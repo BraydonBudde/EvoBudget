@@ -1,12 +1,12 @@
 'use strict';
-/* FinanceKit - v2.7 "Onboarding & Upgrade"  (2026-07-01)
+/* Evo Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
    Change set vs v1.0 "Baseline":
    - All native browser confirm()/alert() popups replaced with in-app
      glass dialogs (confirmDialog / alertDialog) - mobile-friendly.
    - UBP: duplicated init()/applyLayout() collapsed into one; recurring
      engine restored and init now runs exactly once. */
 /* =====================================================================
-   FinanceKit - script.js  v2
+   Evo Budget - script.js  v2
    Improvements: edit transactions, live progress bars, post-symbol
    currencies, mouse-drag tabs, gear settings nav, round help icons,
    clickable period badge, dark / light theme toggle.
@@ -53,7 +53,7 @@ const fmt = (v) => {
 const pct = (act, exp) => (!exp || exp === 0) ? 0 : Math.min(999, Math.round((act / exp) * 100));
 
 // ── State ─────────────────────────────────────────────────────────────
-const STATE_KEY = 'financekit_v1';
+const STATE_KEY = 'evobudget_v1';
 
 // ── Internationalisation ─────────────────────────────────────────────
 const TRANSLATIONS = {
@@ -130,7 +130,7 @@ const TRANSLATIONS = {
     mon:'Mon',tue:'Tue',wed:'Wed',thu:'Thu',fri:'Fri',sat:'Sat',sun:'Sun',
     quick_presets:'Quick presets:',select_currency:'Select your currency',select_language:'Select language',
     appearance_desc:'Switch between light and dark mode.',video_tutorial:'▶ Video Tutorial',
-    help_sett_modal_title:'How Settings work',help_sett_intro:'Customise FinanceKit to match your situation.',
+    help_sett_modal_title:'How Settings work',help_sett_intro:'Customise Evo Budget to match your situation.',
     help_sett_currency_li:'Updates the symbol everywhere (some currencies like PLN place the symbol after the amount).',
     help_sett_period_li:'Set your date range. Click the date badge on Dashboard to jump here quickly.',
     help_sett_rollover_li:'Carry forward unspent money from the last period.',
@@ -203,7 +203,7 @@ const TRANSLATIONS = {
     mon:'Mo',tue:'Di',wed:'Mi',thu:'Do',fri:'Fr',sat:'Sa',sun:'So',
     quick_presets:'Schnellauswahl:',select_currency:'Währung auswählen',select_language:'Sprache auswählen',
     appearance_desc:'Zwischen hellem und dunklem Modus wechseln.',video_tutorial:'▶ Video-Tutorial',
-    help_sett_modal_title:'Einstellungen im Überblick',help_sett_intro:'Passe FinanceKit an deine Situation an.',
+    help_sett_modal_title:'Einstellungen im Überblick',help_sett_intro:'Passe Evo Budget an deine Situation an.',
     help_sett_currency_li:'Aktualisiert das Symbol überall (manche Währungen wie PLN setzen das Symbol nach dem Betrag).',
     help_sett_period_li:'Lege deinen Datumsbereich fest. Klicke auf das Datums-Badge im Dashboard, um schnell hierher zu gelangen.',
     help_sett_rollover_li:'Überträgt nicht ausgegebenes Geld aus der letzten Periode.',
@@ -276,7 +276,7 @@ const TRANSLATIONS = {
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim',
     quick_presets:'Raccourcis :',select_currency:'Sélectionnez votre devise',select_language:'Sélectionner la langue',
     appearance_desc:'Basculer entre le mode clair et sombre.',video_tutorial:'▶ Tutoriel vidéo',
-    help_sett_modal_title:'Fonctionnement des paramètres',help_sett_intro:'Personnalisez FinanceKit selon votre situation.',
+    help_sett_modal_title:'Fonctionnement des paramètres',help_sett_intro:'Personnalisez Evo Budget selon votre situation.',
     help_sett_currency_li:"Met à jour le symbole partout (certaines devises comme le PLN placent le symbole après le montant).",
     help_sett_period_li:'Définissez votre plage de dates. Cliquez sur le badge de date du tableau de bord pour y accéder rapidement.',
     help_sett_rollover_li:"Reporte l'argent non dépensé de la dernière période.",
@@ -349,7 +349,7 @@ const TRANSLATIONS = {
     mon:'Lun',tue:'Mar',wed:'Mié',thu:'Jue',fri:'Vie',sat:'Sáb',sun:'Dom',
     quick_presets:'Accesos rápidos:',select_currency:'Selecciona tu moneda',select_language:'Seleccionar idioma',
     appearance_desc:'Cambiar entre modo claro y oscuro.',video_tutorial:'▶ Tutorial en vídeo',
-    help_sett_modal_title:'Cómo funcionan los ajustes',help_sett_intro:'Personaliza FinanceKit según tu situación.',
+    help_sett_modal_title:'Cómo funcionan los ajustes',help_sett_intro:'Personaliza Evo Budget según tu situación.',
     help_sett_currency_li:'Actualiza el símbolo en todas partes (algunas monedas como PLN colocan el símbolo después del importe).',
     help_sett_period_li:'Establece tu rango de fechas. Haz clic en el distintivo de fecha del panel para acceder rápidamente aquí.',
     help_sett_rollover_li:'Traspasa el dinero no gastado del último período.',
@@ -422,7 +422,7 @@ const TRANSLATIONS = {
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Gio',fri:'Ven',sat:'Sab',sun:'Dom',
     quick_presets:'Selezione rapida:',select_currency:'Seleziona la tua valuta',select_language:'Seleziona lingua',
     appearance_desc:'Passa dalla modalità chiara a quella scura.',video_tutorial:'▶ Video Tutorial',
-    help_sett_modal_title:'Come funzionano le impostazioni',help_sett_intro:'Personalizza FinanceKit in base alla tua situazione.',
+    help_sett_modal_title:'Come funzionano le impostazioni',help_sett_intro:'Personalizza Evo Budget in base alla tua situazione.',
     help_sett_currency_li:"Aggiorna il simbolo ovunque (alcune valute come il PLN inseriscono il simbolo dopo l'importo).",
     help_sett_period_li:'Imposta il tuo intervallo di date. Fai clic sul badge della data nel pannello per accedervi rapidamente.',
     help_sett_rollover_li:"Riporta il denaro non speso dall'ultimo periodo.",
@@ -495,7 +495,7 @@ const TRANSLATIONS = {
     mon:'Pon',tue:'Wt',wed:'Śr',thu:'Czw',fri:'Pt',sat:'Sob',sun:'Nd',
     quick_presets:'Szybki wybór:',select_currency:'Wybierz walutę',select_language:'Wybierz język',
     appearance_desc:'Przełącz między trybem jasnym a ciemnym.',video_tutorial:'▶ Samouczek wideo',
-    help_sett_modal_title:'Jak działają ustawienia',help_sett_intro:'Dostosuj FinanceKit do swojej sytuacji.',
+    help_sett_modal_title:'Jak działają ustawienia',help_sett_intro:'Dostosuj Evo Budget do swojej sytuacji.',
     help_sett_currency_li:'Aktualizuje symbol wszędzie (niektóre waluty jak PLN umieszczają symbol po kwocie).',
     help_sett_period_li:'Ustaw zakres dat. Kliknij znacznik daty na panelu, aby szybko przejść tutaj.',
     help_sett_rollover_li:'Przenieś niewydane środki z ostatniego okresu.',
@@ -590,7 +590,7 @@ function syncSymbol() { SYM = state.settings.symbol; }
 //  FREE TRIAL GATING (SBP)
 //  Entering via "TRY FOR FREE" caps usage; entering via "Open" is full.
 // ══════════════════════════════════════════════════════════════════════
-const SBP_MODE_KEY = 'financekit_sbp_mode';                 // 'trial' | 'full'
+const SBP_MODE_KEY = 'evobudget_sbp_mode';                 // 'trial' | 'full'
 const TRIAL_LIMITS = { transactions: 3, income: 3, expenses: 3, bills: 3, debt: 3, savings: 3 };
 
 // ▼▼ EDIT THESE: drop in your real checkout links + prices ▼▼
@@ -700,9 +700,9 @@ function showUpgradeModal(ctx = {}) {
 //  ACCESS CODES + LAUNCH ROUTING (both tools)
 //  "Open" needs a code (full version); "Try for free" opens the trial.
 // ══════════════════════════════════════════════════════════════════════
-const UBP_MODE_KEY  = 'financekit_ubp_mode';                // 'trial' | 'full'
+const UBP_MODE_KEY  = 'evobudget_ubp_mode';                // 'trial' | 'full'
 const ACCESS_CODES  = { sbp: 'SBP', ubp: 'UBP' };           // case-sensitive
-const UNLOCK_KEYS   = { sbp: 'financekit_sbp_unlocked', ubp: 'financekit_ubp_unlocked' };
+const UNLOCK_KEYS   = { sbp: 'evobudget_sbp_unlocked', ubp: 'evobudget_ubp_unlocked' };
 
 function setUbpMode(m)   { localStorage.setItem(UBP_MODE_KEY, m); }
 function isUnlocked(tool){ return localStorage.getItem(UNLOCK_KEYS[tool]) === '1'; }
@@ -875,10 +875,10 @@ function enableDragScroll(el) {
 // ── Theme ─────────────────────────────────────────────────────────────
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  localStorage.setItem('financekit_theme', theme);
+  localStorage.setItem('evobudget_theme', theme);
   document.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('is-active', b.dataset.themeVal === theme));
 }
-function initTheme() { applyTheme(localStorage.getItem('financekit_theme') || 'light'); }
+function initTheme() { applyTheme(localStorage.getItem('evobudget_theme') || 'light'); }
 
 // ── Navigation ────────────────────────────────────────────────────────
 let currentView = 'hub';
@@ -1726,7 +1726,7 @@ function exportCSV(){
   const blob=new Blob([csv],{type:'text/csv'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url;a.download=`financekit-sbp-${state.settings.periodStart||'export'}.csv`;
+  a.href=url;a.download=`evobudget-sbp-${state.settings.periodStart||'export'}.csv`;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   URL.revokeObjectURL(url);
   showToast(t('toast_export'));
@@ -2300,17 +2300,17 @@ function init() {
 
 // ── Review carousel ────────────────────────────────────────────────────
 const REVIEWS = [
-  {name:'Megan T.',title:'Freelance Graphic Designer & Illustrator',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/44.jpg',text:'I tried every app out there and they all wanted $10 a month just to see my own spending. FinanceKit was the first tool that actually felt like mine. Paid off $3,200 in credit card debt in five months.'},
+  {name:'Megan T.',title:'Freelance Graphic Designer & Illustrator',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/44.jpg',text:'I tried every app out there and they all wanted $10 a month just to see my own spending. Evo Budget was the first tool that actually felt like mine. Paid off $3,200 in credit card debt in five months.'},
   {name:'Daniel K.',title:'Full-Stack Software Engineer at a Startup',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/32.jpg',text:'The sinking funds feature changed how I save. I set a target for a trip to Japan and the planner calculated exactly how much I needed each month. The automatic transactions did the rest.'},
-  {name:'James R.',title:'Senior Account Manager in Advertising',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/75.jpg',text:'My wife and I used spreadsheets for years but always fell off after a month. FinanceKit is just clean enough that we actually stick with it. We can see our bills, track subscriptions, and it all lives in the browser.'},
+  {name:'James R.',title:'Senior Account Manager in Advertising',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/75.jpg',text:'My wife and I used spreadsheets for years but always fell off after a month. Evo Budget is just clean enough that we actually stick with it. We can see our bills, track subscriptions, and it all lives in the browser.'},
   {name:'Priya S.',title:'Recent Business Graduate & Job Seeker',stars:4,tool:'SBP',img:'https://randomuser.me/api/portraits/women/65.jpg',text:'As a recent graduate I needed something dead simple. The Simple planner lets me see income vs. expenses in one screen. I caught a gym membership I forgot to cancel on day one.'},
   {name:'Carlos M.',title:'Independent Restaurant Owner & Operator',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/46.jpg',text:'I run a small restaurant and the subscription tracker alone saves me from forgetting about services I signed up for months ago. The calendar view is perfect for seeing what is due and when.'},
   {name:'Sarah L.',title:'Registered Nurse Working Night Shifts',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/17.jpg',text:'I work 12-hour shifts and have zero energy left for complicated finance apps. This one took me two minutes to set up and I have not missed a bill payment since. Exactly what I needed.'},
   {name:'Tom W.',title:'High School History Teacher & Coach',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/22.jpg',text:'The debt payoff calculator gave me a clear timeline for paying off my student loans. Seeing the numbers update in real time keeps me motivated. Down $8,000 in seven months.'},
-  {name:'Aisha N.',title:'Digital Marketing Manager at an Agency',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/90.jpg',text:'I love that nothing leaves my device. Every other app wanted my bank login and I was never comfortable with that. FinanceKit gave me real budgeting without the privacy trade-off.'},
+  {name:'Aisha N.',title:'Digital Marketing Manager at an Agency',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/90.jpg',text:'I love that nothing leaves my device. Every other app wanted my bank login and I was never comfortable with that. Evo Budget gave me real budgeting without the privacy trade-off.'},
   {name:'Ryan P.',title:'Licensed Electrician & Small Business Owner',stars:4,tool:'UBP',img:'https://randomuser.me/api/portraits/men/55.jpg',text:'I set up sinking funds for my tools, truck insurance, and license renewals. No more scrambling when a big expense hits. The automatic transactions make it completely hands-off.'},
   {name:'Emily C.',title:'Stay-at-Home Parent Managing Family Finances',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/33.jpg',text:'With three kids, every dollar matters. The Simple planner helped me find over $400 in monthly spending I did not even realize we had. We are finally putting real money into savings.'},
-  {name:'Marco D.',title:'PhD Candidate in Applied Mathematics',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/men/86.jpg',text:'I budgeted on paper for years. FinanceKit is basically the digital version of that but with better math. CSV export means I can still pull data into my own spreadsheets when I want to.'},
+  {name:'Marco D.',title:'PhD Candidate in Applied Mathematics',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/men/86.jpg',text:'I budgeted on paper for years. Evo Budget is basically the digital version of that but with better math. CSV export means I can still pull data into my own spreadsheets when I want to.'},
   {name:'Jenny H.',title:'Senior Product Designer at a Tech Company',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/women/26.jpg',text:'The allocation buckets were a game changer. I split everything into needs, wants, and savings and now every transaction goes into the right bucket automatically. So satisfying.'},
   {name:'David B.',title:'Regional Sales Representative in Pharma',stars:4,tool:'UBP',img:'https://randomuser.me/api/portraits/men/41.jpg',text:'I bought this for the debt payoff calculator and ended up using every single feature. The subscription tracker found three services I was double-paying for.'},
   {name:'Olivia F.',title:'Yoga Instructor & Wellness Studio Owner',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/49.jpg',text:'I run a small studio and my personal finances were always tangled up with business. The Simple planner helped me separate everything. Clear categories, simple progress bars, done.'},
@@ -2374,29 +2374,29 @@ function openLegal(type) {
   const titles = { privacy: 'Privacy Policy', terms: 'Terms of Use', disclaimer: 'Disclaimer' };
   const bodies = {
     privacy: `<p><strong>Last updated:</strong> July 2026</p>
-<p>FinanceKit is designed with your privacy as a core principle.</p>
-<p><strong>Data storage.</strong> All financial data you enter into FinanceKit is stored exclusively in your browser's local storage on your device. FinanceKit does not collect, transmit, or store any personal or financial information on external servers.</p>
-<p><strong>No account required.</strong> FinanceKit does not require you to create an account, provide an email address, or share any personally identifiable information to use the product.</p>
-<p><strong>No bank connections.</strong> FinanceKit never asks for or accesses your bank credentials, account numbers, or any third-party financial service logins.</p>
-<p><strong>No tracking.</strong> FinanceKit does not use analytics trackers, advertising pixels, or third-party cookies. Your usage is not monitored, profiled, or shared with any external parties.</p>
-<p><strong>Data control.</strong> Because your data lives entirely on your device, you have full control over it at all times. You can export your data via CSV or clear it through your browser settings. Clearing your browser data or switching devices will remove your FinanceKit data unless you have exported a backup.</p>
-<p><strong>Third-party services.</strong> FinanceKit loads fonts from Google Fonts, which is subject to Google's privacy policy. No other third-party services are used.</p>
+<p>Evo Budget is designed with your privacy as a core principle.</p>
+<p><strong>Data storage.</strong> All financial data you enter into Evo Budget is stored exclusively in your browser's local storage on your device. Evo Budget does not collect, transmit, or store any personal or financial information on external servers.</p>
+<p><strong>No account required.</strong> Evo Budget does not require you to create an account, provide an email address, or share any personally identifiable information to use the product.</p>
+<p><strong>No bank connections.</strong> Evo Budget never asks for or accesses your bank credentials, account numbers, or any third-party financial service logins.</p>
+<p><strong>No tracking.</strong> Evo Budget does not use analytics trackers, advertising pixels, or third-party cookies. Your usage is not monitored, profiled, or shared with any external parties.</p>
+<p><strong>Data control.</strong> Because your data lives entirely on your device, you have full control over it at all times. You can export your data via CSV or clear it through your browser settings. Clearing your browser data or switching devices will remove your Evo Budget data unless you have exported a backup.</p>
+<p><strong>Third-party services.</strong> Evo Budget loads fonts from Google Fonts, which is subject to Google's privacy policy. No other third-party services are used.</p>
 <p><strong>Changes.</strong> If this policy changes, the updated version will be posted on this page with a revised date.</p>`,
     terms: `<p><strong>Last updated:</strong> July 2026</p>
-<p>By using FinanceKit, you agree to the following terms.</p>
-<p><strong>License.</strong> FinanceKit grants you a personal, non-transferable license to use the software for personal financial planning. The free trial allows limited usage. Purchasing an access code unlocks unlimited usage for one user.</p>
-<p><strong>No financial advice.</strong> FinanceKit is a budgeting and organizational tool, not a financial advisor. The calculators, projections, and summaries provided are for informational purposes only and do not constitute financial, tax, investment, or legal advice. Always consult a qualified professional for financial decisions.</p>
-<p><strong>Data responsibility.</strong> You are solely responsible for your data. FinanceKit stores data in your browser's local storage and does not create backups on your behalf. Use the CSV export feature to keep backup copies of your financial information.</p>
-<p><strong>No warranty.</strong> FinanceKit is provided "as is" without warranty of any kind, express or implied. We do not guarantee that the software will be error-free, uninterrupted, or free of bugs.</p>
-<p><strong>Limitation of liability.</strong> FinanceKit and its creators shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the software, including but not limited to financial losses, data loss, or decisions made based on information provided by the software.</p>
+<p>By using Evo Budget, you agree to the following terms.</p>
+<p><strong>License.</strong> Evo Budget grants you a personal, non-transferable license to use the software for personal financial planning. The free trial allows limited usage. Purchasing an access code unlocks unlimited usage for one user.</p>
+<p><strong>No financial advice.</strong> Evo Budget is a budgeting and organizational tool, not a financial advisor. The calculators, projections, and summaries provided are for informational purposes only and do not constitute financial, tax, investment, or legal advice. Always consult a qualified professional for financial decisions.</p>
+<p><strong>Data responsibility.</strong> You are solely responsible for your data. Evo Budget stores data in your browser's local storage and does not create backups on your behalf. Use the CSV export feature to keep backup copies of your financial information.</p>
+<p><strong>No warranty.</strong> Evo Budget is provided "as is" without warranty of any kind, express or implied. We do not guarantee that the software will be error-free, uninterrupted, or free of bugs.</p>
+<p><strong>Limitation of liability.</strong> Evo Budget and its creators shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the software, including but not limited to financial losses, data loss, or decisions made based on information provided by the software.</p>
 <p><strong>Refunds.</strong> Due to the digital nature of the product and immediate access upon purchase, all sales are final. We encourage you to use the free trial to evaluate the product before purchasing.</p>
 <p><strong>Changes.</strong> We reserve the right to modify these terms at any time. Continued use after changes constitutes acceptance of the updated terms.</p>`,
     disclaimer: `<p><strong>Last updated:</strong> July 2026</p>
-<p><strong>Not financial advice.</strong> FinanceKit is a personal budgeting and expense tracking tool. It is not a substitute for professional financial planning, tax advice, or investment guidance. The debt payoff projections, savings calculations, and budget summaries are estimates based on the information you provide and should not be relied upon as precise financial forecasts.</p>
-<p><strong>Accuracy of calculations.</strong> While we strive for accuracy in all calculations, FinanceKit does not account for taxes, fees, interest rate changes, inflation, or other factors that may affect your actual financial outcomes. Always verify important financial calculations independently.</p>
-<p><strong>User responsibility.</strong> You are solely responsible for the financial decisions you make. FinanceKit is a planning aid, and any actions you take based on the information it provides are at your own discretion and risk.</p>
+<p><strong>Not financial advice.</strong> Evo Budget is a personal budgeting and expense tracking tool. It is not a substitute for professional financial planning, tax advice, or investment guidance. The debt payoff projections, savings calculations, and budget summaries are estimates based on the information you provide and should not be relied upon as precise financial forecasts.</p>
+<p><strong>Accuracy of calculations.</strong> While we strive for accuracy in all calculations, Evo Budget does not account for taxes, fees, interest rate changes, inflation, or other factors that may affect your actual financial outcomes. Always verify important financial calculations independently.</p>
+<p><strong>User responsibility.</strong> You are solely responsible for the financial decisions you make. Evo Budget is a planning aid, and any actions you take based on the information it provides are at your own discretion and risk.</p>
 <p><strong>Testimonials.</strong> User testimonials displayed on this site reflect individual experiences and are not guaranteed outcomes. Your results may vary based on your financial situation, discipline, and other personal factors.</p>
-<p><strong>Browser compatibility.</strong> FinanceKit relies on your browser's local storage. Clearing your browser cache or cookies may delete your saved data. We strongly recommend regularly exporting your data using the CSV export feature as a backup.</p>`
+<p><strong>Browser compatibility.</strong> Evo Budget relies on your browser's local storage. Clearing your browser cache or cookies may delete your saved data. We strongly recommend regularly exporting your data using the CSV export feature as a backup.</p>`
   };
   document.getElementById('legalTitle').textContent = titles[type] || '';
   document.getElementById('legalBody').innerHTML = bodies[type] || '';

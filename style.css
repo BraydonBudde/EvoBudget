@@ -1,11 +1,11 @@
-/* FinanceKit - v2.7 "Onboarding & Upgrade"  (2026-07-01)
+/* Evo Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
    Change set vs v1.0 "Baseline":
    - All native browser confirm()/alert() popups replaced with in-app
      glass dialogs (confirmDialog / alertDialog) - mobile-friendly.
    - UBP: duplicated init()/applyLayout() collapsed into one; recurring
      engine restored and init now runs exactly once. */
 /* =====================================================================
-   FinanceKit - Design System
+   Evo Budget - Design System
    Built on the Polish Mastery design language: glassmorphism,
    animated gradient backdrop, Sora + Inter, indigo/purple/pink palette.
    ===================================================================== */
@@ -2386,7 +2386,7 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   .scen-cta { width: 100%; justify-content: center; }
 }
 
-/* ── Why FinanceKit grid ─────────────────────────────────────────────── */
+/* ── Why Evo Budget grid ─────────────────────────────────────────────── */
 .why-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
 }

@@ -1,4 +1,4 @@
-/* FinanceKit - v2.7 "Onboarding & Upgrade"  (2026-07-01)
+/* Evo Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
    Change set vs v1.0 "Baseline":
    - All native browser confirm()/alert() popups replaced with in-app
      glass dialogs (confirmDialog / alertDialog) - mobile-friendly.
@@ -6,7 +6,7 @@
      engine restored and init now runs exactly once. */
 'use strict';
 /* =====================================================================
-   FinanceKit - Ultimate Budget Planner  (ultimate-budget.js)
+   Evo Budget - Ultimate Budget Planner  (ultimate-budget.js)
    ===================================================================== */
 
 // ── Utilities ─────────────────────────────────────────────────────────
@@ -52,8 +52,8 @@ function bindDateField(inputId, wrapId, onChange) {
 }
 
 // ── State ─────────────────────────────────────────────────────────────
-const UBP_KEY = 'financekit_ubp_v1';
-const SBP_KEY = 'financekit_v1';
+const UBP_KEY = 'evobudget_ubp_v1';
+const SBP_KEY = 'evobudget_v1';
 
 function defaultState() {
   const {start,end} = getMonthBounds();
@@ -102,7 +102,7 @@ function syncSymbol() { SYM=state.settings.symbol; }
 //  FREE TRIAL GATING (UBP)
 //  Entering via "TRY FOR FREE" caps usage; entering via "Open" is full.
 // ══════════════════════════════════════════════════════════════════════
-const UBP_MODE_KEY = 'financekit_ubp_mode';                 // 'trial' | 'full'
+const UBP_MODE_KEY = 'evobudget_ubp_mode';                 // 'trial' | 'full'
 const TRIAL_LIMITS = { transactions:3, recurring:3, income:3, expenses:3, bills:3, savings:3, subscriptions:1, sinkingFunds:1, debts:1 };
 
 // ▼▼ EDIT THESE: drop in your real checkout links + prices ▼▼
@@ -2046,8 +2046,8 @@ function enableDragScroll(el) {
   el.addEventListener('mouseup',stop);el.addEventListener('mouseleave',stop);
   el.addEventListener('click',e=>{if(dragged){e.stopPropagation();dragged=false;}},true);
 }
-function applyTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem('financekit_theme',t);document.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('is-active',b.dataset.themeVal===t));}
-function initTheme(){applyTheme(localStorage.getItem('financekit_theme')||'light');}
+function applyTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem('evobudget_theme',t);document.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('is-active',b.dataset.themeVal===t));}
+function initTheme(){applyTheme(localStorage.getItem('evobudget_theme')||'light');}
 
 let currentTab='dashboard', calYear, calMonth, calSelectedDay=null;
 let txFilter={search:'',type:'',alloc:'',sort:'date_desc'};
@@ -3196,7 +3196,7 @@ function exportCSV(){
   const blob=new Blob([csv],{type:'text/csv'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url;a.download=`financekit-${state.settings.periodStart||'export'}.csv`;
+  a.href=url;a.download=`evobudget-${state.settings.periodStart||'export'}.csv`;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   URL.revokeObjectURL(url);
   showToast(t('toast_export'));
