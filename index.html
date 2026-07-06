@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinanceKit | Free Personal Budget Planner & Expense Tracker</title>
+  <meta name="description" content="FinanceKit is a free personal budget planner with income tracking, expense categories, bill reminders, debt payoff calculator, sinking funds, and subscription tracker. No bank login required. Your data stays on your device." />
+  <meta name="keywords" content="budget planner, personal budget, expense tracker, monthly budget, debt payoff calculator, sinking fund tracker, subscription tracker, bill tracker, savings goal tracker, money management, free budget app, budget tool, personal finance, no subscription budget app, offline budget planner" />
+  <meta property="og:title" content="FinanceKit | Free Personal Budget Planner & Expense Tracker" />
+  <meta property="og:description" content="Take control of your money with smart budgeting tools. Track income, expenses, bills, debt, savings, subscriptions, and sinking funds. All offline, no bank login." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://financekit.app/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Ambient gradient backdrop -->
+  <div class="backdrop" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
+
+  <div class="app" id="app">
+
+    <!-- ═══════════════════ HUB VIEW ═══════════════════ -->
+    <div class="view is-active" id="view-hub">
+      <header class="topbar">
+        <div class="wordmark">
+          <div class="wordmark-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <rect x="1" y="7" width="3" height="8" fill="white" rx="1"/>
+              <rect x="6" y="4" width="3" height="11" fill="white" rx="1"/>
+              <rect x="11" y="1" width="3" height="14" fill="white" rx="1"/>
+            </svg>
+          </div>
+          FinanceKit
+        </div>
+        <span class="topbar-tagline">Your personal finance toolkit</span>
+      </header>
+
+      <!-- ── Hero ────────────────────────────────────────── -->
+      <section class="hub-hero">
+        <h1 class="hub-title">Take control of<br><span class="grad-text">your money</span></h1>
+        <p class="hub-sub">Smart budgeting tools that are built for clarity, not complexity.<br>Track income, expenses, bills, debt, savings, &amp; more.</p>
+      </section>
+
+      <!-- ── Tool cards ──────────────────────────────────── -->
+      <div class="tool-grid" id="toolGrid">
+        <!-- Tool cards injected by script.js -->
+      </div>
+
+      <!-- ── USP strip (below cards) ─────────────────────── -->
+      <div class="lp-strip" aria-label="Key benefits">
+        <div class="lp-strip-inner">
+          <div class="lp-strip-item"><span class="lp-strip-icon">💳</span><span class="lp-strip-text">No bank login required</span></div>
+          <div class="lp-strip-sep" aria-hidden="true"></div>
+          <div class="lp-strip-item"><span class="lp-strip-icon">🚫</span><span class="lp-strip-text">No subscription fees</span></div>
+          <div class="lp-strip-sep" aria-hidden="true"></div>
+          <div class="lp-strip-item"><span class="lp-strip-icon">⚡</span><span class="lp-strip-text">Instant setup</span></div>
+        </div>
+      </div>
+
+      <!-- ── Comparison table ────────────────────────────── -->
+      <section class="lp-section" id="compare" aria-labelledby="compareTitle">
+        <h2 class="lp-heading" id="compareTitle">Find your <span class="grad-text">perfect fit</span></h2>
+        <p class="lp-sub">Two planners, one goal: financial clarity. Choose the one that matches your needs.</p>
+
+        <div class="compare-grid">
+          <div class="cc cc-label cc-head"><span class="cc-head-icon">📋</span><strong>Features</strong></div>
+          <div class="cc cc-sbp cc-head"><span class="compare-tool-icon">💰</span><strong>Simple</strong></div>
+          <div class="cc cc-ubp cc-head"><span class="compare-tool-icon">⚡</span><strong>Ultimate</strong><span class="compare-popular">POPULAR</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Set what you plan to earn and spend each month, then watch it fill in as you go. Like knowing you have $300 left for groceries before the month even starts." aria-label="About Monthly budget tracking">?</button><span class="cc-label-text">Monthly budget tracking</span></div>
+          <div class="cc cc-sbp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Group your money into buckets like rent, food, and fun. So when you wonder where it all went, the answer is right there." aria-label="About Income and expense categories">?</button><span class="cc-label-text">Income &amp; expense categories</span></div>
+          <div class="cc cc-sbp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Log each bill with its due date and tick it off once paid. No more late fees because the electric bill slipped your mind." aria-label="About Bill tracking with due dates">?</button><span class="cc-label-text">Bill tracking with due dates</span></div>
+          <div class="cc cc-sbp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Every entry is saved and searchable. Trying to remember what that $60 charge last Tuesday was? Just search for it." aria-label="About Transaction history and search">?</button><span class="cc-label-text">Transaction history &amp; search</span></div>
+          <div class="cc cc-sbp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Move your data in and out as a spreadsheet file. Handy for keeping a backup or sharing figures with your accountant." aria-label="About CSV import and export">?</button><span class="cc-label-text">CSV import &amp; export</span></div>
+          <div class="cc cc-sbp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="See exactly when you will be debt-free and which card to pay off first. Turns 'I will never get out of this' into a real date on the calendar." aria-label="About Debt payoff calculator">?</button><span class="cc-label-text">Debt payoff calculator</span></div>
+          <div class="cc cc-sbp"><span class="compare-no">-</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Save a little each month toward a big goal. Put away $80 a month and that $1,000 Christmas budget is ready by December." aria-label="About Sinking funds tracker">?</button><span class="cc-label-text">Sinking funds tracker</span></div>
+          <div class="cc cc-sbp"><span class="compare-no">-</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Keep every recurring service in one list. Spot the free trial you forgot to cancel before it charges you again." aria-label="About Subscription tracker">?</button><span class="cc-label-text">Subscription tracker</span></div>
+          <div class="cc cc-sbp"><span class="compare-no">-</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Set repeating entries once and let them log themselves. Your $15 gym fee and $1,200 rent appear every month without lifting a finger." aria-label="About Automatic transactions">?</button><span class="cc-label-text">Automatic transactions</span></div>
+          <div class="cc cc-sbp"><span class="compare-no">-</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="See all your bills and paydays laid out on a calendar. Know at a glance that rent lands two days before payday." aria-label="About Financial calendar">?</button><span class="cc-label-text">Financial calendar</span></div>
+          <div class="cc cc-sbp"><span class="compare-no">-</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Split every dollar into needs, wants, and savings automatically. Perfect if you like the 50/30/20 rule but hate the math." aria-label="About Allocation buckets">?</button><span class="cc-label-text">Allocation buckets</span></div>
+          <div class="cc cc-sbp"><span class="compare-no">-</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label"><button class="cc-info" type="button" data-tip="Use FinanceKit in English, German, French, Spanish, Italian, or Polish. Budget in the language you think in." aria-label="About 6 languages">?</button><span class="cc-label-text">6 languages</span></div>
+          <div class="cc cc-sbp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-ubp"><span class="compare-yes">✓</span></div>
+          <div class="cc cc-label cc-price">Price</div>
+          <div class="cc cc-sbp cc-price"><button class="cc-buy-btn cc-buy-btn--sbp" data-buy="sbp" type="button"><strong>$9.99</strong><span class="compare-once">one-time</span></button></div>
+          <div class="cc cc-ubp cc-price"><button class="cc-buy-btn cc-buy-btn--ubp" data-buy="ubp" type="button"><strong>$19.99</strong><span class="compare-once">one-time</span></button></div>
+        </div>
+      </section>
+
+      <!-- ── Scenarios (relatable pain points) ───────────── -->
+      <section class="lp-section lp-section--wide" id="scenarios" aria-labelledby="scenTitle">
+        <h2 class="lp-heading" id="scenTitle">We built this for <span class="grad-text">moments like these</span></h2>
+        <p class="lp-sub">Real situations, real solutions. See how FinanceKit helps when it matters most.</p>
+
+        <div class="scen-list">
+          <!-- Debt -->
+          <article class="scen-row scen-row--debt">
+            <div class="scen-visual"><span class="scen-emoji">💳</span></div>
+            <div class="scen-body">
+              <span class="scen-tag scen-tag--debt">Debt Payoff</span>
+              <h3 class="scen-title">"I have three credit cards and I'm barely keeping up."</h3>
+              <p class="scen-desc">Minimum payments feel like they go nowhere, and you're not sure which card to attack first. The Ultimate planner's debt payoff calculator maps out the avalanche and snowball methods, shows your real payoff date, and turns a vague worry into a clear finish line.</p>
+              <button class="scen-cta scen-cta--grad" data-try="ubp" type="button">Plan my payoff with Ultimate <span class="scen-arrow">→</span></button>
+            </div>
+          </article>
+
+          <!-- Family holiday -->
+          <article class="scen-row scen-row--holiday scen-row--flip">
+            <div class="scen-visual"><span class="scen-emoji">✈️</span></div>
+            <div class="scen-body">
+              <span class="scen-tag scen-tag--holiday">Sinking Funds</span>
+              <h3 class="scen-title">"We want to take the kids somewhere special this year."</h3>
+              <p class="scen-desc">A family trip always seems just out of reach when you're saving in your head. Create a sinking fund with your target and travel date, and the Ultimate planner tells you exactly how much to set aside each month. By the time the holiday arrives, it's already paid for.</p>
+              <button class="scen-cta scen-cta--grad" data-try="ubp" type="button">Start saving with Ultimate <span class="scen-arrow">→</span></button>
+            </div>
+          </article>
+
+          <!-- Paycheck to paycheck -->
+          <article class="scen-row scen-row--paycheck">
+            <div class="scen-visual"><span class="scen-emoji">🔍</span></div>
+            <div class="scen-body">
+              <span class="scen-tag scen-tag--paycheck">Everyday Budgeting</span>
+              <h3 class="scen-title">"My money disappears and I don't know where it goes."</h3>
+              <p class="scen-desc">You earn enough, but somehow there's nothing left by payday. The Simple planner lays your income and spending side by side so the leaks become obvious. Most people spot a forgotten subscription or an overspending category in the first five minutes.</p>
+              <button class="scen-cta scen-cta--ghost" data-try="sbp" type="button">Try Simple free <span class="scen-arrow">→</span></button>
+            </div>
+          </article>
+
+          <!-- Bills / subscriptions -->
+          <article class="scen-row scen-row--bills scen-row--flip">
+            <div class="scen-visual"><span class="scen-emoji">🔄</span></div>
+            <div class="scen-body">
+              <span class="scen-tag scen-tag--bills">Bills &amp; Subscriptions</span>
+              <h3 class="scen-title">"I keep getting caught out by bills I forgot about."</h3>
+              <p class="scen-desc">Streaming services, insurance renewals, that free trial you never cancelled. The Ultimate planner's subscription tracker and financial calendar show everything that's due and when, so nothing sneaks up on you and no payment slips through the cracks again.</p>
+              <button class="scen-cta scen-cta--grad" data-try="ubp" type="button">Take control with Ultimate <span class="scen-arrow">→</span></button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ── Testimonials carousel ────────────────────────── -->
+      <section class="lp-section" id="reviews" aria-labelledby="reviewsTitle">
+        <h2 class="lp-heading" id="reviewsTitle">Real people, <span class="grad-text">real results</span></h2>
+        <p class="lp-sub">Here's what our users have to say.</p>
+        <div class="rc-wrap">
+          <button class="rc-arrow rc-arrow--left" id="rcLeft" type="button" aria-label="Previous reviews">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="rc-viewport"><div class="rc-track" id="rcTrack"></div></div>
+          <button class="rc-arrow rc-arrow--right" id="rcRight" type="button" aria-label="Next reviews">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="rc-dots" id="rcDots"></div>
+      </section>
+
+      <!-- ── Why FinanceKit (objection handling) ─────────── -->
+      <section class="lp-section" id="whyFk" aria-labelledby="whyTitle">
+        <h2 class="lp-heading" id="whyTitle">Why <span class="grad-text">FinanceKit?</span></h2>
+        <p class="lp-sub">Built different on purpose. Here's what sets it apart.</p>
+        <div class="why-grid">
+          <div class="why-card">
+            <div class="why-num">01</div>
+            <h3 class="why-title">Your data never leaves your device</h3>
+            <p class="why-desc">Everything is stored in your browser's local storage. No servers, no cloud sync, no accounts. Export to CSV anytime you want a backup.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-num">02</div>
+            <h3 class="why-title">Pay once, use forever</h3>
+            <p class="why-desc">No monthly fees, no annual renewals, no "premium tier" upsells. One purchase unlocks everything, including all future updates.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-num">03</div>
+            <h3 class="why-title">Works everywhere, installs nowhere</h3>
+            <p class="why-desc">FinanceKit runs in any modern browser on any device. Phone, tablet, laptop. No app store, no downloads, no updates to manage.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-num">04</div>
+            <h3 class="why-title">Simple enough to actually use</h3>
+            <p class="why-desc">No onboarding wizards, no 30-minute setup. Open it, add your categories, start tracking. The interface gets out of your way so you can focus on your money.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CTA banner (upsell) ─────────────────────────── -->
+      <section class="lp-section" aria-label="Get started">
+        <div class="cta-banner">
+          <div class="cta-banner-glow" aria-hidden="true"></div>
+          <div class="cta-banner-text">
+            <h3 class="cta-banner-title">Ready to take control of your money?</h3>
+            <p class="cta-banner-sub">Start free in seconds. No account, no card, nothing to install.</p>
+          </div>
+          <div class="cta-banner-btns">
+            <button class="cta-banner-btn cta-banner-btn--ghost" data-try="sbp" type="button">Try Simple free</button>
+            <button class="cta-banner-btn cta-banner-btn--solid" data-try="ubp" type="button">Try Ultimate free</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FAQ (SEO-rich) ──────────────────────────────── -->
+      <section class="lp-section" id="faq" aria-labelledby="faqTitle">
+        <h2 class="lp-heading" id="faqTitle">Frequently asked <span class="grad-text">questions</span></h2>
+
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary class="faq-q">What is FinanceKit?</summary>
+            <div class="faq-a">FinanceKit is a personal budget planner and expense tracker that runs entirely in your browser. It includes two tools: the Simple Budget Planner for straightforward monthly budgeting, and the Ultimate Budget Planner which adds a debt payoff calculator, sinking funds tracker, subscription tracker, automatic transactions, and a financial calendar. No account creation, no bank login, and no subscription required.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Is FinanceKit really free?</summary>
+            <div class="faq-a">Both planners offer a free trial with limited categories and transactions so you can explore every feature. When you're ready to unlock unlimited usage, it's a one-time purchase: $9.99 for the Simple Budget Planner and $19.99 for the Ultimate Budget Planner. There are no monthly or annual subscription fees.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Where is my data stored?</summary>
+            <div class="faq-a">All your financial data is stored locally on your device using your browser's built-in storage. Nothing is sent to a server. FinanceKit never asks for your bank credentials and never transmits your financial information anywhere. Your budget, transactions, and settings stay entirely under your control.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Do I need to connect my bank account?</summary>
+            <div class="faq-a">No. FinanceKit is designed for manual entry, which gives you full privacy and control over your data. You add your income, expenses, bills, and other transactions yourself. Many users prefer this approach because it keeps them actively engaged with their spending and avoids sharing sensitive bank credentials with third-party services.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">What's the difference between Simple and Ultimate?</summary>
+            <div class="faq-a">The Simple Budget Planner covers the essentials: income, expenses, bills, debt, and savings categories with transaction tracking and a visual dashboard. The Ultimate Budget Planner includes everything in Simple, plus a debt payoff calculator (avalanche and snowball methods), sinking funds tracker, subscription tracker, automatic recurring transactions, a financial calendar, and allocation buckets. Check the comparison table above for a full feature-by-feature breakdown.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Can I track debt payoff with FinanceKit?</summary>
+            <div class="faq-a">Yes. The Ultimate Budget Planner includes a dedicated debt payoff calculator that supports both the avalanche method (highest interest first) and the snowball method (smallest balance first). You can add all your debts, set minimum payments and interest rates, add extra payments, and see a projected payoff timeline. The Simple planner lets you track debt payments as a budget category.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">What are sinking funds?</summary>
+            <div class="faq-a">Sinking funds are a budgeting strategy where you set aside a small amount each month for a large, planned expense, like a vacation, car repair, or holiday gifts. The Ultimate Budget Planner lets you create sinking funds with a target amount and target date, then automatically calculates how much you need to save each month to reach your goal on time.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Does FinanceKit work on mobile?</summary>
+            <div class="faq-a">Yes. FinanceKit is fully responsive and works on any device with a modern browser, including phones and tablets. There's nothing to install from an app store. Just open the page, and your budget is ready.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Can I export my data?</summary>
+            <div class="faq-a">Yes. Both planners support CSV export so you can download your full transaction history and use it in spreadsheet software like Excel, Google Sheets, or Numbers. You can also import transactions from a CSV file.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">What languages does FinanceKit support?</summary>
+            <div class="faq-a">FinanceKit supports English, German, French, Spanish, Italian, and Polish. You can switch languages in the settings panel of either planner.</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ── Footer ──────────────────────────────────────── -->
+      <footer class="lp-footer" id="footer">
+        <div class="lp-footer-inner">
+          <div class="lp-footer-brand">
+            <div class="wordmark wordmark-sm">
+              <div class="wordmark-icon wordmark-icon-sm">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <rect x="1" y="7" width="3" height="8" fill="white" rx="1"/>
+                  <rect x="6" y="4" width="3" height="11" fill="white" rx="1"/>
+                  <rect x="11" y="1" width="3" height="14" fill="white" rx="1"/>
+                </svg>
+              </div>
+              FinanceKit
+            </div>
+          </div>
+          <div class="lp-footer-links">
+            <button class="lp-footer-link" id="footerPrivacy" type="button">Privacy Policy</button>
+            <button class="lp-footer-link" id="footerTerms" type="button">Terms of Use</button>
+            <button class="lp-footer-link" id="footerDisclaimer" type="button">Disclaimer</button>
+          </div>
+          <p class="lp-footer-copy">&copy; 2026 FinanceKit. All rights reserved.</p>
+        </div>
+      </footer>
+
+    </div>
+
+    <!-- ═══════════════════ BUDGET TOOL VIEW ═══════════════════ -->
+    <div class="view" id="view-budget">
+
+      <header class="topbar tool-topbar">
+        <button class="btn-back-round" id="backToHub" type="button" aria-label="Back to all tools">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 13L5 8L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="wordmark wordmark-sm">
+          <div class="wordmark-icon wordmark-icon-sm">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <rect x="1" y="7" width="3" height="8" fill="white" rx="1"/>
+              <rect x="6" y="4" width="3" height="11" fill="white" rx="1"/>
+              <rect x="11" y="1" width="3" height="14" fill="white" rx="1"/>
+            </svg>
+          </div>
+          <span class="app-title-editable" id="appTitleText" role="button" tabindex="0" title="Rename">Simple Budget</span>
+        </div>
+        <div class="tool-topbar-right">
+          <button class="btn-icon" id="settingsNavBtn" type="button" aria-label="Settings">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <nav class="budget-tabs" id="budgetTabs" role="tablist" aria-label="Budget sections">
+        <button class="btab is-active" data-btab="dashboard" role="tab" type="button">📊 Dashboard</button>
+        <button class="btab" data-btab="transactions" role="tab" type="button">📋 Transactions</button>
+        <button class="btab" data-btab="income" role="tab" type="button">💰 Income</button>
+        <button class="btab" data-btab="expenses" role="tab" type="button">🛒 Expenses</button>
+        <button class="btab" data-btab="bills" role="tab" type="button">🧾 Bills</button>
+        <button class="btab" data-btab="debt" role="tab" type="button">💳 Debt</button>
+        <button class="btab" data-btab="savings" role="tab" type="button">🏦 Savings</button>
+      </nav>
+
+      <!-- Budget sub-views (filled by JS) -->
+      <div class="bview is-active" id="bview-dashboard" role="tabpanel"></div>
+      <div class="bview" id="bview-transactions" role="tabpanel"></div>
+      <div class="bview" id="bview-income" role="tabpanel"></div>
+      <div class="bview" id="bview-expenses" role="tabpanel"></div>
+      <div class="bview" id="bview-bills" role="tabpanel"></div>
+      <div class="bview" id="bview-debt" role="tabpanel"></div>
+      <div class="bview" id="bview-savings" role="tabpanel"></div>
+      <div class="bview" id="bview-settings" role="tabpanel"></div>
+
+    </div>
+
+  </div><!-- /.app -->
+
+  <!-- Tutorial / Help modal -->
+  <div class="modal-overlay" id="tutorialOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal" id="tutorialModal">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+      <h3 class="modal-title" id="modalTitle"></h3>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Legal overlay (Privacy / Terms / Disclaimer) -->
+  <div class="modal-overlay" id="legalOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="legalTitle">
+    <div class="modal modal--legal" id="legalModal">
+      <button class="modal-close" id="legalClose" type="button" aria-label="Close">×</button>
+      <h3 class="modal-title" id="legalTitle"></h3>
+      <div class="modal-body" id="legalBody"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

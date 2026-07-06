@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ultimate Budget Planner — FinanceKit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="backdrop" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
+
+  <div class="app" id="app">
+
+    <header class="topbar tool-topbar">
+      <button class="btn-back-round" id="backToHub" type="button" aria-label="Back to all tools">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 13L5 8L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="wordmark wordmark-sm">
+        <div class="wordmark-icon wordmark-icon-sm ubp-icon">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <span class="app-title-editable" id="appTitleText" role="button" tabindex="0" title="Rename">Ultimate Budget</span>
+      </div>
+      <div class="tool-topbar-right">
+        <button class="btn-icon" id="settingsNavBtn" type="button" aria-label="Settings">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <nav class="budget-tabs" id="ubpTabs" role="tablist" aria-label="Ultimate Budget sections">
+      <button class="btab is-active" data-btab="dashboard"     role="tab" type="button">📊 Dashboard</button>
+      <button class="btab"           data-btab="transactions"  role="tab" type="button">📋 Transactions</button>
+      <button class="btab"           data-btab="budget"        role="tab" type="button">💰 Budget</button>
+      <button class="btab"           data-btab="debt"          role="tab" type="button">💳 Debt Payoff</button>
+      <button class="btab"           data-btab="subscriptions" role="tab" type="button">🔄 Subscriptions</button>
+      <button class="btab"           data-btab="sinking"       role="tab" type="button">🏺 Sinking Funds</button>
+      <button class="btab"           data-btab="calendar"      role="tab" type="button">📅 Calendar</button>
+    </nav>
+
+    <div class="bview is-active" id="bview-dashboard"     role="tabpanel"></div>
+    <div class="bview"           id="bview-budget"        role="tabpanel"></div>
+    <div class="bview"           id="bview-transactions"  role="tabpanel"></div>
+    <div class="bview"           id="bview-debt"          role="tabpanel"></div>
+    <div class="bview"           id="bview-sinking"       role="tabpanel"></div>
+    <div class="bview"           id="bview-calendar"      role="tabpanel"></div>
+    <div class="bview"           id="bview-subscriptions" role="tabpanel"></div>
+    <div class="bview"           id="bview-settings"      role="tabpanel"></div>
+
+  </div>
+
+  <!-- ── Sidebar nav (Layout: Sidebar) ─────────────────────── -->
+  <nav id="sideNav" class="side-nav" aria-label="Sidebar navigation">
+    <button class="side-nav-toggle" id="sideNavToggle" type="button" title="Expand / collapse">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="sideNavArrow">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
+    <button class="side-nav-item is-active" data-btab="dashboard"    type="button"><span class="sni">📊</span><span class="snl">Dashboard</span></button>
+    <button class="side-nav-item"           data-btab="transactions" type="button"><span class="sni">📋</span><span class="snl">Transactions</span></button>
+    <button class="side-nav-item"           data-btab="budget"       type="button"><span class="sni">💰</span><span class="snl">Budget</span></button>
+    <button class="side-nav-item"           data-btab="debt"         type="button"><span class="sni">💳</span><span class="snl">Debt Payoff</span></button>
+    <button class="side-nav-item"           data-btab="subscriptions"type="button"><span class="sni">🔄</span><span class="snl">Subscriptions</span></button>
+    <button class="side-nav-item"           data-btab="sinking"      type="button"><span class="sni">🏺</span><span class="snl">Sinking Funds</span></button>
+    <button class="side-nav-item"           data-btab="calendar"     type="button"><span class="sni">📅</span><span class="snl">Calendar</span></button>
+  </nav>
+
+  <div class="modal-overlay" id="tutorialOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal" id="tutorialModal">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+      <h3 class="modal-title" id="modalTitle"></h3>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="ultimate-budget.js"></script>
+</body>
+</html>
