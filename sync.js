@@ -21,7 +21,7 @@
 
 // Fill this in after creating an OAuth Client ID in Google Cloud Console
 // (Web application type, http://localhost:8080 as an authorized origin).
-const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '1008129505128-4p0kobjks9gb8bloe1epis7ea7333kqd.apps.googleusercontent.com';
 
 const SYNC_SCOPES = 'https://www.googleapis.com/auth/drive.file openid email profile';
 const SYNC_FOLDER_NAME = 'Evo Budget';
