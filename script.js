@@ -135,6 +135,29 @@ const TRANSLATIONS = {
     help_sett_period_li:'Set your date range. Click the date badge on Dashboard to jump here quickly.',
     help_sett_rollover_li:'Carry forward unspent money from the last period.',
     help_sett_theme_li:'Use the sun/moon toggle in the top bar to switch Light and Dark mode.',
+    help_dash_modal_title:'How the Dashboard works',help_dash_intro:'The Dashboard is your real-time financial snapshot. Everything updates automatically as you log transactions.',
+    help_dash_cards_h:'Summary cards',help_dash_cards_li:'Totals for income, expenses &amp; bills, debt payments, and savings for the current period.',
+    help_dash_leftover_li:'What\'s left after all outgoings. <span style="color:#10b981;font-weight:600">Green</span> = surplus, <span style="color:#f43f5e;font-weight:600">red</span> = over budget.',
+    help_dash_flow_h:'Cash Flow chart',help_dash_flow_li:'Compares what you <em>expected</em> vs what <em>actually happened</em>.',
+    help_dash_donut_h:'Donut charts',help_dash_donut_li:'Income breakdown and spending allocation as percentages.',
+    help_dash_datebadge_h:'Date badge',help_dash_datebadge_li:'Click it to jump straight to Settings and change your budget period.',
+    help_dash_tip:'💡 Tip: Enter expected amounts in Income / Expenses / Bills / Debt / Savings first, then log transactions to see actuals fill in.',
+    help_tx_modal_title:'How Transactions work',help_tx_intro:'Every time money moves, log it here. Budget modules update automatically.',
+    help_tx_type_li:'Income, Expense, Bill, Debt, or Savings.',help_tx_category_li:'Drawn from your budget module categories.',
+    help_tx_edit_h:'✏️ Edit button',help_tx_edit_li:'Click the pencil icon on any row to edit or delete that transaction.',
+    help_tx_csv_h:'CSV Import format:',
+    help_inc_modal_title:'How Income works',help_inc_intro:'Track expected vs actual income. Progress bars update live as you type expected amounts.',
+    help_inc_expected_li:'Type your planned income; the bar updates instantly.',help_inc_actual_li:'Auto-calculated from Income transactions.',
+    help_inc_tip:'💡 Tip: Log earnings as type "Income" in Transactions to see actuals here.',
+    help_exp_modal_title:'How Expenses work',help_exp_intro:'Set spending limits per category. Progress bars update live and turn red when you go over.',
+    help_exp_expected_li:'Your spending limit; bar updates as you type.',help_exp_actual_li:'Totalled from Expense transactions.',
+    help_bills_modal_title:'How Bills work',help_bills_intro:'Track recurring bills with due dates and paid status.',
+    help_bills_duedate_li:'Set when each bill is due.',help_bills_paid_li:'Tick when you\'ve made the payment.',help_bills_actual_li:'Populated from Bill transactions with matching category name.',
+    help_debt_modal_title:'How Debt works',help_debt_intro:'Stay on top of loan repayments and mortgages.',
+    help_debt_expected_li:'Your planned monthly payment.',help_debt_duedate_li:'When the payment is due.',help_debt_paid_li:'Mark when the payment clears.',
+    help_sav_modal_title:'How Savings work',help_sav_intro:'Set savings goals and track contributions.',
+    help_sav_expected_li:'Your savings target for this period.',help_sav_actual_li:'From Savings type transactions.',
+    help_sav_tip:'💡 Tip: Treat savings like a fixed expense - budget it first, spend the rest.',
   },
   de: {
     lang_name:'Deutsch',
@@ -208,6 +231,29 @@ const TRANSLATIONS = {
     help_sett_period_li:'Lege deinen Datumsbereich fest. Klicke auf das Datums-Badge im Dashboard, um schnell hierher zu gelangen.',
     help_sett_rollover_li:'Überträgt nicht ausgegebenes Geld aus der letzten Periode.',
     help_sett_theme_li:'Nutze den Sonne/Mond-Schalter in der oberen Leiste, um zwischen Hell- und Dunkelmodus zu wechseln.',
+    help_dash_modal_title:'Wie das Dashboard funktioniert',help_dash_intro:'Das Dashboard ist deine Finanzübersicht in Echtzeit. Alles aktualisiert sich automatisch, sobald du Transaktionen erfasst.',
+    help_dash_cards_h:'Übersichtskarten',help_dash_cards_li:'Summen für Einnahmen, Ausgaben &amp; Rechnungen, Schuldenzahlungen und Ersparnisse für den aktuellen Zeitraum.',
+    help_dash_leftover_li:'Was nach allen Ausgaben übrig bleibt. <span style="color:#10b981;font-weight:600">Grün</span> = Überschuss, <span style="color:#f43f5e;font-weight:600">Rot</span> = über dem Budget.',
+    help_dash_flow_h:'Cashflow-Diagramm',help_dash_flow_li:'Vergleicht, was du <em>erwartet</em> hast, mit dem, was <em>tatsächlich passiert ist</em>.',
+    help_dash_donut_h:'Kreisdiagramme',help_dash_donut_li:'Einnahmenaufteilung und Ausgabenverteilung in Prozent.',
+    help_dash_datebadge_h:'Datums-Badge',help_dash_datebadge_li:'Klicke darauf, um direkt zu den Einstellungen zu springen und deinen Budgetzeitraum zu ändern.',
+    help_dash_tip:'💡 Tipp: Trage zuerst die geplanten Beträge bei Einnahmen / Ausgaben / Rechnungen / Schulden / Ersparnisse ein und erfasse dann Transaktionen, damit die tatsächlichen Werte erscheinen.',
+    help_tx_modal_title:'Wie Transaktionen funktionieren',help_tx_intro:'Erfasse hier jede Bewegung deines Geldes. Die Budgetmodule aktualisieren sich automatisch.',
+    help_tx_type_li:'Einnahme, Ausgabe, Rechnung, Schulden oder Ersparnisse.',help_tx_category_li:'Wird aus den Kategorien deiner Budgetmodule übernommen.',
+    help_tx_edit_h:'✏️ Bearbeiten-Schaltfläche',help_tx_edit_li:'Klicke auf das Stiftsymbol einer beliebigen Zeile, um diese Transaktion zu bearbeiten oder zu löschen.',
+    help_tx_csv_h:'CSV-Importformat:',
+    help_inc_modal_title:'Wie Einnahmen funktionieren',help_inc_intro:'Verfolge geplante gegenüber tatsächlichen Einnahmen. Fortschrittsbalken aktualisieren sich live, während du geplante Beträge eingibst.',
+    help_inc_expected_li:'Gib deine geplanten Einnahmen ein; der Balken aktualisiert sich sofort.',help_inc_actual_li:'Wird automatisch aus Einnahme-Transaktionen berechnet.',
+    help_inc_tip:'💡 Tipp: Erfasse Einkünfte in den Transaktionen als Typ „Einnahme“, damit sie hier als tatsächliche Werte erscheinen.',
+    help_exp_modal_title:'Wie Ausgaben funktionieren',help_exp_intro:'Lege Ausgabenlimits pro Kategorie fest. Fortschrittsbalken aktualisieren sich live und werden rot, wenn du das Limit überschreitest.',
+    help_exp_expected_li:'Dein Ausgabenlimit; der Balken aktualisiert sich, während du tippst.',help_exp_actual_li:'Wird aus Ausgabe-Transaktionen summiert.',
+    help_bills_modal_title:'Wie Rechnungen funktionieren',help_bills_intro:'Behalte wiederkehrende Rechnungen mit Fälligkeitsdatum und Zahlungsstatus im Blick.',
+    help_bills_duedate_li:'Lege fest, wann jede Rechnung fällig ist.',help_bills_paid_li:'Hake ab, sobald du die Zahlung geleistet hast.',help_bills_actual_li:'Wird aus Rechnung-Transaktionen mit passendem Kategorienamen befüllt.',
+    help_debt_modal_title:'Wie Schulden funktionieren',help_debt_intro:'Behalte Kredit- und Hypothekenzahlungen im Blick.',
+    help_debt_expected_li:'Deine geplante monatliche Zahlung.',help_debt_duedate_li:'Wann die Zahlung fällig ist.',help_debt_paid_li:'Markiere sie, sobald die Zahlung erfolgt ist.',
+    help_sav_modal_title:'Wie Ersparnisse funktionieren',help_sav_intro:'Lege Sparziele fest und verfolge deine Einzahlungen.',
+    help_sav_expected_li:'Dein Sparziel für diesen Zeitraum.',help_sav_actual_li:'Aus Transaktionen vom Typ Ersparnisse.',
+    help_sav_tip:'💡 Tipp: Behandle Sparen wie eine feste Ausgabe - budgetiere es zuerst und gib danach den Rest aus.',
   },
   fr: {
     lang_name:'Français',
@@ -281,6 +327,29 @@ const TRANSLATIONS = {
     help_sett_period_li:'Définissez votre plage de dates. Cliquez sur le badge de date du tableau de bord pour y accéder rapidement.',
     help_sett_rollover_li:"Reporte l'argent non dépensé de la dernière période.",
     help_sett_theme_li:'Utilisez le bouton soleil/lune dans la barre supérieure pour basculer entre les modes clair et sombre.',
+    help_dash_modal_title:'Comment fonctionne le tableau de bord',help_dash_intro:'Le tableau de bord est votre aperçu financier en temps réel. Tout se met à jour automatiquement dès que vous enregistrez des transactions.',
+    help_dash_cards_h:'Cartes de synthèse',help_dash_cards_li:'Totaux des revenus, dépenses &amp; factures, remboursements de dettes et épargne pour la période en cours.',
+    help_dash_leftover_li:"Ce qu'il reste après toutes les sorties d'argent. <span style=\"color:#10b981;font-weight:600\">Vert</span> = excédent, <span style=\"color:#f43f5e;font-weight:600\">rouge</span> = dépassement de budget.",
+    help_dash_flow_h:'Graphique Flux de trésorerie',help_dash_flow_li:"Compare ce que vous <em>aviez prévu</em> à ce qui <em>s'est réellement passé</em>.",
+    help_dash_donut_h:'Graphiques en anneau',help_dash_donut_li:'Répartition des revenus et des dépenses en pourcentages.',
+    help_dash_datebadge_h:'Badge de date',help_dash_datebadge_li:'Cliquez dessus pour accéder directement aux paramètres et modifier votre période budgétaire.',
+    help_dash_tip:"💡 Astuce : Saisissez d'abord les montants prévus dans Revenus / Dépenses / Factures / Dettes / Épargne, puis enregistrez des transactions pour voir apparaître les montants réels.",
+    help_tx_modal_title:'Comment fonctionnent les transactions',help_tx_intro:"Enregistrez ici chaque mouvement d'argent. Les modules de budget se mettent à jour automatiquement.",
+    help_tx_type_li:'Revenu, Dépense, Facture, Dette ou Épargne.',help_tx_category_li:'Reprise des catégories de vos modules de budget.',
+    help_tx_edit_h:'✏️ Bouton Modifier',help_tx_edit_li:"Cliquez sur l'icône crayon d'une ligne pour modifier ou supprimer cette transaction.",
+    help_tx_csv_h:"Format d'import CSV :",
+    help_inc_modal_title:'Comment fonctionnent les revenus',help_inc_intro:'Suivez le prévu par rapport au réel pour vos revenus. Les barres de progression se mettent à jour en direct pendant que vous saisissez les montants prévus.',
+    help_inc_expected_li:'Saisissez votre revenu prévu ; la barre se met à jour instantanément.',help_inc_actual_li:'Calculé automatiquement à partir des transactions de type Revenu.',
+    help_inc_tip:'💡 Astuce : Enregistrez vos gains avec le type « Revenu » dans les transactions pour voir apparaître les montants réels ici.',
+    help_exp_modal_title:'Comment fonctionnent les dépenses',help_exp_intro:'Définissez une limite de dépenses par catégorie. Les barres de progression se mettent à jour en direct et passent au rouge en cas de dépassement.',
+    help_exp_expected_li:'Votre limite de dépenses ; la barre se met à jour au fur et à mesure de votre saisie.',help_exp_actual_li:'Cumulé à partir des transactions de type Dépense.',
+    help_bills_modal_title:'Comment fonctionnent les factures',help_bills_intro:"Suivez vos factures récurrentes avec leur date d'échéance et leur statut de paiement.",
+    help_bills_duedate_li:"Définissez la date d'échéance de chaque facture.",help_bills_paid_li:'Cochez une fois le paiement effectué.',help_bills_actual_li:'Renseigné à partir des transactions de type Facture portant le même nom de catégorie.',
+    help_debt_modal_title:'Comment fonctionnent les dettes',help_debt_intro:'Gardez le contrôle sur vos remboursements de prêts et de crédits immobiliers.',
+    help_debt_expected_li:'Votre paiement mensuel prévu.',help_debt_duedate_li:"La date d'échéance du paiement.",help_debt_paid_li:'Marquez-le une fois le paiement effectué.',
+    help_sav_modal_title:"Comment fonctionne l'épargne",help_sav_intro:"Définissez des objectifs d'épargne et suivez vos versements.",
+    help_sav_expected_li:"Votre objectif d'épargne pour cette période.",help_sav_actual_li:'À partir des transactions de type Épargne.',
+    help_sav_tip:"💡 Astuce : Traitez l'épargne comme une dépense fixe - budgétez-la en premier, puis dépensez le reste.",
   },
   es: {
     lang_name:'Español',
@@ -354,6 +423,29 @@ const TRANSLATIONS = {
     help_sett_period_li:'Establece tu rango de fechas. Haz clic en el distintivo de fecha del panel para acceder rápidamente aquí.',
     help_sett_rollover_li:'Traspasa el dinero no gastado del último período.',
     help_sett_theme_li:'Usa el botón sol/luna en la barra superior para cambiar entre los modos claro y oscuro.',
+    help_dash_modal_title:'Cómo funciona el panel',help_dash_intro:'El panel es tu instantánea financiera en tiempo real. Todo se actualiza automáticamente a medida que registras transacciones.',
+    help_dash_cards_h:'Tarjetas de resumen',help_dash_cards_li:'Totales de ingresos, gastos &amp; facturas, pagos de deudas y ahorros del período actual.',
+    help_dash_leftover_li:'Lo que queda después de todos los gastos. <span style="color:#10b981;font-weight:600">Verde</span> = superávit, <span style="color:#f43f5e;font-weight:600">rojo</span> = por encima del presupuesto.',
+    help_dash_flow_h:'Gráfico de flujo de caja',help_dash_flow_li:'Compara lo que <em>esperabas</em> con lo que <em>realmente ocurrió</em>.',
+    help_dash_donut_h:'Gráficos circulares',help_dash_donut_li:'Desglose de ingresos y distribución del gasto en porcentajes.',
+    help_dash_datebadge_h:'Distintivo de fecha',help_dash_datebadge_li:'Haz clic para ir directamente a Ajustes y cambiar tu período de presupuesto.',
+    help_dash_tip:'💡 Consejo: Introduce primero los importes previstos en Ingresos / Gastos / Facturas / Deudas / Ahorros y luego registra transacciones para ver los importes reales.',
+    help_tx_modal_title:'Cómo funcionan las transacciones',help_tx_intro:'Registra aquí cada movimiento de dinero. Los módulos de presupuesto se actualizan automáticamente.',
+    help_tx_type_li:'Ingreso, Gasto, Factura, Deuda o Ahorro.',help_tx_category_li:'Se toma de las categorías de tus módulos de presupuesto.',
+    help_tx_edit_h:'✏️ Botón de edición',help_tx_edit_li:'Haz clic en el icono del lápiz de cualquier fila para editar o eliminar esa transacción.',
+    help_tx_csv_h:'Formato de importación CSV:',
+    help_inc_modal_title:'Cómo funcionan los ingresos',help_inc_intro:'Controla lo previsto frente a lo real de tus ingresos. Las barras de progreso se actualizan en vivo mientras escribes los importes previstos.',
+    help_inc_expected_li:'Escribe tu ingreso previsto; la barra se actualiza al instante.',help_inc_actual_li:'Se calcula automáticamente a partir de las transacciones de Ingreso.',
+    help_inc_tip:'💡 Consejo: Registra tus ingresos como tipo "Ingreso" en Transacciones para ver aquí los importes reales.',
+    help_exp_modal_title:'Cómo funcionan los gastos',help_exp_intro:'Establece un límite de gasto por categoría. Las barras de progreso se actualizan en vivo y se ponen en rojo si te pasas.',
+    help_exp_expected_li:'Tu límite de gasto; la barra se actualiza mientras escribes.',help_exp_actual_li:'Se totaliza a partir de las transacciones de Gasto.',
+    help_bills_modal_title:'Cómo funcionan las facturas',help_bills_intro:'Controla tus facturas recurrentes con fechas de vencimiento y estado de pago.',
+    help_bills_duedate_li:'Establece cuándo vence cada factura.',help_bills_paid_li:'Marca la casilla cuando hayas realizado el pago.',help_bills_actual_li:'Se rellena a partir de las transacciones de Factura con el mismo nombre de categoría.',
+    help_debt_modal_title:'Cómo funcionan las deudas',help_debt_intro:'Mantente al día con los pagos de préstamos e hipotecas.',
+    help_debt_expected_li:'Tu pago mensual previsto.',help_debt_duedate_li:'Cuándo vence el pago.',help_debt_paid_li:'Márcalo cuando se haga efectivo el pago.',
+    help_sav_modal_title:'Cómo funcionan los ahorros',help_sav_intro:'Establece metas de ahorro y controla tus aportaciones.',
+    help_sav_expected_li:'Tu objetivo de ahorro para este período.',help_sav_actual_li:'De las transacciones de tipo Ahorro.',
+    help_sav_tip:'💡 Consejo: Trata el ahorro como un gasto fijo: presupuéstalo primero y gasta el resto.',
   },
   it: {
     lang_name:'Italiano',
@@ -427,6 +519,29 @@ const TRANSLATIONS = {
     help_sett_period_li:'Imposta il tuo intervallo di date. Fai clic sul badge della data nel pannello per accedervi rapidamente.',
     help_sett_rollover_li:"Riporta il denaro non speso dall'ultimo periodo.",
     help_sett_theme_li:'Usa il pulsante sole/luna nella barra superiore per passare tra modalità chiara e scura.',
+    help_dash_modal_title:'Come funziona la Dashboard',help_dash_intro:'La Dashboard è la tua panoramica finanziaria in tempo reale. Tutto si aggiorna automaticamente man mano che registri le transazioni.',
+    help_dash_cards_h:'Schede di riepilogo',help_dash_cards_li:'Totali di entrate, spese &amp; bollette, pagamenti dei debiti e risparmi per il periodo corrente.',
+    help_dash_leftover_li:'Ciò che resta dopo tutte le uscite. <span style="color:#10b981;font-weight:600">Verde</span> = surplus, <span style="color:#f43f5e;font-weight:600">rosso</span> = oltre il budget.',
+    help_dash_flow_h:'Grafico Flusso di cassa',help_dash_flow_li:'Confronta ciò che avevi <em>previsto</em> con ciò che è <em>realmente accaduto</em>.',
+    help_dash_donut_h:'Grafici a ciambella',help_dash_donut_li:'Ripartizione delle entrate e delle spese in percentuale.',
+    help_dash_datebadge_h:'Badge della data',help_dash_datebadge_li:'Fai clic per andare direttamente alle Impostazioni e cambiare il tuo periodo di budget.',
+    help_dash_tip:'💡 Suggerimento: inserisci prima gli importi previsti in Entrate / Spese / Bollette / Debiti / Risparmi, poi registra le transazioni per vedere comparire gli importi effettivi.',
+    help_tx_modal_title:'Come funzionano le Transazioni',help_tx_intro:'Registra qui ogni movimento di denaro. I moduli di budget si aggiornano automaticamente.',
+    help_tx_type_li:'Entrata, Spesa, Bolletta, Debito o Risparmio.',help_tx_category_li:'Ripresa dalle categorie dei tuoi moduli di budget.',
+    help_tx_edit_h:'✏️ Pulsante Modifica',help_tx_edit_li:"Fai clic sull'icona della matita su qualsiasi riga per modificare o eliminare quella transazione.",
+    help_tx_csv_h:'Formato di importazione CSV:',
+    help_inc_modal_title:'Come funzionano le Entrate',help_inc_intro:'Confronta previsto ed effettivo per le tue entrate. Le barre di avanzamento si aggiornano dal vivo mentre digiti gli importi previsti.',
+    help_inc_expected_li:"Digita l'entrata prevista; la barra si aggiorna all'istante.",help_inc_actual_li:'Calcolato automaticamente dalle transazioni di tipo Entrata.',
+    help_inc_tip:'💡 Suggerimento: registra i tuoi guadagni come tipo "Entrata" nelle Transazioni per vedere qui gli importi effettivi.',
+    help_exp_modal_title:'Come funzionano le Spese',help_exp_intro:'Imposta un limite di spesa per ogni categoria. Le barre di avanzamento si aggiornano dal vivo e diventano rosse quando lo superi.',
+    help_exp_expected_li:'Il tuo limite di spesa; la barra si aggiorna mentre digiti.',help_exp_actual_li:'Totalizzato dalle transazioni di tipo Spesa.',
+    help_bills_modal_title:'Come funzionano le Bollette',help_bills_intro:'Tieni traccia delle bollette ricorrenti con scadenze e stato di pagamento.',
+    help_bills_duedate_li:'Imposta quando scade ogni bolletta.',help_bills_paid_li:'Spunta la casella quando hai effettuato il pagamento.',help_bills_actual_li:'Popolato dalle transazioni di tipo Bolletta con lo stesso nome di categoria.',
+    help_debt_modal_title:'Come funzionano i Debiti',help_debt_intro:'Tieni sotto controllo i rimborsi di prestiti e mutui.',
+    help_debt_expected_li:'Il tuo pagamento mensile previsto.',help_debt_duedate_li:'Quando scade il pagamento.',help_debt_paid_li:'Segnalo quando il pagamento viene saldato.',
+    help_sav_modal_title:'Come funzionano i Risparmi',help_sav_intro:'Imposta obiettivi di risparmio e monitora i tuoi versamenti.',
+    help_sav_expected_li:'Il tuo obiettivo di risparmio per questo periodo.',help_sav_actual_li:'Dalle transazioni di tipo Risparmio.',
+    help_sav_tip:'💡 Suggerimento: tratta il risparmio come una spesa fissa - mettilo a budget per primo e spendi il resto.',
   },
   pl: {
     lang_name:'Polski',
@@ -500,6 +615,29 @@ const TRANSLATIONS = {
     help_sett_period_li:'Ustaw zakres dat. Kliknij znacznik daty na panelu, aby szybko przejść tutaj.',
     help_sett_rollover_li:'Przenieś niewydane środki z ostatniego okresu.',
     help_sett_theme_li:'Użyj przełącznika słońce/księżyc na górnym pasku, aby przełączyć tryb jasny i ciemny.',
+    help_dash_modal_title:'Jak działa Panel',help_dash_intro:'Panel to Twój migawkowy obraz finansów w czasie rzeczywistym. Wszystko aktualizuje się automatycznie podczas rejestrowania transakcji.',
+    help_dash_cards_h:'Karty podsumowania',help_dash_cards_li:'Sumy przychodów, wydatków &amp; rachunków, spłat długów i oszczędności za bieżący okres.',
+    help_dash_leftover_li:'To, co zostaje po wszystkich wydatkach. <span style="color:#10b981;font-weight:600">Zielony</span> = nadwyżka, <span style="color:#f43f5e;font-weight:600">czerwony</span> = przekroczenie budżetu.',
+    help_dash_flow_h:'Wykres przepływów pieniężnych',help_dash_flow_li:'Porównuje to, co <em>planowano</em>, z tym, co <em>faktycznie się wydarzyło</em>.',
+    help_dash_donut_h:'Wykresy kołowe',help_dash_donut_li:'Podział przychodów i wydatków w procentach.',
+    help_dash_datebadge_h:'Znacznik daty',help_dash_datebadge_li:'Kliknij, aby przejść od razu do ustawień i zmienić okres budżetowy.',
+    help_dash_tip:'💡 Wskazówka: Najpierw wpisz planowane kwoty w Przychodach / Wydatkach / Rachunkach / Długach / Oszczędnościach, a następnie rejestruj transakcje, aby zobaczyć rzeczywiste wartości.',
+    help_tx_modal_title:'Jak działają Transakcje',help_tx_intro:'Rejestruj tu każdy przepływ pieniędzy. Moduły budżetu aktualizują się automatycznie.',
+    help_tx_type_li:'Przychód, Wydatek, Rachunek, Dług lub Oszczędności.',help_tx_category_li:'Pobierane z kategorii Twoich modułów budżetu.',
+    help_tx_edit_h:'✏️ Przycisk edycji',help_tx_edit_li:'Kliknij ikonę ołówka przy dowolnym wierszu, aby edytować lub usunąć tę transakcję.',
+    help_tx_csv_h:'Format importu CSV:',
+    help_inc_modal_title:'Jak działają Przychody',help_inc_intro:'Śledź planowane i rzeczywiste przychody. Paski postępu aktualizują się na bieżąco podczas wpisywania planowanych kwot.',
+    help_inc_expected_li:'Wpisz planowany przychód; pasek aktualizuje się natychmiast.',help_inc_actual_li:'Obliczane automatycznie na podstawie transakcji typu Przychód.',
+    help_inc_tip:'💡 Wskazówka: Rejestruj zarobki jako typ „Przychód” w Transakcjach, aby zobaczyć tu rzeczywiste wartości.',
+    help_exp_modal_title:'Jak działają Wydatki',help_exp_intro:'Ustaw limit wydatków dla każdej kategorii. Paski postępu aktualizują się na bieżąco i zmieniają kolor na czerwony po przekroczeniu limitu.',
+    help_exp_expected_li:'Twój limit wydatków; pasek aktualizuje się podczas wpisywania.',help_exp_actual_li:'Sumowane na podstawie transakcji typu Wydatek.',
+    help_bills_modal_title:'Jak działają Rachunki',help_bills_intro:'Śledź cykliczne rachunki wraz z terminami płatności i statusem opłacenia.',
+    help_bills_duedate_li:'Ustaw termin płatności każdego rachunku.',help_bills_paid_li:'Zaznacz, gdy dokonasz płatności.',help_bills_actual_li:'Uzupełniane na podstawie transakcji typu Rachunek o tej samej nazwie kategorii.',
+    help_debt_modal_title:'Jak działają Długi',help_debt_intro:'Panuj nad spłatami kredytów i hipotek.',
+    help_debt_expected_li:'Twoja planowana miesięczna płatność.',help_debt_duedate_li:'Termin płatności.',help_debt_paid_li:'Zaznacz, gdy płatność zostanie zaksięgowana.',
+    help_sav_modal_title:'Jak działają Oszczędności',help_sav_intro:'Ustal cele oszczędnościowe i śledź swoje wpłaty.',
+    help_sav_expected_li:'Twój cel oszczędnościowy na ten okres.',help_sav_actual_li:'Z transakcji typu Oszczędności.',
+    help_sav_tip:'💡 Wskazówka: Traktuj oszczędności jak stały wydatek - zaplanuj je najpierw, a resztę wydaj.',
   }
 };
 
@@ -1955,70 +2093,70 @@ function renderSettings() {
 // ── Help / Tutorial ───────────────────────────────────────────────────
 const HELP = {
   dashboard: {
-    title: '📊 How the Dashboard works',
-    body: `<p>The Dashboard is your real-time financial snapshot. Everything updates automatically as you log transactions.</p>
+    title: () => `📊 ${t('help_dash_modal_title')}`,
+    body: () => `<p>${t('help_dash_intro')}</p>
 <ul>
-  <li><strong>Summary cards</strong> - Totals for income, expenses &amp; bills, debt payments, and savings for the current period.</li>
-  <li><strong>Net Leftover</strong> - What's left after all outgoings. <span style="color:#10b981;font-weight:600">Green</span> = surplus, <span style="color:#f43f5e;font-weight:600">red</span> = over budget.</li>
-  <li><strong>Cash Flow chart</strong> - Compares what you <em>expected</em> vs what <em>actually happened</em>.</li>
-  <li><strong>Donut charts</strong> - Income breakdown and spending allocation as percentages.</li>
-  <li><strong>Date badge</strong> - Click it to jump straight to Settings and change your budget period.</li>
+  <li><strong>${t('help_dash_cards_h')}</strong> - ${t('help_dash_cards_li')}</li>
+  <li><strong>${t('net_leftover')}</strong> - ${t('help_dash_leftover_li')}</li>
+  <li><strong>${t('help_dash_flow_h')}</strong> - ${t('help_dash_flow_li')}</li>
+  <li><strong>${t('help_dash_donut_h')}</strong> - ${t('help_dash_donut_li')}</li>
+  <li><strong>${t('help_dash_datebadge_h')}</strong> - ${t('help_dash_datebadge_li')}</li>
 </ul>
-<p><em>💡 Tip: Enter expected amounts in Income / Expenses / Bills / Debt / Savings first, then log transactions to see actuals fill in.</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ▶ Video Tutorial</a></div>`
+<p><em>${t('help_dash_tip')}</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
   },
   transactions: {
-    title: '📋 How Transactions work',
-    body: `<p>Every time money moves, log it here. Budget modules update automatically.</p>
+    title: () => `📋 ${t('help_tx_modal_title')}`,
+    body: () => `<p>${t('help_tx_intro')}</p>
 <ul>
-  <li><strong>Type</strong> - Income, Expense, Bill, Debt, or Savings.</li>
-  <li><strong>Category</strong> - Drawn from your budget module categories.</li>
-  <li><strong>✏️ Edit button</strong> - Click the pencil icon on any row to edit or delete that transaction.</li>
+  <li><strong>${t('type')}</strong> - ${t('help_tx_type_li')}</li>
+  <li><strong>${t('category')}</strong> - ${t('help_tx_category_li')}</li>
+  <li><strong>${t('help_tx_edit_h')}</strong> - ${t('help_tx_edit_li')}</li>
 </ul>
-<p><strong>CSV Import format:</strong><br><code>Date,Type,Category,Amount,Description</code><br><code>2024-01-15,expense,Food,25.50,Grocery run</code></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ▶ Video Tutorial</a></div>`
+<p><strong>${t('help_tx_csv_h')}</strong><br><code>Date,Type,Category,Amount,Description</code><br><code>2024-01-15,expense,Food,25.50,Grocery run</code></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
   },
   income: {
-    title: '💰 How Income works',
-    body: `<p>Track expected vs actual income. Progress bars update live as you type expected amounts.</p>
+    title: () => `💰 ${t('help_inc_modal_title')}`,
+    body: () => `<p>${t('help_inc_intro')}</p>
 <ul>
-  <li><strong>Expected</strong> - Type your planned income; the bar updates instantly.</li>
-  <li><strong>Actual</strong> - Auto-calculated from Income transactions.</li>
+  <li><strong>${t('expected')}</strong> - ${t('help_inc_expected_li')}</li>
+  <li><strong>${t('actual')}</strong> - ${t('help_inc_actual_li')}</li>
 </ul>
-<p><em>💡 Tip: Log earnings as type "Income" in Transactions to see actuals here.</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ▶ Video Tutorial</a></div>`
+<p><em>${t('help_inc_tip')}</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
   },
   expenses: {
-    title: '🛒 How Expenses work',
-    body: `<p>Set spending limits per category. Progress bars update live and turn red when you go over.</p>
+    title: () => `🛒 ${t('help_exp_modal_title')}`,
+    body: () => `<p>${t('help_exp_intro')}</p>
 <ul>
-  <li><strong>Expected</strong> - Your spending limit; bar updates as you type.</li>
-  <li><strong>Actual</strong> - Totalled from Expense transactions.</li>
-</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ▶ Video Tutorial</a></div>`
+  <li><strong>${t('expected')}</strong> - ${t('help_exp_expected_li')}</li>
+  <li><strong>${t('actual')}</strong> - ${t('help_exp_actual_li')}</li>
+</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
   },
   bills: {
-    title: '🧾 How Bills work',
-    body: `<p>Track recurring bills with due dates and paid status.</p>
+    title: () => `🧾 ${t('help_bills_modal_title')}`,
+    body: () => `<p>${t('help_bills_intro')}</p>
 <ul>
-  <li><strong>Due Date</strong> - Set when each bill is due.</li>
-  <li><strong>Paid checkbox</strong> - Tick when you've made the payment.</li>
-  <li><strong>Actual</strong> - Populated from Bill transactions with matching category name.</li>
-</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ▶ Video Tutorial</a></div>`
+  <li><strong>${t('due_date')}</strong> - ${t('help_bills_duedate_li')}</li>
+  <li><strong>${t('paid')}</strong> - ${t('help_bills_paid_li')}</li>
+  <li><strong>${t('actual')}</strong> - ${t('help_bills_actual_li')}</li>
+</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
   },
   debt: {
-    title: '💳 How Debt works',
-    body: `<p>Stay on top of loan repayments and mortgages.</p>
+    title: () => `💳 ${t('help_debt_modal_title')}`,
+    body: () => `<p>${t('help_debt_intro')}</p>
 <ul>
-  <li><strong>Expected</strong> - Your planned monthly payment.</li>
-  <li><strong>Due Date</strong> - When the payment is due.</li>
-  <li><strong>Paid checkbox</strong> - Mark when the payment clears.</li>
-</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ▶ Video Tutorial</a></div>`
+  <li><strong>${t('expected')}</strong> - ${t('help_debt_expected_li')}</li>
+  <li><strong>${t('due_date')}</strong> - ${t('help_debt_duedate_li')}</li>
+  <li><strong>${t('paid')}</strong> - ${t('help_debt_paid_li')}</li>
+</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
   },
   savings: {
-    title: '🏦 How Savings work',
-    body: `<p>Set savings goals and track contributions.</p>
+    title: () => `🏦 ${t('help_sav_modal_title')}`,
+    body: () => `<p>${t('help_sav_intro')}</p>
 <ul>
-  <li><strong>Expected</strong> - Your savings target for this period.</li>
-  <li><strong>Actual</strong> - From Savings type transactions.</li>
+  <li><strong>${t('expected')}</strong> - ${t('help_sav_expected_li')}</li>
+  <li><strong>${t('actual')}</strong> - ${t('help_sav_actual_li')}</li>
 </ul>
-<p><em>💡 Tip: Treat savings like a fixed expense - budget it first, spend the rest.</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ▶ Video Tutorial</a></div>`
+<p><em>${t('help_sav_tip')}</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
   },
   settings: {
     title: () => `⚙️ ${t('help_sett_modal_title')}`,
