@@ -1303,6 +1303,16 @@ input[type="number"].expected-input {
   .sub-summary-bar { grid-template-columns: 1fr 1fr; }
 }
 
+/* ── Mobile collapse fixes (prevent horizontal clipping) ─────── */
+@media (max-width: 480px) {
+  /* 4-/3-column filter bars are too tight to be usable on phones */
+  .tx-filter-bar, .tx-filter-bar--3col { grid-template-columns: 1fr 1fr; }
+  /* 3 allocation cards force a nowrap target badge to overflow its column */
+  .alloc-grid { grid-template-columns: 1fr 1fr; }
+  /* Modal padding eats the whole viewport on small screens */
+  .modal { padding: 26px 20px; }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    LAYOUT SYSTEM - Classic / Sidebar / Command
 ═══════════════════════════════════════════════════════════════ */
@@ -1693,6 +1703,15 @@ details[open] > .recurring-summary::before { transform: rotate(90deg); }
 .recurring-row-amt  { font-weight: 700; font-family: 'Sora',sans-serif; color: var(--text-primary); white-space: nowrap; }
 .recurring-row-freq { font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing:.05em; white-space: nowrap; }
 .recurring-row-due  { font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
+@media (max-width: 480px) {
+  /* 7-column recurring rule rows overflow/clip on phones - wrap them */
+  .recurring-row {
+    display: flex; flex-wrap: wrap; align-items: center;
+    column-gap: 8px; row-gap: 4px;
+  }
+  .recurring-row-label { flex: 1 1 55%; min-width: 0; white-space: normal; }
+  .recurring-actions { margin-left: auto; }
+}
 /* Toggle switch */
 .recurring-toggle { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
 .recurring-toggle input { position: absolute; opacity: 0; width: 0; height: 0; }

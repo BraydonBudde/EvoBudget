@@ -2353,6 +2353,9 @@ function renderCarousel() {
     if (!card) return;
     const gap = 16;
     const cardW = card.offsetWidth;
+    // offsetWidth is 0 when an ancestor view is display:none; skip so we don't
+    // bake in a wrong transform - the ResizeObserver re-runs go() once laid out.
+    if (!cardW) return;
     track.style.transform = `translateX(-${page * perPage() * (cardW + gap)}px)`;
     renderDots();
   }
@@ -2364,7 +2367,18 @@ function renderCarousel() {
   }
   document.getElementById('rcLeft')?.addEventListener('click', ()=>go(page-1));
   document.getElementById('rcRight')?.addEventListener('click', ()=>go(page+1));
-  let resizeTimer; window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>go(Math.min(page,totalPages()-1)),120);});
+  const viewport = track.parentElement;
+  if (window.ResizeObserver && viewport) {
+    // Recompute when the carousel is actually laid out (0 -> real width when the
+    // hub view is re-shown, on orientation change, or after fonts/images settle).
+    let lastW = -1;
+    new ResizeObserver(entries => {
+      const w = entries[0].contentRect.width;
+      if (w > 0 && Math.abs(w - lastW) > 0.5) { lastW = w; go(Math.min(page, totalPages()-1)); }
+    }).observe(viewport);
+  } else {
+    let resizeTimer; window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>go(Math.min(page,totalPages()-1)),120);});
+  }
   go(0);
 }
 
