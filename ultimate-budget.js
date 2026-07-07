@@ -3379,8 +3379,8 @@ function renderSettings(){
         else { await syncSwitchToLocal('ubp'); showToast('Switched to local storage ✓'); }
         state = loadState() || defaultState(); syncSymbol();
         renderSettings();
-      } catch {
-        if (errEl) errEl.hidden = false;
+      } catch (e) {
+        if (errEl) { errEl.textContent = syncFriendlyError(e); errEl.hidden = false; }
         el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = false);
       }
     });

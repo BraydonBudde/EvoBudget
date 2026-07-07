@@ -72,15 +72,27 @@ function syncSilentToken() {
 }
 
 // Resolves an access token, showing the Google consent popup if needed.
+// If the browser silently blocks that popup, Google's callback may never
+// fire at all - a timeout turns that into a clear, catchable error instead
+// of leaving the caller waiting forever.
 function syncInteractiveToken() {
   return new Promise((resolve, reject) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      reject(new Error('popup_blocked_or_timed_out'));
+    }, 20000);
     const client = _syncGetTokenClient(resp => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
       if (resp && resp.access_token) { _syncAccessToken = resp.access_token; resolve(resp.access_token); }
       else reject(new Error(resp && resp.error ? resp.error : 'sign_in_failed'));
     });
-    if (!client) { reject(new Error('google_identity_unavailable')); return; }
+    if (!client) { clearTimeout(timer); reject(new Error('google_identity_unavailable')); return; }
     try { client.requestAccessToken({ prompt: '' }); }
-    catch (e) { reject(e); }
+    catch (e) { clearTimeout(timer); reject(e); }
   });
 }
 
@@ -154,6 +166,14 @@ async function _driveWriteFile(token, fileId, data) {
   });
 }
 
+// Turns a raw sign-in error into copy a non-technical user can act on.
+function syncFriendlyError(err) {
+  const msg = err && err.message;
+  if (msg === 'popup_blocked_or_timed_out') return "Your browser blocked the Google sign-in window. Please allow pop-ups for this site (check your address bar for a blocked pop-up icon) and try again.";
+  if (msg === 'access_denied' || msg === 'sign_in_failed') return 'Sign-in was cancelled. Please try again.';
+  return "Sign-in didn't go through. Please try again.";
+}
+
 // Guards against ever adopting/seeding a placeholder blob that's missing
 // the shape the rest of the app expects (e.g. a tool that has never been
 // opened on this device yet has no real state to upload).
@@ -195,7 +215,7 @@ async function syncSignInAndAdopt(tool) {
   const local = _localData(tool);
   const { fileId, data } = await _driveFindOrCreateFile(token, tool, local || {});
   syncSetEmail(tool, email);
-  if (data) _writeLocal(tool, data); // no valid data yet on either side - leave local untouched, app's own defaultState() will run
+  if (_looksLikeValidState(data)) _writeLocal(tool, data); // no valid data yet on either side - leave local untouched, app's own defaultState() will run
   return { email, fileId, data };
 }
 
@@ -208,7 +228,7 @@ async function syncSilentResync(tool) {
   if (!token) return { authOk: false, data: null };
   const local = _localData(tool);
   const { data } = await _driveFindOrCreateFile(token, tool, local || {});
-  if (data) _writeLocal(tool, data);
+  if (_looksLikeValidState(data)) _writeLocal(tool, data);
   return { authOk: true, data };
 }
 
@@ -239,7 +259,7 @@ async function syncSwitchToLocal(tool) {
   if (!token) token = await syncInteractiveToken();
   const local = _localData(tool);
   const { data } = await _driveFindOrCreateFile(token, tool, local || {});
-  if (data) _writeLocal(tool, data);
+  if (_looksLikeValidState(data)) _writeLocal(tool, data);
   syncSetMode(tool, 'local');
 }
 

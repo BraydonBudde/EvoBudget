@@ -873,7 +873,7 @@ function showGoogleReauthModal(tool) {
       </div>
       <h2 class="fk-code-title">Sign in with Google to continue</h2>
       <p class="fk-code-sub">Your data for this tool is synced with Google Drive. Sign in again to pick up where you left off.</p>
-      <p class="fk-code-error" id="fkReauthError" hidden>Sign-in didn't go through. Please try again.</p>
+      <p class="fk-code-error" id="fkReauthError" hidden></p>
       <button class="fk-code-submit" id="fkReauthSubmit" type="button">Sign in with Google</button>
       <div class="fk-code-foot">
         <button class="fk-code-link" id="fkReauthLocal" type="button">Use local data on this device instead</button>
@@ -886,7 +886,7 @@ function showGoogleReauthModal(tool) {
   ov.querySelector('#fkReauthSubmit')?.addEventListener('click', async () => {
     const errEl = ov.querySelector('#fkReauthError');
     try { await syncSignInAndAdopt(tool); close(); enterFull(tool); }
-    catch { errEl.hidden = false; }
+    catch (e) { errEl.textContent = syncFriendlyError(e); errEl.hidden = false; }
   });
   ov.querySelector('#fkReauthLocal')?.addEventListener('click', () => { syncSetMode(tool, 'local'); close(); enterFull(tool); });
   requestAnimationFrame(() => ov.classList.add('is-in'));
@@ -913,8 +913,8 @@ function showSyncChoiceModal(tool) {
         <span class="fk-sync-option-title">Keep it on this device only</span>
         <span class="fk-sync-option-desc">Works exactly as it does today - nothing leaves this browser.</span>
       </button>
-      <p class="fk-code-error" id="fkSyncError" hidden>Sign-in didn't go through. Please try again, or choose to keep it on this device.</p>
-      <p class="fk-sync-status" id="fkSyncStatus" hidden>Signing in...</p>
+      <p class="fk-code-error" id="fkSyncError" hidden></p>
+      <p class="fk-sync-status" id="fkSyncStatus" hidden>Signing in... (a Google window may have opened - check for a blocked pop-up icon in your address bar if nothing appears)</p>
     </div>`;
   document.body.appendChild(ov);
   const close = () => { ov.classList.add('is-leaving'); setTimeout(() => ov.remove(), 180); };
@@ -925,8 +925,9 @@ function showSyncChoiceModal(tool) {
     errEl.hidden = true; statusEl.hidden = false;
     ov.querySelectorAll('.fk-sync-option').forEach(b => b.disabled = true);
     try { await syncSignInAndAdopt(tool); syncSetMode(tool, 'google'); close(); enterFull(tool); }
-    catch {
-      statusEl.hidden = true; errEl.hidden = false;
+    catch (e) {
+      statusEl.hidden = true;
+      errEl.textContent = syncFriendlyError(e); errEl.hidden = false;
       ov.querySelectorAll('.fk-sync-option').forEach(b => b.disabled = false);
     }
   });
@@ -2100,8 +2101,8 @@ function renderSettings() {
         else { await syncSwitchToLocal('sbp'); showToast('Switched to local storage ✓'); }
         state = loadState() || defaultState(); syncSymbol();
         renderSettings();
-      } catch {
-        if (errEl) errEl.hidden = false;
+      } catch (e) {
+        if (errEl) { errEl.textContent = syncFriendlyError(e); errEl.hidden = false; }
         el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = false);
       }
     });
