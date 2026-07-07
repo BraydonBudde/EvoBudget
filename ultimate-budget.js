@@ -88,7 +88,7 @@ function loadState() {
   try {
     const r = localStorage.getItem(UBP_KEY);
     const s = r ? JSON.parse(r) : null;
-    if (!s) return null;
+    if (!s || !s.settings || !s.budgets) return null;
     // Migration: add allocation if missing (existing users)
     if (!s.allocation) s.allocation = defaultState().allocation;
     if (!s.recurringTemplates) s.recurringTemplates = [];
@@ -3375,7 +3375,7 @@ function renderSettings(){
       if (errEl) errEl.hidden = true;
       el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = true);
       try {
-        if (target === 'google') { await syncSwitchToGoogle('ubp'); showToast('Synced with Google Drive ✓'); }
+        if (target === 'google') { saveState(); await syncSwitchToGoogle('ubp'); showToast('Synced with Google Drive ✓'); }
         else { await syncSwitchToLocal('ubp'); showToast('Switched to local storage ✓'); }
         state = loadState() || defaultState(); syncSymbol();
         renderSettings();
@@ -3937,6 +3937,7 @@ function applyLayout() {
 async function init(){
   if(syncGetMode('ubp')==='google'){await syncSilentResync('ubp').catch(()=>{});}
   state=loadState()||defaultState();syncSymbol();
+  saveState(); // ensures localStorage always mirrors state, so Google sync has real data to seed a Drive file with right away
 
   // Generate any due recurring transactions for the current period
   const recGen=processRecurring();

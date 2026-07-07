@@ -154,7 +154,16 @@ async function _driveWriteFile(token, fileId, data) {
   });
 }
 
+// Guards against ever adopting/seeding a placeholder blob that's missing
+// the shape the rest of the app expects (e.g. a tool that has never been
+// opened on this device yet has no real state to upload).
+function _looksLikeValidState(d) { return !!(d && typeof d === 'object' && d.settings && typeof d.settings === 'object'); }
+
 // Finds (or creates) this tool's Drive file, returning { fileId, data, created }.
+// If there's no file yet AND nothing valid to seed it with, returns data:null
+// rather than creating a placeholder - the caller should leave localStorage
+// untouched so the app's own defaultState() runs normally, and the real
+// Drive file gets created the first time saveState() actually has something.
 async function _driveFindOrCreateFile(token, tool, fallbackData) {
   let folderId = await _driveFindFolder(token);
   if (!folderId) folderId = await _driveCreateFolder(token);
@@ -162,8 +171,9 @@ async function _driveFindOrCreateFile(token, tool, fallbackData) {
   let fileId = await _driveFindFile(token, folderId, fileName);
   if (fileId) {
     const data = await _driveReadFile(token, fileId);
-    return { fileId, data: data || fallbackData, created: false };
+    return { fileId, data: _looksLikeValidState(data) ? data : fallbackData, created: false };
   }
+  if (!_looksLikeValidState(fallbackData)) return { fileId: null, data: null, created: false };
   const stamped = { ...fallbackData, _syncMeta: { unlocked: true, updatedAt: new Date().toISOString() } };
   fileId = await _driveCreateFile(token, folderId, fileName, stamped);
   return { fileId, data: stamped, created: true };
@@ -182,23 +192,24 @@ function _writeLocal(tool, data) { localStorage.setItem(SYNC_STATE_KEYS[tool], J
 async function syncSignInAndAdopt(tool) {
   const token = await syncInteractiveToken();
   const email = await _syncFetchEmail(token);
-  const local = _localData(tool) || {};
-  const { fileId, data } = await _driveFindOrCreateFile(token, tool, local);
+  const local = _localData(tool);
+  const { fileId, data } = await _driveFindOrCreateFile(token, tool, local || {});
   syncSetEmail(tool, email);
-  _writeLocal(tool, data);
+  if (data) _writeLocal(tool, data); // no valid data yet on either side - leave local untouched, app's own defaultState() will run
   return { email, fileId, data };
 }
 
 // Silent (no popup) resync for a device already in 'google' mode, e.g. on
-// every app load. Resolves null (not an error) if silent auth isn't possible,
-// so the caller can fall back to prompting for interactive sign-in.
+// every app load. Resolves {authOk:false} if silent auth isn't possible, so
+// the caller can fall back to prompting for interactive sign-in - distinct
+// from {authOk:true, data:null}, which just means nothing to sync yet.
 async function syncSilentResync(tool) {
   const token = await syncSilentToken();
-  if (!token) return null;
-  const local = _localData(tool) || {};
-  const { data } = await _driveFindOrCreateFile(token, tool, local);
-  _writeLocal(tool, data);
-  return data;
+  if (!token) return { authOk: false, data: null };
+  const local = _localData(tool);
+  const { data } = await _driveFindOrCreateFile(token, tool, local || {});
+  if (data) _writeLocal(tool, data);
+  return { authOk: true, data };
 }
 
 // Settings-panel action: switch this device from local storage to Google,
@@ -206,7 +217,8 @@ async function syncSilentResync(tool) {
 async function syncSwitchToGoogle(tool) {
   const token = await syncInteractiveToken();
   const email = await _syncFetchEmail(token);
-  const local = _localData(tool) || {};
+  const local = _localData(tool);
+  if (!_looksLikeValidState(local)) throw new Error('nothing_to_sync_yet');
   let folderId = await _driveFindFolder(token);
   if (!folderId) folderId = await _driveCreateFolder(token);
   const fileName = SYNC_FILE_NAMES[tool];
@@ -225,9 +237,9 @@ async function syncSwitchToGoogle(tool) {
 async function syncSwitchToLocal(tool) {
   let token = await syncSilentToken();
   if (!token) token = await syncInteractiveToken();
-  const local = _localData(tool) || {};
-  const { data } = await _driveFindOrCreateFile(token, tool, local);
-  _writeLocal(tool, data);
+  const local = _localData(tool);
+  const { data } = await _driveFindOrCreateFile(token, tool, local || {});
+  if (data) _writeLocal(tool, data);
   syncSetMode(tool, 'local');
 }
 
@@ -242,7 +254,8 @@ function syncPushDebounced(tool) {
     try {
       let token = _syncAccessToken || await syncSilentToken();
       if (!token) return; // offline / session lost - local copy is still safe, will resync on next load
-      const local = _localData(tool) || {};
+      const local = _localData(tool);
+      if (!_looksLikeValidState(local)) return; // nothing real to push yet
       let folderId = await _driveFindFolder(token);
       if (!folderId) folderId = await _driveCreateFolder(token);
       const fileName = SYNC_FILE_NAMES[tool];

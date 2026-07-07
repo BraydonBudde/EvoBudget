@@ -720,7 +720,7 @@ function defaultState() {
 }
 
 let state;
-function loadState()  { try { const r = localStorage.getItem(STATE_KEY); return r ? JSON.parse(r) : null; } catch { return null; } }
+function loadState()  { try { const r = localStorage.getItem(STATE_KEY); const s = r ? JSON.parse(r) : null; return (s && s.settings && s.budgets) ? s : null; } catch { return null; } }
 function saveState()  { localStorage.setItem(STATE_KEY, JSON.stringify(state)); SYM = state.settings.symbol; syncPushDebounced('sbp'); }
 function syncSymbol() { SYM = state.settings.symbol; }
 
@@ -852,8 +852,8 @@ function enterTrial(tool) { if (tool === 'ubp') { setUbpMode('trial'); window.lo
 async function openFull(tool) {
   if (!isUnlocked(tool)) { showAccessCodeModal(tool); return; }
   if (syncGetMode(tool) !== 'google') { enterFull(tool); return; }
-  const data = await syncSilentResync(tool).catch(() => null);
-  if (data) enterFull(tool);
+  const result = await syncSilentResync(tool).catch(() => ({ authOk: false, data: null }));
+  if (result.authOk) enterFull(tool);
   else showGoogleReauthModal(tool);
 }
 
@@ -2096,7 +2096,7 @@ function renderSettings() {
       if (errEl) errEl.hidden = true;
       el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = true);
       try {
-        if (target === 'google') { await syncSwitchToGoogle('sbp'); showToast('Synced with Google Drive ✓'); }
+        if (target === 'google') { saveState(); await syncSwitchToGoogle('sbp'); showToast('Synced with Google Drive ✓'); }
         else { await syncSwitchToLocal('sbp'); showToast('Switched to local storage ✓'); }
         state = loadState() || defaultState(); syncSymbol();
         renderSettings();
@@ -2520,6 +2520,7 @@ function showUpgradeComparison() {
 function init() {
   state = loadState() || defaultState();
   syncSymbol();
+  saveState(); // ensures localStorage always mirrors state, so Google sync has real data to seed a Drive file with right away
 
   initTheme();  // apply saved theme before rendering
   renderHub();
