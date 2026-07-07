@@ -721,7 +721,7 @@ function defaultState() {
 
 let state;
 function loadState()  { try { const r = localStorage.getItem(STATE_KEY); return r ? JSON.parse(r) : null; } catch { return null; } }
-function saveState()  { localStorage.setItem(STATE_KEY, JSON.stringify(state)); SYM = state.settings.symbol; }
+function saveState()  { localStorage.setItem(STATE_KEY, JSON.stringify(state)); SYM = state.settings.symbol; syncPushDebounced('sbp'); }
 function syncSymbol() { SYM = state.settings.symbol; }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -848,7 +848,90 @@ function setUnlocked(tool){ localStorage.setItem(UNLOCK_KEYS[tool], '1'); }
 
 function enterFull(tool)  { if (tool === 'ubp') { setUbpMode('full');  window.location.href = 'ultimate-budget.html'; } else enterSbpFull(); }
 function enterTrial(tool) { if (tool === 'ubp') { setUbpMode('trial'); window.location.href = 'ultimate-budget.html'; } else enterSbpTrial(); }
-function openFull(tool)   { if (isUnlocked(tool)) enterFull(tool); else showAccessCodeModal(tool); }
+
+async function openFull(tool) {
+  if (!isUnlocked(tool)) { showAccessCodeModal(tool); return; }
+  if (syncGetMode(tool) !== 'google') { enterFull(tool); return; }
+  const data = await syncSilentResync(tool).catch(() => null);
+  if (data) enterFull(tool);
+  else showGoogleReauthModal(tool);
+}
+
+// ── Google re-auth prompt (returning device, Google session expired) ──
+function showGoogleReauthModal(tool) {
+  document.getElementById('fkSyncOverlay')?.remove();
+  const ov = document.createElement('div');
+  ov.className = 'fk-code-overlay';
+  ov.id = 'fkSyncOverlay';
+  ov.setAttribute('role', 'dialog');
+  ov.setAttribute('aria-modal', 'true');
+  ov.innerHTML = `
+    <div class="fk-code-card" role="document">
+      <button class="fk-code-x" id="fkReauthClose" type="button" aria-label="Close">&times;</button>
+      <div class="fk-code-key" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 5v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1"/></svg>
+      </div>
+      <h2 class="fk-code-title">Sign in with Google to continue</h2>
+      <p class="fk-code-sub">Your data for this tool is synced with Google Drive. Sign in again to pick up where you left off.</p>
+      <p class="fk-code-error" id="fkReauthError" hidden>Sign-in didn't go through. Please try again.</p>
+      <button class="fk-code-submit" id="fkReauthSubmit" type="button">Sign in with Google</button>
+      <div class="fk-code-foot">
+        <button class="fk-code-link" id="fkReauthLocal" type="button">Use local data on this device instead</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const close = () => { ov.classList.add('is-leaving'); setTimeout(() => ov.remove(), 180); };
+  ov.addEventListener('click', e => { if (e.target === ov) close(); });
+  ov.querySelector('#fkReauthClose')?.addEventListener('click', close);
+  ov.querySelector('#fkReauthSubmit')?.addEventListener('click', async () => {
+    const errEl = ov.querySelector('#fkReauthError');
+    try { await syncSignInAndAdopt(tool); close(); enterFull(tool); }
+    catch { errEl.hidden = false; }
+  });
+  ov.querySelector('#fkReauthLocal')?.addEventListener('click', () => { syncSetMode(tool, 'local'); close(); enterFull(tool); });
+  requestAnimationFrame(() => ov.classList.add('is-in'));
+}
+
+// ── Local vs Google Sync choice (shown once, right after a code is redeemed) ──
+function showSyncChoiceModal(tool) {
+  document.getElementById('fkSyncOverlay')?.remove();
+  const ov = document.createElement('div');
+  ov.className = 'fk-code-overlay';
+  ov.id = 'fkSyncOverlay';
+  ov.setAttribute('role', 'dialog');
+  ov.setAttribute('aria-modal', 'true');
+  ov.innerHTML = `
+    <div class="fk-code-card" role="document">
+      <h2 class="fk-code-title">How do you want to use Evo Budget?</h2>
+      <p class="fk-code-sub">You can change this anytime in Settings.</p>
+      <button class="fk-sync-option fk-sync-option--google" id="fkSyncGoogle" type="button">
+        <span class="fk-sync-option-badge">Recommended</span>
+        <span class="fk-sync-option-title">Continue with Google</span>
+        <span class="fk-sync-option-desc">Your data syncs automatically to a file in your own Google Drive, so it follows you across devices.</span>
+      </button>
+      <button class="fk-sync-option" id="fkSyncLocal" type="button">
+        <span class="fk-sync-option-title">Keep it on this device only</span>
+        <span class="fk-sync-option-desc">Works exactly as it does today - nothing leaves this browser.</span>
+      </button>
+      <p class="fk-code-error" id="fkSyncError" hidden>Sign-in didn't go through. Please try again, or choose to keep it on this device.</p>
+      <p class="fk-sync-status" id="fkSyncStatus" hidden>Signing in...</p>
+    </div>`;
+  document.body.appendChild(ov);
+  const close = () => { ov.classList.add('is-leaving'); setTimeout(() => ov.remove(), 180); };
+  const statusEl = ov.querySelector('#fkSyncStatus');
+  const errEl = ov.querySelector('#fkSyncError');
+  ov.querySelector('#fkSyncLocal')?.addEventListener('click', () => { syncSetMode(tool, 'local'); close(); enterFull(tool); });
+  ov.querySelector('#fkSyncGoogle')?.addEventListener('click', async () => {
+    errEl.hidden = true; statusEl.hidden = false;
+    ov.querySelectorAll('.fk-sync-option').forEach(b => b.disabled = true);
+    try { await syncSignInAndAdopt(tool); syncSetMode(tool, 'google'); close(); enterFull(tool); }
+    catch {
+      statusEl.hidden = true; errEl.hidden = false;
+      ov.querySelectorAll('.fk-sync-option').forEach(b => b.disabled = false);
+    }
+  });
+  requestAnimationFrame(() => ov.classList.add('is-in'));
+}
 
 // ── Access-code prompt ─────────────────────────────────────────────────
 function showAccessCodeModal(tool) {
@@ -887,7 +970,7 @@ function showAccessCodeModal(tool) {
   const close = () => { ov.classList.add('is-leaving'); document.removeEventListener('keydown', onKey); setTimeout(() => ov.remove(), 180); };
   const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } };
   const submit = () => {
-    if (input.value.trim() === code) { setUnlocked(tool); close(); enterFull(tool); }
+    if (input.value.trim() === code) { setUnlocked(tool); close(); showSyncChoiceModal(tool); }
     else {
       errEl.hidden = false;
       card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
@@ -1956,6 +2039,23 @@ function renderSettings() {
         </div>
       </div></div>
       <div class="panel"><div class="panel-inner">
+        <div class="settings-card-title">☁️ Data &amp; Sync</div>
+        <p class="settings-desc">Choose how your data is stored and kept up to date across devices.</p>
+        <div class="sync-mode-row">
+          <button class="sync-mode-opt${(syncGetMode('sbp')||'local')!=='google'?' is-active':''}" data-sync-mode="local" type="button">
+            <span class="sync-mode-title">This device only</span>
+            <span class="sync-mode-desc">Nothing leaves this browser.</span>
+          </button>
+          <button class="sync-mode-opt${(syncGetMode('sbp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
+            <span class="sync-mode-badge">Recommended</span>
+            <span class="sync-mode-title">Sync with Google</span>
+            <span class="sync-mode-desc">Synced automatically to your own Google Drive.</span>
+          </button>
+        </div>
+        ${(syncGetMode('sbp')==='google'&&syncGetEmail('sbp'))?`<p class="sync-status-line">Signed in as <strong>${esc(syncGetEmail('sbp'))}</strong></p>`:''}
+        <p class="sync-error" id="syncSettError" hidden>Sign-in didn't go through. Please try again.</p>
+      </div></div>
+      <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌐 ${t('language')}</div>
         <div class="field"><label class="field-label">${t('select_language')}</label>
           <select class="select" id="settLanguage">
@@ -1986,6 +2086,27 @@ function renderSettings() {
   el.querySelectorAll('.theme-opt').forEach(btn => {
     btn.addEventListener('click', () => applyTheme(btn.dataset.themeVal));
   });
+
+  el.querySelectorAll('[data-sync-mode]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const target = btn.dataset.syncMode;
+      const current = syncGetMode('sbp') || 'local';
+      if (target === current) return;
+      const errEl = document.getElementById('syncSettError');
+      if (errEl) errEl.hidden = true;
+      el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = true);
+      try {
+        if (target === 'google') { await syncSwitchToGoogle('sbp'); showToast('Synced with Google Drive ✓'); }
+        else { await syncSwitchToLocal('sbp'); showToast('Switched to local storage ✓'); }
+        state = loadState() || defaultState(); syncSymbol();
+        renderSettings();
+      } catch {
+        if (errEl) errEl.hidden = false;
+        el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = false);
+      }
+    });
+  });
+
   document.getElementById('settLanguage')?.addEventListener('change', e => {
     state.settings.language = e.target.value;
     saveState();
@@ -2527,12 +2648,12 @@ function openLegal(type) {
   const bodies = {
     privacy: `<p><strong>Last updated:</strong> July 2026</p>
 <p>Evo Budget is designed with your privacy as a core principle.</p>
-<p><strong>Data storage.</strong> All financial data you enter into Evo Budget is stored exclusively in your browser's local storage on your device. Evo Budget does not collect, transmit, or store any personal or financial information on external servers.</p>
-<p><strong>No account required.</strong> Evo Budget does not require you to create an account, provide an email address, or share any personally identifiable information to use the product.</p>
+<p><strong>Data storage.</strong> By default, all financial data you enter into Evo Budget is stored exclusively in your browser's local storage on your device, and Evo Budget does not collect, transmit, or store any personal or financial information on external servers. You may optionally sign in with Google to sync your data across your own devices - when you choose to do this, your data is saved only in a file in your own Google Drive, which Evo Budget cannot access from anyone else's account. This is entirely opt-in and can be turned off at any time from Settings.</p>
+<p><strong>No account required.</strong> Evo Budget does not require you to create an account, provide an email address, or share any personally identifiable information to use the product. Signing in with Google is entirely optional and only needed if you want your data synced across devices.</p>
 <p><strong>No bank connections.</strong> Evo Budget never asks for or accesses your bank credentials, account numbers, or any third-party financial service logins.</p>
 <p><strong>No tracking.</strong> Evo Budget does not use analytics trackers, advertising pixels, or third-party cookies. Your usage is not monitored, profiled, or shared with any external parties.</p>
-<p><strong>Data control.</strong> Because your data lives entirely on your device, you have full control over it at all times. You can export your data via CSV or clear it through your browser settings. Clearing your browser data or switching devices will remove your Evo Budget data unless you have exported a backup.</p>
-<p><strong>Third-party services.</strong> Evo Budget loads fonts from Google Fonts, which is subject to Google's privacy policy. No other third-party services are used.</p>
+<p><strong>Data control.</strong> Because your data lives entirely on your device (or, if you opt in, your own Google Drive), you have full control over it at all times. You can export your data via CSV or clear it through your browser settings. Clearing your browser data or switching devices will remove your Evo Budget data unless you have exported a backup or enabled Google sync.</p>
+<p><strong>Third-party services.</strong> Evo Budget loads fonts from Google Fonts, which is subject to Google's privacy policy. If you opt in to Google sync, Evo Budget also uses Google Sign-In and the Google Drive API to store your data in your own Drive, subject to Google's privacy policy. No other third-party services are used.</p>
 <p><strong>Changes.</strong> If this policy changes, the updated version will be posted on this page with a revised date.</p>`,
     terms: `<p><strong>Last updated:</strong> July 2026</p>
 <p>By using Evo Budget, you agree to the following terms.</p>

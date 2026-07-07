@@ -95,7 +95,7 @@ function loadState() {
     return s;
   } catch { return null; }
 }
-function saveState()  { localStorage.setItem(UBP_KEY, JSON.stringify(state)); SYM=state.settings.symbol; }
+function saveState()  { localStorage.setItem(UBP_KEY, JSON.stringify(state)); SYM=state.settings.symbol; syncPushDebounced('ubp'); }
 function syncSymbol() { SYM=state.settings.symbol; }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -3298,6 +3298,23 @@ function renderSettings(){
         </div>
       </div></div>
       <div class="panel"><div class="panel-inner">
+        <div class="settings-card-title">☁️ Data &amp; Sync</div>
+        <p class="settings-desc">Choose how your data is stored and kept up to date across devices.</p>
+        <div class="sync-mode-row">
+          <button class="sync-mode-opt${(syncGetMode('ubp')||'local')!=='google'?' is-active':''}" data-sync-mode="local" type="button">
+            <span class="sync-mode-title">This device only</span>
+            <span class="sync-mode-desc">Nothing leaves this browser.</span>
+          </button>
+          <button class="sync-mode-opt${(syncGetMode('ubp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
+            <span class="sync-mode-badge">Recommended</span>
+            <span class="sync-mode-title">Sync with Google</span>
+            <span class="sync-mode-desc">Synced automatically to your own Google Drive.</span>
+          </button>
+        </div>
+        ${(syncGetMode('ubp')==='google'&&syncGetEmail('ubp'))?`<p class="sync-status-line">Signed in as <strong>${esc(syncGetEmail('ubp'))}</strong></p>`:''}
+        <p class="sync-error" id="syncSettError" hidden>Sign-in didn't go through. Please try again.</p>
+      </div></div>
+      <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌐 ${t('language')}</div>
         <div class="field"><label class="field-label">${t('select_language')}</label>
           <select class="select" id="settLanguage">
@@ -3347,6 +3364,26 @@ function renderSettings(){
 
   el.querySelectorAll('.theme-opt').forEach(btn => {
     btn.addEventListener('click', () => applyTheme(btn.dataset.themeVal));
+  });
+
+  el.querySelectorAll('[data-sync-mode]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const target = btn.dataset.syncMode;
+      const current = syncGetMode('ubp') || 'local';
+      if (target === current) return;
+      const errEl = document.getElementById('syncSettError');
+      if (errEl) errEl.hidden = true;
+      el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = true);
+      try {
+        if (target === 'google') { await syncSwitchToGoogle('ubp'); showToast('Synced with Google Drive ✓'); }
+        else { await syncSwitchToLocal('ubp'); showToast('Switched to local storage ✓'); }
+        state = loadState() || defaultState(); syncSymbol();
+        renderSettings();
+      } catch {
+        if (errEl) errEl.hidden = false;
+        el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = false);
+      }
+    });
   });
 
   document.getElementById('settLanguage')?.addEventListener('change', e => {
@@ -3897,7 +3934,8 @@ function applyLayout() {
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────
-function init(){
+async function init(){
+  if(syncGetMode('ubp')==='google'){await syncSilentResync('ubp').catch(()=>{});}
   state=loadState()||defaultState();syncSymbol();
 
   // Generate any due recurring transactions for the current period

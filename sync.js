@@ -1,0 +1,255 @@
+'use strict';
+/* =====================================================================
+   sync.js - Google sign-in + Google Drive sync engine (shared by SBP and UBP)
+
+   Keeps localStorage as the single source of truth that the rest of the
+   app already reads/writes via loadState()/saveState() in script.js and
+   ultimate-budget.js. This module's only job is to keep that local copy
+   in sync with a JSON file in the signed-in user's own Google Drive:
+   pull the Drive copy down before the app loads state, push the local
+   copy up after the app saves state. Neither script.js nor
+   ultimate-budget.js need to know Drive exists beyond calling the
+   handful of functions below.
+
+   No refresh tokens or access tokens are ever written to localStorage -
+   only the chosen mode ('local' | 'google') and the last-seen email
+   (cosmetic only) persist across page loads. A fresh short-lived access
+   token is silently re-requested each time it's needed via Google
+   Identity Services, which is the standard approach for browser-only
+   (no backend) Google API access.
+   ===================================================================== */
+
+// Fill this in after creating an OAuth Client ID in Google Cloud Console
+// (Web application type, http://localhost:8080 as an authorized origin).
+const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
+const SYNC_SCOPES = 'https://www.googleapis.com/auth/drive.file openid email profile';
+const SYNC_FOLDER_NAME = 'Evo Budget';
+const SYNC_FILE_NAMES = { sbp: 'evobudget-simple-data.json', ubp: 'evobudget-ultimate-data.json' };
+const SYNC_STATE_KEYS = { sbp: 'evobudget_v1', ubp: 'evobudget_ubp_v1' };
+
+function syncModeKey(tool)  { return `evobudget_${tool}_storage_mode`; }
+function syncEmailKey(tool) { return `evobudget_${tool}_google_email`; }
+
+function syncGetMode(tool)      { return localStorage.getItem(syncModeKey(tool)) || null; }
+function syncSetMode(tool, m)   { localStorage.setItem(syncModeKey(tool), m); }
+function syncGetEmail(tool)     { return localStorage.getItem(syncEmailKey(tool)) || ''; }
+function syncSetEmail(tool, e)  { if (e) localStorage.setItem(syncEmailKey(tool), e); }
+
+// ── Token acquisition (Google Identity Services) ───────────────────────
+let _syncTokenClient = null;
+let _syncAccessToken = null; // in-memory only, never persisted
+
+function _syncGisReady() {
+  return typeof google !== 'undefined' && google.accounts && google.accounts.oauth2;
+}
+
+function _syncGetTokenClient(onToken) {
+  if (!_syncGisReady()) return null;
+  if (!_syncTokenClient) {
+    _syncTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: SYNC_SCOPES,
+      callback: () => {} // overridden per-request below
+    });
+  }
+  _syncTokenClient.callback = onToken;
+  return _syncTokenClient;
+}
+
+// Resolves an access token without ever showing a popup; resolves null if
+// the browser has no existing Google session / prior consent to reuse.
+function syncSilentToken() {
+  return new Promise(resolve => {
+    const client = _syncGetTokenClient(resp => {
+      if (resp && resp.access_token) { _syncAccessToken = resp.access_token; resolve(resp.access_token); }
+      else resolve(null);
+    });
+    if (!client) { resolve(null); return; }
+    try { client.requestAccessToken({ prompt: 'none' }); }
+    catch { resolve(null); }
+  });
+}
+
+// Resolves an access token, showing the Google consent popup if needed.
+function syncInteractiveToken() {
+  return new Promise((resolve, reject) => {
+    const client = _syncGetTokenClient(resp => {
+      if (resp && resp.access_token) { _syncAccessToken = resp.access_token; resolve(resp.access_token); }
+      else reject(new Error(resp && resp.error ? resp.error : 'sign_in_failed'));
+    });
+    if (!client) { reject(new Error('google_identity_unavailable')); return; }
+    try { client.requestAccessToken({ prompt: '' }); }
+    catch (e) { reject(e); }
+  });
+}
+
+async function _syncFetchEmail(token) {
+  const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) return '';
+  const j = await res.json();
+  return j.email || '';
+}
+
+// ── Drive file helpers (drive.file scope: this app can only see files it
+//    created/opened, so files.list here only ever finds our own file) ──
+async function _driveFindFolder(token) {
+  const q = encodeURIComponent(`name='${SYNC_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const j = await res.json();
+  return (j.files && j.files[0]) ? j.files[0].id : null;
+}
+
+async function _driveCreateFolder(token) {
+  const res = await fetch('https://www.googleapis.com/drive/v3/files?fields=id', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: SYNC_FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder' })
+  });
+  const j = await res.json();
+  return j.id;
+}
+
+async function _driveFindFile(token, folderId, fileName) {
+  const q = encodeURIComponent(`name='${fileName}' and '${folderId}' in parents and trashed=false`);
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const j = await res.json();
+  return (j.files && j.files[0]) ? j.files[0].id : null;
+}
+
+async function _driveCreateFile(token, folderId, fileName, data) {
+  const boundary = 'evobudgetsync';
+  const metadata = { name: fileName, parents: [folderId], mimeType: 'application/json' };
+  const body =
+    `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n` +
+    `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(data)}\r\n--${boundary}--`;
+  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
+    body
+  });
+  const j = await res.json();
+  return j.id;
+}
+
+async function _driveReadFile(token, fileId) {
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) return null;
+  try { return await res.json(); } catch { return null; }
+}
+
+async function _driveWriteFile(token, fileId, data) {
+  await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+}
+
+// Finds (or creates) this tool's Drive file, returning { fileId, data, created }.
+async function _driveFindOrCreateFile(token, tool, fallbackData) {
+  let folderId = await _driveFindFolder(token);
+  if (!folderId) folderId = await _driveCreateFolder(token);
+  const fileName = SYNC_FILE_NAMES[tool];
+  let fileId = await _driveFindFile(token, folderId, fileName);
+  if (fileId) {
+    const data = await _driveReadFile(token, fileId);
+    return { fileId, data: data || fallbackData, created: false };
+  }
+  const stamped = { ...fallbackData, _syncMeta: { unlocked: true, updatedAt: new Date().toISOString() } };
+  fileId = await _driveCreateFile(token, folderId, fileName, stamped);
+  return { fileId, data: stamped, created: true };
+}
+
+// ── High-level API used by script.js / ultimate-budget.js ─────────────
+
+// Reads the tool's current localStorage state blob (raw JSON string or null).
+function _localRaw(tool) { return localStorage.getItem(SYNC_STATE_KEYS[tool]); }
+function _localData(tool) { const r = _localRaw(tool); try { return r ? JSON.parse(r) : null; } catch { return null; } }
+function _writeLocal(tool, data) { localStorage.setItem(SYNC_STATE_KEYS[tool], JSON.stringify(data)); }
+
+// Interactive sign-in used the first time a device switches into Google
+// mode (fresh code entry, or later via Settings). Uploads current local
+// state if Drive has nothing yet; otherwise adopts whatever Drive has.
+async function syncSignInAndAdopt(tool) {
+  const token = await syncInteractiveToken();
+  const email = await _syncFetchEmail(token);
+  const local = _localData(tool) || {};
+  const { fileId, data } = await _driveFindOrCreateFile(token, tool, local);
+  syncSetEmail(tool, email);
+  _writeLocal(tool, data);
+  return { email, fileId, data };
+}
+
+// Silent (no popup) resync for a device already in 'google' mode, e.g. on
+// every app load. Resolves null (not an error) if silent auth isn't possible,
+// so the caller can fall back to prompting for interactive sign-in.
+async function syncSilentResync(tool) {
+  const token = await syncSilentToken();
+  if (!token) return null;
+  const local = _localData(tool) || {};
+  const { data } = await _driveFindOrCreateFile(token, tool, local);
+  _writeLocal(tool, data);
+  return data;
+}
+
+// Settings-panel action: switch this device from local storage to Google,
+// uploading whatever is currently on this device (local wins).
+async function syncSwitchToGoogle(tool) {
+  const token = await syncInteractiveToken();
+  const email = await _syncFetchEmail(token);
+  const local = _localData(tool) || {};
+  let folderId = await _driveFindFolder(token);
+  if (!folderId) folderId = await _driveCreateFolder(token);
+  const fileName = SYNC_FILE_NAMES[tool];
+  let fileId = await _driveFindFile(token, folderId, fileName);
+  const stamped = { ...local, _syncMeta: { unlocked: true, updatedAt: new Date().toISOString() } };
+  if (fileId) await _driveWriteFile(token, fileId, stamped);
+  else fileId = await _driveCreateFile(token, folderId, fileName, stamped);
+  syncSetEmail(tool, email);
+  syncSetMode(tool, 'google');
+  _writeLocal(tool, stamped);
+  return { email };
+}
+
+// Settings-panel action: switch this device from Google back to local
+// storage, pulling down whatever Drive currently has (Drive wins).
+async function syncSwitchToLocal(tool) {
+  let token = await syncSilentToken();
+  if (!token) token = await syncInteractiveToken();
+  const local = _localData(tool) || {};
+  const { data } = await _driveFindOrCreateFile(token, tool, local);
+  _writeLocal(tool, data);
+  syncSetMode(tool, 'local');
+}
+
+// Debounced push used by the saveState() hooks - avoids hammering the
+// Drive API on every keystroke while still saving shortly after the user
+// stops typing.
+const _syncPushTimers = {};
+function syncPushDebounced(tool) {
+  if (syncGetMode(tool) !== 'google') return;
+  clearTimeout(_syncPushTimers[tool]);
+  _syncPushTimers[tool] = setTimeout(async () => {
+    try {
+      let token = _syncAccessToken || await syncSilentToken();
+      if (!token) return; // offline / session lost - local copy is still safe, will resync on next load
+      const local = _localData(tool) || {};
+      let folderId = await _driveFindFolder(token);
+      if (!folderId) folderId = await _driveCreateFolder(token);
+      const fileName = SYNC_FILE_NAMES[tool];
+      let fileId = await _driveFindFile(token, folderId, fileName);
+      const stamped = { ...local, _syncMeta: { unlocked: true, updatedAt: new Date().toISOString() } };
+      if (fileId) await _driveWriteFile(token, fileId, stamped);
+      else await _driveCreateFile(token, folderId, fileName, stamped);
+    } catch { /* best-effort - local storage already has the latest data */ }
+  }, 1500);
+}

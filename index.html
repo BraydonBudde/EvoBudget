@@ -191,8 +191,8 @@
         <div class="why-grid">
           <div class="why-card">
             <div class="why-num">01</div>
-            <h3 class="why-title">Your data never leaves your device</h3>
-            <p class="why-desc">Everything is stored in your browser's local storage. No servers, no cloud sync, no accounts. Export to CSV anytime you want a backup.</p>
+            <h3 class="why-title">Your data, your control</h3>
+            <p class="why-desc">Everything is stored in your browser's local storage by default. No servers, no accounts required. Want it synced across devices? Sign in with Google and it's saved only in your own Drive. Export to CSV anytime you want a backup.</p>
           </div>
           <div class="why-card">
             <div class="why-num">02</div>
@@ -242,7 +242,7 @@
           </details>
           <details class="faq-item">
             <summary class="faq-q">Where is my data stored?</summary>
-            <div class="faq-a">All your financial data is stored locally on your device using your browser's built-in storage. Nothing is sent to a server. Evo Budget never asks for your bank credentials and never transmits your financial information anywhere. Your budget, transactions, and settings stay entirely under your control.</div>
+            <div class="faq-a">By default, all your financial data is stored locally on your device using your browser's built-in storage, and nothing is sent to a server. If you'd like your data to follow you across devices, you can optionally sign in with Google - your data is then kept in a file in your own Google Drive, never on our servers. Evo Budget never asks for your bank credentials and never transmits your financial information anywhere else. Your budget, transactions, and settings stay entirely under your control.</div>
           </details>
           <details class="faq-item">
             <summary class="faq-q">Do I need to connect my bank account?</summary>
@@ -372,6 +372,8 @@
     </div>
   </div>
 
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="sync.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

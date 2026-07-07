@@ -2100,6 +2100,46 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 }
 .fk-code-link:hover { color: var(--grad-purple); text-decoration: underline; }
 
+/* ── Local vs Google sync choice / settings ─────────────────────────── */
+.fk-sync-option {
+  position: relative; display: flex; flex-direction: column; gap: 3px;
+  width: 100%; text-align: left; margin-top: 12px; padding: 14px 16px;
+  border-radius: 14px; border: 1.5px solid var(--border-faint);
+  background: var(--surface-strong); cursor: pointer; transition: border-color .15s, transform .15s;
+}
+.fk-sync-option:first-of-type { margin-top: 20px; }
+.fk-sync-option:hover { transform: translateY(-1px); border-color: var(--grad-purple); }
+.fk-sync-option:disabled { opacity: .6; cursor: default; transform: none; }
+.fk-sync-option--google { border-color: var(--grad-purple); background: rgba(147,51,234,.06); }
+.fk-sync-option-badge {
+  position: absolute; top: -9px; right: 14px; font-size: 10px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; color: #fff; padding: 3px 8px; border-radius: 99px;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink));
+}
+.fk-sync-option-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; color: var(--text-primary); }
+.fk-sync-option-desc { font-size: 12px; line-height: 1.45; color: var(--text-secondary); }
+.fk-sync-status { font-size: 12.5px; color: var(--text-faint); margin-top: 14px; }
+
+.sync-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.sync-mode-opt {
+  position: relative; display: flex; flex-direction: column; gap: 3px; text-align: left;
+  padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border-faint);
+  background: var(--surface-strong); cursor: pointer; transition: border-color .15s, transform .15s;
+}
+.sync-mode-opt:hover { transform: translateY(-1px); }
+.sync-mode-opt:disabled { opacity: .6; cursor: default; transform: none; }
+.sync-mode-opt.is-active { border-color: var(--grad-purple); background: rgba(147,51,234,.08); }
+.sync-mode-badge {
+  position: absolute; top: -8px; right: 10px; font-size: 9px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; color: #fff; padding: 2px 7px; border-radius: 99px;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink));
+}
+.sync-mode-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-primary); }
+.sync-mode-desc { font-size: 11.5px; line-height: 1.4; color: var(--text-secondary); }
+.sync-status-line { font-size: 12px; color: var(--text-faint); margin: 10px 0 0; }
+.sync-error { font-size: 12px; color: var(--expense, #ef4444); margin: 10px 2px 0; line-height: 1.45; }
+@media (max-width: 480px) { .sync-mode-row { grid-template-columns: 1fr; } }
+
 /* ═══════════════════════════════════════════════════════════════════════
    LANDING PAGE SECTIONS
    ═══════════════════════════════════════════════════════════════════════ */
