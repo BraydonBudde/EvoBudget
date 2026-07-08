@@ -44,15 +44,30 @@ function _syncGisReady() {
   return typeof google !== 'undefined' && google.accounts && google.accounts.oauth2;
 }
 
+// Google's own guidance for avoiding popup-blocker false positives: call
+// initTokenClient() once, ahead of time (page load), so that the ONLY thing
+// requestAccessToken() has to do at click-time is open the window - no
+// client construction, no setup work competing with the browser's short
+// window for "this popup came directly from a trusted user gesture."
+// Safe to call repeatedly; a no-op once already warmed up.
+function syncPrewarmTokenClient() {
+  if (_syncTokenClient || !_syncGisReady()) return;
+  _syncTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: SYNC_SCOPES,
+    callback: () => {} // overridden per-request below
+  });
+}
+// Try immediately (covers the rare case GIS is already loaded by the time
+// this script runs) and again once the page has fully loaded, as a fallback
+// in case the <script onload> hook in the HTML fires before this file has
+// finished parsing.
+syncPrewarmTokenClient();
+if (typeof window !== 'undefined') window.addEventListener('load', syncPrewarmTokenClient);
+
 function _syncGetTokenClient(onToken) {
-  if (!_syncGisReady()) return null;
-  if (!_syncTokenClient) {
-    _syncTokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: SYNC_SCOPES,
-      callback: () => {} // overridden per-request below
-    });
-  }
+  syncPrewarmTokenClient(); // no-op if already warm; safety net if it never fired
+  if (!_syncTokenClient) return null;
   _syncTokenClient.callback = onToken;
   return _syncTokenClient;
 }
