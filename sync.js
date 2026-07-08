@@ -57,6 +57,7 @@ function syncPrewarmTokenClient() {
     scope: SYNC_SCOPES,
     callback: () => {} // overridden per-request below
   });
+  console.log('[sync] token client warmed up at', new Date().toISOString(), '(gis ready:', _syncGisReady(), ')');
 }
 // Try immediately (covers the rare case GIS is already loaded by the time
 // this script runs) and again once the page has fully loaded, as a fallback
@@ -66,8 +67,10 @@ syncPrewarmTokenClient();
 if (typeof window !== 'undefined') window.addEventListener('load', syncPrewarmTokenClient);
 
 function _syncGetTokenClient(onToken) {
+  const wasAlreadyWarm = !!_syncTokenClient;
   syncPrewarmTokenClient(); // no-op if already warm; safety net if it never fired
-  if (!_syncTokenClient) return null;
+  if (!_syncTokenClient) { console.log('[sync] no token client available - GIS not loaded yet'); return null; }
+  if (!wasAlreadyWarm) console.log('[sync] WARNING: token client was NOT pre-warmed, had to create it just now (this can make the popup more likely to be blocked)');
   _syncTokenClient.callback = onToken;
   return _syncTokenClient;
 }
@@ -91,23 +94,28 @@ function syncSilentToken() {
 // fire at all - a timeout turns that into a clear, catchable error instead
 // of leaving the caller waiting forever.
 function syncInteractiveToken() {
+  const clickedAt = performance.now();
+  console.log('[sync] syncInteractiveToken() called at', new Date().toISOString(), '- was token client already warm?', !!_syncTokenClient);
   return new Promise((resolve, reject) => {
     let settled = false;
     const timer = setTimeout(() => {
       if (settled) return;
       settled = true;
+      console.log('[sync] TIMED OUT after 20s with no callback from Google at all - this means the popup was almost certainly blocked before it could even open, or GIS itself never responded');
       reject(new Error('popup_blocked_or_timed_out'));
     }, 20000);
     const client = _syncGetTokenClient(resp => {
+      const elapsed = Math.round(performance.now() - clickedAt);
       if (settled) return;
       settled = true;
       clearTimeout(timer);
-      if (resp && resp.access_token) { _syncAccessToken = resp.access_token; resolve(resp.access_token); }
-      else reject(new Error(resp && resp.error ? resp.error : 'sign_in_failed'));
+      if (resp && resp.access_token) { console.log('[sync] got access token after', elapsed, 'ms'); _syncAccessToken = resp.access_token; resolve(resp.access_token); }
+      else { console.log('[sync] Google called back with an error after', elapsed, 'ms:', JSON.stringify(resp)); reject(new Error(resp && resp.error ? resp.error : 'sign_in_failed')); }
     });
     if (!client) { clearTimeout(timer); reject(new Error('google_identity_unavailable')); return; }
-    try { client.requestAccessToken({ prompt: '' }); }
-    catch (e) { clearTimeout(timer); reject(e); }
+    const beforeCall = performance.now();
+    try { client.requestAccessToken({ prompt: '' }); console.log('[sync] requestAccessToken() call itself returned normally after', Math.round(performance.now() - beforeCall), 'ms (this is just the call returning, not the popup outcome)'); }
+    catch (e) { clearTimeout(timer); console.log('[sync] requestAccessToken() threw synchronously:', e); reject(e); }
   });
 }
 
