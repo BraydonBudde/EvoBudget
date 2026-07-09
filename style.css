@@ -2181,7 +2181,7 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 [data-theme="dark"] .sync-mode-icon--google { background: #f4f4f6; }
 .sync-mode-icon--google svg { width: 16px; height: 16px; }
 .sync-mode-badge {
-  position: absolute; top: -8px; right: 10px; font-size: 9px; font-weight: 700;
+  position: absolute; top: 8px; right: 8px; font-size: 9px; font-weight: 700;
   letter-spacing: .04em; text-transform: uppercase; color: #fff; padding: 2px 7px; border-radius: 99px;
   background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink));
   box-shadow: 0 4px 10px -3px rgba(76,29,149,.5);

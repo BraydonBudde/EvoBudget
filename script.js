@@ -909,7 +909,7 @@ function showSyncChoiceModal(tool) {
         <span class="fk-sync-option-icon fk-sync-option-icon--google">${SYNC_ICON_GOOGLE}</span>
         <span class="fk-sync-option-text">
           <span class="fk-sync-option-title">Continue with Google</span>
-          <span class="fk-sync-option-desc">Your data syncs automatically to a file in your own Google Drive, so it follows you across devices.</span>
+          <span class="fk-sync-option-desc">Data is synced across multiple devices</span>
         </span>
         <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
@@ -917,7 +917,7 @@ function showSyncChoiceModal(tool) {
         <span class="fk-sync-option-icon">${SYNC_ICON_LOCAL}</span>
         <span class="fk-sync-option-text">
           <span class="fk-sync-option-title">Keep it on this device only</span>
-          <span class="fk-sync-option-desc">Works exactly as it does today - nothing leaves this browser.</span>
+          <span class="fk-sync-option-desc">Data is saved on this device only</span>
         </span>
         <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
@@ -2055,14 +2055,14 @@ function renderSettings() {
             ${(syncGetMode('sbp')||'local')!=='google'?'<span class="sync-mode-check">✓</span>':''}
             <span class="sync-mode-icon">${SYNC_ICON_LOCAL}</span>
             <span class="sync-mode-title">This device only</span>
-            <span class="sync-mode-desc">Nothing leaves this browser.</span>
+            <span class="sync-mode-desc">Data is saved on this device only</span>
           </button>
           <button class="sync-mode-opt sync-mode-opt--google${(syncGetMode('sbp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
             <span class="sync-mode-badge">Recommended</span>
             ${(syncGetMode('sbp')||'local')==='google'?'<span class="sync-mode-check">✓</span>':''}
             <span class="sync-mode-icon sync-mode-icon--google">${SYNC_ICON_GOOGLE}</span>
             <span class="sync-mode-title">Sync with Google</span>
-            <span class="sync-mode-desc">Synced automatically to your own Google Drive.</span>
+            <span class="sync-mode-desc">Data is synced across multiple devices</span>
           </button>
         </div>
         ${(syncGetMode('sbp')==='google'&&syncGetEmail('sbp'))?`<p class="sync-status-line">Signed in as <strong>${esc(syncGetEmail('sbp'))}</strong></p>`:''}

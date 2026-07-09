@@ -3305,14 +3305,14 @@ function renderSettings(){
             ${(syncGetMode('ubp')||'local')!=='google'?'<span class="sync-mode-check">✓</span>':''}
             <span class="sync-mode-icon">${SYNC_ICON_LOCAL}</span>
             <span class="sync-mode-title">This device only</span>
-            <span class="sync-mode-desc">Nothing leaves this browser.</span>
+            <span class="sync-mode-desc">Data is saved on this device only</span>
           </button>
           <button class="sync-mode-opt sync-mode-opt--google${(syncGetMode('ubp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
             <span class="sync-mode-badge">Recommended</span>
             ${(syncGetMode('ubp')||'local')==='google'?'<span class="sync-mode-check">✓</span>':''}
             <span class="sync-mode-icon sync-mode-icon--google">${SYNC_ICON_GOOGLE}</span>
             <span class="sync-mode-title">Sync with Google</span>
-            <span class="sync-mode-desc">Synced automatically to your own Google Drive.</span>
+            <span class="sync-mode-desc">Data is synced across multiple devices</span>
           </button>
         </div>
         ${(syncGetMode('ubp')==='google'&&syncGetEmail('ubp'))?`<p class="sync-status-line">Signed in as <strong>${esc(syncGetEmail('ubp'))}</strong></p>`:''}
