@@ -3943,43 +3943,51 @@ async function init(){
   state=loadState()||defaultState();syncSymbol();
   saveState(); // ensures localStorage always mirrors state, so Google sync has real data to seed a Drive file with right away
 
-  // Generate any due recurring transactions for the current period
-  const recGen=processRecurring();
+  // A failure anywhere in this optional setup must never leave the whole
+  // page blank - log it loudly (visible as a red error in DevTools) and
+  // still fall through to rendering the dashboard below.
+  try {
+    // Generate any due recurring transactions for the current period
+    const recGen=processRecurring();
 
-  const now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();
-  initTheme();
-  applyLanguage();
+    const now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();
+    initTheme();
+    applyLanguage();
 
-  // Offer to import Simple Budget data only when this tool is empty
-  if(!isTrial()&&state.transactions.length===0&&state.debts.length===0&&state.sinkingFunds.length===0)checkSBPImport();
+    // Offer to import Simple Budget data only when this tool is empty
+    if(!isTrial()&&state.transactions.length===0&&state.debts.length===0&&state.sinkingFunds.length===0)checkSBPImport();
 
-  // Notify if recurring transactions were auto-created
-  if(recGen>0)setTimeout(()=>showToast(tf('recurring_generated',recGen)),600);
+    // Notify if recurring transactions were auto-created
+    if(recGen>0)setTimeout(()=>showToast(tf('recurring_generated',recGen)),600);
 
-  // Classic top tabs
-  document.getElementById('ubpTabs')?.querySelectorAll('.btab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
-  enableDragScroll(document.getElementById('ubpTabs'));
+    // Classic top tabs
+    document.getElementById('ubpTabs')?.querySelectorAll('.btab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
+    enableDragScroll(document.getElementById('ubpTabs'));
 
-  // Command nav items
-  document.getElementById('heroHeader')?.querySelectorAll('.cnav-btn[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
+    // Command nav items
+    document.getElementById('heroHeader')?.querySelectorAll('.cnav-btn[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
 
-  // Back to hub
-  document.getElementById('backToHub')?.addEventListener('click',()=>{window.location.href='index.html';});
+    // Back to hub
+    document.getElementById('backToHub')?.addEventListener('click',()=>{window.location.href='index.html';});
 
-  // Settings gear
-  document.getElementById('settingsNavBtn')?.addEventListener('click',()=>switchTab('settings'));
+    // Settings gear
+    document.getElementById('settingsNavBtn')?.addEventListener('click',()=>switchTab('settings'));
 
-  // Modal
-  document.getElementById('modalClose')?.addEventListener('click',closeModal);
-  document.getElementById('tutorialOverlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+    // Modal
+    document.getElementById('modalClose')?.addEventListener('click',closeModal);
+    document.getElementById('tutorialOverlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
-  // Apply saved layout then render dashboard
-  applyLayout(state.settings?.layout||'classic');
-  switchTab('dashboard');
-  fkInitUIEnhancers();
-  applyAppTitle();
-  bindAppTitle('Ultimate Budget');
+    applyLayout(state.settings?.layout||'classic');
+  } catch (e) {
+    console.error('[init] error during startup setup (rendering the dashboard anyway):', e);
+  }
+
+  try { switchTab('dashboard'); }
+  catch (e) { console.error('[init] switchTab(dashboard) failed - this is why the page can appear blank:', e); }
+
+  try { fkInitUIEnhancers(); applyAppTitle(); bindAppTitle('Ultimate Budget'); }
+  catch (e) { console.error('[init] post-render setup failed:', e); }
 }
 document.addEventListener('DOMContentLoaded',init);
 

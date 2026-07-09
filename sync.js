@@ -114,14 +114,20 @@ function syncSilentToken() {
 }
 
 // Resolves an access token, showing the Google consent popup if needed.
-// If the browser silently blocks that popup, Google's callback may never
-// fire at all - a timeout turns that into a clear, catchable error instead
-// of leaving the caller waiting forever.
+// This is only ever called from a real click (guarded below), so once the
+// popup genuinely opens, the user may take as long as they need to click
+// through Google's consent screens - including the extra "Google hasn't
+// verified this app" warning screen this Testing-mode app shows. A short
+// timeout here would misfire while a real, working popup just sits there
+// waiting on the user, mislabeling "still deciding" as "blocked". The
+// timeout only exists to catch the genuinely-broken case (popup silently
+// failed to open and Google's callback never fires at all), so it's set
+// generously long instead of racing a real human.
 function syncInteractiveToken() {
   const clickedAt = performance.now();
   console.log('[sync] syncInteractiveToken() called at', new Date().toISOString(), '- was token client already warm?', !!_syncTokenClient, '- active user gesture right now?', _syncHasUserActivation());
   if (!_syncHasUserActivation()) {
-    console.log('[sync] no active user gesture - this call is not directly inside a click handler, so the popup would be blocked. Failing fast instead of waiting 20s.');
+    console.log('[sync] no active user gesture - this call is not directly inside a click handler, so the popup would be blocked. Failing fast instead of waiting.');
     return Promise.reject(new Error('popup_blocked_or_timed_out'));
   }
   return new Promise((resolve, reject) => {
@@ -129,9 +135,9 @@ function syncInteractiveToken() {
     const timer = setTimeout(() => {
       if (settled) return;
       settled = true;
-      console.log('[sync] TIMED OUT after 20s with no callback from Google at all - this means the popup was almost certainly blocked before it could even open, or GIS itself never responded');
+      console.log('[sync] TIMED OUT after 5 minutes with no callback from Google at all - this means the popup was almost certainly blocked before it could even open, or GIS itself never responded');
       reject(new Error('popup_blocked_or_timed_out'));
-    }, 20000);
+    }, 300000);
     const client = _syncGetTokenClient(resp => {
       const elapsed = Math.round(performance.now() - clickedAt);
       if (settled) return;

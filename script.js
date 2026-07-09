@@ -922,7 +922,7 @@ function showSyncChoiceModal(tool) {
         <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
       <p class="fk-code-error" id="fkSyncError" hidden></p>
-      <p class="fk-sync-status" id="fkSyncStatus" hidden>Signing in... (a Google window may have opened - check for a blocked pop-up icon in your address bar if nothing appears)</p>
+      <p class="fk-sync-status" id="fkSyncStatus" hidden>Complete the steps in the Google window that just opened. If nothing appeared, check your address bar for a blocked pop-up icon.</p>
       <p class="fk-sync-footer">This can be changed in settings later</p>
     </div>`;
   document.body.appendChild(ov);
