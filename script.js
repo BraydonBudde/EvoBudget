@@ -852,9 +852,18 @@ function enterTrial(tool) { if (tool === 'ubp') { setUbpMode('trial'); window.lo
 async function openFull(tool) {
   if (!isUnlocked(tool)) { showAccessCodeModal(tool); return; }
   if (syncGetMode(tool) !== 'google') { enterFull(tool); return; }
-  const result = await syncSilentResync(tool).catch(() => ({ authOk: false, data: null }));
-  if (result.authOk) enterFull(tool);
-  else showGoogleReauthModal(tool);
+  if (_syncAccessToken) {
+    // Already have a live session cached this browser session (e.g. signed
+    // in moments ago) - reuse it directly, no request of any kind needed.
+    const result = await syncSilentResync(tool).catch(() => ({ authOk: false, data: null }));
+    if (result.authOk) { enterFull(tool); return; }
+  }
+  // No cached session on a fresh page load - deliberately do NOT attempt a
+  // "silent" prompt:'none' request here. It can still visibly flash a real
+  // popup open and closed without reliably resolving either way (confirmed
+  // via testing), which is exactly the confusing dead-end this is meant to
+  // avoid. Go straight to the proven-reliable interactive sign-in prompt.
+  showGoogleReauthModal(tool);
 }
 
 // ── Google re-auth prompt (returning device, Google session expired) ──
