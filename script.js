@@ -846,7 +846,7 @@ function setUbpMode(m)   { localStorage.setItem(UBP_MODE_KEY, m); }
 function isUnlocked(tool){ return localStorage.getItem(UNLOCK_KEYS[tool]) === '1'; }
 function setUnlocked(tool){ localStorage.setItem(UNLOCK_KEYS[tool], '1'); }
 
-function enterFull(tool)  { if (tool === 'ubp') { setUbpMode('full');  window.location.href = 'ultimate-budget.html'; } else enterSbpFull(); }
+function enterFull(tool)  { if (tool === 'ubp') { setUbpMode('full'); syncStashTokenForHandoff('ubp'); window.location.href = 'ultimate-budget.html'; } else enterSbpFull(); }
 function enterTrial(tool) { if (tool === 'ubp') { setUbpMode('trial'); window.location.href = 'ultimate-budget.html'; } else enterSbpTrial(); }
 
 async function openFull(tool) {

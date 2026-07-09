@@ -263,6 +263,24 @@ function _localRaw(tool) { return localStorage.getItem(SYNC_STATE_KEYS[tool]); }
 function _localData(tool) { const r = _localRaw(tool); try { return r ? JSON.parse(r) : null; } catch { return null; } }
 function _writeLocal(tool, data) { localStorage.setItem(SYNC_STATE_KEYS[tool], JSON.stringify(data)); }
 
+// One-time handoff of an already-obtained access token across a full page
+// navigation (index.html -> ultimate-budget.html), so a session established
+// under a real click on one page can be reused on the next without ever
+// requesting anything there - which is what let a Google popup flash open
+// during normal use (an automatic save with no cached token falling back to
+// a live request). sessionStorage is cleared the instant it's read, so
+// the token never outlives the single navigation it's meant for.
+function syncStashTokenForHandoff(tool) {
+  if (!_syncAccessToken) return;
+  try { sessionStorage.setItem('evobudget_' + tool + '_token_handoff', _syncAccessToken); } catch {}
+}
+function syncAdoptHandoffToken(tool) {
+  try {
+    const t = sessionStorage.getItem('evobudget_' + tool + '_token_handoff');
+    if (t) { sessionStorage.removeItem('evobudget_' + tool + '_token_handoff'); _syncAccessToken = t; }
+  } catch {}
+}
+
 // Interactive sign-in used the first time a device switches into Google
 // mode (fresh code entry, or later via Settings). Uploads current local
 // state if Drive has nothing yet; otherwise adopts whatever Drive has.
@@ -281,7 +299,7 @@ async function syncSignInAndAdopt(tool) {
 // the caller can fall back to prompting for interactive sign-in - distinct
 // from {authOk:true, data:null}, which just means nothing to sync yet.
 async function syncSilentResync(tool) {
-  const token = await syncSilentToken();
+  const token = _syncAccessToken || await syncSilentToken();
   if (!token) return { authOk: false, data: null };
   const local = _localData(tool);
   const { data } = await _driveFindOrCreateFile(token, tool, local || {});
@@ -329,8 +347,16 @@ function syncPushDebounced(tool) {
   clearTimeout(_syncPushTimers[tool]);
   _syncPushTimers[tool] = setTimeout(async () => {
     try {
-      let token = _syncAccessToken || await syncSilentToken();
-      if (!token) return; // offline / session lost - local copy is still safe, will resync on next load
+      // Deliberately NEVER requests a fresh token here (no syncSilentToken()
+      // fallback) - this runs from a setTimeout with no user gesture behind
+      // it, and Google's "silent" token request can still visibly flash a
+      // real popup window open and closed when it can't resolve instantly.
+      // A background autosave doing that during normal typing is exactly
+      // the bug being fixed here. Only ever use a token already obtained
+      // under a real click; otherwise skip silently - local data is safe
+      // and will sync the next time a real sign-in happens on this page.
+      const token = _syncAccessToken;
+      if (!token) return;
       const local = _localData(tool);
       if (!_looksLikeValidState(local)) return; // nothing real to push yet
       let folderId = await _driveFindFolder(token);

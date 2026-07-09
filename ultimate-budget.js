@@ -3939,6 +3939,7 @@ function applyLayout() {
 
 // ── INIT ──────────────────────────────────────────────────────────────
 async function init(){
+  syncAdoptHandoffToken('ubp');
   if(syncGetMode('ubp')==='google'){await syncSilentResync('ubp').catch(()=>{});}
   state=loadState()||defaultState();syncSymbol();
   saveState(); // ensures localStorage always mirrors state, so Google sync has real data to seed a Drive file with right away
