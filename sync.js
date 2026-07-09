@@ -310,7 +310,7 @@ async function syncSilentResync(tool) {
 // Settings-panel action: switch this device from local storage to Google,
 // uploading whatever is currently on this device (local wins).
 async function syncSwitchToGoogle(tool) {
-  const token = await syncInteractiveToken();
+  const token = _syncAccessToken || await syncInteractiveToken();
   const email = await _syncFetchEmail(token);
   const local = _localData(tool);
   if (!_looksLikeValidState(local)) throw new Error('nothing_to_sync_yet');
@@ -329,9 +329,13 @@ async function syncSwitchToGoogle(tool) {
 
 // Settings-panel action: switch this device from Google back to local
 // storage, pulling down whatever Drive currently has (Drive wins).
+// Deliberately does NOT try syncSilentToken() first - that "silent" request
+// can flash a real popup open and closed without reliably resolving either
+// way, exactly like the other two cases already fixed. Reuse an
+// already-cached session if there is one, otherwise go straight to the
+// proven-reliable interactive flow.
 async function syncSwitchToLocal(tool) {
-  let token = await syncSilentToken();
-  if (!token) token = await syncInteractiveToken();
+  const token = _syncAccessToken || await syncInteractiveToken();
   const local = _localData(tool);
   const { data } = await _driveFindOrCreateFile(token, tool, local || {});
   if (_looksLikeValidState(data)) _writeLocal(tool, data);
