@@ -901,17 +901,25 @@ function showSyncChoiceModal(tool) {
   ov.setAttribute('role', 'dialog');
   ov.setAttribute('aria-modal', 'true');
   ov.innerHTML = `
-    <div class="fk-code-card" role="document">
+    <div class="fk-code-card fk-sync-card" role="document">
       <h2 class="fk-code-title">How do you want to use Evo Budget?</h2>
       <p class="fk-code-sub">You can change this anytime in Settings.</p>
       <button class="fk-sync-option fk-sync-option--google" id="fkSyncGoogle" type="button">
         <span class="fk-sync-option-badge">Recommended</span>
-        <span class="fk-sync-option-title">Continue with Google</span>
-        <span class="fk-sync-option-desc">Your data syncs automatically to a file in your own Google Drive, so it follows you across devices.</span>
+        <span class="fk-sync-option-icon fk-sync-option-icon--google">${SYNC_ICON_GOOGLE}</span>
+        <span class="fk-sync-option-text">
+          <span class="fk-sync-option-title">Continue with Google</span>
+          <span class="fk-sync-option-desc">Your data syncs automatically to a file in your own Google Drive, so it follows you across devices.</span>
+        </span>
+        <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
       <button class="fk-sync-option" id="fkSyncLocal" type="button">
-        <span class="fk-sync-option-title">Keep it on this device only</span>
-        <span class="fk-sync-option-desc">Works exactly as it does today - nothing leaves this browser.</span>
+        <span class="fk-sync-option-icon">${SYNC_ICON_LOCAL}</span>
+        <span class="fk-sync-option-text">
+          <span class="fk-sync-option-title">Keep it on this device only</span>
+          <span class="fk-sync-option-desc">Works exactly as it does today - nothing leaves this browser.</span>
+        </span>
+        <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
       <p class="fk-code-error" id="fkSyncError" hidden></p>
       <p class="fk-sync-status" id="fkSyncStatus" hidden>Signing in... (a Google window may have opened - check for a blocked pop-up icon in your address bar if nothing appears)</p>
@@ -2044,11 +2052,15 @@ function renderSettings() {
         <p class="settings-desc">Choose how your data is stored and kept up to date across devices.</p>
         <div class="sync-mode-row">
           <button class="sync-mode-opt${(syncGetMode('sbp')||'local')!=='google'?' is-active':''}" data-sync-mode="local" type="button">
+            ${(syncGetMode('sbp')||'local')!=='google'?'<span class="sync-mode-check">✓</span>':''}
+            <span class="sync-mode-icon">${SYNC_ICON_LOCAL}</span>
             <span class="sync-mode-title">This device only</span>
             <span class="sync-mode-desc">Nothing leaves this browser.</span>
           </button>
-          <button class="sync-mode-opt${(syncGetMode('sbp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
+          <button class="sync-mode-opt sync-mode-opt--google${(syncGetMode('sbp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
             <span class="sync-mode-badge">Recommended</span>
+            ${(syncGetMode('sbp')||'local')==='google'?'<span class="sync-mode-check">✓</span>':''}
+            <span class="sync-mode-icon sync-mode-icon--google">${SYNC_ICON_GOOGLE}</span>
             <span class="sync-mode-title">Sync with Google</span>
             <span class="sync-mode-desc">Synced automatically to your own Google Drive.</span>
           </button>

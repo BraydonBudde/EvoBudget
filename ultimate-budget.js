@@ -3302,11 +3302,15 @@ function renderSettings(){
         <p class="settings-desc">Choose how your data is stored and kept up to date across devices.</p>
         <div class="sync-mode-row">
           <button class="sync-mode-opt${(syncGetMode('ubp')||'local')!=='google'?' is-active':''}" data-sync-mode="local" type="button">
+            ${(syncGetMode('ubp')||'local')!=='google'?'<span class="sync-mode-check">✓</span>':''}
+            <span class="sync-mode-icon">${SYNC_ICON_LOCAL}</span>
             <span class="sync-mode-title">This device only</span>
             <span class="sync-mode-desc">Nothing leaves this browser.</span>
           </button>
-          <button class="sync-mode-opt${(syncGetMode('ubp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
+          <button class="sync-mode-opt sync-mode-opt--google${(syncGetMode('ubp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
             <span class="sync-mode-badge">Recommended</span>
+            ${(syncGetMode('ubp')||'local')==='google'?'<span class="sync-mode-check">✓</span>':''}
+            <span class="sync-mode-icon sync-mode-icon--google">${SYNC_ICON_GOOGLE}</span>
             <span class="sync-mode-title">Sync with Google</span>
             <span class="sync-mode-desc">Synced automatically to your own Google Drive.</span>
           </button>
