@@ -902,27 +902,28 @@ function showSyncChoiceModal(tool) {
   ov.setAttribute('aria-modal', 'true');
   ov.innerHTML = `
     <div class="fk-code-card fk-sync-card" role="document">
-      <h2 class="fk-code-title">How do you want to use Evo Budget?</h2>
-      <p class="fk-code-sub">You can change this anytime in Settings.</p>
+      <h2 class="fk-code-title">Welcome to Evo Budget</h2>
+      <p class="fk-code-sub">Choose how to save your data.</p>
       <button class="fk-sync-option fk-sync-option--google" id="fkSyncGoogle" type="button">
         <span class="fk-sync-option-badge">Recommended</span>
         <span class="fk-sync-option-icon fk-sync-option-icon--google">${SYNC_ICON_GOOGLE}</span>
         <span class="fk-sync-option-text">
           <span class="fk-sync-option-title">Continue with Google</span>
-          <span class="fk-sync-option-desc">Data is synced across multiple devices</span>
+          <span class="fk-sync-option-desc">Planner data is stored across multiple devices</span>
         </span>
         <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
       <button class="fk-sync-option" id="fkSyncLocal" type="button">
         <span class="fk-sync-option-icon">${SYNC_ICON_LOCAL}</span>
         <span class="fk-sync-option-text">
-          <span class="fk-sync-option-title">Keep it on this device only</span>
-          <span class="fk-sync-option-desc">Data is saved on this device only</span>
+          <span class="fk-sync-option-title">Use without an account</span>
+          <span class="fk-sync-option-desc">Planner data is stored on this device only</span>
         </span>
         <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
       <p class="fk-code-error" id="fkSyncError" hidden></p>
       <p class="fk-sync-status" id="fkSyncStatus" hidden>Signing in... (a Google window may have opened - check for a blocked pop-up icon in your address bar if nothing appears)</p>
+      <p class="fk-sync-footer">This can be changed in settings later</p>
     </div>`;
   document.body.appendChild(ov);
   const close = () => { ov.classList.add('is-leaving'); setTimeout(() => ov.remove(), 180); };

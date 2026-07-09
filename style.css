@@ -2125,10 +2125,10 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   background: radial-gradient(circle, rgba(236,72,153,.22), transparent 72%); pointer-events: none;
 }
 .fk-sync-option-badge {
-  position: absolute; top: -9px; right: 16px; font-size: 10px; font-weight: 700;
-  letter-spacing: .04em; text-transform: uppercase; color: #fff; padding: 3px 9px; border-radius: 99px;
+  position: absolute; top: -7px; right: 16px; font-size: 8px; font-weight: 700;
+  letter-spacing: .03em; text-transform: uppercase; color: #fff; padding: 2px 7px; border-radius: 99px;
   background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink));
-  box-shadow: 0 4px 12px -2px rgba(76,29,149,.5);
+  box-shadow: 0 3px 8px -2px rgba(76,29,149,.45);
 }
 .fk-sync-option-icon {
   flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
@@ -2147,6 +2147,7 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .fk-sync-option-chevron { flex-shrink: 0; color: var(--text-faint); transition: transform .18s var(--ease), color .18s var(--ease); }
 .fk-sync-option:hover .fk-sync-option-chevron { transform: translateX(3px); color: var(--grad-purple); }
 .fk-sync-status { font-size: 12.5px; color: var(--text-faint); margin-top: 14px; }
+.fk-sync-footer { font-size: 11.5px; color: var(--text-faint); margin: 16px 0 0; text-align: center; }
 
 .sync-mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
 .sync-mode-opt {
