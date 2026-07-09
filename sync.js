@@ -80,9 +80,28 @@ function _syncGetTokenClient(onToken) {
   return _syncTokenClient;
 }
 
+// Google's "silent" prompt:'none' request still internally attempts to open
+// a real popup window when it can't resolve instantly - and a window.open()
+// with no genuine click behind it is unconditionally blocked by every
+// browser, every time, with no workaround (confirmed via real console
+// evidence: the failing requestAccessToken call traced back to an automatic
+// page-load check, not a button click). navigator.userActivation.isActive
+// tells us, reliably, whether the current call is still within a real click
+// - if it isn't, skip the attempt entirely instead of guaranteeing a blocked
+// popup and a confusing browser notification for something the user never
+// initiated.
+function _syncHasUserActivation() {
+  return typeof navigator !== 'undefined' && !!navigator.userActivation && navigator.userActivation.isActive;
+}
+
 // Resolves an access token without ever showing a popup; resolves null if
-// the browser has no existing Google session / prior consent to reuse.
+// the browser has no existing Google session / prior consent to reuse, OR
+// if there's no active user gesture to safely attempt it under.
 function syncSilentToken() {
+  if (!_syncHasUserActivation()) {
+    console.log('[sync] skipping silent token refresh - no active user gesture right now, so it would just be blocked. Using the last-synced local copy instead.');
+    return Promise.resolve(null);
+  }
   return new Promise(resolve => {
     const client = _syncGetTokenClient(resp => {
       if (resp && resp.access_token) { _syncAccessToken = resp.access_token; resolve(resp.access_token); }
@@ -100,7 +119,11 @@ function syncSilentToken() {
 // of leaving the caller waiting forever.
 function syncInteractiveToken() {
   const clickedAt = performance.now();
-  console.log('[sync] syncInteractiveToken() called at', new Date().toISOString(), '- was token client already warm?', !!_syncTokenClient);
+  console.log('[sync] syncInteractiveToken() called at', new Date().toISOString(), '- was token client already warm?', !!_syncTokenClient, '- active user gesture right now?', _syncHasUserActivation());
+  if (!_syncHasUserActivation()) {
+    console.log('[sync] no active user gesture - this call is not directly inside a click handler, so the popup would be blocked. Failing fast instead of waiting 20s.');
+    return Promise.reject(new Error('popup_blocked_or_timed_out'));
+  }
   return new Promise((resolve, reject) => {
     let settled = false;
     const timer = setTimeout(() => {
