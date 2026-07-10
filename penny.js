@@ -14,11 +14,26 @@
    nothing here can call saveState() or mutate `state`.
    ===================================================================== */
 
-const PENNY_MODEL = 'gemini-2.5-flash';
 // NOTE: v1beta is deprecated for generateContent/streamGenerateContent on
 // production API keys as of mid-2026 (returns 404 even for valid, current
 // models like gemini-2.5-flash) - v1 is the correct stable endpoint now.
 const PENNY_API_BASE = 'https://generativelanguage.googleapis.com/v1';
+
+// Tried in order for every request. The free tier hands out a separate
+// small daily quota per model, so rotating through several models (newest
+// first) meaningfully stretches how many questions a user can ask per day
+// before hitting a real rate limit. Entries with dailyLimit:null are the
+// final fallbacks - always tried, no local pre-emptive cutoff (Google's
+// own 429 is what ends the chain).
+const PENNY_MODEL_CHAIN = [
+  { id: 'gemini-3.5-flash',      dailyLimit: 5 },
+  { id: 'gemini-3.1-flash-lite', dailyLimit: 15 },
+  { id: 'gemini-3-flash',        dailyLimit: 5 },
+  { id: 'gemini-2.5-flash',      dailyLimit: null },
+  { id: 'gemini-2.5-flash-lite', dailyLimit: null },
+];
+const PENNY_MODEL_USAGE_KEY = 'evobudget_penny_model_usage_v1';
+
 const PENNY_DB_NAME = 'EvoBudgetPennyVault';
 const PENNY_DB_VERSION = 1;
 const PENNY_STORE = 'secrets';
@@ -138,6 +153,47 @@ function pennyIncrementUsage() {
 }
 function pennyUsageLabel() { return tf('sett_penny_usage_count', pennyGetUsage().count); }
 
+// Per-model, per-day request counts backing the fallback chain below.
+// Separate from pennyGetUsage() (that's the user-facing monthly total);
+// this one resets daily to match how the free tier's per-model RPD caps
+// actually reset, and is never shown in the UI - it just drives routing.
+function pennyTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function pennyGetModelUsage() {
+  let rec;
+  try { rec = JSON.parse(localStorage.getItem(PENNY_MODEL_USAGE_KEY) || 'null'); } catch { rec = null; }
+  const dk = pennyTodayKey();
+  if (!rec || rec.dateKey !== dk) {
+    rec = { dateKey: dk, counts: {} };
+    localStorage.setItem(PENNY_MODEL_USAGE_KEY, JSON.stringify(rec));
+  }
+  return rec;
+}
+function pennyRecordModelUse(modelId) {
+  const rec = pennyGetModelUsage();
+  rec.counts[modelId] = (rec.counts[modelId] || 0) + 1;
+  localStorage.setItem(PENNY_MODEL_USAGE_KEY, JSON.stringify(rec));
+}
+// Called when Google itself returns 429 for a model - trusts Google's
+// real quota over our local guess and stops offering that model for the
+// rest of today, even if our own count hadn't reached its local budget.
+function pennyMarkModelExhausted(modelId) {
+  const rec = pennyGetModelUsage();
+  const entry = PENNY_MODEL_CHAIN.find(m => m.id === modelId);
+  rec.counts[modelId] = entry && entry.dailyLimit != null ? entry.dailyLimit : ((rec.counts[modelId] || 0) + 1);
+  localStorage.setItem(PENNY_MODEL_USAGE_KEY, JSON.stringify(rec));
+}
+function pennyAvailableModels() {
+  const usage = pennyGetModelUsage();
+  const available = PENNY_MODEL_CHAIN.filter(m => m.dailyLimit == null || (usage.counts[m.id] || 0) < m.dailyLimit);
+  // If every model looks locally exhausted, still try them all in order -
+  // our local count is only a guess and may be stale (new day, another
+  // client using the same key, etc.); Google's own 429 is the real signal.
+  return (available.length ? available : PENNY_MODEL_CHAIN).map(m => m.id);
+}
+
 // ══════════════════════════════════════════════════════════════════════
 //  Nav icon + Settings orchestration
 // ══════════════════════════════════════════════════════════════════════
@@ -254,30 +310,32 @@ function pennyBuildSystemInstruction() {
   }] };
 }
 function pennyToolDeclarations() {
+  // NOTE: parameter "type" values are lowercase ('object'/'string'/...) per
+  // Gemini's current REST schema, not the older uppercase enum form.
   return [{
     functionDeclarations: [
       { name: 'get_budget_summary', description: "Returns the user's total income, spending, savings, and leftover amount for a period.",
-        parameters: { type: 'OBJECT', properties: { period: { type: 'STRING', enum: ['current', 'previous'], description: 'Which period to summarize.' } }, required: ['period'] } },
+        parameters: { type: 'object', properties: { period: { type: 'string', enum: ['current', 'previous'], description: 'Which period to summarize.' } }, required: ['period'] } },
       { name: 'get_transactions', description: "Returns a list of the user's recent transactions, optionally filtered.",
-        parameters: { type: 'OBJECT', properties: {
-          type: { type: 'STRING', enum: ['income', 'expense', 'bill', 'savings', 'debt', 'subscription', 'sinking_fund'], description: 'Filter by transaction type.' },
-          category: { type: 'STRING', description: 'Filter by category name.' },
-          startDate: { type: 'STRING', description: 'YYYY-MM-DD, inclusive start date filter.' },
-          endDate: { type: 'STRING', description: 'YYYY-MM-DD, inclusive end date filter.' },
-          limit: { type: 'NUMBER', description: 'Max rows to return (default and max 25).' },
+        parameters: { type: 'object', properties: {
+          type: { type: 'string', enum: ['income', 'expense', 'bill', 'savings', 'debt', 'subscription', 'sinking_fund'], description: 'Filter by transaction type.' },
+          category: { type: 'string', description: 'Filter by category name.' },
+          startDate: { type: 'string', description: 'YYYY-MM-DD, inclusive start date filter.' },
+          endDate: { type: 'string', description: 'YYYY-MM-DD, inclusive end date filter.' },
+          limit: { type: 'number', description: 'Max rows to return (default and max 25).' },
         } } },
       { name: 'get_category_breakdown', description: 'Returns actual vs. expected amounts per category for one budget section for the current period, sorted by actual amount descending.',
-        parameters: { type: 'OBJECT', properties: { section: { type: 'STRING', enum: ['income', 'expenses', 'bills', 'savings'] } }, required: ['section'] } },
+        parameters: { type: 'object', properties: { section: { type: 'string', enum: ['income', 'expenses', 'bills', 'savings'] } }, required: ['section'] } },
       { name: 'get_debts', description: "Returns the user's current debts (balance, APR, minimum payment) and an estimated payoff timeline using their chosen strategy.",
-        parameters: { type: 'OBJECT', properties: {} } },
+        parameters: { type: 'object', properties: {} } },
       { name: 'get_subscriptions', description: "Returns the user's active subscriptions and monthly/annual totals.",
-        parameters: { type: 'OBJECT', properties: {} } },
+        parameters: { type: 'object', properties: {} } },
       { name: 'get_sinking_funds', description: "Returns the user's sinking funds with progress toward each target.",
-        parameters: { type: 'OBJECT', properties: {} } },
+        parameters: { type: 'object', properties: {} } },
       { name: 'render_chart', description: 'Displays a chart of previously-fetched data in the chat. Only call after a data-retrieval function in this same turn; pass back its dataRef.',
-        parameters: { type: 'OBJECT', properties: {
-          chartType: { type: 'STRING', enum: ['category_donut', 'cash_flow'] },
-          dataRef: { type: 'STRING', description: 'The dataRef id from the data function result to visualize.' },
+        parameters: { type: 'object', properties: {
+          chartType: { type: 'string', enum: ['category_donut', 'cash_flow'] },
+          dataRef: { type: 'string', description: 'The dataRef id from the data function result to visualize.' },
         }, required: ['chartType', 'dataRef'] } },
     ],
   }];
@@ -400,20 +458,25 @@ function pennyRenderChartInMessage(chartType, dataResult, bubbleEl) {
 // ══════════════════════════════════════════════════════════════════════
 //  Gemini streaming request + multi-turn function-calling round trip
 // ══════════════════════════════════════════════════════════════════════
-async function pennyStreamGenerateContent(requestBody, onEvent) {
+async function pennyStreamGenerateContent(modelId, requestBody, onEvent) {
   const key = await pennyLoadApiKeyPlain();
   if (!key) throw new Error('penny_no_key');
-  const url = `${PENNY_API_BASE}/models/${PENNY_MODEL}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`;
+  const url = `${PENNY_API_BASE}/models/${modelId}:streamGenerateContent?alt=sse`;
   let resp;
   try {
-    resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+    // The key travels as a header, not a ?key= query param - this is
+    // Gemini's current documented approach, and it also means the key
+    // never ends up sitting in the URL bar, browser history, or
+    // server access logs.
+    resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(requestBody) });
   } catch (e) {
     const err = new Error('penny_network'); err.cause = e; throw err;
   }
   if (!resp.ok) {
     let bodyJson = null;
     try { bodyJson = await resp.json(); } catch {}
-    const err = new Error('penny_http_error'); err.status = resp.status; err.body = bodyJson; throw err;
+    console.error('[penny] Gemini request failed:', modelId, resp.status, bodyJson);
+    const err = new Error('penny_http_error'); err.status = resp.status; err.body = bodyJson; err.modelId = modelId; throw err;
   }
   const reader = resp.body.getReader();
   const decoder = new TextDecoder();
@@ -435,6 +498,30 @@ async function pennyStreamGenerateContent(requestBody, onEvent) {
     }
   }
 }
+// Tries each model in PENNY_MODEL_CHAIN (skipping ones already known to be
+// exhausted for today) until one accepts the request. Only a 429 triggers
+// a fallback to the next model - any other failure (bad key, network,
+// safety block) propagates immediately, since trying a different model
+// won't fix those.
+async function pennyStreamWithFallback(requestBody, onEvent) {
+  const models = pennyAvailableModels();
+  let lastErr = null;
+  for (const modelId of models) {
+    try {
+      await pennyStreamGenerateContent(modelId, requestBody, onEvent);
+      pennyRecordModelUse(modelId);
+      return modelId;
+    } catch (e) {
+      if (e.message === 'penny_http_error' && e.status === 429) {
+        pennyMarkModelExhausted(modelId);
+        lastErr = e;
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw lastErr || new Error('penny_http_error');
+}
 function pennyClassifyHttpError(err) {
   if (err.message === 'penny_network') return 'network';
   if (err.message === 'penny_no_key') return 'invalid_key';
@@ -442,7 +529,7 @@ function pennyClassifyHttpError(err) {
     const status = err.status;
     const gstatus = err.body?.error?.status;
     if (status === 429) return 'rate_limited';
-    if (status === 400 || status === 403 || gstatus === 'INVALID_ARGUMENT' || gstatus === 'PERMISSION_DENIED' || gstatus === 'UNAUTHENTICATED') return 'invalid_key';
+    if (status === 401 || status === 403 || gstatus === 'PERMISSION_DENIED' || gstatus === 'UNAUTHENTICATED') return 'invalid_key';
     return 'unknown';
   }
   return 'unknown';
@@ -467,7 +554,7 @@ async function pennySendMessage(userText) {
     while (guard++ < 4) {
       let sawFunctionCall = false;
       const callsThisLeg = [];
-      await pennyStreamGenerateContent({
+      await pennyStreamWithFallback({
         system_instruction: pennyBuildSystemInstruction(),
         tools: pennyToolDeclarations(),
         generationConfig: { maxOutputTokens: 400, temperature: 0.3 },
@@ -519,7 +606,7 @@ async function pennySendMessage(userText) {
   } catch (e) {
     pennyHideTyping();
     pennyRenderChatError(pennyClassifyHttpError(e), text);
-    console.error('[penny] turn failed:', e);
+    console.error('[penny] turn failed:', e.message, '- HTTP status:', e.status, '- model:', e.modelId, '- response body:', e.body, '- full error:', e);
   } finally {
     _pennyTurnInFlight = false;
     pennySetInputEnabled(true);
@@ -697,9 +784,9 @@ function pennySetInputEnabled(on) {
 function pennyRenderChatError(kind, retryText) {
   const list = document.getElementById('pennyMessages');
   if (!list) return;
-  const msgKey = { invalid_key: 'penny_err_invalid_key', rate_limited: 'penny_err_rate_limited', network: 'penny_err_network', blocked: 'penny_err_blocked', no_key: 'penny_no_key_notice' }[kind] || 'penny_err_blocked';
+  const msgKey = { invalid_key: 'penny_err_invalid_key', rate_limited: 'penny_err_rate_limited', network: 'penny_err_network', blocked: 'penny_err_blocked', no_key: 'penny_no_key_notice', unknown: 'penny_err_unknown' }[kind] || 'penny_err_unknown';
   const showSettings = kind === 'invalid_key' || kind === 'no_key';
-  const showRetry = (kind === 'rate_limited' || kind === 'network') && !!retryText;
+  const showRetry = (kind === 'rate_limited' || kind === 'network' || kind === 'unknown') && !!retryText;
   const row = document.createElement('div');
   row.className = 'penny-msg penny-msg--penny penny-msg--error';
   row.innerHTML = `<span class="penny-msg-avatar">${PENNY_ICON_SVG}</span>
