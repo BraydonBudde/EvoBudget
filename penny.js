@@ -597,7 +597,18 @@ async function pennySendMessage(userText) {
         contents: _pennyContents,
       }, chunk => {
         const cand = chunk.candidates && chunk.candidates[0];
-        if (!cand) return;
+        if (!cand) {
+          // A 200 response with no candidates usually means Google blocked
+          // the PROMPT itself (promptFeedback.blockReason) before generating
+          // anything - as opposed to a normal blocked/empty candidate, which
+          // does show up in `candidates`. Logging the raw chunk either way,
+          // since silently swallowing it is exactly what made this
+          // impossible to diagnose from a bare "couldn't come up with a
+          // safe answer" message.
+          console.warn('[penny] response chunk had no candidates - full chunk:', JSON.stringify(chunk));
+          return;
+        }
+        console.debug('[penny] chunk:', JSON.stringify(chunk));
         finishReason = cand.finishReason || finishReason;
         const parts = cand.content?.parts || [];
         for (const part of parts) {
@@ -633,6 +644,7 @@ async function pennySendMessage(userText) {
 
     pennyHideTyping();
     if (!bubbleEl || !accumulatedText.trim()) {
+      console.warn('[penny] turn ended with nothing to show - finishReason:', finishReason, '- accumulatedText:', JSON.stringify(accumulatedText));
       pennyRenderChatError('blocked');
     } else {
       _pennyContents.push({ role: 'model', parts: [{ text: accumulatedText }] });
