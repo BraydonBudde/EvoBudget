@@ -14,10 +14,15 @@
    nothing here can call saveState() or mutate `state`.
    ===================================================================== */
 
-// NOTE: v1beta is deprecated for generateContent/streamGenerateContent on
-// production API keys as of mid-2026 (returns 404 even for valid, current
-// models like gemini-2.5-flash) - v1 is the correct stable endpoint now.
-const PENNY_API_BASE = 'https://generativelanguage.googleapis.com/v1';
+// NOTE: v1 has dropped "tools"/"systemInstruction" support from the
+// classic generateContent/streamGenerateContent methods entirely (moved
+// exclusively to Google's newer Interactions API) - confirmed live: every
+// model in the chain below rejected both fields identically under v1,
+// which rules out a per-model gap. v1beta still supports them on the
+// classic method. The original 404 seen under v1beta was most likely an
+// artifact of the old ?key= query-param auth (since replaced with the
+// x-goog-api-key header below), not v1beta itself being unavailable.
+const PENNY_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 // Tried in order for every request. The free tier hands out a separate
 // small daily quota per model, so rotating through several models (newest
