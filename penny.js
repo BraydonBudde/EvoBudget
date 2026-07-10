@@ -15,7 +15,10 @@
    ===================================================================== */
 
 const PENNY_MODEL = 'gemini-2.5-flash';
-const PENNY_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
+// NOTE: v1beta is deprecated for generateContent/streamGenerateContent on
+// production API keys as of mid-2026 (returns 404 even for valid, current
+// models like gemini-2.5-flash) - v1 is the correct stable endpoint now.
+const PENNY_API_BASE = 'https://generativelanguage.googleapis.com/v1';
 const PENNY_DB_NAME = 'EvoBudgetPennyVault';
 const PENNY_DB_VERSION = 1;
 const PENNY_STORE = 'secrets';
