@@ -187,11 +187,13 @@ function pennyMarkModelExhausted(modelId) {
 }
 function pennyAvailableModels() {
   const usage = pennyGetModelUsage();
-  const available = PENNY_MODEL_CHAIN.filter(m => m.dailyLimit == null || (usage.counts[m.id] || 0) < m.dailyLimit);
+  const notKnownUnsupported = PENNY_MODEL_CHAIN.filter(m => !_pennyUnsupportedModels.has(m.id));
+  const pool = notKnownUnsupported.length ? notKnownUnsupported : PENNY_MODEL_CHAIN;
+  const available = pool.filter(m => m.dailyLimit == null || (usage.counts[m.id] || 0) < m.dailyLimit);
   // If every model looks locally exhausted, still try them all in order -
   // our local count is only a guess and may be stale (new day, another
   // client using the same key, etc.); Google's own 429 is the real signal.
-  return (available.length ? available : PENNY_MODEL_CHAIN).map(m => m.id);
+  return (available.length ? available : pool).map(m => m.id);
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -500,11 +502,27 @@ async function pennyStreamGenerateContent(modelId, requestBody, onEvent) {
     }
   }
 }
+// Some models in the chain may not support tools/systemInstruction at all
+// under this classic method (newest models can be Interactions-API-only) -
+// that shows up as a 400 "Unknown name ... Cannot find field" rejection of
+// those specific fields, not a value/argument problem. Detected separately
+// from a generic 400 so a real malformed-request bug still surfaces to the
+// user instead of being silently swallowed by the fallback loop.
+function pennyLooksLikeUnsupportedFieldsError(body) {
+  const msg = body?.error?.message || '';
+  return msg.includes('Unknown name') && (msg.includes('systemInstruction') || msg.includes('tools'));
+}
+// In-memory only (not persisted) - a model found to lack tool-calling
+// support doesn't need re-discovering every session, just for the rest of
+// this page load, since it's cheap to re-check next time the app loads.
+let _pennyUnsupportedModels = new Set();
+
 // Tries each model in PENNY_MODEL_CHAIN (skipping ones already known to be
-// exhausted for today) until one accepts the request. Only a 429 triggers
-// a fallback to the next model - any other failure (bad key, network,
-// safety block) propagates immediately, since trying a different model
-// won't fix those.
+// exhausted for today, or found this session to not support tool calling)
+// until one accepts the request. Only a 429 (quota) or an "unsupported
+// field" 400 (model-capability mismatch) triggers a fallback to the next
+// model - any other failure (bad key, network, safety block) propagates
+// immediately, since trying a different model won't fix those.
 async function pennyStreamWithFallback(requestBody, onEvent) {
   const models = pennyAvailableModels();
   let lastErr = null;
@@ -516,6 +534,12 @@ async function pennyStreamWithFallback(requestBody, onEvent) {
     } catch (e) {
       if (e.message === 'penny_http_error' && e.status === 429) {
         pennyMarkModelExhausted(modelId);
+        lastErr = e;
+        continue;
+      }
+      if (e.message === 'penny_http_error' && e.status === 400 && pennyLooksLikeUnsupportedFieldsError(e.body)) {
+        console.warn(`[penny] ${modelId} doesn't support tool calling on this API - skipping it for the rest of this session.`);
+        _pennyUnsupportedModels.add(modelId);
         lastErr = e;
         continue;
       }
