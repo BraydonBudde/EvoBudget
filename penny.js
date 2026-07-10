@@ -475,7 +475,9 @@ async function pennyStreamGenerateContent(modelId, requestBody, onEvent) {
   if (!resp.ok) {
     let bodyJson = null;
     try { bodyJson = await resp.json(); } catch {}
-    console.error('[penny] Gemini request failed:', modelId, resp.status, bodyJson);
+    // Logged as a pre-formatted string (not the raw object) so DevTools
+    // prints it in full rather than a collapsible, width-truncated preview.
+    console.error(`[penny] Gemini request failed: ${modelId} ${resp.status}\n${JSON.stringify(bodyJson, null, 2)}\nRequest body sent:\n${JSON.stringify(requestBody, null, 2)}`);
     const err = new Error('penny_http_error'); err.status = resp.status; err.body = bodyJson; err.modelId = modelId; throw err;
   }
   const reader = resp.body.getReader();
@@ -555,7 +557,12 @@ async function pennySendMessage(userText) {
       let sawFunctionCall = false;
       const callsThisLeg = [];
       await pennyStreamWithFallback({
-        system_instruction: pennyBuildSystemInstruction(),
+        // NOTE: the REST JSON body uses camelCase field names, not the
+        // snake_case shown in some SDK/tutorial examples - systemInstruction,
+        // not system_instruction. Sending the wrong casing gets silently
+        // rejected as an unrecognized field (400 INVALID_ARGUMENT) rather
+        // than erroring on the value, which is what happened here.
+        systemInstruction: pennyBuildSystemInstruction(),
         tools: pennyToolDeclarations(),
         generationConfig: { maxOutputTokens: 400, temperature: 0.3 },
         contents: _pennyContents,
