@@ -34,6 +34,15 @@
         <span class="app-title-editable" id="appTitleText" role="button" tabindex="0" title="Rename">Ultimate Budget</span>
       </div>
       <div class="tool-topbar-right">
+        <button class="penny-nav-btn penny-off" id="pennyNavBtn" type="button" aria-label="Enable Penny">
+          <span class="penny-nav-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3l1.8 4.9L18.7 9l-4.9 1.8L12 15.7l-1.8-4.9L5.3 9l4.9-1.8L12 3z"/>
+              <path d="M19 15l.9 2.4L22.3 18l-2.4.9L19 21.3l-.9-2.4L15.7 18l2.4-.9L19 15z"/>
+            </svg>
+          </span>
+          <span class="penny-nav-pill-text" id="pennyNavPillText">Enable Penny</span>
+        </button>
         <button class="btn-icon" id="settingsNavBtn" type="button" aria-label="Settings">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
@@ -90,6 +99,7 @@
 
   <script src="https://accounts.google.com/gsi/client" async defer onload="if(typeof syncPrewarmTokenClient==='function')syncPrewarmTokenClient();"></script>
   <script src="sync.js"></script>
+  <script src="penny.js"></script>
   <script src="ultimate-budget.js"></script>
 </body>
 </html>
