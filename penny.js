@@ -630,7 +630,7 @@ async function pennySendMessage(userText) {
   pennyShowTyping();
   _pennyContents.push({ role: 'user', parts: [{ text }] });
 
-  let bubbleEl = null, accumulatedText = '', finishReason = null, lastUsedModel = null;
+  let bubbleEl = null, accumulatedText = '', finishReason = null, lastUsedModel = null, lastThoughtSignature = null;
   try {
     let guard = 0;
     while (guard++ < 4) {
@@ -663,8 +663,16 @@ async function pennySendMessage(userText) {
         finishReason = cand.finishReason || finishReason;
         const parts = cand.content?.parts || [];
         for (const part of parts) {
+          // Newer "thinking" models attach a thoughtSignature to parts
+          // (sibling of functionCall/text, not nested inside them) that
+          // MUST be echoed back verbatim when that part is replayed as
+          // conversation history, or Google rejects the follow-up request
+          // with "Function call is missing a thought_signature". Keeping
+          // the whole part object (not just part.functionCall) preserves
+          // it automatically, whatever else Google attaches to it.
+          if (part.thoughtSignature) lastThoughtSignature = part.thoughtSignature;
           if (part.functionCall) {
-            callsThisLeg.push(part.functionCall);
+            callsThisLeg.push(part);
             sawFunctionCall = true;
           } else if (part.text) {
             if (!bubbleEl) { pennyHideTyping(); bubbleEl = pennyAppendMessage('penny', ''); }
@@ -678,15 +686,15 @@ async function pennySendMessage(userText) {
       });
 
       if (sawFunctionCall) {
-        _pennyContents.push({ role: 'model', parts: callsThisLeg.map(fc => ({ functionCall: fc })) });
+        _pennyContents.push({ role: 'model', parts: callsThisLeg });
         // render_chart needs somewhere to render into, but it can resolve
         // before any text has streamed in this turn - ensure the answer
         // bubble already exists so the chart isn't silently dropped.
-        if (callsThisLeg.some(fc => fc.name === 'render_chart') && !bubbleEl) {
+        if (callsThisLeg.some(part => part.functionCall.name === 'render_chart') && !bubbleEl) {
           pennyHideTyping();
           bubbleEl = pennyAppendMessage('penny', '');
         }
-        const responses = callsThisLeg.map(fc => ({ functionResponse: { name: fc.name, response: pennyExecuteTool(fc.name, fc.args, { bubbleEl }) } }));
+        const responses = callsThisLeg.map(part => ({ functionResponse: { name: part.functionCall.name, response: pennyExecuteTool(part.functionCall.name, part.functionCall.args, { bubbleEl }) } }));
         _pennyContents.push({ role: 'user', parts: responses });
         continue;
       }
@@ -699,7 +707,11 @@ async function pennySendMessage(userText) {
       pennyRenderChatError('blocked');
       if (lastUsedModel) pennyRunDiagnosticBareCall(text, lastUsedModel);
     } else {
-      _pennyContents.push({ role: 'model', parts: [{ text: accumulatedText }] });
+      // Defensive: carry forward the last thoughtSignature seen this turn
+      // on the final text part too, in case a later turn ever needs it
+      // the same way functionCall parts do.
+      const finalPart = lastThoughtSignature ? { text: accumulatedText, thoughtSignature: lastThoughtSignature } : { text: accumulatedText };
+      _pennyContents.push({ role: 'model', parts: [finalPart] });
       pennySpeak(accumulatedText);
       pennyIncrementUsage();
     }
