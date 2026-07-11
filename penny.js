@@ -548,6 +548,16 @@ async function pennyStreamWithFallback(requestBody, onEvent) {
         lastErr = e;
         continue;
       }
+      if (e.message === 'penny_http_error' && e.status === 404) {
+        // Google retires specific model IDs from time to time ("no longer
+        // available to new users") independent of anything this app
+        // controls - skip it the same way as an unsupported-fields 400
+        // rather than hard-failing the whole chain on a dead model.
+        console.warn(`[penny] ${modelId} returned 404 (likely retired/unavailable for this key) - skipping it for the rest of this session.`);
+        _pennyUnsupportedModels.add(modelId);
+        lastErr = e;
+        continue;
+      }
       throw e;
     }
   }
@@ -566,6 +576,34 @@ function pennyClassifyHttpError(err) {
   return 'unknown';
 }
 
+// Diagnostic-only: fires automatically whenever a normal turn comes back
+// with nothing to show. Makes one minimal, isolated request with the
+// SAME user text but no tools/systemInstruction at all, against the same
+// model that just came back empty, and logs whether a bare call succeeds.
+// This directly answers "is it the tools/system-instruction that's
+// causing this, or something else" without needing another full manual
+// retest round - the console will show which one it is on the very next
+// failure.
+async function pennyRunDiagnosticBareCall(userText, modelId) {
+  console.warn(`[penny] DIAGNOSTIC: retrying "${userText}" against ${modelId} with NO tools/systemInstruction to isolate the cause...`);
+  let bareText = '';
+  try {
+    await pennyStreamGenerateContent(modelId, { contents: [{ role: 'user', parts: [{ text: userText }] }] }, chunk => {
+      const cand = chunk.candidates && chunk.candidates[0];
+      if (!cand) { console.warn('[penny] DIAGNOSTIC: bare call also had no candidates - full chunk:', JSON.stringify(chunk)); return; }
+      for (const part of cand.content?.parts || []) if (part.text) bareText += part.text;
+    });
+  } catch (e) {
+    console.warn('[penny] DIAGNOSTIC: bare call itself failed:', e.message, '- status:', e.status, '- body:', JSON.stringify(e.body));
+    return;
+  }
+  if (bareText.trim()) {
+    console.warn(`[penny] DIAGNOSTIC RESULT: a bare call with NO tools/systemInstruction WORKS (got: "${bareText}"). This confirms tools/systemInstruction inclusion is what's causing the empty response.`);
+  } else {
+    console.warn('[penny] DIAGNOSTIC RESULT: the bare call ALSO came back empty with no error - tools/systemInstruction are not the cause; something else is blocking or filtering this specific model/request.');
+  }
+}
+
 let _pennyContents = [];
 let _pennyTurnInFlight = false;
 async function pennySendMessage(userText) {
@@ -579,13 +617,13 @@ async function pennySendMessage(userText) {
   pennyShowTyping();
   _pennyContents.push({ role: 'user', parts: [{ text }] });
 
-  let bubbleEl = null, accumulatedText = '', finishReason = null;
+  let bubbleEl = null, accumulatedText = '', finishReason = null, lastUsedModel = null;
   try {
     let guard = 0;
     while (guard++ < 4) {
       let sawFunctionCall = false;
       const callsThisLeg = [];
-      await pennyStreamWithFallback({
+      lastUsedModel = await pennyStreamWithFallback({
         // NOTE: the REST JSON body uses camelCase field names, not the
         // snake_case shown in some SDK/tutorial examples - systemInstruction,
         // not system_instruction. Sending the wrong casing gets silently
@@ -646,6 +684,7 @@ async function pennySendMessage(userText) {
     if (!bubbleEl || !accumulatedText.trim()) {
       console.warn('[penny] turn ended with nothing to show - finishReason:', finishReason, '- accumulatedText:', JSON.stringify(accumulatedText));
       pennyRenderChatError('blocked');
+      if (lastUsedModel) pennyRunDiagnosticBareCall(text, lastUsedModel);
     } else {
       _pennyContents.push({ role: 'model', parts: [{ text: accumulatedText }] });
       pennySpeak(accumulatedText);
