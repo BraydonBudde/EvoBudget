@@ -45,8 +45,12 @@ const PENNY_STORE = 'secrets';
 const PENNY_USAGE_KEY = 'evobudget_penny_usage_v1';
 const PENNY_VOICE_KEY = 'evobudget_penny_voice_on';
 
-const PENNY_ICON_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.9L18.7 9l-4.9 1.8L12 15.7l-1.8-4.9L5.3 9l4.9-1.8L12 3z"/><path d="M19 15l.9 2.4L22.3 18l-2.4.9L19 21.3l-.9-2.4L15.7 18l2.4-.9L19 15z"/></svg>`;
+// translate(-1.8,0) recenters the composite shape (big + small sparkle) -
+// their combined bounding box otherwise skews right of the 24x24 viewBox
+// center, which reads as visibly off-center at small sizes.
+const PENNY_ICON_SVG = `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-1.8,0)"><path d="M12 3l1.8 4.9L18.7 9l-4.9 1.8L12 15.7l-1.8-4.9L5.3 9l4.9-1.8L12 3z"/><path d="M19 15l.9 2.4L22.3 18l-2.4.9L19 21.3l-.9-2.4L15.7 18l2.4-.9L19 15z"/></g></svg>`;
 const PENNY_SPEAKER_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>`;
+const PENNY_SPEAKER_MUTED_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="1.5" y1="1.5" x2="22.5" y2="22.5"/></svg>`;
 
 const round2 = n => Math.round((Number(n) || 0) * 100) / 100;
 
@@ -313,7 +317,8 @@ function pennyBuildSystemInstruction() {
     "Keep every answer under about 60 words unless the user explicitly asks for more detail. " +
     "Use the currency symbol returned by the tools, not your own assumption. " +
     "If a tool returns no data, say so plainly rather than guessing. " +
-    "You may call render_chart to visualize a breakdown, but only after already retrieving the underlying data via another tool in the same turn."
+    "You may call render_chart to visualize a breakdown, but only after already retrieving the underlying data via another tool in the same turn. " +
+    "For general spending questions, prefer get_category_breakdown with section='spending' so the chart covers every spending category, not just one section."
   }] };
 }
 function pennyToolDeclarations() {
@@ -331,8 +336,8 @@ function pennyToolDeclarations() {
           endDate: { type: 'string', description: 'YYYY-MM-DD, inclusive end date filter.' },
           limit: { type: 'number', description: 'Max rows to return (default and max 25).' },
         } } },
-      { name: 'get_category_breakdown', description: 'Returns actual vs. expected amounts per category for one budget section for the current period, sorted by actual amount descending.',
-        parameters: { type: 'object', properties: { section: { type: 'string', enum: ['income', 'expenses', 'bills', 'savings'] } }, required: ['section'] } },
+      { name: 'get_category_breakdown', description: "Returns actual vs. expected amounts per category for the current period, sorted by actual amount descending. Use section='spending' for the user's OVERALL spending breakdown across every category that counts as spending (expenses, bills, debt payments, and subscriptions combined, matching the app's own Spending Breakdown chart) - this is almost always what a general \"where is my money going\" or \"show me a chart of my spending\" question means. Only use a specific section (expenses/bills/savings) when the user asks about that one section by name; use 'income' for income sources.",
+        parameters: { type: 'object', properties: { section: { type: 'string', enum: ['spending', 'income', 'expenses', 'bills', 'savings'] } }, required: ['section'] } },
       { name: 'get_debts', description: "Returns the user's current debts (balance, APR, minimum payment) and an estimated payoff timeline using their chosen strategy.",
         parameters: { type: 'object', properties: {} } },
       { name: 'get_subscriptions', description: "Returns the user's active subscriptions and monthly/annual totals.",
@@ -375,9 +380,24 @@ function pennyToolGetTransactions(args) {
     count: list.length, transactions: list.map(tx => ({ date: tx.date, type: tx.type, category: tx.category, amount: round2(tx.amount), description: tx.description || '' })) };
 }
 function pennyToolGetCategoryBreakdown(args) {
-  const section = ['income', 'expenses', 'bills', 'savings'].includes(args?.section) ? args.section : 'expenses';
+  const validSections = ['income', 'expenses', 'bills', 'savings', 'spending'];
+  const section = validSections.includes(args?.section) ? args.section : 'expenses';
   const act = computeActuals();
-  const rows = (state.budgets[section] || []).map(r => ({ category: r.category, expected: round2(r.expected || 0), actual: round2(act[section][r.category] || 0) }));
+  let rows;
+  if (section === 'spending') {
+    // Combined view across every category that counts as "spending" -
+    // expenses, bills, debt payments, and subscriptions - matching the
+    // Dashboard's own "Spending Breakdown" chart. No row-count cap: every
+    // category the user has appears here, not just a handful.
+    rows = [
+      ...Object.entries(act.expenses || {}).map(([category, actual]) => ({ category, actual, expected: round2((state.budgets.expenses.find(r => r.category === category)?.expected) || 0) })),
+      ...Object.entries(act.bills || {}).map(([category, actual]) => ({ category, actual, expected: round2((state.budgets.bills.find(r => r.category === category)?.expected) || 0) })),
+      ...Object.entries(act.debt || {}).map(([category, actual]) => ({ category: category + ' (debt)', actual, expected: 0 })),
+      ...Object.entries(act.subscription || {}).map(([category, actual]) => ({ category: category + ' (subscription)', actual, expected: 0 })),
+    ].map(r => ({ ...r, actual: round2(r.actual) }));
+  } else {
+    rows = (state.budgets[section] || []).map(r => ({ category: r.category, expected: round2(r.expected || 0), actual: round2(act[section][r.category] || 0) }));
+  }
   rows.sort((a, b) => b.actual - a.actual);
   const total = rows.reduce((s, r) => s + r.actual, 0);
   return { dataRef: 'cat_' + section + '_' + state.settings.periodStart, section, currency: state.settings.currency, symbol: state.settings.symbol,
@@ -444,7 +464,8 @@ function pennyRenderChartInMessage(chartType, dataResult, bubbleEl) {
   if (chartType === 'category_donut' && dataResult.items) {
     const total = dataResult.items.reduce((t, i) => t + (i.actual || 0), 0);
     const segs = dataResult.items.filter(i => i.actual > 0).map((i, idx) => ({ label: i.category, value: i.actual, pct: total > 0 ? i.actual / total * 100 : 0, color: COLORS[idx % COLORS.length] }));
-    html = `<div class="penny-chart-block"><div class="donut-block">${svgDonut(segs, 96, 13)}<div class="donut-legend">${segs.slice(0, 5).map(s => `<div class="dleg-row"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${s.pct.toFixed(0)}%</span></div>`).join('')}</div></div></div>`;
+    // No cap on segments/legend rows - every category the user has shows up, not just the top few.
+    html = `<div class="penny-chart-block"><div class="donut-block"><div class="donut-block-chart">${svgDonut(segs, 96, 13)}</div><div class="donut-legend penny-donut-legend">${segs.map(s => `<div class="dleg-row"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${s.pct.toFixed(0)}%</span></div>`).join('')}</div></div></div>`;
   } else if (chartType === 'cash_flow' && dataResult.totalIncome != null) {
     const rows = [
       { label: t('bud_section_income'), val: dataResult.totalIncome, color: '#10b981' },
@@ -752,8 +773,8 @@ if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
   speechSynthesis.addEventListener?.('voiceschanged', () => { _pennyVoiceCache = null; });
 }
 function pennyVoiceEnabled() {
-  const v = localStorage.getItem(PENNY_VOICE_KEY);
-  return v === null ? true : v === '1';
+  // Muted by default - the user has to opt in to spoken replies.
+  return localStorage.getItem(PENNY_VOICE_KEY) === '1';
 }
 function pennyToggleVoice() {
   const next = !pennyVoiceEnabled();
@@ -807,8 +828,9 @@ function pennyBuildDrawer() {
   const wrap = document.createElement('div');
   wrap.id = 'pennyDrawer';
   wrap.className = 'penny-drawer';
+  const voiceOn = pennyVoiceEnabled();
   const voiceBtn = pennySpeechSupported()
-    ? `<button class="penny-icon-btn${pennyVoiceEnabled() ? '' : ' is-muted'}" id="pennyVoiceToggleBtn" type="button" aria-label="${esc(pennyVoiceEnabled() ? t('penny_voice_on') : t('penny_voice_off'))}">${PENNY_SPEAKER_ICON_SVG}</button>`
+    ? `<button class="penny-icon-btn${voiceOn ? '' : ' is-muted'}" id="pennyVoiceToggleBtn" type="button" aria-label="${esc(voiceOn ? t('penny_voice_on') : t('penny_voice_off'))}">${voiceOn ? PENNY_SPEAKER_ICON_SVG : PENNY_SPEAKER_MUTED_ICON_SVG}</button>`
     : '';
   wrap.innerHTML = `
     <div class="penny-drawer-scrim" id="pennyDrawerScrim"></div>
@@ -836,8 +858,10 @@ function pennyBuildDrawer() {
   document.getElementById('pennyDrawerScrim')?.addEventListener('click', pennyCloseChat);
   document.getElementById('pennyVoiceToggleBtn')?.addEventListener('click', e => {
     const on = pennyToggleVoice();
-    e.currentTarget.classList.toggle('is-muted', !on);
-    e.currentTarget.setAttribute('aria-label', on ? t('penny_voice_on') : t('penny_voice_off'));
+    const btn = e.currentTarget;
+    btn.classList.toggle('is-muted', !on);
+    btn.setAttribute('aria-label', on ? t('penny_voice_on') : t('penny_voice_off'));
+    btn.innerHTML = on ? PENNY_SPEAKER_ICON_SVG : PENNY_SPEAKER_MUTED_ICON_SVG;
   });
   document.getElementById('pennyInputForm')?.addEventListener('submit', e => {
     e.preventDefault();
