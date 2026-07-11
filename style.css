@@ -2286,12 +2286,16 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .penny-drawer-panel {
   position: absolute; top: 50%; left: 50%;
   width: min(572px, 92vw); max-height: min(952px, 92vh);
-  background: var(--surface-solid); border: 1px solid var(--border-faint); border-radius: 24px;
+  background: linear-gradient(160deg, #ffffff 0%, #f8f7ff 45%, #fdf6fa 100%);
+  border: 1px solid var(--border-faint); border-radius: 24px;
   box-shadow: 0 32px 80px -20px rgba(15,12,25,.5), 0 12px 32px -12px rgba(15,12,25,.3);
   display: flex; flex-direction: column; overflow: hidden;
   transform: translate(-50%, -50%) translateY(10px) scale(.94);
   opacity: 0;
   transition: transform .3s var(--ease), opacity .22s var(--ease);
+}
+[data-theme="dark"] .penny-drawer-panel {
+  background: linear-gradient(160deg, #17122a 0%, #0e0820 55%, #1c1024 100%);
 }
 .penny-drawer.is-open { pointer-events: auto; }
 .penny-drawer.is-open .penny-drawer-scrim { opacity: 1; }
@@ -2350,9 +2354,15 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .penny-chart-block .flow-bar { height: 100%; border-radius: 4px; }
 
 .penny-quick-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 12px; flex-shrink: 0; }
-.penny-input-row { display: flex; gap: 8px; padding: 14px 18px; border-top: 1px solid var(--border-faint); flex-shrink: 0; }
-.penny-input { flex: 1; border-radius: 999px; padding-left: 18px; padding-right: 18px; }
-.penny-send-btn { flex-shrink: 0; }
+.penny-input-row { display: flex; padding: 14px 18px; border-top: 1px solid var(--border-faint); flex-shrink: 0; }
+/* Ask button lives inside the pill, anchored to its right edge, rather
+   than sitting beside it as a separate element. */
+.penny-input-wrap { position: relative; flex: 1; display: flex; align-items: center; }
+.penny-input { width: 100%; border-radius: 999px; padding-left: 18px; padding-right: 78px; }
+.penny-send-btn {
+  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+  flex-shrink: 0; border-radius: 999px;
+}
 
 body.penny-drawer-open { overflow: hidden; }
 @media (max-width: 640px) {

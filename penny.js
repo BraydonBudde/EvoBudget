@@ -847,8 +847,10 @@ function pennyBuildDrawer() {
       <div class="penny-messages" id="pennyMessages"></div>
       <div class="penny-quick-actions" id="pennyQuickActions"></div>
       <form class="penny-input-row" id="pennyInputForm">
-        <input class="input penny-input" id="pennyInput" type="text" placeholder="${esc(t('penny_input_placeholder'))}" autocomplete="off">
-        <button class="btn btn-primary btn-sm penny-send-btn" id="pennySendBtn" type="submit">${t('penny_send')}</button>
+        <div class="penny-input-wrap">
+          <input class="input penny-input" id="pennyInput" type="text" placeholder="${esc(t('penny_input_placeholder'))}" autocomplete="off">
+          <button class="btn btn-primary btn-sm penny-send-btn" id="pennySendBtn" type="submit">${t('penny_send')}</button>
+        </div>
       </form>
     </div>`;
   document.body.appendChild(wrap);
@@ -878,7 +880,7 @@ function pennyBuildDrawer() {
 function pennyRenderQuickActions() {
   const wrap = document.getElementById('pennyQuickActions');
   if (!wrap) return;
-  const prompts = ['penny_qp_leftover', 'penny_qp_top_category', 'penny_qp_on_track', 'penny_qp_subscriptions', 'penny_qp_debt', 'penny_qp_chart'];
+  const prompts = ['penny_qp_leftover', 'penny_qp_top_category', 'penny_qp_chart'];
   wrap.innerHTML = prompts.map(k => `<button class="btn btn-ghost btn-sm penny-qp-btn" data-qp="${k}" type="button">${esc(t(k))}</button>`).join('');
   wrap.querySelectorAll('[data-qp]').forEach(b => b.addEventListener('click', () => pennySendMessage(t(b.dataset.qp))));
 }
