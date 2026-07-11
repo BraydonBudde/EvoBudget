@@ -30,12 +30,21 @@ const PENNY_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 // before hitting a real rate limit. Entries with dailyLimit:null are the
 // final fallbacks - always tried, no local pre-emptive cutoff (Google's
 // own 429 is what ends the chain).
+//
+// Only these two are confirmed to actually exist AND accept tool calling
+// on this API - verified directly against a real key. The chain used to
+// also include gemini-3-flash, gemini-2.5-flash, and gemini-2.5-flash-lite,
+// but real testing showed: gemini-3-flash was never a valid model ID at
+// all (404 "not found"), and Google has fully retired BOTH gemini-2.5-flash
+// AND gemini-2.5-flash-lite ("no longer available to new users") - so all
+// three were guaranteed dead weight that only got exercised (and started
+// producing visible errors) once the two real models' daily quotas ran out
+// from testing. Removed rather than left in, since the self-healing 404
+// handling below would otherwise silently retry three guaranteed failures
+// on every single question once the real quota is used up.
 const PENNY_MODEL_CHAIN = [
   { id: 'gemini-3.5-flash',      dailyLimit: 5 },
   { id: 'gemini-3.1-flash-lite', dailyLimit: 15 },
-  { id: 'gemini-3-flash',        dailyLimit: 5 },
-  { id: 'gemini-2.5-flash',      dailyLimit: null },
-  { id: 'gemini-2.5-flash-lite', dailyLimit: null },
 ];
 const PENNY_MODEL_USAGE_KEY = 'evobudget_penny_model_usage_v1';
 
