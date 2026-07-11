@@ -490,10 +490,20 @@ async function pennyStreamGenerateContent(modelId, requestBody, onEvent) {
   const reader = resp.body.getReader();
   const decoder = new TextDecoder();
   let buf = '';
+  let totalBytes = 0, framesParsed = 0;
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
-    buf += decoder.decode(value, { stream: true });
+    totalBytes += value.byteLength;
+    // Normalize CRLF/CR line endings to bare LF before frame-splitting -
+    // the SSE spec allows \r\n, \n, or lone \r as a line terminator, but
+    // this parser only ever recognized \n\n as a frame boundary. If the
+    // server sends \r\n\r\n, that string never contains an adjacent "\n\n"
+    // substring, so frames would never be found and the whole stream
+    // would silently accumulate in `buf` forever - a 200 OK with real
+    // quota consumed, zero errors thrown, and nothing ever reaching
+    // onEvent, which matches exactly what was observed.
+    buf += decoder.decode(value, { stream: true }).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     let idx;
     while ((idx = buf.indexOf('\n\n')) !== -1) {
       const frame = buf.slice(0, idx);
@@ -502,9 +512,12 @@ async function pennyStreamGenerateContent(modelId, requestBody, onEvent) {
       if (!line) continue;
       const jsonStr = line.slice(5).trim();
       if (!jsonStr) continue;
-      try { onEvent(JSON.parse(jsonStr)); }
+      try { onEvent(JSON.parse(jsonStr)); framesParsed++; }
       catch (e) { console.warn('[penny] failed to parse an SSE frame, skipping:', e); }
     }
+  }
+  if (framesParsed === 0) {
+    console.warn(`[penny] stream for ${modelId} closed with zero parsed frames - received ${totalBytes} raw bytes, leftover unparsed buffer:`, JSON.stringify(buf.slice(0, 2000)));
   }
 }
 // Some models in the chain may not support tools/systemInstruction at all
