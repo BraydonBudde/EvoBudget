@@ -843,7 +843,7 @@ function pennyBuildDrawer() {
           <button class="penny-icon-btn" id="pennyDrawerClose" type="button" aria-label="${esc(t('penny_close'))}">✕</button>
         </span>
       </div>
-      <p class="penny-disclaimer">✨ ${t('penny_disclaimer')}</p>
+      <p class="penny-disclaimer">${t('penny_disclaimer')}</p>
       <div class="penny-messages" id="pennyMessages"></div>
       <div class="penny-quick-actions" id="pennyQuickActions"></div>
       <form class="penny-input-row" id="pennyInputForm">
