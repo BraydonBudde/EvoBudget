@@ -1160,7 +1160,7 @@ function dispatchRender(tab) {
 // ── Hub ───────────────────────────────────────────────────────────────
 const TOOLS = [
   { id:'budget', icon:'💰', color:'indigo', status:'live', name:'Simple Budget Planner', desc:'Track income, expenses, bills, debt, and savings - all in one place. Perfect for monthly budget control.' },
-  { id:'ubp',    icon:'⚡', color:'pink',   status:'live', name:'Ultimate Budget Planner', desc:'The pro upgrade. Debt payoff calculator, sinking funds tracker, smart calendar, and subscription tracker - all in one.' }
+  { id:'ubp',    icon:'⚡', color:'pink',   status:'live', name:'Ultimate Budget Planner', desc:'The pro upgrade. Debt payoff calculator, sinking funds tracker, smart calendar, subscription tracker, and Penny, your AI budget assistant - all in one.' }
 ];
 
 function renderHub() {
@@ -2493,6 +2493,7 @@ function showUpgradeComparison() {
     ['🔄','Subscription tracker with category breakdown',       false],
     ['⚡','Pro dashboard with hero stats & 7-day panel',        false],
     ['📥','One-click import from Simple Budget Planner',        false],
+    ['✨','Penny - your AI budget assistant',                   false],
   ];
 
   const makeRow = ([icon, label, inSimple]) =>
