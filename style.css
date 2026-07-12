@@ -367,18 +367,18 @@ p { margin: 0; }
 .tool-card--orange::before { background: linear-gradient(90deg, #fb923c, #eab308, #f43f5e, #fb923c); background-size: 300% 100%; }
 .tool-card--orange:hover::before { animation: ubp-shimmer 1.5s ease infinite; }
 [data-theme="dark"] .tool-card--orange {
-  background: linear-gradient(0deg, #7c2d0e 0%, #3a170a 35%, #1c0f14 70%, #140a10 100%);
+  background: linear-gradient(180deg, rgba(124,45,14,.8) 0%, rgba(58,23,10,.8) 35%, rgba(28,15,20,.8) 70%, rgba(20,10,16,.8) 100%);
 }
 [data-theme="dark"] .tool-card--orange::after {
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(circle at 50% 115%, rgba(251,146,60,.4), transparent 60%);
+  background: radial-gradient(circle at 50% -15%, rgba(251,146,60,.4), transparent 60%);
 }
 [data-theme="dark"] .tool-card--indigo {
-  background: linear-gradient(0deg, #21308a 0%, #171a44 35%, #130f2c 70%, #0e0820 100%);
+  background: linear-gradient(180deg, rgba(33,48,138,.8) 0%, rgba(23,26,68,.8) 35%, rgba(19,15,44,.8) 70%, rgba(14,8,32,.8) 100%);
 }
 [data-theme="dark"] .tool-card--indigo::after {
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(circle at 50% 115%, rgba(99,102,241,.35), transparent 60%);
+  background: radial-gradient(circle at 50% -15%, rgba(99,102,241,.35), transparent 60%);
 }
 .tool-card--green::before  { background: linear-gradient(90deg, #10b981, #06b6d4); }
 .tool-card-inner {
@@ -391,7 +391,7 @@ p { margin: 0; }
 }
 .tool-card-icon { font-size: 2rem; line-height: 1; }
 .tool-card-name {
-  font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700;
+  font-family: 'Sora', sans-serif; font-size: 18.7px; font-weight: 700;
   color: var(--text-primary); margin-bottom: 2px;
 }
 .tool-card-desc {
