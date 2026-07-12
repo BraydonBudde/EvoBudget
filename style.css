@@ -368,9 +368,10 @@ p { margin: 0; }
 .tool-card--orange .tool-card-inner::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3.6px; z-index: 1;
   background: linear-gradient(90deg, #fb923c, #eab308);
+  box-shadow: 0 0 14px 1px rgba(251,146,60,.65);
 }
 [data-theme="dark"] .tool-card--orange {
-  background: linear-gradient(180deg, rgba(124,45,14,.8) 0%, rgba(58,23,10,.8) 35%, rgba(28,15,20,.8) 70%, rgba(20,10,16,.8) 100%);
+  background: linear-gradient(180deg, rgba(33,48,138,.8) 0%, rgba(23,26,68,.8) 35%, rgba(19,15,44,.8) 70%, rgba(14,8,32,.8) 100%);
 }
 [data-theme="dark"] .tool-card--orange::after {
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
