@@ -2388,7 +2388,7 @@ function enableDragScroll(el) {
   el.addEventListener('click',e=>{if(dragged){e.stopPropagation();dragged=false;}},true);
 }
 function applyTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem('evobudget_theme',t);document.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('is-active',b.dataset.themeVal===t));}
-function initTheme(){applyTheme(localStorage.getItem('evobudget_theme')||'light');}
+function initTheme(){applyTheme(localStorage.getItem('evobudget_theme')||'dark');}
 
 let currentTab='dashboard', calYear, calMonth, calSelectedDay=null;
 let txFilter={search:'',type:'',alloc:'',sort:'date_desc'};

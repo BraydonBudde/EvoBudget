@@ -1118,7 +1118,7 @@ function applyTheme(theme) {
   localStorage.setItem('evobudget_theme', theme);
   document.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('is-active', b.dataset.themeVal === theme));
 }
-function initTheme() { applyTheme(localStorage.getItem('evobudget_theme') || 'light'); }
+function initTheme() { applyTheme(localStorage.getItem('evobudget_theme') || 'dark'); }
 
 // ── Navigation ────────────────────────────────────────────────────────
 let currentView = 'hub';
@@ -1160,7 +1160,7 @@ function dispatchRender(tab) {
 // ── Hub ───────────────────────────────────────────────────────────────
 const TOOLS = [
   { id:'budget', icon:'💰', color:'indigo', status:'live', name:'Simple Budget Planner', desc:'Track income, expenses, bills, debt, and savings - all in one place. Perfect for monthly budget control.' },
-  { id:'ubp',    icon:'⚡', color:'pink',   status:'live', name:'Ultimate Budget Planner', desc:'The pro upgrade. Debt payoff calculator, sinking funds tracker, smart calendar, subscription tracker, and Penny, your AI budget assistant - all in one.' }
+  { id:'ubp',    icon:'⚡', color:'orange', status:'live', name:'Ultimate Budget Planner', desc:'The pro upgrade. Debt payoff calculator, sinking funds tracker, smart calendar, subscription tracker, and Penny, your AI budget assistant - all in one.' }
 ];
 
 function renderHub() {
@@ -1169,7 +1169,7 @@ function renderHub() {
       <div class="tool-card-inner">
         <div class="tool-card-top">
           <span class="tool-card-icon">${t.icon}</span>
-          ${t.status === 'live' ? '<span class="badge badge-live">Live</span>' : '<span class="badge badge-soon">Coming soon</span>'}
+          ${t.status === 'live' ? `<span class="badge badge-price">${PRICES[t.id === 'budget' ? 'sbp' : t.id]}</span>` : '<span class="badge badge-soon">Coming soon</span>'}
         </div>
         <h3 class="tool-card-name">${esc(t.name)}</h3>
         <p class="tool-card-desc">${esc(t.desc)}</p>
