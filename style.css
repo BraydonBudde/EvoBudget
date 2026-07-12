@@ -350,7 +350,7 @@ p { margin: 0; }
 .tool-card {
   border-radius: var(--radius-lg); background: var(--surface);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-soft); box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card);
   transition: transform .25s var(--ease), box-shadow .25s var(--ease);
   position: relative; overflow: hidden; container-type: inline-size;
 }
@@ -358,23 +358,15 @@ p { margin: 0; }
 .tool-card.is-live:hover { transform: translateY(-5px); box-shadow: var(--shadow-pop); }
 /* Gradient top accent stripe */
 .tool-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3.6px;
 }
 .tool-card--indigo::before { background: linear-gradient(90deg, #6366f1, #c026d3); }
 .tool-card--pink::before   { background: linear-gradient(90deg, #ec4899, #f43f5e); background-size: 200% 100%; transition: background-position .6s ease; }
 .tool-card--pink:hover::before { animation: ubp-shimmer 1.5s ease infinite; }
 @keyframes ubp-shimmer { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 .tool-card--pink::before { background: linear-gradient(90deg, #ec4899, #a855f7, #6366f1, #ec4899); background-size: 300% 100%; }
-.tool-card--orange::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: auto;
-  padding: 1px; border-radius: inherit; z-index: 2; pointer-events: none;
-  background: linear-gradient(90deg, #fb923c, #eab308, #f43f5e, #fb923c);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
 .tool-card--orange .tool-card-inner::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 1;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3.6px; z-index: 1;
   background: linear-gradient(90deg, #fb923c, #eab308);
 }
 [data-theme="dark"] .tool-card--orange {
