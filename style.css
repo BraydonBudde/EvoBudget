@@ -2209,11 +2209,11 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 }
 .penny-nav-btn-inner {
   position: absolute; top: 0; right: 0; z-index: 5;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0;
   width: 36px; height: 36px; padding: 0;
   border-radius: 999px; border: 1px solid var(--border-faint); background: var(--surface-strong);
   overflow: hidden; color: inherit;
-  transition: width .32s var(--ease), padding .32s var(--ease), justify-content 0s .32s, background .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease), color .25s var(--ease);
+  transition: width .32s var(--ease), padding .32s var(--ease), gap 0s .32s, justify-content 0s .32s, background .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease), color .25s var(--ease);
 }
 .penny-nav-icon { display: inline-flex; flex-shrink: 0; }
 .penny-nav-pill-text {
@@ -2221,8 +2221,13 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   font-family: 'Sora', sans-serif; font-size: 12.5px; font-weight: 700;
   transition: max-width .28s var(--ease), opacity .18s var(--ease) .05s;
 }
+/* gap only kicks in once expanded (icon + revealed text need breathing
+   room) - at rest, gap:0 above keeps the icon in the true geometric
+   center of the circle instead of being centered as part of an
+   "icon + 8px gap + invisible text" group, which pushed it left of
+   center even though the icon itself was correctly drawn. */
 .penny-nav-btn:hover .penny-nav-btn-inner, .penny-nav-btn:focus-visible .penny-nav-btn-inner {
-  width: auto; padding: 0 14px 0 10px; justify-content: flex-start; transition-delay: 0s;
+  width: auto; padding: 0 14px 0 10px; justify-content: flex-start; gap: 8px; transition-delay: 0s;
 }
 .penny-nav-btn:hover .penny-nav-pill-text, .penny-nav-btn:focus-visible .penny-nav-pill-text { max-width: 140px; opacity: 1; }
 
