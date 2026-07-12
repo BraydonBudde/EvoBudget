@@ -1165,7 +1165,9 @@ const TOOLS = [
 
 function renderHub() {
   document.getElementById('toolGrid').innerHTML = TOOLS.map(t => `
-    <div class="tool-card tool-card--${t.color}${t.status === 'live' ? ' is-live' : ''}">
+    <div class="tool-card-wrap">
+      ${t.id === 'ubp' ? '<span class="tool-card-popular-pill">Most Popular</span>' : ''}
+      <div class="tool-card tool-card--${t.color}${t.status === 'live' ? ' is-live' : ''}">
       <div class="tool-card-inner">
         <div class="tool-card-top">
           <span class="tool-card-icon">${t.icon}</span>
@@ -1182,6 +1184,7 @@ function renderHub() {
               <a class="tool-try-link" data-tool="${t.id}" role="button" tabindex="0">Free Demo</a>
             </div>`
           : `<button class="btn btn-ghost btn-sm" disabled type="button">Notify me</button>`}
+      </div>
       </div>
     </div>
   `).join('');

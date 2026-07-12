@@ -347,12 +347,22 @@ p { margin: 0; }
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: 18px; max-width: 880px; margin: 0 auto;
 }
+.tool-card-wrap { position: relative; }
+.tool-card-popular-pill {
+  position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
+  z-index: 3; pointer-events: none; white-space: nowrap;
+  font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 7px; border-radius: 5px;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink));
+  color: #fff;
+}
 .tool-card {
   border-radius: var(--radius-lg); background: var(--surface);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   box-shadow: var(--shadow-card);
   transition: transform .25s var(--ease), box-shadow .25s var(--ease);
   position: relative; overflow: hidden; container-type: inline-size;
+  height: 100%;
 }
 .tool-card.is-live { cursor: default; }
 .tool-card.is-live:hover { transform: translateY(-5px); box-shadow: var(--shadow-pop); }
