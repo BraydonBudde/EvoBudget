@@ -57,7 +57,7 @@ const PENNY_VOICE_KEY = 'evobudget_penny_voice_on';
 // translate(-1.8,0) recenters the composite shape (big + small sparkle) -
 // their combined bounding box otherwise skews right of the 24x24 viewBox
 // center, which reads as visibly off-center at small sizes.
-const PENNY_ICON_SVG = `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(0,2.65)"><path d="M12 3l1.8 4.9L18.7 9l-4.9 1.8L12 15.7l-1.8-4.9L5.3 9l4.9-1.8L12 3z"/></g></svg>`;
+const PENNY_ICON_SVG = `<svg width="100%" height="100%" viewBox="4 1.35 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.9L18.7 9l-4.9 1.8L12 15.7l-1.8-4.9L5.3 9l4.9-1.8L12 3z"/></svg>`;
 const PENNY_SPEAKER_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>`;
 const PENNY_SPEAKER_MUTED_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="1.5" y1="1.5" x2="22.5" y2="22.5"/></svg>`;
 
