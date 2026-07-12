@@ -297,7 +297,7 @@ p { margin: 0; }
 }
 .badge-live  { background: var(--income-bg); color: var(--income); }
 .badge-soon  { background: rgba(107,100,120,.1); color: var(--text-faint); }
-.badge-price { background: rgba(147,51,234,.12); color: var(--grad-purple); }
+.badge-price { background: rgba(147,51,234,.12); color: var(--grad-purple); font-size: 15px; padding: 4px 12px; }
 
 /* ── Section header ──────────────────────────────────────────────────── */
 .section-header {
@@ -367,11 +367,18 @@ p { margin: 0; }
 .tool-card--orange::before { background: linear-gradient(90deg, #fb923c, #eab308, #f43f5e, #fb923c); background-size: 300% 100%; }
 .tool-card--orange:hover::before { animation: ubp-shimmer 1.5s ease infinite; }
 [data-theme="dark"] .tool-card--orange {
-  background: linear-gradient(155deg, #2c1608 0%, #1c0f14 45%, #170a06 100%);
+  background: linear-gradient(0deg, #7c2d0e 0%, #3a170a 35%, #1c0f14 70%, #140a10 100%);
 }
 [data-theme="dark"] .tool-card--orange::after {
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(circle at 88% -8%, rgba(251,146,60,.3), transparent 55%);
+  background: radial-gradient(circle at 50% 115%, rgba(251,146,60,.4), transparent 60%);
+}
+[data-theme="dark"] .tool-card--indigo {
+  background: linear-gradient(0deg, #21308a 0%, #171a44 35%, #130f2c 70%, #0e0820 100%);
+}
+[data-theme="dark"] .tool-card--indigo::after {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(circle at 50% 115%, rgba(99,102,241,.35), transparent 60%);
 }
 .tool-card--green::before  { background: linear-gradient(90deg, #10b981, #06b6d4); }
 .tool-card-inner {
