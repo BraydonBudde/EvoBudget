@@ -108,7 +108,7 @@ const TRIAL_LIMITS = { transactions:3, recurring:3, income:3, expenses:3, bills:
 
 // ▼▼ EDIT THESE: drop in your real checkout links + prices ▼▼
 const PURCHASE_URLS = { sbp:'', ubp:'' };  // leave '' to show a placeholder toast
-const PRICES        = { sbp:'$9.99', ubp:'$19.99' };
+const PRICES        = { sbp:'$9.99', ubp:'$24.99' };
 // ▲▲ ─────────────────────────────────────────────────────── ▲▲
 
 function isTrial(){ return localStorage.getItem(UBP_MODE_KEY) === 'trial'; }
