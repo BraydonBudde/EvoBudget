@@ -418,15 +418,13 @@ p { margin: 0; }
   color: #fff; border: none; box-shadow: var(--shadow-pop);
 }
 .tool-buy-btn:hover { box-shadow: 0 16px 36px -8px rgba(76,29,149,.48); transform: translateY(-1px); }
-.tool-open-btn { position: relative; }
-.tool-open-btn::before {
-  content: ''; position: absolute; inset: 0; padding: 2px;
-  border-radius: inherit; pointer-events: none;
-  background: linear-gradient(135deg, #60a5fa, #6366f1);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+.tool-open-btn {
+  background: var(--surface-strong); color: var(--text-secondary);
+  border: none; box-shadow: none;
 }
+.tool-open-btn:hover { color: var(--text-primary); }
+.tool-card--indigo .tool-open-btn { border: 2px solid var(--grad-indigo); }
+.tool-card--orange .tool-open-btn { border: 2px solid var(--grad-orange); }
 .tool-try-link {
   display: block; text-align: center; margin-top: 4px;
   font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
