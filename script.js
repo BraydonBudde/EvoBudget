@@ -1169,9 +1169,9 @@ function renderHub() {
       <div class="tool-card-inner">
         <div class="tool-card-top">
           <span class="tool-card-icon">${t.icon}</span>
+          <h3 class="tool-card-name">${esc(t.name)}</h3>
           ${t.status === 'live' ? `<span class="badge badge-price">${PRICES[t.id === 'budget' ? 'sbp' : t.id]}</span>` : '<span class="badge badge-soon">Coming soon</span>'}
         </div>
-        <h3 class="tool-card-name">${esc(t.name)}</h3>
         <p class="tool-card-desc">${esc(t.desc)}</p>
         ${t.status === 'live'
           ? `<div class="tool-card-actions">
