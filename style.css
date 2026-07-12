@@ -366,7 +366,7 @@ p { margin: 0; }
 .tool-card--pink::before { background: linear-gradient(90deg, #ec4899, #a855f7, #6366f1, #ec4899); background-size: 300% 100%; }
 .tool-card--orange::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: auto;
-  padding: 3px; border-radius: inherit; z-index: 2; pointer-events: none;
+  padding: 1px; border-radius: inherit; z-index: 2; pointer-events: none;
   background: linear-gradient(90deg, #fb923c, #eab308, #f43f5e, #fb923c);
   background-size: 300% 100%;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -420,11 +420,9 @@ p { margin: 0; }
 .tool-buy-btn:hover { box-shadow: 0 16px 36px -8px rgba(76,29,149,.48); transform: translateY(-1px); }
 .tool-open-btn {
   background: var(--surface-strong); color: var(--text-secondary);
-  border: none; box-shadow: none;
+  border: 1px solid #60a5fa; box-shadow: none;
 }
 .tool-open-btn:hover { color: var(--text-primary); }
-.tool-card--indigo .tool-open-btn { border: 2px solid var(--grad-indigo); }
-.tool-card--orange .tool-open-btn { border: 2px solid var(--grad-orange); }
 .tool-try-link {
   display: block; text-align: center; margin-top: 4px;
   font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
