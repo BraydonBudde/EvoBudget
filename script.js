@@ -1942,24 +1942,32 @@ function renderDashboard() {
   if (!state.settings.hideUpgrade) {
     el.insertAdjacentHTML('beforeend', `
       <div class="upgrade-pro" id="upgradeBanner">
-        <div class="upgrade-pro-badge">⚡ PRO</div>
-        <h3 class="upgrade-pro-title">🚀 ${t('upgrade_title')}</h3>
+        <button class="upgrade-pro-close" id="upgradeCloseBtn" type="button" aria-label="Dismiss">×</button>
+        <div class="upgrade-pro-head">
+          <h3 class="upgrade-pro-title">🚀 ${t('upgrade_title')}</h3>
+          <span class="upgrade-pro-badge">⚡ PRO</span>
+        </div>
         <p class="upgrade-pro-sub">${t('upgrade_desc')}</p>
         <div class="upgrade-pro-feats">
-          <div class="upgrade-feat"><span class="upgrade-feat-ico">💳</span><span>Debt Payoff Planner</span></div>
-          <div class="upgrade-feat"><span class="upgrade-feat-ico">🏺</span><span>Sinking Funds</span></div>
-          <div class="upgrade-feat"><span class="upgrade-feat-ico">📅</span><span>Smart Calendar</span></div>
-          <div class="upgrade-feat"><span class="upgrade-feat-ico">🔄</span><span>Subscription Tracker</span></div>
-          <div class="upgrade-feat"><span class="upgrade-feat-ico">⚡</span><span>Automatic Transactions</span></div>
-          <div class="upgrade-feat"><span class="upgrade-feat-ico">🎯</span><span>Spending Allocation</span></div>
+          <span class="upgrade-feat">💳 Debt Payoff</span>
+          <span class="upgrade-feat">🏺 Sinking Funds</span>
+          <span class="upgrade-feat">📅 Smart Calendar</span>
+          <span class="upgrade-feat">🔄 Subscriptions</span>
+          <span class="upgrade-feat">⚡ Automation</span>
+          <span class="upgrade-feat">🎯 Allocation</span>
         </div>
         <div class="upgrade-pro-actions">
-          <button class="btn btn-primary upgrade-get" id="upgradeNowBtn" type="button">${t('upgrade_get_now')}</button>
-          <button class="btn btn-ghost upgrade-compare" id="upgradeCompareBtn" type="button">${t('upgrade_compare')}</button>
+          <button class="btn btn-primary btn-sm upgrade-get" id="upgradeNowBtn" type="button">${t('upgrade_get_now')}</button>
+          <button class="btn btn-ghost btn-sm upgrade-compare" id="upgradeCompareBtn" type="button">${t('upgrade_compare')}</button>
         </div>
       </div>`);
     document.getElementById('upgradeNowBtn')?.addEventListener('click', () => { window.location.href = 'ultimate-budget.html'; });
     document.getElementById('upgradeCompareBtn')?.addEventListener('click', showUpgradeComparison);
+    document.getElementById('upgradeCloseBtn')?.addEventListener('click', () => {
+      state.settings.hideUpgrade = true;
+      saveState();
+      document.getElementById('upgradeBanner')?.remove();
+    });
   }
 }
 

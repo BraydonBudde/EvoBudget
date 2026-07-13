@@ -3167,7 +3167,7 @@ function renderDashboard() {
         const nearing = !over && tp > 0 && (tp - ap) <= 5 && ap > 0;
         const accentColor = over ? '#f43f5e' : nearing ? '#fb923c' : b.color;
         const statusKey = over ? 'alloc_over' : nearing ? 'alloc_nearing' : 'alloc_under';
-        const statusColor = over ? '#f43f5e' : nearing ? '#fb923c' : 'var(--text-faint)';
+        const statusColor = over ? '#f43f5e' : nearing ? '#fb923c' : '#10b981';
         const displayName = getAllocBucketDisplayName(b);
         return `<div class="alloc-card"><div class="alloc-card-header"><span class="alloc-card-name">${esc(displayName)}</span><span class="alloc-target-badge">${t('alloc_target')} ${tp}%</span></div><div class="alloc-pct-big" style="color:${accentColor}">${ap.toFixed(1)}%</div><div class="alloc-amount">${fmt(actual)}</div><div class="alloc-bar-row"><div class="alloc-strip-wrap"><div class="alloc-strip" style="width:${fill}%;background:${accentColor}"></div></div><span class="alloc-fill-pct" style="color:${accentColor}">${Math.round(fill)}%</span></div><div class="alloc-status" style="color:${statusColor}"><span class="alloc-status-icon">${over?t('alloc_icon_over'):nearing?t('alloc_icon_near'):t('alloc_icon_ok')}</span> ${t(statusKey)}</div></div>`;
       }).join('');
@@ -4283,7 +4283,7 @@ function renderSettings(){
         </div>
       </div></div>
       ${pennySettingsCardHtml()}
-      <div class="panel"><div class="panel-inner">
+      <div class="panel settings-card--automation"><div class="panel-inner">
         <div class="settings-card-title">⚡ ${t('sett_automation_h')}</div>
         <p class="settings-desc">${t('sett_automation_desc')}</p>
         <label class="automate-row" style="margin-top:8px">
