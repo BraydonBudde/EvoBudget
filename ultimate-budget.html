@@ -45,6 +45,12 @@
             <span class="penny-nav-pill-text" id="pennyNavPillText">Enable Penny</span>
           </span>
         </button>
+        <button class="btn-icon" id="guideNavBtn" type="button" aria-label="Guide">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/>
+            <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/>
+          </svg>
+        </button>
         <button class="btn-icon" id="settingsNavBtn" type="button" aria-label="Settings">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
@@ -96,6 +102,16 @@
       <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
       <h3 class="modal-title" id="modalTitle"></h3>
       <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="guide-overlay" id="guideOverlay" hidden role="dialog" aria-modal="true" aria-label="Guide">
+    <div class="guide-modal" id="guideModal">
+      <button class="guide-close" id="guideClose" type="button" aria-label="Close guide">×</button>
+      <div class="guide-modal-inner">
+        <aside class="guide-sidebar" id="guideSidebar" role="navigation" aria-label="Guide topics"></aside>
+        <div class="guide-content" id="guideContent" tabindex="-1"></div>
+      </div>
     </div>
   </div>
 

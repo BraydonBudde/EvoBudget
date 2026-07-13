@@ -720,6 +720,118 @@ const TRANSLATIONS = {
     help_penny_safety_h:'Is my key safe?',
     help_penny_safety_p:"Your key is encrypted before it's saved in your browser's own storage, and it's only ever sent directly to Google's API when you ask Penny a question. It never goes to any Evo Budget server.",
     help_penny_cta:'Open Google AI Studio \u2192',
+    // Guide
+    guide_group_start:'Getting Started', guide_group_track:'Tracking Your Money', guide_group_plan:'Planning Ahead',
+    guide_group_smart:'Working Smarter', guide_group_settings:'Making It Yours',
+    guide_section_big:'The Big Picture', guide_section_how:'How to Use It', guide_section_connects:'How It Connects', guide_back:'Back to topics',
+    guide_welcome_title:'Welcome to Ultimate Budget Planner',
+    guide_welcome_big:"Ultimate Budget Planner takes the simple idea of tracking income and spending and gives it superpowers - a real debt payoff plan, savings goals with progress bars, a bird's-eye calendar, subscription tracking, and Penny, an AI assistant who already knows your numbers. Start with the Dashboard, and explore the rest whenever you're ready.",
+    guide_dashboard_title:'Dashboard',
+    guide_dashboard_big:"The Dashboard is your command center - everything important about your money lives on this one screen, from your bottom line to what's coming up this week.",
+    guide_dashboard_step1:'Check the summary cards at the top for your <strong>Total Income</strong>, <strong>Total Outgoing</strong>, <strong>Savings Rate</strong>, and <strong>Net Leftover</strong>.',
+    guide_dashboard_step2:'Scroll to the <strong>Upcoming</strong> list to see everything due in the next 7 days - bills, debt payments, and subscriptions all in one place.',
+    guide_dashboard_step3:'Check your <strong>Debt Payoff</strong> and <strong>Sinking Funds</strong> snapshots to see progress toward your bigger goals at a glance.',
+    guide_dashboard_connect1:"Every number here is pulled live from Transactions, Budget, Debt Payoff, Sinking Funds, and Subscriptions - there's nothing to calculate by hand.",
+    guide_dashboard_connect2:'The Net Leftover figure includes your <strong>Rollover</strong> setting, so unspent money from last period can carry forward automatically.',
+    guide_dashboard_connect3:"If something looks off, it's almost always worth checking the page it came from - the Dashboard is a mirror, not a source.",
+    guide_dashboard_tip:"Set aside 30 seconds each morning to scan the Dashboard - it's the fastest way to catch a bill or debt payment before it's overdue.",
+    guide_transactions_title:'Transactions',
+    guide_transactions_big:"Transactions are the foundation of everything in this app - every dollar you log here powers your Dashboard, your budget, and every chart you see. Ultimate Budget Planner also lets you automate the repetitive parts so you don't have to log the same thing every single period.",
+    guide_transactions_step1:'Tap <strong>Add Transaction</strong>, pick a type and category, and fill in the amount.',
+    guide_transactions_step2:'Set up a <strong>Recurring Rule</strong> for anything that repeats, like rent or a paycheck, so it posts automatically instead of you typing it every time.',
+    guide_transactions_step3:'Use <strong>Import CSV</strong> to bring in existing spending data all at once instead of entering it by hand.',
+    guide_transactions_step4:'Tap any transaction to edit it, or use the filters above the list to find one quickly.',
+    guide_transactions_connect1:"Recurring rules set up here are what powers the <strong>Automation</strong> feature - once a rule exists, it keeps posting on schedule without you lifting a finger.",
+    guide_transactions_connect2:'Every transaction counts toward its matching category in Budget, Debt Payoff, or Subscriptions automatically.',
+    guide_transactions_connect3:"Your Dashboard totals and charts are built entirely from what's logged here.",
+    guide_transactions_tip:"Set up recurring rules for your regular bills and paycheck first - it's the single biggest time-saver in the whole app.",
+    guide_budget_title:'Budget',
+    guide_budget_big:'Budget is where you set your targets - how much you expect to earn and spend across Income, Expenses, Bills, and Savings - all from one screen instead of jumping between separate tabs.',
+    guide_budget_step1:'Add a category under <strong>Income</strong>, <strong>Expenses</strong>, <strong>Bills</strong>, or <strong>Savings</strong> and set its <strong>Expected</strong> amount.',
+    guide_budget_step2:'As you log transactions, watch the <strong>Actual</strong> column fill in automatically for each category.',
+    guide_budget_step3:'Compare Expected to Actual to see which categories are on track and which need attention.',
+    guide_budget_step4:"Adjust any Expected amount as your life changes - your budget should flex with you, not the other way around.",
+    guide_budget_connect1:'Every transaction you log in Transactions flows straight into the matching category here.',
+    guide_budget_connect2:'Your Spending Breakdown chart and Net Leftover on the Dashboard are both built from these categories.',
+    guide_budget_connect3:"If you've turned on <strong>Allocation Buckets</strong> in Settings, this page is also where you'll see how your spending lines up against those percentage targets.",
+    guide_budget_tip:"Review your Expected amounts once a month - budgets that never change stop reflecting reality pretty quickly.",
+    guide_debt_title:'Debt Payoff Calculator',
+    guide_debt_big:"This is more than a place to log what you owe - it builds you an actual plan to become debt-free, showing you exactly which debt to focus on first and how much interest you'll save doing it.",
+    guide_debt_step1:'Add each debt with its <strong>Balance</strong>, <strong>APR</strong> (interest rate), and <strong>Minimum Payment</strong>.',
+    guide_debt_step2:'Choose a strategy: <strong>Snowball</strong> (pay off the smallest balance first for quick wins) or <strong>Avalanche</strong> (pay off the highest interest rate first to save the most money).',
+    guide_debt_step3:'Add any extra amount you can put toward debt each period - the calculator applies it to whichever debt your strategy targets first.',
+    guide_debt_step4:'Check your projected <strong>debt-free date</strong> and total interest to see how extra payments change the picture.',
+    guide_debt_connect1:"Debt payments you log in Transactions count toward each debt's balance here.",
+    guide_debt_connect2:'Your Dashboard shows a snapshot of this payoff plan so you always know where you stand without opening this page.',
+    guide_debt_connect3:'Paying more than the minimum here - even a little - is usually the single biggest lever you have to shorten your payoff timeline.',
+    guide_debt_tip:'Try switching between Snowball and Avalanche to compare - Snowball feels more motivating early on, but Avalanche usually saves more money overall.',
+    guide_sinking_title:'Sinking Funds',
+    guide_sinking_big:"A sinking fund is money you set aside a little at a time for something specific you know is coming - a vacation, a new laptop, holiday gifts - so it never has to be an emergency when the bill actually arrives.",
+    guide_sinking_step1:'Create a fund and give it a <strong>Target Amount</strong> and, if you like, a target date.',
+    guide_sinking_step2:'Add contributions whenever you set money aside for it, and watch the <strong>progress bar</strong> fill in.',
+    guide_sinking_step3:"Once a fund reaches its target, you're ready for that expense without touching your regular budget.",
+    guide_sinking_connect1:"Sinking funds are separate from your regular Savings category - they're for specific, planned goals rather than general saving.",
+    guide_sinking_connect2:"Your Dashboard shows a snapshot of all your funds' progress in one place.",
+    guide_sinking_connect3:'Contributing to a fund regularly, even a small amount, is what turns a big expense into something that never derails your budget.',
+    guide_sinking_tip:"Break big goals into round monthly numbers - it's much easier to commit to $50 a month than to 'save up for a vacation eventually.'",
+    guide_subscriptions_title:'Subscriptions',
+    guide_subscriptions_big:'Subscriptions have a way of quietly piling up - this page lists every recurring service you pay for in one place, so nothing keeps charging you without your knowledge.',
+    guide_subscriptions_step1:'Add each subscription along with its cost and how often it bills (monthly, yearly, etc.).',
+    guide_subscriptions_step2:'Check the <strong>Monthly Cost</strong> total to see what all your subscriptions add up to.',
+    guide_subscriptions_step3:"Pause or cancel anything you're not using, right from this page.",
+    guide_subscriptions_connect1:'Your total subscription cost feeds directly into your Dashboard summary and your Total Outgoing.',
+    guide_subscriptions_connect2:'Subscription due dates also show up on your Calendar, so you can see them alongside bills and debt payments.',
+    guide_subscriptions_connect3:"Reviewing this list every few months is one of the easiest ways to find money you didn't know you were losing.",
+    guide_subscriptions_tip:"Do a subscription review right after your bank statement comes in each month - it's the easiest time to spot something you forgot you were paying for.",
+    guide_calendar_title:'Calendar',
+    guide_calendar_big:'The Calendar pulls every bill, debt payment, subscription charge, and transaction into one month view, so you can see everything happening with your money at a glance instead of checking five different pages.',
+    guide_calendar_step1:'Browse to any month to see color-coded dots marking bills, debt payments, and subscriptions due that day.',
+    guide_calendar_step2:'Tap a day to see the full list of everything happening on it.',
+    guide_calendar_step3:'Use this view before you make a big purchase to see what else is due around the same time.',
+    guide_calendar_connect1:"Everything shown here comes from Bills, Debt Payoff, Subscriptions, and Transactions - the Calendar doesn't hold any of its own data.",
+    guide_calendar_connect2:"It's the fastest way to spot a week where several due dates land close together, before it catches you off guard.",
+    guide_calendar_connect3:"Nothing you do on the Calendar changes your budget - it's purely a view, so it's completely safe to browse.",
+    guide_calendar_tip:'Check the Calendar at the start of each week - it takes seconds and means due dates are never a surprise.',
+    guide_rollover_title:'Rollover',
+    guide_rollover_big:"Rollover means unspent money from last period doesn't just disappear - it automatically carries forward and adds to what you have available this period.",
+    guide_rollover_step1:'Open <strong>Settings</strong> and find the <strong>Rollover</strong> card.',
+    guide_rollover_step2:'Turn it on so any leftover amount from the previous period carries into the new one automatically.',
+    guide_rollover_step3:"Check your Dashboard's Net Leftover - it will now include that carried-forward amount.",
+    guide_rollover_connect1:"Rollover works directly off your Net Leftover from the previous period - the better you stick to your budget, the more it has to carry forward.",
+    guide_rollover_connect2:'This is different from Sinking Funds, which are for planned future goals - Rollover is just about not losing track of money you already have.',
+    guide_rollover_connect3:"A string of good months compounds nicely here, since each period's leftover adds to the next.",
+    guide_rollover_tip:"If a big rollover amount is burning a hole in your pocket, consider moving some of it into a Sinking Fund so it's earmarked for something specific.",
+    guide_automation_title:'Automation',
+    guide_automation_big:'Automation takes the recurring rules you set up in Transactions and posts them for you automatically, so your regular bills, paychecks, and subscriptions show up right on schedule without you lifting a finger.',
+    guide_automation_step1:'Open <strong>Settings</strong> and find the <strong>Automation</strong> card.',
+    guide_automation_step2:"Turn it on so recurring transaction rules post automatically when they're due.",
+    guide_automation_step3:'Check Transactions afterward to confirm everything posted the way you expected.',
+    guide_automation_connect1:"This feature only works with recurring rules you've already created in Transactions - set those up first.",
+    guide_automation_connect2:'Every transaction it posts flows into Budget, Debt Payoff, and Subscriptions exactly like one you entered by hand.',
+    guide_automation_connect3:"It's the difference between a budgeting app you have to remember to update, and one that keeps itself current.",
+    guide_automation_tip:'Turn on Automation once your recurring rules feel accurate - it is most useful once you trust the numbers it will post.',
+    guide_penny_title:'Penny',
+    guide_penny_big:'Penny is your own AI budget assistant, built right into the app - ask her a question about your money in plain English, and she reads your real budget data to give you a real answer, complete with charts when it helps.',
+    guide_penny_step1:"Open <strong>Settings</strong>, turn on Penny, and paste in your own Gemini API key (there's a link right there showing exactly how to get one for free).",
+    guide_penny_step2:'Tap the sparkle icon in the top navigation to open the chat.',
+    guide_penny_step3:"Ask a question in your own words, like 'what's my biggest spending category this month?', or tap one of the quick-question buttons to get started.",
+    guide_penny_step4:"Toggle her voice reply on or off with the speaker icon if you'd rather listen than read.",
+    guide_penny_connect1:'Penny can only see your budget data to answer questions - she can never add, edit, or delete anything for you.',
+    guide_penny_connect2:"She pulls straight from Dashboard, Transactions, Debt Payoff, Subscriptions, and Sinking Funds, so her answers always match what you'd see on those pages yourself.",
+    guide_penny_connect3:"Your API key is encrypted and stored only on your own device - it's never sent anywhere except directly to Google when you ask Penny a question.",
+    guide_penny_tip:"Start with one of the quick-question buttons the first time - it's the fastest way to see what she can do before asking your own questions.",
+    guide_settings_title:'Settings',
+    guide_settings_big:'Settings is where the app adapts to you - currency, budgeting period, rollover, automation, appearance, language, and how your data is stored and backed up.',
+    guide_settings_step1:'Pick your <strong>Currency</strong> and <strong>Budget Period</strong> so the app matches how you actually get paid and spend.',
+    guide_settings_step2:'Turn on <strong>Rollover</strong> and <strong>Automation</strong> if you want unspent money and recurring transactions to be handled for you automatically.',
+    guide_settings_step3:'Switch <strong>Appearance</strong> between light and dark, and choose your <strong>Language</strong> from the list.',
+    guide_settings_step4:'Set up <strong>Allocation Buckets</strong> if you want to budget by percentage (like 50% needs, 30% wants, 20% savings) instead of fixed category amounts.',
+    guide_settings_step5:'Choose how your data is stored under <strong>Data & Sync</strong> - locally on this device, or synced with Google Drive so it follows you across devices.',
+    guide_settings_step6:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
+    guide_settings_connect1:'Your Currency, Budget Period, Rollover, and Automation choices here shape how every other page in the app calculates and displays numbers.',
+    guide_settings_connect2:'Turning on Google sync here is what lets your data follow you if you open the app on a different device.',
+    guide_settings_connect3:"Exporting your data here is the safest habit to build before making any big change you're not sure about.",
+    guide_settings_tip:'Set up Currency, Budget Period, and Data & Sync first, before anything else - they are the foundation everything else in the app is built on.',
   },
   de: {
     lang_name:'Deutsch',
@@ -4101,6 +4213,120 @@ const HELP={
 };
 function showHelp(k){const h=HELP[k];if(!h)return;document.getElementById('modalTitle').textContent=typeof h.title==='function'?h.title():h.title;document.getElementById('modalBody').innerHTML=typeof h.body==='function'?h.body():h.body;document.getElementById('tutorialOverlay').hidden=false;document.getElementById('modalClose')?.focus();}
 function closeModal(){document.getElementById('tutorialOverlay').hidden=true;}
+
+// ── Guide ─────────────────────────────────────────────────────────────
+const GUIDE_TOPICS = [
+  { id: 'welcome',      group: 'guide_group_start',    icon: '👋', steps: 0, connects: 0, tip: false },
+  { id: 'dashboard',    group: 'guide_group_start',    icon: '📊', steps: 3, connects: 3, tip: true  },
+  { id: 'transactions', group: 'guide_group_track',    icon: '📋', steps: 4, connects: 3, tip: true  },
+  { id: 'budget',       group: 'guide_group_track',    icon: '💰', steps: 4, connects: 3, tip: true  },
+  { id: 'debt',         group: 'guide_group_plan',     icon: '💳', steps: 4, connects: 3, tip: true  },
+  { id: 'sinking',      group: 'guide_group_plan',     icon: '🏺', steps: 3, connects: 3, tip: true  },
+  { id: 'subscriptions',group: 'guide_group_plan',     icon: '🔄', steps: 3, connects: 3, tip: true  },
+  { id: 'calendar',     group: 'guide_group_plan',     icon: '📅', steps: 3, connects: 3, tip: true  },
+  { id: 'rollover',     group: 'guide_group_smart',    icon: '↩️', steps: 3, connects: 3, tip: true  },
+  { id: 'automation',   group: 'guide_group_smart',    icon: '⚡', steps: 3, connects: 3, tip: true  },
+  { id: 'penny',        group: 'guide_group_smart',    icon: '✨', steps: 4, connects: 3, tip: true  },
+  { id: 'settings',     group: 'guide_group_settings', icon: '⚙️', steps: 6, connects: 3, tip: true  }
+];
+let guideActiveTopic = null;
+let guideKeydownHandler = null;
+
+function guideFocusableEls(overlay) {
+  return Array.from(overlay.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])'))
+    .filter(el => el.offsetParent !== null);
+}
+function guideHandleKeydown(e) {
+  const overlay = document.getElementById('guideOverlay');
+  if (!overlay || overlay.hidden) return;
+  if (e.key === 'Escape') { e.preventDefault(); closeGuide(); return; }
+  if (e.key === 'Tab') {
+    const els = guideFocusableEls(overlay);
+    if (!els.length) return;
+    const first = els[0], last = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    return;
+  }
+  const sidebar = document.getElementById('guideSidebar');
+  if (sidebar && sidebar.contains(document.activeElement) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+    e.preventDefault();
+    const idx = GUIDE_TOPICS.findIndex(x => x.id === guideActiveTopic);
+    const next = e.key === 'ArrowDown' ? Math.min(idx + 1, GUIDE_TOPICS.length - 1) : Math.max(idx - 1, 0);
+    selectGuideTopic(GUIDE_TOPICS[next].id);
+    document.querySelector(`.guide-topic-btn[data-topic="${GUIDE_TOPICS[next].id}"]`)?.focus();
+  }
+}
+function renderGuideSidebar() {
+  const sidebar = document.getElementById('guideSidebar');
+  if (!sidebar) return;
+  let lastGroup = null;
+  sidebar.innerHTML = GUIDE_TOPICS.map(topic => {
+    let groupHtml = '';
+    if (topic.group !== lastGroup) { groupHtml = `<div class="guide-group-label">${esc(t(topic.group))}</div>`; lastGroup = topic.group; }
+    return `${groupHtml}<button class="guide-topic-btn" data-topic="${topic.id}" type="button">
+      <span class="guide-topic-icon">${topic.icon}</span><span>${esc(t('guide_' + topic.id + '_title'))}</span>
+    </button>`;
+  }).join('');
+  sidebar.querySelectorAll('.guide-topic-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectGuideTopic(btn.dataset.topic));
+  });
+}
+function renderGuideTopic(id) {
+  const topic = GUIDE_TOPICS.find(x => x.id === id);
+  const content = document.getElementById('guideContent');
+  if (!topic || !content) return;
+  const stepsHtml = topic.steps > 0
+    ? `<div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_how'))}</div>
+        <ol class="guide-steps">${Array.from({ length: topic.steps }, (_, i) => `<li><span class="guide-step-num">${i + 1}</span><span>${t('guide_' + id + '_step' + (i + 1))}</span></li>`).join('')}</ol>
+       </div>` : '';
+  const connectsHtml = topic.connects > 0
+    ? `<div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_connects'))}</div>
+        <ul class="guide-connects">${Array.from({ length: topic.connects }, (_, i) => `<li><span class="guide-connect-dot"></span><span>${t('guide_' + id + '_connect' + (i + 1))}</span></li>`).join('')}</ul>
+       </div>` : '';
+  const tipHtml = topic.tip
+    ? `<div class="guide-section"><div class="guide-tip"><span class="guide-tip-icon">💡</span><span>${t('guide_' + id + '_tip')}</span></div></div>` : '';
+  content.innerHTML = `
+    <button class="guide-back-btn" type="button">← ${esc(t('guide_back'))}</button>
+    <div class="guide-topic-header">
+      <div class="guide-topic-icon-badge">${topic.icon}</div>
+      <h3 class="guide-topic-title">${esc(t('guide_' + id + '_title'))}</h3>
+    </div>
+    <div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_big'))}</div><p class="guide-big-picture">${t('guide_' + id + '_big')}</p></div>
+    ${stepsHtml}${connectsHtml}${tipHtml}`;
+  content.querySelector('.guide-back-btn')?.addEventListener('click', () => {
+    document.getElementById('guideModal')?.classList.remove('is-topic-open');
+  });
+}
+function selectGuideTopic(id, userInitiated = true) {
+  guideActiveTopic = id;
+  document.querySelectorAll('.guide-topic-btn').forEach(btn => btn.classList.toggle('is-active', btn.dataset.topic === id));
+  renderGuideTopic(id);
+  if (userInitiated) document.getElementById('guideModal')?.classList.add('is-topic-open');
+  const content = document.getElementById('guideContent');
+  if (content) { content.scrollTop = 0; if (userInitiated) content.focus(); }
+}
+function openGuide(initialId) {
+  const overlay = document.getElementById('guideOverlay');
+  if (!overlay) return;
+  overlay.hidden = false;
+  document.getElementById('guideModal')?.classList.remove('is-topic-open');
+  renderGuideSidebar();
+  selectGuideTopic(initialId || guideActiveTopic || GUIDE_TOPICS[0].id, false);
+  guideKeydownHandler = e => guideHandleKeydown(e);
+  document.addEventListener('keydown', guideKeydownHandler, true);
+  setTimeout(() => {
+    const overlayEl = document.getElementById('guideOverlay');
+    (overlayEl?.querySelector('.guide-topic-btn.is-active') || overlayEl?.querySelector('.guide-close'))?.focus();
+  }, 40);
+}
+function closeGuide() {
+  const overlay = document.getElementById('guideOverlay');
+  if (!overlay) return;
+  overlay.hidden = true;
+  if (guideKeydownHandler) { document.removeEventListener('keydown', guideKeydownHandler, true); guideKeydownHandler = null; }
+}
+
 function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2800);}
 
 // ── In-app dialog (replaces native confirm / alert) ───────────────────
@@ -4333,6 +4559,11 @@ async function init(){
 
     // Settings gear
     document.getElementById('settingsNavBtn')?.addEventListener('click',()=>switchTab('settings'));
+
+    // Guide
+    document.getElementById('guideNavBtn')?.addEventListener('click',()=>openGuide());
+    document.getElementById('guideClose')?.addEventListener('click',closeGuide);
+    document.getElementById('guideOverlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeGuide();});
 
     // Penny (AI assistant) - failure here must never block the rest of init
     try { await pennyInit(); } catch (e) { console.error('[init] Penny setup failed:', e); }
