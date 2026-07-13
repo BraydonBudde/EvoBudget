@@ -158,6 +158,86 @@ const TRANSLATIONS = {
     help_sav_modal_title:'How Savings work',help_sav_intro:'Set savings goals and track contributions.',
     help_sav_expected_li:'Your savings target for this period.',help_sav_actual_li:'From Savings type transactions.',
     help_sav_tip:'💡 Tip: Treat savings like a fixed expense - budget it first, spend the rest.',
+    // Guide
+    guide_group_start:'Getting Started', guide_group_track:'Tracking Your Money', guide_group_settings:'Making It Yours',
+    guide_section_big:'The Big Picture', guide_section_how:'How to Use It', guide_section_connects:'How It Connects', guide_back:'Back to topics',
+    guide_welcome_title:'Welcome to Simple Budget Planner',
+    guide_welcome_big:"This app is here to answer one question every month: where did my money go? You log what comes in and what goes out, and it quietly does the math so you always know exactly where you stand. No spreadsheets, no guesswork - just a clear picture of your money.",
+    guide_dashboard_title:'Dashboard',
+    guide_dashboard_big:"Think of the Dashboard as the cover page of your finances - one glance tells you what's coming in, what's going out, and what's left over. It's the first thing worth checking whenever you open the app.",
+    guide_dashboard_step1:'Check the summary cards at the top for your <strong>Total Income</strong>, <strong>Total Outgoing</strong>, and <strong>Net Leftover</strong> for the current period.',
+    guide_dashboard_step2:'Scroll down to the <strong>Cash Flow</strong> chart to see how your money moves week by week.',
+    guide_dashboard_step3:'Look at the <strong>Spending Breakdown</strong> donut to spot which category is eating the biggest slice of your budget.',
+    guide_dashboard_connect1:"Every transaction you add anywhere in the app updates these numbers instantly - there's nothing to refresh or recalculate.",
+    guide_dashboard_connect2:'The Net Leftover figure includes any <strong>Rollover</strong> amount you set in Settings, so a good month can carry forward into the next.',
+    guide_dashboard_connect3:'If a number looks off, the fix is almost always in Transactions, Income, Expenses, Bills, Debt, or Savings - the Dashboard just reflects what has already been entered.',
+    guide_dashboard_tip:'Make checking the Dashboard part of your routine - even 10 seconds a day keeps small surprises from becoming big ones.',
+    guide_transactions_title:'Transactions',
+    guide_transactions_big:'Transactions are the foundation of everything else in this app - every dollar you log here is what powers your Dashboard, your categories, and your bottom line. Get in the habit of logging as you spend, and the rest takes care of itself.',
+    guide_transactions_step1:'Tap <strong>Add Transaction</strong>, choose whether it is Income, an Expense, a Bill, Debt, or Savings, and fill in the amount and category.',
+    guide_transactions_step2:'Already have your spending in a spreadsheet? Use <strong>Import CSV</strong> to bring it all in at once instead of typing each one by hand.',
+    guide_transactions_step3:'Tap any transaction in the list to <strong>edit</strong> the amount, date, or category if you made a mistake or something changed.',
+    guide_transactions_step4:'Use the search and filter controls above the list to quickly find a specific transaction by type, category, or date.',
+    guide_transactions_connect1:'Every transaction you log automatically counts toward the matching category - an Expense transaction shows up in Expenses, a Bill payment shows up in Bills, and so on.',
+    guide_transactions_connect2:'Your Dashboard totals and charts are built entirely from these entries - nothing is estimated.',
+    guide_transactions_connect3:'Deleting or editing a transaction here instantly updates every total everywhere else in the app.',
+    guide_transactions_tip:'Log transactions the same day they happen. It takes seconds and keeps your Dashboard trustworthy.',
+    guide_income_title:'Income',
+    guide_income_big:'This is where you tell the app how much money you expect to earn, then track what actually landed - so you can spot the gap between the two at a glance.',
+    guide_income_step1:'Set your <strong>Expected</strong> amount for each income source, like your paycheck or a side hustle.',
+    guide_income_step2:'As money comes in, log it as an Income transaction - it will automatically fill your <strong>Actual</strong> column.',
+    guide_income_step3:"Compare Expected against Actual to see if you're on track or if some income has not landed yet.",
+    guide_income_connect1:"Income transactions logged in Transactions flow straight into this page's Actual totals.",
+    guide_income_connect2:'Your Total Income on the Dashboard is the sum of everything tracked here.',
+    guide_income_connect3:'A higher Net Leftover starts here - the more accurately you track income, the more accurate your whole budget becomes.',
+    guide_income_tip:'Add every income source separately, even small or irregular ones - it makes it much easier to spot patterns over time.',
+    guide_expenses_title:'Expenses',
+    guide_expenses_big:'Expenses is your day-to-day spending - groceries, gas, coffee, all of it. Setting an expected amount per category gives you something to measure yourself against instead of just watching money disappear.',
+    guide_expenses_step1:'Add a category for each type of spending you want to track, like Groceries or Entertainment.',
+    guide_expenses_step2:"Set an <strong>Expected</strong> amount for each one - what you'd like to stay under.",
+    guide_expenses_step3:'Log purchases as Expense transactions and watch the <strong>Actual</strong> column fill in automatically.',
+    guide_expenses_connect1:'Every Expense transaction you log in Transactions adds straight to the matching category here.',
+    guide_expenses_connect2:'Categories that go over their Expected amount are part of what drives your Spending Breakdown chart on the Dashboard.',
+    guide_expenses_connect3:'Trimming an over-budget category here is one of the fastest ways to increase your Net Leftover.',
+    guide_expenses_tip:'Start with just a handful of broad categories. You can always split them into more detail later once you see where the money really goes.',
+    guide_bills_title:'Bills',
+    guide_bills_big:"Bills are the payments you can't skip - rent, utilities, subscriptions you've committed to. This page keeps their due dates and paid status front and center so nothing slips through the cracks.",
+    guide_bills_step1:'Add a bill and give it a <strong>Due Date</strong> so you know exactly when it is due.',
+    guide_bills_step2:'Once you have paid it, tick the <strong>Paid</strong> checkbox to mark it settled for this period.',
+    guide_bills_step3:'Log the actual payment as a Bill transaction so the amount counts toward your totals.',
+    guide_bills_connect1:"Unpaid bills with a due date coming up are exactly the kind of thing worth checking before you spend elsewhere.",
+    guide_bills_connect2:'Bill transactions count toward your Total Outgoing on the Dashboard, right alongside Expenses and Debt.',
+    guide_bills_connect3:'Marking a bill Paid does not remove it - it just tracks status, so you always have a record of what has been settled this period.',
+    guide_bills_tip:'Add recurring bills at the start of each period so the due dates are waiting for you, not something you have to remember.',
+    guide_debt_title:'Debt',
+    guide_debt_big:'This page keeps every payment you owe in one place - credit cards, loans, anything with a balance - so you always know what is due and whether you are keeping up.',
+    guide_debt_step1:'Add each debt you are tracking along with your <strong>Expected</strong> payment for this period.',
+    guide_debt_step2:'Set a <strong>Due Date</strong> so you know exactly when the payment needs to go out.',
+    guide_debt_step3:'Log the payment as a Debt transaction and tick <strong>Paid</strong> once it clears.',
+    guide_debt_connect1:'Debt payments count toward your Total Outgoing on the Dashboard alongside Expenses and Bills.',
+    guide_debt_connect2:"This page tracks payments as a category, not a full payoff plan - if you want a snowball or avalanche strategy with interest projections, that's what Ultimate Budget Planner's Debt Payoff Calculator is built for.",
+    guide_debt_connect3:'Staying consistent here keeps your Net Leftover number honest, since unpaid debt has a way of catching up with you later.',
+    guide_debt_tip:'List even small debts, like a family loan - the point is not the size, it is knowing everything you owe in one place.',
+    guide_savings_title:'Savings',
+    guide_savings_big:'Savings is where you set money aside on purpose, instead of just seeing what is left at the end of the month. Treating it like any other planned expense is the easiest way to actually build it up.',
+    guide_savings_step1:'Set an <strong>Expected</strong> amount for what you want to save this period.',
+    guide_savings_step2:'Whenever you move money into savings, log it as a Savings transaction.',
+    guide_savings_step3:'Compare Expected to <strong>Actual</strong> to see if you hit your savings goal for the period.',
+    guide_savings_connect1:"Savings transactions logged in Transactions count straight toward this page's totals.",
+    guide_savings_connect2:'Your Total Savings figure on the Dashboard comes directly from what is tracked here.',
+    guide_savings_connect3:'Savings is included in your Net Leftover calculation, so saving consistently is one of the most direct ways to grow that number over time.',
+    guide_savings_tip:"Set your savings amount first, before you plan spending for the rest of your budget - it's much easier to hit a goal you commit to upfront.",
+    guide_settings_title:'Settings',
+    guide_settings_big:'Settings is where the app adapts to you - your currency, your budgeting period, how it looks, what language it speaks, and how your data is handled.',
+    guide_settings_step1:'Pick your <strong>Currency</strong> so every amount in the app displays the way you expect.',
+    guide_settings_step2:'Choose your <strong>Budget Period</strong> (like monthly or biweekly) to match how you actually get paid and pay bills.',
+    guide_settings_step3:"Enter a <strong>Rollover</strong> amount if you want unspent money from last period to carry into this one's Net Leftover.",
+    guide_settings_step4:'Switch <strong>Appearance</strong> between light and dark, and pick your <strong>Language</strong> from the list.',
+    guide_settings_step5:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
+    guide_settings_connect1:'Your Currency and Budget Period choices shape how every other page in the app displays and calculates numbers.',
+    guide_settings_connect2:'The Rollover amount you set here flows directly into the Net Leftover shown on your Dashboard.',
+    guide_settings_connect3:'Exporting data here is the safest way to keep a copy of everything before making any big change.',
+    guide_settings_tip:'Set your Currency and Budget Period first thing, before you start logging transactions - it saves you from having to double-check old entries later.',
   },
   de: {
     lang_name:'Deutsch',
@@ -2326,6 +2406,116 @@ function showHelp(key) {
 }
 function closeModal() { document.getElementById('tutorialOverlay').hidden = true; document.getElementById('tutorialModal')?.classList.remove('compare-modal'); document.getElementById('modalBody').innerHTML = ''; }
 
+// ── Guide ─────────────────────────────────────────────────────────────
+const GUIDE_TOPICS = [
+  { id: 'welcome',      group: 'guide_group_start',    icon: '👋', steps: 0, connects: 0, tip: false },
+  { id: 'dashboard',    group: 'guide_group_start',    icon: '📊', steps: 3, connects: 3, tip: true  },
+  { id: 'transactions', group: 'guide_group_track',    icon: '📋', steps: 4, connects: 3, tip: true  },
+  { id: 'income',       group: 'guide_group_track',    icon: '💰', steps: 3, connects: 3, tip: true  },
+  { id: 'expenses',     group: 'guide_group_track',    icon: '🛒', steps: 3, connects: 3, tip: true  },
+  { id: 'bills',        group: 'guide_group_track',    icon: '🧾', steps: 3, connects: 3, tip: true  },
+  { id: 'debt',         group: 'guide_group_track',    icon: '💳', steps: 3, connects: 3, tip: true  },
+  { id: 'savings',      group: 'guide_group_track',    icon: '🏦', steps: 3, connects: 3, tip: true  },
+  { id: 'settings',     group: 'guide_group_settings', icon: '⚙️', steps: 5, connects: 3, tip: true  }
+];
+let guideActiveTopic = null;
+let guideKeydownHandler = null;
+
+function guideFocusableEls(overlay) {
+  return Array.from(overlay.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])'))
+    .filter(el => el.offsetParent !== null);
+}
+function guideHandleKeydown(e) {
+  const overlay = document.getElementById('guideOverlay');
+  if (!overlay || overlay.hidden) return;
+  if (e.key === 'Escape') { e.preventDefault(); closeGuide(); return; }
+  if (e.key === 'Tab') {
+    const els = guideFocusableEls(overlay);
+    if (!els.length) return;
+    const first = els[0], last = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    return;
+  }
+  const sidebar = document.getElementById('guideSidebar');
+  if (sidebar && sidebar.contains(document.activeElement) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+    e.preventDefault();
+    const idx = GUIDE_TOPICS.findIndex(x => x.id === guideActiveTopic);
+    const next = e.key === 'ArrowDown' ? Math.min(idx + 1, GUIDE_TOPICS.length - 1) : Math.max(idx - 1, 0);
+    selectGuideTopic(GUIDE_TOPICS[next].id);
+    document.querySelector(`.guide-topic-btn[data-topic="${GUIDE_TOPICS[next].id}"]`)?.focus();
+  }
+}
+function renderGuideSidebar() {
+  const sidebar = document.getElementById('guideSidebar');
+  if (!sidebar) return;
+  let lastGroup = null;
+  sidebar.innerHTML = GUIDE_TOPICS.map(topic => {
+    let groupHtml = '';
+    if (topic.group !== lastGroup) { groupHtml = `<div class="guide-group-label">${esc(t(topic.group))}</div>`; lastGroup = topic.group; }
+    return `${groupHtml}<button class="guide-topic-btn" data-topic="${topic.id}" type="button">
+      <span class="guide-topic-icon">${topic.icon}</span><span>${esc(t('guide_' + topic.id + '_title'))}</span>
+    </button>`;
+  }).join('');
+  sidebar.querySelectorAll('.guide-topic-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectGuideTopic(btn.dataset.topic));
+  });
+}
+function renderGuideTopic(id) {
+  const topic = GUIDE_TOPICS.find(x => x.id === id);
+  const content = document.getElementById('guideContent');
+  if (!topic || !content) return;
+  const stepsHtml = topic.steps > 0
+    ? `<div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_how'))}</div>
+        <ol class="guide-steps">${Array.from({ length: topic.steps }, (_, i) => `<li><span class="guide-step-num">${i + 1}</span><span>${t('guide_' + id + '_step' + (i + 1))}</span></li>`).join('')}</ol>
+       </div>` : '';
+  const connectsHtml = topic.connects > 0
+    ? `<div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_connects'))}</div>
+        <ul class="guide-connects">${Array.from({ length: topic.connects }, (_, i) => `<li><span class="guide-connect-dot"></span><span>${t('guide_' + id + '_connect' + (i + 1))}</span></li>`).join('')}</ul>
+       </div>` : '';
+  const tipHtml = topic.tip
+    ? `<div class="guide-section"><div class="guide-tip"><span class="guide-tip-icon">💡</span><span>${t('guide_' + id + '_tip')}</span></div></div>` : '';
+  content.innerHTML = `
+    <button class="guide-back-btn" type="button">← ${esc(t('guide_back'))}</button>
+    <div class="guide-topic-header">
+      <div class="guide-topic-icon-badge">${topic.icon}</div>
+      <h3 class="guide-topic-title">${esc(t('guide_' + id + '_title'))}</h3>
+    </div>
+    <div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_big'))}</div><p class="guide-big-picture">${t('guide_' + id + '_big')}</p></div>
+    ${stepsHtml}${connectsHtml}${tipHtml}`;
+  content.querySelector('.guide-back-btn')?.addEventListener('click', () => {
+    document.getElementById('guideModal')?.classList.remove('is-topic-open');
+  });
+}
+function selectGuideTopic(id, userInitiated = true) {
+  guideActiveTopic = id;
+  document.querySelectorAll('.guide-topic-btn').forEach(btn => btn.classList.toggle('is-active', btn.dataset.topic === id));
+  renderGuideTopic(id);
+  if (userInitiated) document.getElementById('guideModal')?.classList.add('is-topic-open');
+  const content = document.getElementById('guideContent');
+  if (content) { content.scrollTop = 0; if (userInitiated) content.focus(); }
+}
+function openGuide(initialId) {
+  const overlay = document.getElementById('guideOverlay');
+  if (!overlay) return;
+  overlay.hidden = false;
+  document.getElementById('guideModal')?.classList.remove('is-topic-open');
+  renderGuideSidebar();
+  selectGuideTopic(initialId || guideActiveTopic || GUIDE_TOPICS[0].id, false);
+  guideKeydownHandler = e => guideHandleKeydown(e);
+  document.addEventListener('keydown', guideKeydownHandler, true);
+  setTimeout(() => {
+    const overlayEl = document.getElementById('guideOverlay');
+    (overlayEl?.querySelector('.guide-topic-btn.is-active') || overlayEl?.querySelector('.guide-close'))?.focus();
+  }, 40);
+}
+function closeGuide() {
+  const overlay = document.getElementById('guideOverlay');
+  if (!overlay) return;
+  overlay.hidden = true;
+  if (guideKeydownHandler) { document.removeEventListener('keydown', guideKeydownHandler, true); guideKeydownHandler = null; }
+}
+
 // ── Toast ─────────────────────────────────────────────────────────────
 function showToast(msg) {
   let t = document.getElementById('toast');
@@ -2565,6 +2755,13 @@ function init() {
 
   // Settings gear → Settings tab
   document.getElementById('settingsNavBtn')?.addEventListener('click', () => switchBTab('settings'));
+
+  // Guide
+  document.getElementById('guideNavBtn')?.addEventListener('click', () => openGuide());
+  document.getElementById('guideClose')?.addEventListener('click', closeGuide);
+  document.getElementById('guideOverlay')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeGuide();
+  });
 
   // Modal close
   document.getElementById('modalClose')?.addEventListener('click', closeModal);
