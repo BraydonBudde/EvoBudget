@@ -730,7 +730,7 @@ input[type="number"].expected-input {
 /* ═══════════════════════════════════════════════════════════════
    TRANSACTIONS
 ═══════════════════════════════════════════════════════════════ */
-.tx-form-panel { margin-bottom: 6px; }
+.tx-form-panel { margin: 10px 0 6px; }
 .tx-filter-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
