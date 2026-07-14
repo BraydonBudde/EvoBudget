@@ -1734,7 +1734,7 @@ input[type="number"].expected-input {
 }
 .recurring-summary::-webkit-details-marker { display: none; }
 .recurring-summary-title { display: inline-flex; align-items: center; gap: 7px; }
-.recurring-summary-icon { flex-shrink: 0; opacity: .75; }
+.recurring-summary-icon { flex-shrink: 0; font-size: 15px; line-height: 1; }
 .recurring-summary::before { content: '▶'; font-size: 9px; margin-right: 8px; color: var(--text-faint); transition: transform .15s; }
 details[open] > .recurring-summary::before { transform: rotate(90deg); }
 .recurring-count {

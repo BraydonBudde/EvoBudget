@@ -3397,7 +3397,7 @@ function renderTransactions() {
   const allocEnabled=state.allocation?.enabled;
   el.innerHTML=`<div class="section-header"><h2 class="section-title">\uD83D\uDCCB ${t('tab_transactions')}</h2><div class="section-header-actions">${helpBtn('transactions')}<label class="btn btn-ghost btn-sm csv-label">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label></div></div>
     <details class="recurring-panel panel">
-      <summary class="recurring-summary"><span class="recurring-summary-title"><svg class="recurring-summary-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>${t('recurring_title')}</span><span class="recurring-count">${(state.recurringTemplates||[]).length||''}</span></summary>
+      <summary class="recurring-summary"><span class="recurring-summary-title"><span class="recurring-summary-icon" aria-hidden="true">⚡</span>${t('recurring_title')}</span><span class="recurring-count">${(state.recurringTemplates||[]).length||''}</span></summary>
       <div class="recurring-body">
         <p class="recurring-desc">${t('recurring_desc')}</p>
         ${(state.recurringTemplates||[]).length===0
