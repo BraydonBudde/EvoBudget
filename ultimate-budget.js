@@ -317,6 +317,10 @@ function calcAmortizationPayment(principal,aprPercent,termMonths) {
   if (r===0) return principal/termMonths;
   return principal*r*Math.pow(1+r,termMonths)/(Math.pow(1+r,termMonths)-1);
 }
+function calcDecliningFirstPayment(principal,aprPercent,termMonths) {
+  if (!(termMonths>0)) return 0;
+  return (principal/termMonths)+principal*((aprPercent/100)/12);
+}
 function recomputePercentMinPayment(d) {
   return Math.max(d.minPayFloor||0,(d.balance||0)*(d.minPayPercent||0)/100);
 }
@@ -337,7 +341,9 @@ function runDebtPayoff() {
       if (d.remaining<=0) continue;
       const interest=d.remaining*(d.interestRate/100/12);
       totalInterest+=interest; d.remaining+=interest;
-      const minPay=d.minPayMode==='percent'?Math.max(d.minPayFloor||0,d.remaining*(d.minPayPercent||0)/100):d.minimumPayment;
+      const minPay=d.minPayMode==='percent'?Math.max(d.minPayFloor||0,d.remaining*(d.minPayPercent||0)/100)
+        :(d.amortType==='equal_principal'&&d.termMonths>0)?(d.balance/d.termMonths)+interest
+        :d.minimumPayment;
       const pay=Math.min(d.remaining,minPay);
       d.remaining-=pay;
       if (d.remaining<0.01){freed+=minPay-Math.max(0,minPay-pay);d.remaining=0;if(!d.paidOffMonth)d.paidOffMonth=month;}
@@ -529,6 +535,9 @@ const TRANSLATIONS = {
     dpc_min_pct_caption:'{0}% of balance',dpc_escrow_note:'{0} escrow',
     dpc_term_note_faster:'{0} mo faster than your {1}-yr term',dpc_term_note_slower:'{0} mo slower than your {1}-yr term',
     dpc_term_note_onschedule:'right on schedule for your {0}-yr term',
+    dpc_amort_type_label:'Repayment style',dpc_amort_equal_payment:'Equal payments',dpc_amort_equal_principal:'Declining payments (equal principal)',
+    dpc_amort_type_hint:'Equal payments stay the same every month. Declining payments keep the amount going to principal fixed, so the total payment shrinks over time as interest reduces - common for some mortgages.',
+    dpc_autocalc_done_declining:'First payment: {0}/mo (decreases monthly)',dpc_declining_caption:'declining payment',
     dtype_credit_card:'Credit Card',dtype_student_loan:'Student Loan',
     dtype_mortgage:'Mortgage',dtype_car_loan:'Car Loan',
     dtype_personal_loan:'Personal Loan',dtype_other:'Other',
@@ -553,6 +562,7 @@ const TRANSLATIONS = {
     help_dpc_term_li:'Loan term - For mortgages, student loans, car loans and personal loans, set the term in years and click Auto-calculate to work out an accurate minimum payment.',
     help_dpc_percent_li:'Percentage-based minimum - For credit cards, switch to "% of balance" to match how your statement\u2019s minimum payment actually works (e.g. 2% of balance or $25, whichever is higher).',
     help_dpc_escrow_li:'Escrow - For mortgages, add your monthly taxes & insurance so your real monthly cost is accurate everywhere; it\u2019s excluded from the payoff projection since it doesn\u2019t reduce your balance.',
+    help_dpc_amort_li:'Repayment style - Equal payments keep your payment the same every month. Declining payments (equal principal) keep the amount going to principal fixed, so your total payment shrinks over time; check your loan documents to see which one you have.',
     tx_import_csv:'\uD83D\uDCE5 Import CSV',
     tx_add_title:'Add a transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Category',tx_amount:'Amount',
@@ -789,6 +799,7 @@ const TRANSLATIONS = {
     guide_debt_step3:'Add any extra amount you can put toward debt each period - the calculator applies it to whichever debt your strategy targets first.',
     guide_debt_step4:'Check your projected <strong>debt-free date</strong> and total interest to see how extra payments change the picture.',
     guide_debt_step5:'For mortgages and loans, set a <strong>Loan term</strong> and click <strong>Auto-calculate</strong> for an accurate minimum payment. For credit cards, switch to <strong>% of balance</strong> to match your real statement minimum.',
+    guide_debt_step6:'Some loans use <strong>declining payments</strong> instead of equal payments - the amount going to principal stays fixed and the total payment shrinks over time. Check <strong>Repayment style</strong> to match your loan.',
     guide_debt_connect1:"Debt payments you log in Transactions count toward each debt's balance here.",
     guide_debt_connect2:'Your Dashboard shows a snapshot of this payoff plan so you always know where you stand without opening this page.',
     guide_debt_connect3:'Paying more than the minimum here - even a little - is usually the single biggest lever you have to shorten your payoff timeline.',
@@ -969,6 +980,9 @@ const TRANSLATIONS = {
     dpc_min_pct_caption:'{0}% vom Saldo',dpc_escrow_note:'{0} Treuhand',
     dpc_term_note_faster:'{0} Monate schneller als deine {1}-jährige Laufzeit',dpc_term_note_slower:'{0} Monate langsamer als deine {1}-jährige Laufzeit',
     dpc_term_note_onschedule:'genau im Zeitplan für deine {0}-jährige Laufzeit',
+    dpc_amort_type_label:'Rückzahlungsart',dpc_amort_equal_payment:'Gleichbleibende Raten',dpc_amort_equal_principal:'Fallende Raten (gleicher Tilgungsanteil)',
+    dpc_amort_type_hint:'Bei gleichbleibenden Raten bleibt die Zahlung jeden Monat gleich. Bei fallenden Raten bleibt der Tilgungsanteil fest, sodass die Gesamtrate mit der Zeit sinkt, da die Zinsen abnehmen - üblich bei manchen Hypotheken.',
+    dpc_autocalc_done_declining:'Erste Rate: {0}/Monat (sinkt monatlich)',dpc_declining_caption:'fallende Rate',
     dtype_credit_card:'Kreditkarte',dtype_student_loan:'Studienkredit',
     dtype_mortgage:'Hypothek',dtype_car_loan:'Autokredit',
     dtype_personal_loan:'Privatkredit',dtype_other:'Sonstiges',
@@ -992,6 +1006,7 @@ const TRANSLATIONS = {
     help_dpc_term_li:'Laufzeit - Lege bei Hypotheken, Studien-, Auto- und Privatkrediten die Laufzeit in Jahren fest und klicke auf "Automatisch berechnen", um eine genaue Mindestrate zu ermitteln.',
     help_dpc_percent_li:'Prozentbasierte Mindestrate - Wechsle bei Kreditkarten zu "% vom Saldo", damit es genauso funktioniert wie auf deiner Abrechnung (z. B. 2% vom Saldo oder 25 €, je nachdem, was höher ist).',
     help_dpc_escrow_li:'Treuhand - Füge bei Hypotheken deine monatlichen Steuern & Versicherungen hinzu, damit deine tatsächlichen monatlichen Kosten überall stimmen; sie werden von der Tilgungsprognose ausgeschlossen, da sie den Saldo nicht verringern.',
+    help_dpc_amort_li:'Rückzahlungsart - Bei gleichbleibenden Raten bleibt deine Zahlung jeden Monat gleich. Bei fallenden Raten (gleicher Tilgungsanteil) bleibt der Betrag, der zur Tilgung geht, fest, sodass deine Gesamtrate mit der Zeit sinkt; prüfe deine Kreditunterlagen, um zu sehen, welche Art du hast.',
     help_dpc_tip:'\uD83D\uDCA1 Wechsle zwischen den Methoden, um zu sehen, wie viele Zinsen du mit jedem Ansatz sparen würdest.',
     tx_import_csv:'\uD83D\uDCE5 CSV importieren',
     tx_add_title:'Transaktion hinzufügen',
@@ -1229,6 +1244,7 @@ const TRANSLATIONS = {
     guide_debt_step3:'Füge jeden zusätzlichen Betrag hinzu, den du pro Periode für Schulden aufbringen kannst - der Rechner wendet ihn auf die Schuld an, die deine Strategie zuerst anvisiert.',
     guide_debt_step4:'Prüfe dein voraussichtliches <strong>schuldenfreies Datum</strong> und die Gesamtzinsen, um zu sehen, wie zusätzliche Zahlungen das Bild verändern.',
     guide_debt_step5:'Lege bei Hypotheken und Krediten eine <strong>Laufzeit</strong> fest und klicke auf <strong>Automatisch berechnen</strong> für eine genaue Mindestrate. Wechsle bei Kreditkarten zu <strong>% vom Saldo</strong>, damit es deiner echten Abrechnung entspricht.',
+    guide_debt_step6:'Manche Kredite verwenden <strong>fallende Raten</strong> statt gleichbleibender Raten - der Tilgungsanteil bleibt fest und die Gesamtrate sinkt mit der Zeit. Prüfe die <strong>Rückzahlungsart</strong>, damit sie zu deinem Kredit passt.',
     guide_debt_connect1:'Schuldenzahlungen, die du bei Transaktionen einträgst, zählen hier zum Saldo jeder Schuld.',
     guide_debt_connect2:'Dein Dashboard zeigt eine Momentaufnahme dieses Tilgungsplans, damit du immer weißt, wo du stehst, ohne diese Seite zu öffnen.',
     guide_debt_connect3:'Mehr als die Mindestzahlung zu leisten - selbst ein wenig mehr - ist meist der größte Hebel, um deine Tilgungszeit zu verkürzen.',
@@ -1409,6 +1425,9 @@ const TRANSLATIONS = {
     dpc_min_pct_caption:'{0}% du solde',dpc_escrow_note:'{0} séquestre',
     dpc_term_note_faster:'{0} mois plus rapide que votre durée de {1} ans',dpc_term_note_slower:'{0} mois plus lent que votre durée de {1} ans',
     dpc_term_note_onschedule:'exactement dans les temps pour votre durée de {0} ans',
+    dpc_amort_type_label:'Type de remboursement',dpc_amort_equal_payment:'Mensualités égales',dpc_amort_equal_principal:'Mensualités dégressives (capital constant)',
+    dpc_amort_type_hint:"Avec les mensualités égales, le paiement reste le même chaque mois. Avec les mensualités dégressives, la part de capital reste fixe, donc le paiement total diminue avec le temps à mesure que les intérêts baissent - courant pour certains prêts immobiliers.",
+    dpc_autocalc_done_declining:'Première mensualité : {0}/mois (diminue chaque mois)',dpc_declining_caption:'mensualité dégressive',
     dtype_credit_card:'Carte de crédit',dtype_student_loan:'Prêt étudiant',
     dtype_mortgage:'Hypothèque',dtype_car_loan:'Prêt auto',
     dtype_personal_loan:'Prêt personnel',dtype_other:'Autre',
@@ -1432,6 +1451,7 @@ const TRANSLATIONS = {
     help_dpc_term_li:"Durée du prêt - Pour les prêts hypothécaires, étudiants, auto et personnels, définissez la durée en années et cliquez sur Calculer automatiquement pour obtenir un paiement minimum précis.",
     help_dpc_percent_li:'Paiement minimum en pourcentage - Pour les cartes de crédit, passez à "% du solde" pour correspondre au fonctionnement réel du paiement minimum de votre relevé (ex. 2% du solde ou 25 $, le plus élevé des deux).',
     help_dpc_escrow_li:"Séquestre - Pour les prêts hypothécaires, ajoutez vos taxes et assurances mensuelles afin que votre coût mensuel réel soit exact partout ; il est exclu de la projection de remboursement puisqu'il ne réduit pas votre solde.",
+    help_dpc_amort_li:"Type de remboursement - Avec les mensualités égales, votre paiement reste le même chaque mois. Avec les mensualités dégressives (capital constant), le montant affecté au capital reste fixe, donc votre mensualité totale diminue avec le temps ; vérifiez vos documents de prêt pour savoir lequel s'applique à vous.",
     help_dpc_tip:"\uD83D\uDCA1 Basculez entre les méthodes pour voir combien d'intérêts vous économiseriez avec chaque approche.",
     tx_import_csv:'\uD83D\uDCE5 Importer CSV',
     tx_add_title:'Ajouter une transaction',
@@ -1669,6 +1689,7 @@ const TRANSLATIONS = {
     guide_debt_step3:"Ajoutez tout montant supplémentaire que vous pouvez consacrer aux dettes chaque période - le calculateur l'applique à la dette ciblée en premier par votre stratégie.",
     guide_debt_step4:"Consultez votre <strong>date de libération</strong> projetée et le total des intérêts pour voir comment des paiements supplémentaires changent la donne.",
     guide_debt_step5:'Pour les prêts hypothécaires et autres prêts, définissez une <strong>durée</strong> et cliquez sur <strong>Calculer automatiquement</strong> pour un paiement minimum précis. Pour les cartes de crédit, passez à <strong>% du solde</strong> pour correspondre à votre relevé réel.',
+    guide_debt_step6:'Certains prêts utilisent des <strong>mensualités dégressives</strong> au lieu de mensualités égales - la part de capital reste fixe et la mensualité totale diminue avec le temps. Vérifiez le <strong>type de remboursement</strong> pour qu\'il corresponde à votre prêt.',
     guide_debt_connect1:"Les paiements de dette saisis dans Transactions comptent dans le solde de chaque dette ici.",
     guide_debt_connect2:"Votre tableau de bord affiche un aperçu de ce plan de remboursement pour que vous sachiez toujours où vous en êtes sans ouvrir cette page.",
     guide_debt_connect3:"Payer plus que le minimum ici - même un peu plus - est généralement le plus grand levier pour raccourcir votre calendrier de remboursement.",
@@ -1849,6 +1870,9 @@ const TRANSLATIONS = {
     dpc_min_pct_caption:'{0}% del saldo',dpc_escrow_note:'{0} en depósito',
     dpc_term_note_faster:'{0} meses más rápido que tu plazo de {1} años',dpc_term_note_slower:'{0} meses más lento que tu plazo de {1} años',
     dpc_term_note_onschedule:'justo a tiempo para tu plazo de {0} años',
+    dpc_amort_type_label:'Tipo de amortización',dpc_amort_equal_payment:'Cuotas iguales',dpc_amort_equal_principal:'Cuotas decrecientes (capital constante)',
+    dpc_amort_type_hint:'Con cuotas iguales, el pago es el mismo cada mes. Con cuotas decrecientes, la parte destinada al capital se mantiene fija, por lo que el pago total disminuye con el tiempo a medida que bajan los intereses - común en algunas hipotecas.',
+    dpc_autocalc_done_declining:'Primera cuota: {0}/mes (disminuye cada mes)',dpc_declining_caption:'cuota decreciente',
     dtype_credit_card:'Tarjeta de crédito',dtype_student_loan:'Préstamo estudiantil',
     dtype_mortgage:'Hipoteca',dtype_car_loan:'Préstamo de coche',
     dtype_personal_loan:'Préstamo personal',dtype_other:'Otro',
@@ -1872,6 +1896,7 @@ const TRANSLATIONS = {
     help_dpc_term_li:'Plazo del préstamo - Para hipotecas, préstamos estudiantiles, de auto y personales, define el plazo en años y haz clic en Calcular automáticamente para obtener un pago mínimo preciso.',
     help_dpc_percent_li:'Pago mínimo por porcentaje - Para tarjetas de crédito, cambia a "% del saldo" para que funcione igual que el pago mínimo real de tu estado de cuenta (p. ej. 2% del saldo o $25, lo que sea mayor).',
     help_dpc_escrow_li:'Depósito en garantía - Para hipotecas, agrega tus impuestos y seguro mensuales para que tu costo mensual real sea preciso en todas partes; se excluye de la proyección de pago ya que no reduce tu saldo.',
+    help_dpc_amort_li:'Tipo de amortización - Con cuotas iguales, tu pago es el mismo cada mes. Con cuotas decrecientes (capital constante), el monto destinado al capital se mantiene fijo, por lo que tu cuota total disminuye con el tiempo; revisa los documentos de tu préstamo para saber cuál tienes.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna entre métodos para ver cuántos intereses ahorrarías con cada enfoque.',
     tx_import_csv:'\uD83D\uDCE5 Importar CSV',
     tx_add_title:'Añadir una transacción',
@@ -2109,6 +2134,7 @@ const TRANSLATIONS = {
     guide_debt_step3:'Agrega cualquier importe extra que puedas destinar a deudas cada período - la calculadora lo aplica a la deuda que tu estrategia prioriza primero.',
     guide_debt_step4:'Revisa tu <strong>fecha estimada sin deudas</strong> y el interés total para ver cómo cambian las cosas con pagos extra.',
     guide_debt_step5:'Para hipotecas y préstamos, define un <strong>plazo</strong> y haz clic en <strong>Calcular automáticamente</strong> para un pago mínimo preciso. Para tarjetas de crédito, cambia a <strong>% del saldo</strong> para igualar tu estado de cuenta real.',
+    guide_debt_step6:'Algunos préstamos usan <strong>cuotas decrecientes</strong> en lugar de cuotas iguales - la parte de capital se mantiene fija y la cuota total disminuye con el tiempo. Revisa el <strong>tipo de amortización</strong> para que coincida con tu préstamo.',
     guide_debt_connect1:'Los pagos de deuda que registras en Transacciones cuentan para el saldo de cada deuda aquí.',
     guide_debt_connect2:'Tu Panel muestra un resumen de este plan de pago para que siempre sepas dónde estás sin abrir esta página.',
     guide_debt_connect3:'Pagar más del mínimo aquí - incluso un poco más - suele ser la mejor palanca para acortar tu calendario de pago.',
@@ -2290,6 +2316,9 @@ const TRANSLATIONS = {
     dpc_min_pct_caption:'{0}% del saldo',dpc_escrow_note:'{0} deposito vincolato',
     dpc_term_note_faster:'{0} mesi più veloce della tua durata di {1} anni',dpc_term_note_slower:'{0} mesi più lento della tua durata di {1} anni',
     dpc_term_note_onschedule:'perfettamente in linea con la tua durata di {0} anni',
+    dpc_amort_type_label:'Tipo di ammortamento',dpc_amort_equal_payment:'Rate costanti',dpc_amort_equal_principal:'Rate decrescenti (capitale costante)',
+    dpc_amort_type_hint:'Con le rate costanti, il pagamento resta uguale ogni mese. Con le rate decrescenti, la quota capitale resta fissa, quindi la rata totale diminuisce nel tempo man mano che gli interessi calano - comune per alcuni mutui.',
+    dpc_autocalc_done_declining:'Prima rata: {0}/mese (diminuisce ogni mese)',dpc_declining_caption:'rata decrescente',
     dtype_credit_card:'Carta di credito',dtype_student_loan:'Prestito studentesco',
     dtype_mortgage:'Mutuo',dtype_car_loan:'Prestito auto',
     dtype_personal_loan:'Prestito personale',dtype_other:'Altro',
@@ -2313,6 +2342,7 @@ const TRANSLATIONS = {
     help_dpc_term_li:'Durata del prestito - Per mutui, prestiti studenteschi, auto e personali, imposta la durata in anni e clicca su Calcola automaticamente per ottenere una rata minima accurata.',
     help_dpc_percent_li:'Rata minima percentuale - Per le carte di credito, passa a "% del saldo" per rispecchiare come funziona davvero la rata minima del tuo estratto conto (es. 2% del saldo o 25€, il valore più alto).',
     help_dpc_escrow_li:'Deposito vincolato - Per i mutui, aggiungi le tue tasse e assicurazione mensili così il tuo costo mensile reale è accurato ovunque; è escluso dalla proiezione di rimborso poiché non riduce il saldo.',
+    help_dpc_amort_li:'Tipo di ammortamento - Con le rate costanti, il tuo pagamento resta uguale ogni mese. Con le rate decrescenti (capitale costante), la quota capitale resta fissa, quindi la rata totale diminuisce nel tempo; controlla i documenti del tuo prestito per sapere quale tipo hai.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna tra i metodi per vedere quanti interessi risparmieresti con ciascun approccio.',
     tx_import_csv:'\uD83D\uDCE5 Importa CSV',
     tx_add_title:'Aggiungi una transazione',
@@ -2550,6 +2580,7 @@ const TRANSLATIONS = {
     guide_debt_step3:"Aggiungi qualsiasi importo extra che puoi destinare ai debiti ogni periodo - il calcolatore lo applica al debito che la tua strategia punta per primo.",
     guide_debt_step4:"Controlla la tua <strong>data prevista senza debiti</strong> e gli interessi totali per vedere come i pagamenti extra cambiano il quadro.",
     guide_debt_step5:'Per mutui e prestiti, imposta una <strong>durata</strong> e clicca su <strong>Calcola automaticamente</strong> per una rata minima accurata. Per le carte di credito, passa a <strong>% del saldo</strong> per rispecchiare il tuo estratto conto reale.',
+    guide_debt_step6:'Alcuni prestiti usano <strong>rate decrescenti</strong> invece di rate costanti - la quota capitale resta fissa e la rata totale diminuisce nel tempo. Controlla il <strong>tipo di ammortamento</strong> per farlo corrispondere al tuo prestito.',
     guide_debt_connect1:"I pagamenti di debiti che registri in Transazioni contano per il saldo di ogni debito qui.",
     guide_debt_connect2:"La tua Dashboard mostra un riepilogo di questo piano di rimborso così sai sempre a che punto sei senza aprire questa pagina.",
     guide_debt_connect3:"Pagare più del minimo qui - anche solo un po' di più - è di solito la leva più grande per accorciare i tempi di rimborso.",
@@ -2730,6 +2761,9 @@ const TRANSLATIONS = {
     dpc_min_pct_caption:'{0}% salda',dpc_escrow_note:'{0} depozytu',
     dpc_term_note_faster:'{0} mies. szybciej niż Twój {1}-letni okres',dpc_term_note_slower:'{0} mies. wolniej niż Twój {1}-letni okres',
     dpc_term_note_onschedule:'dokładnie zgodnie z harmonogramem dla {0}-letniego okresu',
+    dpc_amort_type_label:'Rodzaj rat',dpc_amort_equal_payment:'Raty równe',dpc_amort_equal_principal:'Raty malejące (stały kapitał)',
+    dpc_amort_type_hint:'Przy ratach równych płatność jest taka sama co miesiąc. Przy ratach malejących część kapitałowa jest stała, więc całkowita rata maleje w czasie wraz ze spadkiem odsetek - typowe dla niektórych kredytów hipotecznych.',
+    dpc_autocalc_done_declining:'Pierwsza rata: {0}/mies. (maleje co miesiąc)',dpc_declining_caption:'rata malejąca',
     dtype_credit_card:'Karta kredytowa',dtype_student_loan:'Kredyt studencki',
     dtype_mortgage:'Hipoteka',dtype_car_loan:'Kredyt samochodowy',
     dtype_personal_loan:'Kredyt osobisty',dtype_other:'Inne',
@@ -2753,6 +2787,7 @@ const TRANSLATIONS = {
     help_dpc_term_li:'Okres kredytowania - Dla kredytów hipotecznych, studenckich, samochodowych i osobistych ustaw okres w latach i kliknij Oblicz automatycznie, aby uzyskać dokładną minimalną ratę.',
     help_dpc_percent_li:'Minimalna rata procentowa - Dla kart kredytowych przełącz na "% salda", aby odpowiadało to rzeczywistemu działaniu minimalnej raty z wyciągu (np. 2% salda lub 25 zł, w zależności od tego, co jest wyższe).',
     help_dpc_escrow_li:'Depozyt - Dla kredytów hipotecznych dodaj miesięczne podatki i ubezpieczenie, aby Twój rzeczywisty koszt miesięczny był wszędzie dokładny; jest wykluczony z prognozy spłaty, ponieważ nie zmniejsza salda.',
+    help_dpc_amort_li:'Rodzaj rat - Przy ratach równych Twoja płatność jest taka sama co miesiąc. Przy ratach malejących (stały kapitał) kwota przeznaczona na kapitał jest stała, więc Twoja całkowita rata maleje w czasie; sprawdź dokumenty kredytowe, aby dowiedzieć się, który rodzaj Cię dotyczy.',
     help_dpc_tip:'\uD83D\uDCA1 Przełącz między metodami, aby zobaczyć, ile odsetek zaoszczędziłbyś przy każdym podejściu.',
     tx_import_csv:'\uD83D\uDCE5 Importuj CSV',
     tx_add_title:'Dodaj transakcję',
@@ -2990,6 +3025,7 @@ const TRANSLATIONS = {
     guide_debt_step3:'Dodaj każdą dodatkową kwotę, którą możesz przeznaczyć na długi w danym okresie - kalkulator zastosuje ją do długu, na który wskazuje twoja strategia jako pierwszy.',
     guide_debt_step4:'Sprawdź swoją przewidywaną <strong>datę wolności od długów</strong> i łączne odsetki, aby zobaczyć, jak dodatkowe płatności zmieniają sytuację.',
     guide_debt_step5:'W przypadku kredytów hipotecznych i innych pożyczek ustaw <strong>okres kredytowania</strong> i kliknij <strong>Oblicz automatycznie</strong>, aby uzyskać dokładną minimalną ratę. W przypadku kart kredytowych przełącz na <strong>% salda</strong>, aby dopasować się do rzeczywistego wyciągu.',
+    guide_debt_step6:'Niektóre kredyty korzystają z <strong>rat malejących</strong> zamiast rat równych - część kapitałowa jest stała, a całkowita rata maleje w czasie. Sprawdź <strong>rodzaj rat</strong>, aby dopasować go do swojego kredytu.',
     guide_debt_connect1:'Płatności długów zapisane w Transakcjach liczą się do salda każdego długu tutaj.',
     guide_debt_connect2:'Twój Pulpit pokazuje podsumowanie tego planu spłaty, dzięki czemu zawsze wiesz, na czym stoisz, bez otwierania tej strony.',
     guide_debt_connect3:'Płacenie więcej niż minimum tutaj - nawet trochę więcej - jest zwykle największą dźwignią do skrócenia czasu spłaty.',
@@ -3823,6 +3859,14 @@ function openDebtModal(debtId){
       <input class="input" type="number" id="debtTermYears" min="0" step="1" placeholder="30" value="${d?.termMonths?Math.round(d.termMonths/12):''}">
       <div class="field-hint">${t('dpc_term_hint')}</div>
     </div>
+    <div class="field" id="debtAmortTypeRow" style="display:none">
+      <label class="field-label">${t('dpc_amort_type_label')}</label>
+      <select class="select" id="debtAmortType">
+        <option value="equal_payment" ${(d?.amortType||'equal_payment')==='equal_payment'?'selected':''}>${t('dpc_amort_equal_payment')}</option>
+        <option value="equal_principal" ${d?.amortType==='equal_principal'?'selected':''}>${t('dpc_amort_equal_principal')}</option>
+      </select>
+      <div class="field-hint">${t('dpc_amort_type_hint')}</div>
+    </div>
     <div class="field" id="debtEscrowRow" style="display:none">
       <label class="field-label">${t('dpc_escrow_label')} (${SYM})</label>
       <input class="input" type="number" id="debtEscrow" min="0" step="0.01" placeholder="0.00" value="${d?.escrowMonthly||''}">
@@ -3874,6 +3918,7 @@ function openDebtModal(debtId){
     const type=document.getElementById('debtType')?.value;
     const isAmortizing=AMORTIZING_DEBT_TYPES.includes(type);
     const termRow=document.getElementById('debtTermRow');if(termRow)termRow.style.display=isAmortizing?'':'none';
+    const amortTypeRow=document.getElementById('debtAmortTypeRow');if(amortTypeRow)amortTypeRow.style.display=isAmortizing?'':'none';
     const autoCalcRow=document.getElementById('debtAutoCalcRow');if(autoCalcRow)autoCalcRow.style.display=isAmortizing?'':'none';
     const escrowRow=document.getElementById('debtEscrowRow');if(escrowRow)escrowRow.style.display=type==='mortgage'?'':'none';
     const minModeRow=document.getElementById('debtMinModeRow');if(minModeRow)minModeRow.style.display=type==='credit_card'?'':'none';
@@ -3882,16 +3927,24 @@ function openDebtModal(debtId){
   document.getElementById('debtType')?.addEventListener('change',updateDebtTypeFields);
   document.getElementById('debtMinMode')?.addEventListener('change',updateMinModeFields);
   ['debtBalance','debtMinPercent','debtMinFloor'].forEach(id=>document.getElementById(id)?.addEventListener('input',refreshMinPreview));
+  document.getElementById('debtAmortType')?.addEventListener('change',()=>{document.getElementById('debtAutoCalcResult').textContent='';});
   document.getElementById('debtAutoCalcBtn')?.addEventListener('click',()=>{
     const bal=parseFloat(document.getElementById('debtBalance')?.value)||0;
     const apr=parseFloat(document.getElementById('debtApr')?.value)||0;
     const years=parseFloat(document.getElementById('debtTermYears')?.value)||0;
+    const amortType=document.getElementById('debtAmortType')?.value||'equal_payment';
     const resultEl=document.getElementById('debtAutoCalcResult');
     if(!(bal>0)||!(years>0)){if(resultEl)resultEl.textContent=t('sf_error_required');return;}
-    const payment=calcAmortizationPayment(bal,apr,years*12);
     const minEl=document.getElementById('debtMin');
-    if(minEl){minEl.value=payment.toFixed(2);minEl.classList.remove('fk-invalid');}
-    if(resultEl)resultEl.textContent=tf('dpc_autocalc_done',fmt(payment));
+    if(amortType==='equal_principal'){
+      const payment=calcDecliningFirstPayment(bal,apr,years*12);
+      if(minEl){minEl.value=payment.toFixed(2);minEl.classList.remove('fk-invalid');}
+      if(resultEl)resultEl.textContent=tf('dpc_autocalc_done_declining',fmt(payment));
+    } else {
+      const payment=calcAmortizationPayment(bal,apr,years*12);
+      if(minEl){minEl.value=payment.toFixed(2);minEl.classList.remove('fk-invalid');}
+      if(resultEl)resultEl.textContent=tf('dpc_autocalc_done',fmt(payment));
+    }
   });
   updateDebtTypeFields();
   document.getElementById('saveDebtBtn')?.addEventListener('click',()=>{
@@ -3915,8 +3968,10 @@ function openDebtModal(debtId){
     if(bad){if(errEl){errEl.textContent=t('sf_error_required');errEl.hidden=false;}return;}
     if(errEl)errEl.hidden=true;
     let did,debtObj;
+    const amortType=isAmortizing?(document.getElementById('debtAmortType')?.value||'equal_payment'):undefined;
     const fields={name,type,balance,interestRate:apr,minimumPayment:minPay,dueDay:isNaN(dueDay)?'':dueDay,
       termMonths:isAmortizing&&termYears>0?termYears*12:undefined,
+      amortType:isAmortizing&&termYears>0?amortType:undefined,
       escrowMonthly:type==='mortgage'&&escrow>0?escrow:undefined,
       minPayMode:isCreditCard?minMode:undefined,
       minPayPercent:isCreditCard&&minMode==='percent'?minPercent:undefined,
@@ -3956,7 +4011,7 @@ function renderDebt(){
           <td>${DT[d.type]||esc(d.type)}</td>
           <td>${fmt(d.balance)}</td>
           <td>${(d.interestRate||0)}%</td>
-          <td>${fmt(d.minimumPayment)}${d.minPayMode==='percent'?`<div class="field-hint" style="margin:2px 0 0">${tf('dpc_min_pct_caption',d.minPayPercent||0)}</div>`:''}</td>
+          <td>${fmt(d.minimumPayment)}${d.minPayMode==='percent'?`<div class="field-hint" style="margin:2px 0 0">${tf('dpc_min_pct_caption',d.minPayPercent||0)}</div>`:d.amortType==='equal_principal'?`<div class="field-hint" style="margin:2px 0 0">${t('dpc_declining_caption')}</div>`:''}</td>
           <td>${d.dueDay?d.dueDay:'<span style="color:var(--text-faint)">-</span>'}</td>
           <td><label class="recurring-toggle" title="${t('automate_label')}"><input type="checkbox" class="debt-auto-cb" data-debt-auto="${d.id}" ${findLinkedTemplate('debt',d.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></td>
           <td><div class="row-actions"><button class="sf-edit-btn btn-icon-tiny" data-debt-edit="${d.id}" type="button" title="${t('edit')}">✏️</button><button class="del-btn" data-debt-id="${d.id}" type="button">×</button></div></td>
@@ -4851,6 +4906,7 @@ const HELP={
   <li><strong>${t('dpc_term_label')}</strong> - ${t('help_dpc_term_li').split(' - ')[1]}</li>
   <li><strong>${t('dpc_min_mode_label')}</strong> - ${t('help_dpc_percent_li').split(' - ')[1]}</li>
   <li><strong>${t('dpc_escrow_label')}</strong> - ${t('help_dpc_escrow_li').split(' - ')[1]}</li>
+  <li><strong>${t('dpc_amort_type_label')}</strong> - ${t('help_dpc_amort_li').split(' - ')[1]}</li>
 </ul>
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_dpc_strategies_h')}</h4>
 <ul>
@@ -4967,7 +5023,7 @@ const GUIDE_TOPICS = [
   { id: 'dashboard',    group: 'guide_group_start',    icon: '📊', steps: 3, connects: 3, tip: true  },
   { id: 'transactions', group: 'guide_group_track',    icon: '📋', steps: 4, connects: 3, tip: true  },
   { id: 'budget',       group: 'guide_group_track',    icon: '💰', steps: 4, connects: 3, tip: true  },
-  { id: 'debt',         group: 'guide_group_plan',     icon: '💳', steps: 5, connects: 3, tip: true  },
+  { id: 'debt',         group: 'guide_group_plan',     icon: '💳', steps: 6, connects: 3, tip: true  },
   { id: 'sinking',      group: 'guide_group_plan',     icon: '🏺', steps: 3, connects: 3, tip: true  },
   { id: 'subscriptions',group: 'guide_group_plan',     icon: '🔄', steps: 3, connects: 3, tip: true  },
   { id: 'calendar',     group: 'guide_group_plan',     icon: '📅', steps: 3, connects: 3, tip: true  },
