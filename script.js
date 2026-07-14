@@ -1944,8 +1944,8 @@ function renderDashboard() {
       <div class="upgrade-pro" id="upgradeBanner">
         <button class="upgrade-pro-close" id="upgradeCloseBtn" type="button" aria-label="Dismiss">×</button>
         <div class="upgrade-pro-head">
-          <h3 class="upgrade-pro-title">🚀 ${t('upgrade_title')}</h3>
           <span class="upgrade-pro-badge">⚡ PRO</span>
+          <h3 class="upgrade-pro-title">${t('upgrade_title')}</h3>
         </div>
         <p class="upgrade-pro-sub">${t('upgrade_desc')}</p>
         <div class="upgrade-pro-feats">
