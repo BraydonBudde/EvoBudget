@@ -421,7 +421,8 @@ function pennyToolGetDebts() {
     debtFreeDate: payoff ? payoff.debtFreeDate : null, totalInterest: payoff ? round2(payoff.totalInterest) : 0,
     debts: state.debts.map(d => {
       const p = order.find(x => x.id === d.id);
-      return { name: d.name, type: d.type, balance: round2(d.balance), interestRate: d.interestRate, minimumPayment: round2(d.minimumPayment), paidOffDate: p ? p.paidOffDate : null };
+      return { name: d.name, type: d.type, balance: round2(d.balance), interestRate: d.interestRate, minimumPayment: round2(d.minimumPayment), paidOffDate: p ? p.paidOffDate : null,
+        termMonths: d.termMonths || null, escrowMonthly: d.escrowMonthly ? round2(d.escrowMonthly) : 0, minPayMode: d.minPayMode || 'fixed' };
     }) };
 }
 function pennyToolGetSubscriptions() {

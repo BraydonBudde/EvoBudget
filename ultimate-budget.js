@@ -311,8 +311,21 @@ function annualSubAmt(s) {
 function totalSubMonthly() { return state.subscriptions.filter(s=>s.active!==false).reduce((t,s)=>t+monthlySubAmt(s),0); }
 
 // ── Debt Payoff Algorithm ─────────────────────────────────────────────
+function calcAmortizationPayment(principal,aprPercent,termMonths) {
+  if (!(termMonths>0)) return 0;
+  const r=(aprPercent/100)/12;
+  if (r===0) return principal/termMonths;
+  return principal*r*Math.pow(1+r,termMonths)/(Math.pow(1+r,termMonths)-1);
+}
+function recomputePercentMinPayment(d) {
+  return Math.max(d.minPayFloor||0,(d.balance||0)*(d.minPayPercent||0)/100);
+}
+function totalMonthlyDebtCost(d) {
+  return (d.minimumPayment||0)+(d.type==='mortgage'?(d.escrowMonthly||0):0);
+}
 function runDebtPayoff() {
   const {method,extraPayment}=state.debtSettings;
+  state.debts.forEach(d=>{ if(d.minPayMode==='percent') d.minimumPayment=recomputePercentMinPayment(d); });
   const active=state.debts.filter(d=>d.balance>0);
   if (!active.length) return null;
   let working=active.map(d=>({...d,remaining:d.balance,paidOffMonth:null}));
@@ -324,9 +337,10 @@ function runDebtPayoff() {
       if (d.remaining<=0) continue;
       const interest=d.remaining*(d.interestRate/100/12);
       totalInterest+=interest; d.remaining+=interest;
-      const pay=Math.min(d.remaining,d.minimumPayment);
+      const minPay=d.minPayMode==='percent'?Math.max(d.minPayFloor||0,d.remaining*(d.minPayPercent||0)/100):d.minimumPayment;
+      const pay=Math.min(d.remaining,minPay);
       d.remaining-=pay;
-      if (d.remaining<0.01){freed+=d.minimumPayment-Math.max(0,d.minimumPayment-pay);d.remaining=0;if(!d.paidOffMonth)d.paidOffMonth=month;}
+      if (d.remaining<0.01){freed+=minPay-Math.max(0,minPay-pay);d.remaining=0;if(!d.paidOffMonth)d.paidOffMonth=month;}
     }
     let avail=extraPayment+freed;
     for (const p of priority) {
@@ -505,6 +519,16 @@ const TRANSLATIONS = {
     dpc_th_name:'Debt name',dpc_th_type:'Type',dpc_th_balance:'Balance',
     dpc_th_apr:'APR %',dpc_th_min:'Min. payment',dpc_th_due:'Due day',
     dpc_totals:'Totals',dpc_name_ph:'e.g. Visa Card',
+    dpc_term_label:'Loan term (years)',dpc_term_hint:'Sets how long this loan runs, so Auto-calculate can work out an accurate minimum payment.',
+    dpc_autocalc_btn:'Auto-calculate',dpc_autocalc_done:'Calculated: {0}/mo',
+    dpc_min_mode_label:'Minimum payment type',dpc_min_mode_fixed:'Fixed amount',dpc_min_mode_percent:'% of balance',
+    dpc_min_percent_label:'Percent of balance (%)',dpc_min_floor_label:'Minimum floor amount',
+    dpc_min_calculated_hint:'Calculated automatically - whichever is higher of the percentage or the floor amount.',
+    dpc_escrow_label:'Escrow (taxes & insurance)',
+    dpc_escrow_hint:"Adds to your real monthly cost, but is excluded from the payoff simulation since it doesn't reduce your balance.",
+    dpc_min_pct_caption:'{0}% of balance',dpc_escrow_note:'{0} escrow',
+    dpc_term_note_faster:'{0} mo faster than your {1}-yr term',dpc_term_note_slower:'{0} mo slower than your {1}-yr term',
+    dpc_term_note_onschedule:'right on schedule for your {0}-yr term',
     dtype_credit_card:'Credit Card',dtype_student_loan:'Student Loan',
     dtype_mortgage:'Mortgage',dtype_car_loan:'Car Loan',
     dtype_personal_loan:'Personal Loan',dtype_other:'Other',
@@ -526,6 +550,9 @@ const TRANSLATIONS = {
     help_dpc_extra_h:'Extra monthly payment',
     help_dpc_extra_p:'Any surplus above your minimums you can throw at debt. Even a small extra payment can save hundreds in interest and cut months off your timeline. Results update as you type.',
     help_dpc_tip:'\uD83D\uDCA1 Toggle between methods to see how much interest you\u2019d save with each approach.',
+    help_dpc_term_li:'Loan term - For mortgages, student loans, car loans and personal loans, set the term in years and click Auto-calculate to work out an accurate minimum payment.',
+    help_dpc_percent_li:'Percentage-based minimum - For credit cards, switch to "% of balance" to match how your statement\u2019s minimum payment actually works (e.g. 2% of balance or $25, whichever is higher).',
+    help_dpc_escrow_li:'Escrow - For mortgages, add your monthly taxes & insurance so your real monthly cost is accurate everywhere - it\u2019s excluded from the payoff projection since it doesn\u2019t reduce your balance.',
     tx_import_csv:'\uD83D\uDCE5 Import CSV',
     tx_add_title:'Add a transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Category',tx_amount:'Amount',
@@ -761,6 +788,7 @@ const TRANSLATIONS = {
     guide_debt_step2:'Choose a strategy: <strong>Snowball</strong> (pay off the smallest balance first for quick wins) or <strong>Avalanche</strong> (pay off the highest interest rate first to save the most money).',
     guide_debt_step3:'Add any extra amount you can put toward debt each period - the calculator applies it to whichever debt your strategy targets first.',
     guide_debt_step4:'Check your projected <strong>debt-free date</strong> and total interest to see how extra payments change the picture.',
+    guide_debt_step5:'For mortgages and loans, set a <strong>Loan term</strong> and click <strong>Auto-calculate</strong> for an accurate minimum payment. For credit cards, switch to <strong>% of balance</strong> to match your real statement minimum.',
     guide_debt_connect1:"Debt payments you log in Transactions count toward each debt's balance here.",
     guide_debt_connect2:'Your Dashboard shows a snapshot of this payoff plan so you always know where you stand without opening this page.',
     guide_debt_connect3:'Paying more than the minimum here - even a little - is usually the single biggest lever you have to shorten your payoff timeline.',
@@ -931,6 +959,16 @@ const TRANSLATIONS = {
     dpc_th_name:'Schuldenname',dpc_th_type:'Art',dpc_th_balance:'Saldo',
     dpc_th_apr:'Zins %',dpc_th_min:'Mind.-Zahlung',dpc_th_due:'Fälligkeitstag',
     dpc_totals:'Gesamt',dpc_name_ph:'z.B. Visa Karte',
+    dpc_term_label:'Laufzeit (Jahre)',dpc_term_hint:'Legt fest, wie lange dieser Kredit läuft, damit die automatische Berechnung eine genaue Mindestrate ermitteln kann.',
+    dpc_autocalc_btn:'Automatisch berechnen',dpc_autocalc_done:'Berechnet: {0}/Monat',
+    dpc_min_mode_label:'Art der Mindestrate',dpc_min_mode_fixed:'Fester Betrag',dpc_min_mode_percent:'% vom Saldo',
+    dpc_min_percent_label:'Prozent vom Saldo (%)',dpc_min_floor_label:'Mindestbetrag',
+    dpc_min_calculated_hint:'Wird automatisch berechnet - je nachdem, was höher ist: der Prozentsatz oder der Mindestbetrag.',
+    dpc_escrow_label:'Treuhand (Steuern & Versicherung)',
+    dpc_escrow_hint:'Wird zu deinen tatsächlichen monatlichen Kosten addiert, aber von der Tilgungssimulation ausgeschlossen, da es den Saldo nicht verringert.',
+    dpc_min_pct_caption:'{0}% vom Saldo',dpc_escrow_note:'{0} Treuhand',
+    dpc_term_note_faster:'{0} Monate schneller als deine {1}-jährige Laufzeit',dpc_term_note_slower:'{0} Monate langsamer als deine {1}-jährige Laufzeit',
+    dpc_term_note_onschedule:'genau im Zeitplan für deine {0}-jährige Laufzeit',
     dtype_credit_card:'Kreditkarte',dtype_student_loan:'Studienkredit',
     dtype_mortgage:'Hypothek',dtype_car_loan:'Autokredit',
     dtype_personal_loan:'Privatkredit',dtype_other:'Sonstiges',
@@ -951,6 +989,9 @@ const TRANSLATIONS = {
     help_dpc_avalanche_li:'\uD83C\uDF0A Lawine - Schulden werden nach dem höchsten Zinssatz getilgt. Spart insgesamt am meisten Geld.',
     help_dpc_extra_h:'Zusätzliche monatliche Zahlung',
     help_dpc_extra_p:'Jeder Überschuss über deinen Mindestzahlungen kann zur Schuldentilgung eingesetzt werden. Selbst eine kleine Extrazahlung kann Hunderte an Zinsen sparen und Monate verkürzen. Ergebnisse werden beim Tippen aktualisiert.',
+    help_dpc_term_li:'Laufzeit - Lege bei Hypotheken, Studien-, Auto- und Privatkrediten die Laufzeit in Jahren fest und klicke auf "Automatisch berechnen", um eine genaue Mindestrate zu ermitteln.',
+    help_dpc_percent_li:'Prozentbasierte Mindestrate - Wechsle bei Kreditkarten zu "% vom Saldo", damit es genauso funktioniert wie auf deiner Abrechnung (z. B. 2% vom Saldo oder 25 €, je nachdem, was höher ist).',
+    help_dpc_escrow_li:'Treuhand - Füge bei Hypotheken deine monatlichen Steuern & Versicherungen hinzu, damit deine tatsächlichen monatlichen Kosten überall stimmen - sie werden von der Tilgungsprognose ausgeschlossen, da sie den Saldo nicht verringern.',
     help_dpc_tip:'\uD83D\uDCA1 Wechsle zwischen den Methoden, um zu sehen, wie viele Zinsen du mit jedem Ansatz sparen würdest.',
     tx_import_csv:'\uD83D\uDCE5 CSV importieren',
     tx_add_title:'Transaktion hinzufügen',
@@ -1187,6 +1228,7 @@ const TRANSLATIONS = {
     guide_debt_step2:'Wähle eine Strategie: <strong>Schneeball</strong> (erst den kleinsten Saldo tilgen für schnelle Erfolge) oder <strong>Lawine</strong> (erst den höchsten Zinssatz tilgen, um am meisten zu sparen).',
     guide_debt_step3:'Füge jeden zusätzlichen Betrag hinzu, den du pro Periode für Schulden aufbringen kannst - der Rechner wendet ihn auf die Schuld an, die deine Strategie zuerst anvisiert.',
     guide_debt_step4:'Prüfe dein voraussichtliches <strong>schuldenfreies Datum</strong> und die Gesamtzinsen, um zu sehen, wie zusätzliche Zahlungen das Bild verändern.',
+    guide_debt_step5:'Lege bei Hypotheken und Krediten eine <strong>Laufzeit</strong> fest und klicke auf <strong>Automatisch berechnen</strong> für eine genaue Mindestrate. Wechsle bei Kreditkarten zu <strong>% vom Saldo</strong>, damit es deiner echten Abrechnung entspricht.',
     guide_debt_connect1:'Schuldenzahlungen, die du bei Transaktionen einträgst, zählen hier zum Saldo jeder Schuld.',
     guide_debt_connect2:'Dein Dashboard zeigt eine Momentaufnahme dieses Tilgungsplans, damit du immer weißt, wo du stehst, ohne diese Seite zu öffnen.',
     guide_debt_connect3:'Mehr als die Mindestzahlung zu leisten - selbst ein wenig mehr - ist meist der größte Hebel, um deine Tilgungszeit zu verkürzen.',
@@ -1357,6 +1399,16 @@ const TRANSLATIONS = {
     dpc_th_name:'Nom de la dette',dpc_th_type:'Type',dpc_th_balance:'Solde',
     dpc_th_apr:'Taux %',dpc_th_min:'Paiement min.',dpc_th_due:"Jour d'éch.",
     dpc_totals:'Totaux',dpc_name_ph:'ex. Carte Visa',
+    dpc_term_label:'Durée du prêt (années)',dpc_term_hint:'Définit la durée de ce prêt, afin que le calcul automatique puisse déterminer un paiement minimum précis.',
+    dpc_autocalc_btn:'Calculer automatiquement',dpc_autocalc_done:'Calculé : {0}/mois',
+    dpc_min_mode_label:'Type de paiement minimum',dpc_min_mode_fixed:'Montant fixe',dpc_min_mode_percent:'% du solde',
+    dpc_min_percent_label:'Pourcentage du solde (%)',dpc_min_floor_label:'Montant plancher',
+    dpc_min_calculated_hint:'Calculé automatiquement - le plus élevé entre le pourcentage et le montant plancher.',
+    dpc_escrow_label:'Séquestre (taxes & assurance)',
+    dpc_escrow_hint:"S'ajoute à votre coût mensuel réel, mais est exclu de la simulation de remboursement puisque cela ne réduit pas votre solde.",
+    dpc_min_pct_caption:'{0}% du solde',dpc_escrow_note:'{0} séquestre',
+    dpc_term_note_faster:'{0} mois plus rapide que votre durée de {1} ans',dpc_term_note_slower:'{0} mois plus lent que votre durée de {1} ans',
+    dpc_term_note_onschedule:'exactement dans les temps pour votre durée de {0} ans',
     dtype_credit_card:'Carte de crédit',dtype_student_loan:'Prêt étudiant',
     dtype_mortgage:'Hypothèque',dtype_car_loan:'Prêt auto',
     dtype_personal_loan:'Prêt personnel',dtype_other:'Autre',
@@ -1377,6 +1429,9 @@ const TRANSLATIONS = {
     help_dpc_avalanche_li:"\uD83C\uDF0A Avalanche - Remboursez les dettes du taux le plus élevé d'abord. Économise le plus d'argent au total.",
     help_dpc_extra_h:'Paiement mensuel supplémentaire',
     help_dpc_extra_p:"Tout surplus au-dessus de vos minimums peut être consacré aux dettes. Même un petit paiement supplémentaire peut économiser des centaines d'intérêts et réduire les délais. Les résultats se mettent à jour en temps réel.",
+    help_dpc_term_li:"Durée du prêt - Pour les prêts hypothécaires, étudiants, auto et personnels, définissez la durée en années et cliquez sur Calculer automatiquement pour obtenir un paiement minimum précis.",
+    help_dpc_percent_li:'Paiement minimum en pourcentage - Pour les cartes de crédit, passez à "% du solde" pour correspondre au fonctionnement réel du paiement minimum de votre relevé (ex. 2% du solde ou 25 $, le plus élevé des deux).',
+    help_dpc_escrow_li:"Séquestre - Pour les prêts hypothécaires, ajoutez vos taxes et assurances mensuelles afin que votre coût mensuel réel soit exact partout - il est exclu de la projection de remboursement puisqu'il ne réduit pas votre solde.",
     help_dpc_tip:"\uD83D\uDCA1 Basculez entre les méthodes pour voir combien d'intérêts vous économiseriez avec chaque approche.",
     tx_import_csv:'\uD83D\uDCE5 Importer CSV',
     tx_add_title:'Ajouter une transaction',
@@ -1613,6 +1668,7 @@ const TRANSLATIONS = {
     guide_debt_step2:'Choisissez une stratégie : <strong>Boule de neige</strong> (rembourser le plus petit solde en premier pour des victoires rapides) ou <strong>Avalanche</strong> (rembourser le taux le plus élevé en premier pour économiser le plus).',
     guide_debt_step3:"Ajoutez tout montant supplémentaire que vous pouvez consacrer aux dettes chaque période - le calculateur l'applique à la dette ciblée en premier par votre stratégie.",
     guide_debt_step4:"Consultez votre <strong>date de libération</strong> projetée et le total des intérêts pour voir comment des paiements supplémentaires changent la donne.",
+    guide_debt_step5:'Pour les prêts hypothécaires et autres prêts, définissez une <strong>durée</strong> et cliquez sur <strong>Calculer automatiquement</strong> pour un paiement minimum précis. Pour les cartes de crédit, passez à <strong>% du solde</strong> pour correspondre à votre relevé réel.',
     guide_debt_connect1:"Les paiements de dette saisis dans Transactions comptent dans le solde de chaque dette ici.",
     guide_debt_connect2:"Votre tableau de bord affiche un aperçu de ce plan de remboursement pour que vous sachiez toujours où vous en êtes sans ouvrir cette page.",
     guide_debt_connect3:"Payer plus que le minimum ici - même un peu plus - est généralement le plus grand levier pour raccourcir votre calendrier de remboursement.",
@@ -1783,6 +1839,16 @@ const TRANSLATIONS = {
     dpc_th_name:'Nombre de la deuda',dpc_th_type:'Tipo',dpc_th_balance:'Saldo',
     dpc_th_apr:'TAE %',dpc_th_min:'Pago mín.',dpc_th_due:'Día venc.',
     dpc_totals:'Totales',dpc_name_ph:'p.ej. Tarjeta Visa',
+    dpc_term_label:'Plazo del préstamo (años)',dpc_term_hint:'Define cuánto dura este préstamo, para que el cálculo automático pueda determinar un pago mínimo preciso.',
+    dpc_autocalc_btn:'Calcular automáticamente',dpc_autocalc_done:'Calculado: {0}/mes',
+    dpc_min_mode_label:'Tipo de pago mínimo',dpc_min_mode_fixed:'Monto fijo',dpc_min_mode_percent:'% del saldo',
+    dpc_min_percent_label:'Porcentaje del saldo (%)',dpc_min_floor_label:'Monto mínimo',
+    dpc_min_calculated_hint:'Se calcula automáticamente - lo que sea mayor entre el porcentaje y el monto mínimo.',
+    dpc_escrow_label:'Depósito en garantía (impuestos y seguro)',
+    dpc_escrow_hint:'Se suma a tu costo mensual real, pero se excluye de la simulación de pago ya que no reduce tu saldo.',
+    dpc_min_pct_caption:'{0}% del saldo',dpc_escrow_note:'{0} en depósito',
+    dpc_term_note_faster:'{0} meses más rápido que tu plazo de {1} años',dpc_term_note_slower:'{0} meses más lento que tu plazo de {1} años',
+    dpc_term_note_onschedule:'justo a tiempo para tu plazo de {0} años',
     dtype_credit_card:'Tarjeta de crédito',dtype_student_loan:'Préstamo estudiantil',
     dtype_mortgage:'Hipoteca',dtype_car_loan:'Préstamo de coche',
     dtype_personal_loan:'Préstamo personal',dtype_other:'Otro',
@@ -1803,6 +1869,9 @@ const TRANSLATIONS = {
     help_dpc_avalanche_li:'\uD83C\uDF0A Avalancha - Paga las deudas empezando por la tasa más alta. Ahorra más dinero en total.',
     help_dpc_extra_h:'Pago mensual extra',
     help_dpc_extra_p:'Cualquier excedente sobre tus pagos mínimos puede aplicarse a la deuda. Incluso un pequeño pago extra puede ahorrar cientos en intereses y reducir meses. Los resultados se actualizan mientras escribes.',
+    help_dpc_term_li:'Plazo del préstamo - Para hipotecas, préstamos estudiantiles, de auto y personales, define el plazo en años y haz clic en Calcular automáticamente para obtener un pago mínimo preciso.',
+    help_dpc_percent_li:'Pago mínimo por porcentaje - Para tarjetas de crédito, cambia a "% del saldo" para que funcione igual que el pago mínimo real de tu estado de cuenta (p. ej. 2% del saldo o $25, lo que sea mayor).',
+    help_dpc_escrow_li:'Depósito en garantía - Para hipotecas, agrega tus impuestos y seguro mensuales para que tu costo mensual real sea preciso en todas partes - se excluye de la proyección de pago ya que no reduce tu saldo.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna entre métodos para ver cuántos intereses ahorrarías con cada enfoque.',
     tx_import_csv:'\uD83D\uDCE5 Importar CSV',
     tx_add_title:'Añadir una transacción',
@@ -2039,6 +2108,7 @@ const TRANSLATIONS = {
     guide_debt_step2:'Elige una estrategia: <strong>Bola de nieve</strong> (pagar primero el saldo más pequeño para ganar impulso) o <strong>Avalancha</strong> (pagar primero la tasa más alta para ahorrar más).',
     guide_debt_step3:'Agrega cualquier importe extra que puedas destinar a deudas cada período - la calculadora lo aplica a la deuda que tu estrategia prioriza primero.',
     guide_debt_step4:'Revisa tu <strong>fecha estimada sin deudas</strong> y el interés total para ver cómo cambian las cosas con pagos extra.',
+    guide_debt_step5:'Para hipotecas y préstamos, define un <strong>plazo</strong> y haz clic en <strong>Calcular automáticamente</strong> para un pago mínimo preciso. Para tarjetas de crédito, cambia a <strong>% del saldo</strong> para igualar tu estado de cuenta real.',
     guide_debt_connect1:'Los pagos de deuda que registras en Transacciones cuentan para el saldo de cada deuda aquí.',
     guide_debt_connect2:'Tu Panel muestra un resumen de este plan de pago para que siempre sepas dónde estás sin abrir esta página.',
     guide_debt_connect3:'Pagar más del mínimo aquí - incluso un poco más - suele ser la mejor palanca para acortar tu calendario de pago.',
@@ -2210,6 +2280,16 @@ const TRANSLATIONS = {
     dpc_th_name:'Nome del debito',dpc_th_type:'Tipo',dpc_th_balance:'Saldo',
     dpc_th_apr:'TAEG %',dpc_th_min:'Pag. min.',dpc_th_due:'Giorno scad.',
     dpc_totals:'Totali',dpc_name_ph:'es. Carta Visa',
+    dpc_term_label:'Durata del prestito (anni)',dpc_term_hint:'Imposta la durata di questo prestito, così il calcolo automatico può determinare una rata minima accurata.',
+    dpc_autocalc_btn:'Calcola automaticamente',dpc_autocalc_done:'Calcolato: {0}/mese',
+    dpc_min_mode_label:'Tipo di rata minima',dpc_min_mode_fixed:'Importo fisso',dpc_min_mode_percent:'% del saldo',
+    dpc_min_percent_label:'Percentuale del saldo (%)',dpc_min_floor_label:'Importo minimo',
+    dpc_min_calculated_hint:'Calcolato automaticamente - il valore più alto tra la percentuale e l’importo minimo.',
+    dpc_escrow_label:'Deposito vincolato (tasse e assicurazione)',
+    dpc_escrow_hint:'Si aggiunge al tuo costo mensile reale, ma è escluso dalla simulazione di rimborso poiché non riduce il saldo.',
+    dpc_min_pct_caption:'{0}% del saldo',dpc_escrow_note:'{0} deposito vincolato',
+    dpc_term_note_faster:'{0} mesi più veloce della tua durata di {1} anni',dpc_term_note_slower:'{0} mesi più lento della tua durata di {1} anni',
+    dpc_term_note_onschedule:'perfettamente in linea con la tua durata di {0} anni',
     dtype_credit_card:'Carta di credito',dtype_student_loan:'Prestito studentesco',
     dtype_mortgage:'Mutuo',dtype_car_loan:'Prestito auto',
     dtype_personal_loan:'Prestito personale',dtype_other:'Altro',
@@ -2230,6 +2310,9 @@ const TRANSLATIONS = {
     help_dpc_avalanche_li:'\uD83C\uDF0A Valanga - Ripaga i debiti partendo dal tasso più alto. Risparmia di più nel complesso.',
     help_dpc_extra_h:'Pagamento mensile extra',
     help_dpc_extra_p:'Qualsiasi surplus oltre i pagamenti minimi può essere destinato ai debiti. Anche un piccolo pagamento extra può risparmiare centinaia di interessi e ridurre i mesi. I risultati si aggiornano mentre scrivi.',
+    help_dpc_term_li:'Durata del prestito - Per mutui, prestiti studenteschi, auto e personali, imposta la durata in anni e clicca su Calcola automaticamente per ottenere una rata minima accurata.',
+    help_dpc_percent_li:'Rata minima percentuale - Per le carte di credito, passa a "% del saldo" per rispecchiare come funziona davvero la rata minima del tuo estratto conto (es. 2% del saldo o 25€, il valore più alto).',
+    help_dpc_escrow_li:'Deposito vincolato - Per i mutui, aggiungi le tue tasse e assicurazione mensili così il tuo costo mensile reale è accurato ovunque - è escluso dalla proiezione di rimborso poiché non riduce il saldo.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna tra i metodi per vedere quanti interessi risparmieresti con ciascun approccio.',
     tx_import_csv:'\uD83D\uDCE5 Importa CSV',
     tx_add_title:'Aggiungi una transazione',
@@ -2466,6 +2549,7 @@ const TRANSLATIONS = {
     guide_debt_step2:"Scegli una strategia: <strong>Palla di neve</strong> (ripaga prima il saldo più piccolo per vittorie rapide) oppure <strong>Valanga</strong> (ripaga prima il tasso più alto per risparmiare di più).",
     guide_debt_step3:"Aggiungi qualsiasi importo extra che puoi destinare ai debiti ogni periodo - il calcolatore lo applica al debito che la tua strategia punta per primo.",
     guide_debt_step4:"Controlla la tua <strong>data prevista senza debiti</strong> e gli interessi totali per vedere come i pagamenti extra cambiano il quadro.",
+    guide_debt_step5:'Per mutui e prestiti, imposta una <strong>durata</strong> e clicca su <strong>Calcola automaticamente</strong> per una rata minima accurata. Per le carte di credito, passa a <strong>% del saldo</strong> per rispecchiare il tuo estratto conto reale.',
     guide_debt_connect1:"I pagamenti di debiti che registri in Transazioni contano per il saldo di ogni debito qui.",
     guide_debt_connect2:"La tua Dashboard mostra un riepilogo di questo piano di rimborso così sai sempre a che punto sei senza aprire questa pagina.",
     guide_debt_connect3:"Pagare più del minimo qui - anche solo un po' di più - è di solito la leva più grande per accorciare i tempi di rimborso.",
@@ -2636,6 +2720,16 @@ const TRANSLATIONS = {
     dpc_th_name:'Nazwa długu',dpc_th_type:'Typ',dpc_th_balance:'Saldo',
     dpc_th_apr:'Oprocent. %',dpc_th_min:'Min. płatność',dpc_th_due:'Dzień zapłaty',
     dpc_totals:'Suma',dpc_name_ph:'np. Karta Visa',
+    dpc_term_label:'Okres kredytowania (lata)',dpc_term_hint:'Określa, jak długo trwa ten kredyt, aby automatyczne obliczenie mogło ustalić dokładną minimalną ratę.',
+    dpc_autocalc_btn:'Oblicz automatycznie',dpc_autocalc_done:'Obliczono: {0}/mies.',
+    dpc_min_mode_label:'Typ minimalnej raty',dpc_min_mode_fixed:'Stała kwota',dpc_min_mode_percent:'% salda',
+    dpc_min_percent_label:'Procent salda (%)',dpc_min_floor_label:'Minimalna kwota',
+    dpc_min_calculated_hint:'Obliczane automatycznie - wyższa wartość spośród procentu i minimalnej kwoty.',
+    dpc_escrow_label:'Depozyt (podatki i ubezpieczenie)',
+    dpc_escrow_hint:'Dolicza się do rzeczywistego kosztu miesięcznego, ale jest wykluczony z symulacji spłaty, ponieważ nie zmniejsza salda.',
+    dpc_min_pct_caption:'{0}% salda',dpc_escrow_note:'{0} depozytu',
+    dpc_term_note_faster:'{0} mies. szybciej niż Twój {1}-letni okres',dpc_term_note_slower:'{0} mies. wolniej niż Twój {1}-letni okres',
+    dpc_term_note_onschedule:'dokładnie zgodnie z harmonogramem dla {0}-letniego okresu',
     dtype_credit_card:'Karta kredytowa',dtype_student_loan:'Kredyt studencki',
     dtype_mortgage:'Hipoteka',dtype_car_loan:'Kredyt samochodowy',
     dtype_personal_loan:'Kredyt osobisty',dtype_other:'Inne',
@@ -2656,6 +2750,9 @@ const TRANSLATIONS = {
     help_dpc_avalanche_li:'\uD83C\uDF0A Lawina - Spłacaj długi zaczynając od najwyższego oprocentowania. Oszczędza najwięcej pieniędzy.',
     help_dpc_extra_h:'Dodatkowa miesięczna płatność',
     help_dpc_extra_p:'Każda nadwyżka ponad minimalne płatności może być przeznaczona na spłatę długu. Nawet mała dodatkowa płatność może zaoszczędzić setki na odsetkach i skrócić harmonogram. Wyniki aktualizują się podczas pisania.',
+    help_dpc_term_li:'Okres kredytowania - Dla kredytów hipotecznych, studenckich, samochodowych i osobistych ustaw okres w latach i kliknij Oblicz automatycznie, aby uzyskać dokładną minimalną ratę.',
+    help_dpc_percent_li:'Minimalna rata procentowa - Dla kart kredytowych przełącz na "% salda", aby odpowiadało to rzeczywistemu działaniu minimalnej raty z wyciągu (np. 2% salda lub 25 zł, w zależności od tego, co jest wyższe).',
+    help_dpc_escrow_li:'Depozyt - Dla kredytów hipotecznych dodaj miesięczne podatki i ubezpieczenie, aby Twój rzeczywisty koszt miesięczny był wszędzie dokładny - jest wykluczony z prognozy spłaty, ponieważ nie zmniejsza salda.',
     help_dpc_tip:'\uD83D\uDCA1 Przełącz między metodami, aby zobaczyć, ile odsetek zaoszczędziłbyś przy każdym podejściu.',
     tx_import_csv:'\uD83D\uDCE5 Importuj CSV',
     tx_add_title:'Dodaj transakcję',
@@ -2892,6 +2989,7 @@ const TRANSLATIONS = {
     guide_debt_step2:'Wybierz strategię: <strong>Kula śnieżna</strong> (najpierw spłać najmniejsze saldo dla szybkich sukcesów) lub <strong>Lawina</strong> (najpierw spłać najwyższe oprocentowanie, aby zaoszczędzić najwięcej).',
     guide_debt_step3:'Dodaj każdą dodatkową kwotę, którą możesz przeznaczyć na długi w danym okresie - kalkulator zastosuje ją do długu, na który wskazuje twoja strategia jako pierwszy.',
     guide_debt_step4:'Sprawdź swoją przewidywaną <strong>datę wolności od długów</strong> i łączne odsetki, aby zobaczyć, jak dodatkowe płatności zmieniają sytuację.',
+    guide_debt_step5:'W przypadku kredytów hipotecznych i innych pożyczek ustaw <strong>okres kredytowania</strong> i kliknij <strong>Oblicz automatycznie</strong>, aby uzyskać dokładną minimalną ratę. W przypadku kart kredytowych przełącz na <strong>% salda</strong>, aby dopasować się do rzeczywistego wyciągu.',
     guide_debt_connect1:'Płatności długów zapisane w Transakcjach liczą się do salda każdego długu tutaj.',
     guide_debt_connect2:'Twój Pulpit pokazuje podsumowanie tego planu spłaty, dzięki czemu zawsze wiesz, na czym stoisz, bez otwierania tej strony.',
     guide_debt_connect3:'Płacenie więcej niż minimum tutaj - nawet trochę więcej - jest zwykle największą dźwignią do skrócenia czasu spłaty.',
@@ -3086,7 +3184,7 @@ function renderDashboard() {
   const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
   const expBil=state.budgets.bills.reduce((t,r)=>t+(r.expected||0),0);
   const expSav=state.budgets.savings.reduce((t,r)=>t+(r.expected||0),0);
-  const expDebt=state.debts.reduce((s,d)=>s+(d.minimumPayment||0),0);
+  const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
   const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
   const upcoming=getUpcomingEvents(7,act);
   const incSegs=state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
@@ -3706,6 +3804,7 @@ function openRecurringModal(ruleId){
 function handleCSV(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{const lines=ev.target.result.split('\n').filter(l=>l.trim()),TYPES=new Set(['income','expense','bill','savings','debt','subscription','sinking_fund']);let imported=0,limitHit=false;for(let i=1;i<lines.length;i++){if(trialBlocks('transaction')){limitHit=true;break;}const parts=lines[i].split(',').map(p=>p.trim().replace(/^"|"$/g,''));if(parts.length<4)continue;const[date,type,category,amtStr,desc='',alloc='']=parts,amount=parseFloat(amtStr);if(!date||!TYPES.has(type)||!category||isNaN(amount)||amount<=0)continue;const tx={id:uid(),date,type,category,amount,description:desc};if(alloc)tx.allocation=alloc;applySinkingFundDelta(tx,+1);state.transactions.push(tx);imported++;}saveState();renderTransactions();if(imported>0)showToast(tf('toast_imported',imported));e.target.value='';if(limitHit)showUpgradeModal({reason:'transaction'});};reader.readAsText(file);}
 
 // ── DEBT PAYOFF ────────────────────────────────────────────────────────
+const AMORTIZING_DEBT_TYPES=['mortgage','student_loan','car_loan','personal_loan'];
 function debtTypes(){return{credit_card:t('dtype_credit_card'),student_loan:t('dtype_student_loan'),mortgage:t('dtype_mortgage'),car_loan:t('dtype_car_loan'),personal_loan:t('dtype_personal_loan'),other:t('dtype_other')};}
 function openDebtModal(debtId){
   const d=debtId?state.debts.find(x=>x.id===debtId):null,isNew=!d;
@@ -3719,41 +3818,119 @@ function openDebtModal(debtId){
       <div class="field"><label class="field-label">${t('dpc_th_balance')} (${SYM}) <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="debtBalance" min="0" step="0.01" placeholder="0.00" value="${d?.balance||''}"></div>
       <div class="field"><label class="field-label">${t('dpc_apr_word')} (%)</label><input class="input" type="number" id="debtApr" min="0" max="100" step="0.01" placeholder="0.00" value="${d?.interestRate||''}"></div>
     </div>
+    <div class="field" id="debtTermRow" style="display:none">
+      <label class="field-label">${t('dpc_term_label')}</label>
+      <input class="input" type="number" id="debtTermYears" min="0" step="1" placeholder="30" value="${d?.termMonths?Math.round(d.termMonths/12):''}">
+      <div class="field-hint">${t('dpc_term_hint')}</div>
+    </div>
+    <div class="field" id="debtEscrowRow" style="display:none">
+      <label class="field-label">${t('dpc_escrow_label')} (${SYM})</label>
+      <input class="input" type="number" id="debtEscrow" min="0" step="0.01" placeholder="0.00" value="${d?.escrowMonthly||''}">
+      <div class="field-hint">${t('dpc_escrow_hint')}</div>
+    </div>
     <div class="field-grid">
-      <div class="field"><label class="field-label">${t('dpc_th_min')} (${SYM}) <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="debtMin" min="0" step="0.01" placeholder="0.00" value="${d?.minimumPayment||''}"></div>
+      <div class="field"><label class="field-label">${t('dpc_th_min')} (${SYM}) <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="debtMin" min="0" step="0.01" placeholder="0.00" value="${d?.minimumPayment||''}">
+        <div id="debtAutoCalcRow" style="display:none;margin-top:6px"><button type="button" class="btn btn-ghost btn-sm" id="debtAutoCalcBtn">${t('dpc_autocalc_btn')}</button><div class="field-hint" id="debtAutoCalcResult"></div></div>
+      </div>
       <div class="field"><label class="field-label">${t('dpc_th_due')} <span class="required-star" id="debtDueStar" aria-hidden="true" style="display:${existingLink?'inline':'none'}">*</span></label><input class="input" type="number" id="debtDueDay" min="1" max="31" placeholder="1-31" value="${d?.dueDay||''}"><div class="field-hint">${t('debt_due_day_modal_hint')}</div></div>
+    </div>
+    <div id="debtMinModeRow" style="display:none">
+      <div class="field"><label class="field-label">${t('dpc_min_mode_label')}</label><select class="select" id="debtMinMode">
+        <option value="fixed" ${(d?.minPayMode||'fixed')==='fixed'?'selected':''}>${t('dpc_min_mode_fixed')}</option>
+        <option value="percent" ${d?.minPayMode==='percent'?'selected':''}>${t('dpc_min_mode_percent')}</option>
+      </select></div>
+      <div class="field-grid" id="debtPercentRow" style="display:none">
+        <div class="field"><label class="field-label">${t('dpc_min_percent_label')}</label><input class="input" type="number" id="debtMinPercent" min="0" step="0.1" placeholder="2" value="${d?.minPayPercent||''}"></div>
+        <div class="field"><label class="field-label">${t('dpc_min_floor_label')} (${SYM})</label><input class="input" type="number" id="debtMinFloor" min="0" step="1" placeholder="25" value="${d?.minPayFloor||''}"></div>
+      </div>
+      <div class="field-hint" id="debtMinCalcHint" style="display:none">${t('dpc_min_calculated_hint')}</div>
     </div>
     ${automateRow(!!existingLink)}
     <div class="tx-error" id="debtError" hidden></div>
     <div class="edit-tx-actions"><button class="btn btn-primary" id="saveDebtBtn">${isNew?t('dpc_add_debt_title'):t('save')}</button><button class="btn btn-ghost btn-sm" id="cancelDebtBtn">${t('cancel')}</button>${!isNew?`<button class="btn btn-danger btn-sm" id="deleteDebtBtn">${t('delete')}</button>`:''}</div>`;
   document.getElementById('tutorialOverlay').hidden=false;
   const clearDebtErr=()=>{const e=document.getElementById('debtError');if(e)e.hidden=true;};
-  ['debtName','debtBalance','debtMin','debtDueDay'].forEach(id=>document.getElementById(id)?.addEventListener('input',()=>{document.getElementById(id)?.classList.remove('fk-invalid');clearDebtErr();}));
+  ['debtName','debtBalance','debtMin','debtDueDay','debtMinPercent','debtMinFloor'].forEach(id=>document.getElementById(id)?.addEventListener('input',()=>{document.getElementById(id)?.classList.remove('fk-invalid');clearDebtErr();}));
   document.getElementById('automateToggle')?.addEventListener('change',e=>{const star=document.getElementById('debtDueStar');if(star)star.style.display=e.target.checked?'inline':'none';if(!e.target.checked)document.getElementById('debtDueDay')?.classList.remove('fk-invalid');clearDebtErr();});
   document.getElementById('cancelDebtBtn')?.addEventListener('click',closeModal);
   document.getElementById('deleteDebtBtn')?.addEventListener('click',async()=>{if(!await confirmDialog({message:t('confirm_remove_debt'),confirmText:t('delete')}))return;removeLinkedTemplate('debt',debtId);state.debts=state.debts.filter(x=>x.id!==debtId);saveState();closeModal();renderDebt();});
+  const refreshMinPreview=()=>{
+    if(document.getElementById('debtMinMode')?.value!=='percent')return;
+    const bal=parseFloat(document.getElementById('debtBalance')?.value)||0;
+    const pct=parseFloat(document.getElementById('debtMinPercent')?.value)||0;
+    const floor=parseFloat(document.getElementById('debtMinFloor')?.value)||0;
+    const minEl=document.getElementById('debtMin');
+    if(minEl)minEl.value=Math.max(floor,bal*pct/100).toFixed(2);
+  };
+  const updateMinModeFields=()=>{
+    const mode=document.getElementById('debtMinMode')?.value||'fixed';
+    const percentRow=document.getElementById('debtPercentRow');if(percentRow)percentRow.style.display=mode==='percent'?'':'none';
+    const calcHint=document.getElementById('debtMinCalcHint');if(calcHint)calcHint.style.display=mode==='percent'?'':'none';
+    const minEl=document.getElementById('debtMin');
+    if(minEl){minEl.readOnly=mode==='percent';minEl.classList.toggle('input--muted',mode==='percent');}
+    refreshMinPreview();
+  };
+  const updateDebtTypeFields=()=>{
+    const type=document.getElementById('debtType')?.value;
+    const isAmortizing=AMORTIZING_DEBT_TYPES.includes(type);
+    const termRow=document.getElementById('debtTermRow');if(termRow)termRow.style.display=isAmortizing?'':'none';
+    const autoCalcRow=document.getElementById('debtAutoCalcRow');if(autoCalcRow)autoCalcRow.style.display=isAmortizing?'':'none';
+    const escrowRow=document.getElementById('debtEscrowRow');if(escrowRow)escrowRow.style.display=type==='mortgage'?'':'none';
+    const minModeRow=document.getElementById('debtMinModeRow');if(minModeRow)minModeRow.style.display=type==='credit_card'?'':'none';
+    updateMinModeFields();
+  };
+  document.getElementById('debtType')?.addEventListener('change',updateDebtTypeFields);
+  document.getElementById('debtMinMode')?.addEventListener('change',updateMinModeFields);
+  ['debtBalance','debtMinPercent','debtMinFloor'].forEach(id=>document.getElementById(id)?.addEventListener('input',refreshMinPreview));
+  document.getElementById('debtAutoCalcBtn')?.addEventListener('click',()=>{
+    const bal=parseFloat(document.getElementById('debtBalance')?.value)||0;
+    const apr=parseFloat(document.getElementById('debtApr')?.value)||0;
+    const years=parseFloat(document.getElementById('debtTermYears')?.value)||0;
+    const resultEl=document.getElementById('debtAutoCalcResult');
+    if(!(bal>0)||!(years>0)){if(resultEl)resultEl.textContent=t('sf_error_required');return;}
+    const payment=calcAmortizationPayment(bal,apr,years*12);
+    const minEl=document.getElementById('debtMin');
+    if(minEl){minEl.value=payment.toFixed(2);minEl.classList.remove('fk-invalid');}
+    if(resultEl)resultEl.textContent=tf('dpc_autocalc_done',fmt(payment));
+  });
+  updateDebtTypeFields();
   document.getElementById('saveDebtBtn')?.addEventListener('click',()=>{
     const nameEl=document.getElementById('debtName'),balEl=document.getElementById('debtBalance'),minEl=document.getElementById('debtMin'),dueEl=document.getElementById('debtDueDay'),errEl=document.getElementById('debtError');
-    const name=nameEl?.value.trim(),type=document.getElementById('debtType')?.value,balance=parseFloat(balEl?.value)||0,apr=parseFloat(document.getElementById('debtApr')?.value)||0,minPay=parseFloat(minEl?.value)||0,dueDay=parseInt(dueEl?.value,10);
+    const percentEl=document.getElementById('debtMinPercent'),floorEl=document.getElementById('debtMinFloor');
+    const name=nameEl?.value.trim(),type=document.getElementById('debtType')?.value,balance=parseFloat(balEl?.value)||0,apr=parseFloat(document.getElementById('debtApr')?.value)||0,dueDay=parseInt(dueEl?.value,10);
     const auto=document.getElementById('automateToggle')?.checked;
-    [nameEl,balEl,minEl,dueEl].forEach(x=>x&&x.classList.remove('fk-invalid'));
+    const isAmortizing=AMORTIZING_DEBT_TYPES.includes(type),isCreditCard=type==='credit_card';
+    const termYears=parseFloat(document.getElementById('debtTermYears')?.value)||0;
+    const escrow=parseFloat(document.getElementById('debtEscrow')?.value)||0;
+    const minMode=isCreditCard?(document.getElementById('debtMinMode')?.value||'fixed'):'fixed';
+    const minPercent=parseFloat(percentEl?.value)||0,minFloor=parseFloat(floorEl?.value)||0;
+    const minPay=(isCreditCard&&minMode==='percent')?Math.max(minFloor,balance*minPercent/100):(parseFloat(minEl?.value)||0);
+    [nameEl,balEl,minEl,dueEl,percentEl,floorEl].forEach(x=>x&&x.classList.remove('fk-invalid'));
     let bad=false;
     if(!name){nameEl?.classList.add('fk-invalid');bad=true;}
     if(!(balance>0)){balEl?.classList.add('fk-invalid');bad=true;}
-    if(!(minPay>0)){minEl?.classList.add('fk-invalid');bad=true;}
+    if(isCreditCard&&minMode==='percent'){if(!(minPercent>0)&&!(minFloor>0)){percentEl?.classList.add('fk-invalid');bad=true;}}
+    else if(!(minPay>0)){minEl?.classList.add('fk-invalid');bad=true;}
     if(auto&&!(dueDay>=1&&dueDay<=31)){dueEl?.classList.add('fk-invalid');bad=true;}
     if(bad){if(errEl){errEl.textContent=t('sf_error_required');errEl.hidden=false;}return;}
     if(errEl)errEl.hidden=true;
     let did,debtObj;
-    if(isNew){did=uid();debtObj={id:did,name,type,balance,interestRate:apr,minimumPayment:minPay,dueDay:isNaN(dueDay)?'':dueDay};state.debts.push(debtObj);}
-    else{did=debtId;debtObj=state.debts.find(x=>x.id===debtId);if(debtObj){debtObj.name=name;debtObj.type=type;debtObj.balance=balance;debtObj.interestRate=apr;debtObj.minimumPayment=minPay;debtObj.dueDay=isNaN(dueDay)?'':dueDay;}}
-    if(automationOn()&&debtObj){if(auto)upsertLinkedTemplate('debt',did,{type:'debt',category:name||'Debt',label:(name||'Debt')+' '+t('automate_payment_word'),amount:minPay,frequency:'monthly',nextDue:nextDueFromDay(dueDay)});else removeLinkedTemplate('debt',did);}
+    const fields={name,type,balance,interestRate:apr,minimumPayment:minPay,dueDay:isNaN(dueDay)?'':dueDay,
+      termMonths:isAmortizing&&termYears>0?termYears*12:undefined,
+      escrowMonthly:type==='mortgage'&&escrow>0?escrow:undefined,
+      minPayMode:isCreditCard?minMode:undefined,
+      minPayPercent:isCreditCard&&minMode==='percent'?minPercent:undefined,
+      minPayFloor:isCreditCard&&minMode==='percent'?minFloor:undefined};
+    if(isNew){did=uid();debtObj={id:did,...fields};state.debts.push(debtObj);}
+    else{did=debtId;debtObj=state.debts.find(x=>x.id===debtId);if(debtObj){Object.assign(debtObj,fields);Object.keys(fields).forEach(k=>{if(fields[k]===undefined)delete debtObj[k];});}}
+    if(automationOn()&&debtObj){if(auto)upsertLinkedTemplate('debt',did,{type:'debt',category:name||'Debt',label:(name||'Debt')+' '+t('automate_payment_word'),amount:totalMonthlyDebtCost(debtObj),frequency:'monthly',nextDue:nextDueFromDay(dueDay)});else removeLinkedTemplate('debt',did);}
     saveState();closeModal();renderDebt();showToast(t(isNew?'toast_debt_added':'toast_debt_updated'));
   });
 }
 function renderDebt(){
   const DT=debtTypes(),result=runDebtPayoff(),{method,extraPayment}=state.debtSettings;
   const totDebt=state.debts.reduce((s,d)=>s+d.balance,0),totMin=state.debts.reduce((s,d)=>s+d.minimumPayment,0);
+  const totEscrow=state.debts.reduce((s,d)=>s+(d.type==='mortgage'?(d.escrowMonthly||0):0),0);
   const el=document.getElementById('bview-debt');
   el.innerHTML=`<div class="section-header"><h2 class="section-title">💳 ${t('dpc_title')}</h2><div class="section-header-actions">${helpBtn('debt')}<button class="btn btn-ghost btn-sm" id="addDebtBtn">${t('dpc_add_btn')}</button></div></div>
     <p class="section-desc">${t('dpc_desc')}</p>
@@ -3779,7 +3956,7 @@ function renderDebt(){
           <td>${DT[d.type]||esc(d.type)}</td>
           <td>${fmt(d.balance)}</td>
           <td>${(d.interestRate||0)}%</td>
-          <td>${fmt(d.minimumPayment)}</td>
+          <td>${fmt(d.minimumPayment)}${d.minPayMode==='percent'?`<div class="field-hint" style="margin:2px 0 0">${tf('dpc_min_pct_caption',d.minPayPercent||0)}</div>`:''}</td>
           <td>${d.dueDay?d.dueDay:'<span style="color:var(--text-faint)">-</span>'}</td>
           <td><label class="recurring-toggle" title="${t('automate_label')}"><input type="checkbox" class="debt-auto-cb" data-debt-auto="${d.id}" ${findLinkedTemplate('debt',d.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></td>
           <td><div class="row-actions"><button class="sf-edit-btn btn-icon-tiny" data-debt-edit="${d.id}" type="button" title="${t('edit')}">✏️</button><button class="del-btn" data-debt-id="${d.id}" type="button">×</button></div></td>
@@ -3790,11 +3967,18 @@ function renderDebt(){
       <div class="debt-results-cards">
         <div class="dr-card dr-card--green"><div class="dr-label">${t('dpc_debt_free_label')}</div><div class="dr-value">${formatDateDisplay(result.debtFreeDate)}</div><div class="dr-sub">${result.months} ${t('dpc_months_from_now')}</div></div>
         <div class="dr-card dr-card--red"><div class="dr-label">${t('dpc_interest_label')}</div><div class="dr-value">${fmt(result.totalInterest)}</div><div class="dr-sub">${t('dpc_on_top')} ${fmt(totDebt)} ${t('dpc_principal')}</div></div>
-        <div class="dr-card dr-card--blue"><div class="dr-label">${t('dpc_monthly_label')}</div><div class="dr-value">${fmt(totMin+(extraPayment||0))}</div><div class="dr-sub">${fmt(totMin)} ${t('dpc_min_abbr')} + ${fmt(extraPayment||0)} ${t('dpc_extra_abbr')}</div></div>
+        <div class="dr-card dr-card--blue"><div class="dr-label">${t('dpc_monthly_label')}</div><div class="dr-value">${fmt(totMin+(extraPayment||0)+totEscrow)}</div><div class="dr-sub">${fmt(totMin)} ${t('dpc_min_abbr')} + ${fmt(extraPayment||0)} ${t('dpc_extra_abbr')}${totEscrow>0?` + ${tf('dpc_escrow_note',fmt(totEscrow))}`:''}</div></div>
       </div>
       <div class="panel" style="margin-top:16px"><div class="panel-inner-sm">
         <div class="panel-title-sm" style="margin-bottom:14px">${method==='snowball'?t('dpc_payoff_order_sf'):t('dpc_payoff_order_av')}</div>
-        ${result.payoffOrder.map((d,i)=>`<div class="payoff-order-row"><span class="po-num">${i+1}</span><div class="po-info"><div class="po-name">${esc(d.name)}</div><div class="po-detail">${DT[d.type]||d.type} • ${fmt(d.balance)} ${t('dpc_balance_word')} • ${d.interestRate}% ${t('dpc_apr_word')}</div></div><div class="po-date">${t('dpc_paid_off')} <strong>${d.paidOffDate}</strong></div></div>`).join('')}
+        ${result.payoffOrder.map((d,i)=>{
+          let termNote='';
+          if(d.termMonths>0&&d.paidOffMonth){
+            const years=Math.round(d.termMonths/12),diff=d.termMonths-d.paidOffMonth;
+            termNote=diff>0?` • ${tf('dpc_term_note_faster',diff,years)}`:diff<0?` • ${tf('dpc_term_note_slower',-diff,years)}`:` • ${tf('dpc_term_note_onschedule',years)}`;
+          }
+          return `<div class="payoff-order-row"><span class="po-num">${i+1}</span><div class="po-info"><div class="po-name">${esc(d.name)}</div><div class="po-detail">${DT[d.type]||d.type} • ${fmt(d.balance)} ${t('dpc_balance_word')} • ${d.interestRate}% ${t('dpc_apr_word')}${termNote}</div></div><div class="po-date">${t('dpc_paid_off')} <strong>${d.paidOffDate}</strong></div></div>`;
+        }).join('')}
       </div></div>
     </div>`:''}`;
   document.getElementById('addDebtBtn')?.addEventListener('click',()=>openDebtModal(null));
@@ -3806,7 +3990,7 @@ function renderDebt(){
     const d=state.debts.find(x=>x.id===cb.dataset.debtAuto);if(!d)return;
     if(cb.checked){
       if(!(d.minimumPayment>0)||!(d.dueDay>=1&&d.dueDay<=31)){cb.checked=false;openDebtModal(d.id);return;}
-      upsertLinkedTemplate('debt',d.id,{type:'debt',category:d.name||'Debt',label:(d.name||'Debt')+' '+t('automate_payment_word'),amount:d.minimumPayment,frequency:'monthly',nextDue:nextDueFromDay(d.dueDay)});
+      upsertLinkedTemplate('debt',d.id,{type:'debt',category:d.name||'Debt',label:(d.name||'Debt')+' '+t('automate_payment_word'),amount:totalMonthlyDebtCost(d),frequency:'monthly',nextDue:nextDueFromDay(d.dueDay)});
       showToast(t('recurring_saved'));
     } else removeLinkedTemplate('debt',d.id);
     saveState();
@@ -4780,7 +4964,7 @@ const GUIDE_TOPICS = [
   { id: 'dashboard',    group: 'guide_group_start',    icon: '📊', steps: 3, connects: 3, tip: true  },
   { id: 'transactions', group: 'guide_group_track',    icon: '📋', steps: 4, connects: 3, tip: true  },
   { id: 'budget',       group: 'guide_group_track',    icon: '💰', steps: 4, connects: 3, tip: true  },
-  { id: 'debt',         group: 'guide_group_plan',     icon: '💳', steps: 4, connects: 3, tip: true  },
+  { id: 'debt',         group: 'guide_group_plan',     icon: '💳', steps: 5, connects: 3, tip: true  },
   { id: 'sinking',      group: 'guide_group_plan',     icon: '🏺', steps: 3, connects: 3, tip: true  },
   { id: 'subscriptions',group: 'guide_group_plan',     icon: '🔄', steps: 3, connects: 3, tip: true  },
   { id: 'calendar',     group: 'guide_group_plan',     icon: '📅', steps: 3, connects: 3, tip: true  },

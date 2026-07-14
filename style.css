@@ -278,6 +278,7 @@ p { margin: 0; }
   padding: 11px 14px; appearance: none;
   transition: border-color .15s, box-shadow .15s;
 }
+.input:read-only { opacity: .65; cursor: not-allowed; }
 .select {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%239d97ab' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   background-repeat: no-repeat; background-position: right 14px center;
