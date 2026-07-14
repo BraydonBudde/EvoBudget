@@ -552,7 +552,7 @@ const TRANSLATIONS = {
     help_dpc_tip:'\uD83D\uDCA1 Toggle between methods to see how much interest you\u2019d save with each approach.',
     help_dpc_term_li:'Loan term - For mortgages, student loans, car loans and personal loans, set the term in years and click Auto-calculate to work out an accurate minimum payment.',
     help_dpc_percent_li:'Percentage-based minimum - For credit cards, switch to "% of balance" to match how your statement\u2019s minimum payment actually works (e.g. 2% of balance or $25, whichever is higher).',
-    help_dpc_escrow_li:'Escrow - For mortgages, add your monthly taxes & insurance so your real monthly cost is accurate everywhere - it\u2019s excluded from the payoff projection since it doesn\u2019t reduce your balance.',
+    help_dpc_escrow_li:'Escrow - For mortgages, add your monthly taxes & insurance so your real monthly cost is accurate everywhere; it\u2019s excluded from the payoff projection since it doesn\u2019t reduce your balance.',
     tx_import_csv:'\uD83D\uDCE5 Import CSV',
     tx_add_title:'Add a transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Category',tx_amount:'Amount',
@@ -991,7 +991,7 @@ const TRANSLATIONS = {
     help_dpc_extra_p:'Jeder Überschuss über deinen Mindestzahlungen kann zur Schuldentilgung eingesetzt werden. Selbst eine kleine Extrazahlung kann Hunderte an Zinsen sparen und Monate verkürzen. Ergebnisse werden beim Tippen aktualisiert.',
     help_dpc_term_li:'Laufzeit - Lege bei Hypotheken, Studien-, Auto- und Privatkrediten die Laufzeit in Jahren fest und klicke auf "Automatisch berechnen", um eine genaue Mindestrate zu ermitteln.',
     help_dpc_percent_li:'Prozentbasierte Mindestrate - Wechsle bei Kreditkarten zu "% vom Saldo", damit es genauso funktioniert wie auf deiner Abrechnung (z. B. 2% vom Saldo oder 25 €, je nachdem, was höher ist).',
-    help_dpc_escrow_li:'Treuhand - Füge bei Hypotheken deine monatlichen Steuern & Versicherungen hinzu, damit deine tatsächlichen monatlichen Kosten überall stimmen - sie werden von der Tilgungsprognose ausgeschlossen, da sie den Saldo nicht verringern.',
+    help_dpc_escrow_li:'Treuhand - Füge bei Hypotheken deine monatlichen Steuern & Versicherungen hinzu, damit deine tatsächlichen monatlichen Kosten überall stimmen; sie werden von der Tilgungsprognose ausgeschlossen, da sie den Saldo nicht verringern.',
     help_dpc_tip:'\uD83D\uDCA1 Wechsle zwischen den Methoden, um zu sehen, wie viele Zinsen du mit jedem Ansatz sparen würdest.',
     tx_import_csv:'\uD83D\uDCE5 CSV importieren',
     tx_add_title:'Transaktion hinzufügen',
@@ -1431,7 +1431,7 @@ const TRANSLATIONS = {
     help_dpc_extra_p:"Tout surplus au-dessus de vos minimums peut être consacré aux dettes. Même un petit paiement supplémentaire peut économiser des centaines d'intérêts et réduire les délais. Les résultats se mettent à jour en temps réel.",
     help_dpc_term_li:"Durée du prêt - Pour les prêts hypothécaires, étudiants, auto et personnels, définissez la durée en années et cliquez sur Calculer automatiquement pour obtenir un paiement minimum précis.",
     help_dpc_percent_li:'Paiement minimum en pourcentage - Pour les cartes de crédit, passez à "% du solde" pour correspondre au fonctionnement réel du paiement minimum de votre relevé (ex. 2% du solde ou 25 $, le plus élevé des deux).',
-    help_dpc_escrow_li:"Séquestre - Pour les prêts hypothécaires, ajoutez vos taxes et assurances mensuelles afin que votre coût mensuel réel soit exact partout - il est exclu de la projection de remboursement puisqu'il ne réduit pas votre solde.",
+    help_dpc_escrow_li:"Séquestre - Pour les prêts hypothécaires, ajoutez vos taxes et assurances mensuelles afin que votre coût mensuel réel soit exact partout ; il est exclu de la projection de remboursement puisqu'il ne réduit pas votre solde.",
     help_dpc_tip:"\uD83D\uDCA1 Basculez entre les méthodes pour voir combien d'intérêts vous économiseriez avec chaque approche.",
     tx_import_csv:'\uD83D\uDCE5 Importer CSV',
     tx_add_title:'Ajouter une transaction',
@@ -1871,7 +1871,7 @@ const TRANSLATIONS = {
     help_dpc_extra_p:'Cualquier excedente sobre tus pagos mínimos puede aplicarse a la deuda. Incluso un pequeño pago extra puede ahorrar cientos en intereses y reducir meses. Los resultados se actualizan mientras escribes.',
     help_dpc_term_li:'Plazo del préstamo - Para hipotecas, préstamos estudiantiles, de auto y personales, define el plazo en años y haz clic en Calcular automáticamente para obtener un pago mínimo preciso.',
     help_dpc_percent_li:'Pago mínimo por porcentaje - Para tarjetas de crédito, cambia a "% del saldo" para que funcione igual que el pago mínimo real de tu estado de cuenta (p. ej. 2% del saldo o $25, lo que sea mayor).',
-    help_dpc_escrow_li:'Depósito en garantía - Para hipotecas, agrega tus impuestos y seguro mensuales para que tu costo mensual real sea preciso en todas partes - se excluye de la proyección de pago ya que no reduce tu saldo.',
+    help_dpc_escrow_li:'Depósito en garantía - Para hipotecas, agrega tus impuestos y seguro mensuales para que tu costo mensual real sea preciso en todas partes; se excluye de la proyección de pago ya que no reduce tu saldo.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna entre métodos para ver cuántos intereses ahorrarías con cada enfoque.',
     tx_import_csv:'\uD83D\uDCE5 Importar CSV',
     tx_add_title:'Añadir una transacción',
@@ -2312,7 +2312,7 @@ const TRANSLATIONS = {
     help_dpc_extra_p:'Qualsiasi surplus oltre i pagamenti minimi può essere destinato ai debiti. Anche un piccolo pagamento extra può risparmiare centinaia di interessi e ridurre i mesi. I risultati si aggiornano mentre scrivi.',
     help_dpc_term_li:'Durata del prestito - Per mutui, prestiti studenteschi, auto e personali, imposta la durata in anni e clicca su Calcola automaticamente per ottenere una rata minima accurata.',
     help_dpc_percent_li:'Rata minima percentuale - Per le carte di credito, passa a "% del saldo" per rispecchiare come funziona davvero la rata minima del tuo estratto conto (es. 2% del saldo o 25€, il valore più alto).',
-    help_dpc_escrow_li:'Deposito vincolato - Per i mutui, aggiungi le tue tasse e assicurazione mensili così il tuo costo mensile reale è accurato ovunque - è escluso dalla proiezione di rimborso poiché non riduce il saldo.',
+    help_dpc_escrow_li:'Deposito vincolato - Per i mutui, aggiungi le tue tasse e assicurazione mensili così il tuo costo mensile reale è accurato ovunque; è escluso dalla proiezione di rimborso poiché non riduce il saldo.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna tra i metodi per vedere quanti interessi risparmieresti con ciascun approccio.',
     tx_import_csv:'\uD83D\uDCE5 Importa CSV',
     tx_add_title:'Aggiungi una transazione',
@@ -2752,7 +2752,7 @@ const TRANSLATIONS = {
     help_dpc_extra_p:'Każda nadwyżka ponad minimalne płatności może być przeznaczona na spłatę długu. Nawet mała dodatkowa płatność może zaoszczędzić setki na odsetkach i skrócić harmonogram. Wyniki aktualizują się podczas pisania.',
     help_dpc_term_li:'Okres kredytowania - Dla kredytów hipotecznych, studenckich, samochodowych i osobistych ustaw okres w latach i kliknij Oblicz automatycznie, aby uzyskać dokładną minimalną ratę.',
     help_dpc_percent_li:'Minimalna rata procentowa - Dla kart kredytowych przełącz na "% salda", aby odpowiadało to rzeczywistemu działaniu minimalnej raty z wyciągu (np. 2% salda lub 25 zł, w zależności od tego, co jest wyższe).',
-    help_dpc_escrow_li:'Depozyt - Dla kredytów hipotecznych dodaj miesięczne podatki i ubezpieczenie, aby Twój rzeczywisty koszt miesięczny był wszędzie dokładny - jest wykluczony z prognozy spłaty, ponieważ nie zmniejsza salda.',
+    help_dpc_escrow_li:'Depozyt - Dla kredytów hipotecznych dodaj miesięczne podatki i ubezpieczenie, aby Twój rzeczywisty koszt miesięczny był wszędzie dokładny; jest wykluczony z prognozy spłaty, ponieważ nie zmniejsza salda.',
     help_dpc_tip:'\uD83D\uDCA1 Przełącz między metodami, aby zobaczyć, ile odsetek zaoszczędziłbyś przy każdym podejściu.',
     tx_import_csv:'\uD83D\uDCE5 Importuj CSV',
     tx_add_title:'Dodaj transakcję',
@@ -4848,6 +4848,9 @@ const HELP={
   <li><strong>${t('dpc_th_apr')}</strong> - ${t('help_dpc_apr_li').split(' - ')[1]}</li>
   <li><strong>${t('dpc_th_min')}</strong> - ${t('help_dpc_min_li').split(' - ')[1]}</li>
   <li><strong>${t('dpc_th_due')}</strong> - ${t('help_dpc_due_li').split(' - ')[1]}</li>
+  <li><strong>${t('dpc_term_label')}</strong> - ${t('help_dpc_term_li').split(' - ')[1]}</li>
+  <li><strong>${t('dpc_min_mode_label')}</strong> - ${t('help_dpc_percent_li').split(' - ')[1]}</li>
+  <li><strong>${t('dpc_escrow_label')}</strong> - ${t('help_dpc_escrow_li').split(' - ')[1]}</li>
 </ul>
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_dpc_strategies_h')}</h4>
 <ul>
