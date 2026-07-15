@@ -571,7 +571,7 @@ const TRANSLATIONS = {
     dpc_arm_fixed_years_hint:'How many years the initial rate lasts before switching to the adjusted rate.',dpc_arm_rate_hint:'The interest rate that applies for the rest of the loan once the fixed period ends.',
     dpc_arm_caption:'adjusts after {0}-yr fixed period',
     dpc_recalc_link:'↺ Recalculate',
-    dpc_th_extra:'Extra/mo',
+    dpc_th_extra:'Extra/mo',dpc_mo_suffix:'/mo',
     dpc_extra_col_hint:"Paid on top of this debt's minimum every month, before the shared Extra Monthly Payment above is distributed. Stops once this debt is paid off - it isn't redirected elsewhere.",
     dpc_targeted_extra_note:'{0} targeted extra',
     dpc_schedule_btn_title:'View payment schedule',
@@ -640,6 +640,9 @@ const TRANSLATIONS = {
     bud_th_category:'Category',bud_th_expected:'Expected',
     bud_th_actual:'Actual',bud_th_progress:'Progress',
     bud_th_due_date:'Due Date',bud_th_paid:'Paid',
+    bud_th_expected_hint:'The amount you plan to budget for this category each month.',
+    bud_th_actual_hint:'Calculated automatically from your logged transactions in this category.',
+    bud_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
     bud_total:'Total',bud_set_date:'Set date',
     bud_add_btn:'+ Add',bud_add_cat_title:'Add new category',
     bud_cat_name_label:'Category name',bud_cat_name_ph:'e.g. Freelance',
@@ -1052,7 +1055,7 @@ const TRANSLATIONS = {
     dpc_arm_fixed_years_hint:'Wie viele Jahre der anfängliche Zinssatz gilt, bevor er auf den angepassten Zinssatz wechselt.',dpc_arm_rate_hint:'Der Zinssatz, der für den Rest des Kredits gilt, sobald die feste Periode endet.',
     dpc_arm_caption:'passt sich nach {0}-jähriger fester Periode an',
     dpc_recalc_link:'↺ Neu berechnen',
-    dpc_th_extra:'Extra/Monat',
+    dpc_th_extra:'Extra/Monat',dpc_mo_suffix:'/Monat',
     dpc_extra_col_hint:'Wird jeden Monat zusätzlich zur Mindestzahlung dieser Schuld gezahlt, bevor die gemeinsame Extrazahlung oben verteilt wird. Endet, sobald diese Schuld abbezahlt ist - wird nicht anderswo umgeleitet.',
     dpc_targeted_extra_note:'{0} gezielte Extra',
     dpc_schedule_btn_title:'Zahlungsplan ansehen',
@@ -1121,6 +1124,9 @@ const TRANSLATIONS = {
     bud_th_category:'Kategorie',bud_th_expected:'Geplant',
     bud_th_actual:'Tatsächlich',bud_th_progress:'Fortschritt',
     bud_th_due_date:'Fälligkeitsdatum',bud_th_paid:'Bezahlt',
+    bud_th_expected_hint:'Der Betrag, den du monatlich für diese Kategorie einplanst.',
+    bud_th_actual_hint:'Wird automatisch aus deinen erfassten Transaktionen in dieser Kategorie berechnet.',
+    bud_th_progress_hint:'Wie viel Prozent des geplanten Betrags bisher verbraucht wurde.',
     bud_total:'Gesamt',bud_set_date:'Datum wählen',
     bud_add_btn:'+ Hinzufügen',bud_add_cat_title:'Neue Kategorie hinzufügen',
     bud_cat_name_label:'Kategoriename',bud_cat_name_ph:'z.B. Freiberuflich',
@@ -1533,7 +1539,7 @@ const TRANSLATIONS = {
     dpc_arm_fixed_years_hint:"Le nombre d'années pendant lesquelles le taux initial s'applique avant de passer au taux ajusté.",dpc_arm_rate_hint:'Le taux d’intérêt qui s’applique pour le reste du prêt une fois la période fixe terminée.',
     dpc_arm_caption:"s'ajuste après {0} ans de période fixe",
     dpc_recalc_link:'↺ Recalculer',
-    dpc_th_extra:'Extra/mois',
+    dpc_th_extra:'Extra/mois',dpc_mo_suffix:'/mois',
     dpc_extra_col_hint:"Payé en plus du minimum de cette dette chaque mois, avant que le paiement supplémentaire partagé ci-dessus ne soit distribué. S'arrête une fois cette dette remboursée - il n'est pas redirigé ailleurs.",
     dpc_targeted_extra_note:'{0} extra ciblé',
     dpc_schedule_btn_title:"Voir l'échéancier de paiement",
@@ -1602,6 +1608,9 @@ const TRANSLATIONS = {
     bud_th_category:'Catégorie',bud_th_expected:'Prévu',
     bud_th_actual:'Réel',bud_th_progress:'Progression',
     bud_th_due_date:"Date d'éch.",bud_th_paid:'Payé',
+    bud_th_expected_hint:'Le montant que vous prévoyez de budgétiser pour cette catégorie chaque mois.',
+    bud_th_actual_hint:'Calculé automatiquement à partir de vos transactions enregistrées dans cette catégorie.',
+    bud_th_progress_hint:'Le pourcentage du montant prévu déjà utilisé.',
     bud_total:'Total',bud_set_date:'Définir date',
     bud_add_btn:'+ Ajouter',bud_add_cat_title:'Ajouter une catégorie',
     bud_cat_name_label:'Nom de la catégorie',bud_cat_name_ph:'ex. Freelance',
@@ -2014,7 +2023,7 @@ const TRANSLATIONS = {
     dpc_arm_fixed_years_hint:'Cuántos años dura la tasa inicial antes de cambiar a la tasa ajustada.',dpc_arm_rate_hint:'La tasa de interés que se aplica durante el resto del préstamo una vez finalizado el período fijo.',
     dpc_arm_caption:'se ajusta después de {0} años de período fijo',
     dpc_recalc_link:'↺ Recalcular',
-    dpc_th_extra:'Extra/mes',
+    dpc_th_extra:'Extra/mes',dpc_mo_suffix:'/mes',
     dpc_extra_col_hint:'Se paga además del mínimo de esta deuda cada mes, antes de distribuir el pago extra compartido de arriba. Se detiene una vez que esta deuda está pagada - no se redirige a otra parte.',
     dpc_targeted_extra_note:'{0} extra dirigido',
     dpc_schedule_btn_title:'Ver cronograma de pagos',
@@ -2083,6 +2092,9 @@ const TRANSLATIONS = {
     bud_th_category:'Categoría',bud_th_expected:'Previsto',
     bud_th_actual:'Real',bud_th_progress:'Progreso',
     bud_th_due_date:'Fecha venc.',bud_th_paid:'Pagado',
+    bud_th_expected_hint:'La cantidad que planeas presupuestar para esta categoría cada mes.',
+    bud_th_actual_hint:'Se calcula automáticamente a partir de tus transacciones registradas en esta categoría.',
+    bud_th_progress_hint:'Qué porcentaje del monto previsto se ha usado hasta ahora.',
     bud_total:'Total',bud_set_date:'Seleccionar fecha',
     bud_add_btn:'+ Añadir',bud_add_cat_title:'Añadir nueva categoría',
     bud_cat_name_label:'Nombre de categoría',bud_cat_name_ph:'p.ej. Autónomo',
@@ -2496,7 +2508,7 @@ const TRANSLATIONS = {
     dpc_arm_fixed_years_hint:'Per quanti anni dura il tasso iniziale prima di passare al tasso adeguato.',dpc_arm_rate_hint:'Il tasso di interesse applicato per il resto del prestito una volta terminato il periodo fisso.',
     dpc_arm_caption:'si adegua dopo {0} anni di periodo fisso',
     dpc_recalc_link:'↺ Ricalcola',
-    dpc_th_extra:'Extra/mese',
+    dpc_th_extra:'Extra/mese',dpc_mo_suffix:'/mese',
     dpc_extra_col_hint:'Pagato in aggiunta alla rata minima di questo debito ogni mese, prima che il pagamento extra condiviso sopra venga distribuito. Si ferma una volta che questo debito è saldato - non viene reindirizzato altrove.',
     dpc_targeted_extra_note:'{0} extra mirato',
     dpc_schedule_btn_title:'Visualizza piano di ammortamento',
@@ -2565,6 +2577,9 @@ const TRANSLATIONS = {
     bud_th_category:'Categoria',bud_th_expected:'Previsto',
     bud_th_actual:'Effettivo',bud_th_progress:'Avanzamento',
     bud_th_due_date:'Scadenza',bud_th_paid:'Pagato',
+    bud_th_expected_hint:'L’importo che prevedi di destinare a questa categoria ogni mese.',
+    bud_th_actual_hint:'Calcolato automaticamente dalle transazioni registrate in questa categoria.',
+    bud_th_progress_hint:'Quale percentuale dell’importo previsto è stata utilizzata finora.',
     bud_total:'Totale',bud_set_date:'Imposta data',
     bud_add_btn:'+ Aggiungi',bud_add_cat_title:'Aggiungi nuova categoria',
     bud_cat_name_label:'Nome categoria',bud_cat_name_ph:'es. Freelance',
@@ -2977,7 +2992,7 @@ const TRANSLATIONS = {
     dpc_arm_fixed_years_hint:'Ile lat obowiązuje początkowe oprocentowanie, zanim zmieni się na oprocentowanie po zmianie.',dpc_arm_rate_hint:'Oprocentowanie obowiązujące przez resztę kredytu po zakończeniu okresu stałego.',
     dpc_arm_caption:'zmienia się po {0}-letnim okresie stałym',
     dpc_recalc_link:'↺ Przelicz ponownie',
-    dpc_th_extra:'Dodatkowo/mies.',
+    dpc_th_extra:'Dodatkowo/mies.',dpc_mo_suffix:'/mies.',
     dpc_extra_col_hint:'Płacone dodatkowo do minimalnej raty tego długu co miesiąc, zanim wspólna dodatkowa płatność powyżej zostanie rozdzielona. Zatrzymuje się, gdy ten dług zostanie spłacony - nie jest przekierowywane gdzie indziej.',
     dpc_targeted_extra_note:'{0} celowanej nadpłaty',
     dpc_schedule_btn_title:'Zobacz harmonogram spłat',
@@ -3046,6 +3061,9 @@ const TRANSLATIONS = {
     bud_th_category:'Kategoria',bud_th_expected:'Planowane',
     bud_th_actual:'Rzeczywiste',bud_th_progress:'Postęp',
     bud_th_due_date:'Data zapłaty',bud_th_paid:'Zapłacono',
+    bud_th_expected_hint:'Kwota, którą planujesz przeznaczyć na tę kategorię każdego miesiąca.',
+    bud_th_actual_hint:'Obliczane automatycznie na podstawie zarejestrowanych transakcji w tej kategorii.',
+    bud_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
     bud_total:'Suma',bud_set_date:'Ustaw datę',
     bud_add_btn:'+ Dodaj',bud_add_cat_title:'Dodaj nową kategorię',
     bud_cat_name_label:'Nazwa kategorii',bud_cat_name_ph:'np. Freelance',
@@ -3615,9 +3633,9 @@ function buildModuleHTML(type,meta,act) {
   const noDate=`<span class="no-date">${t('bud_set_date')}</span>`;
   return `<div class="budget-module-section"><div class="module-section-header"><h3 class="module-section-title">${meta.icon} ${meta.title}</h3><button class="btn btn-ghost btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button></div>
     <div class="panel" style="margin-bottom:18px"><div class="module-table-wrap"><table class="module-table"><thead><tr>
-      <th>${t('bud_th_category')}</th><th>${t('bud_th_expected')} (${SYM})</th>
+      <th>${t('bud_th_category')}</th><th><span class="cc-label-text">${t('bud_th_expected')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_expected'))}">i</button></th>
       ${meta.hasDates?`<th>${t('bud_th_due_date')}</th>`:''}
-      <th>${t('bud_th_actual')} (${SYM})</th><th class="prog-cell">${t('bud_th_progress')}</th>
+      <th><span class="cc-label-text">${t('bud_th_actual')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_actual'))}">i</button></th><th class="prog-cell"><span class="cc-label-text">${t('bud_th_progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_progress'))}">i</button></th>
       ${meta.hasDates?`<th>${t('bud_th_paid')}</th>`:''}<th></th>
     </tr></thead>
     <tbody>${rows.map(row=>{
@@ -4082,7 +4100,7 @@ function debtTypes(){return{credit_card:t('dtype_credit_card'),student_loan:t('d
 // Builds the inner content of a <label class="field-label field-label--tip">: label text (truncates
 // with an ellipsis instead of wrapping), an optional required-star, then the "?" tiny helper on the right.
 function tipLabel(text,hintKey,required){
-  return `<span class="cc-label-text">${text}</span>${required?' <span class="required-star" aria-hidden="true">*</span>':''}<button class="cc-info" type="button" data-tip="${esc(t(hintKey))}" aria-label="${tf('field_info_aria',text)}">?</button>`;
+  return `<span class="cc-label-text">${text}</span>${required?' <span class="required-star" aria-hidden="true">*</span>':''}<button class="cc-info" type="button" data-tip="${esc(t(hintKey))}" aria-label="${tf('field_info_aria',text)}">i</button>`;
 }
 function initFieldTips(container){
   const scope=container||document;
@@ -4175,7 +4193,7 @@ function openDebtModal(debtId){
       <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('dpc_th_min')} (${SYM})`,'dpc_min_hint',true)}</label><input class="input" type="number" id="debtMin" min="0" step="0.01" placeholder="0.00" value="${d?.minimumPayment||''}">
         <div id="debtAutoCalcRow" style="display:none;margin-top:6px"><div class="field-hint" id="debtAutoCalcResult"></div><button type="button" class="link-btn" id="debtRecalcBtn" style="display:none">${t('dpc_recalc_link')}</button></div>
       </div>
-      <div class="field"><label class="field-label field-label--tip"><span class="cc-label-text">${t('dpc_th_due')}</span><span class="required-star" id="debtDueStar" aria-hidden="true" style="display:${existingLink?'inline':'none'}">*</span><button class="cc-info" type="button" data-tip="${esc(t('debt_due_day_modal_hint'))}" aria-label="${esc(tf('field_info_aria',t('dpc_th_due')))}">?</button></label><input class="input" type="number" id="debtDueDay" min="1" max="31" placeholder="1-31" value="${d?.dueDay||''}"></div>
+      <div class="field"><label class="field-label field-label--tip"><span class="cc-label-text">${t('dpc_th_due')}</span><span class="required-star" id="debtDueStar" aria-hidden="true" style="display:${existingLink?'inline':'none'}">*</span><button class="cc-info" type="button" data-tip="${esc(t('debt_due_day_modal_hint'))}" aria-label="${esc(tf('field_info_aria',t('dpc_th_due')))}">i</button></label><input class="input" type="number" id="debtDueDay" min="1" max="31" placeholder="1-31" value="${d?.dueDay||''}"></div>
     </div>
     <div id="debtMinModeRow" style="display:none">
       <div class="field"><label class="field-label field-label--tip">${tipLabel(t('dpc_min_mode_label'),'dpc_min_mode_hint',false)}</label><select class="select" id="debtMinMode">
@@ -4347,7 +4365,7 @@ function renderDebt(){
           <td><label class="recurring-toggle" title="${t('automate_label')}"><input type="checkbox" class="debt-auto-cb" data-debt-auto="${d.id}" ${findLinkedTemplate('debt',d.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></td>
           <td><div class="row-actions"><button class="btn-icon-tiny" data-debt-schedule="${d.id}" type="button" title="${t('dpc_schedule_btn_title')}">ℹ️</button><button class="sf-edit-btn btn-icon-tiny" data-debt-edit="${d.id}" type="button" title="${t('edit')}">✏️</button><button class="btn-icon-tiny del-btn" data-debt-id="${d.id}" type="button">×</button></div></td>
         </tr>`).join('')}</tbody>
-        <tfoot><tr class="total-row"><td colspan="2"><strong>${t('dpc_totals')}</strong></td><td><strong>${fmt(totDebt)}</strong></td><td></td><td><strong>${fmt(totMin)} ${t('sf_per_month')}</strong></td><td><strong>${fmt(totExtra)}</strong></td><td colspan="2"></td></tr></tfoot>
+        <tfoot><tr class="total-row"><td colspan="2"><strong>${t('dpc_totals')}</strong></td><td><strong>${fmt(totDebt)}</strong></td><td></td><td><strong>${fmt(totMin)}${t('sf_per_month')}</strong></td><td><strong>${fmt(totExtra)}${t('dpc_mo_suffix')}</strong></td><td colspan="2"></td></tr></tfoot>
       </table></div></div>`}
     ${state.debts.length>0&&result?`<div class="debt-results">
       <div class="debt-results-cards">
@@ -5481,19 +5499,19 @@ function openDebtSchedule(debtId) {
   const parts=[DT[debt.type]||debt.type, `${fmt(debt.balance)} ${t('dpc_balance_word')}`, `${debt.interestRate}% ${t('dpc_apr_word')}`];
   if(AMORTIZING_DEBT_TYPES.includes(debt.type)) parts.push(debt.amortType==='equal_principal'?t('dpc_amort_equal_principal'):t('dpc_amort_equal_payment'));
   if(debt.rateType==='arm') parts.push(t('dpc_rate_type_arm'));
-  headEl.innerHTML=`<h3 class="debt-sched-title">${esc(debt.name)}</h3><div class="debt-sched-summary">${parts.map(esc).join(' • ')}</div>`;
+  const colClass=hasEscrow?'debt-sched-row--6col':'debt-sched-row--5col';
+  const colHeaderHtml=`<div class="debt-sched-colheader ${colClass}">
+    <div>${t('dsched_col_date')}</div><div>${t('dsched_col_payment')}</div><div class="sched-col-secondary">${t('dsched_col_principal')}</div><div class="sched-col-secondary">${t('dsched_col_interest')}</div>
+    ${hasEscrow?`<div class="sched-col-secondary">${t('dsched_col_escrow')}</div>`:''}<div>${t('dsched_col_balance')}</div>
+  </div>`;
+  headEl.innerHTML=`<h3 class="debt-sched-title">${esc(debt.name)}</h3><div class="debt-sched-summary">${parts.map(esc).join(' • ')}</div>`+colHeaderHtml;
   const neverPaidOff=debt.paidOffMonth===null&&schedule.length>=600;
   const warningHtml=neverPaidOff?`<div class="debt-sched-warning"><span aria-hidden="true">⚠️</span><span>${t('dsched_never_payoff_warning')}</span></div>`:'';
-  const tableHtml=`<table class="module-table debt-sched-table"><thead><tr>
-    <th>${t('dsched_col_date')}</th><th>${t('dsched_col_payment')}</th><th class="sched-col-secondary">${t('dsched_col_principal')}</th><th class="sched-col-secondary">${t('dsched_col_interest')}</th>
-    ${hasEscrow?`<th class="sched-col-secondary">${t('dsched_col_escrow')}</th>`:''}<th>${t('dsched_col_balance')}</th>
-  </tr></thead><tbody>
-    ${schedule.map(row=>`<tr class="module-row">
-      <td>${formatDateDisplay(row.date)}</td><td>${fmt(row.payment)}</td><td class="col-principal sched-col-secondary">${fmt(row.principal)}</td><td class="col-interest sched-col-secondary">${fmt(row.interest)}</td>
-      ${hasEscrow?`<td class="sched-col-secondary">${row.escrow!==undefined?fmt(row.escrow):'-'}</td>`:''}<td class="col-balance">${fmt(row.balance)}</td>
-    </tr>`).join('')}
-  </tbody></table>`;
-  bodyEl.innerHTML=warningHtml+tableHtml;
+  const rowsHtml=schedule.map(row=>`<div class="debt-sched-row ${colClass}">
+    <div>${formatDateDisplay(row.date)}</div><div>${fmt(row.payment)}</div><div class="col-principal sched-col-secondary">${fmt(row.principal)}</div><div class="col-interest sched-col-secondary">${fmt(row.interest)}</div>
+    ${hasEscrow?`<div class="sched-col-secondary">${row.escrow!==undefined?fmt(row.escrow):'-'}</div>`:''}<div class="col-balance">${fmt(row.balance)}</div>
+  </div>`).join('');
+  bodyEl.innerHTML=warningHtml+rowsHtml;
   overlay.hidden=false;
   debtSchedKeydownHandler = e => debtSchedHandleKeydown(e);
   document.addEventListener('keydown', debtSchedKeydownHandler, true);
