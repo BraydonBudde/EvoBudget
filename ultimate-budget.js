@@ -466,7 +466,7 @@ const TRANSLATIONS = {
     reset_desc:'Permanently deletes all your data. This cannot be undone.',
     reset_btn:'Reset everything',
     // Common
-    add:'Add', cancel:'Cancel',rename_title_prompt:'Rename your budget planner', save:'Save', delete:'Delete',dp_today:'Today',dp_clear:'Clear', edit:'Edit',
+    add:'Add', cancel:'Cancel',rename_title_prompt:'Rename your budget planner', save:'Save', delete:'Delete',dp_today:'Today',dp_clear:'Clear', edit:'Edit',field_info_aria:'About {0}',
     paid:'Paid', due_date:'Due Date', category:'Category', amount:'Amount',
     description:'Description', date:'Date', type:'Type',
     add_category:'+ Add category', no_transactions:'No transactions yet.',
@@ -512,12 +512,17 @@ const TRANSLATIONS = {
     sf_empty_sub:'Great for: holidays, car repairs, weddings, new tech, annual bills.',
     sf_pct_complete:'complete',
     sf_save_prefix:'Save',sf_per_month:'/month',
-    sf_month_left_one:'month left',sf_month_left_many:'months left',
+    sf_mo_left_tpl:'{0}/mo left',
     sf_total_contrib:'Total monthly contributions needed:',
     sf_modal_new:'\uD83C\uDFFA New Sinking Fund',sf_modal_edit:'\u270F\uFE0F Edit Fund',
     sf_fund_name_label:'Fund name',sf_fund_name_ph:'e.g. Holiday Fund',
     sf_icon_label:'Icon',sf_target_amount_label:'Target amount',
     sf_currently_saved_label:'Currently saved',sf_target_date_label:'Target date',
+    sf_fund_name_hint:'A short name for what you\'re saving toward, like "Summer Holiday" or "New Laptop".',
+    sf_icon_hint:'Pick an icon to help this fund stand out at a glance.',
+    sf_target_amount_hint:'The total amount you need to reach this goal.',
+    sf_currently_saved_hint:"How much you've already put aside for this goal, if anything.",
+    sf_target_date_hint:'When you want to reach your goal by - used to work out how much to save each month.',
     sf_create_btn:'Create fund',
     help_sf_intro:'A sinking fund is money you set aside in advance for a big planned expense - no nasty surprises when the bill arrives.',
     help_sf_how_to_h:'How to use it',
@@ -543,21 +548,27 @@ const TRANSLATIONS = {
     dpc_th_name:'Debt',dpc_th_type:'Type',dpc_th_balance:'Balance',
     dpc_th_apr:'APR %',dpc_th_min:'Min. payment',dpc_th_due:'Due day',
     dpc_totals:'Totals',dpc_name_ph:'e.g. Visa Card',
+    dpc_name_hint:'The label you’ll see for this debt everywhere in the app.',dpc_type_hint:'Used to apply the right rules for this kind of loan (e.g. mortgages support escrow and ARM rates).',
+    dpc_balance_hint:'The amount you currently owe on this debt.',dpc_apr_hint:'The annual interest rate charged on the remaining balance.',
+    dpc_min_hint:'The smallest payment required each month, before any extra you add.',
     dpc_term_label:'Loan term (years)',dpc_term_hint:'Sets how long this loan runs, so Auto-calculate can work out an accurate minimum payment.',
     dpc_autocalc_btn:'Auto-calculate',dpc_autocalc_done:'Calculated: {0}/mo',
     dpc_min_mode_label:'Minimum payment type',dpc_min_mode_fixed:'Fixed amount',dpc_min_mode_percent:'% of balance',
     dpc_min_percent_label:'Percent of balance (%)',dpc_min_floor_label:'Minimum floor amount',
+    dpc_min_mode_hint:'Fixed keeps the same minimum every month. Percent of balance recalculates it as the balance shrinks - common for credit cards.',
+    dpc_min_percent_hint:'The percentage of the remaining balance used to calculate the minimum payment.',dpc_min_floor_hint:'The minimum payment never drops below this amount, even if the percentage works out lower.',
     dpc_min_calculated_hint:'Calculated automatically - whichever is higher of the percentage or the floor amount.',
     dpc_escrow_label:'Escrow (taxes & insurance)',
     dpc_escrow_hint:"Adds to your real monthly cost, but is excluded from the payoff simulation since it doesn't reduce your balance.",
     dpc_min_pct_caption:'{0}% of balance',dpc_escrow_note:'{0} escrow',
-    dpc_term_note_faster:'{0} mo faster than your {1}-yr term',dpc_term_note_slower:'{0} mo slower than your {1}-yr term',
+    dpc_term_note_faster:'{0}/mo faster than your {1}-yr term',dpc_term_note_slower:'{0}/mo slower than your {1}-yr term',
     dpc_term_note_onschedule:'right on schedule for your {0}-yr term',
     dpc_escrow_mode_label:'Escrow type',dpc_escrow_mode_fixed:'Fixed amount',dpc_escrow_mode_declining:'Declining with balance',
     dpc_escrow_mode_hint:"This only affects the payment schedule below. Today's automated amount and dashboard total always use the current flat escrow amount.",
     dpc_rate_type_label:'Rate type',dpc_rate_type_fixed:'Fixed for the whole term',dpc_rate_type_arm:'Adjusts after a fixed period (ARM)',
     dpc_rate_type_hint:'A simplified model: one rate for the fixed period, then a single new rate for the rest of the loan - not a full index/cap simulation.',
     dpc_arm_fixed_years_label:'Fixed-rate period (years)',dpc_arm_rate_label:'Rate after adjustment',
+    dpc_arm_fixed_years_hint:'How many years the initial rate lasts before switching to the adjusted rate.',dpc_arm_rate_hint:'The interest rate that applies for the rest of the loan once the fixed period ends.',
     dpc_arm_caption:'adjusts after {0}-yr fixed period',
     dpc_recalc_link:'↺ Recalculate',
     dpc_th_extra:'Extra/mo',
@@ -570,7 +581,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Credit Card',dtype_student_loan:'Student Loan',
     dtype_mortgage:'Mortgage',dtype_car_loan:'Car Loan',
     dtype_personal_loan:'Personal Loan',dtype_other:'Other',
-    dpc_debt_free_label:'\uD83C\uDFAF Debt-free date',dpc_months_from_now:'months from now',
+    dpc_debt_free_label:'\uD83C\uDFAF Debt-free date',dpc_months_from_now:'{0}/mo from now',
     dpc_interest_label:'\uD83D\uDCB8 Total interest',dpc_on_top:'on top of',dpc_principal:'principal',
     dpc_monthly_label:'\uD83D\uDCC5 Monthly total',dpc_min_abbr:'min',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Payoff order - \u26c4 Snowball (lowest balance first)',
@@ -601,6 +612,11 @@ const TRANSLATIONS = {
     tx_add_title:'Add a transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Category',tx_amount:'Amount',
     tx_desc_label:'Description',tx_desc_ph:'e.g. Grocery run\u2026',
+    tx_date_hint:'The date this transaction happened.',
+    tx_type_hint:'What kind of transaction this is - which part of your budget it counts against.',
+    tx_category_hint:'Which category within that type this belongs to.',
+    tx_amount_hint:'How much this transaction was for.',
+    tx_desc_hint:'An optional note to help you remember what this was, like "Grocery run".',
     tx_add_btn:'Add',tx_error_required:'Please fill all required fields.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
     tx_clear_all:'Clear all',tx_empty:'No transactions yet.',
@@ -628,6 +644,8 @@ const TRANSLATIONS = {
     bud_add_btn:'+ Add',bud_add_cat_title:'Add new category',
     bud_cat_name_label:'Category name',bud_cat_name_ph:'e.g. Freelance',
     bud_add_cat_btn:'Add',bud_due_date_label:'Due date',
+    bud_cat_name_hint:'A short name for this category, like "Rent" or "Groceries".',
+    bud_due_date_hint:'When this is due each period. Shows on the Smart Calendar.',
     help_bud_intro:'The Budget tab is where you plan your money. Set expected amounts for every category - actuals fill in automatically from your Transactions.',
     help_bud_how_h:'How it works',
     help_bud_step1:'Click an Expected field and type your budget amount',
@@ -720,7 +738,7 @@ const TRANSLATIONS = {
     recurring_freq:'Frequency',freq_daily:'Daily',freq_weekly:'Weekly',
     freq_monthly:'Monthly',freq_quarterly:'Quarterly',freq_annual:'Annual',
     recurring_next_due:'Next Due',recurring_generated:'Automated {0} new transactions',
-    recurring_remove:'Remove rule',recurring_paused:'Paused',recurring_active:'Active',recurring_saved:'Automatic transaction saved ✓',dpc_add_debt_title:'Add debt',dpc_edit_debt_title:'Edit debt',debt_due_day_modal_hint:'The day of the month this payment is due',toast_debt_added:'Debt added',toast_debt_updated:'Debt updated',sf_billing_day_label:'Billing day of month',sf_billing_day_hint:'The day each month the contribution is logged automatically',sf_error_required:'Please fill in all required fields',sub_active:'Active',sub_paused:'Paused',sub_desc:"Track every recurring payment and understand your true annual cost. Pause subscriptions you're not using to keep costs in check.",sub_add_btn:'+ Add subscription',sub_add_title:'Add subscription',sub_edit_title:'Edit subscription',sub_empty_title:'No subscriptions yet.',sub_empty_sub:'Add your recurring payments - Netflix, Spotify, gym memberships, etc.',sub_sum_monthly:'Monthly total',sub_sum_annual:'Annual total',sub_by_category:'By category',sub_per_month:'/month',sub_next_label:'Next',sub_name_label:'Subscription name',sub_name_ph:'e.g. Netflix',sub_amount_label:'Amount',sub_freq_label:'Billing frequency',sub_freq_monthly:'Monthly',sub_freq_annual:'Annual',sub_freq_quarterly:'Quarterly',sub_freq_weekly:'Weekly',sub_unit_month:'month',sub_unit_year:'year',sub_unit_quarter:'quarter',sub_cat_label:'Category',sub_date_label:'Next billing date',sub_cat_entertainment:'Entertainment',sub_cat_productivity:'Productivity',sub_cat_health:'Health & Fitness',sub_cat_food:'Food & Drink',sub_cat_cloud:'Cloud Storage',sub_cat_finance:'Finance',sub_cat_education:'Education',sub_cat_gaming:'Gaming',sub_cat_news:'News & Media',sub_cat_other:'Other',help_sub_intro:"Track every recurring payment and understand your true monthly and annual cost. Subscriptions that quietly drain your account are easy to miss - this keeps them visible.",help_sub_how_h:'Adding a subscription',help_sub_step1:'Click + Add subscription',help_sub_step2:'Enter the name, amount, and billing frequency (monthly, annual, quarterly, weekly)',help_sub_step3:'Pick a category to group similar subscriptions',help_sub_step4:'Set the next billing date - it will appear on the Smart Calendar',help_sub_monthly_h:'Monthly equivalent',help_sub_monthly_p:'Annual and quarterly subscriptions are converted to a monthly cost so you can see your true monthly spend at a glance.',help_sub_pause_h:'Pausing subscriptions',help_sub_pause_p:"Switch the Active toggle off on any subscription you're not currently using. It won't count toward your totals until you switch it back on.",help_sub_chart_h:'Category chart',help_sub_chart_p:'The donut chart shows how your subscription spending breaks down by category - hover a segment to see the details.',help_sub_tip:"💡 Turn on Automate for a subscription so it's added to your transactions automatically each billing cycle.",automate_auto_pay:'Auto-pay',sf_auto_contribute:'Auto-contribute',sf_auto_need_amount:'Add a target amount and date first',sf_auto_set:'Monthly contribution set to {0}',automate_label:'Automate',automate_hint:'Adds it to your transactions automatically on schedule',automate_hint_off:'Turn on Automation in Settings to use this',automate_th:'Autopay',automate_need_amount:'Set a minimum payment first',automate_payment_word:'payment',automate_linked:'Linked automatic transaction',sf_contribution_label:'Monthly contribution',sf_contribution_hint:'Logged automatically each month to grow this fund',sett_automation_h:'Automation',sett_automation_desc:'Master switch for automatic transactions. When off, no scheduled transactions are generated and the Automate options are disabled.',sett_automation_toggle:'Automatic transactions',sett_automation_hint:'Applies to the Transactions tab, subscriptions, funds and debts',
+    recurring_remove:'Remove rule',recurring_paused:'Paused',recurring_active:'Active',recurring_saved:'Automatic transaction saved ✓',dpc_add_debt_title:'Add debt',dpc_edit_debt_title:'Edit debt',debt_due_day_modal_hint:'The day of the month this payment is due',toast_debt_added:'Debt added',toast_debt_updated:'Debt updated',sf_billing_day_label:'Billing day of month',sf_billing_day_hint:'The day each month the contribution is logged automatically',sf_error_required:'Please fill in all required fields',sub_active:'Active',sub_paused:'Paused',sub_desc:"Track every recurring payment and understand your true annual cost. Pause subscriptions you're not using to keep costs in check.",sub_add_btn:'+ Add subscription',sub_add_title:'Add subscription',sub_edit_title:'Edit subscription',sub_empty_title:'No subscriptions yet.',sub_empty_sub:'Add your recurring payments - Netflix, Spotify, gym memberships, etc.',sub_sum_monthly:'Monthly total',sub_sum_annual:'Annual total',sub_by_category:'By category',sub_per_month:'/month',sub_next_label:'Next',sub_name_label:'Subscription name',sub_name_ph:'e.g. Netflix',sub_amount_label:'Amount',sub_freq_label:'Billing frequency',sub_freq_monthly:'Monthly',sub_freq_annual:'Annual',sub_freq_quarterly:'Quarterly',sub_freq_weekly:'Weekly',sub_unit_month:'month',sub_unit_year:'year',sub_unit_quarter:'quarter',sub_cat_label:'Category',sub_date_label:'Next billing date',sub_name_hint:'The service or provider this payment is for, like "Netflix" or "Gym Membership".',sub_amount_hint:"How much you're charged each billing cycle.",sub_freq_hint:'How often this subscription bills you.',sub_cat_hint:'Groups this subscription for the category breakdown chart.',sub_date_hint:'The next date this subscription will charge you. Shows on the Smart Calendar.',alloc_label_hint:'Tag this as a Need, Want, or Save so it counts toward your allocation buckets.',sub_cat_entertainment:'Entertainment',sub_cat_productivity:'Productivity',sub_cat_health:'Health & Fitness',sub_cat_food:'Food & Drink',sub_cat_cloud:'Cloud Storage',sub_cat_finance:'Finance',sub_cat_education:'Education',sub_cat_gaming:'Gaming',sub_cat_news:'News & Media',sub_cat_other:'Other',help_sub_intro:"Track every recurring payment and understand your true monthly and annual cost. Subscriptions that quietly drain your account are easy to miss - this keeps them visible.",help_sub_how_h:'Adding a subscription',help_sub_step1:'Click + Add subscription',help_sub_step2:'Enter the name, amount, and billing frequency (monthly, annual, quarterly, weekly)',help_sub_step3:'Pick a category to group similar subscriptions',help_sub_step4:'Set the next billing date - it will appear on the Smart Calendar',help_sub_monthly_h:'Monthly equivalent',help_sub_monthly_p:'Annual and quarterly subscriptions are converted to a monthly cost so you can see your true monthly spend at a glance.',help_sub_pause_h:'Pausing subscriptions',help_sub_pause_p:"Switch the Active toggle off on any subscription you're not currently using. It won't count toward your totals until you switch it back on.",help_sub_chart_h:'Category chart',help_sub_chart_p:'The donut chart shows how your subscription spending breaks down by category - hover a segment to see the details.',help_sub_tip:"💡 Turn on Automate for a subscription so it's added to your transactions automatically each billing cycle.",automate_auto_pay:'Auto-pay',sf_auto_contribute:'Auto-contribute',sf_auto_need_amount:'Add a target amount and date first',sf_auto_set:'Monthly contribution set to {0}',automate_label:'Automate',automate_hint:'Adds it to your transactions automatically on schedule',automate_hint_off:'Turn on Automation in Settings to use this',automate_th:'Autopay',automate_need_amount:'Set a minimum payment first',automate_payment_word:'payment',automate_linked:'Linked automatic transaction',sf_contribution_label:'Monthly contribution',sf_contribution_hint:'Logged automatically each month to grow this fund',sett_automation_h:'Automation',sett_automation_desc:'Master switch for automatic transactions. When off, no scheduled transactions are generated and the Automate options are disabled.',sett_automation_toggle:'Automatic transactions',sett_automation_hint:'Applies to the Transactions tab, subscriptions, funds and debts',
     tx_type_sinking_fund:'Sinking Fund',
     help_dash_alloc_h:'Budget Allocation panel',
     help_dash_alloc_what_h:'What it is',
@@ -932,7 +950,7 @@ const TRANSLATIONS = {
     rollover_amount:'Übertragsbetrag',
     reset_desc:'Löscht alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.',
     reset_btn:'Alles zurücksetzen',
-    add:'Hinzufügen',cancel:'Abbrechen',rename_title_prompt:'Budgetplaner umbenennen',save:'Speichern',delete:'Löschen',dp_today:'Heute',dp_clear:'Löschen',edit:'Bearbeiten',
+    add:'Hinzufügen',cancel:'Abbrechen',rename_title_prompt:'Budgetplaner umbenennen',save:'Speichern',delete:'Löschen',dp_today:'Heute',dp_clear:'Löschen',edit:'Bearbeiten',field_info_aria:'Über {0}',
     paid:'Bezahlt',due_date:'Fälligkeitsdatum',category:'Kategorie',amount:'Betrag',
     description:'Beschreibung',date:'Datum',type:'Typ',
     add_category:'+ Kategorie hinzufügen',no_transactions:'Noch keine Transaktionen.',
@@ -975,12 +993,17 @@ const TRANSLATIONS = {
     sf_empty_sub:'Ideal für: Urlaub, Autoreparaturen, Hochzeiten, neue Technik, Jahresrechnungen.',
     sf_pct_complete:'erreicht',
     sf_save_prefix:'Sparen',sf_per_month:'/Monat',
-    sf_month_left_one:'Monat übrig',sf_month_left_many:'Monate übrig',
+    sf_mo_left_tpl:'{0}/Mon. übrig',
     sf_total_contrib:'Gesamt benötigte monatliche Beiträge:',
     sf_modal_new:'🏺 Neuer Sparzielfonds',sf_modal_edit:'✏️ Fonds bearbeiten',
     sf_fund_name_label:'Fondsname',sf_fund_name_ph:'z.B. Urlaubsfonds',
     sf_icon_label:'Symbol',sf_target_amount_label:'Zielbetrag',
     sf_currently_saved_label:'Bereits gespart',sf_target_date_label:'Zieldatum',
+    sf_fund_name_hint:'Ein kurzer Name für dein Sparziel, z.B. "Sommerurlaub" oder "Neuer Laptop".',
+    sf_icon_hint:'Wähle ein Symbol, damit dieser Fonds auf einen Blick auffällt.',
+    sf_target_amount_hint:'Der Gesamtbetrag, den du für dieses Ziel brauchst.',
+    sf_currently_saved_hint:'Wie viel du für dieses Ziel bereits zurückgelegt hast, falls überhaupt.',
+    sf_target_date_hint:'Bis wann du dein Ziel erreichen möchtest - wird genutzt, um zu berechnen, wie viel du monatlich sparen musst.',
     sf_create_btn:'Fonds erstellen',
     help_sf_intro:'Ein Sparzielfonds ist Geld, das du im Voraus für eine große geplante Ausgabe zurücklegst - keine bösen Überraschungen, wenn die Rechnung kommt.',
     help_sf_how_to_h:'So verwendest du ihn',
@@ -1006,21 +1029,27 @@ const TRANSLATIONS = {
     dpc_th_name:'Schuld',dpc_th_type:'Art',dpc_th_balance:'Saldo',
     dpc_th_apr:'Zins %',dpc_th_min:'Mind.-Zahlung',dpc_th_due:'Fälligkeitstag',
     dpc_totals:'Gesamt',dpc_name_ph:'z.B. Visa Karte',
+    dpc_name_hint:'Die Bezeichnung, die du überall in der App für diese Schuld siehst.',dpc_type_hint:'Legt die passenden Regeln für diese Kreditart fest (z.B. unterstützen Hypotheken Treuhand und variable Zinsen).',
+    dpc_balance_hint:'Der Betrag, den du für diese Schuld aktuell noch schuldest.',dpc_apr_hint:'Der jährliche Zinssatz, der auf den verbleibenden Saldo erhoben wird.',
+    dpc_min_hint:'Die kleinste erforderliche Zahlung pro Monat, vor jeder zusätzlichen Zahlung.',
     dpc_term_label:'Laufzeit (Jahre)',dpc_term_hint:'Legt fest, wie lange dieser Kredit läuft, damit die automatische Berechnung eine genaue Mindestrate ermitteln kann.',
     dpc_autocalc_btn:'Automatisch berechnen',dpc_autocalc_done:'Berechnet: {0}/Monat',
     dpc_min_mode_label:'Art der Mindestrate',dpc_min_mode_fixed:'Fester Betrag',dpc_min_mode_percent:'% vom Saldo',
     dpc_min_percent_label:'Prozent vom Saldo (%)',dpc_min_floor_label:'Mindestbetrag',
+    dpc_min_mode_hint:'Fester Betrag bleibt jeden Monat gleich. % vom Saldo berechnet die Rate neu, während der Saldo sinkt - üblich bei Kreditkarten.',
+    dpc_min_percent_hint:'Der Prozentsatz des verbleibenden Saldos, der zur Berechnung der Mindestrate verwendet wird.',dpc_min_floor_hint:'Die Mindestrate fällt nie unter diesen Betrag, selbst wenn der Prozentsatz weniger ergibt.',
     dpc_min_calculated_hint:'Wird automatisch berechnet - je nachdem, was höher ist: der Prozentsatz oder der Mindestbetrag.',
     dpc_escrow_label:'Treuhand (Steuern & Versicherung)',
     dpc_escrow_hint:'Wird zu deinen tatsächlichen monatlichen Kosten addiert, aber von der Tilgungssimulation ausgeschlossen, da es den Saldo nicht verringert.',
     dpc_min_pct_caption:'{0}% vom Saldo',dpc_escrow_note:'{0} Treuhand',
-    dpc_term_note_faster:'{0} Monate schneller als deine {1}-jährige Laufzeit',dpc_term_note_slower:'{0} Monate langsamer als deine {1}-jährige Laufzeit',
+    dpc_term_note_faster:'{0}/Mon. schneller als deine {1}-jährige Laufzeit',dpc_term_note_slower:'{0}/Mon. langsamer als deine {1}-jährige Laufzeit',
     dpc_term_note_onschedule:'genau im Zeitplan für deine {0}-jährige Laufzeit',
     dpc_escrow_mode_label:'Treuhandart',dpc_escrow_mode_fixed:'Fester Betrag',dpc_escrow_mode_declining:'Fallend mit dem Saldo',
     dpc_escrow_mode_hint:'Dies wirkt sich nur auf den Zahlungsplan unten aus. Dein automatisierter Betrag und die Dashboard-Summe verwenden immer den aktuellen festen Treuhandbetrag.',
     dpc_rate_type_label:'Zinsart',dpc_rate_type_fixed:'Fest für die gesamte Laufzeit',dpc_rate_type_arm:'Passt sich nach einer festen Periode an (variabel)',
     dpc_rate_type_hint:'Ein vereinfachtes Modell: ein Zinssatz für die feste Periode, danach ein einzelner neuer Zinssatz für den Rest des Kredits - keine vollständige Index-/Obergrenzen-Simulation.',
     dpc_arm_fixed_years_label:'Feste Zinsperiode (Jahre)',dpc_arm_rate_label:'Zinssatz nach Anpassung',
+    dpc_arm_fixed_years_hint:'Wie viele Jahre der anfängliche Zinssatz gilt, bevor er auf den angepassten Zinssatz wechselt.',dpc_arm_rate_hint:'Der Zinssatz, der für den Rest des Kredits gilt, sobald die feste Periode endet.',
     dpc_arm_caption:'passt sich nach {0}-jähriger fester Periode an',
     dpc_recalc_link:'↺ Neu berechnen',
     dpc_th_extra:'Extra/Monat',
@@ -1033,7 +1062,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Kreditkarte',dtype_student_loan:'Studienkredit',
     dtype_mortgage:'Hypothek',dtype_car_loan:'Autokredit',
     dtype_personal_loan:'Privatkredit',dtype_other:'Sonstiges',
-    dpc_debt_free_label:'🎯 Schuldenfreiheit',dpc_months_from_now:'Monate ab jetzt',
+    dpc_debt_free_label:'🎯 Schuldenfreiheit',dpc_months_from_now:'{0}/Mon. ab jetzt',
     dpc_interest_label:'💸 Gesamtzinsen',dpc_on_top:'zusätzlich zu',dpc_principal:'Hauptbetrag',
     dpc_monthly_label:'📅 Monatlich gesamt',dpc_min_abbr:'Min.',dpc_extra_abbr:'Extra',
     dpc_payoff_order_sf:'Tilgungsreihenfolge - ⛄ Schneeball (niedrigstes Saldo zuerst)',
@@ -1064,6 +1093,11 @@ const TRANSLATIONS = {
     tx_add_title:'Transaktion hinzufügen',
     tx_date:'Datum',tx_type:'Art',tx_category:'Kategorie',tx_amount:'Betrag',
     tx_desc_label:'Beschreibung',tx_desc_ph:'z.B. Einkaufen\u2026',
+    tx_date_hint:'Das Datum, an dem diese Transaktion stattfand.',
+    tx_type_hint:'Um welche Art von Transaktion es sich handelt - welchem Teil deines Budgets sie zugerechnet wird.',
+    tx_category_hint:'Zu welcher Kategorie innerhalb dieses Typs dies geh\u00f6rt.',
+    tx_amount_hint:'Wie viel diese Transaktion betrug.',
+    tx_desc_hint:'Eine optionale Notiz, damit du dich erinnerst, worum es ging, z.B. "Einkaufen".',
     tx_add_btn:'Hinzufügen',tx_error_required:'Bitte alle Pflichtfelder ausfüllen.',
     tx_transaction_one:'Transaktion',tx_transaction_many:'Transaktionen',
     tx_clear_all:'Alle löschen',tx_empty:'Noch keine Transaktionen.',
@@ -1091,6 +1125,8 @@ const TRANSLATIONS = {
     bud_add_btn:'+ Hinzufügen',bud_add_cat_title:'Neue Kategorie hinzufügen',
     bud_cat_name_label:'Kategoriename',bud_cat_name_ph:'z.B. Freiberuflich',
     bud_add_cat_btn:'Hinzufügen',bud_due_date_label:'Fälligkeitsdatum',
+    bud_cat_name_hint:'Ein kurzer Name für diese Kategorie, z.B. "Miete" oder "Lebensmittel".',
+    bud_due_date_hint:'Wann dies in jedem Zeitraum fällig ist. Erscheint im intelligenten Kalender.',
     help_bud_intro:'Die Budget-Registerkarte ist der Ort, an dem du dein Geld planst. Lege erwartete Beträge für jede Kategorie fest - die Istwerte werden automatisch aus deinen Transaktionen übernommen.',
     help_bud_how_h:'So funktioniert es',
     help_bud_step1:'Klicke auf ein Geplant-Feld und gib deinen Budgetbetrag ein',
@@ -1183,7 +1219,7 @@ const TRANSLATIONS = {
     recurring_freq:'H\u00e4ufigkeit',freq_daily:'T\u00e4glich',freq_weekly:'W\u00f6chentlich',
     freq_monthly:'Monatlich',freq_quarterly:'Viertelj\u00e4hrlich',freq_annual:'J\u00e4hrlich',
     recurring_next_due:'N\u00e4chst f\u00e4llig',recurring_generated:'{0} neue Transaktionen automatisch hinzugefügt',
-    recurring_remove:'Regel entfernen',recurring_paused:'Pausiert',recurring_active:'Aktiv',recurring_saved:'Automatische Transaktion gespeichert ✓',dpc_add_debt_title:'Schuld hinzufügen',dpc_edit_debt_title:'Schuld bearbeiten',debt_due_day_modal_hint:'Der Tag im Monat, an dem diese Zahlung fällig ist',toast_debt_added:'Schuld hinzugefügt',toast_debt_updated:'Schuld aktualisiert',sf_billing_day_label:'Abrechnungstag des Monats',sf_billing_day_hint:'Der Tag im Monat, an dem der Beitrag automatisch gebucht wird',sf_error_required:'Bitte fülle alle Pflichtfelder aus',sub_active:'Aktiv',sub_paused:'Pausiert',sub_desc:'Behalte jede wiederkehrende Zahlung im Blick und verstehe deine tatsächlichen Jahreskosten. Pausiere Abos, die du nicht nutzt, um die Kosten im Griff zu behalten.',sub_add_btn:'+ Abo hinzufügen',sub_add_title:'Abo hinzufügen',sub_edit_title:'Abo bearbeiten',sub_empty_title:'Noch keine Abos.',sub_empty_sub:'Füge deine wiederkehrenden Zahlungen hinzu - Netflix, Spotify, Fitnessstudio usw.',sub_sum_monthly:'Monatlich gesamt',sub_sum_annual:'Jährlich gesamt',sub_by_category:'Nach Kategorie',sub_per_month:'/Monat',sub_next_label:'Nächste',sub_name_label:'Name des Abos',sub_name_ph:'z.B. Netflix',sub_amount_label:'Betrag',sub_freq_label:'Abrechnungsintervall',sub_freq_monthly:'Monatlich',sub_freq_annual:'Jährlich',sub_freq_quarterly:'Vierteljährlich',sub_freq_weekly:'Wöchentlich',sub_unit_month:'Monat',sub_unit_year:'Jahr',sub_unit_quarter:'Quartal',sub_cat_label:'Kategorie',sub_date_label:'Nächstes Abrechnungsdatum',sub_cat_entertainment:'Unterhaltung',sub_cat_productivity:'Produktivität',sub_cat_health:'Gesundheit & Fitness',sub_cat_food:'Essen & Trinken',sub_cat_cloud:'Cloud-Speicher',sub_cat_finance:'Finanzen',sub_cat_education:'Bildung',sub_cat_gaming:'Gaming',sub_cat_news:'Nachrichten & Medien',sub_cat_other:'Sonstiges',help_sub_intro:'Behalte jede wiederkehrende Zahlung im Blick und verstehe deine tatsächlichen monatlichen und jährlichen Kosten. Abos, die unbemerkt dein Konto belasten, gehen leicht unter - so bleiben sie sichtbar.',help_sub_how_h:'Ein Abo hinzufügen',help_sub_step1:'Klicke auf + Abo hinzufügen',help_sub_step2:'Gib Name, Betrag und Abrechnungsintervall ein (monatlich, jährlich, vierteljährlich, wöchentlich)',help_sub_step3:'Wähle eine Kategorie, um ähnliche Abos zu gruppieren',help_sub_step4:'Lege das nächste Abrechnungsdatum fest - es erscheint im intelligenten Kalender',help_sub_monthly_h:'Monatliches Äquivalent',help_sub_monthly_p:'Jährliche und vierteljährliche Abos werden in monatliche Kosten umgerechnet, damit du deine tatsächlichen monatlichen Ausgaben auf einen Blick siehst.',help_sub_pause_h:'Abos pausieren',help_sub_pause_p:'Schalte den Aktiv-Schalter bei einem Abo aus, das du gerade nicht nutzt. Es zählt dann nicht mehr zu deinen Summen, bis du ihn wieder einschaltest.',help_sub_chart_h:'Kategorie-Diagramm',help_sub_chart_p:'Das Kreisdiagramm zeigt, wie sich deine Abo-Ausgaben auf Kategorien verteilen - fahre über ein Segment für Details.',help_sub_tip:'💡 Aktiviere „Automatisieren“ bei einem Abo, damit es bei jedem Abrechnungszyklus automatisch zu deinen Transaktionen hinzugefügt wird.',automate_auto_pay:'Auto-Zahlung',sf_auto_contribute:'Auto-Beitrag',sf_auto_need_amount:'Füge zuerst Zielbetrag und Datum hinzu',sf_auto_set:'Monatlicher Beitrag: {0}',automate_label:'Automatisieren',automate_hint:'Fügt es planmäßig automatisch zu deinen Transaktionen hinzu',automate_hint_off:'Aktiviere die Automatisierung in den Einstellungen',automate_th:'Auto-Zahlung',automate_need_amount:'Lege zuerst eine Mindestzahlung fest',automate_payment_word:'Zahlung',automate_linked:'Verknüpfte automatische Transaktion',sf_contribution_label:'Monatlicher Beitrag',sf_contribution_hint:'Wird monatlich automatisch gebucht, um diesen Fonds zu erhöhen',sett_automation_h:'Automatisierung',sett_automation_desc:'Hauptschalter für automatische Transaktionen. Wenn aus, werden keine geplanten Transaktionen erstellt und die Automatisierungs-Optionen sind deaktiviert.',sett_automation_toggle:'Automatische Transaktionen',sett_automation_hint:'Gilt für Transaktionen, Abos, Fonds und Schulden',
+    recurring_remove:'Regel entfernen',recurring_paused:'Pausiert',recurring_active:'Aktiv',recurring_saved:'Automatische Transaktion gespeichert ✓',dpc_add_debt_title:'Schuld hinzufügen',dpc_edit_debt_title:'Schuld bearbeiten',debt_due_day_modal_hint:'Der Tag im Monat, an dem diese Zahlung fällig ist',toast_debt_added:'Schuld hinzugefügt',toast_debt_updated:'Schuld aktualisiert',sf_billing_day_label:'Abrechnungstag des Monats',sf_billing_day_hint:'Der Tag im Monat, an dem der Beitrag automatisch gebucht wird',sf_error_required:'Bitte fülle alle Pflichtfelder aus',sub_active:'Aktiv',sub_paused:'Pausiert',sub_desc:'Behalte jede wiederkehrende Zahlung im Blick und verstehe deine tatsächlichen Jahreskosten. Pausiere Abos, die du nicht nutzt, um die Kosten im Griff zu behalten.',sub_add_btn:'+ Abo hinzufügen',sub_add_title:'Abo hinzufügen',sub_edit_title:'Abo bearbeiten',sub_empty_title:'Noch keine Abos.',sub_empty_sub:'Füge deine wiederkehrenden Zahlungen hinzu - Netflix, Spotify, Fitnessstudio usw.',sub_sum_monthly:'Monatlich gesamt',sub_sum_annual:'Jährlich gesamt',sub_by_category:'Nach Kategorie',sub_per_month:'/Monat',sub_next_label:'Nächste',sub_name_label:'Name des Abos',sub_name_ph:'z.B. Netflix',sub_amount_label:'Betrag',sub_freq_label:'Abrechnungsintervall',sub_freq_monthly:'Monatlich',sub_freq_annual:'Jährlich',sub_freq_quarterly:'Vierteljährlich',sub_freq_weekly:'Wöchentlich',sub_unit_month:'Monat',sub_unit_year:'Jahr',sub_unit_quarter:'Quartal',sub_cat_label:'Kategorie',sub_date_label:'Nächstes Abrechnungsdatum',sub_name_hint:'Der Dienst oder Anbieter, für den diese Zahlung ist, z.B. "Netflix" oder "Fitnessstudio-Mitgliedschaft".',sub_amount_hint:'Wie viel dir bei jedem Abrechnungszyklus berechnet wird.',sub_freq_hint:'Wie oft dieses Abo abgerechnet wird.',sub_cat_hint:'Gruppiert dieses Abo für das Kategorie-Diagramm.',sub_date_hint:'Das nächste Datum, an dem dieses Abo abgerechnet wird. Erscheint im intelligenten Kalender.',alloc_label_hint:'Markiere dies als Need, Want oder Save, damit es zu deinen Zuordnungs-Buckets zählt.',sub_cat_entertainment:'Unterhaltung',sub_cat_productivity:'Produktivität',sub_cat_health:'Gesundheit & Fitness',sub_cat_food:'Essen & Trinken',sub_cat_cloud:'Cloud-Speicher',sub_cat_finance:'Finanzen',sub_cat_education:'Bildung',sub_cat_gaming:'Gaming',sub_cat_news:'Nachrichten & Medien',sub_cat_other:'Sonstiges',help_sub_intro:'Behalte jede wiederkehrende Zahlung im Blick und verstehe deine tatsächlichen monatlichen und jährlichen Kosten. Abos, die unbemerkt dein Konto belasten, gehen leicht unter - so bleiben sie sichtbar.',help_sub_how_h:'Ein Abo hinzufügen',help_sub_step1:'Klicke auf + Abo hinzufügen',help_sub_step2:'Gib Name, Betrag und Abrechnungsintervall ein (monatlich, jährlich, vierteljährlich, wöchentlich)',help_sub_step3:'Wähle eine Kategorie, um ähnliche Abos zu gruppieren',help_sub_step4:'Lege das nächste Abrechnungsdatum fest - es erscheint im intelligenten Kalender',help_sub_monthly_h:'Monatliches Äquivalent',help_sub_monthly_p:'Jährliche und vierteljährliche Abos werden in monatliche Kosten umgerechnet, damit du deine tatsächlichen monatlichen Ausgaben auf einen Blick siehst.',help_sub_pause_h:'Abos pausieren',help_sub_pause_p:'Schalte den Aktiv-Schalter bei einem Abo aus, das du gerade nicht nutzt. Es zählt dann nicht mehr zu deinen Summen, bis du ihn wieder einschaltest.',help_sub_chart_h:'Kategorie-Diagramm',help_sub_chart_p:'Das Kreisdiagramm zeigt, wie sich deine Abo-Ausgaben auf Kategorien verteilen - fahre über ein Segment für Details.',help_sub_tip:'💡 Aktiviere „Automatisieren“ bei einem Abo, damit es bei jedem Abrechnungszyklus automatisch zu deinen Transaktionen hinzugefügt wird.',automate_auto_pay:'Auto-Zahlung',sf_auto_contribute:'Auto-Beitrag',sf_auto_need_amount:'Füge zuerst Zielbetrag und Datum hinzu',sf_auto_set:'Monatlicher Beitrag: {0}',automate_label:'Automatisieren',automate_hint:'Fügt es planmäßig automatisch zu deinen Transaktionen hinzu',automate_hint_off:'Aktiviere die Automatisierung in den Einstellungen',automate_th:'Auto-Zahlung',automate_need_amount:'Lege zuerst eine Mindestzahlung fest',automate_payment_word:'Zahlung',automate_linked:'Verknüpfte automatische Transaktion',sf_contribution_label:'Monatlicher Beitrag',sf_contribution_hint:'Wird monatlich automatisch gebucht, um diesen Fonds zu erhöhen',sett_automation_h:'Automatisierung',sett_automation_desc:'Hauptschalter für automatische Transaktionen. Wenn aus, werden keine geplanten Transaktionen erstellt und die Automatisierungs-Optionen sind deaktiviert.',sett_automation_toggle:'Automatische Transaktionen',sett_automation_hint:'Gilt für Transaktionen, Abos, Fonds und Schulden',
     tx_type_sinking_fund:'Spartopf',
     help_dash_alloc_h:'Budget-Aufteilungs-Panel',
     help_dash_alloc_what_h:'Was es ist',
@@ -1395,7 +1431,7 @@ const TRANSLATIONS = {
     rollover_amount:'Montant du report',
     reset_desc:'Supprime définitivement toutes vos données. Irréversible.',
     reset_btn:'Tout réinitialiser',
-    add:'Ajouter',cancel:'Annuler',rename_title_prompt:'Renommer votre planificateur de budget',save:'Enregistrer',delete:'Supprimer',dp_today:"Aujourd'hui",dp_clear:'Effacer',edit:'Modifier',
+    add:'Ajouter',cancel:'Annuler',rename_title_prompt:'Renommer votre planificateur de budget',save:'Enregistrer',delete:'Supprimer',dp_today:"Aujourd'hui",dp_clear:'Effacer',edit:'Modifier',field_info_aria:'À propos de {0}',
     paid:'Payé',due_date:"Date d'échéance",category:'Catégorie',amount:'Montant',
     description:'Description',date:'Date',type:'Type',
     add_category:'+ Ajouter une catégorie',no_transactions:'Aucune transaction.',
@@ -1438,12 +1474,17 @@ const TRANSLATIONS = {
     sf_empty_sub:'Idéal pour : vacances, réparations auto, mariages, nouvelles technologies, factures annuelles.',
     sf_pct_complete:'atteint',
     sf_save_prefix:'Épargner',sf_per_month:'/mois',
-    sf_month_left_one:'mois restant',sf_month_left_many:'mois restants',
+    sf_mo_left_tpl:'{0}/mois restants',
     sf_total_contrib:'Total des contributions mensuelles nécessaires :',
     sf_modal_new:'🏺 Nouveau fonds de prévision',sf_modal_edit:'✏️ Modifier le fonds',
     sf_fund_name_label:'Nom du fonds',sf_fund_name_ph:'ex. Fonds vacances',
     sf_icon_label:'Icône',sf_target_amount_label:'Montant cible',
     sf_currently_saved_label:'Déjà épargné',sf_target_date_label:'Date cible',
+    sf_fund_name_hint:"Un nom court pour ce que vous économisez, comme « Vacances d'été » ou « Nouvel ordinateur ».",
+    sf_icon_hint:"Choisissez une icône pour repérer ce fonds en un coup d'œil.",
+    sf_target_amount_hint:'Le montant total dont vous avez besoin pour atteindre cet objectif.',
+    sf_currently_saved_hint:'Le montant que vous avez déjà mis de côté pour cet objectif, le cas échéant.',
+    sf_target_date_hint:'La date à laquelle vous voulez atteindre votre objectif - utilisée pour calculer combien épargner chaque mois.',
     sf_create_btn:'Créer le fonds',
     help_sf_intro:"Un fonds de prévision est de l'argent mis de côté à l'avance pour une grande dépense planifiée - sans mauvaises surprises à l'arrivée de la facture.",
     help_sf_how_to_h:"Comment l'utiliser",
@@ -1469,21 +1510,27 @@ const TRANSLATIONS = {
     dpc_th_name:'Dette',dpc_th_type:'Type',dpc_th_balance:'Solde',
     dpc_th_apr:'Taux %',dpc_th_min:'Paiement min.',dpc_th_due:"Jour d'éch.",
     dpc_totals:'Totaux',dpc_name_ph:'ex. Carte Visa',
+    dpc_name_hint:'Le nom que vous verrez pour cette dette partout dans l’application.',dpc_type_hint:'Applique les règles adaptées à ce type de prêt (les hypothèques prennent en charge le séquestre et les taux ARM).',
+    dpc_balance_hint:'Le montant que vous devez actuellement sur cette dette.',dpc_apr_hint:'Le taux d’intérêt annuel appliqué au solde restant.',
+    dpc_min_hint:'Le paiement minimum requis chaque mois, avant tout supplément que vous ajoutez.',
     dpc_term_label:'Durée du prêt (années)',dpc_term_hint:'Définit la durée de ce prêt, afin que le calcul automatique puisse déterminer un paiement minimum précis.',
     dpc_autocalc_btn:'Calculer automatiquement',dpc_autocalc_done:'Calculé : {0}/mois',
     dpc_min_mode_label:'Type de paiement minimum',dpc_min_mode_fixed:'Montant fixe',dpc_min_mode_percent:'% du solde',
     dpc_min_percent_label:'Pourcentage du solde (%)',dpc_min_floor_label:'Montant plancher',
+    dpc_min_mode_hint:'Montant fixe reste identique chaque mois. % du solde recalcule le paiement à mesure que le solde diminue - courant pour les cartes de crédit.',
+    dpc_min_percent_hint:'Le pourcentage du solde restant utilisé pour calculer le paiement minimum.',dpc_min_floor_hint:'Le paiement minimum ne descend jamais en dessous de ce montant, même si le pourcentage donne moins.',
     dpc_min_calculated_hint:'Calculé automatiquement - le plus élevé entre le pourcentage et le montant plancher.',
     dpc_escrow_label:'Séquestre (taxes & assurance)',
     dpc_escrow_hint:"S'ajoute à votre coût mensuel réel, mais est exclu de la simulation de remboursement puisque cela ne réduit pas votre solde.",
     dpc_min_pct_caption:'{0}% du solde',dpc_escrow_note:'{0} séquestre',
-    dpc_term_note_faster:'{0} mois plus rapide que votre durée de {1} ans',dpc_term_note_slower:'{0} mois plus lent que votre durée de {1} ans',
+    dpc_term_note_faster:'{0}/mois plus rapide que votre durée de {1} ans',dpc_term_note_slower:'{0}/mois plus lent que votre durée de {1} ans',
     dpc_term_note_onschedule:'exactement dans les temps pour votre durée de {0} ans',
     dpc_escrow_mode_label:'Type de séquestre',dpc_escrow_mode_fixed:'Montant fixe',dpc_escrow_mode_declining:'Dégressif avec le solde',
     dpc_escrow_mode_hint:"Cela n'affecte que l'échéancier ci-dessous. Votre montant automatisé et le total du tableau de bord utilisent toujours le montant de séquestre fixe actuel.",
     dpc_rate_type_label:'Type de taux',dpc_rate_type_fixed:'Fixe pour toute la durée',dpc_rate_type_arm:'Ajustable après une période fixe (taux variable)',
     dpc_rate_type_hint:"Un modèle simplifié : un taux pour la période fixe, puis un seul nouveau taux pour le reste du prêt - pas une simulation complète d'indice/plafond.",
     dpc_arm_fixed_years_label:'Période à taux fixe (années)',dpc_arm_rate_label:'Taux après ajustement',
+    dpc_arm_fixed_years_hint:"Le nombre d'années pendant lesquelles le taux initial s'applique avant de passer au taux ajusté.",dpc_arm_rate_hint:'Le taux d’intérêt qui s’applique pour le reste du prêt une fois la période fixe terminée.',
     dpc_arm_caption:"s'ajuste après {0} ans de période fixe",
     dpc_recalc_link:'↺ Recalculer',
     dpc_th_extra:'Extra/mois',
@@ -1496,7 +1543,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Carte de crédit',dtype_student_loan:'Prêt étudiant',
     dtype_mortgage:'Hypothèque',dtype_car_loan:'Prêt auto',
     dtype_personal_loan:'Prêt personnel',dtype_other:'Autre',
-    dpc_debt_free_label:'🎯 Date sans dette',dpc_months_from_now:'mois à partir de maintenant',
+    dpc_debt_free_label:'🎯 Date sans dette',dpc_months_from_now:'{0}/mois à partir de maintenant',
     dpc_interest_label:'💸 Intérêts totaux',dpc_on_top:'en plus de',dpc_principal:'principal',
     dpc_monthly_label:'📅 Total mensuel',dpc_min_abbr:'min',dpc_extra_abbr:'suppl.',
     dpc_payoff_order_sf:"Ordre de remboursement - ⛄ Boule de neige (solde le plus bas d'abord)",
@@ -1527,6 +1574,11 @@ const TRANSLATIONS = {
     tx_add_title:'Ajouter une transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Catégorie',tx_amount:'Montant',
     tx_desc_label:'Description',tx_desc_ph:'ex. Courses\u2026',
+    tx_date_hint:'La date \u00e0 laquelle cette transaction a eu lieu.',
+    tx_type_hint:"Le type de transaction - la partie de votre budget qu'elle affecte.",
+    tx_category_hint:'La cat\u00e9gorie \u00e0 laquelle cela appartient au sein de ce type.',
+    tx_amount_hint:'Le montant de cette transaction.',
+    tx_desc_hint:"Une note facultative pour vous rappeler de quoi il s'agissait, comme \u00ab Courses \u00bb.",
     tx_add_btn:'Ajouter',tx_error_required:'Veuillez remplir tous les champs obligatoires.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
     tx_clear_all:'Tout effacer',tx_empty:'Aucune transaction encore.',
@@ -1554,6 +1606,8 @@ const TRANSLATIONS = {
     bud_add_btn:'+ Ajouter',bud_add_cat_title:'Ajouter une catégorie',
     bud_cat_name_label:'Nom de la catégorie',bud_cat_name_ph:'ex. Freelance',
     bud_add_cat_btn:'Ajouter',bud_due_date_label:"Date d'échéance",
+    bud_cat_name_hint:'Un nom court pour cette catégorie, comme « Loyer » ou « Courses ».',
+    bud_due_date_hint:'Quand cela est dû à chaque période. Apparaît dans le calendrier intelligent.',
     help_bud_intro:"L'onglet Budget est l'endroit où vous planifiez votre argent. Définissez des montants prévus pour chaque catégorie - les montants réels se remplissent automatiquement depuis vos Transactions.",
     help_bud_how_h:'Comment ça marche',
     help_bud_step1:'Cliquez sur un champ Prévu et saisissez votre montant budgétaire',
@@ -1646,7 +1700,7 @@ const TRANSLATIONS = {
     recurring_freq:'Fr\u00e9quence',freq_daily:'Quotidien',freq_weekly:'Hebdomadaire',
     freq_monthly:'Mensuel',freq_quarterly:'Trimestriel',freq_annual:'Annuel',
     recurring_next_due:'Prochaine \u00e9ch\u00e9ance',recurring_generated:'{0} nouvelles transactions automatisées ajoutées',
-    recurring_remove:'Supprimer la r\u00e8gle',recurring_paused:'En pause',recurring_active:'Actif',recurring_saved:'Transaction automatique enregistrée ✓',dpc_add_debt_title:'Ajouter une dette',dpc_edit_debt_title:'Modifier la dette',debt_due_day_modal_hint:'Le jour du mois où ce paiement est dû',toast_debt_added:'Dette ajoutée',toast_debt_updated:'Dette mise à jour',sf_billing_day_label:'Jour de prélèvement du mois',sf_billing_day_hint:'Le jour du mois où la contribution est enregistrée automatiquement',sf_error_required:'Veuillez remplir tous les champs obligatoires',sub_active:'Actif',sub_paused:'En pause',sub_desc:"Suivez chaque paiement récurrent et comprenez votre coût annuel réel. Mettez en pause les abonnements que vous n'utilisez pas pour maîtriser vos dépenses.",sub_add_btn:'+ Ajouter un abonnement',sub_add_title:'Ajouter un abonnement',sub_edit_title:"Modifier l'abonnement",sub_empty_title:'Aucun abonnement pour le moment.',sub_empty_sub:'Ajoutez vos paiements récurrents - Netflix, Spotify, abonnement de sport, etc.',sub_sum_monthly:'Total mensuel',sub_sum_annual:'Total annuel',sub_by_category:'Par catégorie',sub_per_month:'/mois',sub_next_label:'Prochain',sub_name_label:"Nom de l'abonnement",sub_name_ph:'ex. Netflix',sub_amount_label:'Montant',sub_freq_label:'Fréquence de facturation',sub_freq_monthly:'Mensuelle',sub_freq_annual:'Annuelle',sub_freq_quarterly:'Trimestrielle',sub_freq_weekly:'Hebdomadaire',sub_unit_month:'mois',sub_unit_year:'an',sub_unit_quarter:'trimestre',sub_cat_label:'Catégorie',sub_date_label:'Prochaine date de facturation',sub_cat_entertainment:'Divertissement',sub_cat_productivity:'Productivité',sub_cat_health:'Santé & Fitness',sub_cat_food:'Alimentation',sub_cat_cloud:'Stockage cloud',sub_cat_finance:'Finance',sub_cat_education:'Éducation',sub_cat_gaming:'Jeux vidéo',sub_cat_news:'Actualités & Médias',sub_cat_other:'Autre',help_sub_intro:"Suivez chaque paiement récurrent et comprenez votre coût mensuel et annuel réel. Les abonnements qui grignotent votre compte discrètement sont faciles à manquer - ceci les garde visibles.",help_sub_how_h:'Ajouter un abonnement',help_sub_step1:'Cliquez sur + Ajouter un abonnement',help_sub_step2:'Saisissez le nom, le montant et la fréquence de facturation (mensuelle, annuelle, trimestrielle, hebdomadaire)',help_sub_step3:'Choisissez une catégorie pour regrouper les abonnements similaires',help_sub_step4:"Définissez la prochaine date de facturation - elle apparaîtra dans le calendrier intelligent",help_sub_monthly_h:'Équivalent mensuel',help_sub_monthly_p:"Les abonnements annuels et trimestriels sont convertis en coût mensuel afin que vous puissiez voir vos dépenses mensuelles réelles en un coup d'œil.",help_sub_pause_h:'Mettre en pause un abonnement',help_sub_pause_p:"Désactivez le bouton Actif d'un abonnement que vous n'utilisez plus actuellement. Il ne comptera plus dans vos totaux tant que vous ne le réactivez pas.",help_sub_chart_h:'Graphique par catégorie',help_sub_chart_p:'Le graphique en anneau montre la répartition de vos dépenses d\'abonnement par catégorie - survolez un segment pour voir les détails.',help_sub_tip:"💡 Activez « Automatiser » sur un abonnement pour qu'il soit ajouté automatiquement à vos transactions à chaque cycle de facturation.",automate_auto_pay:'Paiement auto',sf_auto_contribute:'Contribution auto',sf_auto_need_amount:"Ajoutez d'abord un montant et une date cibles",sf_auto_set:'Contribution mensuelle : {0}',automate_label:'Automatiser',automate_hint:"L'ajoute automatiquement à vos transactions selon le calendrier",automate_hint_off:"Activez l'automatisation dans les Paramètres pour l'utiliser",automate_th:'Paiement auto',automate_need_amount:"Définissez d'abord un paiement minimum",automate_payment_word:'paiement',automate_linked:'Transaction automatique liée',sf_contribution_label:'Contribution mensuelle',sf_contribution_hint:'Enregistrée automatiquement chaque mois pour alimenter ce fonds',sett_automation_h:'Automatisation',sett_automation_desc:"Interrupteur principal des transactions automatiques. Désactivé, aucune transaction planifiée n'est générée et les options d'automatisation sont désactivées.",sett_automation_toggle:'Transactions automatiques',sett_automation_hint:"S'applique aux transactions, abonnements, fonds et dettes",
+    recurring_remove:'Supprimer la r\u00e8gle',recurring_paused:'En pause',recurring_active:'Actif',recurring_saved:'Transaction automatique enregistrée ✓',dpc_add_debt_title:'Ajouter une dette',dpc_edit_debt_title:'Modifier la dette',debt_due_day_modal_hint:'Le jour du mois où ce paiement est dû',toast_debt_added:'Dette ajoutée',toast_debt_updated:'Dette mise à jour',sf_billing_day_label:'Jour de prélèvement du mois',sf_billing_day_hint:'Le jour du mois où la contribution est enregistrée automatiquement',sf_error_required:'Veuillez remplir tous les champs obligatoires',sub_active:'Actif',sub_paused:'En pause',sub_desc:"Suivez chaque paiement récurrent et comprenez votre coût annuel réel. Mettez en pause les abonnements que vous n'utilisez pas pour maîtriser vos dépenses.",sub_add_btn:'+ Ajouter un abonnement',sub_add_title:'Ajouter un abonnement',sub_edit_title:"Modifier l'abonnement",sub_empty_title:'Aucun abonnement pour le moment.',sub_empty_sub:'Ajoutez vos paiements récurrents - Netflix, Spotify, abonnement de sport, etc.',sub_sum_monthly:'Total mensuel',sub_sum_annual:'Total annuel',sub_by_category:'Par catégorie',sub_per_month:'/mois',sub_next_label:'Prochain',sub_name_label:"Nom de l'abonnement",sub_name_ph:'ex. Netflix',sub_amount_label:'Montant',sub_freq_label:'Fréquence de facturation',sub_freq_monthly:'Mensuelle',sub_freq_annual:'Annuelle',sub_freq_quarterly:'Trimestrielle',sub_freq_weekly:'Hebdomadaire',sub_unit_month:'mois',sub_unit_year:'an',sub_unit_quarter:'trimestre',sub_cat_label:'Catégorie',sub_date_label:'Prochaine date de facturation',sub_name_hint:'Le service ou fournisseur concerné par ce paiement, comme « Netflix » ou « Abonnement salle de sport ».',sub_amount_hint:'Le montant facturé à chaque cycle de facturation.',sub_freq_hint:'La fréquence à laquelle cet abonnement vous facture.',sub_cat_hint:'Regroupe cet abonnement pour le graphique par catégorie.',sub_date_hint:'La prochaine date à laquelle cet abonnement vous facturera. Apparaît dans le calendrier intelligent.',alloc_label_hint:"Étiquetez ceci comme Besoin, Envie ou Épargne pour qu'il compte dans vos catégories de répartition.",sub_cat_entertainment:'Divertissement',sub_cat_productivity:'Productivité',sub_cat_health:'Santé & Fitness',sub_cat_food:'Alimentation',sub_cat_cloud:'Stockage cloud',sub_cat_finance:'Finance',sub_cat_education:'Éducation',sub_cat_gaming:'Jeux vidéo',sub_cat_news:'Actualités & Médias',sub_cat_other:'Autre',help_sub_intro:"Suivez chaque paiement récurrent et comprenez votre coût mensuel et annuel réel. Les abonnements qui grignotent votre compte discrètement sont faciles à manquer - ceci les garde visibles.",help_sub_how_h:'Ajouter un abonnement',help_sub_step1:'Cliquez sur + Ajouter un abonnement',help_sub_step2:'Saisissez le nom, le montant et la fréquence de facturation (mensuelle, annuelle, trimestrielle, hebdomadaire)',help_sub_step3:'Choisissez une catégorie pour regrouper les abonnements similaires',help_sub_step4:"Définissez la prochaine date de facturation - elle apparaîtra dans le calendrier intelligent",help_sub_monthly_h:'Équivalent mensuel',help_sub_monthly_p:"Les abonnements annuels et trimestriels sont convertis en coût mensuel afin que vous puissiez voir vos dépenses mensuelles réelles en un coup d'œil.",help_sub_pause_h:'Mettre en pause un abonnement',help_sub_pause_p:"Désactivez le bouton Actif d'un abonnement que vous n'utilisez plus actuellement. Il ne comptera plus dans vos totaux tant que vous ne le réactivez pas.",help_sub_chart_h:'Graphique par catégorie',help_sub_chart_p:'Le graphique en anneau montre la répartition de vos dépenses d\'abonnement par catégorie - survolez un segment pour voir les détails.',help_sub_tip:"💡 Activez « Automatiser » sur un abonnement pour qu'il soit ajouté automatiquement à vos transactions à chaque cycle de facturation.",automate_auto_pay:'Paiement auto',sf_auto_contribute:'Contribution auto',sf_auto_need_amount:"Ajoutez d'abord un montant et une date cibles",sf_auto_set:'Contribution mensuelle : {0}',automate_label:'Automatiser',automate_hint:"L'ajoute automatiquement à vos transactions selon le calendrier",automate_hint_off:"Activez l'automatisation dans les Paramètres pour l'utiliser",automate_th:'Paiement auto',automate_need_amount:"Définissez d'abord un paiement minimum",automate_payment_word:'paiement',automate_linked:'Transaction automatique liée',sf_contribution_label:'Contribution mensuelle',sf_contribution_hint:'Enregistrée automatiquement chaque mois pour alimenter ce fonds',sett_automation_h:'Automatisation',sett_automation_desc:"Interrupteur principal des transactions automatiques. Désactivé, aucune transaction planifiée n'est générée et les options d'automatisation sont désactivées.",sett_automation_toggle:'Transactions automatiques',sett_automation_hint:"S'applique aux transactions, abonnements, fonds et dettes",
     tx_type_sinking_fund:'Fonds projet',
     help_dash_alloc_h:'Panneau de répartition budgétaire',
     help_dash_alloc_what_h:'Ce que c\'est',
@@ -1858,7 +1912,7 @@ const TRANSLATIONS = {
     rollover_amount:'Importe de saldo anterior',
     reset_desc:'Elimina permanentemente todos tus datos. No se puede deshacer.',
     reset_btn:'Restablecer todo',
-    add:'Añadir',cancel:'Cancelar',rename_title_prompt:'Renombrar tu planificador de presupuesto',save:'Guardar',delete:'Eliminar',dp_today:'Hoy',dp_clear:'Borrar',edit:'Editar',
+    add:'Añadir',cancel:'Cancelar',rename_title_prompt:'Renombrar tu planificador de presupuesto',save:'Guardar',delete:'Eliminar',dp_today:'Hoy',dp_clear:'Borrar',edit:'Editar',field_info_aria:'Acerca de {0}',
     paid:'Pagado',due_date:'Fecha de vencimiento',category:'Categoría',amount:'Importe',
     description:'Descripción',date:'Fecha',type:'Tipo',
     add_category:'+ Añadir categoría',no_transactions:'Sin transacciones aún.',
@@ -1901,12 +1955,17 @@ const TRANSLATIONS = {
     sf_empty_sub:'Perfecto para: vacaciones, reparaciones de coche, bodas, nueva tecnología, facturas anuales.',
     sf_pct_complete:'completado',
     sf_save_prefix:'Ahorrar',sf_per_month:'/mes',
-    sf_month_left_one:'mes restante',sf_month_left_many:'meses restantes',
+    sf_mo_left_tpl:'{0}/meses restantes',
     sf_total_contrib:'Total de contribuciones mensuales necesarias:',
     sf_modal_new:'🏺 Nuevo fondo de ahorro',sf_modal_edit:'✏️ Editar fondo',
     sf_fund_name_label:'Nombre del fondo',sf_fund_name_ph:'p.ej. Fondo vacaciones',
     sf_icon_label:'Icono',sf_target_amount_label:'Importe objetivo',
     sf_currently_saved_label:'Ya ahorrado',sf_target_date_label:'Fecha objetivo',
+    sf_fund_name_hint:'Un nombre corto para lo que estás ahorrando, como "Vacaciones de verano" o "Portátil nuevo".',
+    sf_icon_hint:'Elige un icono para que este fondo destaque de un vistazo.',
+    sf_target_amount_hint:'El monto total que necesitas para alcanzar esta meta.',
+    sf_currently_saved_hint:'Cuánto ya has apartado para esta meta, si algo.',
+    sf_target_date_hint:'Para cuándo quieres alcanzar tu meta - se usa para calcular cuánto ahorrar cada mes.',
     sf_create_btn:'Crear fondo',
     help_sf_intro:'Un fondo de ahorro es dinero que apartas con antelación para un gran gasto planificado - sin sorpresas desagradables cuando llega la factura.',
     help_sf_how_to_h:'Cómo usarlo',
@@ -1932,21 +1991,27 @@ const TRANSLATIONS = {
     dpc_th_name:'Deuda',dpc_th_type:'Tipo',dpc_th_balance:'Saldo',
     dpc_th_apr:'TAE %',dpc_th_min:'Pago mín.',dpc_th_due:'Día venc.',
     dpc_totals:'Totales',dpc_name_ph:'p.ej. Tarjeta Visa',
+    dpc_name_hint:'El nombre que verás para esta deuda en toda la aplicación.',dpc_type_hint:'Aplica las reglas correctas para este tipo de préstamo (las hipotecas admiten depósito en garantía y tasas ARM).',
+    dpc_balance_hint:'La cantidad que debes actualmente en esta deuda.',dpc_apr_hint:'La tasa de interés anual aplicada al saldo restante.',
+    dpc_min_hint:'El pago mínimo requerido cada mes, antes de cualquier extra que añadas.',
     dpc_term_label:'Plazo del préstamo (años)',dpc_term_hint:'Define cuánto dura este préstamo, para que el cálculo automático pueda determinar un pago mínimo preciso.',
     dpc_autocalc_btn:'Calcular automáticamente',dpc_autocalc_done:'Calculado: {0}/mes',
     dpc_min_mode_label:'Tipo de pago mínimo',dpc_min_mode_fixed:'Monto fijo',dpc_min_mode_percent:'% del saldo',
     dpc_min_percent_label:'Porcentaje del saldo (%)',dpc_min_floor_label:'Monto mínimo',
+    dpc_min_mode_hint:'Monto fijo se mantiene igual cada mes. % del saldo recalcula el pago a medida que el saldo baja - habitual en tarjetas de crédito.',
+    dpc_min_percent_hint:'El porcentaje del saldo restante usado para calcular el pago mínimo.',dpc_min_floor_hint:'El pago mínimo nunca baja de este monto, aunque el porcentaje resulte menor.',
     dpc_min_calculated_hint:'Se calcula automáticamente - lo que sea mayor entre el porcentaje y el monto mínimo.',
     dpc_escrow_label:'Depósito en garantía (impuestos y seguro)',
     dpc_escrow_hint:'Se suma a tu costo mensual real, pero se excluye de la simulación de pago ya que no reduce tu saldo.',
     dpc_min_pct_caption:'{0}% del saldo',dpc_escrow_note:'{0} en depósito',
-    dpc_term_note_faster:'{0} meses más rápido que tu plazo de {1} años',dpc_term_note_slower:'{0} meses más lento que tu plazo de {1} años',
+    dpc_term_note_faster:'{0}/meses más rápido que tu plazo de {1} años',dpc_term_note_slower:'{0}/meses más lento que tu plazo de {1} años',
     dpc_term_note_onschedule:'justo a tiempo para tu plazo de {0} años',
     dpc_escrow_mode_label:'Tipo de depósito en garantía',dpc_escrow_mode_fixed:'Monto fijo',dpc_escrow_mode_declining:'Decreciente con el saldo',
     dpc_escrow_mode_hint:'Esto solo afecta el cronograma de pagos de abajo. Tu monto automatizado y el total del panel siempre usan el monto fijo actual del depósito en garantía.',
     dpc_rate_type_label:'Tipo de tasa',dpc_rate_type_fixed:'Fija durante todo el plazo',dpc_rate_type_arm:'Se ajusta después de un período fijo (tasa variable)',
     dpc_rate_type_hint:'Un modelo simplificado: una tasa durante el período fijo, luego una única tasa nueva para el resto del préstamo - no es una simulación completa de índice/límite.',
     dpc_arm_fixed_years_label:'Período de tasa fija (años)',dpc_arm_rate_label:'Tasa después del ajuste',
+    dpc_arm_fixed_years_hint:'Cuántos años dura la tasa inicial antes de cambiar a la tasa ajustada.',dpc_arm_rate_hint:'La tasa de interés que se aplica durante el resto del préstamo una vez finalizado el período fijo.',
     dpc_arm_caption:'se ajusta después de {0} años de período fijo',
     dpc_recalc_link:'↺ Recalcular',
     dpc_th_extra:'Extra/mes',
@@ -1959,7 +2024,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Tarjeta de crédito',dtype_student_loan:'Préstamo estudiantil',
     dtype_mortgage:'Hipoteca',dtype_car_loan:'Préstamo de coche',
     dtype_personal_loan:'Préstamo personal',dtype_other:'Otro',
-    dpc_debt_free_label:'🎯 Fecha libre de deudas',dpc_months_from_now:'meses desde ahora',
+    dpc_debt_free_label:'🎯 Fecha libre de deudas',dpc_months_from_now:'{0}/meses desde ahora',
     dpc_interest_label:'💸 Intereses totales',dpc_on_top:'además de',dpc_principal:'principal',
     dpc_monthly_label:'📅 Total mensual',dpc_min_abbr:'mín',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Orden de pago - ⛄ Bola de nieve (saldo más bajo primero)',
@@ -1989,6 +2054,11 @@ const TRANSLATIONS = {
     tx_import_csv:'\uD83D\uDCE5 Importar CSV',
     tx_add_title:'Añadir una transacción',
     tx_date:'Fecha',tx_type:'Tipo',tx_category:'Categoría',tx_amount:'Importe',
+    tx_date_hint:'La fecha en que ocurrió esta transacción.',
+    tx_type_hint:'Qué tipo de transacción es esta - a qué parte de tu presupuesto afecta.',
+    tx_category_hint:'A qué categoría dentro de ese tipo pertenece esto.',
+    tx_amount_hint:'Cuánto fue esta transacción.',
+    tx_desc_hint:'Una nota opcional para ayudarte a recordar de qué se trataba, como "Compra en supermercado".',
     tx_desc_label:'Descripción',tx_desc_ph:'p.ej. Compra en supermercado\u2026',
     tx_add_btn:'Añadir',tx_error_required:'Por favor, completa todos los campos obligatorios.',
     tx_transaction_one:'transacción',tx_transaction_many:'transacciones',
@@ -2017,6 +2087,8 @@ const TRANSLATIONS = {
     bud_add_btn:'+ Añadir',bud_add_cat_title:'Añadir nueva categoría',
     bud_cat_name_label:'Nombre de categoría',bud_cat_name_ph:'p.ej. Autónomo',
     bud_add_cat_btn:'Añadir',bud_due_date_label:'Fecha de vencimiento',
+    bud_cat_name_hint:'Un nombre corto para esta categoría, como "Alquiler" o "Comestibles".',
+    bud_due_date_hint:'Cuándo vence esto en cada período. Aparece en el calendario inteligente.',
     help_bud_intro:'La pestaña Presupuesto es donde planificas tu dinero. Establece importes previstos para cada categoría - los reales se rellenan automáticamente desde tus Transacciones.',
     help_bud_how_h:'Cómo funciona',
     help_bud_step1:'Haz clic en un campo Previsto e introduce tu importe presupuestario',
@@ -2109,7 +2181,7 @@ const TRANSLATIONS = {
     recurring_freq:'Frecuencia',freq_daily:'Diario',freq_weekly:'Semanal',
     freq_monthly:'Mensual',freq_quarterly:'Trimestral',freq_annual:'Anual',
     recurring_next_due:'Pr\u00f3ximo vencimiento',recurring_generated:'{0} nuevas transacciones automatizadas',
-    recurring_remove:'Eliminar regla',recurring_paused:'En pausa',recurring_active:'Activo',recurring_saved:'Transacción automática guardada ✓',dpc_add_debt_title:'Añadir deuda',dpc_edit_debt_title:'Editar deuda',debt_due_day_modal_hint:'El día del mes en que vence este pago',toast_debt_added:'Deuda añadida',toast_debt_updated:'Deuda actualizada',sf_billing_day_label:'Día de cargo del mes',sf_billing_day_hint:'El día del mes en que se registra la contribución automáticamente',sf_error_required:'Por favor, completa todos los campos obligatorios',sub_active:'Activo',sub_paused:'Pausado',sub_desc:'Controla cada pago recurrente y comprende tu coste anual real. Pausa las suscripciones que no uses para mantener los gastos bajo control.',sub_add_btn:'+ Añadir suscripción',sub_add_title:'Añadir suscripción',sub_edit_title:'Editar suscripción',sub_empty_title:'Aún no hay suscripciones.',sub_empty_sub:'Añade tus pagos recurrentes - Netflix, Spotify, el gimnasio, etc.',sub_sum_monthly:'Total mensual',sub_sum_annual:'Total anual',sub_by_category:'Por categoría',sub_per_month:'/mes',sub_next_label:'Próximo',sub_name_label:'Nombre de la suscripción',sub_name_ph:'ej. Netflix',sub_amount_label:'Importe',sub_freq_label:'Frecuencia de facturación',sub_freq_monthly:'Mensual',sub_freq_annual:'Anual',sub_freq_quarterly:'Trimestral',sub_freq_weekly:'Semanal',sub_unit_month:'mes',sub_unit_year:'año',sub_unit_quarter:'trimestre',sub_cat_label:'Categoría',sub_date_label:'Próxima fecha de facturación',sub_cat_entertainment:'Entretenimiento',sub_cat_productivity:'Productividad',sub_cat_health:'Salud y ejercicio',sub_cat_food:'Comida y bebida',sub_cat_cloud:'Almacenamiento en la nube',sub_cat_finance:'Finanzas',sub_cat_education:'Educación',sub_cat_gaming:'Videojuegos',sub_cat_news:'Noticias y medios',sub_cat_other:'Otro',help_sub_intro:'Controla cada pago recurrente y comprende tu coste mensual y anual real. Las suscripciones que consumen tu cuenta en silencio son fáciles de pasar por alto - esto las mantiene visibles.',help_sub_how_h:'Añadir una suscripción',help_sub_step1:'Haz clic en + Añadir suscripción',help_sub_step2:'Introduce el nombre, el importe y la frecuencia de facturación (mensual, anual, trimestral, semanal)',help_sub_step3:'Elige una categoría para agrupar suscripciones similares',help_sub_step4:'Define la próxima fecha de facturación - aparecerá en el calendario inteligente',help_sub_monthly_h:'Equivalente mensual',help_sub_monthly_p:'Las suscripciones anuales y trimestrales se convierten a un coste mensual para que veas tu gasto mensual real de un vistazo.',help_sub_pause_h:'Pausar suscripciones',help_sub_pause_p:'Desactiva el interruptor Activo de cualquier suscripción que no estés usando. No contará en tus totales hasta que vuelvas a activarlo.',help_sub_chart_h:'Gráfico por categoría',help_sub_chart_p:'El gráfico circular muestra cómo se reparte tu gasto en suscripciones por categoría - pasa el cursor sobre un segmento para ver los detalles.',help_sub_tip:'💡 Activa «Automatizar» en una suscripción para que se añada automáticamente a tus transacciones en cada ciclo de facturación.',automate_auto_pay:'Pago auto',sf_auto_contribute:'Auto-contribución',sf_auto_need_amount:'Primero añade un importe y fecha objetivo',sf_auto_set:'Contribución mensual: {0}',automate_label:'Automatizar',automate_hint:'Lo añade a tus transacciones automáticamente según el calendario',automate_hint_off:'Activa la Automatización en Ajustes para usarlo',automate_th:'Pago auto',automate_need_amount:'Primero establece un pago mínimo',automate_payment_word:'pago',automate_linked:'Transacción automática vinculada',sf_contribution_label:'Contribución mensual',sf_contribution_hint:'Se registra automáticamente cada mes para aumentar este fondo',sett_automation_h:'Automatización',sett_automation_desc:'Interruptor principal de las transacciones automáticas. Si está apagado, no se generan transacciones programadas y las opciones de automatización se desactivan.',sett_automation_toggle:'Transacciones automáticas',sett_automation_hint:'Se aplica a transacciones, suscripciones, fondos y deudas',
+    recurring_remove:'Eliminar regla',recurring_paused:'En pausa',recurring_active:'Activo',recurring_saved:'Transacción automática guardada ✓',dpc_add_debt_title:'Añadir deuda',dpc_edit_debt_title:'Editar deuda',debt_due_day_modal_hint:'El día del mes en que vence este pago',toast_debt_added:'Deuda añadida',toast_debt_updated:'Deuda actualizada',sf_billing_day_label:'Día de cargo del mes',sf_billing_day_hint:'El día del mes en que se registra la contribución automáticamente',sf_error_required:'Por favor, completa todos los campos obligatorios',sub_active:'Activo',sub_paused:'Pausado',sub_desc:'Controla cada pago recurrente y comprende tu coste anual real. Pausa las suscripciones que no uses para mantener los gastos bajo control.',sub_add_btn:'+ Añadir suscripción',sub_add_title:'Añadir suscripción',sub_edit_title:'Editar suscripción',sub_empty_title:'Aún no hay suscripciones.',sub_empty_sub:'Añade tus pagos recurrentes - Netflix, Spotify, el gimnasio, etc.',sub_sum_monthly:'Total mensual',sub_sum_annual:'Total anual',sub_by_category:'Por categoría',sub_per_month:'/mes',sub_next_label:'Próximo',sub_name_label:'Nombre de la suscripción',sub_name_ph:'ej. Netflix',sub_amount_label:'Importe',sub_freq_label:'Frecuencia de facturación',sub_freq_monthly:'Mensual',sub_freq_annual:'Anual',sub_freq_quarterly:'Trimestral',sub_freq_weekly:'Semanal',sub_unit_month:'mes',sub_unit_year:'año',sub_unit_quarter:'trimestre',sub_cat_label:'Categoría',sub_date_label:'Próxima fecha de facturación',sub_name_hint:'El servicio o proveedor de este pago, como "Netflix" o "Membresía del gimnasio".',sub_amount_hint:'Cuánto te cobran en cada ciclo de facturación.',sub_freq_hint:'Con qué frecuencia te cobra esta suscripción.',sub_cat_hint:'Agrupa esta suscripción para el gráfico de categorías.',sub_date_hint:'La próxima fecha en que esta suscripción te cobrará. Aparece en el calendario inteligente.',alloc_label_hint:'Etiqueta esto como Necesidad, Deseo o Ahorro para que cuente en tus categorías de distribución.',sub_cat_entertainment:'Entretenimiento',sub_cat_productivity:'Productividad',sub_cat_health:'Salud y ejercicio',sub_cat_food:'Comida y bebida',sub_cat_cloud:'Almacenamiento en la nube',sub_cat_finance:'Finanzas',sub_cat_education:'Educación',sub_cat_gaming:'Videojuegos',sub_cat_news:'Noticias y medios',sub_cat_other:'Otro',help_sub_intro:'Controla cada pago recurrente y comprende tu coste mensual y anual real. Las suscripciones que consumen tu cuenta en silencio son fáciles de pasar por alto - esto las mantiene visibles.',help_sub_how_h:'Añadir una suscripción',help_sub_step1:'Haz clic en + Añadir suscripción',help_sub_step2:'Introduce el nombre, el importe y la frecuencia de facturación (mensual, anual, trimestral, semanal)',help_sub_step3:'Elige una categoría para agrupar suscripciones similares',help_sub_step4:'Define la próxima fecha de facturación - aparecerá en el calendario inteligente',help_sub_monthly_h:'Equivalente mensual',help_sub_monthly_p:'Las suscripciones anuales y trimestrales se convierten a un coste mensual para que veas tu gasto mensual real de un vistazo.',help_sub_pause_h:'Pausar suscripciones',help_sub_pause_p:'Desactiva el interruptor Activo de cualquier suscripción que no estés usando. No contará en tus totales hasta que vuelvas a activarlo.',help_sub_chart_h:'Gráfico por categoría',help_sub_chart_p:'El gráfico circular muestra cómo se reparte tu gasto en suscripciones por categoría - pasa el cursor sobre un segmento para ver los detalles.',help_sub_tip:'💡 Activa «Automatizar» en una suscripción para que se añada automáticamente a tus transacciones en cada ciclo de facturación.',automate_auto_pay:'Pago auto',sf_auto_contribute:'Auto-contribución',sf_auto_need_amount:'Primero añade un importe y fecha objetivo',sf_auto_set:'Contribución mensual: {0}',automate_label:'Automatizar',automate_hint:'Lo añade a tus transacciones automáticamente según el calendario',automate_hint_off:'Activa la Automatización en Ajustes para usarlo',automate_th:'Pago auto',automate_need_amount:'Primero establece un pago mínimo',automate_payment_word:'pago',automate_linked:'Transacción automática vinculada',sf_contribution_label:'Contribución mensual',sf_contribution_hint:'Se registra automáticamente cada mes para aumentar este fondo',sett_automation_h:'Automatización',sett_automation_desc:'Interruptor principal de las transacciones automáticas. Si está apagado, no se generan transacciones programadas y las opciones de automatización se desactivan.',sett_automation_toggle:'Transacciones automáticas',sett_automation_hint:'Se aplica a transacciones, suscripciones, fondos y deudas',
     tx_type_sinking_fund:'Fondo objetivo',
     help_dash_alloc_h:'Panel de distribución presupuestaria',
     help_dash_alloc_what_h:'Qué es',
@@ -2321,7 +2393,7 @@ const TRANSLATIONS = {
     rollover_amount:'Importo riporto',
     reset_desc:'Elimina definitivamente tutti i dati. Non reversibile.',
     reset_btn:'Reimposta tutto',
-    add:'Aggiungi',cancel:'Annulla',rename_title_prompt:'Rinomina il tuo pianificatore di budget',save:'Salva',delete:'Elimina',dp_today:'Oggi',dp_clear:'Cancella',edit:'Modifica',
+    add:'Aggiungi',cancel:'Annulla',rename_title_prompt:'Rinomina il tuo pianificatore di budget',save:'Salva',delete:'Elimina',dp_today:'Oggi',dp_clear:'Cancella',edit:'Modifica',field_info_aria:'Informazioni su {0}',
     paid:'Pagato',due_date:'Data di scadenza',category:'Categoria',amount:'Importo',
     description:'Descrizione',date:'Data',type:'Tipo',
     add_category:'+ Aggiungi categoria',no_transactions:'Nessuna transazione.',
@@ -2365,12 +2437,17 @@ const TRANSLATIONS = {
     sf_empty_sub:'Ottimo per: vacanze, riparazioni auto, matrimoni, nuova tecnologia, bollette annuali.',
     sf_pct_complete:'completato',
     sf_save_prefix:'Risparmiare',sf_per_month:'/mese',
-    sf_month_left_one:'mese rimasto',sf_month_left_many:'mesi rimasti',
+    sf_mo_left_tpl:'{0}/mesi rimasti',
     sf_total_contrib:'Contributi mensili totali necessari:',
     sf_modal_new:'🏺 Nuovo fondo di accantonamento',sf_modal_edit:'✏️ Modifica fondo',
     sf_fund_name_label:'Nome del fondo',sf_fund_name_ph:'es. Fondo vacanze',
     sf_icon_label:'Icona',sf_target_amount_label:'Importo obiettivo',
     sf_currently_saved_label:'Già risparmiato',sf_target_date_label:'Data obiettivo',
+    sf_fund_name_hint:'Un nome breve per ciò che stai risparmiando, come "Vacanze estive" o "Nuovo laptop".',
+    sf_icon_hint:"Scegli un'icona per far risaltare questo fondo a colpo d'occhio.",
+    sf_target_amount_hint:"L'importo totale di cui hai bisogno per raggiungere questo obiettivo.",
+    sf_currently_saved_hint:'Quanto hai già messo da parte per questo obiettivo, se presente.',
+    sf_target_date_hint:'Entro quando vuoi raggiungere il tuo obiettivo - usato per calcolare quanto risparmiare ogni mese.',
     sf_create_btn:'Crea fondo',
     help_sf_intro:"Un fondo di accantonamento è denaro messo da parte in anticipo per una grande spesa pianificata - nessuna sorpresa spiacevole all'arrivo della bolletta.",
     help_sf_how_to_h:'Come usarlo',
@@ -2396,21 +2473,27 @@ const TRANSLATIONS = {
     dpc_th_name:'Debito',dpc_th_type:'Tipo',dpc_th_balance:'Saldo',
     dpc_th_apr:'TAEG %',dpc_th_min:'Pag. min.',dpc_th_due:'Giorno scad.',
     dpc_totals:'Totali',dpc_name_ph:'es. Carta Visa',
+    dpc_name_hint:'Il nome che vedrai per questo debito in tutta l’app.',dpc_type_hint:'Applica le regole corrette per questo tipo di prestito (i mutui supportano il deposito vincolato e i tassi ARM).',
+    dpc_balance_hint:'L’importo che devi attualmente su questo debito.',dpc_apr_hint:'Il tasso di interesse annuo applicato al saldo residuo.',
+    dpc_min_hint:'Il pagamento minimo richiesto ogni mese, prima di qualsiasi extra che aggiungi.',
     dpc_term_label:'Durata del prestito (anni)',dpc_term_hint:'Imposta la durata di questo prestito, così il calcolo automatico può determinare una rata minima accurata.',
     dpc_autocalc_btn:'Calcola automaticamente',dpc_autocalc_done:'Calcolato: {0}/mese',
     dpc_min_mode_label:'Tipo di rata minima',dpc_min_mode_fixed:'Importo fisso',dpc_min_mode_percent:'% del saldo',
     dpc_min_percent_label:'Percentuale del saldo (%)',dpc_min_floor_label:'Importo minimo',
+    dpc_min_mode_hint:'Importo fisso resta uguale ogni mese. % del saldo ricalcola la rata mentre il saldo scende - comune per le carte di credito.',
+    dpc_min_percent_hint:'La percentuale del saldo residuo usata per calcolare la rata minima.',dpc_min_floor_hint:'La rata minima non scende mai sotto questo importo, anche se la percentuale risulta inferiore.',
     dpc_min_calculated_hint:'Calcolato automaticamente - il valore più alto tra la percentuale e l’importo minimo.',
     dpc_escrow_label:'Deposito vincolato (tasse e assicurazione)',
     dpc_escrow_hint:'Si aggiunge al tuo costo mensile reale, ma è escluso dalla simulazione di rimborso poiché non riduce il saldo.',
     dpc_min_pct_caption:'{0}% del saldo',dpc_escrow_note:'{0} deposito vincolato',
-    dpc_term_note_faster:'{0} mesi più veloce della tua durata di {1} anni',dpc_term_note_slower:'{0} mesi più lento della tua durata di {1} anni',
+    dpc_term_note_faster:'{0}/mesi più veloce della tua durata di {1} anni',dpc_term_note_slower:'{0}/mesi più lento della tua durata di {1} anni',
     dpc_term_note_onschedule:'perfettamente in linea con la tua durata di {0} anni',
     dpc_escrow_mode_label:'Tipo di deposito vincolato',dpc_escrow_mode_fixed:'Importo fisso',dpc_escrow_mode_declining:'Decrescente con il saldo',
     dpc_escrow_mode_hint:'Questo influisce solo sul piano di ammortamento qui sotto. Il tuo importo automatizzato e il totale della dashboard usano sempre l’importo fisso attuale del deposito vincolato.',
     dpc_rate_type_label:'Tipo di tasso',dpc_rate_type_fixed:'Fisso per tutta la durata',dpc_rate_type_arm:'Si adegua dopo un periodo fisso (tasso variabile)',
     dpc_rate_type_hint:'Un modello semplificato: un tasso per il periodo fisso, poi un unico nuovo tasso per il resto del prestito - non una simulazione completa di indice/tetto massimo.',
     dpc_arm_fixed_years_label:'Periodo a tasso fisso (anni)',dpc_arm_rate_label:'Tasso dopo l’adeguamento',
+    dpc_arm_fixed_years_hint:'Per quanti anni dura il tasso iniziale prima di passare al tasso adeguato.',dpc_arm_rate_hint:'Il tasso di interesse applicato per il resto del prestito una volta terminato il periodo fisso.',
     dpc_arm_caption:'si adegua dopo {0} anni di periodo fisso',
     dpc_recalc_link:'↺ Ricalcola',
     dpc_th_extra:'Extra/mese',
@@ -2423,7 +2506,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Carta di credito',dtype_student_loan:'Prestito studentesco',
     dtype_mortgage:'Mutuo',dtype_car_loan:'Prestito auto',
     dtype_personal_loan:'Prestito personale',dtype_other:'Altro',
-    dpc_debt_free_label:'🎯 Data libera dai debiti',dpc_months_from_now:'mesi da ora',
+    dpc_debt_free_label:'🎯 Data libera dai debiti',dpc_months_from_now:'{0}/mesi da ora',
     dpc_interest_label:'💸 Interessi totali',dpc_on_top:'oltre a',dpc_principal:'capitale',
     dpc_monthly_label:'📅 Totale mensile',dpc_min_abbr:'min',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Ordine di rimborso - ⛄ Palla di neve (saldo più basso prima)',
@@ -2453,6 +2536,11 @@ const TRANSLATIONS = {
     tx_import_csv:'\uD83D\uDCE5 Importa CSV',
     tx_add_title:'Aggiungi una transazione',
     tx_date:'Data',tx_type:'Tipo',tx_category:'Categoria',tx_amount:'Importo',
+    tx_date_hint:'La data in cui è avvenuta questa transazione.',
+    tx_type_hint:'Che tipo di transazione è questa - quale parte del tuo budget riguarda.',
+    tx_category_hint:"A quale categoria all'interno di quel tipo appartiene questa transazione.",
+    tx_amount_hint:'Quanto è stata questa transazione.',
+    tx_desc_hint:'Una nota facoltativa per aiutarti a ricordare di cosa si trattava, come "Spesa al supermercato".',
     tx_desc_label:'Descrizione',tx_desc_ph:'es. Spesa al supermercato\u2026',
     tx_add_btn:'Aggiungi',tx_error_required:'Compila tutti i campi obbligatori.',
     tx_transaction_one:'transazione',tx_transaction_many:'transazioni',
@@ -2481,6 +2569,8 @@ const TRANSLATIONS = {
     bud_add_btn:'+ Aggiungi',bud_add_cat_title:'Aggiungi nuova categoria',
     bud_cat_name_label:'Nome categoria',bud_cat_name_ph:'es. Freelance',
     bud_add_cat_btn:'Aggiungi',bud_due_date_label:'Data di scadenza',
+    bud_cat_name_hint:'Un nome breve per questa categoria, come "Affitto" o "Spesa".',
+    bud_due_date_hint:'Quando scade questo in ogni periodo. Appare nel calendario intelligente.',
     help_bud_intro:"La scheda Budget è dove pianifichi i tuoi soldi. Imposta importi previsti per ogni categoria - gli effettivi si compilano automaticamente dalle tue Transazioni.",
     help_bud_how_h:'Come funziona',
     help_bud_step1:'Clicca su un campo Previsto e inserisci il tuo importo di budget',
@@ -2573,7 +2663,7 @@ const TRANSLATIONS = {
     recurring_freq:'Frequenza',freq_daily:'Giornaliero',freq_weekly:'Settimanale',
     freq_monthly:'Mensile',freq_quarterly:'Trimestrale',freq_annual:'Annuale',
     recurring_next_due:'Prossima scadenza',recurring_generated:'{0} nuove transazioni automatizzate',
-    recurring_remove:'Rimuovi regola',recurring_paused:'In pausa',recurring_active:'Attivo',recurring_saved:'Transazione automatica salvata ✓',dpc_add_debt_title:'Aggiungi debito',dpc_edit_debt_title:'Modifica debito',debt_due_day_modal_hint:'Il giorno del mese in cui è dovuto questo pagamento',toast_debt_added:'Debito aggiunto',toast_debt_updated:'Debito aggiornato',sf_billing_day_label:'Giorno di addebito del mese',sf_billing_day_hint:'Il giorno del mese in cui il contributo viene registrato automaticamente',sf_error_required:'Compila tutti i campi obbligatori',sub_active:'Attivo',sub_paused:'In pausa',sub_desc:'Tieni traccia di ogni pagamento ricorrente e scopri il tuo costo annuale reale. Metti in pausa gli abbonamenti che non usi per tenere sotto controllo le spese.',sub_add_btn:'+ Aggiungi abbonamento',sub_add_title:'Aggiungi abbonamento',sub_edit_title:'Modifica abbonamento',sub_empty_title:'Nessun abbonamento ancora.',sub_empty_sub:'Aggiungi i tuoi pagamenti ricorrenti - Netflix, Spotify, palestra, ecc.',sub_sum_monthly:'Totale mensile',sub_sum_annual:'Totale annuale',sub_by_category:'Per categoria',sub_per_month:'/mese',sub_next_label:'Prossimo',sub_name_label:"Nome dell'abbonamento",sub_name_ph:'es. Netflix',sub_amount_label:'Importo',sub_freq_label:'Frequenza di fatturazione',sub_freq_monthly:'Mensile',sub_freq_annual:'Annuale',sub_freq_quarterly:'Trimestrale',sub_freq_weekly:'Settimanale',sub_unit_month:'mese',sub_unit_year:'anno',sub_unit_quarter:'trimestre',sub_cat_label:'Categoria',sub_date_label:'Prossima data di fatturazione',sub_cat_entertainment:'Intrattenimento',sub_cat_productivity:'Produttività',sub_cat_health:'Salute e fitness',sub_cat_food:'Cibo e bevande',sub_cat_cloud:'Archiviazione cloud',sub_cat_finance:'Finanza',sub_cat_education:'Istruzione',sub_cat_gaming:'Videogiochi',sub_cat_news:'Notizie e media',sub_cat_other:'Altro',help_sub_intro:"Tieni traccia di ogni pagamento ricorrente e scopri il tuo costo mensile e annuale reale. Gli abbonamenti che silenziosamente prosciugano il tuo conto sono facili da perdere di vista - questo li tiene visibili.",help_sub_how_h:'Aggiungere un abbonamento',help_sub_step1:'Clicca su + Aggiungi abbonamento',help_sub_step2:'Inserisci nome, importo e frequenza di fatturazione (mensile, annuale, trimestrale, settimanale)',help_sub_step3:'Scegli una categoria per raggruppare abbonamenti simili',help_sub_step4:'Imposta la prossima data di fatturazione - apparirà nel calendario intelligente',help_sub_monthly_h:'Equivalente mensile',help_sub_monthly_p:"Gli abbonamenti annuali e trimestrali vengono convertiti in un costo mensile così puoi vedere la tua spesa mensile reale a colpo d'occhio.",help_sub_pause_h:'Mettere in pausa gli abbonamenti',help_sub_pause_p:"Disattiva l'interruttore Attivo di un abbonamento che non stai usando. Non verrà conteggiato nei totali finché non lo riattivi.",help_sub_chart_h:'Grafico per categoria',help_sub_chart_p:'Il grafico a ciambella mostra come si distribuisce la spesa per abbonamenti tra le categorie - passa sopra un segmento per i dettagli.',help_sub_tip:'💡 Attiva "Automatizza" su un abbonamento perché venga aggiunto automaticamente alle tue transazioni a ogni ciclo di fatturazione.',automate_auto_pay:'Pagamento auto',sf_auto_contribute:'Auto-contributo',sf_auto_need_amount:'Aggiungi prima un importo e una data obiettivo',sf_auto_set:'Contributo mensile: {0}',automate_label:'Automatizza',automate_hint:'Lo aggiunge automaticamente alle transazioni secondo la pianificazione',automate_hint_off:"Attiva l'Automazione nelle Impostazioni per usarlo",automate_th:'Pagamento auto',automate_need_amount:'Imposta prima un pagamento minimo',automate_payment_word:'pagamento',automate_linked:'Transazione automatica collegata',sf_contribution_label:'Contributo mensile',sf_contribution_hint:'Registrato automaticamente ogni mese per far crescere questo fondo',sett_automation_h:'Automazione',sett_automation_desc:'Interruttore principale delle transazioni automatiche. Se disattivato, non vengono generate transazioni pianificate e le opzioni di automazione sono disattivate.',sett_automation_toggle:'Transazioni automatiche',sett_automation_hint:'Si applica a transazioni, abbonamenti, fondi e debiti',
+    recurring_remove:'Rimuovi regola',recurring_paused:'In pausa',recurring_active:'Attivo',recurring_saved:'Transazione automatica salvata ✓',dpc_add_debt_title:'Aggiungi debito',dpc_edit_debt_title:'Modifica debito',debt_due_day_modal_hint:'Il giorno del mese in cui è dovuto questo pagamento',toast_debt_added:'Debito aggiunto',toast_debt_updated:'Debito aggiornato',sf_billing_day_label:'Giorno di addebito del mese',sf_billing_day_hint:'Il giorno del mese in cui il contributo viene registrato automaticamente',sf_error_required:'Compila tutti i campi obbligatori',sub_active:'Attivo',sub_paused:'In pausa',sub_desc:'Tieni traccia di ogni pagamento ricorrente e scopri il tuo costo annuale reale. Metti in pausa gli abbonamenti che non usi per tenere sotto controllo le spese.',sub_add_btn:'+ Aggiungi abbonamento',sub_add_title:'Aggiungi abbonamento',sub_edit_title:'Modifica abbonamento',sub_empty_title:'Nessun abbonamento ancora.',sub_empty_sub:'Aggiungi i tuoi pagamenti ricorrenti - Netflix, Spotify, palestra, ecc.',sub_sum_monthly:'Totale mensile',sub_sum_annual:'Totale annuale',sub_by_category:'Per categoria',sub_per_month:'/mese',sub_next_label:'Prossimo',sub_name_label:"Nome dell'abbonamento",sub_name_ph:'es. Netflix',sub_amount_label:'Importo',sub_freq_label:'Frequenza di fatturazione',sub_freq_monthly:'Mensile',sub_freq_annual:'Annuale',sub_freq_quarterly:'Trimestrale',sub_freq_weekly:'Settimanale',sub_unit_month:'mese',sub_unit_year:'anno',sub_unit_quarter:'trimestre',sub_cat_label:'Categoria',sub_date_label:'Prossima data di fatturazione',sub_name_hint:'Il servizio o fornitore di questo pagamento, come "Netflix" o "Abbonamento palestra".',sub_amount_hint:'Quanto ti viene addebitato a ogni ciclo di fatturazione.',sub_freq_hint:'Con quale frequenza questo abbonamento ti addebita.',sub_cat_hint:'Raggruppa questo abbonamento per il grafico delle categorie.',sub_date_hint:'La prossima data in cui questo abbonamento ti addebiterà. Appare nel calendario intelligente.',alloc_label_hint:'Etichetta questo come Bisogno, Desiderio o Risparmio così conta nelle tue categorie di distribuzione.',sub_cat_entertainment:'Intrattenimento',sub_cat_productivity:'Produttività',sub_cat_health:'Salute e fitness',sub_cat_food:'Cibo e bevande',sub_cat_cloud:'Archiviazione cloud',sub_cat_finance:'Finanza',sub_cat_education:'Istruzione',sub_cat_gaming:'Videogiochi',sub_cat_news:'Notizie e media',sub_cat_other:'Altro',help_sub_intro:"Tieni traccia di ogni pagamento ricorrente e scopri il tuo costo mensile e annuale reale. Gli abbonamenti che silenziosamente prosciugano il tuo conto sono facili da perdere di vista - questo li tiene visibili.",help_sub_how_h:'Aggiungere un abbonamento',help_sub_step1:'Clicca su + Aggiungi abbonamento',help_sub_step2:'Inserisci nome, importo e frequenza di fatturazione (mensile, annuale, trimestrale, settimanale)',help_sub_step3:'Scegli una categoria per raggruppare abbonamenti simili',help_sub_step4:'Imposta la prossima data di fatturazione - apparirà nel calendario intelligente',help_sub_monthly_h:'Equivalente mensile',help_sub_monthly_p:"Gli abbonamenti annuali e trimestrali vengono convertiti in un costo mensile così puoi vedere la tua spesa mensile reale a colpo d'occhio.",help_sub_pause_h:'Mettere in pausa gli abbonamenti',help_sub_pause_p:"Disattiva l'interruttore Attivo di un abbonamento che non stai usando. Non verrà conteggiato nei totali finché non lo riattivi.",help_sub_chart_h:'Grafico per categoria',help_sub_chart_p:'Il grafico a ciambella mostra come si distribuisce la spesa per abbonamenti tra le categorie - passa sopra un segmento per i dettagli.',help_sub_tip:'💡 Attiva "Automatizza" su un abbonamento perché venga aggiunto automaticamente alle tue transazioni a ogni ciclo di fatturazione.',automate_auto_pay:'Pagamento auto',sf_auto_contribute:'Auto-contributo',sf_auto_need_amount:'Aggiungi prima un importo e una data obiettivo',sf_auto_set:'Contributo mensile: {0}',automate_label:'Automatizza',automate_hint:'Lo aggiunge automaticamente alle transazioni secondo la pianificazione',automate_hint_off:"Attiva l'Automazione nelle Impostazioni per usarlo",automate_th:'Pagamento auto',automate_need_amount:'Imposta prima un pagamento minimo',automate_payment_word:'pagamento',automate_linked:'Transazione automatica collegata',sf_contribution_label:'Contributo mensile',sf_contribution_hint:'Registrato automaticamente ogni mese per far crescere questo fondo',sett_automation_h:'Automazione',sett_automation_desc:'Interruttore principale delle transazioni automatiche. Se disattivato, non vengono generate transazioni pianificate e le opzioni di automazione sono disattivate.',sett_automation_toggle:'Transazioni automatiche',sett_automation_hint:'Si applica a transazioni, abbonamenti, fondi e debiti',
     tx_type_sinking_fund:'Fondo dedicato',
     help_dash_alloc_h:'Pannello distribuzione budget',
     help_dash_alloc_what_h:'Cos\u2019è',
@@ -2785,7 +2875,7 @@ const TRANSLATIONS = {
     rollover_amount:'Kwota przeniesienia',
     reset_desc:'Trwale usuwa wszystkie dane. Nie można cofnąć.',
     reset_btn:'Zresetuj wszystko',
-    add:'Dodaj',cancel:'Anuluj',rename_title_prompt:'Zmień nazwę planera budżetu',save:'Zapisz',delete:'Usuń',dp_today:'Dziś',dp_clear:'Wyczyść',edit:'Edytuj',
+    add:'Dodaj',cancel:'Anuluj',rename_title_prompt:'Zmień nazwę planera budżetu',save:'Zapisz',delete:'Usuń',dp_today:'Dziś',dp_clear:'Wyczyść',edit:'Edytuj',field_info_aria:'O {0}',
     paid:'Zapłacone',due_date:'Termin płatności',category:'Kategoria',amount:'Kwota',
     description:'Opis',date:'Data',type:'Typ',
     add_category:'+ Dodaj kategorię',no_transactions:'Brak transakcji.',
@@ -2828,12 +2918,17 @@ const TRANSLATIONS = {
     sf_empty_sub:'Idealny na: wakacje, naprawy samochodu, wesela, nowy sprzęt, rachunki roczne.',
     sf_pct_complete:'ukończono',
     sf_save_prefix:'Oszczędź',sf_per_month:'/miesiąc',
-    sf_month_left_one:'miesiąc pozostał',sf_month_left_many:'miesięcy pozostało',
+    sf_mo_left_tpl:'{0}/mies. pozostało',
     sf_total_contrib:'Łączne wymagane miesięczne wpłaty:',
     sf_modal_new:'🏺 Nowy fundusz celowy',sf_modal_edit:'✏️ Edytuj fundusz',
     sf_fund_name_label:'Nazwa funduszu',sf_fund_name_ph:'np. Fundusz wakacyjny',
     sf_icon_label:'Ikona',sf_target_amount_label:'Kwota docelowa',
     sf_currently_saved_label:'Już zaoszczędzono',sf_target_date_label:'Data docelowa',
+    sf_fund_name_hint:'Krótka nazwa tego, na co oszczędzasz, np. "Wakacje letnie" lub "Nowy laptop".',
+    sf_icon_hint:'Wybierz ikonę, aby ten fundusz wyróżniał się na pierwszy rzut oka.',
+    sf_target_amount_hint:'Całkowita kwota potrzebna do osiągnięcia tego celu.',
+    sf_currently_saved_hint:'Ile już odłożyłeś na ten cel, jeśli cokolwiek.',
+    sf_target_date_hint:'Do kiedy chcesz osiągnąć swój cel - używane do obliczenia, ile oszczędzać miesięcznie.',
     sf_create_btn:'Utwórz fundusz',
     help_sf_intro:'Fundusz celowy to pieniądze odkładane z góry na duży zaplanowany wydatek - bez nieprzyjemnych niespodzianek, gdy przychodzi rachunek.',
     help_sf_how_to_h:'Jak go używać',
@@ -2859,21 +2954,27 @@ const TRANSLATIONS = {
     dpc_th_name:'Dług',dpc_th_type:'Typ',dpc_th_balance:'Saldo',
     dpc_th_apr:'Oprocent. %',dpc_th_min:'Min. płatność',dpc_th_due:'Dzień zapłaty',
     dpc_totals:'Suma',dpc_name_ph:'np. Karta Visa',
+    dpc_name_hint:'Nazwa, którą zobaczysz dla tego długu w całej aplikacji.',dpc_type_hint:'Stosuje odpowiednie reguły dla tego rodzaju kredytu (kredyty hipoteczne obsługują depozyt i oprocentowanie zmienne ARM).',
+    dpc_balance_hint:'Kwota, którą aktualnie jesteś winien z tytułu tego długu.',dpc_apr_hint:'Roczne oprocentowanie naliczane od pozostałego salda.',
+    dpc_min_hint:'Najmniejsza wymagana płatność co miesiąc, przed jakąkolwiek dodatkową kwotą, którą dodajesz.',
     dpc_term_label:'Okres kredytowania (lata)',dpc_term_hint:'Określa, jak długo trwa ten kredyt, aby automatyczne obliczenie mogło ustalić dokładną minimalną ratę.',
     dpc_autocalc_btn:'Oblicz automatycznie',dpc_autocalc_done:'Obliczono: {0}/mies.',
     dpc_min_mode_label:'Typ minimalnej raty',dpc_min_mode_fixed:'Stała kwota',dpc_min_mode_percent:'% salda',
     dpc_min_percent_label:'Procent salda (%)',dpc_min_floor_label:'Minimalna kwota',
+    dpc_min_mode_hint:'Stała kwota pozostaje taka sama co miesiąc. % salda przelicza ratę w miarę zmniejszania się salda - typowe dla kart kredytowych.',
+    dpc_min_percent_hint:'Procent pozostałego salda używany do obliczenia minimalnej raty.',dpc_min_floor_hint:'Minimalna rata nigdy nie spada poniżej tej kwoty, nawet jeśli procent daje mniej.',
     dpc_min_calculated_hint:'Obliczane automatycznie - wyższa wartość spośród procentu i minimalnej kwoty.',
     dpc_escrow_label:'Depozyt (podatki i ubezpieczenie)',
     dpc_escrow_hint:'Dolicza się do rzeczywistego kosztu miesięcznego, ale jest wykluczony z symulacji spłaty, ponieważ nie zmniejsza salda.',
     dpc_min_pct_caption:'{0}% salda',dpc_escrow_note:'{0} depozytu',
-    dpc_term_note_faster:'{0} mies. szybciej niż Twój {1}-letni okres',dpc_term_note_slower:'{0} mies. wolniej niż Twój {1}-letni okres',
+    dpc_term_note_faster:'{0}/mies. szybciej niż Twój {1}-letni okres',dpc_term_note_slower:'{0}/mies. wolniej niż Twój {1}-letni okres',
     dpc_term_note_onschedule:'dokładnie zgodnie z harmonogramem dla {0}-letniego okresu',
     dpc_escrow_mode_label:'Typ depozytu',dpc_escrow_mode_fixed:'Stała kwota',dpc_escrow_mode_declining:'Malejący wraz z saldem',
     dpc_escrow_mode_hint:'Dotyczy to tylko harmonogramu spłat poniżej. Twoja zautomatyzowana kwota i suma na pulpicie zawsze używają aktualnej stałej kwoty depozytu.',
     dpc_rate_type_label:'Typ oprocentowania',dpc_rate_type_fixed:'Stałe przez cały okres',dpc_rate_type_arm:'Zmienia się po okresie stałym (zmienne)',
     dpc_rate_type_hint:'Uproszczony model: jedna stawka przez okres stały, a potem jedna nowa stawka na resztę kredytu - nie jest to pełna symulacja indeksu/limitu.',
     dpc_arm_fixed_years_label:'Okres stałego oprocentowania (lata)',dpc_arm_rate_label:'Oprocentowanie po zmianie',
+    dpc_arm_fixed_years_hint:'Ile lat obowiązuje początkowe oprocentowanie, zanim zmieni się na oprocentowanie po zmianie.',dpc_arm_rate_hint:'Oprocentowanie obowiązujące przez resztę kredytu po zakończeniu okresu stałego.',
     dpc_arm_caption:'zmienia się po {0}-letnim okresie stałym',
     dpc_recalc_link:'↺ Przelicz ponownie',
     dpc_th_extra:'Dodatkowo/mies.',
@@ -2886,7 +2987,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Karta kredytowa',dtype_student_loan:'Kredyt studencki',
     dtype_mortgage:'Hipoteka',dtype_car_loan:'Kredyt samochodowy',
     dtype_personal_loan:'Kredyt osobisty',dtype_other:'Inne',
-    dpc_debt_free_label:'🎯 Data wolności od długów',dpc_months_from_now:'miesięcy od teraz',
+    dpc_debt_free_label:'🎯 Data wolności od długów',dpc_months_from_now:'{0}/mies. od teraz',
     dpc_interest_label:'💸 Łączne odsetki',dpc_on_top:'ponad',dpc_principal:'kapitału',
     dpc_monthly_label:'📅 Suma miesięczna',dpc_min_abbr:'min',dpc_extra_abbr:'dod.',
     dpc_payoff_order_sf:'Kolejność spłaty - ⛄ Śnieżka (najniższe saldo najpierw)',
@@ -2916,6 +3017,11 @@ const TRANSLATIONS = {
     tx_import_csv:'\uD83D\uDCE5 Importuj CSV',
     tx_add_title:'Dodaj transakcję',
     tx_date:'Data',tx_type:'Typ',tx_category:'Kategoria',tx_amount:'Kwota',
+    tx_date_hint:'Data, kiedy miała miejsce ta transakcja.',
+    tx_type_hint:'Jaki to rodzaj transakcji - której części Twojego budżetu dotyczy.',
+    tx_category_hint:'Do jakiej kategorii w ramach tego typu to należy.',
+    tx_amount_hint:'Ile wynosiła ta transakcja.',
+    tx_desc_hint:'Opcjonalna notatka, aby zapamiętać, czego dotyczyła, np. "Zakupy spożywcze".',
     tx_desc_label:'Opis',tx_desc_ph:'np. Zakupy spożywcze\u2026',
     tx_add_btn:'Dodaj',tx_error_required:'Proszę wypełnić wszystkie wymagane pola.',
     tx_transaction_one:'transakcja',tx_transaction_many:'transakcji',
@@ -2944,6 +3050,8 @@ const TRANSLATIONS = {
     bud_add_btn:'+ Dodaj',bud_add_cat_title:'Dodaj nową kategorię',
     bud_cat_name_label:'Nazwa kategorii',bud_cat_name_ph:'np. Freelance',
     bud_add_cat_btn:'Dodaj',bud_due_date_label:'Data płatności',
+    bud_cat_name_hint:'Krótka nazwa tej kategorii, np. "Czynsz" lub "Zakupy spożywcze".',
+    bud_due_date_hint:'Kiedy to jest płatne w każdym okresie. Pojawia się w inteligentnym kalendarzu.',
     help_bud_intro:'Zakładka Budżet to miejsce, w którym planujesz swoje finanse. Ustaw planowane kwoty dla każdej kategorii - rzeczywiste wartości są automatycznie uzupełniane z Twoich Transakcji.',
     help_bud_how_h:'Jak to działa',
     help_bud_step1:'Kliknij pole Planowane i wpisz kwotę budżetu',
@@ -3036,7 +3144,7 @@ const TRANSLATIONS = {
     recurring_freq:'Cz\u0119stotliwo\u015b\u0107',freq_daily:'Codziennie',freq_weekly:'Co tydzie\u0144',
     freq_monthly:'Co miesi\u0105c',freq_quarterly:'Co kwarta\u0142',freq_annual:'Co rok',
     recurring_next_due:'Nast\u0119pny termin',recurring_generated:'Zautomatyzowano {0} nowych transakcji',
-    recurring_remove:'Usu\u0144 regu\u0142\u0119',recurring_paused:'Wstrzymano',recurring_active:'Aktywna',recurring_saved:'Transakcja automatyczna zapisana ✓',dpc_add_debt_title:'Dodaj dług',dpc_edit_debt_title:'Edytuj dług',debt_due_day_modal_hint:'Dzień miesiąca, w którym przypada ta płatność',toast_debt_added:'Dług dodany',toast_debt_updated:'Dług zaktualizowany',sf_billing_day_label:'Dzień miesiąca płatności',sf_billing_day_hint:'Dzień miesiąca, w którym wpłata jest księgowana automatycznie',sf_error_required:'Wypełnij wszystkie wymagane pola',sub_active:'Aktywna',sub_paused:'Wstrzymana',sub_desc:'Śledź każdą powtarzającą się płatność i poznaj swój rzeczywisty roczny koszt. Wstrzymaj subskrypcje, z których nie korzystasz, aby kontrolować wydatki.',sub_add_btn:'+ Dodaj subskrypcję',sub_add_title:'Dodaj subskrypcję',sub_edit_title:'Edytuj subskrypcję',sub_empty_title:'Brak subskrypcji.',sub_empty_sub:'Dodaj swoje powtarzające się płatności - Netflix, Spotify, siłownia itp.',sub_sum_monthly:'Suma miesięczna',sub_sum_annual:'Suma roczna',sub_by_category:'Według kategorii',sub_per_month:'/miesiąc',sub_next_label:'Następna',sub_name_label:'Nazwa subskrypcji',sub_name_ph:'np. Netflix',sub_amount_label:'Kwota',sub_freq_label:'Częstotliwość rozliczeń',sub_freq_monthly:'Miesięcznie',sub_freq_annual:'Rocznie',sub_freq_quarterly:'Kwartalnie',sub_freq_weekly:'Tygodniowo',sub_unit_month:'miesiąc',sub_unit_year:'rok',sub_unit_quarter:'kwartał',sub_cat_label:'Kategoria',sub_date_label:'Data następnego rozliczenia',sub_cat_entertainment:'Rozrywka',sub_cat_productivity:'Produktywność',sub_cat_health:'Zdrowie i fitness',sub_cat_food:'Jedzenie i napoje',sub_cat_cloud:'Chmura',sub_cat_finance:'Finanse',sub_cat_education:'Edukacja',sub_cat_gaming:'Gry',sub_cat_news:'Wiadomości i media',sub_cat_other:'Inne',help_sub_intro:'Śledź każdą powtarzającą się płatność i poznaj swój rzeczywisty miesięczny i roczny koszt. Subskrypcje, które po cichu obciążają konto, łatwo przeoczyć - dzięki temu pozostają widoczne.',help_sub_how_h:'Dodawanie subskrypcji',help_sub_step1:'Kliknij + Dodaj subskrypcję',help_sub_step2:'Wpisz nazwę, kwotę i częstotliwość rozliczeń (miesięcznie, rocznie, kwartalnie, tygodniowo)',help_sub_step3:'Wybierz kategorię, aby grupować podobne subskrypcje',help_sub_step4:'Ustaw datę następnego rozliczenia - pojawi się w inteligentnym kalendarzu',help_sub_monthly_h:'Odpowiednik miesięczny',help_sub_monthly_p:'Subskrypcje roczne i kwartalne są przeliczane na koszt miesięczny, dzięki czemu od razu widzisz swój rzeczywisty miesięczny wydatek.',help_sub_pause_h:'Wstrzymywanie subskrypcji',help_sub_pause_p:'Wyłącz przełącznik Aktywna przy subskrypcji, z której obecnie nie korzystasz. Nie będzie liczona w sumach, dopóki nie włączysz go ponownie.',help_sub_chart_h:'Wykres według kategorii',help_sub_chart_p:'Wykres kołowy pokazuje, jak Twoje wydatki na subskrypcje rozkładają się na kategorie - najedź na segment, aby zobaczyć szczegóły.',help_sub_tip:'💡 Włącz „Automatyzuj” przy subskrypcji, aby była automatycznie dodawana do transakcji w każdym cyklu rozliczeniowym.',automate_auto_pay:'Auto-płatność',sf_auto_contribute:'Auto-wpłata',sf_auto_need_amount:'Najpierw dodaj kwotę docelową i datę',sf_auto_set:'Miesięczna wpłata: {0}',automate_label:'Automatyzuj',automate_hint:'Dodaje to automatycznie do transakcji według harmonogramu',automate_hint_off:'Włącz Automatyzację w Ustawieniach, aby użyć',automate_th:'Auto-płatność',automate_need_amount:'Najpierw ustaw minimalną płatność',automate_payment_word:'płatność',automate_linked:'Powiązana transakcja automatyczna',sf_contribution_label:'Miesięczna wpłata',sf_contribution_hint:'Księgowana automatycznie co miesiąc, aby zwiększać ten fundusz',sett_automation_h:'Automatyzacja',sett_automation_desc:'Główny przełącznik transakcji automatycznych. Gdy wyłączony, nie są generowane zaplanowane transakcje, a opcje automatyzacji są nieaktywne.',sett_automation_toggle:'Transakcje automatyczne',sett_automation_hint:'Dotyczy transakcji, subskrypcji, funduszy i długów',
+    recurring_remove:'Usu\u0144 regu\u0142\u0119',recurring_paused:'Wstrzymano',recurring_active:'Aktywna',recurring_saved:'Transakcja automatyczna zapisana ✓',dpc_add_debt_title:'Dodaj dług',dpc_edit_debt_title:'Edytuj dług',debt_due_day_modal_hint:'Dzień miesiąca, w którym przypada ta płatność',toast_debt_added:'Dług dodany',toast_debt_updated:'Dług zaktualizowany',sf_billing_day_label:'Dzień miesiąca płatności',sf_billing_day_hint:'Dzień miesiąca, w którym wpłata jest księgowana automatycznie',sf_error_required:'Wypełnij wszystkie wymagane pola',sub_active:'Aktywna',sub_paused:'Wstrzymana',sub_desc:'Śledź każdą powtarzającą się płatność i poznaj swój rzeczywisty roczny koszt. Wstrzymaj subskrypcje, z których nie korzystasz, aby kontrolować wydatki.',sub_add_btn:'+ Dodaj subskrypcję',sub_add_title:'Dodaj subskrypcję',sub_edit_title:'Edytuj subskrypcję',sub_empty_title:'Brak subskrypcji.',sub_empty_sub:'Dodaj swoje powtarzające się płatności - Netflix, Spotify, siłownia itp.',sub_sum_monthly:'Suma miesięczna',sub_sum_annual:'Suma roczna',sub_by_category:'Według kategorii',sub_per_month:'/miesiąc',sub_next_label:'Następna',sub_name_label:'Nazwa subskrypcji',sub_name_ph:'np. Netflix',sub_amount_label:'Kwota',sub_freq_label:'Częstotliwość rozliczeń',sub_freq_monthly:'Miesięcznie',sub_freq_annual:'Rocznie',sub_freq_quarterly:'Kwartalnie',sub_freq_weekly:'Tygodniowo',sub_unit_month:'miesiąc',sub_unit_year:'rok',sub_unit_quarter:'kwartał',sub_cat_label:'Kategoria',sub_date_label:'Data następnego rozliczenia',sub_name_hint:'Usługa lub dostawca, którego dotyczy ta płatność, np. "Netflix" lub "Karnet na siłownię".',sub_amount_hint:'Ile zostaniesz obciążony w każdym cyklu rozliczeniowym.',sub_freq_hint:'Jak często ta subskrypcja Cię obciąża.',sub_cat_hint:'Grupuje tę subskrypcję na wykresie kategorii.',sub_date_hint:'Najbliższa data, kiedy ta subskrypcja Cię obciąży. Pojawia się w inteligentnym kalendarzu.',alloc_label_hint:'Oznacz to jako Potrzebę, Zachciankę lub Oszczędność, aby liczyło się do Twoich kategorii podziału.',sub_cat_entertainment:'Rozrywka',sub_cat_productivity:'Produktywność',sub_cat_health:'Zdrowie i fitness',sub_cat_food:'Jedzenie i napoje',sub_cat_cloud:'Chmura',sub_cat_finance:'Finanse',sub_cat_education:'Edukacja',sub_cat_gaming:'Gry',sub_cat_news:'Wiadomości i media',sub_cat_other:'Inne',help_sub_intro:'Śledź każdą powtarzającą się płatność i poznaj swój rzeczywisty miesięczny i roczny koszt. Subskrypcje, które po cichu obciążają konto, łatwo przeoczyć - dzięki temu pozostają widoczne.',help_sub_how_h:'Dodawanie subskrypcji',help_sub_step1:'Kliknij + Dodaj subskrypcję',help_sub_step2:'Wpisz nazwę, kwotę i częstotliwość rozliczeń (miesięcznie, rocznie, kwartalnie, tygodniowo)',help_sub_step3:'Wybierz kategorię, aby grupować podobne subskrypcje',help_sub_step4:'Ustaw datę następnego rozliczenia - pojawi się w inteligentnym kalendarzu',help_sub_monthly_h:'Odpowiednik miesięczny',help_sub_monthly_p:'Subskrypcje roczne i kwartalne są przeliczane na koszt miesięczny, dzięki czemu od razu widzisz swój rzeczywisty miesięczny wydatek.',help_sub_pause_h:'Wstrzymywanie subskrypcji',help_sub_pause_p:'Wyłącz przełącznik Aktywna przy subskrypcji, z której obecnie nie korzystasz. Nie będzie liczona w sumach, dopóki nie włączysz go ponownie.',help_sub_chart_h:'Wykres według kategorii',help_sub_chart_p:'Wykres kołowy pokazuje, jak Twoje wydatki na subskrypcje rozkładają się na kategorie - najedź na segment, aby zobaczyć szczegóły.',help_sub_tip:'💡 Włącz „Automatyzuj” przy subskrypcji, aby była automatycznie dodawana do transakcji w każdym cyklu rozliczeniowym.',automate_auto_pay:'Auto-płatność',sf_auto_contribute:'Auto-wpłata',sf_auto_need_amount:'Najpierw dodaj kwotę docelową i datę',sf_auto_set:'Miesięczna wpłata: {0}',automate_label:'Automatyzuj',automate_hint:'Dodaje to automatycznie do transakcji według harmonogramu',automate_hint_off:'Włącz Automatyzację w Ustawieniach, aby użyć',automate_th:'Auto-płatność',automate_need_amount:'Najpierw ustaw minimalną płatność',automate_payment_word:'płatność',automate_linked:'Powiązana transakcja automatyczna',sf_contribution_label:'Miesięczna wpłata',sf_contribution_hint:'Księgowana automatycznie co miesiąc, aby zwiększać ten fundusz',sett_automation_h:'Automatyzacja',sett_automation_desc:'Główny przełącznik transakcji automatycznych. Gdy wyłączony, nie są generowane zaplanowane transakcje, a opcje automatyzacji są nieaktywne.',sett_automation_toggle:'Transakcje automatyczne',sett_automation_hint:'Dotyczy transakcji, subskrypcji, funduszy i długów',
     tx_type_sinking_fund:'Fundusz celowy',
     help_dash_alloc_h:'Panel podziału budżetu',
     help_dash_alloc_what_h:'Czym jest',
@@ -3497,6 +3605,7 @@ function renderBudget() {
     Object.entries(MOD_META).map(([type,meta])=>buildModuleHTML(type,meta,act)).join('');
   Object.entries(MOD_META).forEach(([type,meta])=>bindModuleEvents(type,meta,el,act));
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
+  initFieldTips(el);
 }
 
 function buildModuleHTML(type,meta,act) {
@@ -3530,8 +3639,8 @@ function buildModuleHTML(type,meta,act) {
       <div class="panel-inner-sm">
         <div class="add-cat-title">${t('bud_add_cat_title')}</div>
         <div class="add-cat-row">
-          <div class="field"><label class="field-label">${t('bud_cat_name_label')}</label><input class="input input-sm" type="text" id="newCatName-${type}" placeholder="${t('bud_cat_name_ph')}"></div>
-          ${meta.hasDates?`<div class="field"><label class="field-label">${t('bud_due_date_label')}</label><input class="input input-sm" type="date" id="newCatDate-${type}"></div>`:''}
+          <div class="field"><label class="field-label field-label--tip">${tipLabel(t('bud_cat_name_label'),'bud_cat_name_hint',false)}</label><input class="input input-sm" type="text" id="newCatName-${type}" placeholder="${t('bud_cat_name_ph')}"></div>
+          ${meta.hasDates?`<div class="field"><label class="field-label field-label--tip">${tipLabel(t('bud_due_date_label'),'bud_due_date_hint',false)}</label><input class="input input-sm" type="date" id="newCatDate-${type}"></div>`:''}
           <div class="add-cat-btns">
             <button class="btn btn-primary btn-sm" id="saveCatBtn-${type}" type="button">${t('bud_add_cat_btn')}</button>
             <button class="btn btn-ghost btn-sm" id="cancelCatBtn-${type}" type="button">${t('cancel')}</button>
@@ -3680,8 +3789,8 @@ function renderTransactions() {
     </details>
     <div class="panel tx-form-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('tx_add_title')}</div>
       <div class="tx-form-row">
-        <div class="field"><label class="field-label">${t('tx_date')}</label>${styledDateField('txDate','txDateWrap',today())}</div>
-        <div class="field"><label class="field-label">${t('tx_type')}</label><select class="select" id="txType">
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_date'),'tx_date_hint',false)}</label>${styledDateField('txDate','txDateWrap',today())}</div>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_type'),'tx_type_hint',false)}</label><select class="select" id="txType">
           <option value="expense" selected>${t('tx_type_expense')}</option>
           <option value="bill">${t('tx_type_bill')}</option>
           <option value="subscription">${t('tx_type_subscription')}</option>
@@ -3690,10 +3799,10 @@ function renderTransactions() {
           <option value="debt">${t('tx_type_debt')}</option>
           <option value="income">${t('tx_type_income')}</option>
         </select></div>
-        <div class="field"><label class="field-label">${t('tx_category')}</label><select class="select" id="txCategory"></select></div>
-        ${allocEnabled?`<div class="field" id="txAllocWrap"><label class="field-label">${t('alloc_label')} <span class="required-star" aria-hidden="true">*</span></label><select class="select" id="txAlloc"><option value="">${t('alloc_optional')}</option>${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}">${esc(getAllocBucketDisplayName(b))}</option>`).join('')}</select></div><div class="field" id="txSaveHint" style="display:none"><label class="field-label">${t('alloc_label')}</label><span class="alloc-auto-tag-badge">${(()=>{const sb=(state.allocation.buckets||[]).find(b=>b.id==='save');return`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${sb?.color||'#10b981'};margin-right:6px;flex-shrink:0"></span>${tf('alloc_auto_tag',sb?getAllocBucketDisplayName(sb):'Save')}`;})()}</span></div>`:''}
-        <div class="field"><label class="field-label">${t('tx_amount')} (${SYM})</label><input class="input" type="number" id="txAmount" min="0" step="0.01" placeholder="0.00"></div>
-        <div class="field field-grow"><label class="field-label">${t('tx_desc_label')}</label><input class="input" type="text" id="txDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_category'),'tx_category_hint',false)}</label><select class="select" id="txCategory"></select></div>
+        ${allocEnabled?`<div class="field" id="txAllocWrap"><label class="field-label field-label--tip">${tipLabel(t('alloc_label'),'alloc_label_hint',true)}</label><select class="select" id="txAlloc"><option value="">${t('alloc_optional')}</option>${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}">${esc(getAllocBucketDisplayName(b))}</option>`).join('')}</select></div><div class="field" id="txSaveHint" style="display:none"><label class="field-label">${t('alloc_label')}</label><span class="alloc-auto-tag-badge">${(()=>{const sb=(state.allocation.buckets||[]).find(b=>b.id==='save');return`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${sb?.color||'#10b981'};margin-right:6px;flex-shrink:0"></span>${tf('alloc_auto_tag',sb?getAllocBucketDisplayName(sb):'Save')}`;})()}</span></div>`:''}
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('tx_amount')} (${SYM})`,'tx_amount_hint',false)}</label><input class="input" type="number" id="txAmount" min="0" step="0.01" placeholder="0.00"></div>
+        <div class="field field-grow"><label class="field-label field-label--tip">${tipLabel(t('tx_desc_label'),'tx_desc_hint',false)}</label><input class="input" type="text" id="txDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
         <div class="field field-btn"><label class="field-label" style="visibility:hidden">.</label><button class="btn btn-primary" id="addTxBtn" type="button">${t('tx_add_btn')}</button></div>
       </div><div class="tx-error" id="txError" hidden></div>
     </div></div>
@@ -3740,6 +3849,7 @@ function renderTransactions() {
   document.getElementById('txEmptyAdd')?.addEventListener('click',()=>{const a=document.getElementById('txAmount');a?.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>a?.focus(),200);});
   document.getElementById('csvInput')?.addEventListener('change',handleCSV);
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
+  initFieldTips(el);
   document.getElementById('txSearch')?.addEventListener('input',e=>{txFilter.search=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txTypeFilter')?.addEventListener('change',e=>{txFilter.type=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txAllocFilter')?.addEventListener('change',e=>{txFilter.alloc=e.target.value;txPage=0;renderTxList();});
@@ -3969,6 +4079,11 @@ function handleCSV(e){const file=e.target.files[0];if(!file)return;const reader=
 const AMORTIZING_DEBT_TYPES=['mortgage','student_loan','car_loan','personal_loan'];
 function debtTypes(){return{credit_card:t('dtype_credit_card'),student_loan:t('dtype_student_loan'),mortgage:t('dtype_mortgage'),car_loan:t('dtype_car_loan'),personal_loan:t('dtype_personal_loan'),other:t('dtype_other')};}
 // ── Lightweight "?" field-info tooltips (same pattern as the hub's plan comparison table) ──
+// Builds the inner content of a <label class="field-label field-label--tip">: label text (truncates
+// with an ellipsis instead of wrapping), an optional required-star, then the "?" tiny helper on the right.
+function tipLabel(text,hintKey,required){
+  return `<span class="cc-label-text">${text}</span>${required?' <span class="required-star" aria-hidden="true">*</span>':''}<button class="cc-info" type="button" data-tip="${esc(t(hintKey))}" aria-label="${tf('field_info_aria',text)}">?</button>`;
+}
 function initFieldTips(container){
   const scope=container||document;
   let tipBtn=null,shownViaHover=false;
@@ -4019,57 +4134,57 @@ function openDebtModal(debtId){
   const DT=debtTypes(),existingLink=findLinkedTemplate('debt',debtId);
   document.getElementById('modalTitle').textContent=isNew?'💳 '+t('dpc_add_debt_title'):'✏️ '+t('dpc_edit_debt_title');
   document.getElementById('modalBody').innerHTML=`
-    <div class="field"><label class="field-label">${t('dpc_th_name')} <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="text" id="debtName" placeholder="${t('dpc_name_ph')}" value="${esc(d?.name||'')}"></div>
-    <div class="field"><label class="field-label">${t('dpc_th_type')}</label><select class="select" id="debtType">${Object.entries(DT).map(([v,l])=>`<option value="${v}" ${(d?.type||'credit_card')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+    <div class="field"><label class="field-label field-label--tip">${tipLabel(t('dpc_th_name'),'dpc_name_hint',true)}</label><input class="input" type="text" id="debtName" placeholder="${t('dpc_name_ph')}" value="${esc(d?.name||'')}"></div>
+    <div class="field"><label class="field-label field-label--tip">${tipLabel(t('dpc_th_type'),'dpc_type_hint',false)}</label><select class="select" id="debtType">${Object.entries(DT).map(([v,l])=>`<option value="${v}" ${(d?.type||'credit_card')===v?'selected':''}>${l}</option>`).join('')}</select></div>
     <div class="field-grid">
-      <div class="field"><label class="field-label">${t('dpc_th_balance')} (${SYM}) <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="debtBalance" min="0" step="0.01" placeholder="0.00" value="${d?.balance||''}"></div>
-      <div class="field"><label class="field-label">${t('dpc_apr_word')} (%)</label><input class="input" type="number" id="debtApr" min="0" max="100" step="0.01" placeholder="0.00" value="${d?.interestRate||''}"></div>
+      <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('dpc_th_balance')} (${SYM})`,'dpc_balance_hint',true)}</label><input class="input" type="number" id="debtBalance" min="0" step="0.01" placeholder="0.00" value="${d?.balance||''}"></div>
+      <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('dpc_apr_word')} (%)`,'dpc_apr_hint',false)}</label><input class="input" type="number" id="debtApr" min="0" max="100" step="0.01" placeholder="0.00" value="${d?.interestRate||''}"></div>
     </div>
     <div class="field" id="debtTermRow" style="display:none">
-      <label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('dpc_term_hint'))}" aria-label="About ${esc(t('dpc_term_label'))}">?</button><span class="cc-label-text">${t('dpc_term_label')}</span></label>
+      <label class="field-label field-label--tip">${tipLabel(t('dpc_term_label'),'dpc_term_hint',false)}</label>
       <input class="input" type="number" id="debtTermYears" min="0" step="1" placeholder="30" value="${d?.termMonths?Math.round(d.termMonths/12):''}">
     </div>
     <div class="field" id="debtAmortTypeRow" style="display:none">
-      <label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('dpc_amort_type_hint'))}" aria-label="About ${esc(t('dpc_amort_type_label'))}">?</button><span class="cc-label-text">${t('dpc_amort_type_label')}</span></label>
+      <label class="field-label field-label--tip">${tipLabel(t('dpc_amort_type_label'),'dpc_amort_type_hint',false)}</label>
       <select class="select" id="debtAmortType">
         <option value="equal_payment" ${(d?.amortType||'equal_payment')==='equal_payment'?'selected':''}>${t('dpc_amort_equal_payment')}</option>
         <option value="equal_principal" ${d?.amortType==='equal_principal'?'selected':''}>${t('dpc_amort_equal_principal')}</option>
       </select>
     </div>
     <div class="field" id="debtRateTypeRow" style="display:none">
-      <label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('dpc_rate_type_hint'))}" aria-label="About ${esc(t('dpc_rate_type_label'))}">?</button><span class="cc-label-text">${t('dpc_rate_type_label')}</span></label>
+      <label class="field-label field-label--tip">${tipLabel(t('dpc_rate_type_label'),'dpc_rate_type_hint',false)}</label>
       <select class="select" id="debtRateType">
         <option value="fixed" ${(d?.rateType||'fixed')==='fixed'?'selected':''}>${t('dpc_rate_type_fixed')}</option>
         <option value="arm" ${d?.rateType==='arm'?'selected':''}>${t('dpc_rate_type_arm')}</option>
       </select>
       <div class="field-grid" id="debtArmFieldsRow" style="display:none;margin-top:10px">
-        <div class="field"><label class="field-label">${t('dpc_arm_fixed_years_label')}</label><input class="input" type="number" id="debtArmFixedYears" min="0" step="1" placeholder="5" value="${d?.armFixedMonths?Math.round(d.armFixedMonths/12):''}"></div>
-        <div class="field"><label class="field-label">${t('dpc_arm_rate_label')} (%)</label><input class="input" type="number" id="debtArmRate" min="0" max="100" step="0.01" placeholder="0.00" value="${d?.armAdjustedRate??''}"></div>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('dpc_arm_fixed_years_label'),'dpc_arm_fixed_years_hint',false)}</label><input class="input" type="number" id="debtArmFixedYears" min="0" step="1" placeholder="5" value="${d?.armFixedMonths?Math.round(d.armFixedMonths/12):''}"></div>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('dpc_arm_rate_label')} (%)`,'dpc_arm_rate_hint',false)}</label><input class="input" type="number" id="debtArmRate" min="0" max="100" step="0.01" placeholder="0.00" value="${d?.armAdjustedRate??''}"></div>
       </div>
     </div>
     <div class="field" id="debtEscrowRow" style="display:none">
-      <label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('dpc_escrow_hint'))}" aria-label="About ${esc(t('dpc_escrow_label'))}">?</button><span class="cc-label-text">${t('dpc_escrow_label')} (${SYM})</span></label>
+      <label class="field-label field-label--tip">${tipLabel(`${t('dpc_escrow_label')} (${SYM})`,'dpc_escrow_hint',false)}</label>
       <input class="input" type="number" id="debtEscrow" min="0" step="0.01" placeholder="0.00" value="${d?.escrowMonthly||''}">
-      <label class="field-label" style="margin-top:8px;display:flex"><button class="cc-info" type="button" data-tip="${esc(t('dpc_escrow_mode_hint'))}" aria-label="About ${esc(t('dpc_escrow_mode_label'))}">?</button><span class="cc-label-text">${t('dpc_escrow_mode_label')}</span></label>
+      <label class="field-label field-label--tip" style="margin-top:8px">${tipLabel(t('dpc_escrow_mode_label'),'dpc_escrow_mode_hint',false)}</label>
       <select class="select" id="debtEscrowMode">
         <option value="fixed" ${(d?.escrowMode||'fixed')==='fixed'?'selected':''}>${t('dpc_escrow_mode_fixed')}</option>
         <option value="declining" ${d?.escrowMode==='declining'?'selected':''}>${t('dpc_escrow_mode_declining')}</option>
       </select>
     </div>
     <div class="field-grid">
-      <div class="field"><label class="field-label">${t('dpc_th_min')} (${SYM}) <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="debtMin" min="0" step="0.01" placeholder="0.00" value="${d?.minimumPayment||''}">
+      <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('dpc_th_min')} (${SYM})`,'dpc_min_hint',true)}</label><input class="input" type="number" id="debtMin" min="0" step="0.01" placeholder="0.00" value="${d?.minimumPayment||''}">
         <div id="debtAutoCalcRow" style="display:none;margin-top:6px"><div class="field-hint" id="debtAutoCalcResult"></div><button type="button" class="link-btn" id="debtRecalcBtn" style="display:none">${t('dpc_recalc_link')}</button></div>
       </div>
-      <div class="field"><label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('debt_due_day_modal_hint'))}" aria-label="About ${esc(t('dpc_th_due'))}">?</button><span class="cc-label-text">${t('dpc_th_due')}</span> <span class="required-star" id="debtDueStar" aria-hidden="true" style="display:${existingLink?'inline':'none'}">*</span></label><input class="input" type="number" id="debtDueDay" min="1" max="31" placeholder="1-31" value="${d?.dueDay||''}"></div>
+      <div class="field"><label class="field-label field-label--tip"><span class="cc-label-text">${t('dpc_th_due')}</span><span class="required-star" id="debtDueStar" aria-hidden="true" style="display:${existingLink?'inline':'none'}">*</span><button class="cc-info" type="button" data-tip="${esc(t('debt_due_day_modal_hint'))}" aria-label="${esc(tf('field_info_aria',t('dpc_th_due')))}">?</button></label><input class="input" type="number" id="debtDueDay" min="1" max="31" placeholder="1-31" value="${d?.dueDay||''}"></div>
     </div>
     <div id="debtMinModeRow" style="display:none">
-      <div class="field"><label class="field-label">${t('dpc_min_mode_label')}</label><select class="select" id="debtMinMode">
+      <div class="field"><label class="field-label field-label--tip">${tipLabel(t('dpc_min_mode_label'),'dpc_min_mode_hint',false)}</label><select class="select" id="debtMinMode">
         <option value="fixed" ${(d?.minPayMode||'fixed')==='fixed'?'selected':''}>${t('dpc_min_mode_fixed')}</option>
         <option value="percent" ${d?.minPayMode==='percent'?'selected':''}>${t('dpc_min_mode_percent')}</option>
       </select></div>
       <div class="field-grid" id="debtPercentRow" style="display:none">
-        <div class="field"><label class="field-label">${t('dpc_min_percent_label')}</label><input class="input" type="number" id="debtMinPercent" min="0" step="0.1" placeholder="2" value="${d?.minPayPercent||''}"></div>
-        <div class="field"><label class="field-label">${t('dpc_min_floor_label')} (${SYM})</label><input class="input" type="number" id="debtMinFloor" min="0" step="1" placeholder="25" value="${d?.minPayFloor||''}"></div>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('dpc_min_percent_label'),'dpc_min_percent_hint',false)}</label><input class="input" type="number" id="debtMinPercent" min="0" step="0.1" placeholder="2" value="${d?.minPayPercent||''}"></div>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('dpc_min_floor_label')} (${SYM})`,'dpc_min_floor_hint',false)}</label><input class="input" type="number" id="debtMinFloor" min="0" step="1" placeholder="25" value="${d?.minPayFloor||''}"></div>
       </div>
       <div class="field-hint" id="debtMinCalcHint" style="display:none">${t('dpc_min_calculated_hint')}</div>
     </div>
@@ -4236,7 +4351,7 @@ function renderDebt(){
       </table></div></div>`}
     ${state.debts.length>0&&result?`<div class="debt-results">
       <div class="debt-results-cards">
-        <div class="dr-card dr-card--green"><div class="dr-label">${t('dpc_debt_free_label')}</div><div class="dr-value">${formatDateDisplay(result.debtFreeDate)}</div><div class="dr-sub">${result.months} ${t('dpc_months_from_now')}</div></div>
+        <div class="dr-card dr-card--green"><div class="dr-label">${t('dpc_debt_free_label')}</div><div class="dr-value">${formatDateDisplay(result.debtFreeDate)}</div><div class="dr-sub">${tf('dpc_months_from_now',result.months)}</div></div>
         <div class="dr-card dr-card--red"><div class="dr-label">${t('dpc_interest_label')}</div><div class="dr-value">${fmt(result.totalInterest)}</div><div class="dr-sub">${t('dpc_on_top')} ${fmt(totDebt)} ${t('dpc_principal')}</div></div>
         <div class="dr-card dr-card--blue"><div class="dr-label">${t('dpc_monthly_label')}</div><div class="dr-value">${fmt(totMin+(extraPayment||0)+totExtra+totEscrow)}</div><div class="dr-sub">${fmt(totMin)} ${t('dpc_min_abbr')} + ${fmt(extraPayment||0)} ${t('dpc_extra_abbr')}${totExtra>0?` + ${tf('dpc_targeted_extra_note',fmt(totExtra))}`:''}${totEscrow>0?` + ${tf('dpc_escrow_note',fmt(totEscrow))}`:''}</div></div>
       </div>
@@ -4284,7 +4399,6 @@ function renderSinking(){
       :`<div class="sf-grid">${state.sinkingFunds.map(f=>{
         const{monthsLeft,requiredMonthly,pctComplete}=calcFund(f),p=Math.round(pctComplete);
         const barColor=p>=100?'#10b981':p>=60?'#6366f1':'#fb923c';
-        const moLabel=monthsLeft===1?t('sf_month_left_one'):t('sf_month_left_many');
         return`<div class="sf-card panel"><div class="sf-card-inner">
           <div class="sf-card-top"><span class="sf-icon">${f.icon||'🏺'}</span><div class="sf-card-actions">
             <button class="sf-add-btn btn-icon-tiny" data-fund="${f.id}" title="${t('sf_add_btn')}" type="button">+</button>
@@ -4297,7 +4411,7 @@ function renderSinking(){
           <div class="sf-pct">${p}% ${t('sf_pct_complete')}</div>
           ${(()=>{if(!f.targetDate)return'';if(p>=100)return`<div class="sf-date sf-complete">${t('sf_target_complete')}</div>`;const td=new Date(f.targetDate+'T00:00:00'),now=new Date();now.setHours(0,0,0,0);const dl=Math.ceil((td-now)/86400000);const cls=dl<0?'sf-date sf-overdue':dl===0?'sf-date sf-today':'sf-date';return`<div class="${cls}">\uD83C\uDFAF ${formatDateDisplay(f.targetDate)}</div>`;})()} 
           <div class="sf-monthly">${t('sf_save_prefix')} ${fmt(requiredMonthly)}${t('sf_per_month')}</div>
-          <div class="sf-months-left">${monthsLeft} ${moLabel}</div>
+          <div class="sf-months-left">${tf('sf_mo_left_tpl',monthsLeft)}</div>
           <div class="sf-auto-row${automationOn()?'':' is-off'}" title="${automationOn()?t('automate_hint'):t('automate_hint_off')}"><span class="sf-auto-label">${t('automate_label')}</span><label class="recurring-toggle"><input type="checkbox" class="sf-auto-cb" data-fund-auto="${f.id}" ${findLinkedTemplate('sinking_fund',f.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></div>
         </div></div>`;
       }).join('')}</div>
@@ -4346,15 +4460,16 @@ function openFundModal(fundId){
   const existingLink=findLinkedTemplate('sinking_fund',fundId);
   const billDay=f?.billingDay||(existingLink?.nextDue?parseInt(existingLink.nextDue.slice(8,10),10):'');
   document.getElementById('modalTitle').textContent=isNew?t('sf_modal_new'):t('sf_modal_edit');
-  document.getElementById('modalBody').innerHTML=`<div class="field"><label class="field-label">${t('sf_fund_name_label')} <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="text" id="fundName" placeholder="${t('sf_fund_name_ph')}" value="${esc(f?.name||'')}"></div>
-    <div class="field"><label class="field-label">${t('sf_icon_label')}</label><div class="icon-picker">${FUND_ICONS.map(ic=>`<button class="icon-pick-btn${(f?.icon||FUND_ICONS[0])===ic?' is-active':''}" data-icon="${ic}" type="button">${ic}</button>`).join('')}</div></div>
-    <div class="field-grid"><div class="field"><label class="field-label">${t('sf_target_amount_label')} (${SYM}) <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="fundTarget" min="0" step="10" placeholder="0.00" value="${f?.targetAmount||''}"></div><div class="field"><label class="field-label">${t('sf_currently_saved_label')} (${SYM})</label><input class="input" type="number" id="fundSaved" min="0" step="10" placeholder="0.00" value="${f?.currentSaved||''}"></div></div>
-    <div class="field"><label class="field-label">${t('sf_target_date_label')} <span class="required-star" aria-hidden="true">*</span></label>${styledDateField('fundDate','fundDateWrap',f?.targetDate||'')}</div>
+  document.getElementById('modalBody').innerHTML=`<div class="field"><label class="field-label field-label--tip">${tipLabel(t('sf_fund_name_label'),'sf_fund_name_hint',true)}</label><input class="input" type="text" id="fundName" placeholder="${t('sf_fund_name_ph')}" value="${esc(f?.name||'')}"></div>
+    <div class="field"><label class="field-label field-label--tip">${tipLabel(t('sf_icon_label'),'sf_icon_hint',false)}</label><div class="icon-picker">${FUND_ICONS.map(ic=>`<button class="icon-pick-btn${(f?.icon||FUND_ICONS[0])===ic?' is-active':''}" data-icon="${ic}" type="button">${ic}</button>`).join('')}</div></div>
+    <div class="field-grid"><div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('sf_target_amount_label')} (${SYM})`,'sf_target_amount_hint',true)}</label><input class="input" type="number" id="fundTarget" min="0" step="10" placeholder="0.00" value="${f?.targetAmount||''}"></div><div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('sf_currently_saved_label')} (${SYM})`,'sf_currently_saved_hint',false)}</label><input class="input" type="number" id="fundSaved" min="0" step="10" placeholder="0.00" value="${f?.currentSaved||''}"></div></div>
+    <div class="field"><label class="field-label field-label--tip">${tipLabel(t('sf_target_date_label'),'sf_target_date_hint',true)}</label>${styledDateField('fundDate','fundDateWrap',f?.targetDate||'')}</div>
     ${automateRow(!!existingLink)}
-    <div class="field" id="fundBillingWrap" style="display:${existingLink&&automationOn()?'block':'none'}"><label class="field-label">${t('sf_billing_day_label')} <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="fundBillingDay" min="1" max="31" placeholder="1-31" value="${billDay||''}"><div class="field-hint">${t('sf_billing_day_hint')}</div></div>
+    <div class="field" id="fundBillingWrap" style="display:${existingLink&&automationOn()?'block':'none'}"><label class="field-label field-label--tip">${tipLabel(t('sf_billing_day_label'),'sf_billing_day_hint',true)}</label><input class="input" type="number" id="fundBillingDay" min="1" max="31" placeholder="1-31" value="${billDay||''}"></div>
     <div class="tx-error" id="fundError" hidden></div>
     <div class="edit-tx-actions"><button class="btn btn-primary" id="saveFundBtn">${isNew?t('sf_create_btn'):t('save')}</button><button class="btn btn-ghost btn-sm" id="cancelFundBtn">${t('cancel')}</button>${!isNew?`<button class="btn btn-danger btn-sm" id="deleteFundBtn">${t('delete')}</button>`:''}</div>`;
   document.getElementById('tutorialOverlay').hidden=false;
+  initFieldTips(document.getElementById('modalBody'));
   bindDateField('fundDate','fundDateWrap');
   document.querySelectorAll('.icon-pick-btn').forEach(b=>{b.addEventListener('click',()=>{selIcon=b.dataset.icon;document.querySelectorAll('.icon-pick-btn').forEach(x=>x.classList.toggle('is-active',x.dataset.icon===selIcon));});});
   const clearFundErr=()=>{document.getElementById('fundError')&&(document.getElementById('fundError').hidden=true);};
@@ -4625,15 +4740,16 @@ function openSubModal(subId){
   if(isNew&&trialBlocks('subscriptions')){ showUpgradeModal({reason:'subscriptions'}); return; }
   const allocEnabled=state.allocation?.enabled;
   document.getElementById('modalTitle').textContent=isNew?'🔄 '+t('sub_add_title'):'✏️ '+t('sub_edit_title');
-  document.getElementById('modalBody').innerHTML=`<div class="field"><label class="field-label">${t('sub_name_label')} <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="text" id="subName" placeholder="${t('sub_name_ph')}" value="${esc(sub?.name||'')}"></div>
-    <div class="field-grid"><div class="field"><label class="field-label">${t('sub_amount_label')} (${SYM}) <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="subAmount" min="0" step="0.01" placeholder="0.00" value="${sub?.amount||''}"></div><div class="field"><label class="field-label">${t('sub_freq_label')}</label><select class="select" id="subFreq"><option value="monthly" ${sub?.frequency==='monthly'?'selected':''}>${t('sub_freq_monthly')}</option><option value="annual" ${sub?.frequency==='annual'?'selected':''}>${t('sub_freq_annual')}</option><option value="quarterly" ${sub?.frequency==='quarterly'?'selected':''}>${t('sub_freq_quarterly')}</option><option value="weekly" ${sub?.frequency==='weekly'?'selected':''}>${t('sub_freq_weekly')}</option></select></div></div>
-    <div class="field"><label class="field-label">${t('sub_cat_label')}</label><select class="select" id="subCat">${SUB_CATS.map(c=>`<option value="${c}" ${sub?.category===c?'selected':''}>${esc(subCatLabel(c))}</option>`).join('')}</select></div>
-    ${allocEnabled?`<div class="field"><label class="field-label">${t('alloc_label')} <span class="required-star" aria-hidden="true">*</span></label><select class="select" id="subAlloc"><option value="">${t('alloc_optional')}</option>${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}"${sub?.allocation===b.id?' selected':''}>${esc(getAllocBucketDisplayName(b))}</option>`).join('')}</select></div>`:''}
-    <div class="field"><label class="field-label">${t('sub_date_label')} <span class="required-star" aria-hidden="true">*</span></label>${styledDateField('subDate','subDateWrap',sub?.nextBillingDate||'')}</div>
+  document.getElementById('modalBody').innerHTML=`<div class="field"><label class="field-label field-label--tip">${tipLabel(t('sub_name_label'),'sub_name_hint',true)}</label><input class="input" type="text" id="subName" placeholder="${t('sub_name_ph')}" value="${esc(sub?.name||'')}"></div>
+    <div class="field-grid"><div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('sub_amount_label')} (${SYM})`,'sub_amount_hint',true)}</label><input class="input" type="number" id="subAmount" min="0" step="0.01" placeholder="0.00" value="${sub?.amount||''}"></div><div class="field"><label class="field-label field-label--tip">${tipLabel(t('sub_freq_label'),'sub_freq_hint',false)}</label><select class="select" id="subFreq"><option value="monthly" ${sub?.frequency==='monthly'?'selected':''}>${t('sub_freq_monthly')}</option><option value="annual" ${sub?.frequency==='annual'?'selected':''}>${t('sub_freq_annual')}</option><option value="quarterly" ${sub?.frequency==='quarterly'?'selected':''}>${t('sub_freq_quarterly')}</option><option value="weekly" ${sub?.frequency==='weekly'?'selected':''}>${t('sub_freq_weekly')}</option></select></div></div>
+    <div class="field"><label class="field-label field-label--tip">${tipLabel(t('sub_cat_label'),'sub_cat_hint',false)}</label><select class="select" id="subCat">${SUB_CATS.map(c=>`<option value="${c}" ${sub?.category===c?'selected':''}>${esc(subCatLabel(c))}</option>`).join('')}</select></div>
+    ${allocEnabled?`<div class="field"><label class="field-label field-label--tip">${tipLabel(t('alloc_label'),'alloc_label_hint',true)}</label><select class="select" id="subAlloc"><option value="">${t('alloc_optional')}</option>${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}"${sub?.allocation===b.id?' selected':''}>${esc(getAllocBucketDisplayName(b))}</option>`).join('')}</select></div>`:''}
+    <div class="field"><label class="field-label field-label--tip">${tipLabel(t('sub_date_label'),'sub_date_hint',true)}</label>${styledDateField('subDate','subDateWrap',sub?.nextBillingDate||'')}</div>
     ${automateRow(!!findLinkedTemplate('subscription',subId))}
     <div class="tx-error" id="subError" hidden></div>
     <div class="edit-tx-actions"><button class="btn btn-primary" id="saveSubBtn">${isNew?t('sub_add_title'):t('save')}</button><button class="btn btn-ghost btn-sm" id="cancelSubBtn">${t('cancel')}</button>${!isNew?`<button class="btn btn-danger btn-sm" id="deleteSubBtn">${t('delete')}</button>`:''}</div>`;
   document.getElementById('tutorialOverlay').hidden=false;
+  initFieldTips(document.getElementById('modalBody'));
   bindDateField('subDate','subDateWrap');
   const clearSubErr=()=>{const e=document.getElementById('subError');if(e)e.hidden=true;};
   ['subName','subAmount'].forEach(id=>document.getElementById(id)?.addEventListener('input',()=>{document.getElementById(id)?.classList.remove('fk-invalid');clearSubErr();}));

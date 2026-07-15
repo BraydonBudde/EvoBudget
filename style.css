@@ -271,6 +271,12 @@ p { margin: 0; }
   display: block; font-size: 10px; font-weight: 700; letter-spacing: .08em;
   text-transform: uppercase; color: var(--text-faint); margin-bottom: 7px;
 }
+/* "Tiny helper" field-info pattern: a small "?" always to the right of the label,
+   truncating the label text with an ellipsis instead of wrapping to a 2nd line. */
+.field-label--tip { display: flex; align-items: center; gap: 5px; }
+.field-label--tip .cc-label-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.field-label--tip .required-star { flex-shrink: 0; }
+.field-label--tip .cc-info { margin: 0 0 0 1px; flex-shrink: 0; }
 .select, .input {
   width: 100%; font-family: inherit; font-size: 14px; font-weight: 500;
   color: var(--text-primary); background: var(--surface-strong);
@@ -3060,20 +3066,8 @@ body.penny-drawer-open { overflow: hidden; }
   .debt-sched-table .sched-col-secondary { display: none; }
 }
 
-/* ── Debt list table: even column distribution, no forced horizontal scroll ── */
-.debt-table { table-layout: fixed; }
-.debt-table th:nth-child(1), .debt-table td:nth-child(1) { width: 19%; }
-.debt-table th:nth-child(2), .debt-table td:nth-child(2) { width: 13%; }
-.debt-table th:nth-child(3), .debt-table td:nth-child(3) { width: 13%; }
-.debt-table th:nth-child(4), .debt-table td:nth-child(4) { width: 13%; }
-.debt-table th:nth-child(5), .debt-table td:nth-child(5) { width: 14%; }
-.debt-table th:nth-child(6), .debt-table td:nth-child(6) { width: 12%; }
-.debt-table th:nth-child(7), .debt-table td:nth-child(7) { width: 9%; }
-.debt-table th:nth-child(8), .debt-table td:nth-child(8) { width: 16%; }
-.debt-table .expected-input { width: 100%; }
-.debt-table th, .debt-table td { overflow-wrap: break-word; white-space: normal; }
+/* ── Debt list table: content-sized columns, headers never wrap ── */
+.debt-table th { white-space: nowrap; }
+.debt-table td { overflow-wrap: break-word; }
+.debt-table .expected-input { width: 90px; }
 .total-row td { overflow-wrap: break-word; }
-@media (max-width: 700px) {
-  .debt-table { table-layout: auto; }
-  .debt-table th, .debt-table td { width: auto; }
-}
