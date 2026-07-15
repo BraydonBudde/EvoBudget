@@ -3048,12 +3048,16 @@ body.penny-drawer-open { overflow: hidden; }
 .debt-sched-table .col-principal { color: #10b981; font-weight: 600; }
 .debt-sched-table .col-interest { color: #f43f5e; }
 .debt-sched-table .col-balance { font-weight: 700; color: var(--text-primary); }
+/* Skip layout/paint work for off-screen rows - the standard fix for long-list/table scroll jank */
+.debt-sched-table tbody tr { content-visibility: auto; contain-intrinsic-size: auto 39px; }
 
-@media (max-width: 700px) {
+@media (max-width: 640px) {
   .debt-sched-overlay { padding: 0; }
   .debt-sched-modal { max-width: 100%; height: 100%; border-radius: 0; }
   .debt-sched-head { padding: 24px 20px 14px; }
   .debt-sched-body { padding: 16px 20px 30px; }
+  /* Only the most relevant columns on small screens: date, payment, balance */
+  .debt-sched-table .sched-col-secondary { display: none; }
 }
 
 /* ── Debt list table: even column distribution, no forced horizontal scroll ── */
@@ -3067,6 +3071,8 @@ body.penny-drawer-open { overflow: hidden; }
 .debt-table th:nth-child(7), .debt-table td:nth-child(7) { width: 9%; }
 .debt-table th:nth-child(8), .debt-table td:nth-child(8) { width: 16%; }
 .debt-table .expected-input { width: 100%; }
+.debt-table th, .debt-table td { overflow-wrap: break-word; white-space: normal; }
+.total-row td { overflow-wrap: break-word; }
 @media (max-width: 700px) {
   .debt-table { table-layout: auto; }
   .debt-table th, .debt-table td { width: auto; }

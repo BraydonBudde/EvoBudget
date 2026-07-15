@@ -3968,6 +3968,51 @@ function handleCSV(e){const file=e.target.files[0];if(!file)return;const reader=
 // ── DEBT PAYOFF ────────────────────────────────────────────────────────
 const AMORTIZING_DEBT_TYPES=['mortgage','student_loan','car_loan','personal_loan'];
 function debtTypes(){return{credit_card:t('dtype_credit_card'),student_loan:t('dtype_student_loan'),mortgage:t('dtype_mortgage'),car_loan:t('dtype_car_loan'),personal_loan:t('dtype_personal_loan'),other:t('dtype_other')};}
+// ── Lightweight "?" field-info tooltips (same pattern as the hub's plan comparison table) ──
+function initFieldTips(container){
+  const scope=container||document;
+  let tipBtn=null,shownViaHover=false;
+  const hideAll=()=>{document.querySelectorAll('.cc-tip-pop').forEach(el=>el.remove());tipBtn=null;shownViaHover=false;};
+  const show=(btn,viaHover)=>{
+    hideAll();
+    const name=btn.parentElement.querySelector('.cc-label-text')?.textContent||'';
+    const tipEl=document.createElement('div');
+    tipEl.className='cc-tip-pop';
+    tipEl.innerHTML=`<div class="cc-tip-head"><span class="cc-tip-dot"></span>${esc(name)}</div><div class="cc-tip-body">${esc(btn.dataset.tip)}</div><span class="cc-tip-arrow"></span>`;
+    document.body.appendChild(tipEl);
+    tipBtn=btn;shownViaHover=!!viaHover;
+    const r=btn.getBoundingClientRect();
+    const tw=tipEl.offsetWidth,th=tipEl.offsetHeight;
+    const iconCenter=r.left+r.width/2+window.scrollX;
+    let left=iconCenter-tw/2;
+    const minL=window.scrollX+10,maxL=window.scrollX+window.innerWidth-tw-10;
+    left=Math.max(minL,Math.min(left,maxL));
+    let top=r.top+window.scrollY-th-11;
+    if(r.top-th-11<0){top=r.bottom+window.scrollY+11;tipEl.classList.add('cc-tip-below');}
+    else{tipEl.classList.add('cc-tip-above');}
+    tipEl.style.left=left+'px';tipEl.style.top=top+'px';
+    const arrow=tipEl.querySelector('.cc-tip-arrow');
+    let ax=iconCenter-left-6;
+    ax=Math.max(14,Math.min(ax,tw-26));
+    arrow.style.left=ax+'px';
+    requestAnimationFrame(()=>tipEl.classList.add('is-in'));
+  };
+  scope.querySelectorAll('.cc-info[data-tip]').forEach(btn=>{
+    btn.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')show(btn,true);});
+    btn.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'&&shownViaHover)hideAll();});
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(tipBtn===btn&&document.querySelector('.cc-tip-pop')){
+        if(shownViaHover){shownViaHover=false;return;}
+        hideAll();return;
+      }
+      show(btn,false);
+    });
+    btn.addEventListener('blur',hideAll);
+  });
+}
+document.addEventListener('click',()=>document.querySelectorAll('.cc-tip-pop').forEach(el=>el.remove()));
+window.addEventListener('scroll',()=>document.querySelectorAll('.cc-tip-pop').forEach(el=>el.remove()),true);
 function openDebtModal(debtId){
   const d=debtId?state.debts.find(x=>x.id===debtId):null,isNew=!d;
   if(isNew&&trialBlocks('debts')){ showUpgradeModal({reason:'debts'}); return; }
@@ -3981,46 +4026,41 @@ function openDebtModal(debtId){
       <div class="field"><label class="field-label">${t('dpc_apr_word')} (%)</label><input class="input" type="number" id="debtApr" min="0" max="100" step="0.01" placeholder="0.00" value="${d?.interestRate||''}"></div>
     </div>
     <div class="field" id="debtTermRow" style="display:none">
-      <label class="field-label">${t('dpc_term_label')}</label>
+      <label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('dpc_term_hint'))}" aria-label="About ${esc(t('dpc_term_label'))}">?</button><span class="cc-label-text">${t('dpc_term_label')}</span></label>
       <input class="input" type="number" id="debtTermYears" min="0" step="1" placeholder="30" value="${d?.termMonths?Math.round(d.termMonths/12):''}">
-      <div class="field-hint">${t('dpc_term_hint')}</div>
     </div>
     <div class="field" id="debtAmortTypeRow" style="display:none">
-      <label class="field-label">${t('dpc_amort_type_label')}</label>
+      <label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('dpc_amort_type_hint'))}" aria-label="About ${esc(t('dpc_amort_type_label'))}">?</button><span class="cc-label-text">${t('dpc_amort_type_label')}</span></label>
       <select class="select" id="debtAmortType">
         <option value="equal_payment" ${(d?.amortType||'equal_payment')==='equal_payment'?'selected':''}>${t('dpc_amort_equal_payment')}</option>
         <option value="equal_principal" ${d?.amortType==='equal_principal'?'selected':''}>${t('dpc_amort_equal_principal')}</option>
       </select>
-      <div class="field-hint">${t('dpc_amort_type_hint')}</div>
     </div>
     <div class="field" id="debtRateTypeRow" style="display:none">
-      <label class="field-label">${t('dpc_rate_type_label')}</label>
+      <label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('dpc_rate_type_hint'))}" aria-label="About ${esc(t('dpc_rate_type_label'))}">?</button><span class="cc-label-text">${t('dpc_rate_type_label')}</span></label>
       <select class="select" id="debtRateType">
         <option value="fixed" ${(d?.rateType||'fixed')==='fixed'?'selected':''}>${t('dpc_rate_type_fixed')}</option>
         <option value="arm" ${d?.rateType==='arm'?'selected':''}>${t('dpc_rate_type_arm')}</option>
       </select>
-      <div class="field-hint">${t('dpc_rate_type_hint')}</div>
       <div class="field-grid" id="debtArmFieldsRow" style="display:none;margin-top:10px">
         <div class="field"><label class="field-label">${t('dpc_arm_fixed_years_label')}</label><input class="input" type="number" id="debtArmFixedYears" min="0" step="1" placeholder="5" value="${d?.armFixedMonths?Math.round(d.armFixedMonths/12):''}"></div>
         <div class="field"><label class="field-label">${t('dpc_arm_rate_label')} (%)</label><input class="input" type="number" id="debtArmRate" min="0" max="100" step="0.01" placeholder="0.00" value="${d?.armAdjustedRate??''}"></div>
       </div>
     </div>
     <div class="field" id="debtEscrowRow" style="display:none">
-      <label class="field-label">${t('dpc_escrow_label')} (${SYM})</label>
+      <label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('dpc_escrow_hint'))}" aria-label="About ${esc(t('dpc_escrow_label'))}">?</button><span class="cc-label-text">${t('dpc_escrow_label')} (${SYM})</span></label>
       <input class="input" type="number" id="debtEscrow" min="0" step="0.01" placeholder="0.00" value="${d?.escrowMonthly||''}">
-      <div class="field-hint">${t('dpc_escrow_hint')}</div>
-      <label class="field-label" style="margin-top:8px;display:block">${t('dpc_escrow_mode_label')}</label>
+      <label class="field-label" style="margin-top:8px;display:flex"><button class="cc-info" type="button" data-tip="${esc(t('dpc_escrow_mode_hint'))}" aria-label="About ${esc(t('dpc_escrow_mode_label'))}">?</button><span class="cc-label-text">${t('dpc_escrow_mode_label')}</span></label>
       <select class="select" id="debtEscrowMode">
         <option value="fixed" ${(d?.escrowMode||'fixed')==='fixed'?'selected':''}>${t('dpc_escrow_mode_fixed')}</option>
         <option value="declining" ${d?.escrowMode==='declining'?'selected':''}>${t('dpc_escrow_mode_declining')}</option>
       </select>
-      <div class="field-hint">${t('dpc_escrow_mode_hint')}</div>
     </div>
     <div class="field-grid">
       <div class="field"><label class="field-label">${t('dpc_th_min')} (${SYM}) <span class="required-star" aria-hidden="true">*</span></label><input class="input" type="number" id="debtMin" min="0" step="0.01" placeholder="0.00" value="${d?.minimumPayment||''}">
         <div id="debtAutoCalcRow" style="display:none;margin-top:6px"><div class="field-hint" id="debtAutoCalcResult"></div><button type="button" class="link-btn" id="debtRecalcBtn" style="display:none">${t('dpc_recalc_link')}</button></div>
       </div>
-      <div class="field"><label class="field-label">${t('dpc_th_due')} <span class="required-star" id="debtDueStar" aria-hidden="true" style="display:${existingLink?'inline':'none'}">*</span></label><input class="input" type="number" id="debtDueDay" min="1" max="31" placeholder="1-31" value="${d?.dueDay||''}"><div class="field-hint">${t('debt_due_day_modal_hint')}</div></div>
+      <div class="field"><label class="field-label"><button class="cc-info" type="button" data-tip="${esc(t('debt_due_day_modal_hint'))}" aria-label="About ${esc(t('dpc_th_due'))}">?</button><span class="cc-label-text">${t('dpc_th_due')}</span> <span class="required-star" id="debtDueStar" aria-hidden="true" style="display:${existingLink?'inline':'none'}">*</span></label><input class="input" type="number" id="debtDueDay" min="1" max="31" placeholder="1-31" value="${d?.dueDay||''}"></div>
     </div>
     <div id="debtMinModeRow" style="display:none">
       <div class="field"><label class="field-label">${t('dpc_min_mode_label')}</label><select class="select" id="debtMinMode">
@@ -4110,6 +4150,7 @@ function openDebtModal(debtId){
   updateDebtTypeFields();
   updateRecalcLinkVisibility();
   recomputeMin();
+  initFieldTips(document.getElementById('modalBody'));
   document.getElementById('saveDebtBtn')?.addEventListener('click',()=>{
     const nameEl=document.getElementById('debtName'),balEl=document.getElementById('debtBalance'),minEl=document.getElementById('debtMin'),dueEl=document.getElementById('debtDueDay'),errEl=document.getElementById('debtError');
     const percentEl=document.getElementById('debtMinPercent'),floorEl=document.getElementById('debtMinFloor');
@@ -4191,7 +4232,7 @@ function renderDebt(){
           <td><label class="recurring-toggle" title="${t('automate_label')}"><input type="checkbox" class="debt-auto-cb" data-debt-auto="${d.id}" ${findLinkedTemplate('debt',d.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></td>
           <td><div class="row-actions"><button class="btn-icon-tiny" data-debt-schedule="${d.id}" type="button" title="${t('dpc_schedule_btn_title')}">ℹ️</button><button class="sf-edit-btn btn-icon-tiny" data-debt-edit="${d.id}" type="button" title="${t('edit')}">✏️</button><button class="btn-icon-tiny del-btn" data-debt-id="${d.id}" type="button">×</button></div></td>
         </tr>`).join('')}</tbody>
-        <tfoot><tr class="total-row"><td colspan="2"><strong>${t('dpc_totals')}</strong></td><td><strong>${fmt(totDebt)}</strong></td><td></td><td><strong>${fmt(totMin)}${t('sf_per_month')}</strong></td><td><strong>${fmt(totExtra)}</strong></td><td colspan="2"></td></tr></tfoot>
+        <tfoot><tr class="total-row"><td colspan="2"><strong>${t('dpc_totals')}</strong></td><td><strong>${fmt(totDebt)}</strong></td><td></td><td><strong>${fmt(totMin)} ${t('sf_per_month')}</strong></td><td><strong>${fmt(totExtra)}</strong></td><td colspan="2"></td></tr></tfoot>
       </table></div></div>`}
     ${state.debts.length>0&&result?`<div class="debt-results">
       <div class="debt-results-cards">
@@ -5328,12 +5369,12 @@ function openDebtSchedule(debtId) {
   const neverPaidOff=debt.paidOffMonth===null&&schedule.length>=600;
   const warningHtml=neverPaidOff?`<div class="debt-sched-warning"><span aria-hidden="true">⚠️</span><span>${t('dsched_never_payoff_warning')}</span></div>`:'';
   const tableHtml=`<table class="module-table debt-sched-table"><thead><tr>
-    <th>${t('dsched_col_date')}</th><th>${t('dsched_col_payment')}</th><th>${t('dsched_col_principal')}</th><th>${t('dsched_col_interest')}</th>
-    ${hasEscrow?`<th>${t('dsched_col_escrow')}</th>`:''}<th>${t('dsched_col_balance')}</th>
+    <th>${t('dsched_col_date')}</th><th>${t('dsched_col_payment')}</th><th class="sched-col-secondary">${t('dsched_col_principal')}</th><th class="sched-col-secondary">${t('dsched_col_interest')}</th>
+    ${hasEscrow?`<th class="sched-col-secondary">${t('dsched_col_escrow')}</th>`:''}<th>${t('dsched_col_balance')}</th>
   </tr></thead><tbody>
     ${schedule.map(row=>`<tr class="module-row">
-      <td>${formatDateDisplay(row.date)}</td><td>${fmt(row.payment)}</td><td class="col-principal">${fmt(row.principal)}</td><td class="col-interest">${fmt(row.interest)}</td>
-      ${hasEscrow?`<td>${row.escrow!==undefined?fmt(row.escrow):'-'}</td>`:''}<td class="col-balance">${fmt(row.balance)}</td>
+      <td>${formatDateDisplay(row.date)}</td><td>${fmt(row.payment)}</td><td class="col-principal sched-col-secondary">${fmt(row.principal)}</td><td class="col-interest sched-col-secondary">${fmt(row.interest)}</td>
+      ${hasEscrow?`<td class="sched-col-secondary">${row.escrow!==undefined?fmt(row.escrow):'-'}</td>`:''}<td class="col-balance">${fmt(row.balance)}</td>
     </tr>`).join('')}
   </tbody></table>`;
   bodyEl.innerHTML=warningHtml+tableHtml;
