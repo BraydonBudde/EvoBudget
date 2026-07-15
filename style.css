@@ -3001,3 +3001,42 @@ body.penny-drawer-open { overflow: hidden; }
   .guide-modal.is-topic-open .guide-sidebar { transform: translateX(-100%); pointer-events: none; }
   .guide-back-btn { display: inline-flex; }
 }
+
+/* ── Debt amortization schedule modal ────────────────────────────────── */
+.debt-sched-overlay {
+  position: fixed; inset: 0; background: rgba(15,10,30,.58);
+  backdrop-filter: blur(5px); z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.debt-sched-modal {
+  background: var(--surface-solid); border-radius: var(--radius-lg);
+  box-shadow: 0 40px 100px rgba(0,0,0,.28);
+  width: 100%; max-width: 900px; height: min(82vh, 760px);
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  animation: modal-in .28s var(--ease);
+}
+.debt-sched-inner { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.debt-sched-head { padding: 30px 40px 16px; border-bottom: 1px solid var(--border-faint); }
+.debt-sched-title { font-family:'Sora',sans-serif; font-size: 19px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px; }
+.debt-sched-summary { font-size: 13px; color: var(--text-secondary); }
+.debt-sched-body { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 40px 36px; }
+.debt-sched-body:focus { outline: none; }
+.debt-sched-body table thead th {
+  position: sticky; top: 0; background: var(--surface-solid); z-index: 1;
+}
+.debt-sched-warning {
+  display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px;
+  border-radius: var(--radius-md); background: rgba(251,146,60,.1);
+  border: 1px solid rgba(251,146,60,.28); font-size: 13px; color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+[data-theme="dark"] .debt-sched-warning { background: rgba(251,146,60,.08); }
+.debt-sched-modal *:focus-visible { outline: 2px solid var(--grad-indigo); outline-offset: 2px; border-radius: 4px; }
+
+@media (max-width: 700px) {
+  .debt-sched-overlay { padding: 0; }
+  .debt-sched-modal { max-width: 100%; height: 100%; border-radius: 0; }
+  .debt-sched-head { padding: 24px 20px 14px; }
+  .debt-sched-body { padding: 16px 20px 30px; }
+}
