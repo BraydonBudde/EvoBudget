@@ -4365,7 +4365,7 @@ function renderDebt(){
           <td><label class="recurring-toggle" title="${t('automate_label')}"><input type="checkbox" class="debt-auto-cb" data-debt-auto="${d.id}" ${findLinkedTemplate('debt',d.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></td>
           <td><div class="row-actions"><button class="btn-icon-tiny" data-debt-schedule="${d.id}" type="button" title="${t('dpc_schedule_btn_title')}">ℹ️</button><button class="sf-edit-btn btn-icon-tiny" data-debt-edit="${d.id}" type="button" title="${t('edit')}">✏️</button><button class="btn-icon-tiny del-btn" data-debt-id="${d.id}" type="button">×</button></div></td>
         </tr>`).join('')}</tbody>
-        <tfoot><tr class="total-row"><td colspan="2"><strong>${t('dpc_totals')}</strong></td><td><strong>${fmt(totDebt)}</strong></td><td></td><td><strong>${fmt(totMin)}${t('sf_per_month')}</strong></td><td><strong>${fmt(totExtra)}${t('dpc_mo_suffix')}</strong></td><td colspan="2"></td></tr></tfoot>
+        <tfoot><tr class="total-row"><td colspan="2"><strong>${t('dpc_totals')}</strong></td><td><strong>${fmt(totDebt)}</strong></td><td></td><td><strong>${fmt(totMin)}${t('dpc_mo_suffix')}</strong></td><td><strong>${fmt(totExtra)}${t('dpc_mo_suffix')}</strong></td><td colspan="2"></td></tr></tfoot>
       </table></div></div>`}
     ${state.debts.length>0&&result?`<div class="debt-results">
       <div class="debt-results-cards">

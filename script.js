@@ -118,7 +118,10 @@ const TRANSLATIONS = {
     reset_desc:'Permanently deletes all your data. This cannot be undone.',
     reset_btn:'Reset everything',
     // Common
-    add:'Add', cancel:'Cancel',rename_title_prompt:'Rename your budget planner', save:'Save', delete:'Delete',dp_today:'Today',dp_clear:'Clear', edit:'Edit',
+    add:'Add', cancel:'Cancel',rename_title_prompt:'Rename your budget planner', save:'Save', delete:'Delete',dp_today:'Today',dp_clear:'Clear', edit:'Edit',field_info_aria:'About {0}',
+    mod_name_hint:'The label you’ll see for this category everywhere in the app.',mod_due_date_hint:'When this is due each month - used for the calendar and paid tracking.',
+    mod_th_expected_hint:'The amount you plan to budget for this category each month.',mod_th_actual_hint:'Calculated automatically from your logged transactions in this category.',mod_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
+    tx_date_hint:'The date this transaction happened.',tx_type_hint:'What kind of transaction this is - controls which category list you can pick from.',tx_category_hint:'Which budget category this transaction counts toward.',tx_amount_hint:'How much money this transaction was for.',tx_desc_hint:'An optional note to help you remember what this was for.',
     paid:'Paid', due_date:'Due Date', category:'Category', amount:'Amount',
     description:'Description', date:'Date', type:'Type',
     add_category:'+ Add category', no_transactions:'No transactions yet.',
@@ -296,7 +299,10 @@ const TRANSLATIONS = {
     rollover_amount:'Übertragsbetrag',
     reset_desc:'Löscht alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.',
     reset_btn:'Alles zurücksetzen',
-    add:'Hinzufügen',cancel:'Abbrechen',rename_title_prompt:'Budgetplaner umbenennen',save:'Speichern',delete:'Löschen',dp_today:'Heute',dp_clear:'Löschen',edit:'Bearbeiten',
+    add:'Hinzufügen',cancel:'Abbrechen',rename_title_prompt:'Budgetplaner umbenennen',save:'Speichern',delete:'Löschen',dp_today:'Heute',dp_clear:'Löschen',edit:'Bearbeiten',field_info_aria:'Über {0}',
+    mod_name_hint:'Die Bezeichnung, die du überall in der App für diese Kategorie siehst.',mod_due_date_hint:'Wann dies jeden Monat fällig ist - wird für den Kalender und die Bezahlt-Markierung verwendet.',
+    mod_th_expected_hint:'Der Betrag, den du monatlich für diese Kategorie einplanst.',mod_th_actual_hint:'Wird automatisch aus deinen erfassten Transaktionen in dieser Kategorie berechnet.',mod_th_progress_hint:'Wie viel Prozent des geplanten Betrags bisher verbraucht wurde.',
+    tx_date_hint:'Das Datum, an dem diese Transaktion stattfand.',tx_type_hint:'Um welche Art von Transaktion es sich handelt - bestimmt, aus welcher Kategorieliste du wählen kannst.',tx_category_hint:'Welcher Budgetkategorie diese Transaktion zugerechnet wird.',tx_amount_hint:'Wie viel Geld diese Transaktion betraf.',tx_desc_hint:'Eine optionale Notiz, damit du dich erinnerst, wofür das war.',
     paid:'Bezahlt',due_date:'Fälligkeitsdatum',category:'Kategorie',amount:'Betrag',
     description:'Beschreibung',date:'Datum',type:'Typ',
     add_category:'+ Kategorie hinzufügen',no_transactions:'Noch keine Transaktionen.',
@@ -472,7 +478,10 @@ const TRANSLATIONS = {
     rollover_amount:'Montant du report',
     reset_desc:'Supprime définitivement toutes vos données. Irréversible.',
     reset_btn:'Tout réinitialiser',
-    add:'Ajouter',cancel:'Annuler',rename_title_prompt:'Renommer votre planificateur de budget',save:'Enregistrer',delete:'Supprimer',dp_today:"Aujourd'hui",dp_clear:'Effacer',edit:'Modifier',
+    add:'Ajouter',cancel:'Annuler',rename_title_prompt:'Renommer votre planificateur de budget',save:'Enregistrer',delete:'Supprimer',dp_today:"Aujourd'hui",dp_clear:'Effacer',edit:'Modifier',field_info_aria:'À propos de {0}',
+    mod_name_hint:'Le nom que vous verrez pour cette catégorie partout dans l’application.',mod_due_date_hint:'Quand cela est dû chaque mois - utilisé pour le calendrier et le suivi des paiements.',
+    mod_th_expected_hint:'Le montant que vous prévoyez de budgétiser pour cette catégorie chaque mois.',mod_th_actual_hint:'Calculé automatiquement à partir de vos transactions enregistrées dans cette catégorie.',mod_th_progress_hint:'Le pourcentage du montant prévu déjà utilisé.',
+    tx_date_hint:'La date à laquelle cette transaction a eu lieu.',tx_type_hint:'Le type de transaction - détermine la liste de catégories disponible.',tx_category_hint:'La catégorie budgétaire à laquelle cette transaction est associée.',tx_amount_hint:'Le montant de cette transaction.',tx_desc_hint:'Une note facultative pour vous rappeler à quoi cela correspondait.',
     paid:'Payé',due_date:"Date d'échéance",category:'Catégorie',amount:'Montant',
     description:'Description',date:'Date',type:'Type',
     add_category:'+ Ajouter une catégorie',no_transactions:'Aucune transaction.',
@@ -648,7 +657,10 @@ const TRANSLATIONS = {
     rollover_amount:'Importe de saldo anterior',
     reset_desc:'Elimina permanentemente todos tus datos. No se puede deshacer.',
     reset_btn:'Restablecer todo',
-    add:'Añadir',cancel:'Cancelar',rename_title_prompt:'Renombrar tu planificador de presupuesto',save:'Guardar',delete:'Eliminar',dp_today:'Hoy',dp_clear:'Borrar',edit:'Editar',
+    add:'Añadir',cancel:'Cancelar',rename_title_prompt:'Renombrar tu planificador de presupuesto',save:'Guardar',delete:'Eliminar',dp_today:'Hoy',dp_clear:'Borrar',edit:'Editar',field_info_aria:'Acerca de {0}',
+    mod_name_hint:'El nombre que verás para esta categoría en toda la aplicación.',mod_due_date_hint:'Cuándo vence esto cada mes - se usa para el calendario y el seguimiento de pagos.',
+    mod_th_expected_hint:'La cantidad que planeas presupuestar para esta categoría cada mes.',mod_th_actual_hint:'Se calcula automáticamente a partir de tus transacciones registradas en esta categoría.',mod_th_progress_hint:'Qué porcentaje del monto previsto se ha usado hasta ahora.',
+    tx_date_hint:'La fecha en que ocurrió esta transacción.',tx_type_hint:'Qué tipo de transacción es - determina de qué lista de categorías puedes elegir.',tx_category_hint:'A qué categoría del presupuesto pertenece esta transacción.',tx_amount_hint:'Cuánto dinero fue esta transacción.',tx_desc_hint:'Una nota opcional para ayudarte a recordar para qué fue esto.',
     paid:'Pagado',due_date:'Fecha de vencimiento',category:'Categoría',amount:'Importe',
     description:'Descripción',date:'Fecha',type:'Tipo',
     add_category:'+ Añadir categoría',no_transactions:'Sin transacciones aún.',
@@ -824,7 +836,10 @@ const TRANSLATIONS = {
     rollover_amount:'Importo riporto',
     reset_desc:'Elimina definitivamente tutti i dati. Non reversibile.',
     reset_btn:'Reimposta tutto',
-    add:'Aggiungi',cancel:'Annulla',rename_title_prompt:'Rinomina il tuo pianificatore di budget',save:'Salva',delete:'Elimina',dp_today:'Oggi',dp_clear:'Cancella',edit:'Modifica',
+    add:'Aggiungi',cancel:'Annulla',rename_title_prompt:'Rinomina il tuo pianificatore di budget',save:'Salva',delete:'Elimina',dp_today:'Oggi',dp_clear:'Cancella',edit:'Modifica',field_info_aria:'Informazioni su {0}',
+    mod_name_hint:'Il nome che vedrai per questa categoria in tutta l’app.',mod_due_date_hint:'Quando scade ogni mese - usato per il calendario e il monitoraggio dei pagamenti.',
+    mod_th_expected_hint:'L’importo che prevedi di destinare a questa categoria ogni mese.',mod_th_actual_hint:'Calcolato automaticamente dalle transazioni registrate in questa categoria.',mod_th_progress_hint:'Quale percentuale dell’importo previsto è stata utilizzata finora.',
+    tx_date_hint:'La data in cui è avvenuta questa transazione.',tx_type_hint:'Il tipo di transazione - determina da quale elenco di categorie puoi scegliere.',tx_category_hint:'A quale categoria di budget appartiene questa transazione.',tx_amount_hint:'Quanto denaro riguardava questa transazione.',tx_desc_hint:'Una nota facoltativa per aiutarti a ricordare a cosa si riferiva.',
     paid:'Pagato',due_date:'Data di scadenza',category:'Categoria',amount:'Importo',
     description:'Descrizione',date:'Data',type:'Tipo',
     add_category:'+ Aggiungi categoria',no_transactions:'Nessuna transazione.',
@@ -1000,7 +1015,10 @@ const TRANSLATIONS = {
     rollover_amount:'Kwota przeniesienia',
     reset_desc:'Trwale usuwa wszystkie dane. Nie można cofnąć.',
     reset_btn:'Zresetuj wszystko',
-    add:'Dodaj',cancel:'Anuluj',rename_title_prompt:'Zmień nazwę planera budżetu',save:'Zapisz',delete:'Usuń',dp_today:'Dziś',dp_clear:'Wyczyść',edit:'Edytuj',
+    add:'Dodaj',cancel:'Anuluj',rename_title_prompt:'Zmień nazwę planera budżetu',save:'Zapisz',delete:'Usuń',dp_today:'Dziś',dp_clear:'Wyczyść',edit:'Edytuj',field_info_aria:'O {0}',
+    mod_name_hint:'Nazwa, którą zobaczysz dla tej kategorii w całej aplikacji.',mod_due_date_hint:'Kiedy termin płatności przypada każdego miesiąca - używane do kalendarza i śledzenia płatności.',
+    mod_th_expected_hint:'Kwota, którą planujesz przeznaczyć na tę kategorię każdego miesiąca.',mod_th_actual_hint:'Obliczane automatycznie na podstawie zarejestrowanych transakcji w tej kategorii.',mod_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
+    tx_date_hint:'Data, kiedy miała miejsce ta transakcja.',tx_type_hint:'Jaki to rodzaj transakcji - określa, z jakiej listy kategorii możesz wybierać.',tx_category_hint:'Do której kategorii budżetu należy ta transakcja.',tx_amount_hint:'Ile pieniędzy dotyczyło tej transakcji.',tx_desc_hint:'Opcjonalna notatka, która pomoże ci zapamiętać, czego to dotyczyło.',
     paid:'Zapłacone',due_date:'Termin płatności',category:'Kategoria',amount:'Kwota',
     description:'Opis',date:'Data',type:'Typ',
     add_category:'+ Dodaj kategorię',no_transactions:'Brak transakcji.',
@@ -1756,6 +1774,55 @@ function initFeatureTips() {
   window.addEventListener('scroll', hide, true);
 }
 
+// ── Lightweight "?" field-info tooltips ("tiny helpers") for SBP forms ──
+function tipLabel(text,hintKey,required){
+  return `<span class="cc-label-text">${text}</span>${required?' <span class="required-star" aria-hidden="true">*</span>':''}<button class="cc-info" type="button" data-tip="${esc(t(hintKey))}" aria-label="${tf('field_info_aria',text)}">i</button>`;
+}
+function initFieldTips(container){
+  const scope=container||document;
+  let tipBtn=null,shownViaHover=false;
+  const hideAll=()=>{document.querySelectorAll('.cc-tip-pop').forEach(el=>el.remove());tipBtn=null;shownViaHover=false;};
+  const show=(btn,viaHover)=>{
+    hideAll();
+    const name=btn.parentElement.querySelector('.cc-label-text')?.textContent||'';
+    const tipEl=document.createElement('div');
+    tipEl.className='cc-tip-pop';
+    tipEl.innerHTML=`<div class="cc-tip-head"><span class="cc-tip-dot"></span>${esc(name)}</div><div class="cc-tip-body">${esc(btn.dataset.tip)}</div><span class="cc-tip-arrow"></span>`;
+    document.body.appendChild(tipEl);
+    tipBtn=btn;shownViaHover=!!viaHover;
+    const r=btn.getBoundingClientRect();
+    const tw=tipEl.offsetWidth,th=tipEl.offsetHeight;
+    const iconCenter=r.left+r.width/2+window.scrollX;
+    let left=iconCenter-tw/2;
+    const minL=window.scrollX+10,maxL=window.scrollX+window.innerWidth-tw-10;
+    left=Math.max(minL,Math.min(left,maxL));
+    let top=r.top+window.scrollY-th-11;
+    if(r.top-th-11<0){top=r.bottom+window.scrollY+11;tipEl.classList.add('cc-tip-below');}
+    else{tipEl.classList.add('cc-tip-above');}
+    tipEl.style.left=left+'px';tipEl.style.top=top+'px';
+    const arrow=tipEl.querySelector('.cc-tip-arrow');
+    let ax=iconCenter-left-6;
+    ax=Math.max(14,Math.min(ax,tw-26));
+    arrow.style.left=ax+'px';
+    requestAnimationFrame(()=>tipEl.classList.add('is-in'));
+  };
+  scope.querySelectorAll('.cc-info[data-tip]').forEach(btn=>{
+    btn.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')show(btn,true);});
+    btn.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'&&shownViaHover)hideAll();});
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(tipBtn===btn&&document.querySelector('.cc-tip-pop')){
+        if(shownViaHover){shownViaHover=false;return;}
+        hideAll();return;
+      }
+      show(btn,false);
+    });
+    btn.addEventListener('blur',hideAll);
+  });
+}
+document.addEventListener('click',()=>document.querySelectorAll('.cc-tip-pop').forEach(el=>el.remove()));
+window.addEventListener('scroll',()=>document.querySelectorAll('.cc-tip-pop').forEach(el=>el.remove()),true);
+
 // ── Dashboard ─────────────────────────────────────────────────────────
 function renderDashboard() {
   const actuals = computeActuals();
@@ -2007,10 +2074,10 @@ function renderModule(type) {
           <thead>
             <tr>
               <th>Category</th>
-              <th>Expected (${SYM})</th>
+              <th><span class="cc-label-text">Expected (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_expected_hint'))}" aria-label="${tf('field_info_aria','Expected')}">i</button></th>
               ${meta.hasDates ? '<th>Due Date</th>' : ''}
-              <th>Actual (${SYM})</th>
-              <th class="prog-cell">Progress</th>
+              <th><span class="cc-label-text">Actual (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_actual_hint'))}" aria-label="${tf('field_info_aria','Actual')}">i</button></th>
+              <th class="prog-cell"><span class="cc-label-text">Progress</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_progress_hint'))}" aria-label="${tf('field_info_aria','Progress')}">i</button></th>
               ${meta.hasDates ? '<th>Paid</th>' : ''}
               <th></th>
             </tr>
@@ -2079,9 +2146,9 @@ function renderModule(type) {
       <div class="panel-inner-sm">
         <div class="add-cat-title">Add new category</div>
         <div class="add-cat-row">
-          <div class="field"><label class="field-label">Name</label>
+          <div class="field"><label class="field-label field-label--tip">${tipLabel('Name','mod_name_hint',false)}</label>
             <input class="input input-sm" type="text" id="newCatName" placeholder="e.g. Freelance"></div>
-          ${meta.hasDates ? `<div class="field"><label class="field-label">Due date</label>
+          ${meta.hasDates ? `<div class="field"><label class="field-label field-label--tip">${tipLabel('Due date','mod_due_date_hint',false)}</label>
             <input class="input input-sm" type="date" id="newCatDate"></div>` : ''}
           <div class="add-cat-btns">
             <button class="btn btn-primary btn-sm" id="saveCatBtn" type="button">Add</button>
@@ -2197,6 +2264,7 @@ function renderModule(type) {
   });
 
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
+  initFieldTips(el);
 }
 
 // ── Transactions ──────────────────────────────────────────────────────
@@ -2260,13 +2328,13 @@ function renderTransactions() {
     <div class="panel tx-form-panel"><div class="panel-inner-sm">
       <div class="panel-title-sm" style="margin-bottom:14px">${t('tx_add_title')}</div>
       <div class="tx-form-row">
-        <div class="field"><label class="field-label">${t('tx_date')}</label>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_date'),'tx_date_hint',false)}</label>
           <div class="date-field-styled" id="txDateWrap">
             <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             <span class="date-field-val" id="txDateDisp">${formatDateDisplay(today())}</span>
             <input type="date" id="txDate" value="${today()}">
           </div></div>
-        <div class="field"><label class="field-label">${t('tx_type')}</label>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_type'),'tx_type_hint',false)}</label>
           <select class="select" id="txType">
             <option value="expense" selected>${t('tx_type_expense')}</option>
             <option value="bill">${t('tx_type_bill')}</option>
@@ -2274,10 +2342,10 @@ function renderTransactions() {
             <option value="debt">${t('tx_type_debt')}</option>
             <option value="income">${t('tx_type_income')}</option>
           </select></div>
-        <div class="field"><label class="field-label">${t('tx_category')}</label><select class="select" id="txCategory"></select></div>
-        <div class="field"><label class="field-label">${t('tx_amount')} (${SYM})</label>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_category'),'tx_category_hint',false)}</label><select class="select" id="txCategory"></select></div>
+        <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('tx_amount')} (${SYM})`,'tx_amount_hint',false)}</label>
           <input class="input" type="number" id="txAmount" min="0" step="0.01" placeholder="0.00"></div>
-        <div class="field field-grow"><label class="field-label">${t('tx_desc_label')}</label>
+        <div class="field field-grow"><label class="field-label field-label--tip">${tipLabel(t('tx_desc_label'),'tx_desc_hint',false)}</label>
           <input class="input" type="text" id="txDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
         <div class="field field-btn"><label class="field-label" style="visibility:hidden">.</label>
           <button class="btn btn-primary" id="addTxBtn" type="button">${t('tx_add_btn')}</button></div>
@@ -2310,6 +2378,7 @@ function renderTransactions() {
   document.getElementById('addTxBtn')?.addEventListener('click',addTransaction);
   document.getElementById('csvInput')?.addEventListener('change',handleCSV);
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
+  initFieldTips(el);
   document.getElementById('txSearch')?.addEventListener('input',e=>{txFilter.search=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txTypeFilter')?.addEventListener('change',e=>{txFilter.type=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txSort')?.addEventListener('change',e=>{txFilter.sort=e.target.value;txPage=0;renderTxList();});

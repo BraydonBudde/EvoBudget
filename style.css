@@ -276,15 +276,17 @@ p { margin: 0; }
 .field-label--tip { display: flex; align-items: center; gap: 5px; }
 .field-label--tip .cc-label-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .field-label--tip .required-star { flex-shrink: 0; }
-.field-label--tip .cc-info {
+.field-label--tip .cc-info,
+.module-table th .cc-info {
   margin: 0 0 0 1px; flex-shrink: 0;
-  background: rgba(148,163,184,.16); color: var(--text-secondary);
-  font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 700; font-size: 12px;
+  background: var(--surface-strong); border: 1px solid var(--border-faint);
+  color: var(--text-secondary);
+  font-family: inherit; font-style: normal; font-weight: 500; font-size: 11px;
   box-shadow: none;
 }
-[data-theme="dark"] .field-label--tip .cc-info { background: rgba(148,163,184,.14); color: var(--text-secondary); }
-.field-label--tip .cc-info:hover, .field-label--tip .cc-info:focus-visible {
-  background: rgba(99,102,241,.16); color: var(--grad-indigo);
+.field-label--tip .cc-info:hover, .field-label--tip .cc-info:focus-visible,
+.module-table th .cc-info:hover, .module-table th .cc-info:focus-visible {
+  background: var(--surface-strong); color: var(--grad-indigo); border-color: var(--grad-indigo);
   transform: scale(1.08); box-shadow: none;
 }
 .select, .input {
@@ -3056,7 +3058,7 @@ body.penny-drawer-open { overflow: hidden; }
    header that simply lives outside the scroll container has no such bug
    and needs no sticky positioning at all. ── */
 .debt-sched-colheader {
-  display: grid; margin: 0 40px; padding: 0 12px;
+  display: grid;
   background: linear-gradient(135deg, rgba(99,102,241,.1), rgba(192,38,211,.06)), var(--surface-solid);
   border-radius: var(--radius-md) var(--radius-md) 0 0;
   border-bottom: 2px solid var(--border-faint);
@@ -3088,7 +3090,6 @@ body.penny-drawer-open { overflow: hidden; }
   .debt-sched-overlay { padding: 0; }
   .debt-sched-modal { max-width: 100%; height: 100%; border-radius: 0; }
   .debt-sched-head { padding: 24px 20px 0; }
-  .debt-sched-colheader { margin: 0 20px; }
   .debt-sched-body { padding: 16px 20px 30px; }
   /* Only the most relevant columns on small screens: date, payment, balance */
   .sched-col-secondary { display: none; }
