@@ -1547,16 +1547,16 @@ function svgDonut(segments, size = 130, sw = 17) {
   const bg=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(30,27,46,.08)" stroke-width="${sw}"/>`;
   if (!segments||!segments.length) return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0">${defs}${bg}</svg>`;
   let arcs='', cum=0;
-  for (const seg of segments) {
-    const p=seg.pct||0; if(p<=0){cum+=p;continue;}
+  segments.forEach((seg,idx) => {
+    const p=seg.pct||0; if(p<=0){cum+=p;return;}
     const dash=(p/100)*c, gap=c-dash, rot=-90+(cum/100)*360;
-    arcs+=`<circle class="dseg" data-label="${seg.label||''}" data-pct="${p.toFixed(1)}"
+    arcs+=`<circle class="dseg" data-idx="${idx}" data-label="${esc(seg.label||'')}" data-pct="${p.toFixed(1)}" data-val="${seg.value||0}"
       cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${sw}"
       stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}"
       transform="rotate(${rot.toFixed(2)} ${cx} ${cy})"
       style="cursor:pointer;transition:stroke-width .18s,opacity .18s"/>`;
     cum+=p;
-  }
+  });
   const overlay=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#rg${gid})" stroke-width="${sw+6}" pointer-events="none"/>`;
   const fs1=(size*.14).toFixed(0), fs2=(size*.085).toFixed(0);
   const center=`<g class="donut-center" pointer-events="none">
@@ -1573,17 +1573,36 @@ function initDonuts(container) {
     const segs=svg.querySelectorAll('.dseg'); if(!segs.length) return;
     const baseSW=parseFloat(segs[0].getAttribute('stroke-width')||17);
     const pctEl=svg.querySelector('.donut-hover-pct'), lblEl=svg.querySelector('.donut-hover-lbl');
+    const legend=svg.closest('.donut-block')?.querySelector('.donut-legend');
+    const legRows=legend?Array.from(legend.querySelectorAll('.dleg-row')):[];
     const show=seg=>{segs.forEach(s=>{s.setAttribute('stroke-width',baseSW);s.style.opacity='0.45';});
       seg.setAttribute('stroke-width',baseSW+5);seg.style.opacity='1';
       if(pctEl){pctEl.textContent=seg.dataset.pct+'%';pctEl.style.opacity='1';}
-      if(lblEl){lblEl.textContent=seg.dataset.label;lblEl.style.opacity='1';}};
+      if(lblEl){lblEl.textContent=seg.dataset.label;lblEl.style.opacity='1';}
+      const row=legRows.find(r=>r.dataset.idx===seg.dataset.idx);
+      if(row){
+        row.classList.add('is-active');
+        const amtEl=row.querySelector('.dleg-pct');
+        if(amtEl){if(amtEl.dataset.pctText===undefined)amtEl.dataset.pctText=amtEl.textContent;amtEl.textContent=fmt(parseFloat(seg.dataset.val)||0);}
+      }};
     const hide=()=>{segs.forEach(s=>{s.setAttribute('stroke-width',baseSW);s.style.opacity='1';});
-      if(pctEl)pctEl.style.opacity='0'; if(lblEl)lblEl.style.opacity='0';};
+      if(pctEl)pctEl.style.opacity='0'; if(lblEl)lblEl.style.opacity='0';
+      legRows.forEach(row=>{
+        row.classList.remove('is-active');
+        const amtEl=row.querySelector('.dleg-pct');
+        if(amtEl&&amtEl.dataset.pctText!==undefined)amtEl.textContent=amtEl.dataset.pctText;
+      });};
     segs.forEach(seg=>{
       seg.addEventListener('mouseenter',()=>show(seg));
       seg.addEventListener('mouseleave',hide);
       seg.addEventListener('touchstart',e=>{e.preventDefault();show(seg);},{passive:false});
       seg.addEventListener('touchend',()=>setTimeout(hide,1600));
+    });
+    legRows.forEach(row=>{
+      const seg=Array.from(segs).find(s=>s.dataset.idx===row.dataset.idx);
+      if(!seg) return;
+      row.addEventListener('mouseenter',()=>show(seg));
+      row.addEventListener('mouseleave',hide);
     });
   });
 }
@@ -1970,8 +1989,8 @@ function renderDashboard() {
               ? `<div class="chart-empty">No income logged yet.<br><button class="link-btn" data-btab="transactions">Add transactions →</button></div>`
               : `<div class="donut-block">
                   ${svgDonut(incSegs, 110, 16)}
-                  <div class="donut-legend">${incSegs.slice(0,5).map(s => `
-                    <div class="dleg-row">
+                  <div class="donut-legend">${incSegs.slice(0,5).map((s,idx) => `
+                    <div class="dleg-row" data-idx="${idx}">
                       <span class="dleg-swatch" style="background:${s.color}"></span>
                       <span class="dleg-label">${esc(s.label)}</span>
                       <span class="dleg-pct">${s.pct.toFixed(0)}%</span>
@@ -1986,8 +2005,8 @@ function renderDashboard() {
               ? `<div class="chart-empty">No spending logged yet.<br><button class="link-btn" data-btab="transactions">Add transactions →</button></div>`
               : `<div class="donut-block">
                   ${svgDonut(spendSegs, 110, 16)}
-                  <div class="donut-legend">${spendSegs.slice(0,5).map(s => `
-                    <div class="dleg-row">
+                  <div class="donut-legend">${spendSegs.slice(0,5).map((s,idx) => `
+                    <div class="dleg-row" data-idx="${idx}">
                       <span class="dleg-swatch" style="background:${s.color}"></span>
                       <span class="dleg-label">${esc(s.label)}</span>
                       <span class="dleg-pct">${s.pct.toFixed(0)}%</span>

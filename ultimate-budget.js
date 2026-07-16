@@ -3386,16 +3386,16 @@ function svgDonut(segs,size=130,sw=17) {
   const bg=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(30,27,46,.08)" stroke-width="${sw}"/>`;
   if(!segs||!segs.length) return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0">${defs}${bg}</svg>`;
   let arcs='',cum=0;
-  for(const s of segs){
-    const p=s.pct||0;if(p<=0){cum+=p;continue;}
+  segs.forEach((s,idx)=>{
+    const p=s.pct||0;if(p<=0){cum+=p;return;}
     const dash=(p/100)*c,gap=c-dash,rot=-90+(cum/100)*360;
-    arcs+=`<circle class="dseg" data-label="${esc(s.label||'')}" data-pct="${p.toFixed(1)}" data-val="${s.value||0}"
+    arcs+=`<circle class="dseg" data-idx="${idx}" data-label="${esc(s.label||'')}" data-pct="${p.toFixed(1)}" data-val="${s.value||0}"
       cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="${sw}"
       stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}"
       transform="rotate(${rot.toFixed(2)} ${cx} ${cy})"
       style="cursor:pointer;transition:stroke-width .18s,opacity .18s"/>`;
     cum+=p;
-  }
+  });
   // Gradient overlay for depth effect
   const overlay=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#rg${gid})" stroke-width="${sw+6}" pointer-events="none"/>`;
   // Center hover label
@@ -3416,22 +3416,41 @@ function initDonuts(container) {
     const baseSW=parseFloat(segs[0].getAttribute('stroke-width')||17);
     const pctEl=svg.querySelector('.donut-hover-pct');
     const lblEl=svg.querySelector('.donut-hover-lbl');
+    const legend=svg.closest('.donut-block')?.querySelector('.donut-legend');
+    const legRows=legend?Array.from(legend.querySelectorAll('.dleg-row')):[];
     const show=seg=>{
       segs.forEach(s=>{s.setAttribute('stroke-width',baseSW);s.style.opacity='0.45';});
       seg.setAttribute('stroke-width',baseSW+5);seg.style.opacity='1';
       if(pctEl){pctEl.textContent=seg.dataset.pct+'%';pctEl.style.opacity='1';}
       if(lblEl){lblEl.textContent=seg.dataset.label;lblEl.style.opacity='1';}
+      const row=legRows.find(r=>r.dataset.idx===seg.dataset.idx);
+      if(row){
+        row.classList.add('is-active');
+        const amtEl=row.querySelector('.dleg-pct');
+        if(amtEl){if(amtEl.dataset.pctText===undefined)amtEl.dataset.pctText=amtEl.textContent;amtEl.textContent=fmt(parseFloat(seg.dataset.val)||0);}
+      }
     };
     const hide=()=>{
       segs.forEach(s=>{s.setAttribute('stroke-width',baseSW);s.style.opacity='1';});
       if(pctEl)pctEl.style.opacity='0';
       if(lblEl)lblEl.style.opacity='0';
+      legRows.forEach(row=>{
+        row.classList.remove('is-active');
+        const amtEl=row.querySelector('.dleg-pct');
+        if(amtEl&&amtEl.dataset.pctText!==undefined)amtEl.textContent=amtEl.dataset.pctText;
+      });
     };
     segs.forEach(seg=>{
       seg.addEventListener('mouseenter',()=>show(seg));
       seg.addEventListener('mouseleave',hide);
       seg.addEventListener('touchstart',e=>{e.preventDefault();show(seg);},{passive:false});
       seg.addEventListener('touchend',()=>setTimeout(hide,1600));
+    });
+    legRows.forEach(row=>{
+      const seg=Array.from(segs).find(s=>s.dataset.idx===row.dataset.idx);
+      if(!seg) return;
+      row.addEventListener('mouseenter',()=>show(seg));
+      row.addEventListener('mouseleave',hide);
     });
   });
 }
@@ -3533,8 +3552,8 @@ function renderDashboard() {
         <div class="flow-table">${flowRows.map(row=>{const max=Math.max(row.exp,row.act,1),ew=(row.exp/max*100).toFixed(1),aw=(row.act/max*100).toFixed(1),over=!row.isInc&&row.act>row.exp&&row.exp>0;return`<div class="flow-row"><span class="flow-label">${esc(row.label)}</span><div class="flow-bars"><div class="flow-bar-wrap"><div class="flow-bar flow-bar--exp" style="width:${ew}%"></div></div><div class="flow-bar-wrap"><div class="flow-bar" style="width:${aw}%;background:${over?'#f43f5e':row.color}"></div></div></div><div class="flow-amounts"><div class="flow-amt flow-amt--exp">${fmt(row.exp)}</div><div class="flow-amt" style="color:${row.color};font-weight:700">${fmt(row.act)}</div></div></div>`;}).join('')}</div>
       </div></div>
       <div class="charts-col">
-        <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgDonut(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})),110,16)}<div class="donut-legend">${incSegs.slice(0,5).map(s=>`<div class="dleg-row"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
-        <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="donut-block">${svgDonut(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})).slice(0,50),110,16)}<div class="donut-legend">${spendSegs.slice(0,5).map(s=>`<div class="dleg-row"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(spTot>0?s.value/spTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
+        <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgDonut(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})),110,16)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
+        <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="donut-block">${svgDonut(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})).slice(0,50),110,16)}<div class="donut-legend">${spendSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(spTot>0?s.value/spTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
       </div>
     </div>
     ${(()=>{
