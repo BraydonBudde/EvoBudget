@@ -58,7 +58,7 @@ const SBP_KEY = 'evobudget_v1';
 function defaultState() {
   const {start,end} = getMonthBounds();
   return {
-    settings: { currency:'USD', symbol:'$', periodStart:start, periodEnd:end, language:'en', automationEnabled:true, pennyEnabled:false },
+    settings: { currency:'USD', symbol:'$', periodStart:start, periodEnd:end, language:'en', automationEnabled:true, pennyEnabled:false, upcomingDays:7 },
     rollover: 0,
     budgets: {
       income:   [{id:uid(),category:'Paycheck',expected:0}],
@@ -536,7 +536,7 @@ const TRANSLATIONS = {
     help_sf_contrib_h:'Adding contributions',
     help_sf_contrib_p:"Click the + icon on a card to log a contribution - enter the amount you're adding this month.",
     help_sf_tip:'\uD83D\uDCA1 Great for: holidays, car repairs, annual insurance, weddings, electronics, home improvements.',
-    dpc_title:'Debt Payoff Calculator',dpc_add_btn:'+ Add debt',
+    dpc_title:'Debt Payoff',dpc_add_btn:'+ Add debt',
     dpc_desc:"Enter every debt, pick a payoff strategy, and see exactly when you'll be debt-free and how much interest you'll pay in total.",
     dpc_method_label:'Payoff method',
     dpc_snowball_desc:'Lowest balance first - quick wins keep you motivated',
@@ -609,6 +609,7 @@ const TRANSLATIONS = {
     dsched_col_date:'Date',dsched_col_payment:'Payment',dsched_col_principal:'Principal',dsched_col_interest:'Interest',dsched_col_escrow:'Escrow',dsched_col_balance:'Balance',
     dsched_never_payoff_warning:"At this pace, this debt won't be fully paid off within 50 years - the payment barely outpaces interest. Consider a higher minimum, a higher percentage floor, or an extra payment.",
     tx_import_csv:'\uD83D\uDCE5 Import CSV',
+    tx_page_desc:'Log every dollar that moves - each entry updates your budget categories, dashboard, and allocation automatically.',
     tx_add_title:'Add a transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Category',tx_amount:'Amount',
     tx_desc_label:'Description',tx_desc_ph:'e.g. Grocery run\u2026',
@@ -635,6 +636,7 @@ const TRANSLATIONS = {
     help_tx_csv_h:'CSV import',
     help_tx_csv_p1:'Import a spreadsheet export using the format: Date,Type,Category,Amount,Description (header row required).',
     help_tx_csv_p2:'Dates should be in YYYY-MM-DD format. Type must be one of: income, expense, bill, savings, debt, subscription, sinking_fund.',
+    bud_desc:'Set an expected amount for every income, expense, bill, and savings category, then track what actually comes in and goes out.',
     bud_section_income:'Income',bud_section_expenses:'Expenses',
     bud_section_bills:'Bills',bud_section_savings:'Savings',
     bud_th_category:'Category',bud_th_expected:'Expected',
@@ -676,7 +678,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Debt-free',dash_interest_label:'Interest',
     dash_months_label:'Months',dash_method_label:'Method',
     dash_set_balances:'Set balances to see results.',
-    dash_upcoming_7:'\uD83D\uDCC5 Upcoming (7 days)',dash_nothing_scheduled:'Nothing scheduled.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',
     dash_no_sinking:'No sinking funds.',dash_create_one:'Create one \u2192',
     help_dash_intro:'The Dashboard gives you a real-time financial overview. All numbers update automatically as you log transactions.',
     help_dash_hero_h:'Hero stats row',
@@ -721,6 +723,7 @@ const TRANSLATIONS = {
     confirm_delete_fund:'Delete this fund?',confirm_remove_sub:'Remove this subscription?',
     confirm_reset_1:'Are you sure? All data will be permanently deleted.',
     confirm_reset_2:'Last chance - this cannot be undone. Continue?',
+    sett_upcoming_title:'📅 Upcoming Window',sett_upcoming_desc:"Choose how many days ahead the Dashboard's Upcoming list looks.",sett_upcoming_label:'Days ahead',
     export_csv_btn:'\uD83D\uDCE5 Export CSV',sett_export_title:'\uD83D\uDCE4 Export Data',
     sett_export_desc:'Download all transactions as a CSV file for backup or use in another app.',
     sf_add_contribution:'Add Contribution',sf_contribution_label:'Amount to add',sf_currently_saved:'Currently saved',
@@ -847,7 +850,7 @@ const TRANSLATIONS = {
     guide_budget_connect2:'Your Spending Breakdown chart and Net Leftover on the Dashboard are both built from these categories.',
     guide_budget_connect3:"If you've turned on <strong>Allocation Buckets</strong> in Settings, this page is also where you'll see how your spending lines up against those percentage targets.",
     guide_budget_tip:"Review your Expected amounts once a month - budgets that never change stop reflecting reality pretty quickly.",
-    guide_debt_title:'Debt Payoff Calculator',
+    guide_debt_title:'Debt Payoff',
     guide_debt_big:"This is more than a place to log what you owe - it builds you an actual plan to become debt-free, showing you exactly which debt to focus on first and how much interest you'll save doing it.",
     guide_debt_step1:'Add each debt with its <strong>Balance</strong>, <strong>APR</strong> (interest rate), and <strong>Minimum Payment</strong>.',
     guide_debt_step2:'Choose a strategy: <strong>Snowball</strong> (pay off the smallest balance first for quick wins) or <strong>Avalanche</strong> (pay off the highest interest rate first to save the most money).',
@@ -1020,7 +1023,7 @@ const TRANSLATIONS = {
     help_sf_contrib_h:'Beiträge hinzufügen',
     help_sf_contrib_p:'Klicke auf das +-Symbol auf einer Karte, um einen Beitrag zu erfassen - gib den Betrag ein, den du diesen Monat hinzufügst.',
     help_sf_tip:'💡 Ideal für: Urlaub, Autoreparaturen, Jahresversicherungen, Hochzeiten, Elektronik, Heimverbesserungen.',
-    dpc_title:'Schuldenrechner',dpc_add_btn:'+ Schuld hinzufügen',
+    dpc_title:'Schuldentilgung',dpc_add_btn:'+ Schuld hinzufügen',
     dpc_desc:'Trage jede Schuld ein, wähle eine Rückzahlungsstrategie und sieh genau, wann du schuldenfrei bist und wie viel Zinsen du insgesamt zahlst.',
     dpc_method_label:'Rückzahlungsmethode',
     dpc_snowball_desc:'Niedrigstes Saldo zuerst - schnelle Erfolge halten dich motiviert',
@@ -1093,6 +1096,7 @@ const TRANSLATIONS = {
     dsched_never_payoff_warning:'In diesem Tempo wird diese Schuld innerhalb von 50 Jahren nicht vollständig abbezahlt sein - die Zahlung übertrifft die Zinsen kaum. Erwäge eine höhere Mindestzahlung, einen höheren Prozentsatz-Mindestbetrag oder eine Extrazahlung.',
     help_dpc_tip:'\uD83D\uDCA1 Wechsle zwischen den Methoden, um zu sehen, wie viele Zinsen du mit jedem Ansatz sparen würdest.',
     tx_import_csv:'\uD83D\uDCE5 CSV importieren',
+    tx_page_desc:'Erfasse jeden bewegten Euro - jeder Eintrag aktualisiert automatisch deine Budgetkategorien, dein Dashboard und deine Zuweisung.',
     tx_add_title:'Transaktion hinzufügen',
     tx_date:'Datum',tx_type:'Art',tx_category:'Kategorie',tx_amount:'Betrag',
     tx_desc_label:'Beschreibung',tx_desc_ph:'z.B. Einkaufen\u2026',
@@ -1119,6 +1123,7 @@ const TRANSLATIONS = {
     help_tx_csv_h:'CSV-Import',
     help_tx_csv_p1:'Importiere einen Tabellenexport im Format: Date,Type,Category,Amount,Description (Kopfzeile erforderlich).',
     help_tx_csv_p2:'Daten sollten im Format YYYY-MM-DD vorliegen. Type muss eines von Folgendem sein: income, expense, bill, savings, debt, subscription, sinking_fund.',
+    bud_desc:'Lege für jede Einnahmen-, Ausgaben-, Rechnungs- und Sparkategorie einen erwarteten Betrag fest und verfolge, was tatsächlich hereinkommt und hinausgeht.',
     bud_section_income:'Einnahmen',bud_section_expenses:'Ausgaben',
     bud_section_bills:'Rechnungen',bud_section_savings:'Ersparnisse',
     bud_th_category:'Kategorie',bud_th_expected:'Geplant',
@@ -1160,7 +1165,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Schuldenfrei',dash_interest_label:'Zinsen',
     dash_months_label:'Monate',dash_method_label:'Methode',
     dash_set_balances:'Salden eingeben, um Ergebnisse zu sehen.',
-    dash_upcoming_7:'\uD83D\uDCC5 Bevorstehend (7 Tage)',dash_nothing_scheduled:'Nichts geplant.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Bevorstehend ({0} Tage)',dash_nothing_scheduled:'Nichts geplant.',
     dash_no_sinking:'Keine Sparzielfonds.',dash_create_one:'Einen erstellen \u2192',
     help_dash_intro:'Das Dashboard gibt dir einen Echtzeit-Überblick über deine Finanzen. Alle Zahlen werden automatisch aktualisiert, wenn du Transaktionen erfasst.',
     help_dash_hero_h:'Statistikübersicht',
@@ -1205,6 +1210,7 @@ const TRANSLATIONS = {
     confirm_delete_fund:'Diesen Fonds l\u00f6schen?',confirm_remove_sub:'Dieses Abonnement entfernen?',
     confirm_reset_1:'Bist du sicher? Alle Daten werden dauerhaft gel\u00f6scht.',
     confirm_reset_2:'Letzte Chance - das kann nicht r\u00fcckg\u00e4ngig gemacht werden. Fortfahren?',
+    sett_upcoming_title:'📅 Bevorstehendes Fenster',sett_upcoming_desc:'Wähle, wie viele Tage im Voraus die Übersicht Bevorstehend im Dashboard anzeigt.',sett_upcoming_label:'Tage im Voraus',
     export_csv_btn:'\uD83D\uDCE5 CSV exportieren',sett_export_title:'\uD83D\uDCE4 Daten exportieren',
     sett_export_desc:'Alle Transaktionen als CSV-Datei herunterladen, zur Sicherung oder Nutzung in einer anderen App.',
     sf_add_contribution:'Beitrag hinzuf\u00fcgen',sf_contribution_label:'Hinzuzuf\u00fcgender Betrag',sf_currently_saved:'Bisher gespart',
@@ -1331,7 +1337,7 @@ const TRANSLATIONS = {
     guide_budget_connect2:'Dein Ausgabenverteilung-Diagramm und dein Nettoüberschuss im Dashboard basieren beide auf diesen Kategorien.',
     guide_budget_connect3:'Wenn du <strong>Budget-Buckets</strong> in den Einstellungen aktiviert hast, siehst du hier auch, wie deine Ausgaben zu diesen prozentualen Zielen passen.',
     guide_budget_tip:'Überprüfe deine erwarteten Beträge einmal im Monat - ein Budget, das sich nie ändert, spiegelt die Realität ziemlich schnell nicht mehr wider.',
-    guide_debt_title:'Schuldentilgungsrechner',
+    guide_debt_title:'Schuldentilgung',
     guide_debt_big:'Das ist mehr als eine Liste dessen, was du schuldest - hier bekommst du einen echten Plan, um schuldenfrei zu werden, mit genauer Angabe, welche Schuld du zuerst angehen solltest und wie viel Zinsen du dabei sparst.',
     guide_debt_step1:'Füge jede Schuld mit ihrem <strong>Saldo</strong>, ihrem <strong>Zinssatz</strong> und ihrer <strong>Mindestzahlung</strong> hinzu.',
     guide_debt_step2:'Wähle eine Strategie: <strong>Schneeball</strong> (erst den kleinsten Saldo tilgen für schnelle Erfolge) oder <strong>Lawine</strong> (erst den höchsten Zinssatz tilgen, um am meisten zu sparen).',
@@ -1504,7 +1510,7 @@ const TRANSLATIONS = {
     help_sf_contrib_h:'Ajouter des contributions',
     help_sf_contrib_p:"Cliquez sur l'icône + d'une carte pour enregistrer une contribution - entrez le montant que vous ajoutez ce mois-ci.",
     help_sf_tip:'💡 Idéal pour : vacances, réparations auto, assurances annuelles, mariages, électronique, travaux domestiques.',
-    dpc_title:'Calculateur de remboursement',dpc_add_btn:'+ Ajouter une dette',
+    dpc_title:'Remboursement de dettes',dpc_add_btn:'+ Ajouter une dette',
     dpc_desc:"Saisissez chaque dette, choisissez une stratégie de remboursement et voyez exactement quand vous serez libre de dettes et combien d'intérêts vous paierez au total.",
     dpc_method_label:'Méthode de remboursement',
     dpc_snowball_desc:"Solde le plus bas d'abord - les petites victoires vous gardent motivé",
@@ -1577,6 +1583,7 @@ const TRANSLATIONS = {
     dsched_never_payoff_warning:"À ce rythme, cette dette ne sera pas entièrement remboursée avant 50 ans - le paiement dépasse à peine les intérêts. Envisagez un minimum plus élevé, un plancher en pourcentage plus élevé, ou un paiement supplémentaire.",
     help_dpc_tip:"\uD83D\uDCA1 Basculez entre les méthodes pour voir combien d'intérêts vous économiseriez avec chaque approche.",
     tx_import_csv:'\uD83D\uDCE5 Importer CSV',
+    tx_page_desc:'Enregistrez chaque euro qui bouge - chaque entrée met à jour automatiquement vos catégories de budget, votre tableau de bord et votre répartition.',
     tx_add_title:'Ajouter une transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Catégorie',tx_amount:'Montant',
     tx_desc_label:'Description',tx_desc_ph:'ex. Courses\u2026',
@@ -1603,6 +1610,7 @@ const TRANSLATIONS = {
     help_tx_csv_h:'Import CSV',
     help_tx_csv_p1:"Importez un export de tableur au format : Date,Type,Category,Amount,Description (ligne d'en-tête requise).",
     help_tx_csv_p2:'Les dates doivent être au format YYYY-MM-DD. Type doit être : income, expense, bill, savings, debt, subscription, sinking_fund.',
+    bud_desc:'Définissez un montant prévu pour chaque catégorie de revenus, dépenses, factures et épargne, puis suivez ce qui rentre et sort réellement.',
     bud_section_income:'Revenus',bud_section_expenses:'Dépenses',
     bud_section_bills:'Factures',bud_section_savings:'Épargne',
     bud_th_category:'Catégorie',bud_th_expected:'Prévu',
@@ -1644,7 +1652,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Sans dette',dash_interest_label:'Intérêts',
     dash_months_label:'Mois',dash_method_label:'Méthode',
     dash_set_balances:'Entrez les soldes pour voir les résultats.',
-    dash_upcoming_7:'\uD83D\uDCC5 À venir (7 jours)',dash_nothing_scheduled:'Rien de planifié.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 À venir ({0} jours)',dash_nothing_scheduled:'Rien de planifié.',
     dash_no_sinking:'Aucun fonds de prévision.',dash_create_one:'En créer un \u2192',
     help_dash_intro:"Le tableau de bord vous donne un aperçu financier en temps réel. Tous les chiffres se mettent à jour automatiquement lorsque vous enregistrez des transactions.",
     help_dash_hero_h:'Statistiques principales',
@@ -1689,6 +1697,7 @@ const TRANSLATIONS = {
     confirm_delete_fund:'Supprimer ce fonds ?',confirm_remove_sub:'Supprimer cet abonnement ?',
     confirm_reset_1:'\u00cates-vous s\u00fbr ? Toutes les donn\u00e9es seront d\u00e9finitivement supprim\u00e9es.',
     confirm_reset_2:'Derni\u00e8re chance - c\u2019est irr\u00e9versible. Continuer ?',
+    sett_upcoming_title:'📅 Fenêtre à venir',sett_upcoming_desc:"Choisissez combien de jours à l'avance la liste À venir du tableau de bord doit afficher.",sett_upcoming_label:"Jours à l'avance",
     export_csv_btn:'\uD83D\uDCE5 Exporter CSV',sett_export_title:'\uD83D\uDCE4 Exporter les donn\u00e9es',
     sett_export_desc:'T\u00e9l\u00e9chargez toutes les transactions en fichier CSV pour sauvegarde ou utilisation dans une autre application.',
     sf_add_contribution:'Ajouter une contribution',sf_contribution_label:'Montant \u00e0 ajouter',sf_currently_saved:'Actuellement \u00e9pargn\u00e9',
@@ -1815,7 +1824,7 @@ const TRANSLATIONS = {
     guide_budget_connect2:"Votre graphique de Répartition des dépenses et votre Solde net au tableau de bord sont tous deux construits à partir de ces catégories.",
     guide_budget_connect3:"Si vous avez activé les <strong>Enveloppes budgétaires</strong> dans les Paramètres, c'est aussi ici que vous verrez comment vos dépenses se comparent à ces objectifs en pourcentage.",
     guide_budget_tip:"Revoyez vos montants Prévus une fois par mois - un budget qui ne change jamais cesse assez vite de refléter la réalité.",
-    guide_debt_title:'Calculateur de remboursement de dette',
+    guide_debt_title:'Remboursement de dettes',
     guide_debt_big:"C'est plus qu'un simple relevé de ce que vous devez - cela vous construit un vrai plan pour devenir libre de dettes, en montrant exactement quelle dette privilégier en premier et combien d'intérêts vous économiserez.",
     guide_debt_step1:'Ajoutez chaque dette avec son <strong>Solde</strong>, son <strong>Taux</strong> (intérêt) et son <strong>Paiement minimum</strong>.',
     guide_debt_step2:'Choisissez une stratégie : <strong>Boule de neige</strong> (rembourser le plus petit solde en premier pour des victoires rapides) ou <strong>Avalanche</strong> (rembourser le taux le plus élevé en premier pour économiser le plus).',
@@ -1988,7 +1997,7 @@ const TRANSLATIONS = {
     help_sf_contrib_h:'Añadir contribuciones',
     help_sf_contrib_p:'Haz clic en el icono + de una tarjeta para registrar una contribución - introduce el importe que añades este mes.',
     help_sf_tip:'💡 Perfecto para: vacaciones, reparaciones de coche, seguros anuales, bodas, electrónica, mejoras del hogar.',
-    dpc_title:'Calculadora de deudas',dpc_add_btn:'+ Añadir deuda',
+    dpc_title:'Pago de deudas',dpc_add_btn:'+ Añadir deuda',
     dpc_desc:'Introduce cada deuda, elige una estrategia de pago y ve exactamente cuándo estarás libre de deudas y cuántos intereses pagarás en total.',
     dpc_method_label:'Método de pago',
     dpc_snowball_desc:'Saldo más bajo primero - las victorias rápidas te mantienen motivado',
@@ -2061,6 +2070,7 @@ const TRANSLATIONS = {
     dsched_never_payoff_warning:'A este ritmo, esta deuda no se pagará por completo dentro de 50 años - el pago apenas supera el interés. Considera un mínimo más alto, un piso porcentual más alto, o un pago extra.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna entre métodos para ver cuántos intereses ahorrarías con cada enfoque.',
     tx_import_csv:'\uD83D\uDCE5 Importar CSV',
+    tx_page_desc:'Registra cada dólar que se mueve - cada entrada actualiza automáticamente tus categorías de presupuesto, tu panel y tu asignación.',
     tx_add_title:'Añadir una transacción',
     tx_date:'Fecha',tx_type:'Tipo',tx_category:'Categoría',tx_amount:'Importe',
     tx_date_hint:'La fecha en que ocurrió esta transacción.',
@@ -2087,6 +2097,7 @@ const TRANSLATIONS = {
     help_tx_csv_h:'Importación CSV',
     help_tx_csv_p1:'Importa un export de hoja de cálculo con el formato: Date,Type,Category,Amount,Description (fila de encabezado obligatoria).',
     help_tx_csv_p2:'Las fechas deben estar en formato YYYY-MM-DD. Type debe ser: income, expense, bill, savings, debt, subscription, sinking_fund.',
+    bud_desc:'Define un monto previsto para cada categoría de ingresos, gastos, facturas y ahorros, y haz seguimiento de lo que realmente entra y sale.',
     bud_section_income:'Ingresos',bud_section_expenses:'Gastos',
     bud_section_bills:'Facturas',bud_section_savings:'Ahorros',
     bud_th_category:'Categoría',bud_th_expected:'Previsto',
@@ -2128,7 +2139,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Sin deuda',dash_interest_label:'Intereses',
     dash_months_label:'Meses',dash_method_label:'Método',
     dash_set_balances:'Introduce los saldos para ver los resultados.',
-    dash_upcoming_7:'\uD83D\uDCC5 Próximos (7 días)',dash_nothing_scheduled:'Nada programado.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Próximos ({0} días)',dash_nothing_scheduled:'Nada programado.',
     dash_no_sinking:'No hay fondos de ahorro.',dash_create_one:'Crear uno \u2192',
     help_dash_intro:'El panel te ofrece un resumen financiero en tiempo real. Todos los números se actualizan automáticamente cuando registras transacciones.',
     help_dash_hero_h:'Fila de estadísticas principales',
@@ -2173,6 +2184,7 @@ const TRANSLATIONS = {
     confirm_delete_fund:'\u00bfEliminar este fondo?',confirm_remove_sub:'\u00bfEliminar esta suscripci\u00f3n?',
     confirm_reset_1:'\u00bfEst\u00e1s seguro? Todos los datos se eliminar\u00e1n permanentemente.',
     confirm_reset_2:'\u00daltima oportunidad - no se puede deshacer. \u00bfContinuar?',
+    sett_upcoming_title:'📅 Ventana de próximos',sett_upcoming_desc:'Elige con cuántos días de antelación se muestra la lista Próximos del panel.',sett_upcoming_label:'Días de antelación',
     export_csv_btn:'\uD83D\uDCE5 Exportar CSV',sett_export_title:'\uD83D\uDCE4 Exportar datos',
     sett_export_desc:'Descarga todas las transacciones como archivo CSV para copia de seguridad o uso en otra app.',
     sf_add_contribution:'A\u00f1adir aportaci\u00f3n',sf_contribution_label:'Importe a a\u00f1adir',sf_currently_saved:'Actualmente ahorrado',
@@ -2299,7 +2311,7 @@ const TRANSLATIONS = {
     guide_budget_connect2:'Tu gráfico de Distribución del gasto y tu Sobrante neto en el Panel se construyen a partir de estas categorías.',
     guide_budget_connect3:'Si has activado <strong>Distribución por porcentajes</strong> en Ajustes, aquí también verás cómo se compara tu gasto con esas metas porcentuales.',
     guide_budget_tip:'Revisa tus importes Esperados una vez al mes - un presupuesto que nunca cambia deja de reflejar la realidad bastante rápido.',
-    guide_debt_title:'Calculadora de pago de deudas',
+    guide_debt_title:'Pago de deudas',
     guide_debt_big:'Esto es más que un registro de lo que debes - te construye un plan real para quedar libre de deudas, mostrando exactamente qué deuda priorizar primero y cuánto interés ahorrarás haciéndolo.',
     guide_debt_step1:'Agrega cada deuda con su <strong>Saldo</strong>, su <strong>Tasa</strong> (interés) y su <strong>Pago mínimo</strong>.',
     guide_debt_step2:'Elige una estrategia: <strong>Bola de nieve</strong> (pagar primero el saldo más pequeño para ganar impulso) o <strong>Avalancha</strong> (pagar primero la tasa más alta para ahorrar más).',
@@ -2473,7 +2485,7 @@ const TRANSLATIONS = {
     help_sf_contrib_h:'Aggiungere contributi',
     help_sf_contrib_p:"Clicca sull'icona + su una scheda per registrare un contributo - inserisci l'importo che stai aggiungendo questo mese.",
     help_sf_tip:'\uD83D\uDCA1 Ottimo per: vacanze, riparazioni auto, assicurazioni annuali, matrimoni, elettronica, miglioramenti domestici.',
-    dpc_title:'Calcolatore debiti',dpc_add_btn:'+ Aggiungi debito',
+    dpc_title:'Pagamento debiti',dpc_add_btn:'+ Aggiungi debito',
     dpc_desc:'Inserisci ogni debito, scegli una strategia di rimborso e scopri esattamente quando sarai libero dai debiti e quanti interessi pagherai in totale.',
     dpc_method_label:'Metodo di rimborso',
     dpc_snowball_desc:'Saldo più basso prima - le piccole vittorie ti mantengono motivato',
@@ -2546,6 +2558,7 @@ const TRANSLATIONS = {
     dsched_never_payoff_warning:'A questo ritmo, questo debito non sarà completamente saldato entro 50 anni - il pagamento supera appena gli interessi. Considera una rata minima più alta, una soglia percentuale più alta o un pagamento extra.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna tra i metodi per vedere quanti interessi risparmieresti con ciascun approccio.',
     tx_import_csv:'\uD83D\uDCE5 Importa CSV',
+    tx_page_desc:'Registra ogni euro che si muove - ogni voce aggiorna automaticamente le tue categorie di budget, la dashboard e la ripartizione.',
     tx_add_title:'Aggiungi una transazione',
     tx_date:'Data',tx_type:'Tipo',tx_category:'Categoria',tx_amount:'Importo',
     tx_date_hint:'La data in cui è avvenuta questa transazione.',
@@ -2572,6 +2585,7 @@ const TRANSLATIONS = {
     help_tx_csv_h:'Import CSV',
     help_tx_csv_p1:'Importa un export di foglio di calcolo nel formato: Date,Type,Category,Amount,Description (riga di intestazione richiesta).',
     help_tx_csv_p2:'Le date devono essere nel formato YYYY-MM-DD. Type deve essere: income, expense, bill, savings, debt, subscription, sinking_fund.',
+    bud_desc:'Imposta un importo previsto per ogni categoria di entrate, spese, bollette e risparmi, poi monitora ciò che entra ed esce realmente.',
     bud_section_income:'Entrate',bud_section_expenses:'Spese',
     bud_section_bills:'Bollette',bud_section_savings:'Risparmi',
     bud_th_category:'Categoria',bud_th_expected:'Previsto',
@@ -2613,7 +2627,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Senza debiti',dash_interest_label:'Interessi',
     dash_months_label:'Mesi',dash_method_label:'Metodo',
     dash_set_balances:'Inserisci i saldi per vedere i risultati.',
-    dash_upcoming_7:'\uD83D\uDCC5 In arrivo (7 giorni)',dash_nothing_scheduled:'Niente in programma.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 In arrivo ({0} giorni)',dash_nothing_scheduled:'Niente in programma.',
     dash_no_sinking:'Nessun fondo di accantonamento.',dash_create_one:'Creane uno \u2192',
     help_dash_intro:'Il pannello offre una panoramica finanziaria in tempo reale. Tutti i numeri si aggiornano automaticamente quando registri le transazioni.',
     help_dash_hero_h:'Statistiche principali',
@@ -2658,6 +2672,7 @@ const TRANSLATIONS = {
     confirm_delete_fund:'Eliminare questo fondo?',confirm_remove_sub:'Rimuovere questo abbonamento?',
     confirm_reset_1:'Sei sicuro? Tutti i dati verranno eliminati definitivamente.',
     confirm_reset_2:'Ultima possibilit\u00e0 - non \u00e8 reversibile. Continuare?',
+    sett_upcoming_title:'📅 Finestra in arrivo',sett_upcoming_desc:'Scegli con quanti giorni di anticipo la lista In arrivo della dashboard deve mostrare gli eventi.',sett_upcoming_label:'Giorni di anticipo',
     export_csv_btn:'\uD83D\uDCE5 Esporta CSV',sett_export_title:'\uD83D\uDCE4 Esporta dati',
     sett_export_desc:"Scarica tutte le transazioni come file CSV per backup o utilizzo in un'altra app.",
     sf_add_contribution:'Aggiungi contributo',sf_contribution_label:'Importo da aggiungere',sf_currently_saved:'Attualmente risparmiato',
@@ -2784,7 +2799,7 @@ const TRANSLATIONS = {
     guide_budget_connect2:"Il tuo grafico Distribuzione spese e il tuo Avanzo netto nella Dashboard si basano entrambi su queste categorie.",
     guide_budget_connect3:"Se hai attivato le <strong>Distribuzioni percentuali</strong> nelle Impostazioni, qui vedrai anche come le tue spese si confrontano con quegli obiettivi percentuali.",
     guide_budget_tip:"Rivedi i tuoi importi Previsti una volta al mese - un budget che non cambia mai smette abbastanza rapidamente di riflettere la realtà.",
-    guide_debt_title:"Calcolatore di rimborso debiti",
+    guide_debt_title:"Pagamento debiti",
     guide_debt_big:"Questo è più di un semplice elenco di ciò che devi - ti costruisce un vero piano per diventare libero dai debiti, mostrando esattamente quale debito affrontare prima e quanti interessi risparmierai facendolo.",
     guide_debt_step1:"Aggiungi ogni debito con il suo <strong>Saldo</strong>, il suo <strong>Tasso</strong> (interesse) e il suo <strong>Pagamento minimo</strong>.",
     guide_debt_step2:"Scegli una strategia: <strong>Palla di neve</strong> (ripaga prima il saldo più piccolo per vittorie rapide) oppure <strong>Valanga</strong> (ripaga prima il tasso più alto per risparmiare di più).",
@@ -2957,7 +2972,7 @@ const TRANSLATIONS = {
     help_sf_contrib_h:'Dodawanie wpłat',
     help_sf_contrib_p:'Kliknij ikonę + na karcie, aby zarejestrować wpłatę - podaj kwotę, którą dodajesz w tym miesiącu.',
     help_sf_tip:'💡 Idealny na: wakacje, naprawy samochodu, ubezpieczenia roczne, wesela, elektronikę, remonty domu.',
-    dpc_title:'Kalkulator spłaty długów',dpc_add_btn:'+ Dodaj dług',
+    dpc_title:'Spłata długów',dpc_add_btn:'+ Dodaj dług',
     dpc_desc:'Wprowadź każdy dług, wybierz strategię spłaty i sprawdź dokładnie, kiedy będziesz wolny od długów i ile odsetek zapłacisz łącznie.',
     dpc_method_label:'Metoda spłaty',
     dpc_snowball_desc:'Najniższe saldo najpierw - szybkie sukcesy utrzymują motywację',
@@ -3030,6 +3045,7 @@ const TRANSLATIONS = {
     dsched_never_payoff_warning:'W tym tempie ten dług nie zostanie w pełni spłacony w ciągu 50 lat - płatność ledwo przewyższa odsetki. Rozważ wyższą minimalną ratę, wyższy próg procentowy lub dodatkową płatność.',
     help_dpc_tip:'\uD83D\uDCA1 Przełącz między metodami, aby zobaczyć, ile odsetek zaoszczędziłbyś przy każdym podejściu.',
     tx_import_csv:'\uD83D\uDCE5 Importuj CSV',
+    tx_page_desc:'Zapisuj każdą przepływającą złotówkę - każdy wpis automatycznie aktualizuje Twoje kategorie budżetu, panel i alokację.',
     tx_add_title:'Dodaj transakcję',
     tx_date:'Data',tx_type:'Typ',tx_category:'Kategoria',tx_amount:'Kwota',
     tx_date_hint:'Data, kiedy miała miejsce ta transakcja.',
@@ -3056,6 +3072,7 @@ const TRANSLATIONS = {
     help_tx_csv_h:'Import CSV',
     help_tx_csv_p1:'Zaimportuj eksport arkusza kalkulacyjnego w formacie: Date,Type,Category,Amount,Description (wymagana linia nagłówka).',
     help_tx_csv_p2:'Daty powinny być w formacie YYYY-MM-DD. Type musi być jednym z: income, expense, bill, savings, debt, subscription, sinking_fund.',
+    bud_desc:'Ustal oczekiwaną kwotę dla każdej kategorii przychodów, wydatków, rachunków i oszczędności, a następnie śledź, co faktycznie wpływa i wypływa.',
     bud_section_income:'Przychody',bud_section_expenses:'Wydatki',
     bud_section_bills:'Rachunki',bud_section_savings:'Oszczędności',
     bud_th_category:'Kategoria',bud_th_expected:'Planowane',
@@ -3097,7 +3114,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Wolny od długów',dash_interest_label:'Odsetki',
     dash_months_label:'Miesiące',dash_method_label:'Metoda',
     dash_set_balances:'Wpisz salda, aby zobaczyć wyniki.',
-    dash_upcoming_7:'\uD83D\uDCC5 Nadchodzące (7 dni)',dash_nothing_scheduled:'Nic zaplanowanego.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Nadchodzące ({0} dni)',dash_nothing_scheduled:'Nic zaplanowanego.',
     dash_no_sinking:'Brak funduszy celowych.',dash_create_one:'Utwórz jeden \u2192',
     help_dash_intro:'Panel zapewnia przegląd finansów w czasie rzeczywistym. Wszystkie liczby aktualizują się automatycznie po dodaniu transakcji.',
     help_dash_hero_h:'Główne statystyki',
@@ -3142,6 +3159,7 @@ const TRANSLATIONS = {
     confirm_delete_fund:'Usun\u0105\u0107 ten fundusz?',confirm_remove_sub:'Usun\u0105\u0107 t\u0119 subskrypcj\u0119?',
     confirm_reset_1:'Jeste\u015b pewny? Wszystkie dane zostan\u0105 trwale usuni\u0119te.',
     confirm_reset_2:'Ostatnia szansa - tego nie mo\u017cna cofn\u0105\u0107. Kontynuowa\u0107?',
+    sett_upcoming_title:'📅 Okno nadchodzących',sett_upcoming_desc:'Wybierz, z iloma dniami wyprzedzenia lista Nadchodzące na pulpicie ma wyświetlać zdarzenia.',sett_upcoming_label:'Dni wyprzedzenia',
     export_csv_btn:'\uD83D\uDCE5 Eksportuj CSV',sett_export_title:'\uD83D\uDCE4 Eksportuj dane',
     sett_export_desc:'Pobierz wszystkie transakcje jako plik CSV do kopii zapasowej lub u\u017cycia w innej aplikacji.',
     sf_add_contribution:'Dodaj wp\u0142at\u0119',sf_contribution_label:'Kwota do dodania',sf_currently_saved:'Dotychczas zaoszcz\u0119dzono',
@@ -3268,7 +3286,7 @@ const TRANSLATIONS = {
     guide_budget_connect2:'Twój wykres Podziału wydatków i Saldo netto na Pulpicie są budowane na podstawie tych kategorii.',
     guide_budget_connect3:'Jeśli włączyłeś <strong>Podział procentowy budżetu</strong> w Ustawieniach, tutaj również zobaczysz, jak twoje wydatki wypadają na tle tych procentowych celów.',
     guide_budget_tip:'Przeglądaj swoje Oczekiwane kwoty raz w miesiącu - budżet, który nigdy się nie zmienia, dość szybko przestaje odzwierciedlać rzeczywistość.',
-    guide_debt_title:'Kalkulator spłaty długów',
+    guide_debt_title:'Spłata długów',
     guide_debt_big:'To coś więcej niż zapis tego, co jesteś winien - buduje dla ciebie prawdziwy plan, jak stać się wolnym od długów, pokazując dokładnie, który dług potraktować priorytetowo i ile odsetek dzięki temu zaoszczędzisz.',
     guide_debt_step1:'Dodaj każdy dług z jego <strong>Saldem</strong>, <strong>Oprocentowaniem</strong> i <strong>Minimalną płatnością</strong>.',
     guide_debt_step2:'Wybierz strategię: <strong>Kula śnieżna</strong> (najpierw spłać najmniejsze saldo dla szybkich sukcesów) lub <strong>Lawina</strong> (najpierw spłać najwyższe oprocentowanie, aby zaoszczędzić najwięcej).',
@@ -3493,7 +3511,8 @@ function renderDashboard() {
   const expSav=state.budgets.savings.reduce((t,r)=>t+(r.expected||0),0);
   const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
   const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
-  const upcoming=getUpcomingEvents(7,act);
+  const upcomingDays=state.settings?.upcomingDays||7;
+  const upcoming=getUpcomingEvents(upcomingDays,act);
   const incSegs=state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
   const incTot=incSegs.reduce((t,s)=>t+s.value,0);
   const spendSegs=[
@@ -3585,7 +3604,7 @@ function renderDashboard() {
         ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>${(()=>{const dp=act.debt||{},paid=state.debts.filter(d=>(dp[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0).length,total=state.debts.filter(d=>d.minimumPayment>0).length;return total>0?`<div style="margin-top:7px;font-size:11px;color:${paid===total?'#10b981':'#f43f5e'};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paid}/${total} ${paid===1?t('dash_debts_paid'):t('dash_debts_paid_many')}</div>`:'';})()}`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
       </div></div>
       <div class="panel pro-card"><div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:12px">${t('dash_upcoming_7')}</div>
+        <div class="panel-title-sm" style="margin-bottom:12px">${tf('dash_upcoming_tpl',upcomingDays)}</div>
         ${upcoming.length===0?`<div class="chart-empty">${t('dash_nothing_scheduled')}</div>`:`<div class="upcoming-list">${upcoming.slice(0,6).map(ev=>{const p=ev.paid;return`<div class="upcoming-item"><span class="up-dot" style="background:${p?'var(--text-faint)':ev.color}"></span><span class="up-label" style="${p?'text-decoration:line-through;color:var(--text-faint)':''}">${esc(ev.label)}</span><span class="up-date" style="${p?'color:var(--text-faint)':''}">${formatDateDisplay(ev.date)}</span><span class="up-amt" style="${p?'color:var(--text-faint)':''}">${fmt(ev.amount)}</span></div>`;}).join('')}</div>`}
       </div></div>
       <div class="panel pro-card"><div class="panel-inner-sm">
@@ -3638,7 +3657,8 @@ function getModMeta(){return{
 function renderBudget() {
   const act=computeActuals(), MOD_META=getModMeta();
   const el=document.getElementById('bview-budget');
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">💰 ${t('tab_budget')}</h2>${helpBtn('budget')}</div>`+
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">💰 ${t('tab_budget')}</h2>${helpBtn('budget')}</div>
+    <p class="section-desc">${t('bud_desc')}</p>`+
     Object.entries(MOD_META).map(([type,meta])=>buildModuleHTML(type,meta,act)).join('');
   Object.entries(MOD_META).forEach(([type,meta])=>bindModuleEvents(type,meta,el,act));
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
@@ -3802,9 +3822,10 @@ function renderTransactions() {
   const el=document.getElementById('bview-transactions');
   const allocEnabled=state.allocation?.enabled;
   el.innerHTML=`<div class="section-header"><h2 class="section-title">\uD83D\uDCCB ${t('tab_transactions')}</h2><div class="section-header-actions">${helpBtn('transactions')}<label class="btn btn-ghost btn-sm csv-label">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label></div></div>
+    <p class="section-desc">${t('tx_page_desc')}</p>
     <details class="recurring-panel panel">
       <summary class="recurring-summary"><span class="recurring-summary-title"><span class="recurring-summary-icon" aria-hidden="true">⚡</span>${t('recurring_title')}</span><span class="recurring-count">${(state.recurringTemplates||[]).length||''}</span></summary>
-      <div class="recurring-body">
+      <div class="recurring-body${(state.recurringTemplates||[]).length===0?' is-empty':''}">
         <p class="recurring-desc">${t('recurring_desc')}</p>
         ${(state.recurringTemplates||[]).length===0
           ?`<p class="recurring-empty">${t('recurring_empty')}</p>`
@@ -4971,6 +4992,14 @@ function renderSettings(){
           </div>
         </div>
       </div></div>
+      <div class="panel"><div class="panel-inner">
+        <div class="settings-card-title">${t('sett_upcoming_title')}</div>
+        <p class="settings-desc">${t('sett_upcoming_desc')}</p>
+        <div class="field"><label class="field-label">${t('sett_upcoming_label')}</label>
+          <input class="input" type="number" id="settUpcomingDays" min="1" max="90" step="1"
+                 value="${s.upcomingDays||7}">
+        </div>
+      </div></div>
       <div class="panel settings-card"><div class="panel-inner">
         <div class="settings-card-title">${t('sett_export_title')}</div>
         <p class="settings-desc">${t('sett_export_desc')}</p>
@@ -5098,6 +5127,14 @@ function renderSettings(){
 
   document.getElementById('settRollover')?.addEventListener('change', e => {
     state.rollover = parseFloat(e.target.value) || 0;
+    saveState();
+    showToast(t('toast_saved'));
+  });
+
+  document.getElementById('settUpcomingDays')?.addEventListener('change', e => {
+    const days = parseInt(e.target.value, 10);
+    state.settings.upcomingDays = (days>=1&&days<=90) ? days : 7;
+    e.target.value = state.settings.upcomingDays;
     saveState();
     showToast(t('toast_saved'));
   });
