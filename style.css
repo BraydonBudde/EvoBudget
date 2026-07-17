@@ -942,6 +942,13 @@ input[type="number"].expected-input {
   .summary-cards { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 700px) {
+  /* Fade the tab bar's edges so a horizontally-scrollable row of tabs
+     visibly hints that more tabs exist off-screen, instead of just
+     cutting a label off mid-word with no other indication. */
+  .budget-tabs {
+    mask-image: linear-gradient(to right, transparent 0, black 20px, black calc(100% - 20px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black 20px, black calc(100% - 20px), transparent 100%);
+  }
   .app { padding: 20px 16px 60px; }
   .tool-grid { grid-template-columns: 1fr; max-width: 100%; }
   .summary-cards { grid-template-columns: 1fr 1fr; }

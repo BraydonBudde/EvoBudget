@@ -71,7 +71,7 @@ const TRANSLATIONS = {
     total_outgoing:'Total Outgoing', savings_rate:'Savings Rate',
     net_leftover:'Net Leftover', cash_flow:'Cash Flow',
     income_sources:'Income Sources', spending_breakdown:'Spending Breakdown',
-    expected:'Expected', actual:'Actual',
+    expected:'Expected', actual:'Actual', progress:'Progress',
     of:'of', budgeted:'budgeted', saved:'saved',
     // Settings
     budget_period:'Budget Period', start_date:'Start date', end_date:'End date',
@@ -87,6 +87,7 @@ const TRANSLATIONS = {
     toast_saved:'Saved \u2713',toast_reset:'All data cleared',
     toast_alloc_bucket_added:'Bucket added \u2713',
     confirm_remove_cat:'Remove this category?',
+    confirm_remove_cat_with_tx:'{0} existing transaction(s) use this category. They will keep it as a label, but it will no longer be tracked in your budget. Delete anyway?',
     confirm_delete_all_tx:'Delete ALL transactions? This cannot be undone.',
     confirm_delete_tx:'Delete this transaction?',confirm_remove_debt:'Remove this debt?',
     confirm_delete_fund:'Delete this fund?',confirm_remove_sub:'Remove this subscription?',
@@ -241,6 +242,79 @@ const TRANSLATIONS = {
     guide_settings_connect2:'The Rollover amount you set here flows directly into the Net Leftover shown on your Dashboard.',
     guide_settings_connect3:'Exporting data here is the safest way to keep a copy of everything before making any big change.',
     guide_settings_tip:'Set your Currency and Budget Period first thing, before you start logging transactions - it saves you from having to double-check old entries later.',
+    mod_desc_income:'Set your expected income for each source. Actual amounts fill in automatically when you log transactions.',
+    mod_desc_expenses:'Set a budget limit for each spending category. Progress bars turn red when you go over.',
+    mod_desc_bills:"Track recurring bills. Add a due date, then tick the checkbox once you've paid.",
+    mod_desc_debt:'Stay on top of loan and mortgage repayments. Set expected amounts and mark each as paid.',
+    mod_desc_savings:'Set a savings goal for each bucket. Actual contributions come from your logged transactions.',
+    mod_add_category:'+ Add category',mod_add_new_category:'Add new category',mod_cat_name_label:'Name',
+    mod_set_date:'Set date',mod_remove:'Remove',mod_mark_paid:'Mark as paid',mod_total:'Total',
+    dash_period_title:'Click to change budget period',
+    onboard_welcome:"👋 Welcome! Here's how to get started:",
+    onboard_step1_html:'Go to <strong>Income, Expenses, Bills</strong> etc. and enter your expected amounts.',
+    onboard_step2_html:'Use <strong>Transactions</strong> to log what you actually earn and spend.',
+    onboard_step3_html:'Return here to see your full financial picture update in real time.',
+    dash_stat_income:'Total Income',dash_stat_of_expected:'of {0} expected',
+    dash_stat_exp_bills:'Expenses &amp; Bills',dash_stat_of_budgeted:'of {0} budgeted',
+    dash_stat_debt:'Debt Payments',dash_stat_savings:'Total Savings',dash_stat_of_goal:'of {0} goal',
+    dash_net_leftover_period:'Net Leftover this period',dash_includes_rollover:'Includes {0} rollover from last period',
+    dash_lf_income:'income',dash_lf_exp_bills:'exp &amp; bills',dash_lf_debt:'debt',dash_lf_savings:'savings',dash_lf_rollover:'rollover',
+    dash_cash_flow:'Cash Flow - Expected vs Actual',dash_expected:'Expected',dash_actual:'Actual',
+    dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',dash_add_tx_link:'Add transactions →',
+    dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
+    upgrade_feat_debt:'💳 Debt Payoff',upgrade_feat_sinking:'🏺 Sinking Funds',upgrade_feat_calendar:'📅 Smart Calendar',
+    upgrade_feat_subs:'🔄 Subscriptions',upgrade_feat_auto:'⚡ Automation',upgrade_feat_alloc:'🎯 Allocation',
+    upg_chip_tx:'{0} / {0} free transactions used',upg_chip_cat:'{0} / {0} free {1} categories used',upg_chip_limit:'Free trial limit reached',
+    upg_aria_label:'Upgrade to unlock the full planner',
+    upg_title_html:'Unlock the full<br>Simple Budget Planner',
+    upg_sub:"You're at the free trial limit. Upgrade once to remove every cap. No subscription, ever.",
+    upg_feat_unlimited_tx_html:'<strong>Unlimited</strong> transactions',
+    upg_feat_unlimited_cat_html:'<strong>Unlimited</strong> categories in every section',
+    upg_feat_csv:'CSV import &amp; export, full history',upg_feat_onetime:'One-time payment · free updates for life',
+    upg_price_tag:'one-time',upg_price_note:'No subscription',
+    upg_cta_sbp:'Unlock Simple Budget for {0}',
+    upg_upsell_lead:'⚡ Want debt payoff, sinking funds &amp; more?',upg_upsell_cta:'Get Ultimate for {0} →',
+    upg_later:'Maybe later',
+    reauth_title:'Sign in with Google to continue',
+    reauth_sub:'Your data for this tool is synced with Google Drive. Sign in again to pick up where you left off.',
+    reauth_submit:'Sign in with Google',reauth_local:'Use local data on this device instead',
+    sync_welcome:'Welcome to Evo Budget',sync_choose:'Choose how to save your data.',sync_recommended:'Recommended',
+    sync_continue_google:'Continue with Google',sync_desc_multi_device:'Planner data is stored across multiple devices',
+    sync_use_no_account:'Use without an account',sync_desc_this_device:'Planner data is stored on this device only',
+    sync_status_wait:'Complete the steps in the Google window that just opened. If nothing appeared, check your address bar for a blocked pop-up icon.',
+    sync_footer_note:'This can be changed in settings later',
+    code_title:'Enter your access code',code_sub:'Unlock the full {0} with the code from your purchase.',
+    code_placeholder:'Access code',code_error:"That code isn't right. Check for exact capitalization and try again.",
+    code_submit:'Submit',code_try_free:'Try for free instead',code_get:'Get a code',
+    app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
+    edit_tx_title:'✏️ Edit Transaction',save_changes:'Save changes',no_categories:'- no categories -',
+    no_cat_setup:'- set up categories first -',
+    tx_error_required:'Please fill in date, type, category, and a valid amount greater than 0.',
+    csv_error_msg:'No valid rows found.\n\nExpected format:\nDate, Type, Category, Amount, Description\n2024-01-15, expense, Food, 25.50, Grocery run',
+    sync_card_title:'☁️ Data &amp; Sync',sync_card_desc:'Choose how your data is stored and kept up to date across devices.',
+    sync_mode_local_title:'This device only',sync_mode_local_desc:'Data is saved on this device only',
+    sync_mode_google_title:'Sync with Google',sync_mode_google_desc:'Data is synced across multiple devices',
+    sync_signed_in_as:'Signed in as {0}',sync_error_generic:"Sign-in didn't go through. Please try again.",
+    sync_err_popup_blocked:'Your browser blocked the Google sign-in window. Please allow pop-ups for this site (check your address bar for a blocked pop-up icon) and try again.',
+    sync_err_cancelled:'Sign-in was cancelled. Please try again.',
+    toast_synced_google:'Synced with Google Drive ✓',toast_synced_local:'Switched to local storage ✓',
+    cmp_title:'⚡ Simple vs Ultimate Budget Planner',cmp_col_feature:'Feature',cmp_col_simple:'💰 Simple',cmp_col_ultimate:'⚡ Ultimate',
+    cmp_section_core:'Core budgeting',cmp_section_pro:'Pro features - Ultimate only',
+    cmp_stay_simple:'Stay with Simple',cmp_open_ultimate:'Open Ultimate Budget Planner →',
+    cmp_feat1:'Budget tracking - Income, Expenses, Bills &amp; Savings',
+    cmp_feat2:'Transaction logging with CSV import',
+    cmp_feat3:'Cash flow chart - expected vs actual',
+    cmp_feat4:'Income &amp; spending donut charts',
+    cmp_feat5:'Budget period control with presets',
+    cmp_feat6:'Rollover from previous period',
+    cmp_feat7:'Debt Payoff (Snowball &amp; Avalanche)',
+    cmp_feat8:'Sinking funds tracker with monthly goals',
+    cmp_feat9:'Smart calendar with all events auto-populated',
+    cmp_feat10:'Subscription tracker with category breakdown',
+    cmp_feat11:'Pro dashboard with hero stats &amp; upcoming panel',
+    cmp_feat12:'One-click import from Simple Budget Planner',
+    cmp_feat13:'Penny - your AI budget assistant',
+    help_aria:'Help',close_aria:'Close',dismiss_aria:'Dismiss',ok:'OK',
   },
   de: {
     lang_name:'Deutsch',
@@ -254,7 +328,7 @@ const TRANSLATIONS = {
     total_outgoing:'Gesamtausgaben',savings_rate:'Sparquote',
     net_leftover:'Verbleibend',cash_flow:'Cashflow',
     income_sources:'Einkommensquellen',spending_breakdown:'Ausgabenübersicht',
-    expected:'Geplant',actual:'Tatsächlich',
+    expected:'Geplant',actual:'Tatsächlich',progress:'Fortschritt',
     of:'von',budgeted:'budgetiert',saved:'gespart',
     budget_period:'Budgetzeitraum',start_date:'Startdatum',end_date:'Enddatum',
     this_month:'Diesen Monat',this_week:'Diese Woche',last_week:'Letzte Woche',last_month:'Letzter Monat',last_30_days:'Letzte 30 Tage',this_quarter:'Dieses Quartal',this_year:'Dieses Jahr',
@@ -269,6 +343,7 @@ const TRANSLATIONS = {
     toast_saved:'Gespeichert \u2713',toast_reset:'Alle Daten gel\u00f6scht',
     toast_alloc_bucket_added:'Kategorie hinzugef\u00fcgt \u2713',
     confirm_remove_cat:'Diese Kategorie entfernen?',
+    confirm_remove_cat_with_tx:'{0} bestehende Transaktion(en) verwenden diese Kategorie. Sie behalten sie als Bezeichnung, wird aber nicht mehr in deinem Budget erfasst. Trotzdem löschen?',
     confirm_delete_all_tx:'ALLE Transaktionen l\u00f6schen? Das kann nicht r\u00fcckg\u00e4ngig gemacht werden.',
     confirm_delete_tx:'Diese Transaktion l\u00f6schen?',confirm_remove_debt:'Diese Schuld entfernen?',
     confirm_delete_fund:'Diesen Fonds l\u00f6schen?',confirm_remove_sub:'Dieses Abonnement entfernen?',
@@ -420,6 +495,79 @@ const TRANSLATIONS = {
     guide_settings_connect2:'Der hier festgelegte Übertrag-Betrag fließt direkt in den im Dashboard angezeigten Nettoüberschuss ein.',
     guide_settings_connect3:'Daten hier zu exportieren, ist der sicherste Weg, eine Kopie von allem zu behalten, bevor du eine größere Änderung vornimmst.',
     guide_settings_tip:'Lege Währung und Budgetzeitraum gleich zu Beginn fest, bevor du Transaktionen einträgst - das erspart dir, alte Einträge später noch einmal überprüfen zu müssen.',
+    mod_desc_income:'Lege dein erwartetes Einkommen für jede Quelle fest. Tatsächliche Beträge werden automatisch ausgefüllt, sobald du Transaktionen erfasst.',
+    mod_desc_expenses:'Lege ein Budgetlimit für jede Ausgabenkategorie fest. Fortschrittsbalken werden rot, wenn du es überschreitest.',
+    mod_desc_bills:'Behalte wiederkehrende Rechnungen im Blick. Füge ein Fälligkeitsdatum hinzu und hake es ab, sobald du bezahlt hast.',
+    mod_desc_debt:'Behalte Kredit- und Hypothekenzahlungen im Blick. Lege erwartete Beträge fest und markiere jede als bezahlt.',
+    mod_desc_savings:'Lege ein Sparziel für jeden Topf fest. Tatsächliche Beiträge stammen aus deinen erfassten Transaktionen.',
+    mod_add_category:'+ Kategorie hinzufügen',mod_add_new_category:'Neue Kategorie hinzufügen',mod_cat_name_label:'Name',
+    mod_set_date:'Datum festlegen',mod_remove:'Entfernen',mod_mark_paid:'Als bezahlt markieren',mod_total:'Gesamt',
+    dash_period_title:'Klicken, um den Budgetzeitraum zu ändern',
+    onboard_welcome:'👋 Willkommen! So kommst du los:',
+    onboard_step1_html:'Gehe zu <strong>Einnahmen, Ausgaben, Rechnungen</strong> usw. und trage deine erwarteten Beträge ein.',
+    onboard_step2_html:'Nutze <strong>Transaktionen</strong>, um zu erfassen, was du tatsächlich einnimmst und ausgibst.',
+    onboard_step3_html:'Komm hierher zurück, um dein vollständiges Finanzbild in Echtzeit zu sehen.',
+    dash_stat_income:'Gesamteinnahmen',dash_stat_of_expected:'von {0} erwartet',
+    dash_stat_exp_bills:'Ausgaben &amp; Rechnungen',dash_stat_of_budgeted:'von {0} budgetiert',
+    dash_stat_debt:'Schuldenzahlungen',dash_stat_savings:'Gesamtersparnisse',dash_stat_of_goal:'von {0} Ziel',
+    dash_net_leftover_period:'Nettosaldo dieser Periode',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
+    dash_lf_income:'Einnahmen',dash_lf_exp_bills:'Ausg. &amp; Rechn.',dash_lf_debt:'Schulden',dash_lf_savings:'Ersparnisse',dash_lf_rollover:'Übertrag',
+    dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
+    dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',dash_add_tx_link:'Transaktionen hinzufügen →',
+    dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
+    upgrade_feat_debt:'💳 Schuldentilgung',upgrade_feat_sinking:'🏺 Sparzielfonds',upgrade_feat_calendar:'📅 Smart-Kalender',
+    upgrade_feat_subs:'🔄 Abonnements',upgrade_feat_auto:'⚡ Automatisierung',upgrade_feat_alloc:'🎯 Zuweisung',
+    upg_chip_tx:'{0} / {0} kostenlose Transaktionen genutzt',upg_chip_cat:'{0} / {0} kostenlose {1}-Kategorien genutzt',upg_chip_limit:'Kostenlose Testphase erreicht',
+    upg_aria_label:'Upgrade, um den vollen Planer freizuschalten',
+    upg_title_html:'Schalte den vollen<br>Simple Budget Planner frei',
+    upg_sub:'Du hast das kostenlose Testlimit erreicht. Einmal upgraden, um jede Grenze aufzuheben. Kein Abo, nie.',
+    upg_feat_unlimited_tx_html:'<strong>Unbegrenzte</strong> Transaktionen',
+    upg_feat_unlimited_cat_html:'<strong>Unbegrenzte</strong> Kategorien in jedem Bereich',
+    upg_feat_csv:'CSV-Import &amp; -Export, volle Historie',upg_feat_onetime:'Einmalzahlung · kostenlose Updates fürs Leben',
+    upg_price_tag:'einmalig',upg_price_note:'Kein Abo',
+    upg_cta_sbp:'Simple Budget freischalten für {0}',
+    upg_upsell_lead:'⚡ Schuldentilgung, Sparzielfonds &amp; mehr gewünscht?',upg_upsell_cta:'Ultimate holen für {0} →',
+    upg_later:'Vielleicht später',
+    reauth_title:'Melde dich mit Google an, um fortzufahren',
+    reauth_sub:'Deine Daten für dieses Tool werden mit Google Drive synchronisiert. Melde dich erneut an, um dort weiterzumachen, wo du aufgehört hast.',
+    reauth_submit:'Mit Google anmelden',reauth_local:'Stattdessen lokale Daten auf diesem Gerät verwenden',
+    sync_welcome:'Willkommen bei Evo Budget',sync_choose:'Wähle, wie deine Daten gespeichert werden.',sync_recommended:'Empfohlen',
+    sync_continue_google:'Mit Google fortfahren',sync_desc_multi_device:'Planerdaten werden auf mehreren Geräten gespeichert',
+    sync_use_no_account:'Ohne Konto verwenden',sync_desc_this_device:'Planerdaten werden nur auf diesem Gerät gespeichert',
+    sync_status_wait:'Schließe die Schritte im gerade geöffneten Google-Fenster ab. Falls nichts erschienen ist, prüfe deine Adressleiste auf ein blockiertes Pop-up-Symbol.',
+    sync_footer_note:'Dies kann später in den Einstellungen geändert werden',
+    code_title:'Gib deinen Zugangscode ein',code_sub:'Schalte den vollen {0} mit dem Code aus deinem Kauf frei.',
+    code_placeholder:'Zugangscode',code_error:'Dieser Code ist nicht richtig. Prüfe die genaue Groß-/Kleinschreibung und versuche es erneut.',
+    code_submit:'Absenden',code_try_free:'Stattdessen kostenlos testen',code_get:'Code holen',
+    app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
+    edit_tx_title:'✏️ Transaktion bearbeiten',save_changes:'Änderungen speichern',no_categories:'- keine Kategorien -',
+    no_cat_setup:'- zuerst Kategorien einrichten -',
+    tx_error_required:'Bitte Datum, Typ, Kategorie und einen gültigen Betrag größer als 0 eingeben.',
+    csv_error_msg:'Keine gültigen Zeilen gefunden.\n\nErwartetes Format:\nDatum, Typ, Kategorie, Betrag, Beschreibung\n2024-01-15, expense, Lebensmittel, 25.50, Einkauf',
+    sync_card_title:'☁️ Daten &amp; Synchronisierung',sync_card_desc:'Wähle, wie deine Daten gespeichert und geräteübergreifend aktuell gehalten werden.',
+    sync_mode_local_title:'Nur dieses Gerät',sync_mode_local_desc:'Daten werden nur auf diesem Gerät gespeichert',
+    sync_mode_google_title:'Mit Google synchronisieren',sync_mode_google_desc:'Daten werden geräteübergreifend synchronisiert',
+    sync_signed_in_as:'Angemeldet als {0}',sync_error_generic:'Anmeldung hat nicht funktioniert. Bitte erneut versuchen.',
+    sync_err_popup_blocked:'Dein Browser hat das Google-Anmeldefenster blockiert. Bitte erlaube Pop-ups für diese Seite (prüfe deine Adressleiste auf ein blockiertes Pop-up-Symbol) und versuche es erneut.',
+    sync_err_cancelled:'Die Anmeldung wurde abgebrochen. Bitte erneut versuchen.',
+    toast_synced_google:'Mit Google Drive synchronisiert ✓',toast_synced_local:'Zu lokalem Speicher gewechselt ✓',
+    cmp_title:'⚡ Simple vs. Ultimate Budget Planner',cmp_col_feature:'Funktion',cmp_col_simple:'💰 Simple',cmp_col_ultimate:'⚡ Ultimate',
+    cmp_section_core:'Kernbudgetierung',cmp_section_pro:'Pro-Funktionen - nur Ultimate',
+    cmp_stay_simple:'Bei Simple bleiben',cmp_open_ultimate:'Ultimate Budget Planner öffnen →',
+    cmp_feat1:'Budgetverfolgung - Einnahmen, Ausgaben, Rechnungen &amp; Ersparnisse',
+    cmp_feat2:'Transaktionserfassung mit CSV-Import',
+    cmp_feat3:'Cashflow-Diagramm - erwartet vs. tatsächlich',
+    cmp_feat4:'Einnahmen- &amp; Ausgaben-Donut-Diagramme',
+    cmp_feat5:'Budgetzeitraum-Steuerung mit Voreinstellungen',
+    cmp_feat6:'Übertrag aus vorheriger Periode',
+    cmp_feat7:'Schuldentilgung (Schneeball &amp; Lawine)',
+    cmp_feat8:'Sparzielfonds-Tracker mit monatlichen Zielen',
+    cmp_feat9:'Smart-Kalender mit automatisch befüllten Ereignissen',
+    cmp_feat10:'Abo-Tracker mit Kategorieaufschlüsselung',
+    cmp_feat11:'Pro-Dashboard mit Kennzahlen &amp; Übersichtspanel',
+    cmp_feat12:'Ein-Klick-Import aus Simple Budget Planner',
+    cmp_feat13:'Penny - dein KI-Budgetassistent',
+    help_aria:'Hilfe',close_aria:'Schließen',dismiss_aria:'Verwerfen',ok:'OK',
   },
   fr: {
     lang_name:'Français',
@@ -433,7 +581,7 @@ const TRANSLATIONS = {
     total_outgoing:'Sorties totales',savings_rate:"Taux d'épargne",
     net_leftover:'Solde net',cash_flow:'Flux de trésorerie',
     income_sources:'Sources de revenus',spending_breakdown:'Répartition des dépenses',
-    expected:'Prévu',actual:'Réel',
+    expected:'Prévu',actual:'Réel',progress:'Progression',
     of:'sur',budgeted:'budgété',saved:'épargné',
     budget_period:'Période budgétaire',start_date:'Date de début',end_date:'Date de fin',
     this_month:'Ce mois',this_week:'Cette semaine',last_week:'Semaine pr\u00e9c.',last_month:'Mois pr\u00e9c.',last_30_days:'30 derniers jours',this_quarter:'Ce trimestre',this_year:'Cette ann\u00e9e',
@@ -448,6 +596,7 @@ const TRANSLATIONS = {
     toast_saved:'Enregistr\u00e9 \u2713',toast_reset:'Toutes les donn\u00e9es effac\u00e9es',
     toast_alloc_bucket_added:'Segment ajout\u00e9 \u2713',
     confirm_remove_cat:'Supprimer cette cat\u00e9gorie ?',
+    confirm_remove_cat_with_tx:'{0} transaction(s) existante(s) utilisent cette cat\u00e9gorie. Elles la conserveront comme \u00e9tiquette, mais elle ne sera plus suivie dans votre budget. Supprimer quand m\u00eame ?',
     confirm_delete_all_tx:'Supprimer TOUTES les transactions ? Cela est irr\u00e9versible.',
     confirm_delete_tx:'Supprimer cette transaction ?',confirm_remove_debt:'Supprimer cette dette ?',
     confirm_delete_fund:'Supprimer ce fonds ?',confirm_remove_sub:'Supprimer cet abonnement ?',
@@ -599,6 +748,79 @@ const TRANSLATIONS = {
     guide_settings_connect2:"Le montant de Report défini ici se répercute directement sur le Solde net affiché sur votre tableau de bord.",
     guide_settings_connect3:"Exporter vos données ici est le geste le plus sûr avant tout changement important.",
     guide_settings_tip:"Définissez votre Devise et votre Période budgétaire en tout premier, avant de saisir des transactions - cela vous évite d'avoir à revérifier d'anciennes saisies plus tard.",
+    mod_desc_income:'Définissez votre revenu prévu pour chaque source. Les montants réels se remplissent automatiquement quand vous enregistrez des transactions.',
+    mod_desc_expenses:'Définissez une limite de budget pour chaque catégorie de dépenses. Les barres de progression passent au rouge en cas de dépassement.',
+    mod_desc_bills:'Suivez vos factures récurrentes. Ajoutez une date d’échéance, puis cochez la case une fois payée.',
+    mod_desc_debt:'Gardez le contrôle de vos remboursements de prêts et d’hypothèque. Définissez les montants prévus et marquez chacun comme payé.',
+    mod_desc_savings:'Définissez un objectif d’épargne pour chaque tirelire. Les contributions réelles proviennent de vos transactions enregistrées.',
+    mod_add_category:'+ Ajouter une catégorie',mod_add_new_category:'Ajouter une nouvelle catégorie',mod_cat_name_label:'Nom',
+    mod_set_date:'Définir la date',mod_remove:'Supprimer',mod_mark_paid:'Marquer comme payé',mod_total:'Total',
+    dash_period_title:'Cliquez pour changer la période budgétaire',
+    onboard_welcome:'👋 Bienvenue ! Voici comment commencer :',
+    onboard_step1_html:'Allez dans <strong>Revenus, Dépenses, Factures</strong>, etc. et saisissez vos montants prévus.',
+    onboard_step2_html:'Utilisez <strong>Transactions</strong> pour enregistrer ce que vous gagnez et dépensez réellement.',
+    onboard_step3_html:'Revenez ici pour voir votre situation financière complète se mettre à jour en temps réel.',
+    dash_stat_income:'Revenu total',dash_stat_of_expected:'sur {0} prévu',
+    dash_stat_exp_bills:'Dépenses &amp; Factures',dash_stat_of_budgeted:'sur {0} budgétisé',
+    dash_stat_debt:'Paiements de dettes',dash_stat_savings:'Épargne totale',dash_stat_of_goal:'sur {0} objectif',
+    dash_net_leftover_period:'Solde net de cette période',dash_includes_rollover:'Inclut {0} de report de la période précédente',
+    dash_lf_income:'revenus',dash_lf_exp_bills:'dép. &amp; fact.',dash_lf_debt:'dettes',dash_lf_savings:'épargne',dash_lf_rollover:'report',
+    dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_expected:'Prévu',dash_actual:'Réel',
+    dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',dash_add_tx_link:'Ajouter des transactions →',
+    dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
+    upgrade_feat_debt:'💳 Remboursement de dettes',upgrade_feat_sinking:'🏺 Provisions',upgrade_feat_calendar:'📅 Calendrier intelligent',
+    upgrade_feat_subs:'🔄 Abonnements',upgrade_feat_auto:'⚡ Automatisation',upgrade_feat_alloc:'🎯 Répartition',
+    upg_chip_tx:'{0} / {0} transactions gratuites utilisées',upg_chip_cat:'{0} / {0} catégories {1} gratuites utilisées',upg_chip_limit:'Limite d’essai gratuit atteinte',
+    upg_aria_label:'Mettre à niveau pour débloquer le planificateur complet',
+    upg_title_html:'Débloquez le<br>Simple Budget Planner complet',
+    upg_sub:"Vous avez atteint la limite d'essai gratuit. Mettez à niveau une fois pour lever tous les plafonds. Jamais d'abonnement.",
+    upg_feat_unlimited_tx_html:'Transactions <strong>illimitées</strong>',
+    upg_feat_unlimited_cat_html:'Catégories <strong>illimitées</strong> dans chaque section',
+    upg_feat_csv:'Import &amp; export CSV, historique complet',upg_feat_onetime:'Paiement unique · mises à jour gratuites à vie',
+    upg_price_tag:'unique',upg_price_note:'Sans abonnement',
+    upg_cta_sbp:'Débloquer Simple Budget pour {0}',
+    upg_upsell_lead:'⚡ Envie de remboursement de dettes, provisions &amp; plus ?',upg_upsell_cta:'Obtenir Ultimate pour {0} →',
+    upg_later:'Plus tard',
+    reauth_title:'Connectez-vous avec Google pour continuer',
+    reauth_sub:'Vos données pour cet outil sont synchronisées avec Google Drive. Reconnectez-vous pour reprendre où vous en étiez.',
+    reauth_submit:'Se connecter avec Google',reauth_local:'Utiliser les données locales de cet appareil à la place',
+    sync_welcome:'Bienvenue sur Evo Budget',sync_choose:'Choisissez comment enregistrer vos données.',sync_recommended:'Recommandé',
+    sync_continue_google:'Continuer avec Google',sync_desc_multi_device:'Les données du planificateur sont stockées sur plusieurs appareils',
+    sync_use_no_account:'Utiliser sans compte',sync_desc_this_device:'Les données du planificateur sont stockées uniquement sur cet appareil',
+    sync_status_wait:"Terminez les étapes dans la fenêtre Google qui vient de s'ouvrir. Si rien n'est apparu, vérifiez votre barre d'adresse pour une icône de pop-up bloquée.",
+    sync_footer_note:'Cela peut être modifié plus tard dans les paramètres',
+    code_title:'Entrez votre code d’accès',code_sub:'Débloquez le {0} complet avec le code de votre achat.',
+    code_placeholder:'Code d’accès',code_error:'Ce code est incorrect. Vérifiez la casse exacte et réessayez.',
+    code_submit:'Valider',code_try_free:'Essayer gratuitement à la place',code_get:'Obtenir un code',
+    app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
+    edit_tx_title:'✏️ Modifier la transaction',save_changes:'Enregistrer les modifications',no_categories:'- aucune catégorie -',
+    no_cat_setup:'- configurez d’abord des catégories -',
+    tx_error_required:'Veuillez renseigner la date, le type, la catégorie et un montant valide supérieur à 0.',
+    csv_error_msg:"Aucune ligne valide trouvée.\n\nFormat attendu :\nDate, Type, Catégorie, Montant, Description\n2024-01-15, expense, Alimentation, 25.50, Courses",
+    sync_card_title:'☁️ Données &amp; Synchronisation',sync_card_desc:'Choisissez comment vos données sont stockées et tenues à jour entre les appareils.',
+    sync_mode_local_title:'Cet appareil uniquement',sync_mode_local_desc:'Les données sont enregistrées uniquement sur cet appareil',
+    sync_mode_google_title:'Synchroniser avec Google',sync_mode_google_desc:'Les données sont synchronisées entre plusieurs appareils',
+    sync_signed_in_as:'Connecté en tant que {0}',sync_error_generic:"La connexion n'a pas abouti. Veuillez réessayer.",
+    sync_err_popup_blocked:"Votre navigateur a bloqué la fenêtre de connexion Google. Veuillez autoriser les pop-ups pour ce site (vérifiez votre barre d'adresse pour une icône de pop-up bloquée) et réessayez.",
+    sync_err_cancelled:'La connexion a été annulée. Veuillez réessayer.',
+    toast_synced_google:'Synchronisé avec Google Drive ✓',toast_synced_local:'Basculé vers le stockage local ✓',
+    cmp_title:'⚡ Simple vs Ultimate Budget Planner',cmp_col_feature:'Fonctionnalité',cmp_col_simple:'💰 Simple',cmp_col_ultimate:'⚡ Ultimate',
+    cmp_section_core:'Budgétisation de base',cmp_section_pro:'Fonctionnalités Pro - Ultimate uniquement',
+    cmp_stay_simple:'Rester avec Simple',cmp_open_ultimate:'Ouvrir Ultimate Budget Planner →',
+    cmp_feat1:'Suivi du budget - Revenus, Dépenses, Factures &amp; Épargne',
+    cmp_feat2:'Enregistrement des transactions avec import CSV',
+    cmp_feat3:'Graphique de flux de trésorerie - prévu vs réel',
+    cmp_feat4:'Graphiques en anneau des revenus &amp; dépenses',
+    cmp_feat5:'Contrôle de la période budgétaire avec préréglages',
+    cmp_feat6:'Report de la période précédente',
+    cmp_feat7:'Remboursement de dettes (Boule de neige &amp; Avalanche)',
+    cmp_feat8:'Suivi des provisions avec objectifs mensuels',
+    cmp_feat9:'Calendrier intelligent avec tous les événements auto-remplis',
+    cmp_feat10:'Suivi des abonnements avec répartition par catégorie',
+    cmp_feat11:'Tableau de bord Pro avec statistiques clés &amp; panneau à venir',
+    cmp_feat12:'Import en un clic depuis Simple Budget Planner',
+    cmp_feat13:'Penny - votre assistant budgétaire IA',
+    help_aria:'Aide',close_aria:'Fermer',dismiss_aria:'Ignorer',ok:'OK',
   },
   es: {
     lang_name:'Español',
@@ -612,7 +834,7 @@ const TRANSLATIONS = {
     total_outgoing:'Gastos totales',savings_rate:'Tasa de ahorro',
     net_leftover:'Saldo neto',cash_flow:'Flujo de caja',
     income_sources:'Fuentes de ingresos',spending_breakdown:'Desglose de gastos',
-    expected:'Previsto',actual:'Real',
+    expected:'Previsto',actual:'Real',progress:'Progreso',
     of:'de',budgeted:'presupuestado',saved:'ahorrado',
     budget_period:'Período presupuestario',start_date:'Fecha de inicio',end_date:'Fecha de fin',
     this_month:'Este mes',this_week:'Esta semana',last_week:'Sem. pasada',last_month:'Mes pasado',last_30_days:'\u00daltimos 30 d\u00edas',this_quarter:'Este trimestre',this_year:'Este a\u00f1o',
@@ -627,6 +849,7 @@ const TRANSLATIONS = {
     toast_saved:'Guardado \u2713',toast_reset:'Todos los datos borrados',
     toast_alloc_bucket_added:'Segmento a\u00f1adido \u2713',
     confirm_remove_cat:'\u00bfEliminar esta categor\u00eda?',
+    confirm_remove_cat_with_tx:'{0} transacci\u00f3n(es) existente(s) usan esta categor\u00eda. La conservar\u00e1n como etiqueta, pero ya no se har\u00e1 seguimiento en tu presupuesto. \u00bfEliminar de todos modos?',
     confirm_delete_all_tx:'\u00bfEliminar TODAS las transacciones? Esto no se puede deshacer.',
     confirm_delete_tx:'\u00bfEliminar esta transacci\u00f3n?',confirm_remove_debt:'\u00bfEliminar esta deuda?',
     confirm_delete_fund:'\u00bfEliminar este fondo?',confirm_remove_sub:'\u00bfEliminar esta suscripci\u00f3n?',
@@ -778,6 +1001,79 @@ const TRANSLATIONS = {
     guide_settings_connect2:'El importe de Saldo anterior que fijas aquí pasa directamente al Sobrante neto que se muestra en tu Panel.',
     guide_settings_connect3:'Exportar tus datos aquí es la forma más segura de guardar una copia de todo antes de hacer un cambio grande.',
     guide_settings_tip:'Fija tu Moneda y Período de presupuesto desde el principio, antes de registrar transacciones - te ahorra tener que revisar registros antiguos más tarde.',
+    mod_desc_income:'Define tus ingresos previstos para cada fuente. Los montos reales se completan automáticamente al registrar transacciones.',
+    mod_desc_expenses:'Define un límite de presupuesto para cada categoría de gasto. Las barras de progreso se ponen rojas si te excedes.',
+    mod_desc_bills:'Haz seguimiento de tus facturas recurrentes. Añade una fecha de vencimiento y marca la casilla una vez pagada.',
+    mod_desc_debt:'Mantente al día con tus pagos de préstamos e hipoteca. Define los montos previstos y marca cada uno como pagado.',
+    mod_desc_savings:'Define una meta de ahorro para cada fondo. Las contribuciones reales provienen de tus transacciones registradas.',
+    mod_add_category:'+ Añadir categoría',mod_add_new_category:'Añadir nueva categoría',mod_cat_name_label:'Nombre',
+    mod_set_date:'Definir fecha',mod_remove:'Eliminar',mod_mark_paid:'Marcar como pagado',mod_total:'Total',
+    dash_period_title:'Haz clic para cambiar el período de presupuesto',
+    onboard_welcome:'👋 ¡Bienvenido! Así es como empezar:',
+    onboard_step1_html:'Ve a <strong>Ingresos, Gastos, Facturas</strong>, etc. e introduce tus montos previstos.',
+    onboard_step2_html:'Usa <strong>Transacciones</strong> para registrar lo que realmente ganas y gastas.',
+    onboard_step3_html:'Vuelve aquí para ver tu panorama financiero completo actualizarse en tiempo real.',
+    dash_stat_income:'Ingresos totales',dash_stat_of_expected:'de {0} previsto',
+    dash_stat_exp_bills:'Gastos &amp; Facturas',dash_stat_of_budgeted:'de {0} presupuestado',
+    dash_stat_debt:'Pagos de deudas',dash_stat_savings:'Ahorros totales',dash_stat_of_goal:'de {0} objetivo',
+    dash_net_leftover_period:'Saldo neto de este período',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
+    dash_lf_income:'ingresos',dash_lf_exp_bills:'gastos &amp; fact.',dash_lf_debt:'deudas',dash_lf_savings:'ahorros',dash_lf_rollover:'arrastre',
+    dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_expected:'Previsto',dash_actual:'Real',
+    dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',dash_add_tx_link:'Añadir transacciones →',
+    dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
+    upgrade_feat_debt:'💳 Pago de deudas',upgrade_feat_sinking:'🏺 Fondos de ahorro',upgrade_feat_calendar:'📅 Calendario inteligente',
+    upgrade_feat_subs:'🔄 Suscripciones',upgrade_feat_auto:'⚡ Automatización',upgrade_feat_alloc:'🎯 Asignación',
+    upg_chip_tx:'{0} / {0} transacciones gratuitas usadas',upg_chip_cat:'{0} / {0} categorías de {1} gratuitas usadas',upg_chip_limit:'Límite de prueba gratuita alcanzado',
+    upg_aria_label:'Actualizar para desbloquear el planificador completo',
+    upg_title_html:'Desbloquea el<br>Simple Budget Planner completo',
+    upg_sub:'Has alcanzado el límite de la prueba gratuita. Actualiza una vez para eliminar todos los límites. Nunca una suscripción.',
+    upg_feat_unlimited_tx_html:'Transacciones <strong>ilimitadas</strong>',
+    upg_feat_unlimited_cat_html:'Categorías <strong>ilimitadas</strong> en cada sección',
+    upg_feat_csv:'Importación &amp; exportación CSV, historial completo',upg_feat_onetime:'Pago único · actualizaciones gratuitas de por vida',
+    upg_price_tag:'pago único',upg_price_note:'Sin suscripción',
+    upg_cta_sbp:'Desbloquear Simple Budget por {0}',
+    upg_upsell_lead:'⚡ ¿Quieres pago de deudas, fondos de ahorro &amp; más?',upg_upsell_cta:'Obtener Ultimate por {0} →',
+    upg_later:'Quizás más tarde',
+    reauth_title:'Inicia sesión con Google para continuar',
+    reauth_sub:'Tus datos para esta herramienta están sincronizados con Google Drive. Vuelve a iniciar sesión para continuar donde lo dejaste.',
+    reauth_submit:'Iniciar sesión con Google',reauth_local:'Usar datos locales de este dispositivo en su lugar',
+    sync_welcome:'Bienvenido a Evo Budget',sync_choose:'Elige cómo guardar tus datos.',sync_recommended:'Recomendado',
+    sync_continue_google:'Continuar con Google',sync_desc_multi_device:'Los datos del planificador se almacenan en varios dispositivos',
+    sync_use_no_account:'Usar sin cuenta',sync_desc_this_device:'Los datos del planificador se almacenan solo en este dispositivo',
+    sync_status_wait:'Completa los pasos en la ventana de Google que acaba de abrirse. Si no apareció nada, revisa tu barra de direcciones por un icono de ventana emergente bloqueada.',
+    sync_footer_note:'Esto se puede cambiar más tarde en los ajustes',
+    code_title:'Introduce tu código de acceso',code_sub:'Desbloquea el {0} completo con el código de tu compra.',
+    code_placeholder:'Código de acceso',code_error:'Ese código no es correcto. Revisa las mayúsculas exactas e inténtalo de nuevo.',
+    code_submit:'Enviar',code_try_free:'Probar gratis en su lugar',code_get:'Obtener un código',
+    app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
+    edit_tx_title:'✏️ Editar transacción',save_changes:'Guardar cambios',no_categories:'- sin categorías -',
+    no_cat_setup:'- configura categorías primero -',
+    tx_error_required:'Por favor completa fecha, tipo, categoría y un monto válido mayor que 0.',
+    csv_error_msg:'No se encontraron filas válidas.\n\nFormato esperado:\nFecha, Tipo, Categoría, Monto, Descripción\n2024-01-15, expense, Comida, 25.50, Compra semanal',
+    sync_card_title:'☁️ Datos &amp; Sincronización',sync_card_desc:'Elige cómo se almacenan tus datos y se mantienen actualizados entre dispositivos.',
+    sync_mode_local_title:'Solo este dispositivo',sync_mode_local_desc:'Los datos se guardan solo en este dispositivo',
+    sync_mode_google_title:'Sincronizar con Google',sync_mode_google_desc:'Los datos se sincronizan entre varios dispositivos',
+    sync_signed_in_as:'Sesión iniciada como {0}',sync_error_generic:'El inicio de sesión no se completó. Inténtalo de nuevo.',
+    sync_err_popup_blocked:'Tu navegador bloqueó la ventana de inicio de sesión de Google. Permite las ventanas emergentes para este sitio (revisa tu barra de direcciones por un icono de ventana emergente bloqueada) e inténtalo de nuevo.',
+    sync_err_cancelled:'El inicio de sesión fue cancelado. Inténtalo de nuevo.',
+    toast_synced_google:'Sincronizado con Google Drive ✓',toast_synced_local:'Cambiado a almacenamiento local ✓',
+    cmp_title:'⚡ Simple vs Ultimate Budget Planner',cmp_col_feature:'Función',cmp_col_simple:'💰 Simple',cmp_col_ultimate:'⚡ Ultimate',
+    cmp_section_core:'Presupuesto básico',cmp_section_pro:'Funciones Pro - solo Ultimate',
+    cmp_stay_simple:'Quedarme con Simple',cmp_open_ultimate:'Abrir Ultimate Budget Planner →',
+    cmp_feat1:'Seguimiento de presupuesto - Ingresos, Gastos, Facturas &amp; Ahorros',
+    cmp_feat2:'Registro de transacciones con importación CSV',
+    cmp_feat3:'Gráfico de flujo de caja - previsto vs real',
+    cmp_feat4:'Gráficos de anillo de ingresos &amp; gastos',
+    cmp_feat5:'Control del período de presupuesto con preajustes',
+    cmp_feat6:'Arrastre del período anterior',
+    cmp_feat7:'Pago de deudas (Bola de nieve &amp; Avalancha)',
+    cmp_feat8:'Seguimiento de fondos de ahorro con metas mensuales',
+    cmp_feat9:'Calendario inteligente con todos los eventos autocompletados',
+    cmp_feat10:'Seguimiento de suscripciones con desglose por categoría',
+    cmp_feat11:'Panel Pro con estadísticas clave &amp; panel de próximos eventos',
+    cmp_feat12:'Importación con un clic desde Simple Budget Planner',
+    cmp_feat13:'Penny - tu asistente de presupuesto con IA',
+    help_aria:'Ayuda',close_aria:'Cerrar',dismiss_aria:'Descartar',ok:'OK',
   },
   it: {
     lang_name:'Italiano',
@@ -791,7 +1087,7 @@ const TRANSLATIONS = {
     total_outgoing:'Uscite totali',savings_rate:'Tasso di risparmio',
     net_leftover:'Saldo netto',cash_flow:'Flusso di cassa',
     income_sources:'Fonti di reddito',spending_breakdown:'Ripartizione spese',
-    expected:'Previsto',actual:'Effettivo',
+    expected:'Previsto',actual:'Effettivo',progress:'Avanzamento',
     of:'di',budgeted:'preventivato',saved:'risparmiato',
     budget_period:'Periodo di budget',start_date:'Data inizio',end_date:'Data fine',
     this_month:'Questo mese',this_week:'Questa settimana',last_week:'Sett. scorsa',last_month:'Mese scorso',last_30_days:'Ultimi 30 giorni',this_quarter:'Questo trimestre',this_year:'Quest\u2019anno',
@@ -806,6 +1102,7 @@ const TRANSLATIONS = {
     toast_saved:'Salvato \u2713',toast_reset:'Tutti i dati cancellati',
     toast_alloc_bucket_added:'Segmento aggiunto \u2713',
     confirm_remove_cat:'Rimuovere questa categoria?',
+    confirm_remove_cat_with_tx:'{0} transazione/i esistente/i usa/usano questa categoria. La manterranno come etichetta, ma non sarà più monitorata nel tuo budget. Eliminare comunque?',
     confirm_delete_all_tx:'Eliminare TUTTE le transazioni? Questa azione \u00e8 irreversibile.',
     confirm_delete_tx:'Eliminare questa transazione?',confirm_remove_debt:'Rimuovere questo debito?',
     confirm_delete_fund:'Eliminare questo fondo?',confirm_remove_sub:'Rimuovere questo abbonamento?',
@@ -957,6 +1254,79 @@ const TRANSLATIONS = {
     guide_settings_connect2:"L'importo di Riporto impostato qui confluisce direttamente nell'Avanzo netto mostrato nella tua Dashboard.",
     guide_settings_connect3:"Esportare i tuoi dati qui è l'abitudine più sicura prima di fare qualsiasi cambiamento importante.",
     guide_settings_tip:"Imposta Valuta e Periodo di budget fin da subito, prima di registrare transazioni - ti risparmia di dover ricontrollare vecchie registrazioni più avanti.",
+    mod_desc_income:'Imposta le entrate previste per ogni fonte. Gli importi effettivi si compilano automaticamente quando registri le transazioni.',
+    mod_desc_expenses:'Imposta un limite di budget per ogni categoria di spesa. Le barre di avanzamento diventano rosse in caso di superamento.',
+    mod_desc_bills:'Tieni traccia delle bollette ricorrenti. Aggiungi una scadenza, poi spunta la casella una volta pagata.',
+    mod_desc_debt:'Resta al passo con i pagamenti di prestiti e mutui. Imposta gli importi previsti e segna ciascuno come pagato.',
+    mod_desc_savings:'Imposta un obiettivo di risparmio per ogni salvadanaio. I contributi effettivi provengono dalle transazioni registrate.',
+    mod_add_category:'+ Aggiungi categoria',mod_add_new_category:'Aggiungi nuova categoria',mod_cat_name_label:'Nome',
+    mod_set_date:'Imposta data',mod_remove:'Rimuovi',mod_mark_paid:'Segna come pagato',mod_total:'Totale',
+    dash_period_title:'Clicca per cambiare il periodo di budget',
+    onboard_welcome:'👋 Benvenuto! Ecco come iniziare:',
+    onboard_step1_html:'Vai su <strong>Entrate, Spese, Bollette</strong> ecc. e inserisci gli importi previsti.',
+    onboard_step2_html:'Usa <strong>Transazioni</strong> per registrare ciò che guadagni e spendi realmente.',
+    onboard_step3_html:'Torna qui per vedere il tuo quadro finanziario completo aggiornarsi in tempo reale.',
+    dash_stat_income:'Entrate totali',dash_stat_of_expected:'di {0} previsto',
+    dash_stat_exp_bills:'Spese &amp; Bollette',dash_stat_of_budgeted:'di {0} a budget',
+    dash_stat_debt:'Pagamenti debiti',dash_stat_savings:'Risparmi totali',dash_stat_of_goal:'di {0} obiettivo',
+    dash_net_leftover_period:'Saldo netto di questo periodo',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
+    dash_lf_income:'entrate',dash_lf_exp_bills:'spese &amp; boll.',dash_lf_debt:'debiti',dash_lf_savings:'risparmi',dash_lf_rollover:'riporto',
+    dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_expected:'Previsto',dash_actual:'Effettivo',
+    dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',dash_add_tx_link:'Aggiungi transazioni →',
+    dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
+    upgrade_feat_debt:'💳 Pagamento debiti',upgrade_feat_sinking:'🏺 Fondi di accantonamento',upgrade_feat_calendar:'📅 Calendario intelligente',
+    upgrade_feat_subs:'🔄 Abbonamenti',upgrade_feat_auto:'⚡ Automazione',upgrade_feat_alloc:'🎯 Ripartizione',
+    upg_chip_tx:'{0} / {0} transazioni gratuite utilizzate',upg_chip_cat:'{0} / {0} categorie {1} gratuite utilizzate',upg_chip_limit:'Limite di prova gratuita raggiunto',
+    upg_aria_label:'Esegui l’upgrade per sbloccare il pianificatore completo',
+    upg_title_html:'Sblocca il<br>Simple Budget Planner completo',
+    upg_sub:'Hai raggiunto il limite della prova gratuita. Esegui l’upgrade una volta per rimuovere ogni limite. Mai un abbonamento.',
+    upg_feat_unlimited_tx_html:'Transazioni <strong>illimitate</strong>',
+    upg_feat_unlimited_cat_html:'Categorie <strong>illimitate</strong> in ogni sezione',
+    upg_feat_csv:'Importazione &amp; esportazione CSV, cronologia completa',upg_feat_onetime:'Pagamento unico · aggiornamenti gratuiti a vita',
+    upg_price_tag:'una tantum',upg_price_note:'Nessun abbonamento',
+    upg_cta_sbp:'Sblocca Simple Budget per {0}',
+    upg_upsell_lead:'⚡ Vuoi pagamento debiti, fondi di accantonamento &amp; altro?',upg_upsell_cta:'Ottieni Ultimate per {0} →',
+    upg_later:'Forse più tardi',
+    reauth_title:'Accedi con Google per continuare',
+    reauth_sub:'I tuoi dati per questo strumento sono sincronizzati con Google Drive. Accedi di nuovo per riprendere da dove avevi lasciato.',
+    reauth_submit:'Accedi con Google',reauth_local:'Usa invece i dati locali su questo dispositivo',
+    sync_welcome:'Benvenuto su Evo Budget',sync_choose:'Scegli come salvare i tuoi dati.',sync_recommended:'Consigliato',
+    sync_continue_google:'Continua con Google',sync_desc_multi_device:'I dati del pianificatore sono memorizzati su più dispositivi',
+    sync_use_no_account:'Usa senza account',sync_desc_this_device:'I dati del pianificatore sono memorizzati solo su questo dispositivo',
+    sync_status_wait:'Completa i passaggi nella finestra Google appena apertasi. Se non è apparso nulla, controlla la barra degli indirizzi per un’icona di popup bloccato.',
+    sync_footer_note:'Questo può essere modificato in seguito nelle impostazioni',
+    code_title:'Inserisci il tuo codice di accesso',code_sub:'Sblocca il {0} completo con il codice del tuo acquisto.',
+    code_placeholder:'Codice di accesso',code_error:'Il codice non è corretto. Controlla le maiuscole esatte e riprova.',
+    code_submit:'Invia',code_try_free:'Prova gratis invece',code_get:'Ottieni un codice',
+    app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
+    edit_tx_title:'✏️ Modifica transazione',save_changes:'Salva modifiche',no_categories:'- nessuna categoria -',
+    no_cat_setup:'- imposta prima le categorie -',
+    tx_error_required:'Compila data, tipo, categoria e un importo valido maggiore di 0.',
+    csv_error_msg:'Nessuna riga valida trovata.\n\nFormato previsto:\nData, Tipo, Categoria, Importo, Descrizione\n2024-01-15, expense, Alimentari, 25.50, Spesa settimanale',
+    sync_card_title:'☁️ Dati &amp; Sincronizzazione',sync_card_desc:'Scegli come vengono memorizzati e tenuti aggiornati i tuoi dati tra i dispositivi.',
+    sync_mode_local_title:'Solo questo dispositivo',sync_mode_local_desc:'I dati sono salvati solo su questo dispositivo',
+    sync_mode_google_title:'Sincronizza con Google',sync_mode_google_desc:'I dati sono sincronizzati tra più dispositivi',
+    sync_signed_in_as:'Accesso effettuato come {0}',sync_error_generic:'L’accesso non è andato a buon fine. Riprova.',
+    sync_err_popup_blocked:'Il tuo browser ha bloccato la finestra di accesso Google. Consenti i popup per questo sito (controlla la barra degli indirizzi per un’icona di popup bloccato) e riprova.',
+    sync_err_cancelled:'Accesso annullato. Riprova.',
+    toast_synced_google:'Sincronizzato con Google Drive ✓',toast_synced_local:'Passato all’archiviazione locale ✓',
+    cmp_title:'⚡ Simple vs Ultimate Budget Planner',cmp_col_feature:'Funzione',cmp_col_simple:'💰 Simple',cmp_col_ultimate:'⚡ Ultimate',
+    cmp_section_core:'Budgeting principale',cmp_section_pro:'Funzioni Pro - solo Ultimate',
+    cmp_stay_simple:'Resta con Simple',cmp_open_ultimate:'Apri Ultimate Budget Planner →',
+    cmp_feat1:'Monitoraggio budget - Entrate, Spese, Bollette &amp; Risparmi',
+    cmp_feat2:'Registrazione transazioni con importazione CSV',
+    cmp_feat3:'Grafico del flusso di cassa - previsto vs effettivo',
+    cmp_feat4:'Grafici a ciambella di entrate &amp; spese',
+    cmp_feat5:'Controllo del periodo di budget con preimpostazioni',
+    cmp_feat6:'Riporto dal periodo precedente',
+    cmp_feat7:'Pagamento debiti (Palla di neve &amp; Valanga)',
+    cmp_feat8:'Monitoraggio fondi di accantonamento con obiettivi mensili',
+    cmp_feat9:'Calendario intelligente con tutti gli eventi popolati automaticamente',
+    cmp_feat10:'Monitoraggio abbonamenti con ripartizione per categoria',
+    cmp_feat11:'Dashboard Pro con statistiche principali &amp; pannello eventi in arrivo',
+    cmp_feat12:'Importazione con un clic da Simple Budget Planner',
+    cmp_feat13:'Penny - il tuo assistente di budget IA',
+    help_aria:'Aiuto',close_aria:'Chiudi',dismiss_aria:'Ignora',ok:'OK',
   },
   pl: {
     lang_name:'Polski',
@@ -970,7 +1340,7 @@ const TRANSLATIONS = {
     total_outgoing:'Łączne wydatki',savings_rate:'Stopa oszczędności',
     net_leftover:'Saldo netto',cash_flow:'Przepływ gotówki',
     income_sources:'Źródła dochodów',spending_breakdown:'Podział wydatków',
-    expected:'Planowane',actual:'Rzeczywiste',
+    expected:'Planowane',actual:'Rzeczywiste',progress:'Postęp',
     of:'z',budgeted:'zaplanowane',saved:'zaoszczędzone',
     budget_period:'Okres budżetowy',start_date:'Data rozpoczęcia',end_date:'Data zakończenia',
     this_month:'Ten miesiąc',this_week:'Ten tydzień',last_week:'Poprz. tydzień',last_month:'Poprz. miesiąc',last_30_days:'Ostatnie 30 dni',this_quarter:'Ten kwartał',this_year:'Ten rok',
@@ -985,6 +1355,7 @@ const TRANSLATIONS = {
     toast_saved:'Zapisano \u2713',toast_reset:'Wszystkie dane usuni\u0119te',
     toast_alloc_bucket_added:'Segment dodany \u2713',
     confirm_remove_cat:'Usun\u0105\u0107 t\u0119 kategori\u0119?',
+    confirm_remove_cat_with_tx:'{0} istniej\u0105ca(-ych) transakcja(-i) u\u017cywa tej kategorii. Zachowaj\u0105 j\u0105 jako etykiet\u0119, ale nie b\u0119dzie ju\u017c \u015bledzona w Twoim bud\u017cecie. Usun\u0105\u0107 mimo to?',
     confirm_delete_all_tx:'Usun\u0105\u0107 WSZYSTKIE transakcje? Tej operacji nie mo\u017cna cofn\u0105\u0107.',
     confirm_delete_tx:'Usun\u0105\u0107 t\u0119 transakcj\u0119?',confirm_remove_debt:'Usun\u0105\u0107 ten d\u0142ug?',
     confirm_delete_fund:'Usun\u0105\u0107 ten fundusz?',confirm_remove_sub:'Usun\u0105\u0107 t\u0119 subskrypcj\u0119?',
@@ -1136,6 +1507,79 @@ const TRANSLATIONS = {
     guide_settings_connect2:'Kwota Przeniesienia ustawiona tutaj trafia bezpośrednio do Salda netto pokazanego na twoim Pulpicie.',
     guide_settings_connect3:'Eksportowanie danych tutaj to najbezpieczniejszy sposób na zachowanie kopii wszystkiego przed dokonaniem większej zmiany.',
     guide_settings_tip:'Ustaw Walutę i Okres budżetowy od razu na początku, zanim zaczniesz zapisywać transakcje - oszczędzi ci to konieczności sprawdzania starych zapisów później.',
+    mod_desc_income:'Ustal spodziewane przychody dla każdego źródła. Rzeczywiste kwoty wypełniają się automatycznie po zarejestrowaniu transakcji.',
+    mod_desc_expenses:'Ustal limit budżetu dla każdej kategorii wydatków. Paski postępu zmieniają się na czerwone po przekroczeniu.',
+    mod_desc_bills:'Śledź powtarzające się rachunki. Dodaj termin płatności, a następnie zaznacz pole po opłaceniu.',
+    mod_desc_debt:'Trzymaj rękę na pulsie spłat kredytów i hipotek. Ustal spodziewane kwoty i oznacz każdą jako opłaconą.',
+    mod_desc_savings:'Ustal cel oszczędnościowy dla każdego funduszu. Rzeczywiste wpłaty pochodzą z zarejestrowanych transakcji.',
+    mod_add_category:'+ Dodaj kategorię',mod_add_new_category:'Dodaj nową kategorię',mod_cat_name_label:'Nazwa',
+    mod_set_date:'Ustaw datę',mod_remove:'Usuń',mod_mark_paid:'Oznacz jako opłacone',mod_total:'Suma',
+    dash_period_title:'Kliknij, aby zmienić okres budżetowy',
+    onboard_welcome:'👋 Witaj! Oto jak zacząć:',
+    onboard_step1_html:'Przejdź do <strong>Przychody, Wydatki, Rachunki</strong> itd. i wprowadź spodziewane kwoty.',
+    onboard_step2_html:'Użyj <strong>Transakcji</strong>, aby zapisywać to, co faktycznie zarabiasz i wydajesz.',
+    onboard_step3_html:'Wróć tutaj, aby zobaczyć pełny obraz finansów aktualizowany w czasie rzeczywistym.',
+    dash_stat_income:'Łączne przychody',dash_stat_of_expected:'z {0} spodziewanych',
+    dash_stat_exp_bills:'Wydatki &amp; Rachunki',dash_stat_of_budgeted:'z {0} zaplanowanych',
+    dash_stat_debt:'Spłaty długów',dash_stat_savings:'Łączne oszczędności',dash_stat_of_goal:'z {0} celu',
+    dash_net_leftover_period:'Saldo netto tego okresu',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
+    dash_lf_income:'przychody',dash_lf_exp_bills:'wyd. &amp; rach.',dash_lf_debt:'długi',dash_lf_savings:'oszczędności',dash_lf_rollover:'przeniesienie',
+    dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
+    dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',dash_add_tx_link:'Dodaj transakcje →',
+    dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
+    upgrade_feat_debt:'💳 Spłata długów',upgrade_feat_sinking:'🏺 Fundusze celowe',upgrade_feat_calendar:'📅 Inteligentny kalendarz',
+    upgrade_feat_subs:'🔄 Subskrypcje',upgrade_feat_auto:'⚡ Automatyzacja',upgrade_feat_alloc:'🎯 Alokacja',
+    upg_chip_tx:'{0} / {0} bezpłatnych transakcji wykorzystanych',upg_chip_cat:'{0} / {0} bezpłatnych kategorii {1} wykorzystanych',upg_chip_limit:'Osiągnięto limit bezpłatnej wersji próbnej',
+    upg_aria_label:'Ulepsz, aby odblokować pełny planer',
+    upg_title_html:'Odblokuj pełny<br>Simple Budget Planner',
+    upg_sub:'Osiągnąłeś limit bezpłatnej wersji próbnej. Ulepsz raz, aby usunąć wszystkie limity. Nigdy subskrypcji.',
+    upg_feat_unlimited_tx_html:'<strong>Nieograniczone</strong> transakcje',
+    upg_feat_unlimited_cat_html:'<strong>Nieograniczone</strong> kategorie w każdej sekcji',
+    upg_feat_csv:'Import &amp; eksport CSV, pełna historia',upg_feat_onetime:'Jednorazowa płatność · darmowe aktualizacje na zawsze',
+    upg_price_tag:'jednorazowo',upg_price_note:'Bez subskrypcji',
+    upg_cta_sbp:'Odblokuj Simple Budget za {0}',
+    upg_upsell_lead:'⚡ Chcesz spłatę długów, fundusze celowe &amp; więcej?',upg_upsell_cta:'Zdobądź Ultimate za {0} →',
+    upg_later:'Może później',
+    reauth_title:'Zaloguj się przez Google, aby kontynuować',
+    reauth_sub:'Twoje dane dla tego narzędzia są synchronizowane z Google Drive. Zaloguj się ponownie, aby kontynuować tam, gdzie skończyłeś.',
+    reauth_submit:'Zaloguj się przez Google',reauth_local:'Zamiast tego użyj danych lokalnych na tym urządzeniu',
+    sync_welcome:'Witaj w Evo Budget',sync_choose:'Wybierz, jak zapisywać swoje dane.',sync_recommended:'Zalecane',
+    sync_continue_google:'Kontynuuj z Google',sync_desc_multi_device:'Dane planera są przechowywane na wielu urządzeniach',
+    sync_use_no_account:'Użyj bez konta',sync_desc_this_device:'Dane planera są przechowywane tylko na tym urządzeniu',
+    sync_status_wait:'Ukończ kroki w oknie Google, które właśnie się otworzyło. Jeśli nic się nie pojawiło, sprawdź pasek adresu pod kątem zablokowanej ikony wyskakującego okienka.',
+    sync_footer_note:'Można to później zmienić w ustawieniach',
+    code_title:'Wprowadź swój kod dostępu',code_sub:'Odblokuj pełny {0} za pomocą kodu z Twojego zakupu.',
+    code_placeholder:'Kod dostępu',code_error:'Ten kod jest nieprawidłowy. Sprawdź dokładną wielkość liter i spróbuj ponownie.',
+    code_submit:'Wyślij',code_try_free:'Wypróbuj za darmo zamiast tego',code_get:'Zdobądź kod',
+    app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
+    edit_tx_title:'✏️ Edytuj transakcję',save_changes:'Zapisz zmiany',no_categories:'- brak kategorii -',
+    no_cat_setup:'- najpierw skonfiguruj kategorie -',
+    tx_error_required:'Podaj datę, typ, kategorię i prawidłową kwotę większą niż 0.',
+    csv_error_msg:'Nie znaleziono prawidłowych wierszy.\n\nOczekiwany format:\nData, Typ, Kategoria, Kwota, Opis\n2024-01-15, expense, Jedzenie, 25.50, Zakupy spożywcze',
+    sync_card_title:'☁️ Dane &amp; Synchronizacja',sync_card_desc:'Wybierz, jak Twoje dane są przechowywane i aktualizowane na różnych urządzeniach.',
+    sync_mode_local_title:'Tylko to urządzenie',sync_mode_local_desc:'Dane są zapisywane tylko na tym urządzeniu',
+    sync_mode_google_title:'Synchronizuj z Google',sync_mode_google_desc:'Dane są synchronizowane na wielu urządzeniach',
+    sync_signed_in_as:'Zalogowano jako {0}',sync_error_generic:'Logowanie nie powiodło się. Spróbuj ponownie.',
+    sync_err_popup_blocked:'Twoja przeglądarka zablokowała okno logowania Google. Zezwól na wyskakujące okienka dla tej strony (sprawdź pasek adresu pod kątem zablokowanej ikony wyskakującego okienka) i spróbuj ponownie.',
+    sync_err_cancelled:'Logowanie zostało anulowane. Spróbuj ponownie.',
+    toast_synced_google:'Zsynchronizowano z Google Drive ✓',toast_synced_local:'Przełączono na lokalne przechowywanie ✓',
+    cmp_title:'⚡ Simple vs Ultimate Budget Planner',cmp_col_feature:'Funkcja',cmp_col_simple:'💰 Simple',cmp_col_ultimate:'⚡ Ultimate',
+    cmp_section_core:'Podstawowe budżetowanie',cmp_section_pro:'Funkcje Pro - tylko Ultimate',
+    cmp_stay_simple:'Zostań przy Simple',cmp_open_ultimate:'Otwórz Ultimate Budget Planner →',
+    cmp_feat1:'Śledzenie budżetu - Przychody, Wydatki, Rachunki &amp; Oszczędności',
+    cmp_feat2:'Rejestrowanie transakcji z importem CSV',
+    cmp_feat3:'Wykres przepływu gotówki - spodziewane vs rzeczywiste',
+    cmp_feat4:'Wykresy pierścieniowe przychodów &amp; wydatków',
+    cmp_feat5:'Kontrola okresu budżetowego z ustawieniami wstępnymi',
+    cmp_feat6:'Przeniesienie z poprzedniego okresu',
+    cmp_feat7:'Spłata długów (Kula śniegowa &amp; Lawina)',
+    cmp_feat8:'Śledzenie funduszy celowych z miesięcznymi celami',
+    cmp_feat9:'Inteligentny kalendarz z automatycznie uzupełnianymi wydarzeniami',
+    cmp_feat10:'Śledzenie subskrypcji z podziałem na kategorie',
+    cmp_feat11:'Panel Pro z kluczowymi statystykami &amp; panelem nadchodzących wydarzeń',
+    cmp_feat12:'Import jednym kliknięciem z Simple Budget Planner',
+    cmp_feat13:'Penny - Twój asystent budżetowy AI',
+    help_aria:'Pomoc',close_aria:'Zamknij',dismiss_aria:'Odrzuć',ok:'OK',
   }
 };
 
@@ -1146,7 +1590,7 @@ function t(key) {
   // Last-resort safeguard: never render a raw key identifier in the UI
   return String(key).replace(/^(tx|sf|dpc|cal|sett|alloc|bud|dtype|help|toast|freq|dash|sub|rec|dp|sett)_/, '').replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase());
 }
-function tf(key,...args){let s=t(key);args.forEach((v,i)=>s=s.replace(`{${i}}`,v));return s;}
+function tf(key,...args){let s=t(key);args.forEach((v,i)=>s=s.replaceAll(`{${i}}`,v));return s;}
 
 function applyLanguage() {
   const lang = state?.settings?.language || 'en';
@@ -1267,16 +1711,31 @@ function goToPurchase(product) {
   else { showToast('Add your checkout link in PURCHASE_URLS.' + product); }
 }
 
+// Traps Tab/Shift+Tab focus inside a custom modal overlay so keyboard users
+// can't tab past it into page content that's only visually covered by it.
+// Returns true if it handled the keypress (caller should not also act on it).
+function modalTabTrap(overlay, e) {
+  if (e.key !== 'Tab' || !overlay) return false;
+  const els = Array.from(overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+    .filter(el => el.offsetParent !== null);
+  if (!els.length) return false;
+  const first = els[0], last = els[els.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); return true; }
+  if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); return true; }
+  if (!els.includes(document.activeElement)) { e.preventDefault(); first.focus(); return true; }
+  return false;
+}
+
 // ── Upgrade prompt ─────────────────────────────────────────────────────
 function showUpgradeModal(ctx = {}) {
   document.getElementById('fkUpgradeOverlay')?.remove();
 
   let chip;
-  if (ctx.reason === 'transaction') chip = `${TRIAL_LIMITS.transactions} / ${TRIAL_LIMITS.transactions} free transactions used`;
+  if (ctx.reason === 'transaction') chip = tf('upg_chip_tx', TRIAL_LIMITS.transactions);
   else if (ctx.reason === 'category') {
-    const label = MODULE_META[ctx.type]?.title || 'category';
-    chip = `${TRIAL_LIMITS[ctx.type]} / ${TRIAL_LIMITS[ctx.type]} free ${label} categories used`;
-  } else chip = 'Free trial limit reached';
+    const label = t(MODULE_META[ctx.type]?.titleKey) || 'category';
+    chip = tf('upg_chip_cat', TRIAL_LIMITS[ctx.type], label);
+  } else chip = t('upg_chip_limit');
 
   const check = `<svg class="fk-up-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
 
@@ -1285,49 +1744,51 @@ function showUpgradeModal(ctx = {}) {
   ov.id = 'fkUpgradeOverlay';
   ov.setAttribute('role', 'dialog');
   ov.setAttribute('aria-modal', 'true');
-  ov.setAttribute('aria-label', 'Upgrade to unlock the full planner');
+  ov.setAttribute('aria-label', t('upg_aria_label'));
   ov.innerHTML = `
     <div class="fk-up-card" role="document">
-      <button class="fk-up-x" id="fkUpClose" type="button" aria-label="Close">&times;</button>
+      <button class="fk-up-x" id="fkUpClose" type="button" aria-label="${t('close_aria')}">&times;</button>
       <div class="fk-up-hero">
         <div class="fk-up-glow" aria-hidden="true"></div>
         <div class="fk-up-badge">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           ${esc(chip)}
         </div>
-        <h2 class="fk-up-title">Unlock the full<br>Simple Budget Planner</h2>
-        <p class="fk-up-sub">You're at the free trial limit. Upgrade once to remove every cap. No subscription, ever.</p>
+        <h2 class="fk-up-title">${t('upg_title_html')}</h2>
+        <p class="fk-up-sub">${t('upg_sub')}</p>
       </div>
       <div class="fk-up-body">
         <ul class="fk-up-list">
-          <li>${check}<span><strong>Unlimited</strong> transactions</span></li>
-          <li>${check}<span><strong>Unlimited</strong> categories in every section</span></li>
-          <li>${check}<span>CSV import &amp; export, full history</span></li>
-          <li>${check}<span>One-time payment · free updates for life</span></li>
+          <li>${check}<span>${t('upg_feat_unlimited_tx_html')}</span></li>
+          <li>${check}<span>${t('upg_feat_unlimited_cat_html')}</span></li>
+          <li>${check}<span>${t('upg_feat_csv')}</span></li>
+          <li>${check}<span>${t('upg_feat_onetime')}</span></li>
         </ul>
         <div class="fk-up-price-row">
-          <div class="fk-up-price"><span class="fk-up-price-num">${esc(PRICES.sbp)}</span><span class="fk-up-price-tag">one-time</span></div>
-          <span class="fk-up-price-note">No subscription</span>
+          <div class="fk-up-price"><span class="fk-up-price-num">${esc(PRICES.sbp)}</span><span class="fk-up-price-tag">${t('upg_price_tag')}</span></div>
+          <span class="fk-up-price-note">${t('upg_price_note')}</span>
         </div>
-        <button class="fk-up-cta" id="fkUpBuySbp" type="button">Unlock Simple Budget for ${esc(PRICES.sbp)}</button>
+        <button class="fk-up-cta" id="fkUpBuySbp" type="button">${tf('upg_cta_sbp',esc(PRICES.sbp))}</button>
         <button class="fk-up-upsell" id="fkUpBuyUbp" type="button">
-          <span class="fk-up-upsell-lead">⚡ Want debt payoff, sinking funds &amp; more?</span>
-          <span class="fk-up-upsell-cta">Get Ultimate for ${esc(PRICES.ubp)} →</span>
+          <span class="fk-up-upsell-lead">${t('upg_upsell_lead')}</span>
+          <span class="fk-up-upsell-cta">${tf('upg_upsell_cta',esc(PRICES.ubp))}</span>
         </button>
         <div class="fk-up-foot">
-          <button class="fk-up-later" id="fkUpLater" type="button">Maybe later</button>
+          <button class="fk-up-later" id="fkUpLater" type="button">${t('upg_later')}</button>
         </div>
       </div>
     </div>`;
   document.body.appendChild(ov);
 
-  const close = () => { ov.classList.add('is-leaving'); document.removeEventListener('keydown', onKey); setTimeout(() => ov.remove(), 180); };
-  const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } };
+  const opener = document.activeElement;
+  const close = () => { ov.classList.add('is-leaving'); document.removeEventListener('keydown', onKey); setTimeout(() => { ov.remove(); opener?.focus?.(); }, 180); };
+  const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else { modalTabTrap(ov, e); } };
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', e => { if (e.target === ov) close(); });
   ov.querySelector('#fkUpClose')?.addEventListener('click', close);
   ov.querySelector('#fkUpLater')?.addEventListener('click', close);
   ov.querySelector('#fkUpBuySbp')?.addEventListener('click', () => goToPurchase('sbp'));
+  requestAnimationFrame(() => ov.querySelector('#fkUpClose')?.focus());
   ov.querySelector('#fkUpBuyUbp')?.addEventListener('click', () => goToPurchase('ubp'));
   requestAnimationFrame(() => ov.classList.add('is-in'));
 }
@@ -1374,16 +1835,16 @@ function showGoogleReauthModal(tool) {
   ov.setAttribute('aria-modal', 'true');
   ov.innerHTML = `
     <div class="fk-code-card" role="document">
-      <button class="fk-code-x" id="fkReauthClose" type="button" aria-label="Close">&times;</button>
+      <button class="fk-code-x" id="fkReauthClose" type="button" aria-label="${t('close_aria')}">&times;</button>
       <div class="fk-code-key" aria-hidden="true">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 5v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1"/></svg>
       </div>
-      <h2 class="fk-code-title">Sign in with Google to continue</h2>
-      <p class="fk-code-sub">Your data for this tool is synced with Google Drive. Sign in again to pick up where you left off.</p>
+      <h2 class="fk-code-title">${t('reauth_title')}</h2>
+      <p class="fk-code-sub">${t('reauth_sub')}</p>
       <p class="fk-code-error" id="fkReauthError" hidden></p>
-      <button class="fk-code-submit" id="fkReauthSubmit" type="button">Sign in with Google</button>
+      <button class="fk-code-submit" id="fkReauthSubmit" type="button">${t('reauth_submit')}</button>
       <div class="fk-code-foot">
-        <button class="fk-code-link" id="fkReauthLocal" type="button">Use local data on this device instead</button>
+        <button class="fk-code-link" id="fkReauthLocal" type="button">${t('reauth_local')}</button>
       </div>
     </div>`;
   document.body.appendChild(ov);
@@ -1409,28 +1870,28 @@ function showSyncChoiceModal(tool) {
   ov.setAttribute('aria-modal', 'true');
   ov.innerHTML = `
     <div class="fk-code-card fk-sync-card" role="document">
-      <h2 class="fk-code-title">Welcome to Evo Budget</h2>
-      <p class="fk-code-sub">Choose how to save your data.</p>
+      <h2 class="fk-code-title">${t('sync_welcome')}</h2>
+      <p class="fk-code-sub">${t('sync_choose')}</p>
       <button class="fk-sync-option fk-sync-option--google" id="fkSyncGoogle" type="button">
-        <span class="fk-sync-option-badge">Recommended</span>
+        <span class="fk-sync-option-badge">${t('sync_recommended')}</span>
         <span class="fk-sync-option-icon fk-sync-option-icon--google">${SYNC_ICON_GOOGLE}</span>
         <span class="fk-sync-option-text">
-          <span class="fk-sync-option-title">Continue with Google</span>
-          <span class="fk-sync-option-desc">Planner data is stored across multiple devices</span>
+          <span class="fk-sync-option-title">${t('sync_continue_google')}</span>
+          <span class="fk-sync-option-desc">${t('sync_desc_multi_device')}</span>
         </span>
         <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
       <button class="fk-sync-option" id="fkSyncLocal" type="button">
         <span class="fk-sync-option-icon">${SYNC_ICON_LOCAL}</span>
         <span class="fk-sync-option-text">
-          <span class="fk-sync-option-title">Use without an account</span>
-          <span class="fk-sync-option-desc">Planner data is stored on this device only</span>
+          <span class="fk-sync-option-title">${t('sync_use_no_account')}</span>
+          <span class="fk-sync-option-desc">${t('sync_desc_this_device')}</span>
         </span>
         <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
       </button>
       <p class="fk-code-error" id="fkSyncError" hidden></p>
-      <p class="fk-sync-status" id="fkSyncStatus" hidden>Complete the steps in the Google window that just opened. If nothing appeared, check your address bar for a blocked pop-up icon.</p>
-      <p class="fk-sync-footer">This can be changed in settings later</p>
+      <p class="fk-sync-status" id="fkSyncStatus" hidden>${t('sync_status_wait')}</p>
+      <p class="fk-sync-footer">${t('sync_footer_note')}</p>
     </div>`;
   document.body.appendChild(ov);
   const close = () => { ov.classList.add('is-leaving'); setTimeout(() => ov.remove(), 180); };
@@ -1454,7 +1915,7 @@ function showSyncChoiceModal(tool) {
 function showAccessCodeModal(tool) {
   document.getElementById('fkCodeOverlay')?.remove();
   const isU  = tool === 'ubp';
-  const name = isU ? 'Ultimate Budget Planner' : 'Simple Budget Planner';
+  const name = isU ? t('app_name_ubp') : t('app_name_sbp');
   const code = ACCESS_CODES[tool];
 
   const ov = document.createElement('div');
@@ -1462,21 +1923,21 @@ function showAccessCodeModal(tool) {
   ov.id = 'fkCodeOverlay';
   ov.setAttribute('role', 'dialog');
   ov.setAttribute('aria-modal', 'true');
-  ov.setAttribute('aria-label', 'Enter your access code');
+  ov.setAttribute('aria-label', t('code_title'));
   ov.innerHTML = `
     <div class="fk-code-card" role="document">
-      <button class="fk-code-x" id="fkCodeClose" type="button" aria-label="Close">&times;</button>
+      <button class="fk-code-x" id="fkCodeClose" type="button" aria-label="${t('close_aria')}">&times;</button>
       <div class="fk-code-key" aria-hidden="true">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3"/></svg>
       </div>
-      <h2 class="fk-code-title">Enter your access code</h2>
-      <p class="fk-code-sub">Unlock the full ${esc(name)} with the code from your purchase.</p>
-      <input class="fk-code-input" id="fkCodeInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Access code" aria-label="Access code" />
-      <p class="fk-code-error" id="fkCodeError" hidden>That code isn't right. Check for exact capitalization and try again.</p>
-      <button class="fk-code-submit" id="fkCodeSubmit" type="button">Submit</button>
+      <h2 class="fk-code-title">${t('code_title')}</h2>
+      <p class="fk-code-sub">${tf('code_sub',esc(name))}</p>
+      <input class="fk-code-input" id="fkCodeInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${t('code_placeholder')}" aria-label="${t('code_placeholder')}" />
+      <p class="fk-code-error" id="fkCodeError" hidden>${t('code_error')}</p>
+      <button class="fk-code-submit" id="fkCodeSubmit" type="button">${t('code_submit')}</button>
       <div class="fk-code-foot">
-        <button class="fk-code-link" id="fkCodeTry" type="button">Try for free instead</button>
-        <button class="fk-code-link" id="fkCodeBuy" type="button">Get a code</button>
+        <button class="fk-code-link" id="fkCodeTry" type="button">${t('code_try_free')}</button>
+        <button class="fk-code-link" id="fkCodeBuy" type="button">${t('code_get')}</button>
       </div>
     </div>`;
   document.body.appendChild(ov);
@@ -1484,8 +1945,9 @@ function showAccessCodeModal(tool) {
   const input = ov.querySelector('#fkCodeInput');
   const errEl = ov.querySelector('#fkCodeError');
   const card  = ov.querySelector('.fk-code-card');
-  const close = () => { ov.classList.add('is-leaving'); document.removeEventListener('keydown', onKey); setTimeout(() => ov.remove(), 180); };
-  const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } };
+  const opener = document.activeElement;
+  const close = () => { ov.classList.add('is-leaving'); document.removeEventListener('keydown', onKey); setTimeout(() => { ov.remove(); opener?.focus?.(); }, 180); };
+  const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else { modalTabTrap(ov, e); } };
   const submit = () => {
     if (input.value.trim() === code) { setUnlocked(tool); close(); showSyncChoiceModal(tool); }
     else {
@@ -1659,6 +2121,7 @@ function navigateTo(view) {
 function switchBTab(tab) {
   currentBTab = tab;
   document.querySelectorAll('.btab').forEach(b => b.classList.toggle('is-active', b.dataset.btab === tab));
+  document.querySelectorAll('.btab[role="tab"]').forEach(b => b.setAttribute('aria-selected', b.dataset.btab === tab ? 'true' : 'false'));
   document.querySelectorAll('.bview').forEach(v => v.classList.remove('is-active'));
   document.getElementById(`bview-${tab}`)?.classList.add('is-active');
   dispatchRender(tab);
@@ -1874,76 +2337,76 @@ function renderDashboard() {
   const leftColor = sum.leftover >= 0 ? '#10b981' : '#f43f5e';
 
   const flowRows = [
-    { label:'Income',   exp:expIncome,   act:sum.totalIncome,   color:'#10b981', isIncome:true  },
-    { label:'Expenses', exp:expExpenses,  act:sum.totalExpenses, color:'#f43f5e', isIncome:false },
-    { label:'Bills',    exp:expBills,     act:sum.totalBills,    color:'#fb923c', isIncome:false },
-    { label:'Debt',     exp:expDebt,      act:sum.totalDebt,     color:'#a855f7', isIncome:false },
-    { label:'Savings',  exp:expSavings,   act:sum.totalSavings,  color:'#3b82f6', isIncome:false }
+    { label:t('tab_income'),   exp:expIncome,   act:sum.totalIncome,   color:'#10b981', isIncome:true  },
+    { label:t('tab_expenses'), exp:expExpenses,  act:sum.totalExpenses, color:'#f43f5e', isIncome:false },
+    { label:t('tab_bills'),    exp:expBills,     act:sum.totalBills,    color:'#fb923c', isIncome:false },
+    { label:t('tab_debt'),     exp:expDebt,      act:sum.totalDebt,     color:'#a855f7', isIncome:false },
+    { label:t('tab_savings'),  exp:expSavings,   act:sum.totalSavings,  color:'#3b82f6', isIncome:false }
   ];
 
   const onboardHTML = !hasAnyData() ? `
     <div class="onboard-banner">
-      <div class="onboard-title">👋 Welcome! Here's how to get started:</div>
+      <div class="onboard-title">${t('onboard_welcome')}</div>
       <div class="onboard-steps">
-        <div class="onboard-step"><span class="onboard-num">1</span>Go to <strong>Income, Expenses, Bills</strong> etc. and enter your expected amounts.</div>
-        <div class="onboard-step"><span class="onboard-num">2</span>Use <strong>Transactions</strong> to log what you actually earn and spend.</div>
-        <div class="onboard-step"><span class="onboard-num">3</span>Return here to see your full financial picture update in real time.</div>
+        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
       </div>
     </div>` : '';
 
   const el = document.getElementById('bview-dashboard');
   el.innerHTML = `
     <div class="section-header">
-      <h2 class="section-title">Dashboard</h2>
+      <h2 class="section-title">${t('tab_dashboard')}</h2>
       <!-- Period badge is a button → navigates to Settings to change dates -->
       <button class="period-badge period-badge--btn" id="periodBadgeBtn" type="button"
-              title="Click to change budget period">
+              title="${t('dash_period_title')}">
         ${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}
       </button>
-      <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="Help">?</button>
+      <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
     </div>
 
     ${onboardHTML}
 
     <div class="summary-cards">
       <div class="scard scard--income">
-        <div class="scard-label">Total Income</div>
+        <div class="scard-label">${t('dash_stat_income')}</div>
         <div class="scard-value">${fmt(sum.totalIncome)}</div>
-        <div class="scard-sub">of ${fmt(expIncome)} expected</div>
+        <div class="scard-sub">${tf('dash_stat_of_expected',fmt(expIncome))}</div>
       </div>
       <div class="scard scard--expenses">
-        <div class="scard-label">Expenses &amp; Bills</div>
+        <div class="scard-label">${t('dash_stat_exp_bills')}</div>
         <div class="scard-value">${fmt(sum.totalExpBills)}</div>
-        <div class="scard-sub">of ${fmt(expExpBills)} budgeted</div>
+        <div class="scard-sub">${tf('dash_stat_of_budgeted',fmt(expExpBills))}</div>
       </div>
       <div class="scard scard--debt">
-        <div class="scard-label">Debt Payments</div>
+        <div class="scard-label">${t('dash_stat_debt')}</div>
         <div class="scard-value">${fmt(sum.totalDebt)}</div>
-        <div class="scard-sub">of ${fmt(expDebt)} budgeted</div>
+        <div class="scard-sub">${tf('dash_stat_of_budgeted',fmt(expDebt))}</div>
       </div>
       <div class="scard scard--savings">
-        <div class="scard-label">Total Savings</div>
+        <div class="scard-label">${t('dash_stat_savings')}</div>
         <div class="scard-value">${fmt(sum.totalSavings)}</div>
-        <div class="scard-sub">of ${fmt(expSavings)} goal</div>
+        <div class="scard-sub">${tf('dash_stat_of_goal',fmt(expSavings))}</div>
       </div>
     </div>
 
     <div class="panel leftover-panel">
       <div class="leftover-inner">
         <div>
-          <div class="leftover-label">Net Leftover this period</div>
+          <div class="leftover-label">${t('dash_net_leftover_period')}</div>
           <div class="leftover-value" style="color:${leftColor}">${sum.leftover < 0 ? '−' : ''}${fmt(Math.abs(sum.leftover))}</div>
-          ${state.rollover ? `<div class="leftover-rollover">Includes ${fmt(state.rollover)} rollover from last period</div>` : ''}
+          ${state.rollover ? `<div class="leftover-rollover">${tf('dash_includes_rollover',fmt(state.rollover))}</div>` : ''}
         </div>
         <div class="leftover-formula">
-          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} income</span>
+          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_lf_income')}</span>
           <span class="lf-sep">−</span>
-          <span class="lf-chip lf-expense">${fmt(sum.totalExpBills)} exp &amp; bills</span>
+          <span class="lf-chip lf-expense">${fmt(sum.totalExpBills)} ${t('dash_lf_exp_bills')}</span>
           <span class="lf-sep">−</span>
-          <span class="lf-chip lf-debt">${fmt(sum.totalDebt)} debt</span>
+          <span class="lf-chip lf-debt">${fmt(sum.totalDebt)} ${t('dash_lf_debt')}</span>
           <span class="lf-sep">−</span>
-          <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} savings</span>
-          ${state.rollover ? `<span class="lf-sep">+</span><span class="lf-chip lf-rollover">${fmt(state.rollover)} rollover</span>` : ''}
+          <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_lf_savings')}</span>
+          ${state.rollover ? `<span class="lf-sep">+</span><span class="lf-chip lf-rollover">${fmt(state.rollover)} ${t('dash_lf_rollover')}</span>` : ''}
         </div>
       </div>
     </div>
@@ -1952,10 +2415,10 @@ function renderDashboard() {
       <div class="panel cash-flow-panel">
         <div class="panel-inner-sm">
           <div class="panel-titlebar">
-            <span class="panel-title-sm">Cash Flow - Expected vs Actual</span>
+            <span class="panel-title-sm">${t('dash_cash_flow')}</span>
             <div class="flow-legend">
-              <span class="legend-item"><span class="legend-dot" style="background:rgba(30,27,46,.22)"></span>Expected</span>
-              <span class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>Actual</span>
+              <span class="legend-item"><span class="legend-dot" style="background:rgba(30,27,46,.22)"></span>${t('dash_expected')}</span>
+              <span class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>${t('dash_actual')}</span>
             </div>
           </div>
           <div class="flow-table">
@@ -1984,9 +2447,9 @@ function renderDashboard() {
       <div class="charts-col">
         <div class="panel chart-panel">
           <div class="panel-inner-sm">
-            <div class="panel-title-sm" style="margin-bottom:14px">Income Sources</div>
+            <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
             ${incSegs.length === 0
-              ? `<div class="chart-empty">No income logged yet.<br><button class="link-btn" data-btab="transactions">Add transactions →</button></div>`
+              ? `<div class="chart-empty">${t('dash_no_income')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
               : `<div class="donut-block">
                   ${svgDonut(incSegs, 110, 16)}
                   <div class="donut-legend">${incSegs.slice(0,5).map((s,idx) => `
@@ -2000,9 +2463,9 @@ function renderDashboard() {
         </div>
         <div class="panel chart-panel">
           <div class="panel-inner-sm">
-            <div class="panel-title-sm" style="margin-bottom:14px">Spending Breakdown</div>
+            <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>
             ${spendSegs.length === 0
-              ? `<div class="chart-empty">No spending logged yet.<br><button class="link-btn" data-btab="transactions">Add transactions →</button></div>`
+              ? `<div class="chart-empty">${t('dash_no_spending')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
               : `<div class="donut-block">
                   ${svgDonut(spendSegs, 110, 16)}
                   <div class="donut-legend">${spendSegs.slice(0,5).map((s,idx) => `
@@ -2028,19 +2491,19 @@ function renderDashboard() {
   if (!state.settings.hideUpgrade) {
     el.insertAdjacentHTML('beforeend', `
       <div class="upgrade-pro" id="upgradeBanner">
-        <button class="upgrade-pro-close" id="upgradeCloseBtn" type="button" aria-label="Dismiss">×</button>
+        <button class="upgrade-pro-close" id="upgradeCloseBtn" type="button" aria-label="${t('dismiss_aria')}">×</button>
         <div class="upgrade-pro-head">
           <span class="upgrade-pro-badge">⚡ PRO</span>
           <h3 class="upgrade-pro-title">${t('upgrade_title')}</h3>
         </div>
         <p class="upgrade-pro-sub">${t('upgrade_desc')}</p>
         <div class="upgrade-pro-feats">
-          <span class="upgrade-feat">💳 Debt Payoff</span>
-          <span class="upgrade-feat">🏺 Sinking Funds</span>
-          <span class="upgrade-feat">📅 Smart Calendar</span>
-          <span class="upgrade-feat">🔄 Subscriptions</span>
-          <span class="upgrade-feat">⚡ Automation</span>
-          <span class="upgrade-feat">🎯 Allocation</span>
+          <span class="upgrade-feat">${t('upgrade_feat_debt')}</span>
+          <span class="upgrade-feat">${t('upgrade_feat_sinking')}</span>
+          <span class="upgrade-feat">${t('upgrade_feat_calendar')}</span>
+          <span class="upgrade-feat">${t('upgrade_feat_subs')}</span>
+          <span class="upgrade-feat">${t('upgrade_feat_auto')}</span>
+          <span class="upgrade-feat">${t('upgrade_feat_alloc')}</span>
         </div>
         <div class="upgrade-pro-actions">
           <button class="btn btn-primary btn-sm upgrade-get" id="upgradeNowBtn" type="button">${t('upgrade_get_now')}</button>
@@ -2059,11 +2522,11 @@ function renderDashboard() {
 
 // ── Budget Modules ─────────────────────────────────────────────────────
 const MODULE_META = {
-  income:   { icon:'💰', title:'Income',   hasDates:false, desc:'Set your expected income for each source. Actual amounts fill in automatically when you log transactions.' },
-  expenses: { icon:'🛒', title:'Expenses', hasDates:false, desc:'Set a budget limit for each spending category. Progress bars turn red when you go over.' },
-  bills:    { icon:'🧾', title:'Bills',    hasDates:true,  desc:"Track recurring bills. Add a due date, then tick the checkbox once you've paid." },
-  debt:     { icon:'💳', title:'Debt',     hasDates:true,  desc:'Stay on top of loan and mortgage repayments. Set expected amounts and mark each as paid.' },
-  savings:  { icon:'🏦', title:'Savings',  hasDates:false, desc:'Set a savings goal for each bucket. Actual contributions come from your logged transactions.' }
+  income:   { icon:'💰', titleKey:'tab_income',   hasDates:false, descKey:'mod_desc_income' },
+  expenses: { icon:'🛒', titleKey:'tab_expenses', hasDates:false, descKey:'mod_desc_expenses' },
+  bills:    { icon:'🧾', titleKey:'tab_bills',    hasDates:true,  descKey:'mod_desc_bills' },
+  debt:     { icon:'💳', titleKey:'tab_debt',     hasDates:true,  descKey:'mod_desc_debt' },
+  savings:  { icon:'🏦', titleKey:'tab_savings',  hasDates:false, descKey:'mod_desc_savings' }
 };
 
 function renderModule(type) {
@@ -2079,25 +2542,25 @@ function renderModule(type) {
 
   document.getElementById(`bview-${type}`).innerHTML = `
     <div class="section-header">
-      <h2 class="section-title">${meta.icon} ${meta.title}</h2>
+      <h2 class="section-title">${meta.icon} ${t(meta.titleKey)}</h2>
       <div class="section-header-actions">
-        <button class="help-icon-btn" data-help="${type}" type="button" aria-label="Help">?</button>
-        <button class="btn btn-ghost btn-sm" id="addRowBtn" type="button">+ Add category</button>
+        <button class="help-icon-btn" data-help="${type}" type="button" aria-label="${t('help_aria')}">?</button>
+        <button class="btn btn-ghost btn-sm" id="addRowBtn" type="button">${t('mod_add_category')}</button>
       </div>
     </div>
-    <p class="section-desc">${meta.desc}</p>
+    <p class="section-desc">${t(meta.descKey)}</p>
 
     <div class="panel">
       <div class="module-table-wrap">
         <table class="module-table">
           <thead>
             <tr>
-              <th>Category</th>
-              <th><span class="cc-label-text">Expected (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_expected_hint'))}" aria-label="${tf('field_info_aria','Expected')}">i</button></th>
-              ${meta.hasDates ? '<th>Due Date</th>' : ''}
-              <th><span class="cc-label-text">Actual (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_actual_hint'))}" aria-label="${tf('field_info_aria','Actual')}">i</button></th>
-              <th class="prog-cell"><span class="cc-label-text">Progress</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_progress_hint'))}" aria-label="${tf('field_info_aria','Progress')}">i</button></th>
-              ${meta.hasDates ? '<th>Paid</th>' : ''}
+              <th>${t('category')}</th>
+              <th><span class="cc-label-text">${t('expected')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('expected'))}">i</button></th>
+              ${meta.hasDates ? `<th>${t('due_date')}</th>` : ''}
+              <th><span class="cc-label-text">${t('actual')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('actual'))}">i</button></th>
+              <th class="prog-cell"><span class="cc-label-text">${t('progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('progress'))}">i</button></th>
+              ${meta.hasDates ? `<th>${t('paid')}</th>` : ''}
               <th></th>
             </tr>
           </thead>
@@ -2113,7 +2576,7 @@ function renderModule(type) {
                              value="${row.expected || ''}" placeholder="0.00" data-id="${row.id}"></td>
                   ${meta.hasDates ? `<td>
                     <div class="date-cell-styled" id="dwrap-${row.id}" data-input-id="dinp-${row.id}">
-                      <span class="date-cell-val" id="dcell-${row.id}">${row.dueDate ? formatDateDisplay(row.dueDate) : '<span class="no-date">Set date</span>'}</span>
+                      <span class="date-cell-val" id="dcell-${row.id}">${row.dueDate ? formatDateDisplay(row.dueDate) : `<span class="no-date">${t('mod_set_date')}</span>`}</span>
                       <input type="date" id="dinp-${row.id}" class="date-input" value="${row.dueDate || ''}" data-id="${row.id}">
                     </div>
                   </td>` : ''}
@@ -2129,20 +2592,20 @@ function renderModule(type) {
                   </td>
                   ${meta.hasDates ? `
                   <td class="paid-cell">
-                    <label class="check-label" aria-label="Mark as paid">
+                    <label class="check-label" aria-label="${t('mod_mark_paid')}">
                       <input type="checkbox" class="paid-cb" ${row.paid ? 'checked' : ''} data-id="${row.id}">
                       <span class="checkmark"></span>
                     </label>
                   </td>` : ''}
                   <td class="action-cell">
-                    <button class="del-btn" data-id="${row.id}" type="button" title="Remove">×</button>
+                    <button class="del-btn" data-id="${row.id}" type="button" title="${t('mod_remove')}" aria-label="${t('mod_remove')}">×</button>
                   </td>
                 </tr>`;
             }).join('')}
           </tbody>
           <tfoot>
             <tr class="total-row">
-              <td><strong>Total</strong></td>
+              <td><strong>${t('mod_total')}</strong></td>
               <td><strong>${fmt(totalExp)}</strong></td>
               ${meta.hasDates ? '<td></td>' : ''}
               <td><strong>${fmt(totalAct)}</strong></td>
@@ -2163,15 +2626,15 @@ function renderModule(type) {
 
     <div class="panel add-cat-card" id="addCatCard" style="display:none">
       <div class="panel-inner-sm">
-        <div class="add-cat-title">Add new category</div>
+        <div class="add-cat-title">${t('mod_add_new_category')}</div>
         <div class="add-cat-row">
-          <div class="field"><label class="field-label field-label--tip">${tipLabel('Name','mod_name_hint',false)}</label>
+          <div class="field"><label class="field-label field-label--tip">${tipLabel(t('mod_cat_name_label'),'mod_name_hint',false)}</label>
             <input class="input input-sm" type="text" id="newCatName" placeholder="e.g. Freelance"></div>
-          ${meta.hasDates ? `<div class="field"><label class="field-label field-label--tip">${tipLabel('Due date','mod_due_date_hint',false)}</label>
+          ${meta.hasDates ? `<div class="field"><label class="field-label field-label--tip">${tipLabel(t('due_date'),'mod_due_date_hint',false)}</label>
             <input class="input input-sm" type="date" id="newCatDate"></div>` : ''}
           <div class="add-cat-btns">
-            <button class="btn btn-primary btn-sm" id="saveCatBtn" type="button">Add</button>
-            <button class="btn btn-ghost btn-sm"   id="cancelCatBtn" type="button">Cancel</button>
+            <button class="btn btn-primary btn-sm" id="saveCatBtn" type="button">${t('add')}</button>
+            <button class="btn btn-ghost btn-sm"   id="cancelCatBtn" type="button">${t('cancel')}</button>
           </div>
         </div>
       </div>
@@ -2233,7 +2696,7 @@ function renderModule(type) {
       const dispEl = document.getElementById(`dcell-${inp.dataset.id}`);
       if (dispEl) dispEl.innerHTML = inp.value
         ? formatDateDisplay(inp.value)
-        : '<span class="no-date">Set date</span>';
+        : `<span class="no-date">${t('mod_set_date')}</span>`;
     });
   });
 
@@ -2242,6 +2705,12 @@ function renderModule(type) {
     wrap.addEventListener('click', () => {
       const inp = document.getElementById(wrap.dataset.inputId);
       openDatePicker(inp, wrap);
+    });
+    document.getElementById(wrap.dataset.inputId)?.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        openDatePicker(document.getElementById(wrap.dataset.inputId), wrap);
+      }
     });
   });
 
@@ -2254,9 +2723,13 @@ function renderModule(type) {
   });
 
   // Delete row
+  const TX_TYPE_FOR_MODULE = { income:'income', expenses:'expense', bills:'bill', debt:'debt', savings:'savings' };
   el.querySelectorAll('.del-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-      if (!await confirmDialog({ message: t('confirm_remove_cat'), confirmText: t('delete') })) return;
+      const row = state.budgets[type].find(r => r.id === btn.dataset.id);
+      const txCount = row ? state.transactions.filter(tx => tx.type === TX_TYPE_FOR_MODULE[type] && tx.category === row.category).length : 0;
+      const message = txCount > 0 ? tf('confirm_remove_cat_with_tx', txCount) : t('confirm_remove_cat');
+      if (!await confirmDialog({ message, confirmText: t('delete') })) return;
       state.budgets[type] = state.budgets[type].filter(r => r.id !== btn.dataset.id);
       saveState(); renderModule(type);
     });
@@ -2329,7 +2802,7 @@ function renderTxList(){
           <td class="tx-cat">${esc(tx.category)}</td>
           <td class="tx-amt tx-amt--${tx.type}">${tx.type==='income'?'+':'\u2212'}${fmt(tx.amount)}</td>
           <td class="tx-desc">${esc(tx.description||'-')}</td>
-          <td><div class="tx-actions"><button class="edit-btn" data-tx="${tx.id}" type="button" title="Edit">\u270f\ufe0f</button><button class="del-btn" data-tx="${tx.id}" type="button" title="Delete">\xd7</button></div></td>
+          <td><div class="tx-actions"><button class="edit-btn" data-tx="${tx.id}" type="button" title="${t('edit')}" aria-label="${t('edit')}">\u270f\ufe0f</button><button class="del-btn" data-tx="${tx.id}" type="button" title="${t('delete')}" aria-label="${t('delete')}">\xd7</button></div></td>
         </tr>`).join('')}</tbody></table></div></div>${pagination}`}`;
   el.querySelectorAll('.edit-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>openEditTx(b.dataset.tx)));
   el.querySelectorAll('.del-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>{state.transactions=state.transactions.filter(t=>t.id!==b.dataset.tx);saveState();renderTxList();}));
@@ -2341,7 +2814,7 @@ function renderTransactions() {
   const el=document.getElementById('bview-transactions');
   el.innerHTML=`<div class="section-header"><h2 class="section-title">\uD83D\uDCCB ${t('tab_transactions')}</h2>
       <div class="section-header-actions">
-        <button class="help-icon-btn" data-help="transactions" type="button" aria-label="Help">?</button>
+        <button class="help-icon-btn" data-help="transactions" type="button" aria-label="${t('help_aria')}">?</button>
         <label class="btn btn-ghost btn-sm csv-label" title="${t('tx_import_csv')}">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label>
       </div></div>
     <div class="panel tx-form-panel"><div class="panel-inner-sm">
@@ -2392,6 +2865,7 @@ function renderTransactions() {
   renderTxList();
   populateTxCats();
   document.getElementById('txDateWrap')?.addEventListener('click',()=>{openDatePicker(document.getElementById('txDate'),document.getElementById('txDateWrap'));});
+  document.getElementById('txDate')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '||e.key==='ArrowDown'){e.preventDefault();openDatePicker(document.getElementById('txDate'),document.getElementById('txDateWrap'));}});
   document.getElementById('txDate')?.addEventListener('change',e=>{document.getElementById('txDateDisp').textContent=formatDateDisplay(e.target.value);});
   document.getElementById('txType')?.addEventListener('change',populateTxCats);
   document.getElementById('addTxBtn')?.addEventListener('click',addTransaction);
@@ -2409,7 +2883,7 @@ function populateTxCats() {
   if (!sel) return;
   sel.innerHTML = cats.length > 0
     ? cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('')
-    : '<option value="">- set up categories first -</option>';
+    : `<option value="">${t('no_cat_setup')}</option>`;
 }
 
 function addTransaction() {
@@ -2421,7 +2895,7 @@ function addTransaction() {
   const desc   = document.getElementById('txDesc')?.value?.trim() || '';
   const errEl  = document.getElementById('txError');
   if (!date || !type || !cat || isNaN(amount) || amount <= 0) {
-    if (errEl) { errEl.textContent = 'Please fill in date, type, category, and a valid amount greater than 0.'; errEl.hidden = false; }
+    if (errEl) { errEl.textContent = t('tx_error_required'); errEl.hidden = false; }
     return;
   }
   if (errEl) errEl.hidden = true;
@@ -2438,34 +2912,34 @@ function openEditTx(txId) {
   const tx = state.transactions.find(t => t.id === txId);
   if (!tx) return;
 
-  document.getElementById('modalTitle').textContent = '✏️ Edit Transaction';
+  document.getElementById('modalTitle').textContent = t('edit_tx_title');
   document.getElementById('modalBody').innerHTML = `
     <div class="field">
-      <label class="field-label">Date</label>
+      <label class="field-label">${t('tx_date')}</label>
       <div class="date-field-styled" id="editDateWrap">
         <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         <span class="date-field-val" id="editDateDisp">${formatDateDisplay(tx.date)}</span>
         <input type="date" id="editDate" value="${tx.date}">
       </div>
     </div>
-    <div class="field"><label class="field-label">Type</label>
+    <div class="field"><label class="field-label">${t('tx_type')}</label>
       <select class="select" id="editType">
-        <option value="expense" ${tx.type==='expense' ?'selected':''}>Expense</option>
-        <option value="bill"    ${tx.type==='bill'    ?'selected':''}>Bill</option>
-        <option value="savings" ${tx.type==='savings' ?'selected':''}>Savings</option>
-        <option value="debt"    ${tx.type==='debt'    ?'selected':''}>Debt</option>
-        <option value="income"  ${tx.type==='income'  ?'selected':''}>Income</option>
+        <option value="expense" ${tx.type==='expense' ?'selected':''}>${t('tx_type_expense')}</option>
+        <option value="bill"    ${tx.type==='bill'    ?'selected':''}>${t('tx_type_bill')}</option>
+        <option value="savings" ${tx.type==='savings' ?'selected':''}>${t('tx_type_savings')}</option>
+        <option value="debt"    ${tx.type==='debt'    ?'selected':''}>${t('tx_type_debt')}</option>
+        <option value="income"  ${tx.type==='income'  ?'selected':''}>${t('tx_type_income')}</option>
       </select></div>
-    <div class="field"><label class="field-label">Category</label>
+    <div class="field"><label class="field-label">${t('tx_category')}</label>
       <select class="select" id="editCategory"></select></div>
-    <div class="field"><label class="field-label">Amount (${SYM})</label>
+    <div class="field"><label class="field-label">${t('tx_amount')} (${SYM})</label>
       <input class="input" type="number" id="editAmount" min="0" step="0.01" value="${tx.amount}"></div>
-    <div class="field"><label class="field-label">Description</label>
+    <div class="field"><label class="field-label">${t('tx_desc_label')}</label>
       <input class="input" type="text" id="editDesc" value="${esc(tx.description || '')}" maxlength="120"></div>
     <div class="edit-tx-actions">
-      <button class="btn btn-primary" id="saveEditBtn" type="button">Save changes</button>
-      <button class="btn btn-ghost btn-sm" id="cancelEditBtn" type="button">Cancel</button>
-      <button class="btn btn-danger btn-sm" id="deleteEditBtn" type="button">Delete</button>
+      <button class="btn btn-primary" id="saveEditBtn" type="button">${t('save_changes')}</button>
+      <button class="btn btn-ghost btn-sm" id="cancelEditBtn" type="button">${t('cancel')}</button>
+      <button class="btn btn-danger btn-sm" id="deleteEditBtn" type="button">${t('delete')}</button>
     </div>
   `;
   document.getElementById('tutorialOverlay').hidden = false;
@@ -2475,12 +2949,18 @@ function openEditTx(txId) {
     const sel  = document.getElementById('editCategory');
     const cats = getCats(type);
     if (sel) sel.innerHTML = cats.map(c => `<option value="${esc(c)}" ${c===tx.category?'selected':''}>${esc(c)}</option>`).join('')
-      || '<option value="">- no categories -</option>';
+      || `<option value="">${t('no_categories')}</option>`;
   };
   fillEditCats();
   document.getElementById('editType')?.addEventListener('change', fillEditCats);
   document.getElementById('editDateWrap')?.addEventListener('click', () => {
     openDatePicker(document.getElementById('editDate'), document.getElementById('editDateWrap'));
+  });
+  document.getElementById('editDate')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      openDatePicker(document.getElementById('editDate'), document.getElementById('editDateWrap'));
+    }
   });
   document.getElementById('editDate')?.addEventListener('change', e => {
     document.getElementById('editDateDisp').textContent = formatDateDisplay(e.target.value);
@@ -2531,7 +3011,7 @@ function handleCSV(e) {
     e.target.value = '';
     if (limitHit) { if (imported > 0) showToast(tf('toast_imported',imported)); showUpgradeModal({ reason: 'transaction' }); return; }
     if (imported > 0) showToast(tf('toast_imported',imported));
-    else alertDialog('No valid rows found.\n\nExpected format:\nDate, Type, Category, Amount, Description\n2024-01-15, expense, Food, 25.50, Grocery run', '\uD83D\uDCC4');
+    else alertDialog(t('csv_error_msg'), '\uD83D\uDCC4');
     e.target.value = '';
   };
   reader.readAsText(file);
@@ -2539,7 +3019,7 @@ function handleCSV(e) {
 
 // ── Settings ──────────────────────────────────────────────────────────
 function exportCSV(){
-  const rows=[['Date','Type','Category','Amount','Description']];
+  const rows=[[t('tx_date'),t('tx_type'),t('tx_category'),t('tx_amount'),t('tx_desc_label')]];
   for(const tx of state.transactions)rows.push([tx.date,tx.type,tx.category,tx.amount,tx.description||'']);
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob=new Blob([csv],{type:'text/csv'});
@@ -2558,7 +3038,7 @@ function renderSettings() {
   el.innerHTML = `
     <div class="section-header">
       <h2 class="section-title">⚙️ ${t('tab_settings')}</h2>
-      <button class="help-icon-btn" data-help="settings" type="button" aria-label="Help">?</button>
+      <button class="help-icon-btn" data-help="settings" type="button" aria-label="${t('help_aria')}">?</button>
     </div>
 
     <div class="settings-grid">
@@ -2637,25 +3117,25 @@ function renderSettings() {
         </div>
       </div></div>
       <div class="panel"><div class="panel-inner">
-        <div class="settings-card-title">☁️ Data &amp; Sync</div>
-        <p class="settings-desc">Choose how your data is stored and kept up to date across devices.</p>
+        <div class="settings-card-title">${t('sync_card_title')}</div>
+        <p class="settings-desc">${t('sync_card_desc')}</p>
         <div class="sync-mode-row">
           <button class="sync-mode-opt${(syncGetMode('sbp')||'local')!=='google'?' is-active':''}" data-sync-mode="local" type="button">
             ${(syncGetMode('sbp')||'local')!=='google'?'<span class="sync-mode-check">✓</span>':''}
             <span class="sync-mode-icon">${SYNC_ICON_LOCAL}</span>
-            <span class="sync-mode-title">This device only</span>
-            <span class="sync-mode-desc">Data is saved on this device only</span>
+            <span class="sync-mode-title">${t('sync_mode_local_title')}</span>
+            <span class="sync-mode-desc">${t('sync_mode_local_desc')}</span>
           </button>
           <button class="sync-mode-opt sync-mode-opt--google${(syncGetMode('sbp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
-            <span class="sync-mode-badge">Recommended</span>
+            <span class="sync-mode-badge">${t('sync_recommended')}</span>
             ${(syncGetMode('sbp')||'local')==='google'?'<span class="sync-mode-check">✓</span>':''}
             <span class="sync-mode-icon sync-mode-icon--google">${SYNC_ICON_GOOGLE}</span>
-            <span class="sync-mode-title">Sync with Google</span>
-            <span class="sync-mode-desc">Data is synced across multiple devices</span>
+            <span class="sync-mode-title">${t('sync_mode_google_title')}</span>
+            <span class="sync-mode-desc">${t('sync_mode_google_desc')}</span>
           </button>
         </div>
-        ${(syncGetMode('sbp')==='google'&&syncGetEmail('sbp'))?`<p class="sync-status-line">Signed in as <strong>${esc(syncGetEmail('sbp'))}</strong></p>`:''}
-        <p class="sync-error" id="syncSettError" hidden>Sign-in didn't go through. Please try again.</p>
+        ${(syncGetMode('sbp')==='google'&&syncGetEmail('sbp'))?`<p class="sync-status-line">${tf('sync_signed_in_as',`<strong>${esc(syncGetEmail('sbp'))}</strong>`)}</p>`:''}
+        <p class="sync-error" id="syncSettError" hidden>${t('sync_error_generic')}</p>
       </div></div>
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌐 ${t('language')}</div>
@@ -2698,8 +3178,8 @@ function renderSettings() {
       if (errEl) errEl.hidden = true;
       el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = true);
       try {
-        if (target === 'google') { saveState(); await syncSwitchToGoogle('sbp'); showToast('Synced with Google Drive ✓'); }
-        else { await syncSwitchToLocal('sbp'); showToast('Switched to local storage ✓'); }
+        if (target === 'google') { saveState(); await syncSwitchToGoogle('sbp'); showToast(t('toast_synced_google')); }
+        else { await syncSwitchToLocal('sbp'); showToast(t('toast_synced_local')); }
         state = loadState() || defaultState(); syncSymbol();
         renderSettings();
       } catch (e) {
@@ -2773,6 +3253,13 @@ function renderSettings() {
   });
   document.getElementById('settEndWrap')?.addEventListener('click', () => {
     openDatePicker(document.getElementById('settEnd'), document.getElementById('settEndWrap'));
+  });
+  // Space/ArrowDown open the picker; Enter is handled separately (advances to next field)
+  document.getElementById('settStart')?.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); document.getElementById('settStartWrap')?.click(); }
+  });
+  document.getElementById('settEnd')?.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); document.getElementById('settEndWrap')?.click(); }
   });
 
   // Auto-save on change
@@ -3015,7 +3502,7 @@ function closeGuide() {
 // ── Toast ─────────────────────────────────────────────────────────────
 function showToast(msg) {
   let t = document.getElementById('toast');
-  if (!t) { t = document.createElement('div'); t.id = 'toast'; document.body.appendChild(t); }
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); document.body.appendChild(t); }
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._timer);
@@ -3038,7 +3525,7 @@ function fkDialog({ message, confirmText, cancelText, danger = false, alertOnly 
         <p class="fk-dialog-msg">${esc(message)}</p>
         <div class="fk-dialog-actions">
           ${alertOnly ? '' : `<button class="btn btn-ghost" data-act="cancel" type="button">${esc(cancelText || t('cancel'))}</button>`}
-          <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-act="ok" type="button">${esc(confirmText || (alertOnly ? 'OK' : t('save')))}</button>
+          <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-act="ok" type="button">${esc(confirmText || (alertOnly ? t('ok') : t('save')))}</button>
         </div>
       </div>`;
     document.body.appendChild(ov);
@@ -3052,6 +3539,14 @@ function fkDialog({ message, confirmText, cancelText, danger = false, alertOnly 
     const onKey = e => {
       if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(alertOnly ? true : false); }
       else if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); done(true); }
+      else if (e.key === 'Tab') {
+        const els = Array.from(ov.querySelectorAll('button')).filter(el => el.offsetParent !== null);
+        if (!els.length) return;
+        const first = els[0], last = els[els.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        else if (!els.includes(document.activeElement)) { e.preventDefault(); first.focus(); }
+      }
     };
     document.addEventListener('keydown', onKey, true);
     ov.querySelector('[data-act="ok"]')?.addEventListener('click', () => done(true));
@@ -3170,19 +3665,19 @@ function showUpgradeComparison() {
   if (modal) modal.classList.add('compare-modal');
 
   const feats = [
-    ['📊','Budget tracking - Income, Expenses, Bills & Savings', true],
-    ['📋','Transaction logging with CSV import',                 true],
-    ['📈','Cash flow chart - expected vs actual',               true],
-    ['🍩','Income & spending donut charts',                     true],
-    ['📅','Budget period control with presets',                 true],
-    ['🔄','Rollover from previous period',                      true],
-    ['💳','Debt payoff calculator (Snowball & Avalanche)',      false],
-    ['🏺','Sinking funds tracker with monthly goals',           false],
-    ['📅','Smart calendar with all events auto-populated',      false],
-    ['🔄','Subscription tracker with category breakdown',       false],
-    ['⚡','Pro dashboard with hero stats & 7-day panel',        false],
-    ['📥','One-click import from Simple Budget Planner',        false],
-    ['✨','Penny - your AI budget assistant',                   false],
+    ['📊',t('cmp_feat1'), true],
+    ['📋',t('cmp_feat2'), true],
+    ['📈',t('cmp_feat3'), true],
+    ['🍩',t('cmp_feat4'), true],
+    ['📅',t('cmp_feat5'), true],
+    ['🔄',t('cmp_feat6'), true],
+    ['💳',t('cmp_feat7'), false],
+    ['🏺',t('cmp_feat8'), false],
+    ['📅',t('cmp_feat9'), false],
+    ['🔄',t('cmp_feat10'), false],
+    ['⚡',t('cmp_feat11'), false],
+    ['📥',t('cmp_feat12'), false],
+    ['✨',t('cmp_feat13'), false],
   ];
 
   const makeRow = ([icon, label, inSimple]) =>
@@ -3195,26 +3690,26 @@ function showUpgradeComparison() {
   const coreRows = feats.filter((_,i) => i < 6).map(makeRow).join('');
   const proRows  = feats.filter((_,i) => i >= 6).map(makeRow).join('');
 
-  document.getElementById('modalTitle').textContent = '⚡ Simple vs Ultimate Budget Planner';
+  document.getElementById('modalTitle').textContent = t('cmp_title');
   document.getElementById('modalBody').innerHTML = `
     <table class="compare-table">
       <thead>
         <tr>
-          <th class="col-feat">Feature</th>
-          <th class="col-simple">💰 Simple</th>
-          <th class="col-ultimate">⚡ Ultimate</th>
+          <th class="col-feat">${t('cmp_col_feature')}</th>
+          <th class="col-simple">${t('cmp_col_simple')}</th>
+          <th class="col-ultimate">${t('cmp_col_ultimate')}</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="compare-section-row"><td colspan="3">Core budgeting</td></tr>
+        <tr class="compare-section-row"><td colspan="3">${t('cmp_section_core')}</td></tr>
         ${coreRows}
-        <tr class="compare-section-row"><td colspan="3">Pro features - Ultimate only</td></tr>
+        <tr class="compare-section-row"><td colspan="3">${t('cmp_section_pro')}</td></tr>
         ${proRows}
       </tbody>
     </table>
     <div class="compare-actions">
-      <button class="btn btn-ghost btn-sm" id="compareStay" type="button">Stay with Simple</button>
-      <button class="btn btn-primary" id="compareUpgrade" type="button">Open Ultimate Budget Planner →</button>
+      <button class="btn btn-ghost btn-sm" id="compareStay" type="button">${t('cmp_stay_simple')}</button>
+      <button class="btn btn-primary" id="compareUpgrade" type="button">${t('cmp_open_ultimate')}</button>
     </div>`;
 
   document.getElementById('tutorialOverlay').hidden = false;
@@ -3264,7 +3759,25 @@ function init() {
   document.getElementById('tutorialOverlay')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();
   });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeLegal(); } });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(); closeLegal(); return; }
+    const overlay = document.getElementById('tutorialOverlay');
+    if (overlay && !overlay.hidden) modalTabTrap(overlay, e);
+  });
+  // Move focus into the modal whenever it opens, so keyboard users don't
+  // start tabbing through the (visually hidden) page behind the overlay.
+  const tutorialOverlayEl = document.getElementById('tutorialOverlay');
+  if (tutorialOverlayEl) {
+    new MutationObserver(muts => {
+      for (const m of muts) {
+        if (m.attributeName === 'hidden' && !tutorialOverlayEl.hidden) {
+          const els = Array.from(tutorialOverlayEl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+            .filter(el => el.offsetParent !== null);
+          (els[0] || tutorialOverlayEl).focus();
+        }
+      }
+    }).observe(tutorialOverlayEl, { attributes: true });
+  }
 
   // Legal modals
   document.getElementById('legalClose')?.addEventListener('click', closeLegal);

@@ -226,9 +226,17 @@ async function _driveWriteFile(token, fileId, data) {
 // Turns a raw sign-in error into copy a non-technical user can act on.
 function syncFriendlyError(err) {
   const msg = err && err.message;
-  if (msg === 'popup_blocked_or_timed_out') return "Your browser blocked the Google sign-in window. Please allow pop-ups for this site (check your address bar for a blocked pop-up icon) and try again.";
-  if (msg === 'access_denied' || msg === 'sign_in_failed') return 'Sign-in was cancelled. Please try again.';
-  return "Sign-in didn't go through. Please try again.";
+  // t()/tf() are defined by whichever host page loaded this file (script.js or
+  // ultimate-budget.js each define their own TRANSLATIONS with matching keys),
+  // so this stays translated without this file needing its own i18n system.
+  const tr = typeof t === 'function' ? t : k => ({
+    sync_err_popup_blocked: 'Your browser blocked the Google sign-in window. Please allow pop-ups for this site (check your address bar for a blocked pop-up icon) and try again.',
+    sync_err_cancelled: 'Sign-in was cancelled. Please try again.',
+    sync_error_generic: "Sign-in didn't go through. Please try again.",
+  }[k]);
+  if (msg === 'popup_blocked_or_timed_out') return tr('sync_err_popup_blocked');
+  if (msg === 'access_denied' || msg === 'sign_in_failed') return tr('sync_err_cancelled');
+  return tr('sync_error_generic');
 }
 
 // Guards against ever adopting/seeding a placeholder blob that's missing

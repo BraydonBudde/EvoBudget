@@ -37,13 +37,21 @@ const fmt = v => {
 const pct = (a,e) => (!e||e===0) ? 0 : Math.min(999, Math.round((a/e)*100));
 
 const calIcon = () => `<svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`;
-const helpBtn = k => `<button class="help-icon-btn" data-help="${k}" type="button" aria-label="Help">?</button>`;
+const helpBtn = k => `<button class="help-icon-btn" data-help="${k}" type="button" aria-label="${t('help_aria')}">?</button>`;
 
 function styledDateField(inputId, wrapId, value) {
   return `<div class="date-field-styled" id="${wrapId}">${calIcon()}<span class="date-field-val" id="${inputId}Disp">${value ? formatDateDisplay(value) : '<span class="no-date">Set date</span>'}</span><input type="date" id="${inputId}" value="${value||''}"></div>`;
 }
 function bindDateField(inputId, wrapId, onChange) {
   document.getElementById(wrapId)?.addEventListener('click', () => { openDatePicker(document.getElementById(inputId), document.getElementById(wrapId)); });
+  // Keyboard users tab to the real (visually-hidden) <input type="date"> - let
+  // Enter/Space/Down open the same styled picker a mouse click would.
+  document.getElementById(inputId)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      openDatePicker(document.getElementById(inputId), document.getElementById(wrapId));
+    }
+  });
   document.getElementById(inputId)?.addEventListener('change', e => {
     const disp = document.getElementById(inputId+'Disp');
     if (disp) disp.innerHTML = e.target.value ? formatDateDisplay(e.target.value) : '<span class="no-date">Set date</span>';
@@ -134,16 +142,16 @@ function goToPurchase(product){
 
 function upgradeChip(ctx){
   const L = {
-    transaction:  `${TRIAL_LIMITS.transactions} / ${TRIAL_LIMITS.transactions} free transactions used`,
-    recurring:    `${TRIAL_LIMITS.recurring} / ${TRIAL_LIMITS.recurring} free automatic transactions used`,
-    subscriptions:`${TRIAL_LIMITS.subscriptions} / ${TRIAL_LIMITS.subscriptions} free subscription used`,
-    sinkingFunds: `${TRIAL_LIMITS.sinkingFunds} / ${TRIAL_LIMITS.sinkingFunds} free sinking fund used`,
-    debts:        `${TRIAL_LIMITS.debts} / ${TRIAL_LIMITS.debts} free debt used`,
+    transaction:  tf('upg_chip_tx', TRIAL_LIMITS.transactions),
+    recurring:    tf('upg_chip_recurring', TRIAL_LIMITS.recurring),
+    subscriptions:tf('upg_chip_subs', TRIAL_LIMITS.subscriptions),
+    sinkingFunds: tf('upg_chip_sinking', TRIAL_LIMITS.sinkingFunds),
+    debts:        tf('upg_chip_debts', TRIAL_LIMITS.debts),
   };
   if(L[ctx.reason]) return L[ctx.reason];
-  const names = { income:'Income', expenses:'Expenses', bills:'Bills', savings:'Savings' };
-  if(ctx.reason==='category' && names[ctx.type]) return `${TRIAL_LIMITS[ctx.type]} / ${TRIAL_LIMITS[ctx.type]} free ${names[ctx.type]} categories used`;
-  return 'Free trial limit reached';
+  const names = { income:'tab_income', expenses:'tab_expenses', bills:'tab_bills', savings:'tab_savings' };
+  if(ctx.reason==='category' && names[ctx.type]) return tf('upg_chip_cat', TRIAL_LIMITS[ctx.type], t(names[ctx.type]));
+  return t('upg_chip_limit');
 }
 
 // ── Upgrade prompt (UBP primary, SBP secondary) ────────────────────────
@@ -156,37 +164,37 @@ function showUpgradeModal(ctx = {}){
   ov.id = 'fkUpgradeOverlay';
   ov.setAttribute('role','dialog');
   ov.setAttribute('aria-modal','true');
-  ov.setAttribute('aria-label','Upgrade to unlock the full planner');
+  ov.setAttribute('aria-label',t('upg_aria_label'));
   ov.innerHTML = `
     <div class="fk-up-card" role="document">
-      <button class="fk-up-x" id="fkUpClose" type="button" aria-label="Close">&times;</button>
+      <button class="fk-up-x" id="fkUpClose" type="button" aria-label="${t('close_aria')}">&times;</button>
       <div class="fk-up-hero">
         <div class="fk-up-glow" aria-hidden="true"></div>
         <div class="fk-up-badge">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           ${esc(upgradeChip(ctx))}
         </div>
-        <h2 class="fk-up-title">Unlock the full<br>Ultimate Budget Planner</h2>
-        <p class="fk-up-sub">You're at the free trial limit. Upgrade once to remove every cap. No subscription, ever.</p>
+        <h2 class="fk-up-title">${t('upg_title_html')}</h2>
+        <p class="fk-up-sub">${t('upg_sub')}</p>
       </div>
       <div class="fk-up-body">
         <ul class="fk-up-list">
-          <li>${check}<span><strong>Unlimited</strong> transactions &amp; automatic transactions</span></li>
-          <li>${check}<span><strong>Unlimited</strong> budget categories in every section</span></li>
-          <li>${check}<span><strong>Unlimited</strong> debts, subscriptions &amp; sinking funds</span></li>
-          <li>${check}<span>One-time payment · free updates for life</span></li>
+          <li>${check}<span>${t('upg_feat_unlimited_tx_html')}</span></li>
+          <li>${check}<span>${t('upg_feat_unlimited_cat_html')}</span></li>
+          <li>${check}<span>${t('upg_feat_unlimited_other_html')}</span></li>
+          <li>${check}<span>${t('upg_feat_onetime')}</span></li>
         </ul>
         <div class="fk-up-price-row">
-          <div class="fk-up-price"><span class="fk-up-price-num">${esc(PRICES.ubp)}</span><span class="fk-up-price-tag">one-time</span></div>
-          <span class="fk-up-price-note">No subscription</span>
+          <div class="fk-up-price"><span class="fk-up-price-num">${esc(PRICES.ubp)}</span><span class="fk-up-price-tag">${t('upg_price_tag')}</span></div>
+          <span class="fk-up-price-note">${t('upg_price_note')}</span>
         </div>
-        <button class="fk-up-cta" id="fkUpBuyUbp" type="button">Unlock Ultimate for ${esc(PRICES.ubp)}</button>
+        <button class="fk-up-cta" id="fkUpBuyUbp" type="button">${tf('upg_cta_ubp',esc(PRICES.ubp))}</button>
         <button class="fk-up-upsell" id="fkUpBuySbp" type="button">
-          <span class="fk-up-upsell-lead">💰 Just need the basics?</span>
-          <span class="fk-up-upsell-cta">Get Simple for ${esc(PRICES.sbp)} →</span>
+          <span class="fk-up-upsell-lead">${t('upg_upsell_lead')}</span>
+          <span class="fk-up-upsell-cta">${tf('upg_upsell_cta',esc(PRICES.sbp))}</span>
         </button>
         <div class="fk-up-foot">
-          <button class="fk-up-later" id="fkUpLater" type="button">Maybe later</button>
+          <button class="fk-up-later" id="fkUpLater" type="button">${t('upg_later')}</button>
         </div>
       </div>
     </div>`;
@@ -719,6 +727,7 @@ const TRANSLATIONS = {
     toast_lang_updated:'Language updated \u2713',toast_export:'Exported \u2713',
     toast_saved:'Saved \u2713',toast_reset:'All data cleared',toast_alloc_bucket_added:'Bucket added \u2713',
     confirm_remove_cat:'Remove this category?',confirm_delete_all_tx:'Delete ALL transactions? This cannot be undone.',
+    confirm_remove_cat_with_tx:'{0} existing transaction(s) use this category. They will keep it as a label, but it will no longer be tracked in your budget. Delete anyway?',
     confirm_delete_tx:'Delete this transaction?',confirm_remove_debt:'Remove this debt?',
     confirm_delete_fund:'Delete this fund?',confirm_remove_sub:'Remove this subscription?',
     confirm_reset_1:'Are you sure? All data will be permanently deleted.',
@@ -931,6 +940,38 @@ const TRANSLATIONS = {
     guide_settings_connect2:'Turning on Google sync here is what lets your data follow you if you open the app on a different device.',
     guide_settings_connect3:"Exporting your data here is the safest habit to build before making any big change you're not sure about.",
     guide_settings_tip:'Set up Currency, Budget Period, and Data & Sync first, before anything else - they are the foundation everything else in the app is built on.',
+    upg_chip_tx:'{0} / {0} free transactions used',
+    upg_chip_recurring:'{0} / {0} free automatic transactions used',
+    upg_chip_subs:'{0} / {0} free subscription used',
+    upg_chip_sinking:'{0} / {0} free sinking fund used',
+    upg_chip_debts:'{0} / {0} free debt used',
+    upg_chip_cat:'{0} / {0} free {1} categories used',
+    upg_chip_limit:'Free trial limit reached',
+    upg_aria_label:'Upgrade to unlock the full planner',
+    close_aria:'Close',help_aria:'Help',ok:'OK',
+    upg_title_html:'Unlock the full<br>Ultimate Budget Planner',
+    upg_sub:"You're at the free trial limit. Upgrade once to remove every cap. No subscription, ever.",
+    upg_feat_unlimited_tx_html:'<strong>Unlimited</strong> transactions &amp; automatic transactions',
+    upg_feat_unlimited_cat_html:'<strong>Unlimited</strong> budget categories in every section',
+    upg_feat_unlimited_other_html:'<strong>Unlimited</strong> debts, subscriptions &amp; sinking funds',
+    upg_feat_onetime:'One-time payment · free updates for life',
+    upg_price_tag:'one-time',upg_price_note:'No subscription',
+    upg_cta_ubp:'Unlock Ultimate for {0}',
+    upg_upsell_lead:'💰 Just need the basics?',upg_upsell_cta:'Get Simple for {0} →',
+    upg_later:'Maybe later',
+    onboard_welcome:"👋 Welcome! Here's how to get started:",
+    onboard_step1_html:'Open <strong>Settings</strong> to set your currency and budget period.',
+    onboard_step2_html:'Go to <strong>Budget</strong> and enter expected amounts for Income, Expenses, Bills &amp; Savings.',
+    onboard_step3_html:'Use <strong>Transactions</strong> to log what you actually earn and spend.',
+    onboard_step4_html:'Explore the pro tools: <strong>Debt Payoff, Sinking Funds, Subscriptions &amp; the Smart Calendar.</strong>',
+    sync_card_title:'☁️ Data &amp; Sync',sync_card_desc:'Choose how your data is stored and kept up to date across devices.',
+    sync_mode_local_title:'This device only',sync_mode_local_desc:'Data is saved on this device only',
+    sync_recommended:'Recommended',
+    sync_mode_google_title:'Sync with Google',sync_mode_google_desc:'Data is synced across multiple devices',
+    sync_signed_in_as:'Signed in as {0}',sync_error_generic:"Sign-in didn't go through. Please try again.",
+    toast_synced_google:'Synced with Google Drive ✓',toast_synced_local:'Switched to local storage ✓',
+    sync_err_popup_blocked:'Your browser blocked the Google sign-in window. Please allow pop-ups for this site (check your address bar for a blocked pop-up icon) and try again.',
+    sync_err_cancelled:'Sign-in was cancelled. Please try again.',
   },
   de: {
     lang_name:'Deutsch',
@@ -1206,6 +1247,7 @@ const TRANSLATIONS = {
     toast_lang_updated:'Sprache aktualisiert \u2713',toast_export:'Exportiert \u2713',
     toast_saved:'Gespeichert \u2713',toast_reset:'Alle Daten gel\u00f6scht',toast_alloc_bucket_added:'Kategorie hinzugef\u00fcgt \u2713',
     confirm_remove_cat:'Diese Kategorie entfernen?',confirm_delete_all_tx:'ALLE Transaktionen l\u00f6schen? Das kann nicht r\u00fcckg\u00e4ngig gemacht werden.',
+    confirm_remove_cat_with_tx:'{0} bestehende Transaktion(en) verwenden diese Kategorie. Sie behalten sie als Bezeichnung, wird aber nicht mehr in deinem Budget erfasst. Trotzdem l\u00f6schen?',
     confirm_delete_tx:'Diese Transaktion l\u00f6schen?',confirm_remove_debt:'Diese Schuld entfernen?',
     confirm_delete_fund:'Diesen Fonds l\u00f6schen?',confirm_remove_sub:'Dieses Abonnement entfernen?',
     confirm_reset_1:'Bist du sicher? Alle Daten werden dauerhaft gel\u00f6scht.',
@@ -1418,6 +1460,38 @@ const TRANSLATIONS = {
     guide_settings_connect2:'Google-Sync hier zu aktivieren, sorgt dafür, dass deine Daten dir folgen, wenn du die App auf einem anderen Gerät öffnest.',
     guide_settings_connect3:'Deine Daten hier zu exportieren, ist die sicherste Gewohnheit, bevor du eine größere Änderung vornimmst, bei der du dir unsicher bist.',
     guide_settings_tip:'Richte zuerst Währung, Budgetzeitraum und Daten & Sync ein, bevor du etwas anderes tust - sie sind das Fundament, auf dem alles andere in der App aufbaut.',
+    upg_chip_tx:'{0} / {0} kostenlose Transaktionen genutzt',
+    upg_chip_recurring:'{0} / {0} kostenlose automatische Transaktionen genutzt',
+    upg_chip_subs:'{0} / {0} kostenloses Abo genutzt',
+    upg_chip_sinking:'{0} / {0} kostenloser Sparzielfonds genutzt',
+    upg_chip_debts:'{0} / {0} kostenlose Schuld genutzt',
+    upg_chip_cat:'{0} / {0} kostenlose {1}-Kategorien genutzt',
+    upg_chip_limit:'Kostenlose Testphase erreicht',
+    upg_aria_label:'Upgrade, um den vollen Planer freizuschalten',
+    close_aria:'Schließen',help_aria:'Hilfe',ok:'OK',
+    upg_title_html:'Schalte den vollen<br>Ultimate Budget Planner frei',
+    upg_sub:'Du hast das kostenlose Testlimit erreicht. Einmal upgraden, um jede Grenze aufzuheben. Kein Abo, nie.',
+    upg_feat_unlimited_tx_html:'<strong>Unbegrenzte</strong> Transaktionen &amp; automatische Transaktionen',
+    upg_feat_unlimited_cat_html:'<strong>Unbegrenzte</strong> Budgetkategorien in jedem Bereich',
+    upg_feat_unlimited_other_html:'<strong>Unbegrenzte</strong> Schulden, Abos &amp; Sparzielfonds',
+    upg_feat_onetime:'Einmalzahlung · kostenlose Updates fürs Leben',
+    upg_price_tag:'einmalig',upg_price_note:'Kein Abo',
+    upg_cta_ubp:'Ultimate freischalten für {0}',
+    upg_upsell_lead:'💰 Brauchst du nur die Grundlagen?',upg_upsell_cta:'Simple holen für {0} →',
+    upg_later:'Vielleicht später',
+    onboard_welcome:'👋 Willkommen! So kommst du los:',
+    onboard_step1_html:'Öffne <strong>Einstellungen</strong>, um deine Währung und deinen Budgetzeitraum festzulegen.',
+    onboard_step2_html:'Gehe zu <strong>Budget</strong> und trage erwartete Beträge für Einnahmen, Ausgaben, Rechnungen &amp; Ersparnisse ein.',
+    onboard_step3_html:'Nutze <strong>Transaktionen</strong>, um zu erfassen, was du tatsächlich einnimmst und ausgibst.',
+    onboard_step4_html:'Entdecke die Pro-Tools: <strong>Schuldentilgung, Sparzielfonds, Abonnements &amp; den Smart-Kalender.</strong>',
+    sync_card_title:'☁️ Daten &amp; Synchronisierung',sync_card_desc:'Wähle, wie deine Daten gespeichert und geräteübergreifend aktuell gehalten werden.',
+    sync_mode_local_title:'Nur dieses Gerät',sync_mode_local_desc:'Daten werden nur auf diesem Gerät gespeichert',
+    sync_recommended:'Empfohlen',
+    sync_mode_google_title:'Mit Google synchronisieren',sync_mode_google_desc:'Daten werden geräteübergreifend synchronisiert',
+    sync_signed_in_as:'Angemeldet als {0}',sync_error_generic:'Anmeldung hat nicht funktioniert. Bitte erneut versuchen.',
+    toast_synced_google:'Mit Google Drive synchronisiert ✓',toast_synced_local:'Zu lokalem Speicher gewechselt ✓',
+    sync_err_popup_blocked:'Dein Browser hat das Google-Anmeldefenster blockiert. Bitte erlaube Pop-ups für diese Seite (prüfe deine Adressleiste auf ein blockiertes Pop-up-Symbol) und versuche es erneut.',
+    sync_err_cancelled:'Die Anmeldung wurde abgebrochen. Bitte erneut versuchen.',
   },
   fr: {
     lang_name:'Français',
@@ -1693,6 +1767,7 @@ const TRANSLATIONS = {
     toast_lang_updated:'Langue mise \u00e0 jour \u2713',toast_export:'Export\u00e9 \u2713',
     toast_saved:'Enregistr\u00e9 \u2713',toast_reset:'Toutes les donn\u00e9es effac\u00e9es',toast_alloc_bucket_added:'Segment ajout\u00e9 \u2713',
     confirm_remove_cat:'Supprimer cette cat\u00e9gorie ?',confirm_delete_all_tx:'Supprimer TOUTES les transactions ? Cela est irr\u00e9versible.',
+    confirm_remove_cat_with_tx:'{0} transaction(s) existante(s) utilisent cette cat\u00e9gorie. Elles la conserveront comme \u00e9tiquette, mais elle ne sera plus suivie dans votre budget. Supprimer quand m\u00eame ?',
     confirm_delete_tx:'Supprimer cette transaction ?',confirm_remove_debt:'Supprimer cette dette ?',
     confirm_delete_fund:'Supprimer ce fonds ?',confirm_remove_sub:'Supprimer cet abonnement ?',
     confirm_reset_1:'\u00cates-vous s\u00fbr ? Toutes les donn\u00e9es seront d\u00e9finitivement supprim\u00e9es.',
@@ -1905,6 +1980,38 @@ const TRANSLATIONS = {
     guide_settings_connect2:"Activer la synchronisation Google ici permet à vos données de vous suivre si vous ouvrez l'application sur un autre appareil.",
     guide_settings_connect3:"Exporter vos données ici est l'habitude la plus sûre à prendre avant tout changement important dont vous n'êtes pas sûr.",
     guide_settings_tip:"Configurez d'abord Devise, Période budgétaire et Données et synchronisation, avant tout le reste - ce sont les fondations sur lesquelles tout le reste de l'application est construit.",
+    upg_chip_tx:'{0} / {0} transactions gratuites utilisées',
+    upg_chip_recurring:'{0} / {0} transactions automatiques gratuites utilisées',
+    upg_chip_subs:'{0} / {0} abonnement gratuit utilisé',
+    upg_chip_sinking:'{0} / {0} provision gratuite utilisée',
+    upg_chip_debts:'{0} / {0} dette gratuite utilisée',
+    upg_chip_cat:'{0} / {0} catégories {1} gratuites utilisées',
+    upg_chip_limit:'Limite d’essai gratuit atteinte',
+    upg_aria_label:'Mettre à niveau pour débloquer le planificateur complet',
+    close_aria:'Fermer',help_aria:'Aide',ok:'OK',
+    upg_title_html:'Débloquez le<br>Ultimate Budget Planner complet',
+    upg_sub:"Vous avez atteint la limite d'essai gratuit. Mettez à niveau une fois pour lever tous les plafonds. Jamais d'abonnement.",
+    upg_feat_unlimited_tx_html:'Transactions &amp; transactions automatiques <strong>illimitées</strong>',
+    upg_feat_unlimited_cat_html:'Catégories de budget <strong>illimitées</strong> dans chaque section',
+    upg_feat_unlimited_other_html:'Dettes, abonnements &amp; provisions <strong>illimités</strong>',
+    upg_feat_onetime:'Paiement unique · mises à jour gratuites à vie',
+    upg_price_tag:'unique',upg_price_note:'Sans abonnement',
+    upg_cta_ubp:'Débloquer Ultimate pour {0}',
+    upg_upsell_lead:'💰 Besoin seulement des bases ?',upg_upsell_cta:'Obtenir Simple pour {0} →',
+    upg_later:'Plus tard',
+    onboard_welcome:'👋 Bienvenue ! Voici comment commencer :',
+    onboard_step1_html:'Ouvrez <strong>Paramètres</strong> pour définir votre devise et votre période budgétaire.',
+    onboard_step2_html:'Allez dans <strong>Budget</strong> et saisissez les montants prévus pour Revenus, Dépenses, Factures &amp; Épargne.',
+    onboard_step3_html:'Utilisez <strong>Transactions</strong> pour enregistrer ce que vous gagnez et dépensez réellement.',
+    onboard_step4_html:'Découvrez les outils Pro : <strong>Remboursement de dettes, Provisions, Abonnements &amp; le Calendrier intelligent.</strong>',
+    sync_card_title:'☁️ Données &amp; Synchronisation',sync_card_desc:'Choisissez comment vos données sont stockées et tenues à jour entre les appareils.',
+    sync_mode_local_title:'Cet appareil uniquement',sync_mode_local_desc:'Les données sont enregistrées uniquement sur cet appareil',
+    sync_recommended:'Recommandé',
+    sync_mode_google_title:'Synchroniser avec Google',sync_mode_google_desc:'Les données sont synchronisées entre plusieurs appareils',
+    sync_signed_in_as:'Connecté en tant que {0}',sync_error_generic:"La connexion n'a pas abouti. Veuillez réessayer.",
+    toast_synced_google:'Synchronisé avec Google Drive ✓',toast_synced_local:'Basculé vers le stockage local ✓',
+    sync_err_popup_blocked:"Votre navigateur a bloqué la fenêtre de connexion Google. Veuillez autoriser les pop-ups pour ce site (vérifiez votre barre d'adresse pour une icône de pop-up bloquée) et réessayez.",
+    sync_err_cancelled:'La connexion a été annulée. Veuillez réessayer.',
   },
   es: {
     lang_name:'Español',
@@ -2180,6 +2287,7 @@ const TRANSLATIONS = {
     toast_lang_updated:'Idioma actualizado \u2713',toast_export:'Exportado \u2713',
     toast_saved:'Guardado \u2713',toast_reset:'Todos los datos borrados',toast_alloc_bucket_added:'Segmento a\u00f1adido \u2713',
     confirm_remove_cat:'\u00bfEliminar esta categor\u00eda?',confirm_delete_all_tx:'\u00bfEliminar TODAS las transacciones? Esto no se puede deshacer.',
+    confirm_remove_cat_with_tx:'{0} transacci\u00f3n(es) existente(s) usan esta categor\u00eda. La conservar\u00e1n como etiqueta, pero ya no se har\u00e1 seguimiento en tu presupuesto. \u00bfEliminar de todos modos?',
     confirm_delete_tx:'\u00bfEliminar esta transacci\u00f3n?',confirm_remove_debt:'\u00bfEliminar esta deuda?',
     confirm_delete_fund:'\u00bfEliminar este fondo?',confirm_remove_sub:'\u00bfEliminar esta suscripci\u00f3n?',
     confirm_reset_1:'\u00bfEst\u00e1s seguro? Todos los datos se eliminar\u00e1n permanentemente.',
@@ -2392,6 +2500,38 @@ const TRANSLATIONS = {
     guide_settings_connect2:'Activar la sincronización con Google aquí permite que tus datos te sigan si abres la app en otro dispositivo.',
     guide_settings_connect3:'Exportar tus datos aquí es el hábito más seguro antes de hacer cualquier cambio importante del que no estés seguro.',
     guide_settings_tip:'Configura Moneda, Período de presupuesto y Datos y sincronización primero, antes que cualquier otra cosa - son la base sobre la que se construye todo lo demás en la app.',
+    upg_chip_tx:'{0} / {0} transacciones gratuitas usadas',
+    upg_chip_recurring:'{0} / {0} transacciones automáticas gratuitas usadas',
+    upg_chip_subs:'{0} / {0} suscripción gratuita usada',
+    upg_chip_sinking:'{0} / {0} fondo de ahorro gratuito usado',
+    upg_chip_debts:'{0} / {0} deuda gratuita usada',
+    upg_chip_cat:'{0} / {0} categorías de {1} gratuitas usadas',
+    upg_chip_limit:'Límite de prueba gratuita alcanzado',
+    upg_aria_label:'Actualizar para desbloquear el planificador completo',
+    close_aria:'Cerrar',help_aria:'Ayuda',ok:'OK',
+    upg_title_html:'Desbloquea el<br>Ultimate Budget Planner completo',
+    upg_sub:'Has alcanzado el límite de la prueba gratuita. Actualiza una vez para eliminar todos los límites. Nunca una suscripción.',
+    upg_feat_unlimited_tx_html:'Transacciones &amp; transacciones automáticas <strong>ilimitadas</strong>',
+    upg_feat_unlimited_cat_html:'Categorías de presupuesto <strong>ilimitadas</strong> en cada sección',
+    upg_feat_unlimited_other_html:'Deudas, suscripciones &amp; fondos de ahorro <strong>ilimitados</strong>',
+    upg_feat_onetime:'Pago único · actualizaciones gratuitas de por vida',
+    upg_price_tag:'pago único',upg_price_note:'Sin suscripción',
+    upg_cta_ubp:'Desbloquear Ultimate por {0}',
+    upg_upsell_lead:'💰 ¿Solo necesitas lo básico?',upg_upsell_cta:'Obtener Simple por {0} →',
+    upg_later:'Quizás más tarde',
+    onboard_welcome:'👋 ¡Bienvenido! Así es como empezar:',
+    onboard_step1_html:'Abre <strong>Ajustes</strong> para definir tu moneda y período de presupuesto.',
+    onboard_step2_html:'Ve a <strong>Presupuesto</strong> e introduce los montos previstos para Ingresos, Gastos, Facturas &amp; Ahorros.',
+    onboard_step3_html:'Usa <strong>Transacciones</strong> para registrar lo que realmente ganas y gastas.',
+    onboard_step4_html:'Explora las herramientas Pro: <strong>Pago de deudas, Fondos de ahorro, Suscripciones &amp; el Calendario inteligente.</strong>',
+    sync_card_title:'☁️ Datos &amp; Sincronización',sync_card_desc:'Elige cómo se almacenan tus datos y se mantienen actualizados entre dispositivos.',
+    sync_mode_local_title:'Solo este dispositivo',sync_mode_local_desc:'Los datos se guardan solo en este dispositivo',
+    sync_recommended:'Recomendado',
+    sync_mode_google_title:'Sincronizar con Google',sync_mode_google_desc:'Los datos se sincronizan entre varios dispositivos',
+    sync_signed_in_as:'Sesión iniciada como {0}',sync_error_generic:'El inicio de sesión no se completó. Inténtalo de nuevo.',
+    toast_synced_google:'Sincronizado con Google Drive ✓',toast_synced_local:'Cambiado a almacenamiento local ✓',
+    sync_err_popup_blocked:'Tu navegador bloqueó la ventana de inicio de sesión de Google. Permite las ventanas emergentes para este sitio (revisa tu barra de direcciones por un icono de ventana emergente bloqueada) e inténtalo de nuevo.',
+    sync_err_cancelled:'El inicio de sesión fue cancelado. Inténtalo de nuevo.',
   },
   it: {
     lang_name:'Italiano',
@@ -2668,6 +2808,7 @@ const TRANSLATIONS = {
     toast_lang_updated:'Lingua aggiornata \u2713',toast_export:'Esportato \u2713',
     toast_saved:'Salvato \u2713',toast_reset:'Tutti i dati cancellati',toast_alloc_bucket_added:'Segmento aggiunto \u2713',
     confirm_remove_cat:'Rimuovere questa categoria?',confirm_delete_all_tx:'Eliminare TUTTE le transazioni? Questa azione \u00e8 irreversibile.',
+    confirm_remove_cat_with_tx:'{0} transazione/i esistente/i usa/usano questa categoria. La manterranno come etichetta, ma non sar\u00e0 pi\u00f9 monitorata nel tuo budget. Eliminare comunque?',
     confirm_delete_tx:'Eliminare questa transazione?',confirm_remove_debt:'Rimuovere questo debito?',
     confirm_delete_fund:'Eliminare questo fondo?',confirm_remove_sub:'Rimuovere questo abbonamento?',
     confirm_reset_1:'Sei sicuro? Tutti i dati verranno eliminati definitivamente.',
@@ -2880,6 +3021,38 @@ const TRANSLATIONS = {
     guide_settings_connect2:"Attivare la sincronizzazione Google qui permette ai tuoi dati di seguirti se apri l'app su un altro dispositivo.",
     guide_settings_connect3:"Esportare i tuoi dati qui è l'abitudine più sicura prima di qualsiasi cambiamento importante di cui non sei sicuro.",
     guide_settings_tip:"Configura Valuta, Periodo di budget e Dati e sincronizzazione per prima cosa, prima di tutto il resto - sono le fondamenta su cui è costruito tutto il resto dell'app.",
+    upg_chip_tx:'{0} / {0} transazioni gratuite utilizzate',
+    upg_chip_recurring:'{0} / {0} transazioni automatiche gratuite utilizzate',
+    upg_chip_subs:'{0} / {0} abbonamento gratuito utilizzato',
+    upg_chip_sinking:'{0} / {0} fondo di accantonamento gratuito utilizzato',
+    upg_chip_debts:'{0} / {0} debito gratuito utilizzato',
+    upg_chip_cat:'{0} / {0} categorie {1} gratuite utilizzate',
+    upg_chip_limit:'Limite di prova gratuita raggiunto',
+    upg_aria_label:'Esegui l’upgrade per sbloccare il pianificatore completo',
+    close_aria:'Chiudi',help_aria:'Aiuto',ok:'OK',
+    upg_title_html:'Sblocca il<br>Ultimate Budget Planner completo',
+    upg_sub:'Hai raggiunto il limite della prova gratuita. Esegui l’upgrade una volta per rimuovere ogni limite. Mai un abbonamento.',
+    upg_feat_unlimited_tx_html:'Transazioni &amp; transazioni automatiche <strong>illimitate</strong>',
+    upg_feat_unlimited_cat_html:'Categorie di budget <strong>illimitate</strong> in ogni sezione',
+    upg_feat_unlimited_other_html:'Debiti, abbonamenti &amp; fondi di accantonamento <strong>illimitati</strong>',
+    upg_feat_onetime:'Pagamento unico · aggiornamenti gratuiti a vita',
+    upg_price_tag:'una tantum',upg_price_note:'Nessun abbonamento',
+    upg_cta_ubp:'Sblocca Ultimate per {0}',
+    upg_upsell_lead:'💰 Ti servono solo le basi?',upg_upsell_cta:'Ottieni Simple per {0} →',
+    upg_later:'Forse più tardi',
+    onboard_welcome:'👋 Benvenuto! Ecco come iniziare:',
+    onboard_step1_html:'Apri <strong>Impostazioni</strong> per impostare la tua valuta e il periodo di budget.',
+    onboard_step2_html:'Vai su <strong>Budget</strong> e inserisci gli importi previsti per Entrate, Spese, Bollette &amp; Risparmi.',
+    onboard_step3_html:'Usa <strong>Transazioni</strong> per registrare ciò che guadagni e spendi realmente.',
+    onboard_step4_html:'Esplora gli strumenti Pro: <strong>Pagamento debiti, Fondi di accantonamento, Abbonamenti &amp; il Calendario intelligente.</strong>',
+    sync_card_title:'☁️ Dati &amp; Sincronizzazione',sync_card_desc:'Scegli come vengono memorizzati e tenuti aggiornati i tuoi dati tra i dispositivi.',
+    sync_mode_local_title:'Solo questo dispositivo',sync_mode_local_desc:'I dati sono salvati solo su questo dispositivo',
+    sync_recommended:'Consigliato',
+    sync_mode_google_title:'Sincronizza con Google',sync_mode_google_desc:'I dati sono sincronizzati tra più dispositivi',
+    sync_signed_in_as:'Accesso effettuato come {0}',sync_error_generic:'L’accesso non è andato a buon fine. Riprova.',
+    toast_synced_google:'Sincronizzato con Google Drive ✓',toast_synced_local:'Passato all’archiviazione locale ✓',
+    sync_err_popup_blocked:'Il tuo browser ha bloccato la finestra di accesso Google. Consenti i popup per questo sito (controlla la barra degli indirizzi per un’icona di popup bloccato) e riprova.',
+    sync_err_cancelled:'Accesso annullato. Riprova.',
   },
   pl: {
     lang_name:'Polski',
@@ -3155,6 +3328,7 @@ const TRANSLATIONS = {
     toast_lang_updated:'J\u0119zyk zaktualizowany \u2713',toast_export:'Wyeksportowano \u2713',
     toast_saved:'Zapisano \u2713',toast_reset:'Wszystkie dane usuni\u0119te',toast_alloc_bucket_added:'Segment dodany \u2713',
     confirm_remove_cat:'Usun\u0105\u0107 t\u0119 kategori\u0119?',confirm_delete_all_tx:'Usun\u0105\u0107 WSZYSTKIE transakcje? Tej operacji nie mo\u017cna cofn\u0105\u0107.',
+    confirm_remove_cat_with_tx:'{0} istniej\u0105ca(-ych) transakcja(-i) u\u017cywa tej kategorii. Zachowaj\u0105 j\u0105 jako etykiet\u0119, ale nie b\u0119dzie ju\u017c \u015bledzona w Twoim bud\u017cecie. Usun\u0105\u0107 mimo to?',
     confirm_delete_tx:'Usun\u0105\u0107 t\u0119 transakcj\u0119?',confirm_remove_debt:'Usun\u0105\u0107 ten d\u0142ug?',
     confirm_delete_fund:'Usun\u0105\u0107 ten fundusz?',confirm_remove_sub:'Usun\u0105\u0107 t\u0119 subskrypcj\u0119?',
     confirm_reset_1:'Jeste\u015b pewny? Wszystkie dane zostan\u0105 trwale usuni\u0119te.',
@@ -3367,6 +3541,38 @@ const TRANSLATIONS = {
     guide_settings_connect2:'Włączenie synchronizacji Google tutaj sprawia, że twoje dane podążają za tobą, gdy otworzysz aplikację na innym urządzeniu.',
     guide_settings_connect3:'Eksportowanie danych tutaj to najbezpieczniejszy nawyk przed dokonaniem większej zmiany, co do której nie masz pewności.',
     guide_settings_tip:'Skonfiguruj Walutę, Okres budżetowy oraz Dane i synchronizację jako pierwsze, zanim zrobisz cokolwiek innego - to fundament, na którym zbudowana jest reszta aplikacji.',
+    upg_chip_tx:'{0} / {0} bezpłatnych transakcji wykorzystanych',
+    upg_chip_recurring:'{0} / {0} bezpłatnych transakcji automatycznych wykorzystanych',
+    upg_chip_subs:'{0} / {0} bezpłatna subskrypcja wykorzystana',
+    upg_chip_sinking:'{0} / {0} bezpłatny fundusz celowy wykorzystany',
+    upg_chip_debts:'{0} / {0} bezpłatny dług wykorzystany',
+    upg_chip_cat:'{0} / {0} bezpłatnych kategorii {1} wykorzystanych',
+    upg_chip_limit:'Osiągnięto limit bezpłatnej wersji próbnej',
+    upg_aria_label:'Ulepsz, aby odblokować pełny planer',
+    close_aria:'Zamknij',help_aria:'Pomoc',ok:'OK',
+    upg_title_html:'Odblokuj pełny<br>Ultimate Budget Planner',
+    upg_sub:'Osiągnąłeś limit bezpłatnej wersji próbnej. Ulepsz raz, aby usunąć wszystkie limity. Nigdy subskrypcji.',
+    upg_feat_unlimited_tx_html:'<strong>Nieograniczone</strong> transakcje &amp; transakcje automatyczne',
+    upg_feat_unlimited_cat_html:'<strong>Nieograniczone</strong> kategorie budżetu w każdej sekcji',
+    upg_feat_unlimited_other_html:'<strong>Nieograniczone</strong> długi, subskrypcje &amp; fundusze celowe',
+    upg_feat_onetime:'Jednorazowa płatność · darmowe aktualizacje na zawsze',
+    upg_price_tag:'jednorazowo',upg_price_note:'Bez subskrypcji',
+    upg_cta_ubp:'Odblokuj Ultimate za {0}',
+    upg_upsell_lead:'💰 Potrzebujesz tylko podstaw?',upg_upsell_cta:'Zdobądź Simple za {0} →',
+    upg_later:'Może później',
+    onboard_welcome:'👋 Witaj! Oto jak zacząć:',
+    onboard_step1_html:'Otwórz <strong>Ustawienia</strong>, aby ustawić walutę i okres budżetowy.',
+    onboard_step2_html:'Przejdź do <strong>Budżetu</strong> i wprowadź spodziewane kwoty dla Przychodów, Wydatków, Rachunków &amp; Oszczędności.',
+    onboard_step3_html:'Użyj <strong>Transakcji</strong>, aby zapisywać to, co faktycznie zarabiasz i wydajesz.',
+    onboard_step4_html:'Poznaj narzędzia Pro: <strong>Spłatę długów, Fundusze celowe, Subskrypcje &amp; Inteligentny kalendarz.</strong>',
+    sync_card_title:'☁️ Dane &amp; Synchronizacja',sync_card_desc:'Wybierz, jak Twoje dane są przechowywane i aktualizowane na różnych urządzeniach.',
+    sync_mode_local_title:'Tylko to urządzenie',sync_mode_local_desc:'Dane są zapisywane tylko na tym urządzeniu',
+    sync_recommended:'Zalecane',
+    sync_mode_google_title:'Synchronizuj z Google',sync_mode_google_desc:'Dane są synchronizowane na wielu urządzeniach',
+    sync_signed_in_as:'Zalogowano jako {0}',sync_error_generic:'Logowanie nie powiodło się. Spróbuj ponownie.',
+    toast_synced_google:'Zsynchronizowano z Google Drive ✓',toast_synced_local:'Przełączono na lokalne przechowywanie ✓',
+    sync_err_popup_blocked:'Twoja przeglądarka zablokowała okno logowania Google. Zezwól na wyskakujące okienka dla tej strony (sprawdź pasek adresu pod kątem zablokowanej ikony wyskakującego okienka) i spróbuj ponownie.',
+    sync_err_cancelled:'Logowanie zostało anulowane. Spróbuj ponownie.',
   }
 };
 
@@ -3377,7 +3583,7 @@ function t(key) {
   // Last-resort safeguard: never render a raw key identifier in the UI
   return String(key).replace(/^(tx|sf|dpc|cal|sett|alloc|bud|dtype|help|toast|freq|dash|sub|rec|dp|sett)_/, '').replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase());
 }
-function tf(key, ...args) { let s=t(key); args.forEach((v,i)=>s=s.replace(`{${i}}`,v)); return s; }
+function tf(key, ...args) { let s=t(key); args.forEach((v,i)=>s=s.replaceAll(`{${i}}`,v)); return s; }
 
 function applyLanguage() {
   const lang = state?.settings?.language || 'en';
@@ -3411,6 +3617,7 @@ function svgDonut(segs,size=130,sw=17) {
       cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="${sw}"
       stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}"
       transform="rotate(${rot.toFixed(2)} ${cx} ${cy})"
+      tabindex="0" role="button" aria-label="${esc(s.label||'')}: ${p.toFixed(0)}%, ${esc(fmt(s.value||0))}"
       style="cursor:pointer;transition:stroke-width .18s,opacity .18s"/>`;
     cum+=p;
   });
@@ -3463,12 +3670,19 @@ function initDonuts(container) {
       seg.addEventListener('mouseleave',hide);
       seg.addEventListener('touchstart',e=>{e.preventDefault();show(seg);},{passive:false});
       seg.addEventListener('touchend',()=>setTimeout(hide,1600));
+      seg.addEventListener('focus',()=>show(seg));
+      seg.addEventListener('blur',hide);
     });
     legRows.forEach(row=>{
       const seg=Array.from(segs).find(s=>s.dataset.idx===row.dataset.idx);
       if(!seg) return;
+      row.setAttribute('tabindex','0');
+      row.setAttribute('role','button');
+      row.setAttribute('aria-label',seg.getAttribute('aria-label')||'');
       row.addEventListener('mouseenter',()=>show(seg));
       row.addEventListener('mouseleave',hide);
+      row.addEventListener('focus',()=>show(seg));
+      row.addEventListener('blur',hide);
     });
   });
 }
@@ -3496,6 +3710,7 @@ function switchTab(tab) {
   ['.btab','.side-nav-item','.cnav-btn'].forEach(sel =>
     document.querySelectorAll(sel).forEach(b=>b.classList.toggle('is-active',b.dataset.btab===tab))
   );
+  document.querySelectorAll('.btab[role="tab"]').forEach(b=>b.setAttribute('aria-selected',b.dataset.btab===tab?'true':'false'));
   document.querySelectorAll('.bview').forEach(v=>v.classList.remove('is-active'));
   document.getElementById(`bview-${tab}`)?.classList.add('is-active');
   if(tab==='transactions'){const g=processRecurring();if(g>0)setTimeout(()=>showToast(tf('recurring_generated',g)),300);}
@@ -3535,12 +3750,12 @@ function renderDashboard() {
   const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
   const welcomeHtml = showWelcome ? `
     <div class="onboard-banner">
-      <div class="onboard-title">\uD83D\uDC4B Welcome! Here's how to get started:</div>
+      <div class="onboard-title">${t('onboard_welcome')}</div>
       <div class="onboard-steps">
-        <div class="onboard-step"><span class="onboard-num">1</span>Open <strong>Settings</strong> to set your currency and budget period.</div>
-        <div class="onboard-step"><span class="onboard-num">2</span>Go to <strong>Budget</strong> and enter expected amounts for Income, Expenses, Bills &amp; Savings.</div>
-        <div class="onboard-step"><span class="onboard-num">3</span>Use <strong>Transactions</strong> to log what you actually earn and spend.</div>
-        <div class="onboard-step"><span class="onboard-num">4</span>Explore the pro tools: <strong>Debt Payoff, Sinking Funds, Subscriptions &amp; the Smart Calendar</strong>.</div>
+        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
       </div>
     </div>` : '';
   const el=document.getElementById('bview-dashboard');
@@ -3685,7 +3900,7 @@ function buildModuleHTML(type,meta,act) {
         <td><span class="actual-val${ovr?' is-over':meta.isInc&&p>=100?' is-good':''}">${fmt(a)}</span></td>
         <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':ovr?' prog-bar--over':' prog-bar--normal'}" id="pb-${row.id}" style="width:${Math.min(p,100)}%"></div></div><span class="prog-label${ovr?' is-over':''}" id="pl-${row.id}">${p}%</span></td>
         ${meta.hasDates?`<td class="paid-cell"><label class="check-label"><input type="checkbox" class="mod-paid" ${row.paid?'checked':''} data-id="${row.id}" data-type="${type}"><span class="checkmark"></span></label></td>`:''}
-        <td><button class="del-btn mod-del" data-id="${row.id}" data-type="${type}" type="button">×</button></td></tr>`;
+        <td><button class="del-btn mod-del" data-id="${row.id}" data-type="${type}" type="button" aria-label="${t('delete')}">×</button></td></tr>`;
     }).join('')}</tbody>
     <tfoot><tr class="total-row"><td><strong>${t('bud_total')}</strong></td><td><strong id="te-${type}">${fmt(totExp)}</strong></td>
       ${meta.hasDates?'<td></td>':''}
@@ -3730,11 +3945,23 @@ function bindModuleEvents(type,meta,container,act) {
     container.querySelectorAll(`.mod-date[data-type="${type}"]`).forEach(inp=>{
       inp.addEventListener('change',()=>{const row=(state.budgets[type]||[]).find(r=>r.id===inp.dataset.id);if(row){row.dueDate=inp.value;saveState();}const dc=document.getElementById('dc-'+inp.dataset.id);if(dc)dc.innerHTML=inp.value?formatDateDisplay(inp.value):`<span class="no-date">${t('bud_set_date')}</span>`;});
     });
-    container.querySelectorAll('.date-cell-styled').forEach(wrap=>{wrap.addEventListener('click',()=>{openDatePicker(document.getElementById(wrap.dataset.inputId),wrap);});});
+    container.querySelectorAll('.date-cell-styled').forEach(wrap=>{
+      wrap.addEventListener('click',()=>{openDatePicker(document.getElementById(wrap.dataset.inputId),wrap);});
+      document.getElementById(wrap.dataset.inputId)?.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '||e.key==='ArrowDown'){e.preventDefault();openDatePicker(document.getElementById(wrap.dataset.inputId),wrap);}
+      });
+    });
     container.querySelectorAll(`.mod-paid[data-type="${type}"]`).forEach(cb=>{cb.addEventListener('change',()=>{const row=(state.budgets[type]||[]).find(r=>r.id===cb.dataset.id);if(row){row.paid=cb.checked;saveState();}});});
   }
+  const TX_TYPE_FOR_MODULE={income:'income',expenses:'expense',bills:'bill',debt:'debt',savings:'savings'};
   container.querySelectorAll(`.mod-del[data-type="${type}"]`).forEach(btn=>{
-    btn.addEventListener('click',async()=>{if(!await confirmDialog({message:t('confirm_remove_cat'),confirmText:t('delete')}))return;state.budgets[type]=(state.budgets[type]||[]).filter(r=>r.id!==btn.dataset.id);saveState();renderBudget();});
+    btn.addEventListener('click',async()=>{
+      const row=(state.budgets[type]||[]).find(r=>r.id===btn.dataset.id);
+      const txCount=row?state.transactions.filter(tx=>tx.type===TX_TYPE_FOR_MODULE[type]&&tx.category===row.category).length:0;
+      const message=txCount>0?tf('confirm_remove_cat_with_tx',txCount):t('confirm_remove_cat');
+      if(!await confirmDialog({message,confirmText:t('delete')}))return;
+      state.budgets[type]=(state.budgets[type]||[]).filter(r=>r.id!==btn.dataset.id);saveState();renderBudget();
+    });
   });
   container.querySelectorAll(`.mod-add-btn[data-type="${type}"]`).forEach(btn=>{
     btn.addEventListener('click',()=>{
@@ -4403,7 +4630,7 @@ function renderDebt(){
           <td>${fmt(d.minimumPayment)}${d.minPayMode==='percent'?`<div class="field-hint" style="margin:2px 0 0">${tf('dpc_min_pct_caption',d.minPayPercent||0)}</div>`:d.amortType==='equal_principal'?`<div class="field-hint" style="margin:2px 0 0">${t('dpc_declining_caption')}</div>`:''}</td>
           <td><input class="expected-input" type="number" min="0" step="10" value="${d.targetedExtra||''}" placeholder="0.00" data-debt-extra="${d.id}"></td>
           <td><label class="recurring-toggle" title="${t('automate_label')}"><input type="checkbox" class="debt-auto-cb" data-debt-auto="${d.id}" ${findLinkedTemplate('debt',d.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></td>
-          <td><div class="row-actions"><button class="btn-icon-tiny" data-debt-schedule="${d.id}" type="button" title="${t('dpc_schedule_btn_title')}">ℹ️</button><button class="sf-edit-btn btn-icon-tiny" data-debt-edit="${d.id}" type="button" title="${t('edit')}">✏️</button><button class="btn-icon-tiny del-btn" data-debt-id="${d.id}" type="button">×</button></div></td>
+          <td><div class="row-actions"><button class="btn-icon-tiny" data-debt-schedule="${d.id}" type="button" title="${t('dpc_schedule_btn_title')}">ℹ️</button><button class="sf-edit-btn btn-icon-tiny" data-debt-edit="${d.id}" type="button" title="${t('edit')}">✏️</button><button class="btn-icon-tiny del-btn" data-debt-id="${d.id}" type="button" aria-label="${t('delete')}">×</button></div></td>
         </tr>`).join('')}</tbody>
         <tfoot><tr class="total-row"><td colspan="2"><strong>${t('dpc_totals')}</strong></td><td><strong>${fmt(totDebt)}</strong></td><td></td><td><strong>${fmt(totMin)}${t('dpc_mo_suffix')}</strong></td><td><strong>${fmt(totExtra)}${t('dpc_mo_suffix')}</strong></td><td colspan="2"></td></tr></tfoot>
       </table></div></div>`}
@@ -4939,25 +5166,25 @@ function renderSettings(){
         </div>
       </div></div>
       <div class="panel"><div class="panel-inner">
-        <div class="settings-card-title">☁️ Data &amp; Sync</div>
-        <p class="settings-desc">Choose how your data is stored and kept up to date across devices.</p>
+        <div class="settings-card-title">${t('sync_card_title')}</div>
+        <p class="settings-desc">${t('sync_card_desc')}</p>
         <div class="sync-mode-row">
           <button class="sync-mode-opt${(syncGetMode('ubp')||'local')!=='google'?' is-active':''}" data-sync-mode="local" type="button">
             ${(syncGetMode('ubp')||'local')!=='google'?'<span class="sync-mode-check">✓</span>':''}
             <span class="sync-mode-icon">${SYNC_ICON_LOCAL}</span>
-            <span class="sync-mode-title">This device only</span>
-            <span class="sync-mode-desc">Data is saved on this device only</span>
+            <span class="sync-mode-title">${t('sync_mode_local_title')}</span>
+            <span class="sync-mode-desc">${t('sync_mode_local_desc')}</span>
           </button>
           <button class="sync-mode-opt sync-mode-opt--google${(syncGetMode('ubp')||'local')==='google'?' is-active':''}" data-sync-mode="google" type="button">
-            <span class="sync-mode-badge">Recommended</span>
+            <span class="sync-mode-badge">${t('sync_recommended')}</span>
             ${(syncGetMode('ubp')||'local')==='google'?'<span class="sync-mode-check">✓</span>':''}
             <span class="sync-mode-icon sync-mode-icon--google">${SYNC_ICON_GOOGLE}</span>
-            <span class="sync-mode-title">Sync with Google</span>
-            <span class="sync-mode-desc">Data is synced across multiple devices</span>
+            <span class="sync-mode-title">${t('sync_mode_google_title')}</span>
+            <span class="sync-mode-desc">${t('sync_mode_google_desc')}</span>
           </button>
         </div>
-        ${(syncGetMode('ubp')==='google'&&syncGetEmail('ubp'))?`<p class="sync-status-line">Signed in as <strong>${esc(syncGetEmail('ubp'))}</strong></p>`:''}
-        <p class="sync-error" id="syncSettError" hidden>Sign-in didn't go through. Please try again.</p>
+        ${(syncGetMode('ubp')==='google'&&syncGetEmail('ubp'))?`<p class="sync-status-line">${tf('sync_signed_in_as',`<strong>${esc(syncGetEmail('ubp'))}</strong>`)}</p>`:''}
+        <p class="sync-error" id="syncSettError" hidden>${t('sync_error_generic')}</p>
       </div></div>
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌐 ${t('language')}</div>
@@ -5028,8 +5255,8 @@ function renderSettings(){
       if (errEl) errEl.hidden = true;
       el.querySelectorAll('[data-sync-mode]').forEach(b => b.disabled = true);
       try {
-        if (target === 'google') { saveState(); await syncSwitchToGoogle('ubp'); showToast('Synced with Google Drive ✓'); }
-        else { await syncSwitchToLocal('ubp'); showToast('Switched to local storage ✓'); }
+        if (target === 'google') { saveState(); await syncSwitchToGoogle('ubp'); showToast(t('toast_synced_google')); }
+        else { await syncSwitchToLocal('ubp'); showToast(t('toast_synced_local')); }
         state = loadState() || defaultState(); syncSymbol();
         renderSettings();
       } catch (e) {
@@ -5592,7 +5819,7 @@ function debtSchedHandleKeydown(e) {
   }
 }
 
-function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2800);}
+function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');t.setAttribute('aria-live','polite');document.body.appendChild(t);}t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2800);}
 
 // ── In-app dialog (replaces native confirm / alert) ───────────────────
 function fkDialog({ message, confirmText, cancelText, danger = false, alertOnly = false, icon }) {
@@ -5610,7 +5837,7 @@ function fkDialog({ message, confirmText, cancelText, danger = false, alertOnly 
         <p class="fk-dialog-msg">${esc(message)}</p>
         <div class="fk-dialog-actions">
           ${alertOnly ? '' : `<button class="btn btn-ghost" data-act="cancel" type="button">${esc(cancelText || t('cancel'))}</button>`}
-          <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-act="ok" type="button">${esc(confirmText || (alertOnly ? 'OK' : t('save')))}</button>
+          <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-act="ok" type="button">${esc(confirmText || (alertOnly ? t('ok') : t('save')))}</button>
         </div>
       </div>`;
     document.body.appendChild(ov);
@@ -5624,6 +5851,14 @@ function fkDialog({ message, confirmText, cancelText, danger = false, alertOnly 
     const onKey = e => {
       if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(alertOnly ? true : false); }
       else if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); done(true); }
+      else if (e.key === 'Tab') {
+        const els = Array.from(ov.querySelectorAll('button')).filter(el => el.offsetParent !== null);
+        if (!els.length) return;
+        const first = els[0], last = els[els.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        else if (!els.includes(document.activeElement)) { e.preventDefault(); first.focus(); }
+      }
     };
     document.addEventListener('keydown', onKey, true);
     ov.querySelector('[data-act="ok"]')?.addEventListener('click', () => done(true));
@@ -5838,7 +6073,31 @@ async function init(){
     // Modal
     document.getElementById('modalClose')?.addEventListener('click',closeModal);
     document.getElementById('tutorialOverlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+    document.addEventListener('keydown',e=>{
+      const overlay=document.getElementById('tutorialOverlay');
+      if(!overlay||overlay.hidden)return;
+      if(e.key==='Escape'){closeModal();return;}
+      if(e.key==='Tab'){
+        const els=guideFocusableEls(overlay);
+        if(!els.length)return;
+        const first=els[0],last=els[els.length-1];
+        if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+        else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+      }
+    });
+    // Move focus into the modal whenever it opens, so keyboard users don't
+    // start tabbing through the (visually hidden) page behind the overlay.
+    new MutationObserver(muts=>{
+      for(const m of muts){
+        if(m.attributeName==='hidden'){
+          const overlay=document.getElementById('tutorialOverlay');
+          if(overlay&&!overlay.hidden){
+            const els=guideFocusableEls(overlay);
+            (els[0]||overlay).focus();
+          }
+        }
+      }
+    }).observe(document.getElementById('tutorialOverlay'),{attributes:true});
 
     applyLayout(state.settings?.layout||'classic');
   } catch (e) {
