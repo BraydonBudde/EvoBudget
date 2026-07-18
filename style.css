@@ -809,15 +809,19 @@ input[type="number"].expected-input {
 }
 .tx-table tbody tr:last-child td { border-bottom: none; }
 .tx-table tbody tr:hover td { background: rgba(30,27,46,.02); }
-.tx-table tbody tr.is-selected td { background: rgba(99,102,241,.06); }
-.tx-sel-col { width: 32px; padding-right: 0 !important; }
+.tx-table tbody tr.is-selected td { background: rgba(99,102,241,.08); }
+[data-theme="dark"] .tx-table tbody tr.is-selected td { background: rgba(129,140,248,.1); }
+.tx-table th.tx-sel-col, .tx-table td.tx-sel-col { width: 34px; padding: 10px 0 10px 15px; text-align: center; }
+.checkmark--sm { width: 16px; height: 16px; border-radius: 5px; }
+.check-label input:checked + .checkmark--sm::after { font-size: 10px; }
 .tx-bulk-bar {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 14px;
-  margin: 0 0 10px; padding: 10px 14px;
-  background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px;
+  margin: 10px 0 4px; padding: 10px 14px;
+  background: rgba(30,27,46,.04); border: 1px solid var(--border-faint); border-radius: var(--radius-md);
   font-size: 13px;
 }
-.tx-bulk-count { font-weight: 700; color: var(--text-primary); }
+[data-theme="dark"] .tx-bulk-bar { background: rgba(99,102,241,.06); }
+.tx-bulk-count { font-weight: 700; color: var(--grad-indigo); }
 .tx-pill {
   display: inline-block; font-size: 10px; font-weight: 700;
   letter-spacing: .06em; text-transform: uppercase;
@@ -1347,8 +1351,7 @@ input[type="number"].expected-input {
 .cal-ev-status { font-size: 11px; font-weight: 700; }
 .cal-ev-status.is-paid   { color: var(--success); }
 .cal-ev-status.is-unpaid { color: var(--error); }
-.cal-mark-paid { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--error); }
-.cal-mark-paid input[type="checkbox"] { margin: 0; cursor: pointer; }
+.cal-mark-paid { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--error); }
 .cal-mark-paid:hover { color: var(--text-primary); }
 
 /* ── Subscriptions ─────────────────────────────────────────── */
