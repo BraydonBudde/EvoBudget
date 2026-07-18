@@ -310,6 +310,16 @@ function computePrevSummary() {
   const hasTx=Object.values(a).some(o=>Object.keys(o).length>0);
   return hasTx?computeSummary(a):null;
 }
+function maybeAutoCarryRollover() {
+  if (state.settings.rolloverAutoCarry===false) return;
+  const prev=computePrevSummary();
+  if (!prev) return;
+  state.rollover=Math.max(0,Math.round(prev.leftover*100)/100);
+  saveState();
+  const input=document.getElementById('settRollover');
+  if (input) input.value=state.rollover||'';
+  showToast(tf('toast_rollover_autoset',fmt(state.rollover)));
+}
 function monthlySubAmt(s) {
   switch(s.frequency){case'annual':return s.amount/12;case'weekly':return s.amount*52/12;case'quarterly':return s.amount/3;default:return s.amount;}
 }
@@ -469,7 +479,7 @@ const TRANSLATIONS = {
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark',
     changes_autosaved:'✅ Changes are saved automatically.',
-    rollover_desc:'Carry unspent money from your previous period into this one.',
+    rollover_desc:'Carry unspent money from your previous period into this one.',rollover_autocarry_label:'Auto-carry from previous period',rollover_autocarry_hint:'When you change the budget period, this amount is recalculated automatically from what was actually left over last time. Uncheck to set it manually instead.',toast_rollover_autoset:'Rollover auto-set to {0} from last period',
     rollover_amount:'Rollover amount',
     reset_desc:'Permanently deletes all your data. This cannot be undone.',
     reset_btn:'Reset everything',
@@ -504,7 +514,7 @@ const TRANSLATIONS = {
     cal_no_events_sub:'Add bills, debts, or subscriptions to see them here.',
     cal_event_one:'event',cal_event_many:'events',cal_clear:'Clear \u00d7',
     cal_leg_bill:'Bill',cal_leg_debt:'Debt',cal_leg_sub:'Subscription',cal_leg_tx:'Transaction',cal_leg_sinking:'Sinking fund',cal_leg_goal:'Goal date',cal_leg_auto:'Automatic',
-    cal_paid:'\u2713 Paid',cal_unpaid:'Unpaid',
+    cal_paid:'\u2713 Paid',cal_unpaid:'Unpaid',cal_mark_paid:'Mark paid',
     help_cal_intro:'The Smart Calendar pulls together all your financial commitments in one monthly view - updated automatically as you add data.',
     help_cal_ev_types_h:'Event types',
     help_cal_bill_li:'Bills - from your Bills budget section (recurring monthly on the due day you set)',
@@ -628,7 +638,7 @@ const TRANSLATIONS = {
     tx_desc_hint:'An optional note to help you remember what this was, like "Grocery run".',
     tx_add_btn:'Add',tx_error_required:'Please fill all required fields.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
-    tx_clear_all:'Clear all',tx_empty:'No transactions yet.',
+    tx_clear_all:'Clear all',tx_empty:'No transactions yet.',tx_select_all_page:'Select all on this page',tx_n_selected:'{0} selected',tx_delete_selected:'Delete selected',tx_clear_selection:'Clear selection',tx_select_all_matching:'Select all {0} matching',confirm_delete_selected_tx:'Delete {0} selected transactions? This cannot be undone.',
     tx_type_income:'Income',tx_type_expense:'Expense',tx_type_bill:'Bill',tx_type_savings:'Savings',
     tx_th_amount:'Amount',tx_th_desc:'Description',
     tx_edit_title:'\u270F\uFE0F Edit Transaction',tx_save_changes:'Save changes',
@@ -745,7 +755,7 @@ const TRANSLATIONS = {
     debt_due_day_note:'Days 29-31 won\u2019t show in shorter months',
     sub_advanced:'Billing date advanced to {date}',
     sf_days_left:'{n} days left',sf_days_overdue:'{n} days overdue',
-    sf_due_today:'Due today!',sf_target_complete:'Target reached! \u2713',
+    sf_due_today:'Due today!',sf_target_complete:'Target reached! \u2713',sf_goal_reached:'Goal reached',
     alloc_icon_over:'\u25b2',alloc_icon_near:'!',alloc_icon_ok:'\u2713',
     dash_compare_title:'vs Previous Period',dash_compare_no_data:'No previous period data',
     recurring_title:'Automatic Transactions',recurring_desc:"Set up transactions that repeat on a schedule (example: rent, salary or subscriptions). They're added to your list automatically on each due date.",recurring_add_rule:'+ Add Automatic Transaction',
@@ -993,7 +1003,7 @@ const TRANSLATIONS = {
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
     light:'Hell',dark:'Dunkel',
     changes_autosaved:'✅ Änderungen werden automatisch gespeichert.',
-    rollover_desc:'Überträgt nicht ausgegebenes Geld aus der vorherigen Periode.',
+    rollover_desc:'Überträgt nicht ausgegebenes Geld aus der vorherigen Periode.',rollover_autocarry_label:'Automatisch aus der vorherigen Periode übertragen',rollover_autocarry_hint:'Wenn du den Budgetzeitraum änderst, wird dieser Betrag automatisch aus dem tatsächlichen Restbetrag der letzten Periode neu berechnet. Deaktiviere dies, um ihn manuell festzulegen.',toast_rollover_autoset:'Übertrag automatisch auf {0} aus der letzten Periode gesetzt',
     rollover_amount:'Übertragsbetrag',
     reset_desc:'Löscht alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.',
     reset_btn:'Alles zurücksetzen',
@@ -1024,7 +1034,7 @@ const TRANSLATIONS = {
     cal_no_events_sub:'Füge Rechnungen, Schulden oder Abonnements hinzu, um sie hier zu sehen.',
     cal_event_one:'Ereignis',cal_event_many:'Ereignisse',cal_clear:'Schließen ×',
     cal_leg_bill:'Rechnung',cal_leg_debt:'Schulden',cal_leg_sub:'Abonnement',cal_leg_tx:'Transaktion',cal_leg_sinking:'Rücklage',cal_leg_goal:'Zieldatum',cal_leg_auto:'Automatisch',
-    cal_paid:'✓ Bezahlt',cal_unpaid:'Unbezahlt',
+    cal_paid:'✓ Bezahlt',cal_unpaid:'Unbezahlt',cal_mark_paid:'Als bezahlt markieren',
     help_cal_intro:'Der Smart-Kalender fasst alle deine finanziellen Verpflichtungen in einer monatlichen Ansicht zusammen - wird automatisch aktualisiert, wenn du Daten hinzufügst.',
     help_cal_ev_types_h:'Ereignistypen',
     help_cal_bill_li:'Rechnungen - aus deinem Rechnungsbudget (monatlich wiederkehrend am festgelegten Fälligkeitstag)',
@@ -1148,7 +1158,7 @@ const TRANSLATIONS = {
     tx_desc_hint:'Eine optionale Notiz, damit du dich erinnerst, worum es ging, z.B. "Einkaufen".',
     tx_add_btn:'Hinzufügen',tx_error_required:'Bitte alle Pflichtfelder ausfüllen.',
     tx_transaction_one:'Transaktion',tx_transaction_many:'Transaktionen',
-    tx_clear_all:'Alle löschen',tx_empty:'Noch keine Transaktionen.',
+    tx_clear_all:'Alle löschen',tx_empty:'Noch keine Transaktionen.',tx_select_all_page:'Alle auf dieser Seite auswählen',tx_n_selected:'{0} ausgewählt',tx_delete_selected:'Auswahl löschen',tx_clear_selection:'Auswahl aufheben',tx_select_all_matching:'Alle {0} übereinstimmenden auswählen',confirm_delete_selected_tx:'{0} ausgewählte Transaktionen löschen? Dies kann nicht rückgängig gemacht werden.',
     tx_type_income:'Einnahmen',tx_type_expense:'Ausgaben',tx_type_bill:'Rechnung',tx_type_savings:'Ersparnisse',
     tx_th_amount:'Betrag',tx_th_desc:'Beschreibung',
     tx_edit_title:'\u270F\uFE0F Transaktion bearbeiten',tx_save_changes:'Änderungen speichern',
@@ -1265,7 +1275,7 @@ const TRANSLATIONS = {
     debt_due_day_note:'Tage 29-31 erscheinen nicht in k\u00fcrzeren Monaten',
     sub_advanced:'Abrechnungsdatum vorger\u00fcckt auf {date}',
     sf_days_left:'{n} Tage verbleibend',sf_days_overdue:'{n} Tage \u00fcberf\u00e4llig',
-    sf_due_today:'Heute f\u00e4llig!',sf_target_complete:'Ziel erreicht! \u2713',
+    sf_due_today:'Heute f\u00e4llig!',sf_target_complete:'Ziel erreicht! \u2713',sf_goal_reached:'Ziel erreicht',
     alloc_icon_over:'\u25b2',alloc_icon_near:'!',alloc_icon_ok:'\u2713',
     dash_compare_title:'vs Vorherige Periode',dash_compare_no_data:'Keine Daten f\u00fcr vorherige Periode',
     recurring_title:'Automatische Transaktionen',recurring_desc:'Richte Transaktionen ein, die sich regelmäßig wiederholen (Beispiel: Miete, Gehalt oder Abos). Sie werden an jedem Fälligkeitsdatum automatisch zur Liste hinzugefügt.',recurring_add_rule:'+ Automatische Transaktion hinzuf\u00fcgen',
@@ -1513,7 +1523,7 @@ const TRANSLATIONS = {
     language:'Langue',reset_data:'Réinitialiser les données',
     light:'Clair',dark:'Sombre',
     changes_autosaved:'✅ Les modifications sont enregistrées automatiquement.',
-    rollover_desc:"Reporte l'argent non dépensé de la période précédente.",
+    rollover_desc:"Reporte l'argent non dépensé de la période précédente.",rollover_autocarry_label:'Report automatique depuis la période précédente',rollover_autocarry_hint:"Quand vous changez la période budgétaire, ce montant est recalculé automatiquement à partir de ce qu'il restait réellement la dernière fois. Décochez pour le définir manuellement.",toast_rollover_autoset:'Report automatiquement défini sur {0} depuis la dernière période',
     rollover_amount:'Montant du report',
     reset_desc:'Supprime définitivement toutes vos données. Irréversible.',
     reset_btn:'Tout réinitialiser',
@@ -1544,7 +1554,7 @@ const TRANSLATIONS = {
     cal_no_events_sub:'Ajoutez des factures, dettes ou abonnements pour les voir ici.',
     cal_event_one:'événement',cal_event_many:'événements',cal_clear:'Effacer ×',
     cal_leg_bill:'Facture',cal_leg_debt:'Dette',cal_leg_sub:'Abonnement',cal_leg_tx:'Transaction',cal_leg_sinking:"Fonds d'épargne",cal_leg_goal:"Date d'objectif",cal_leg_auto:'Automatique',
-    cal_paid:'✓ Payé',cal_unpaid:'Non payé',
+    cal_paid:'✓ Payé',cal_unpaid:'Non payé',cal_mark_paid:'Marquer comme payé',
     help_cal_intro:"Le Calendrier intelligent regroupe tous vos engagements financiers en une vue mensuelle - mis à jour automatiquement à mesure que vous ajoutez des données.",
     help_cal_ev_types_h:"Types d'événements",
     help_cal_bill_li:"Factures - depuis votre section Factures (récurrent mensuellement le jour d'échéance défini)",
@@ -1668,7 +1678,7 @@ const TRANSLATIONS = {
     tx_desc_hint:"Une note facultative pour vous rappeler de quoi il s'agissait, comme \u00ab Courses \u00bb.",
     tx_add_btn:'Ajouter',tx_error_required:'Veuillez remplir tous les champs obligatoires.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
-    tx_clear_all:'Tout effacer',tx_empty:'Aucune transaction encore.',
+    tx_clear_all:'Tout effacer',tx_empty:'Aucune transaction encore.',tx_select_all_page:'Tout sélectionner sur cette page',tx_n_selected:'{0} sélectionnée(s)',tx_delete_selected:'Supprimer la sélection',tx_clear_selection:'Effacer la sélection',tx_select_all_matching:'Sélectionner les {0} correspondantes',confirm_delete_selected_tx:'Supprimer {0} transactions sélectionnées ? Cette action est irréversible.',
     tx_type_income:'Revenu',tx_type_expense:'Dépense',tx_type_bill:'Facture',tx_type_savings:'Épargne',
     tx_th_amount:'Montant',tx_th_desc:'Description',
     tx_edit_title:'\u270F\uFE0F Modifier la transaction',tx_save_changes:'Enregistrer les modifications',
@@ -1785,7 +1795,7 @@ const TRANSLATIONS = {
     debt_due_day_note:'Les jours 29-31 n\u2019apparaissent pas dans les mois courts',
     sub_advanced:'Date de facturation avanc\u00e9e au {date}',
     sf_days_left:'{n} jours restants',sf_days_overdue:'{n} jours de retard',
-    sf_due_today:'Aujourd\u2019hui!',sf_target_complete:'Objectif atteint ! \u2713',
+    sf_due_today:'Aujourd\u2019hui!',sf_target_complete:'Objectif atteint ! \u2713',sf_goal_reached:'Objectif atteint',
     alloc_icon_over:'\u25b2',alloc_icon_near:'!',alloc_icon_ok:'\u2713',
     dash_compare_title:'vs P\u00e9riode pr\u00e9c\u00e9dente',dash_compare_no_data:'Aucune donn\u00e9e pour la p\u00e9riode pr\u00e9c\u00e9dente',
     recurring_title:'Transactions automatiques',recurring_desc:'Créez des transactions qui se répètent (exemple : loyer, salaire ou abonnements). Elles sont ajoutées automatiquement à votre liste à chaque échéance.',recurring_add_rule:'+ Ajouter une transaction automatique',
@@ -2033,7 +2043,7 @@ const TRANSLATIONS = {
     language:'Idioma',reset_data:'Restablecer datos',
     light:'Claro',dark:'Oscuro',
     changes_autosaved:'✅ Los cambios se guardan automáticamente.',
-    rollover_desc:'Traspasa el dinero no gastado del período anterior.',
+    rollover_desc:'Traspasa el dinero no gastado del período anterior.',rollover_autocarry_label:'Trasladar automáticamente del período anterior',rollover_autocarry_hint:'Cuando cambias el período de presupuesto, este importe se recalcula automáticamente según lo que realmente sobró la última vez. Desmarca para configurarlo manualmente.',toast_rollover_autoset:'Remanente ajustado automáticamente a {0} del período anterior',
     rollover_amount:'Importe de saldo anterior',
     reset_desc:'Elimina permanentemente todos tus datos. No se puede deshacer.',
     reset_btn:'Restablecer todo',
@@ -2064,7 +2074,7 @@ const TRANSLATIONS = {
     cal_no_events_sub:'Añade facturas, deudas o suscripciones para verlas aquí.',
     cal_event_one:'evento',cal_event_many:'eventos',cal_clear:'Borrar ×',
     cal_leg_bill:'Factura',cal_leg_debt:'Deuda',cal_leg_sub:'Suscripción',cal_leg_tx:'Transacción',cal_leg_sinking:'Fondo de reserva',cal_leg_goal:'Fecha objetivo',cal_leg_auto:'Automático',
-    cal_paid:'✓ Pagado',cal_unpaid:'No pagado',
+    cal_paid:'✓ Pagado',cal_unpaid:'No pagado',cal_mark_paid:'Marcar como pagado',
     help_cal_intro:'El Calendario inteligente reúne todos tus compromisos financieros en una vista mensual - actualizado automáticamente a medida que añades datos.',
     help_cal_ev_types_h:'Tipos de eventos',
     help_cal_bill_li:'Facturas - desde tu sección de Facturas (recurrente mensualmente el día de vencimiento que estableces)',
@@ -2188,7 +2198,7 @@ const TRANSLATIONS = {
     tx_desc_label:'Descripción',tx_desc_ph:'p.ej. Compra en supermercado\u2026',
     tx_add_btn:'Añadir',tx_error_required:'Por favor, completa todos los campos obligatorios.',
     tx_transaction_one:'transacción',tx_transaction_many:'transacciones',
-    tx_clear_all:'Borrar todo',tx_empty:'Aún no hay transacciones.',
+    tx_clear_all:'Borrar todo',tx_empty:'Aún no hay transacciones.',tx_select_all_page:'Seleccionar todo en esta página',tx_n_selected:'{0} seleccionadas',tx_delete_selected:'Eliminar seleccionadas',tx_clear_selection:'Borrar selección',tx_select_all_matching:'Seleccionar las {0} coincidentes',confirm_delete_selected_tx:'¿Eliminar {0} transacciones seleccionadas? Esta acción no se puede deshacer.',
     tx_type_income:'Ingreso',tx_type_expense:'Gasto',tx_type_bill:'Factura',tx_type_savings:'Ahorro',
     tx_th_amount:'Importe',tx_th_desc:'Descripción',
     tx_edit_title:'\u270F\uFE0F Editar transacción',tx_save_changes:'Guardar cambios',
@@ -2305,7 +2315,7 @@ const TRANSLATIONS = {
     debt_due_day_note:'Los d\u00edas 29-31 no aparecen en meses cortos',
     sub_advanced:'Fecha de facturaci\u00f3n avanzada al {date}',
     sf_days_left:'{n} d\u00edas restantes',sf_days_overdue:'{n} d\u00edas de retraso',
-    sf_due_today:'\u00a1Hoy!',sf_target_complete:'\u00a1Objetivo alcanzado! \u2713',
+    sf_due_today:'\u00a1Hoy!',sf_target_complete:'\u00a1Objetivo alcanzado! \u2713',sf_goal_reached:'Objetivo alcanzado',
     alloc_icon_over:'\u25b2',alloc_icon_near:'!',alloc_icon_ok:'\u2713',
     dash_compare_title:'vs Per\u00edodo anterior',dash_compare_no_data:'Sin datos del per\u00edodo anterior',
     recurring_title:'Transacciones automáticas',recurring_desc:'Crea transacciones que se repiten (ejemplo: alquiler, salario o suscripciones). Se añaden automáticamente a tu lista en cada fecha de vencimiento.',recurring_add_rule:'+ A\u00f1adir transacci\u00f3n autom\u00e1tica',
@@ -2553,7 +2563,7 @@ const TRANSLATIONS = {
     language:'Lingua',reset_data:'Reimposta dati',
     light:'Chiaro',dark:'Scuro',
     changes_autosaved:'✅ Le modifiche vengono salvate automaticamente.',
-    rollover_desc:'Riporta il denaro non speso dal periodo precedente.',
+    rollover_desc:'Riporta il denaro non speso dal periodo precedente.',rollover_autocarry_label:'Riporto automatico dal periodo precedente',rollover_autocarry_hint:"Quando cambi il periodo di budget, questo importo viene ricalcolato automaticamente in base a quanto è effettivamente avanzato l'ultima volta. Deseleziona per impostarlo manualmente.",toast_rollover_autoset:"Riporto impostato automaticamente su {0} dall'ultimo periodo",
     rollover_amount:'Importo riporto',
     reset_desc:'Elimina definitivamente tutti i dati. Non reversibile.',
     reset_btn:'Reimposta tutto',
@@ -2585,7 +2595,7 @@ const TRANSLATIONS = {
     cal_no_events_sub:'Aggiungi bollette, debiti o abbonamenti per vederli qui.',
     cal_event_one:'evento',cal_event_many:'eventi',cal_clear:'Cancella \u00d7',
     cal_leg_bill:'Bolletta',cal_leg_debt:'Debito',cal_leg_sub:'Abbonamento',cal_leg_tx:'Transazione',cal_leg_sinking:'Fondo accantonamento',cal_leg_goal:'Data obiettivo',cal_leg_auto:'Automatico',
-    cal_paid:'\u2713 Pagato',cal_unpaid:'Non pagato',
+    cal_paid:'\u2713 Pagato',cal_unpaid:'Non pagato',cal_mark_paid:'Segna come pagato',
     help_cal_intro:'Il Calendario intelligente raccoglie tutti i tuoi impegni finanziari in una vista mensile - aggiornato automaticamente man mano che aggiungi dati.',
     help_cal_ev_types_h:'Tipi di eventi',
     help_cal_bill_li:'Bollette - dalla sezione Bollette del tuo budget (ricorrente mensilmente il giorno di scadenza impostato)',
@@ -2709,7 +2719,7 @@ const TRANSLATIONS = {
     tx_desc_label:'Descrizione',tx_desc_ph:'es. Spesa al supermercato\u2026',
     tx_add_btn:'Aggiungi',tx_error_required:'Compila tutti i campi obbligatori.',
     tx_transaction_one:'transazione',tx_transaction_many:'transazioni',
-    tx_clear_all:'Cancella tutto',tx_empty:'Nessuna transazione ancora.',
+    tx_clear_all:'Cancella tutto',tx_empty:'Nessuna transazione ancora.',tx_select_all_page:'Seleziona tutto in questa pagina',tx_n_selected:'{0} selezionate',tx_delete_selected:'Elimina selezionate',tx_clear_selection:'Deseleziona',tx_select_all_matching:'Seleziona tutte le {0} corrispondenti',confirm_delete_selected_tx:'Eliminare {0} transazioni selezionate? Questa azione non può essere annullata.',
     tx_type_income:'Entrata',tx_type_expense:'Spesa',tx_type_bill:'Bolletta',tx_type_savings:'Risparmio',
     tx_th_amount:'Importo',tx_th_desc:'Descrizione',
     tx_edit_title:'\u270F\uFE0F Modifica transazione',tx_save_changes:'Salva modifiche',
@@ -2826,7 +2836,7 @@ const TRANSLATIONS = {
     debt_due_day_note:'I giorni 29-31 non appaiono nei mesi pi\u00f9 corti',
     sub_advanced:'Data di fatturazione avanzata al {date}',
     sf_days_left:'{n} giorni rimanenti',sf_days_overdue:'{n} giorni di ritardo',
-    sf_due_today:'Oggi!',sf_target_complete:'Obiettivo raggiunto! \u2713',
+    sf_due_today:'Oggi!',sf_target_complete:'Obiettivo raggiunto! \u2713',sf_goal_reached:'Obiettivo raggiunto',
     alloc_icon_over:'\u25b2',alloc_icon_near:'!',alloc_icon_ok:'\u2713',
     dash_compare_title:'vs Periodo precedente',dash_compare_no_data:'Nessun dato per il periodo precedente',
     recurring_title:'Transazioni automatiche',recurring_desc:'Crea transazioni che si ripetono (esempio: affitto, stipendio o abbonamenti). Vengono aggiunte automaticamente alla tua lista a ogni scadenza.',recurring_add_rule:'+ Aggiungi transazione automatica',
@@ -3074,7 +3084,7 @@ const TRANSLATIONS = {
     language:'Język',reset_data:'Zresetuj dane',
     light:'Jasny',dark:'Ciemny',
     changes_autosaved:'✅ Zmiany są zapisywane automatycznie.',
-    rollover_desc:'Przenieś niewydane środki z poprzedniego okresu.',
+    rollover_desc:'Przenieś niewydane środki z poprzedniego okresu.',rollover_autocarry_label:'Automatyczne przenoszenie z poprzedniego okresu',rollover_autocarry_hint:'Gdy zmienisz okres budżetowy, ta kwota zostanie automatycznie przeliczona na podstawie tego, co faktycznie zostało ostatnim razem. Odznacz, aby ustawić ją ręcznie.',toast_rollover_autoset:'Przeniesienie automatycznie ustawione na {0} z poprzedniego okresu',
     rollover_amount:'Kwota przeniesienia',
     reset_desc:'Trwale usuwa wszystkie dane. Nie można cofnąć.',
     reset_btn:'Zresetuj wszystko',
@@ -3105,7 +3115,7 @@ const TRANSLATIONS = {
     cal_no_events_sub:'Dodaj rachunki, długi lub subskrypcje, aby zobaczyć je tutaj.',
     cal_event_one:'zdarzenie',cal_event_many:'zdarzeń',cal_clear:'Wyczyść ×',
     cal_leg_bill:'Rachunek',cal_leg_debt:'Dług',cal_leg_sub:'Subskrypcja',cal_leg_tx:'Transakcja',cal_leg_sinking:'Fundusz celowy',cal_leg_goal:'Data celu',cal_leg_auto:'Automatyczne',
-    cal_paid:'✓ Zapłacono',cal_unpaid:'Niezapłacone',
+    cal_paid:'✓ Zapłacono',cal_unpaid:'Niezapłacone',cal_mark_paid:'Oznacz jako zapłacone',
     help_cal_intro:'Inteligentny Kalendarz łączy wszystkie Twoje zobowiązania finansowe w jednym widoku miesięcznym - aktualizowany automatycznie w miarę dodawania danych.',
     help_cal_ev_types_h:'Typy zdarzeń',
     help_cal_bill_li:'Rachunki - z sekcji budżetu Rachunki (powtarzające się co miesiąc w wybranym dniu płatności)',
@@ -3229,7 +3239,7 @@ const TRANSLATIONS = {
     tx_desc_label:'Opis',tx_desc_ph:'np. Zakupy spożywcze\u2026',
     tx_add_btn:'Dodaj',tx_error_required:'Proszę wypełnić wszystkie wymagane pola.',
     tx_transaction_one:'transakcja',tx_transaction_many:'transakcji',
-    tx_clear_all:'Wyczyść wszystko',tx_empty:'Brak transakcji.',
+    tx_clear_all:'Wyczyść wszystko',tx_empty:'Brak transakcji.',tx_select_all_page:'Zaznacz wszystkie na tej stronie',tx_n_selected:'Zaznaczono: {0}',tx_delete_selected:'Usuń zaznaczone',tx_clear_selection:'Wyczyść zaznaczenie',tx_select_all_matching:'Zaznacz wszystkie pasujące ({0})',confirm_delete_selected_tx:'Usunąć {0} zaznaczonych transakcji? Tej operacji nie można cofnąć.',
     tx_type_income:'Przychód',tx_type_expense:'Wydatek',tx_type_bill:'Rachunek',tx_type_savings:'Oszczędności',
     tx_th_amount:'Kwota',tx_th_desc:'Opis',
     tx_edit_title:'\u270F\uFE0F Edytuj transakcję',tx_save_changes:'Zapisz zmiany',
@@ -3346,7 +3356,7 @@ const TRANSLATIONS = {
     debt_due_day_note:'Dni 29-31 nie pojawiaj\u0105 si\u0119 w kr\u00f3tszych miesi\u0105cach',
     sub_advanced:'Data rozliczenia przeniesiona na {date}',
     sf_days_left:'Pozosta\u0142o {n} dni',sf_days_overdue:'{n} dni po terminie',
-    sf_due_today:'Dzi\u015b!',sf_target_complete:'Cel osi\u0105gni\u0119ty! \u2713',
+    sf_due_today:'Dzi\u015b!',sf_target_complete:'Cel osi\u0105gni\u0119ty! \u2713',sf_goal_reached:'Cel osi\u0105gni\u0119ty',
     alloc_icon_over:'\u25b2',alloc_icon_near:'!',alloc_icon_ok:'\u2713',
     dash_compare_title:'vs Poprzedni okres',dash_compare_no_data:'Brak danych z poprzedniego okresu',
     recurring_title:'Transakcje automatyczne',recurring_desc:'Ustaw transakcje, które powtarzają się (przykład: czynsz, wypłata lub subskrypcje). Są dodawane automatycznie do listy w każdym terminie.',recurring_add_rule:'+ Dodaj transakcj\u0119 automatyczn\u0105',
@@ -3702,6 +3712,7 @@ function initTheme(){applyTheme(localStorage.getItem('evobudget_theme')||'dark')
 let currentTab='dashboard', calYear, calMonth, calSelectedDay=null;
 let txFilter={search:'',type:'',alloc:'',sort:'date_desc'};
 let txPage=0;
+let txSelected=new Set();
 const TX_PAGE_SIZE=25;
 
 function switchTab(tab) {
@@ -3992,6 +4003,7 @@ function txTypeLabel(type){return{income:t('tx_type_income'),expense:t('tx_type_
 function renderTxList(){
   const el=document.getElementById('txListWrap');
   if(!el)return;
+  if(txSelected.size){const liveIds=new Set(state.transactions.map(tx=>tx.id));txSelected.forEach(id=>{if(!liveIds.has(id))txSelected.delete(id);});}
   let filtered=[...state.transactions];
   if(txFilter.search){const q=txFilter.search.toLowerCase();filtered=filtered.filter(tx=>(tx.category||'').toLowerCase().includes(q)||(tx.description||'').toLowerCase().includes(q));}
   if(txFilter.type)filtered=filtered.filter(tx=>tx.type===txFilter.type);
@@ -4013,16 +4025,27 @@ function renderTxList(){
   const isFiltered=txFilter.search||txFilter.type||(state.allocation?.enabled&&txFilter.alloc);
   const countLabel=isFiltered?t('tx_showing').replace('{n}',count).replace('{total}',total):`${total} ${total===1?t('tx_transaction_one'):t('tx_transaction_many')}`;
   const pagination=count>TX_PAGE_SIZE?`<div class="tx-pagination"><button class="btn btn-ghost btn-sm" id="txPrevBtn" ${page===0?'disabled':''}>${t('tx_prev')}</button><span class="tx-page-label">${t('tx_page_of').replace('{n}',page+1).replace('{total}',totalPages)}</span><button class="btn btn-ghost btn-sm" id="txNextBtn" ${page>=totalPages-1?'disabled':''}>${t('tx_next')}</button></div>`:'';
+  const pageIds=paged.map(tx=>tx.id);
+  const allPageSelected=pageIds.length>0&&pageIds.every(id=>txSelected.has(id));
+  const bulkBar=txSelected.size>0?`<div class="tx-bulk-bar">
+      <span class="tx-bulk-count">${tf('tx_n_selected',txSelected.size)}</span>
+      ${count>txSelected.size?`<button class="link-btn" id="txSelectAllMatching">${tf('tx_select_all_matching',count)}</button>`:''}
+      <button class="link-btn" id="txClearSelection">${t('tx_clear_selection')}</button>
+      <button class="btn btn-danger btn-sm" id="txDeleteSelected">${t('tx_delete_selected')}</button>
+    </div>`:'';
   el.innerHTML=`<div class="tx-list-header"><span>${countLabel}</span>${total>0?`<button class="link-btn" id="clearAllBtn2">${t('tx_clear_all')}</button>`:''}</div>
+    ${bulkBar}
     ${count===0&&total===0
       ?`<div class="empty-state"><div class="empty-icon">\uD83D\uDCCB</div><p class="empty-title">${t('tx_empty')}</p><button class="btn btn-primary btn-sm empty-cta" id="txEmptyAdd" type="button">\u002B ${t('tx_add_title')}</button></div>`
       :count===0
       ?`<div class="empty-state"><div class="empty-icon">\uD83D\uDD0D</div><p>${t('tx_no_results')}</p></div>`
       :`<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
+          <th class="tx-sel-col"><input type="checkbox" id="txSelectPage" aria-label="${t('tx_select_all_page')}" ${allPageSelected?'checked':''}></th>
           <th>${t('tx_date')}</th><th>${t('tx_type')}</th><th>${t('tx_category')}</th>
           <th>${t('tx_th_amount')}</th><th>${t('tx_th_desc')}</th><th></th>
         </tr></thead><tbody>
-        ${paged.map(tx=>`<tr class="tx-row">
+        ${paged.map(tx=>`<tr class="tx-row${txSelected.has(tx.id)?' is-selected':''}">
+          <td class="tx-sel-col"><input type="checkbox" class="tx-sel-cb" data-tx="${tx.id}" ${txSelected.has(tx.id)?'checked':''}></td>
           <td class="tx-date">${formatDateDisplay(tx.date)}</td>
           <td><span class="tx-pill tx-pill--${tx.type}">${esc(txTypeLabel(tx.type))}</span></td>
           <td class="tx-cat">${esc(tx.category)}</td>
@@ -4032,10 +4055,20 @@ function renderTxList(){
           <td><div class="tx-actions"><button class="edit-btn" data-tx="${tx.id}" title="Edit">\u270f\ufe0f</button><button class="del-btn" data-tx="${tx.id}" title="Delete">\xd7</button></div></td>
         </tr>`).join('')}</tbody></table></div></div>${pagination}`}`;
   el.querySelectorAll('.edit-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>openEditTx(b.dataset.tx)));
-  el.querySelectorAll('.del-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>{const tx=state.transactions.find(t=>t.id===b.dataset.tx);applySinkingFundDelta(tx,-1);state.transactions=state.transactions.filter(t=>t.id!==b.dataset.tx);saveState();renderTxList();}));
-  document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{if(await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')})){state.transactions=[];saveState();renderTxList();}});
+  el.querySelectorAll('.del-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>{const tx=state.transactions.find(t=>t.id===b.dataset.tx);applySinkingFundDelta(tx,-1);state.transactions=state.transactions.filter(t=>t.id!==b.dataset.tx);txSelected.delete(b.dataset.tx);saveState();renderTxList();}));
+  document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{if(await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')})){state.transactions=[];txSelected.clear();saveState();renderTxList();}});
   document.getElementById('txPrevBtn')?.addEventListener('click',()=>{if(txPage>0){txPage--;renderTxList();}});
   document.getElementById('txNextBtn')?.addEventListener('click',()=>{if(txPage<totalPages-1){txPage++;renderTxList();}});
+  document.getElementById('txSelectPage')?.addEventListener('change',e=>{pageIds.forEach(id=>{if(e.target.checked)txSelected.add(id);else txSelected.delete(id);});renderTxList();});
+  el.querySelectorAll('.tx-sel-cb[data-tx]').forEach(cb=>cb.addEventListener('change',()=>{if(cb.checked)txSelected.add(cb.dataset.tx);else txSelected.delete(cb.dataset.tx);renderTxList();}));
+  document.getElementById('txSelectAllMatching')?.addEventListener('click',()=>{filtered.forEach(tx=>txSelected.add(tx.id));renderTxList();});
+  document.getElementById('txClearSelection')?.addEventListener('click',()=>{txSelected.clear();renderTxList();});
+  document.getElementById('txDeleteSelected')?.addEventListener('click',async()=>{
+    if(!await confirmDialog({message:tf('confirm_delete_selected_tx',txSelected.size),confirmText:t('delete')}))return;
+    state.transactions.forEach(tx=>{if(txSelected.has(tx.id))applySinkingFundDelta(tx,-1);});
+    state.transactions=state.transactions.filter(tx=>!txSelected.has(tx.id));
+    txSelected.clear();saveState();renderTxList();
+  });
   refreshRecurringAmounts();
 }
 // Update the amounts shown in the Automatic Transactions panel in place (preserves open state / scroll / form)
@@ -4690,7 +4723,7 @@ function renderSinking(){
             <button class="sf-edit-btn btn-icon-tiny" data-fund="${f.id}" title="${t('edit')}" type="button">✏️</button>
             <button class="sf-del-btn btn-icon-tiny del-btn" data-fund="${f.id}" title="${t('delete')}" type="button">×</button>
           </div></div>
-          <div class="sf-name">${esc(f.name)}</div>
+          <div class="sf-name">${esc(f.name)}${p>=100?`<span class="sf-goal-badge">🎉 ${t('sf_goal_reached')}</span>`:''}</div>
           <div class="sf-amounts"><span class="sf-saved">${fmt(f.currentSaved||0)}</span><span class="sf-divider"> / </span><span class="sf-target">${fmt(f.targetAmount||0)}</span></div>
           <div class="prog-bar-wrap" style="margin:10px 0 5px"><div class="prog-bar" style="width:${p}%;background:${barColor}"></div></div>
           <div class="sf-pct">${p}% ${t('sf_pct_complete')}</div>
@@ -4794,7 +4827,7 @@ function renderCalendar(){
   const firstDow=(new Date(y,m,1).getDay()+6)%7,daysInMo=new Date(y,m+1,0).getDate();
   const evs={};
   const addEv=(day,ev)=>{(evs[day]=evs[day]||[]).push(ev);};
-  for(const b of state.budgets.bills||[])if(b.dueDate){const d=parseInt(b.dueDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'bill',label:b.category,amount:b.expected||0,color:'#fb923c',paid:b.paid});}
+  for(const b of state.budgets.bills||[])if(b.dueDate){const d=parseInt(b.dueDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'bill',id:b.id,label:b.category,amount:b.expected||0,color:'#fb923c',paid:b.paid});}
   for(const d of state.debts)if(d.dueDay&&d.dueDay>=1&&d.dueDay<=daysInMo)addEv(d.dueDay,{type:'debt',label:d.name,amount:d.minimumPayment||0,color:'#a855f7'});
   for(const s of state.subscriptions.filter(s=>s.active!==false))if(s.nextBillingDate){const d=parseInt(s.nextBillingDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'subscription',label:s.name,amount:monthlySubAmt(s),color:'#10b981'});}
   const monthStr=`${y}-${String(m+1).padStart(2,'0')}`;
@@ -4828,7 +4861,9 @@ function renderCalendar(){
     const evHtml=dayEvs.length===0
       ?`<div class="cal-no-events">${t('cal_no_events_day')}</div>`
       :dayEvs.map(ev=>{
-        const statusHtml=ev.paid!==undefined?`<span class="cal-ev-status ${ev.paid?'is-paid':'is-unpaid'}">${ev.paid?t('cal_paid'):t('cal_unpaid')}</span>`:'';
+        const statusHtml=ev.paid===undefined?''
+          :ev.paid?`<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`
+          :`<label class="cal-mark-paid"><input type="checkbox" data-mark-paid-id="${ev.id}"><span>${t('cal_mark_paid')}</span></label>`;
         return `<div class="cal-ev-item"><span class="cal-dot" style="background:${ev.color}"></span><span class="cal-ev-label">${esc(ev.label)}</span><span class="cal-ev-type">${esc(typeLabel[ev.type]||ev.type)}</span><span class="cal-ev-amt">${fmt(ev.amount)}</span>${statusHtml}</div>`;
       }).join('');
     selPanel=`<div class="cal-selected-events" id="calDayEvents"><div class="cal-selected-title">📌 ${esc(dayName)} - ${evCount}<button class="link-btn" id="calClearSel" style="margin-left:12px;font-size:11px">${t('cal_clear')}</button></div>${evHtml}</div>`;
@@ -4841,7 +4876,9 @@ function renderCalendar(){
     Object.entries(evs).sort(([a],[b])=>+a-+b).forEach(([day,dayEvs])=>{
       monthList+=`<div class="cal-ev-day"><div class="cal-ev-date">${day} ${new Date(y,m,+day).toLocaleDateString(loc,{month:'short'})}</div>`;
       dayEvs.forEach(ev=>{
-        const statusHtml=ev.paid!==undefined?`<span class="cal-ev-status ${ev.paid?'is-paid':'is-unpaid'}">${ev.paid?t('cal_paid'):t('cal_unpaid')}</span>`:'';
+        const statusHtml=ev.paid===undefined?''
+          :ev.paid?`<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`
+          :`<label class="cal-mark-paid"><input type="checkbox" data-mark-paid-id="${ev.id}"><span>${t('cal_mark_paid')}</span></label>`;
         monthList+=`<div class="cal-ev-item"><span class="cal-dot" style="background:${ev.color}"></span><span class="cal-ev-label">${esc(ev.label)}</span><span class="cal-ev-type">${esc(typeLabel[ev.type]||ev.type)}</span><span class="cal-ev-amt">${fmt(ev.amount)}</span>${statusHtml}</div>`;
       });
       monthList+='</div>';
@@ -4875,6 +4912,10 @@ function renderCalendar(){
     });
   });
   document.getElementById('calClearSel')?.addEventListener('click',()=>{calSelectedDay=null;renderCalendar();});
+  el.querySelectorAll('[data-mark-paid-id]').forEach(cb=>cb.addEventListener('change',()=>{
+    const row=(state.budgets.bills||[]).find(b=>b.id===cb.dataset.markPaidId);
+    if(row){row.paid=true;saveState();renderCalendar();}
+  }));
   document.getElementById('calPrev')?.addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}calSelectedDay=null;renderCalendar();});
   document.getElementById('calEmptyAdd')?.addEventListener('click',()=>switchTab('transactions'));
   document.getElementById('calNext')?.addEventListener('click',()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();});
@@ -4917,6 +4958,13 @@ function renderSubscriptions(){
     : state.subscriptions.map(sub => {
         const freqLabel = sub.frequency==='annual'?t('sub_unit_year'):sub.frequency==='quarterly'?t('sub_unit_quarter'):t('sub_unit_month');
         const nextDue = sub.nextBillingDate ? `<span class="sub-due">${t('sub_next_label')}: ${formatDateDisplay(sub.nextBillingDate)}</span>` : '';
+        const hist=sub.priceHistory||[];
+        let priceDelta='';
+        if(hist.length){
+          const latest=hist[hist.length-1],up=latest.to>latest.from;
+          const tooltip=hist.map(hEntry=>`${formatDateDisplay(hEntry.date)}: ${fmt(hEntry.from)} \u2192 ${fmt(hEntry.to)}`).join(' | ');
+          priceDelta=`<span class="sub-price-delta ${up?'is-up':'is-down'}" title="${tooltip}">${up?'\u2191':'\u2193'} ${fmt(Math.abs(latest.to-latest.from))}</span>`;
+        }
         return `<div class="sub-card panel${sub.active===false?' sub-paused':''}">
           <div class="sub-card-inner">
             <div class="sub-card-head">
@@ -4927,6 +4975,7 @@ function renderSubscriptions(){
               <div class="sub-amount-block">
                 <div class="sub-amount">${fmt(sub.amount)}<span class="sub-freq">/${freqLabel}</span></div>
                 ${sub.frequency!=='monthly'?`<div class="sub-monthly-eq">\u2248 ${fmt(monthlySubAmt(sub))}/mo</div>`:''}
+                ${priceDelta}
               </div>
             </div>
             <div class="sub-card-foot">
@@ -5055,7 +5104,7 @@ function openSubModal(subId){
     const auto=document.getElementById('automateToggle')?.checked;
     let sid;
     if(isNew){sid=uid();state.subscriptions.push({id:sid,name,amount,frequency:freq,category:cat,nextBillingDate:date,active:true,allocation:alloc});}
-    else{sid=subId;const s=state.subscriptions.find(s=>s.id===subId);if(s){s.name=name;s.amount=amount;s.frequency=freq;s.category=cat;s.nextBillingDate=date;s.allocation=alloc;}}
+    else{sid=subId;const s=state.subscriptions.find(s=>s.id===subId);if(s){if(amount!==s.amount)(s.priceHistory=s.priceHistory||[]).push({date:today(),from:s.amount,to:amount});s.name=name;s.amount=amount;s.frequency=freq;s.category=cat;s.nextBillingDate=date;s.allocation=alloc;}}
     if(automationOn()){if(auto)upsertLinkedTemplate('subscription',sid,{type:'subscription',category:cat||'Subscriptions',label:name,amount,frequency:freq,nextDue:date||today(),allocation:alloc});else removeLinkedTemplate('subscription',sid);}
     saveState();closeModal();renderSubscriptions();showToast(t(isNew?'toast_sub_added':'toast_sub_updated'));
   });
@@ -5139,6 +5188,11 @@ function renderSettings(){
           <input class="input" type="number" id="settRollover" min="0" step="0.01"
                  value="${state.rollover||''}" placeholder="0.00">
         </div>
+        <label class="field-hint" style="display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer">
+          <input type="checkbox" id="settRolloverAuto" ${state.settings.rolloverAutoCarry!==false?'checked':''}>
+          ${t('rollover_autocarry_label')}
+        </label>
+        <p class="settings-desc" style="margin-top:2px">${t('rollover_autocarry_hint')}</p>
       </div></div>
       ${pennySettingsCardHtml()}
       <div class="panel settings-card--automation"><div class="panel-inner">
@@ -5321,6 +5375,7 @@ function renderSettings(){
       saveState();
       el.querySelectorAll('[data-preset]').forEach(b=>b.classList.toggle('preset-active',b===btn));
       showToast(t('toast_period_updated'));
+      maybeAutoCarryRollover();
     });
   });
 
@@ -5337,11 +5392,16 @@ function renderSettings(){
     if(e.target.value && state.settings.periodEnd && e.target.value > state.settings.periodEnd){showToast(t('toast_period_error'));e.target.value=state.settings.periodStart;document.getElementById('settStartDisp').textContent=formatDateDisplay(state.settings.periodStart);return;}
     state.settings.periodStart = e.target.value; saveState();
     document.getElementById('settStartDisp').textContent = formatDateDisplay(e.target.value);
+    maybeAutoCarryRollover();
   });
   document.getElementById('settEnd')?.addEventListener('change', e => {
     if(e.target.value && state.settings.periodStart && e.target.value < state.settings.periodStart){showToast(t('toast_period_error'));e.target.value=state.settings.periodEnd;document.getElementById('settEndDisp').textContent=formatDateDisplay(state.settings.periodEnd);return;}
     state.settings.periodEnd = e.target.value; saveState();
     document.getElementById('settEndDisp').textContent = formatDateDisplay(e.target.value);
+    maybeAutoCarryRollover();
+  });
+  document.getElementById('settRolloverAuto')?.addEventListener('change', e => {
+    state.settings.rolloverAutoCarry = e.target.checked; saveState();
   });
 
   document.getElementById('settCurrency')?.addEventListener('change', e => {
