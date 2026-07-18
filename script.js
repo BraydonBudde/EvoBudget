@@ -112,7 +112,7 @@ const TRANSLATIONS = {
     sub_advanced:'Billing date advanced to {date}',
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
-    light:'Light', dark:'Dark',
+    light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage Ledger', theme_terminal:'Terminal',
     changes_autosaved:'✅ Changes are saved automatically.',
     rollover_desc:'Carry unspent money from your previous period into this one.',
     rollover_amount:'Rollover amount',
@@ -133,12 +133,12 @@ const TRANSLATIONS = {
     // Calendar days
     mon:'Mon',tue:'Tue',wed:'Wed',thu:'Thu',fri:'Fri',sat:'Sat',sun:'Sun',
     quick_presets:'Quick presets:',select_currency:'Select your currency',select_language:'Select language',
-    appearance_desc:'Switch between light and dark mode.',video_tutorial:'▶ Video Tutorial',
+    appearance_desc:'Choose a colour theme.',video_tutorial:'▶ Video Tutorial',
     help_sett_modal_title:'How Settings work',help_sett_intro:'Customise Evo Budget to match your situation.',
     help_sett_currency_li:'Updates the symbol everywhere (some currencies like PLN place the symbol after the amount).',
     help_sett_period_li:'Set your date range. Click the date badge on Dashboard to jump here quickly.',
     help_sett_rollover_li:'Carry forward unspent money from the last period.',
-    help_sett_theme_li:'Use the sun/moon toggle in the top bar to switch Light and Dark mode.',
+    help_sett_theme_li:'Choose from five colour themes - Light, Dark, Synthwave, Vintage Ledger, or Terminal.',
     help_dash_modal_title:'How the Dashboard works',help_dash_intro:'The Dashboard is your real-time financial snapshot. Everything updates automatically as you log transactions.',
     help_dash_cards_h:'Summary cards',help_dash_cards_li:'Totals for income, expenses &amp; bills, debt payments, and savings for the current period.',
     help_dash_leftover_li:'What\'s left after all outgoings. <span style="color:#10b981;font-weight:600">Green</span> = surplus, <span style="color:#f43f5e;font-weight:600">red</span> = over budget.',
@@ -175,7 +175,7 @@ const TRANSLATIONS = {
     guide_dashboard_connect1:"Every transaction you add anywhere in the app updates these numbers instantly - there's nothing to refresh or recalculate.",
     guide_dashboard_connect2:'The Net Leftover figure includes any <strong>Rollover</strong> amount you set in Settings, so a good month can carry forward into the next.',
     guide_dashboard_connect3:'If a number looks off, the fix is almost always in Transactions, Income, Expenses, Bills, Debt, or Savings - the Dashboard just reflects what has already been entered.',
-    guide_dashboard_tip:'Make checking the Dashboard part of your routine - even 10 seconds a day keeps small surprises from becoming big ones.',
+    guide_dashboard_tip:'Make checking the Dashboard part of your routine - even 10 seconds a day keeps small surprises from becoming big ones.',guide_dashboard_usecase_h:'See it in action',guide_dashboard_usecase_p:'<p><strong>Liam</strong> checks the Dashboard before deciding whether to eat out this week. He sees his Net Leftover for the period is only $45, well below his usual buffer, so he decides to cook at home instead - catching the problem early instead of finding out when his account is nearly empty.</p>',
     guide_transactions_title:'Transactions',
     guide_transactions_big:'Transactions are the foundation of everything else in this app - every dollar you log here is what powers your Dashboard, your categories, and your bottom line. Get in the habit of logging as you spend, and the rest takes care of itself.',
     guide_transactions_step1:'Tap <strong>Add Transaction</strong>, choose whether it is Income, an Expense, a Bill, Debt, or Savings, and fill in the amount and category.',
@@ -185,7 +185,7 @@ const TRANSLATIONS = {
     guide_transactions_connect1:'Every transaction you log automatically counts toward the matching category - an Expense transaction shows up in Expenses, a Bill payment shows up in Bills, and so on.',
     guide_transactions_connect2:'Your Dashboard totals and charts are built entirely from these entries - nothing is estimated.',
     guide_transactions_connect3:'Deleting or editing a transaction here instantly updates every total everywhere else in the app.',
-    guide_transactions_tip:'Log transactions the same day they happen. It takes seconds and keeps your Dashboard trustworthy.',
+    guide_transactions_tip:'Log transactions the same day they happen. It takes seconds and keeps your Dashboard trustworthy.',guide_transactions_usecase_h:'See it in action',guide_transactions_usecase_p:"<p><strong>Aisha</strong> gets paid on Friday. She opens Transactions, picks Income → Paycheck, types the amount, and it's logged immediately - showing up on her Dashboard right away as part of her Total Income for the period.</p>",
     guide_income_title:'Income',
     guide_income_big:'This is where you tell the app how much money you expect to earn, then track what actually landed - so you can spot the gap between the two at a glance.',
     guide_income_step1:'Set your <strong>Expected</strong> amount for each income source, like your paycheck or a side hustle.',
@@ -194,7 +194,7 @@ const TRANSLATIONS = {
     guide_income_connect1:"Income transactions logged in Transactions flow straight into this page's Actual totals.",
     guide_income_connect2:'Your Total Income on the Dashboard is the sum of everything tracked here.',
     guide_income_connect3:'A higher Net Leftover starts here - the more accurately you track income, the more accurate your whole budget becomes.',
-    guide_income_tip:'Add every income source separately, even small or irregular ones - it makes it much easier to spot patterns over time.',
+    guide_income_tip:'Add every income source separately, even small or irregular ones - it makes it much easier to spot patterns over time.',guide_income_usecase_h:'See it in action',guide_income_usecase_p:'<p>Before the month starts, <strong>Carlos</strong> sets his expected Salary at $3,200 and his expected Freelance income at $400 in the Income module.</p><p>As paychecks come in through Transactions, the Actual column updates automatically, so he can see at a glance whether this month\'s freelance work is keeping pace with what he planned.</p>',
     guide_expenses_title:'Expenses',
     guide_expenses_big:'Expenses is your day-to-day spending - groceries, gas, coffee, all of it. Setting an expected amount per category gives you something to measure yourself against instead of just watching money disappear.',
     guide_expenses_step1:'Add a category for each type of spending you want to track, like Groceries or Entertainment.',
@@ -203,7 +203,7 @@ const TRANSLATIONS = {
     guide_expenses_connect1:'Every Expense transaction you log in Transactions adds straight to the matching category here.',
     guide_expenses_connect2:'Categories that go over their Expected amount are part of what drives your Spending Breakdown chart on the Dashboard.',
     guide_expenses_connect3:'Trimming an over-budget category here is one of the fastest ways to increase your Net Leftover.',
-    guide_expenses_tip:'Start with just a handful of broad categories. You can always split them into more detail later once you see where the money really goes.',
+    guide_expenses_tip:'Start with just a handful of broad categories. You can always split them into more detail later once you see where the money really goes.',guide_expenses_usecase_h:'See it in action',guide_expenses_usecase_p:'<p><strong>Nina</strong> wants to see where her spending actually goes, so she sets expected amounts for Groceries, Dining, and Transport in Expenses.</p><p>Halfway through the month she notices Dining is already at 90% of its budget, and cuts back for the rest of the period instead of only finding out at month\'s end.</p>',
     guide_bills_title:'Bills',
     guide_bills_big:"Bills are the payments you can't skip - rent, utilities, subscriptions you've committed to. This page keeps their due dates and paid status front and center so nothing slips through the cracks.",
     guide_bills_step1:'Add a bill and give it a <strong>Due Date</strong> so you know exactly when it is due.',
@@ -212,7 +212,7 @@ const TRANSLATIONS = {
     guide_bills_connect1:"Unpaid bills with a due date coming up are exactly the kind of thing worth checking before you spend elsewhere.",
     guide_bills_connect2:'Bill transactions count toward your Total Outgoing on the Dashboard, right alongside Expenses and Debt.',
     guide_bills_connect3:'Marking a bill Paid does not remove it - it just tracks status, so you always have a record of what has been settled this period.',
-    guide_bills_tip:'Add recurring bills at the start of each period so the due dates are waiting for you, not something you have to remember.',
+    guide_bills_tip:'Add recurring bills at the start of each period so the due dates are waiting for you, not something you have to remember.',guide_bills_usecase_h:'See it in action',guide_bills_usecase_p:"<p>Every month, <strong>Derek</strong>'s electricity bill is a little different. He sets Electric's due date and expected amount ($100) in Bills.</p><p>When he actually pays it, he ticks the Paid checkbox and enters the $118.32 he was actually charged - which gets logged as a real transaction instead of just a checkmark, so his spending history stays accurate even though the bill wasn't exactly what he planned for.</p>",
     guide_debt_title:'Debt',
     guide_debt_big:'This page keeps every payment you owe in one place - credit cards, loans, anything with a balance - so you always know what is due and whether you are keeping up.',
     guide_debt_step1:'Add each debt you are tracking along with your <strong>Expected</strong> payment for this period.',
@@ -221,7 +221,7 @@ const TRANSLATIONS = {
     guide_debt_connect1:'Debt payments count toward your Total Outgoing on the Dashboard alongside Expenses and Bills.',
     guide_debt_connect2:"This page tracks payments as a category, not a full payoff plan - if you want a snowball or avalanche strategy with interest projections, that's what Ultimate Budget Planner's Debt Payoff is built for.",
     guide_debt_connect3:'Staying consistent here keeps your Net Leftover number honest, since unpaid debt has a way of catching up with you later.',
-    guide_debt_tip:'List even small debts, like a family loan - the point is not the size, it is knowing everything you owe in one place.',
+    guide_debt_tip:'List even small debts, like a family loan - the point is not the size, it is knowing everything you owe in one place.',guide_debt_usecase_h:'See it in action',guide_debt_usecase_p:'<p><strong>Grace</strong> has a small personal loan to her sister. She adds it to Debt with the monthly amount she\'s agreed to pay and a due date.</p><p>When she sends the payment, she ticks Paid and enters the exact amount she sent, so it\'s tracked in her transaction history just like any other debt payment.</p>',
     guide_savings_title:'Savings',
     guide_savings_big:'Savings is where you set money aside on purpose, instead of just seeing what is left at the end of the month. Treating it like any other planned expense is the easiest way to actually build it up.',
     guide_savings_step1:'Set an <strong>Expected</strong> amount for what you want to save this period.',
@@ -230,18 +230,18 @@ const TRANSLATIONS = {
     guide_savings_connect1:"Savings transactions logged in Transactions count straight toward this page's totals.",
     guide_savings_connect2:'Your Total Savings figure on the Dashboard comes directly from what is tracked here.',
     guide_savings_connect3:'Savings is included in your Net Leftover calculation, so saving consistently is one of the most direct ways to grow that number over time.',
-    guide_savings_tip:"Set your savings amount first, before you plan spending for the rest of your budget - it's much easier to hit a goal you commit to upfront.",
+    guide_savings_tip:"Set your savings amount first, before you plan spending for the rest of your budget - it's much easier to hit a goal you commit to upfront.",guide_savings_usecase_h:'See it in action',guide_savings_usecase_p:'<p>Every payday, <strong>Wen</strong> sets aside money for a house deposit. She sets her expected Savings amount in the Savings module, and as she logs Savings transactions through the period, she can see her progress bar creep toward the goal she budgeted for.</p>',
     guide_settings_title:'Settings',
     guide_settings_big:'Settings is where the app adapts to you - your currency, your budgeting period, how it looks, what language it speaks, and how your data is handled.',
     guide_settings_step1:'Pick your <strong>Currency</strong> so every amount in the app displays the way you expect.',
     guide_settings_step2:'Choose your <strong>Budget Period</strong> (like monthly or biweekly) to match how you actually get paid and pay bills.',
     guide_settings_step3:"Enter a <strong>Rollover</strong> amount if you want unspent money from last period to carry into this one's Net Leftover.",
-    guide_settings_step4:'Switch <strong>Appearance</strong> between light and dark, and pick your <strong>Language</strong> from the list.',
+    guide_settings_step4:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage Ledger, or Terminal), and choose your <strong>Language</strong> from the list.',
     guide_settings_step5:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
     guide_settings_connect1:'Your Currency and Budget Period choices shape how every other page in the app displays and calculates numbers.',
     guide_settings_connect2:'The Rollover amount you set here flows directly into the Net Leftover shown on your Dashboard.',
     guide_settings_connect3:'Exporting data here is the safest way to keep a copy of everything before making any big change.',
-    guide_settings_tip:'Set your Currency and Budget Period first thing, before you start logging transactions - it saves you from having to double-check old entries later.',
+    guide_settings_tip:'Set your Currency and Budget Period first thing, before you start logging transactions - it saves you from having to double-check old entries later.',guide_settings_usecase_h:'See it in action',guide_settings_usecase_p:'<p>When <strong>Yuki</strong> moves to a new country and starts earning in Euros, she opens Settings, changes her Currency to EUR, and switches her Budget Period to match her new pay schedule - so every number in the app reflects her new reality from that point on.</p>',
     mod_desc_income:'Set your expected income for each source. Actual amounts fill in automatically when you log transactions.',
     mod_desc_expenses:'Set a budget limit for each spending category. Progress bars turn red when you go over.',
     mod_desc_bills:"Track recurring bills. Add a due date, then tick the checkbox once you've paid.",
@@ -368,7 +368,7 @@ const TRANSLATIONS = {
     sub_advanced:'Abrechnungsdatum vorger\u00fcckt auf {date}',
     currency:'Währung',rollover:'Übertrag',appearance:'Erscheinungsbild',
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
-    light:'Hell',dark:'Dunkel',
+    light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage-Kontobuch',theme_terminal:'Terminal',
     changes_autosaved:'✅ Änderungen werden automatisch gespeichert.',
     rollover_desc:'Überträgt nicht ausgegebenes Geld aus der vorherigen Periode.',
     rollover_amount:'Übertragsbetrag',
@@ -386,12 +386,12 @@ const TRANSLATIONS = {
     upgrade_now:'Jetzt upgraden →',upgrade_get_now:'JETZT HOLEN',upgrade_compare:'PLANER VERGLEICHEN',sett_upgrade_h:'Upgrade-Banner',sett_upgrade_label:'Upgrade-Banner im Dashboard anzeigen',
     mon:'Mo',tue:'Di',wed:'Mi',thu:'Do',fri:'Fr',sat:'Sa',sun:'So',
     quick_presets:'Schnellauswahl:',select_currency:'Währung auswählen',select_language:'Sprache auswählen',
-    appearance_desc:'Zwischen hellem und dunklem Modus wechseln.',video_tutorial:'▶ Video-Tutorial',
+    appearance_desc:'Wähle ein Farbthema.',video_tutorial:'▶ Video-Tutorial',
     help_sett_modal_title:'Einstellungen im Überblick',help_sett_intro:'Passe Evo Budget an deine Situation an.',
     help_sett_currency_li:'Aktualisiert das Symbol überall (manche Währungen wie PLN setzen das Symbol nach dem Betrag).',
     help_sett_period_li:'Lege deinen Datumsbereich fest. Klicke auf das Datums-Badge im Dashboard, um schnell hierher zu gelangen.',
     help_sett_rollover_li:'Überträgt nicht ausgegebenes Geld aus der letzten Periode.',
-    help_sett_theme_li:'Nutze den Sonne/Mond-Schalter in der oberen Leiste, um zwischen Hell- und Dunkelmodus zu wechseln.',
+    help_sett_theme_li:'Wähle aus fünf Farbthemen - Hell, Dunkel, Synthwave, Vintage-Kontobuch oder Terminal.',
     help_dash_modal_title:'Wie das Dashboard funktioniert',help_dash_intro:'Das Dashboard ist deine Finanzübersicht in Echtzeit. Alles aktualisiert sich automatisch, sobald du Transaktionen erfasst.',
     help_dash_cards_h:'Übersichtskarten',help_dash_cards_li:'Summen für Einnahmen, Ausgaben &amp; Rechnungen, Schuldenzahlungen und Ersparnisse für den aktuellen Zeitraum.',
     help_dash_leftover_li:'Was nach allen Ausgaben übrig bleibt. <span style="color:#10b981;font-weight:600">Grün</span> = Überschuss, <span style="color:#f43f5e;font-weight:600">Rot</span> = über dem Budget.',
@@ -489,7 +489,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Wähle deine <strong>Währung</strong>, damit jeder Betrag in der App so angezeigt wird, wie du es erwartest.',
     guide_settings_step2:'Wähle deinen <strong>Budgetzeitraum</strong> (etwa monatlich oder zweiwöchentlich) passend dazu, wie du tatsächlich bezahlt wirst und Rechnungen begleichst.',
     guide_settings_step3:'Trage einen <strong>Übertrag</strong>-Betrag ein, wenn nicht ausgegebenes Geld aus der letzten Periode in den Nettoüberschuss dieser Periode einfließen soll.',
-    guide_settings_step4:'Wechsle das <strong>Erscheinungsbild</strong> zwischen Hell und Dunkel und wähle deine <strong>Sprache</strong> aus der Liste.',
+    guide_settings_step4:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage-Kontobuch oder Terminal) und deine <strong>Sprache</strong> aus der Liste.',
     guide_settings_step5:'Nutze <strong>Daten exportieren</strong>, um alles zu sichern, oder <strong>Daten zurücksetzen</strong>, wenn du jemals ganz neu anfangen möchtest.',
     guide_settings_connect1:'Deine Wahl von Währung und Budgetzeitraum bestimmt, wie jede andere Seite in der App Zahlen anzeigt und berechnet.',
     guide_settings_connect2:'Der hier festgelegte Übertrag-Betrag fließt direkt in den im Dashboard angezeigten Nettoüberschuss ein.',
@@ -621,7 +621,7 @@ const TRANSLATIONS = {
     sub_advanced:'Date de facturation avanc\u00e9e au {date}',
     currency:'Devise',rollover:'Report',appearance:'Apparence',
     language:'Langue',reset_data:'Réinitialiser les données',
-    light:'Clair',dark:'Sombre',
+    light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Registre vintage',theme_terminal:'Terminal',
     changes_autosaved:'✅ Les modifications sont enregistrées automatiquement.',
     rollover_desc:"Reporte l'argent non dépensé de la période précédente.",
     rollover_amount:'Montant du report',
@@ -639,12 +639,12 @@ const TRANSLATIONS = {
     upgrade_now:'Mettre à niveau →',upgrade_get_now:'OBTENIR',upgrade_compare:'COMPARER',sett_upgrade_h:'Bannière de mise à niveau',sett_upgrade_label:'Afficher la bannière sur le tableau de bord',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim',
     quick_presets:'Raccourcis :',select_currency:'Sélectionnez votre devise',select_language:'Sélectionner la langue',
-    appearance_desc:'Basculer entre le mode clair et sombre.',video_tutorial:'▶ Tutoriel vidéo',
+    appearance_desc:'Choisissez un thème de couleur.',video_tutorial:'▶ Tutoriel vidéo',
     help_sett_modal_title:'Fonctionnement des paramètres',help_sett_intro:'Personnalisez Evo Budget selon votre situation.',
     help_sett_currency_li:"Met à jour le symbole partout (certaines devises comme le PLN placent le symbole après le montant).",
     help_sett_period_li:'Définissez votre plage de dates. Cliquez sur le badge de date du tableau de bord pour y accéder rapidement.',
     help_sett_rollover_li:"Reporte l'argent non dépensé de la dernière période.",
-    help_sett_theme_li:'Utilisez le bouton soleil/lune dans la barre supérieure pour basculer entre les modes clair et sombre.',
+    help_sett_theme_li:'Choisissez parmi cinq thèmes de couleur - Clair, Sombre, Synthwave, Registre vintage ou Terminal.',
     help_dash_modal_title:'Comment fonctionne le tableau de bord',help_dash_intro:'Le tableau de bord est votre aperçu financier en temps réel. Tout se met à jour automatiquement dès que vous enregistrez des transactions.',
     help_dash_cards_h:'Cartes de synthèse',help_dash_cards_li:'Totaux des revenus, dépenses &amp; factures, remboursements de dettes et épargne pour la période en cours.',
     help_dash_leftover_li:"Ce qu'il reste après toutes les sorties d'argent. <span style=\"color:#10b981;font-weight:600\">Vert</span> = excédent, <span style=\"color:#f43f5e;font-weight:600\">rouge</span> = dépassement de budget.",
@@ -742,7 +742,7 @@ const TRANSLATIONS = {
     guide_settings_step1:"Choisissez votre <strong>Devise</strong> pour que chaque montant s'affiche comme vous l'attendez.",
     guide_settings_step2:"Choisissez votre <strong>Période budgétaire</strong> (mensuelle, aux deux semaines...) pour correspondre à votre rythme réel de paiement et de factures.",
     guide_settings_step3:"Saisissez un montant de <strong>Report</strong> si vous voulez que l'argent non dépensé de la période précédente se répercute sur le Solde net de celle-ci.",
-    guide_settings_step4:"Basculez l'<strong>Apparence</strong> entre clair et sombre, et choisissez votre <strong>Langue</strong> dans la liste.",
+    guide_settings_step4:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Registre vintage ou Terminal), et votre <strong>Langue</strong> dans la liste.",
     guide_settings_step5:"Utilisez <strong>Exporter les données</strong> pour tout sauvegarder, ou <strong>Réinitialiser les données</strong> si vous voulez repartir complètement à zéro.",
     guide_settings_connect1:"Vos choix de Devise et de Période budgétaire déterminent comment chaque autre page de l'application affiche et calcule les chiffres.",
     guide_settings_connect2:"Le montant de Report défini ici se répercute directement sur le Solde net affiché sur votre tableau de bord.",
@@ -874,7 +874,7 @@ const TRANSLATIONS = {
     sub_advanced:'Fecha de facturaci\u00f3n avanzada al {date}',
     currency:'Moneda',rollover:'Saldo anterior',appearance:'Apariencia',
     language:'Idioma',reset_data:'Restablecer datos',
-    light:'Claro',dark:'Oscuro',
+    light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Libro contable vintage',theme_terminal:'Terminal',
     changes_autosaved:'✅ Los cambios se guardan automáticamente.',
     rollover_desc:'Traspasa el dinero no gastado del período anterior.',
     rollover_amount:'Importe de saldo anterior',
@@ -892,12 +892,12 @@ const TRANSLATIONS = {
     upgrade_now:'Actualizar ahora →',upgrade_get_now:'OBTENER',upgrade_compare:'COMPARAR',sett_upgrade_h:'Banner de actualización',sett_upgrade_label:'Mostrar el banner en el panel',
     mon:'Lun',tue:'Mar',wed:'Mié',thu:'Jue',fri:'Vie',sat:'Sáb',sun:'Dom',
     quick_presets:'Accesos rápidos:',select_currency:'Selecciona tu moneda',select_language:'Seleccionar idioma',
-    appearance_desc:'Cambiar entre modo claro y oscuro.',video_tutorial:'▶ Tutorial en vídeo',
+    appearance_desc:'Elige un tema de color.',video_tutorial:'▶ Tutorial en vídeo',
     help_sett_modal_title:'Cómo funcionan los ajustes',help_sett_intro:'Personaliza Evo Budget según tu situación.',
     help_sett_currency_li:'Actualiza el símbolo en todas partes (algunas monedas como PLN colocan el símbolo después del importe).',
     help_sett_period_li:'Establece tu rango de fechas. Haz clic en el distintivo de fecha del panel para acceder rápidamente aquí.',
     help_sett_rollover_li:'Traspasa el dinero no gastado del último período.',
-    help_sett_theme_li:'Usa el botón sol/luna en la barra superior para cambiar entre los modos claro y oscuro.',
+    help_sett_theme_li:'Elige entre cinco temas de color - Claro, Oscuro, Synthwave, Libro contable vintage o Terminal.',
     help_dash_modal_title:'Cómo funciona el panel',help_dash_intro:'El panel es tu instantánea financiera en tiempo real. Todo se actualiza automáticamente a medida que registras transacciones.',
     help_dash_cards_h:'Tarjetas de resumen',help_dash_cards_li:'Totales de ingresos, gastos &amp; facturas, pagos de deudas y ahorros del período actual.',
     help_dash_leftover_li:'Lo que queda después de todos los gastos. <span style="color:#10b981;font-weight:600">Verde</span> = superávit, <span style="color:#f43f5e;font-weight:600">rojo</span> = por encima del presupuesto.',
@@ -995,7 +995,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Elige tu <strong>Moneda</strong> para que cada importe en la app se muestre como esperas.',
     guide_settings_step2:'Elige tu <strong>Período de presupuesto</strong> (mensual, quincenal, etc.) para que coincida con cómo realmente cobras y pagas.',
     guide_settings_step3:'Ingresa un importe de <strong>Saldo anterior</strong> si quieres que el dinero no gastado del último período pase al Sobrante neto de este.',
-    guide_settings_step4:'Cambia la <strong>Apariencia</strong> entre clara y oscura, y elige tu <strong>Idioma</strong> de la lista.',
+    guide_settings_step4:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Libro contable vintage o Terminal), y tu <strong>Idioma</strong> de la lista.',
     guide_settings_step5:'Usa <strong>Exportar datos</strong> para respaldar todo, o <strong>Restablecer datos</strong> si alguna vez quieres empezar completamente de cero.',
     guide_settings_connect1:'Tus elecciones de Moneda y Período de presupuesto determinan cómo cada otra página de la app muestra y calcula los números.',
     guide_settings_connect2:'El importe de Saldo anterior que fijas aquí pasa directamente al Sobrante neto que se muestra en tu Panel.',
@@ -1127,7 +1127,7 @@ const TRANSLATIONS = {
     sub_advanced:'Data di fatturazione avanzata al {date}',
     currency:'Valuta',rollover:'Riporto',appearance:'Aspetto',
     language:'Lingua',reset_data:'Reimposta dati',
-    light:'Chiaro',dark:'Scuro',
+    light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Registro vintage',theme_terminal:'Terminal',
     changes_autosaved:'✅ Le modifiche vengono salvate automaticamente.',
     rollover_desc:'Riporta il denaro non speso dal periodo precedente.',
     rollover_amount:'Importo riporto',
@@ -1145,12 +1145,12 @@ const TRANSLATIONS = {
     upgrade_now:'Aggiorna ora →',upgrade_get_now:'OTTIENI',upgrade_compare:'CONFRONTA',sett_upgrade_h:'Banner di upgrade',sett_upgrade_label:'Mostra il banner nella dashboard',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Gio',fri:'Ven',sat:'Sab',sun:'Dom',
     quick_presets:'Selezione rapida:',select_currency:'Seleziona la tua valuta',select_language:'Seleziona lingua',
-    appearance_desc:'Passa dalla modalità chiara a quella scura.',video_tutorial:'▶ Video Tutorial',
+    appearance_desc:'Scegli un tema di colore.',video_tutorial:'▶ Video Tutorial',
     help_sett_modal_title:'Come funzionano le impostazioni',help_sett_intro:'Personalizza Evo Budget in base alla tua situazione.',
     help_sett_currency_li:"Aggiorna il simbolo ovunque (alcune valute come il PLN inseriscono il simbolo dopo l'importo).",
     help_sett_period_li:'Imposta il tuo intervallo di date. Fai clic sul badge della data nel pannello per accedervi rapidamente.',
     help_sett_rollover_li:"Riporta il denaro non speso dall'ultimo periodo.",
-    help_sett_theme_li:'Usa il pulsante sole/luna nella barra superiore per passare tra modalità chiara e scura.',
+    help_sett_theme_li:'Scegli tra cinque temi di colore - Chiaro, Scuro, Synthwave, Registro vintage o Terminal.',
     help_dash_modal_title:'Come funziona la Dashboard',help_dash_intro:'La Dashboard è la tua panoramica finanziaria in tempo reale. Tutto si aggiorna automaticamente man mano che registri le transazioni.',
     help_dash_cards_h:'Schede di riepilogo',help_dash_cards_li:'Totali di entrate, spese &amp; bollette, pagamenti dei debiti e risparmi per il periodo corrente.',
     help_dash_leftover_li:'Ciò che resta dopo tutte le uscite. <span style="color:#10b981;font-weight:600">Verde</span> = surplus, <span style="color:#f43f5e;font-weight:600">rosso</span> = oltre il budget.',
@@ -1248,7 +1248,7 @@ const TRANSLATIONS = {
     guide_settings_step1:"Scegli la tua <strong>Valuta</strong> così ogni importo nell'app viene mostrato come ti aspetti.",
     guide_settings_step2:"Scegli il tuo <strong>Periodo di budget</strong> (mensile, quindicinale, ecc.) per adattarlo a come vieni pagato e paghi davvero.",
     guide_settings_step3:"Inserisci un importo di <strong>Riporto</strong> se vuoi che i soldi non spesi del periodo precedente confluiscano nell'Avanzo netto di questo.",
-    guide_settings_step4:"Passa dall'<strong>Aspetto</strong> chiaro a scuro, e scegli la tua <strong>Lingua</strong> dall'elenco.",
+    guide_settings_step4:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Registro vintage o Terminal), e la tua <strong>Lingua</strong> dall'elenco.",
     guide_settings_step5:"Usa <strong>Esporta dati</strong> per fare un backup di tutto, o <strong>Ripristina dati</strong> se vuoi mai ricominciare completamente da zero.",
     guide_settings_connect1:"Le tue scelte di Valuta e Periodo di budget determinano come ogni altra pagina dell'app mostra e calcola i numeri.",
     guide_settings_connect2:"L'importo di Riporto impostato qui confluisce direttamente nell'Avanzo netto mostrato nella tua Dashboard.",
@@ -1380,7 +1380,7 @@ const TRANSLATIONS = {
     sub_advanced:'Data rozliczenia przeniesiona na {date}',
     currency:'Waluta',rollover:'Przeniesienie',appearance:'Wygląd',
     language:'Język',reset_data:'Zresetuj dane',
-    light:'Jasny',dark:'Ciemny',
+    light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Retro księga',theme_terminal:'Terminal',
     changes_autosaved:'✅ Zmiany są zapisywane automatycznie.',
     rollover_desc:'Przenieś niewydane środki z poprzedniego okresu.',
     rollover_amount:'Kwota przeniesienia',
@@ -1398,12 +1398,12 @@ const TRANSLATIONS = {
     upgrade_now:'Ulepsz teraz →',upgrade_get_now:'POBIERZ',upgrade_compare:'PORÓWNAJ',sett_upgrade_h:'Baner ulepszenia',sett_upgrade_label:'Pokaż baner na pulpicie',
     mon:'Pon',tue:'Wt',wed:'Śr',thu:'Czw',fri:'Pt',sat:'Sob',sun:'Nd',
     quick_presets:'Szybki wybór:',select_currency:'Wybierz walutę',select_language:'Wybierz język',
-    appearance_desc:'Przełącz między trybem jasnym a ciemnym.',video_tutorial:'▶ Samouczek wideo',
+    appearance_desc:'Wybierz motyw kolorystyczny.',video_tutorial:'▶ Samouczek wideo',
     help_sett_modal_title:'Jak działają ustawienia',help_sett_intro:'Dostosuj Evo Budget do swojej sytuacji.',
     help_sett_currency_li:'Aktualizuje symbol wszędzie (niektóre waluty jak PLN umieszczają symbol po kwocie).',
     help_sett_period_li:'Ustaw zakres dat. Kliknij znacznik daty na panelu, aby szybko przejść tutaj.',
     help_sett_rollover_li:'Przenieś niewydane środki z ostatniego okresu.',
-    help_sett_theme_li:'Użyj przełącznika słońce/księżyc na górnym pasku, aby przełączyć tryb jasny i ciemny.',
+    help_sett_theme_li:'Wybierz spośród pięciu motywów kolorystycznych - Jasny, Ciemny, Synthwave, Retro księga lub Terminal.',
     help_dash_modal_title:'Jak działa Panel',help_dash_intro:'Panel to Twój migawkowy obraz finansów w czasie rzeczywistym. Wszystko aktualizuje się automatycznie podczas rejestrowania transakcji.',
     help_dash_cards_h:'Karty podsumowania',help_dash_cards_li:'Sumy przychodów, wydatków &amp; rachunków, spłat długów i oszczędności za bieżący okres.',
     help_dash_leftover_li:'To, co zostaje po wszystkich wydatkach. <span style="color:#10b981;font-weight:600">Zielony</span> = nadwyżka, <span style="color:#f43f5e;font-weight:600">czerwony</span> = przekroczenie budżetu.',
@@ -1501,7 +1501,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Wybierz swoją <strong>Walutę</strong>, aby każda kwota w aplikacji wyświetlała się tak, jak oczekujesz.',
     guide_settings_step2:'Wybierz swój <strong>Okres budżetowy</strong> (na przykład miesięczny lub dwutygodniowy), aby pasował do tego, jak faktycznie otrzymujesz wypłatę i płacisz rachunki.',
     guide_settings_step3:'Wpisz kwotę <strong>Przeniesienia</strong>, jeśli chcesz, aby niewydane pieniądze z ostatniego okresu przeszły do Salda netto bieżącego okresu.',
-    guide_settings_step4:'Przełącz <strong>Wygląd</strong> między jasnym a ciemnym i wybierz swój <strong>Język</strong> z listy.',
+    guide_settings_step4:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Retro księga lub Terminal) i swój <strong>Język</strong> z listy.',
     guide_settings_step5:'Użyj <strong>Eksportuj dane</strong>, aby zrobić kopię zapasową wszystkiego, lub <strong>Zresetuj dane</strong>, jeśli kiedykolwiek zechcesz zacząć zupełnie od nowa.',
     guide_settings_connect1:'Twój wybór Waluty i Okresu budżetowego określa, jak każda inna strona aplikacji wyświetla i oblicza liczby.',
     guide_settings_connect2:'Kwota Przeniesienia ustawiona tutaj trafia bezpośrednio do Salda netto pokazanego na twoim Pulpicie.',
@@ -3168,14 +3168,26 @@ function renderSettings() {
         <div class="settings-card-title">🌙 ${t('appearance')}</div>
         <p class="settings-desc">${t('appearance_desc')}</p>
         <div class="theme-setting-row">
-          <div class="theme-pill" role="group" aria-label="Colour theme">
-            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='light'?' is-active':''}" data-theme-val="light" type="button" title="Light mode">
+          <div class="theme-pill" role="group" aria-label="${t('appearance')}">
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='light'?' is-active':''}" data-theme-val="light" type="button" title="${t('light')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               ${t('light')}
             </button>
-            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='dark'?' is-active':''}" data-theme-val="dark" type="button" title="Dark mode">
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='dark'?' is-active':''}" data-theme-val="dark" type="button" title="${t('dark')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               ${t('dark')}
+            </button>
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='synthwave'?' is-active':''}" data-theme-val="synthwave" type="button" title="${t('theme_synthwave')}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 0 1 16 0"/><line x1="4" y1="16" x2="20" y2="16"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
+              ${t('theme_synthwave')}
+            </button>
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='vintage-ledger'?' is-active':''}" data-theme-val="vintage-ledger" type="button" title="${t('theme_vintage_ledger')}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5z"/><path d="M20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/></svg>
+              ${t('theme_vintage_ledger')}
+            </button>
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='terminal'?' is-active':''}" data-theme-val="terminal" type="button" title="${t('theme_terminal')}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3"/><line x1="12" y1="15" x2="16" y2="15"/></svg>
+              ${t('theme_terminal')}
             </button>
           </div>
         </div>
@@ -3522,6 +3534,11 @@ function renderGuideTopic(id) {
        </div>` : '';
   const tipHtml = topic.tip
     ? `<div class="guide-section"><div class="guide-tip"><span class="guide-tip-icon">💡</span><span>${t('guide_' + id + '_tip')}</span></div></div>` : '';
+  const useCaseHtml = topic.steps > 0
+    ? `<div class="guide-section"><details class="recurring-panel panel guide-usecase">
+        <summary class="recurring-summary"><span class="recurring-summary-title"><span class="recurring-summary-icon" aria-hidden="true">👤</span>${esc(t('guide_' + id + '_usecase_h'))}</span></summary>
+        <div class="recurring-body">${t('guide_' + id + '_usecase_p')}</div>
+      </details></div>` : '';
   content.innerHTML = `
     <button class="guide-back-btn" type="button">← ${esc(t('guide_back'))}</button>
     <div class="guide-topic-header">
@@ -3529,7 +3546,7 @@ function renderGuideTopic(id) {
       <h3 class="guide-topic-title">${esc(t('guide_' + id + '_title'))}</h3>
     </div>
     <div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_big'))}</div><p class="guide-big-picture">${t('guide_' + id + '_big')}</p></div>
-    ${stepsHtml}${connectsHtml}${tipHtml}`;
+    ${stepsHtml}${connectsHtml}${tipHtml}${useCaseHtml}`;
   content.querySelector('.guide-back-btn')?.addEventListener('click', () => {
     document.getElementById('guideModal')?.classList.remove('is-topic-open');
   });

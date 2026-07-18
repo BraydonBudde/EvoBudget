@@ -477,7 +477,7 @@ const TRANSLATIONS = {
     this_month:'This Month', this_week:'This Week', last_week:'Last Week', last_month:'Last Month', last_30_days:'Last 30 Days', this_quarter:'This Quarter', this_year:'This Year',
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
-    light:'Light', dark:'Dark',
+    light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage Ledger', theme_terminal:'Terminal',
     changes_autosaved:'✅ Changes are saved automatically.',
     rollover_desc:'Carry unspent money from your previous period into this one.',rollover_autocarry_label:'Auto-carry from previous period',rollover_autocarry_hint:'When you change the budget period, this amount is recalculated automatically from what was actually left over last time. Uncheck to set it manually instead.',toast_rollover_autoset:'Rollover auto-set to {0} from last period',
     rollover_amount:'Rollover amount',
@@ -495,10 +495,10 @@ const TRANSLATIONS = {
     // Calendar days
     mon:'Mon',tue:'Tue',wed:'Wed',thu:'Thu',fri:'Fri',sat:'Sat',sun:'Sun',
     quick_presets:'Quick presets:',select_currency:'Select your currency',select_language:'Select language',
-    appearance_desc:'Switch between light and dark mode.',video_tutorial:'▶ Video Tutorial',
+    appearance_desc:'Choose a colour theme.',video_tutorial:'▶ Video Tutorial',
     help_sett_intro:'All your preferences for the Ultimate Budget Planner. Changes are saved automatically as you make them.',
     help_sett_currency_p:'Changes the currency symbol everywhere in the app immediately on selection.',
-    help_sett_appearance_p:'Switch between Light and Dark mode. Your preference is remembered across sessions.',
+    help_sett_appearance_p:'Choose from five colour themes - Light, Dark, Synthwave, Vintage Ledger, or Terminal. Your preference is remembered across sessions.',
     help_sett_nav_h:'Navigation',
     help_sett_nav_top:'Top Navigation - Classic horizontal tab bar at the top (default).',
     help_sett_nav_side:'Side Navigation - A floating icon rail to the left of your content. Click the arrow to expand and see full labels.',
@@ -848,7 +848,7 @@ const TRANSLATIONS = {
     guide_dashboard_connect1:"Every number here is pulled live from Transactions, Budget, Debt Payoff, Sinking Funds, and Subscriptions - there's nothing to calculate by hand.",
     guide_dashboard_connect2:'The Net Leftover figure includes your <strong>Rollover</strong> setting, so unspent money from last period can carry forward automatically.',
     guide_dashboard_connect3:"If something looks off, it's almost always worth checking the page it came from - the Dashboard is a mirror, not a source.",
-    guide_dashboard_tip:"Set aside 30 seconds each morning to scan the Dashboard - it's the fastest way to catch a bill or debt payment before it's overdue.",
+    guide_dashboard_tip:"Set aside 30 seconds each morning to scan the Dashboard - it's the fastest way to catch a bill or debt payment before it's overdue.",guide_dashboard_usecase_h:'See it in action',guide_dashboard_usecase_p:"<p><strong>Maria</strong> opens Evo Budget on payday. She glances at the Dashboard and sees her Net Leftover this period is $420 - enough to add a bit extra to her emergency fund.</p><p>The Cash Flow panel shows she's already over budget on Dining, so she skips ordering takeout that night instead of finding out at the end of the month.</p>",
     guide_transactions_title:'Transactions',
     guide_transactions_big:"Transactions are the foundation of everything in this app - every dollar you log here powers your Dashboard, your budget, and every chart you see. Ultimate Budget Planner also lets you automate the repetitive parts so you don't have to log the same thing every single period.",
     guide_transactions_step1:'Tap <strong>Add Transaction</strong>, pick a type and category, and fill in the amount.',
@@ -858,7 +858,7 @@ const TRANSLATIONS = {
     guide_transactions_connect1:"Recurring rules set up here are what powers the <strong>Automation</strong> feature - once a rule exists, it keeps posting on schedule without you lifting a finger.",
     guide_transactions_connect2:'Every transaction counts toward its matching category in Budget, Debt Payoff, or Subscriptions automatically.',
     guide_transactions_connect3:"Your Dashboard totals and charts are built entirely from what's logged here.",
-    guide_transactions_tip:"Set up recurring rules for your regular bills and paycheck first - it's the single biggest time-saver in the whole app.",
+    guide_transactions_tip:"Set up recurring rules for your regular bills and paycheck first - it's the single biggest time-saver in the whole app.",guide_transactions_usecase_h:'See it in action',guide_transactions_usecase_p:"<p><strong>Jack</strong> gets his Netflix renewal charged to his card. He opens Transactions, taps <strong>+ Add Transaction</strong>, picks Expense → Entertainment, types the amount, and it's logged in seconds.</p><p>Later, doing a spring clean, he notices a batch of duplicate test entries from when he was trying out the app. He selects them with the checkboxes and taps <strong>Delete Selected</strong>, clearing them all in one go instead of deleting them one by one.</p>",
     guide_budget_title:'Budget',
     guide_budget_big:'Budget is where you set your targets - how much you expect to earn and spend across Income, Expenses, Bills, and Savings - all from one screen instead of jumping between separate tabs.',
     guide_budget_step1:'Add a category under <strong>Income</strong>, <strong>Expenses</strong>, <strong>Bills</strong>, or <strong>Savings</strong> and set its <strong>Expected</strong> amount.',
@@ -868,7 +868,7 @@ const TRANSLATIONS = {
     guide_budget_connect1:'Every transaction you log in Transactions flows straight into the matching category here.',
     guide_budget_connect2:'Your Spending Breakdown chart and Net Leftover on the Dashboard are both built from these categories.',
     guide_budget_connect3:"If you've turned on <strong>Allocation Buckets</strong> in Settings, this page is also where you'll see how your spending lines up against those percentage targets.",
-    guide_budget_tip:"Review your Expected amounts once a month - budgets that never change stop reflecting reality pretty quickly.",
+    guide_budget_tip:"Review your Expected amounts once a month - budgets that never change stop reflecting reality pretty quickly.",guide_budget_usecase_h:'See it in action',guide_budget_usecase_p:"<p>At the start of the month, <strong>Priya</strong> sets her expected amount for Groceries to $500 in the Budget tab. As she logs transactions through the month, the Actual column fills in automatically.</p><p>The progress bar turns from green to orange as she gets close to her limit - telling her to ease off before she goes over, instead of finding out after the fact.</p>",
     guide_debt_title:'Debt Payoff',
     guide_debt_big:"This is more than a place to log what you owe - it builds you an actual plan to become debt-free, showing you exactly which debt to focus on first and how much interest you'll save doing it.",
     guide_debt_step1:'Add each debt with its <strong>Balance</strong>, <strong>APR</strong> (interest rate), and <strong>Minimum Payment</strong>.',
@@ -882,7 +882,7 @@ const TRANSLATIONS = {
     guide_debt_connect1:"Debt payments you log in Transactions count toward each debt's balance here.",
     guide_debt_connect2:'Your Dashboard shows a snapshot of this payoff plan so you always know where you stand without opening this page.',
     guide_debt_connect3:'Paying more than the minimum here - even a little - is usually the single biggest lever you have to shorten your payoff timeline.',
-    guide_debt_tip:'Try switching between Snowball and Avalanche to compare - Snowball feels more motivating early on, but Avalanche usually saves more money overall.',
+    guide_debt_tip:'Try switching between Snowball and Avalanche to compare - Snowball feels more motivating early on, but Avalanche usually saves more money overall.',guide_debt_usecase_h:'See it in action',guide_debt_usecase_p:'<p><strong>Sam</strong> has three debts: a credit card, a car loan, and a small personal loan. He enters all three, picks Avalanche so the highest-interest card gets paid off first, and sees his real payoff date and total interest right away.</p><p>When he gets a work bonus, he types it into that one card\'s <strong>Extra/mo</strong> field instead of the shared extra-payment pool, so the bonus goes exactly where he wants it - then opens the ℹ️ schedule to see month-by-month exactly how much faster he\'ll be debt-free.</p>',
     guide_sinking_title:'Sinking Funds',
     guide_sinking_big:"A sinking fund is money you set aside a little at a time for something specific you know is coming - a vacation, a new laptop, holiday gifts - so it never has to be an emergency when the bill actually arrives.",
     guide_sinking_step1:'Create a fund and give it a <strong>Target Amount</strong> and, if you like, a target date.',
@@ -891,7 +891,7 @@ const TRANSLATIONS = {
     guide_sinking_connect1:"Sinking funds are separate from your regular Savings category - they're for specific, planned goals rather than general saving.",
     guide_sinking_connect2:"Your Dashboard shows a snapshot of all your funds' progress in one place.",
     guide_sinking_connect3:'Contributing to a fund regularly, even a small amount, is what turns a big expense into something that never derails your budget.',
-    guide_sinking_tip:"Break big goals into round monthly numbers - it's much easier to commit to $50 a month than to 'save up for a vacation eventually.'",
+    guide_sinking_tip:"Break big goals into round monthly numbers - it's much easier to commit to $50 a month than to 'save up for a vacation eventually.'",guide_sinking_usecase_h:'See it in action',guide_sinking_usecase_p:'<p><strong>Elena</strong> is planning a $1,200 vacation for next July. She creates a Sinking Fund with that target amount and date, and Evo Budget tells her she needs to save $150/month to get there.</p><p>She turns on <strong>Automate</strong> so that amount is logged as a contribution every month without her needing to remember.</p>',
     guide_subscriptions_title:'Subscriptions',
     guide_subscriptions_big:'Subscriptions have a way of quietly piling up - this page lists every recurring service you pay for in one place, so nothing keeps charging you without your knowledge.',
     guide_subscriptions_step1:'Add each subscription along with its cost and how often it bills (monthly, yearly, etc.).',
@@ -900,7 +900,7 @@ const TRANSLATIONS = {
     guide_subscriptions_connect1:'Your total subscription cost feeds directly into your Dashboard summary and your Total Outgoing.',
     guide_subscriptions_connect2:'Subscription due dates also show up on your Calendar, so you can see them alongside bills and debt payments.',
     guide_subscriptions_connect3:"Reviewing this list every few months is one of the easiest ways to find money you didn't know you were losing.",
-    guide_subscriptions_tip:"Do a subscription review right after your bank statement comes in each month - it's the easiest time to spot something you forgot you were paying for.",
+    guide_subscriptions_tip:"Do a subscription review right after your bank statement comes in each month - it's the easiest time to spot something you forgot you were paying for.",guide_subscriptions_usecase_h:'See it in action',guide_subscriptions_usecase_p:"<p><strong>Jack</strong> adds Netflix as a subscription - $15.49, Monthly - and turns on <strong>Automate</strong> so it's logged as a transaction every billing cycle without him lifting a finger.</p><p>Six months later, Netflix raises its price to $17.99. The next time Jack edits the subscription to update it, Evo Budget quietly notes the price increase and shows a small ↑ next to the amount, so he can see at a glance which subscriptions have crept up in price.</p>",
     guide_calendar_title:'Calendar',
     guide_calendar_big:'The Calendar pulls every bill, debt payment, subscription charge, and transaction into one month view, so you can see everything happening with your money at a glance instead of checking five different pages.',
     guide_calendar_step1:'Browse to any month to see color-coded dots marking bills, debt payments, and subscriptions due that day.',
@@ -909,7 +909,7 @@ const TRANSLATIONS = {
     guide_calendar_connect1:"Everything shown here comes from Bills, Debt Payoff, Subscriptions, and Transactions - the Calendar doesn't hold any of its own data.",
     guide_calendar_connect2:"It's the fastest way to spot a week where several due dates land close together, before it catches you off guard.",
     guide_calendar_connect3:"Nothing you do on the Calendar changes your budget - it's purely a view, so it's completely safe to browse.",
-    guide_calendar_tip:'Check the Calendar at the start of each week - it takes seconds and means due dates are never a surprise.',
+    guide_calendar_tip:'Check the Calendar at the start of each week - it takes seconds and means due dates are never a surprise.',guide_calendar_usecase_h:'See it in action',guide_calendar_usecase_p:"<p>Before heading out for the weekend, <strong>Amir</strong> checks the Calendar to see what's due this week. He spots his electric bill is due Monday and still unpaid.</p><p>He pays it online, then checks the box right there on the calendar and types in the $87.40 he actually paid - logged without him needing to switch tabs.</p>",
     guide_rollover_title:'Rollover',
     guide_rollover_big:"Rollover means unspent money from last period doesn't just disappear - it automatically carries forward and adds to what you have available this period.",
     guide_rollover_step1:'Open <strong>Settings</strong> and find the <strong>Rollover</strong> card.',
@@ -918,7 +918,7 @@ const TRANSLATIONS = {
     guide_rollover_connect1:"Rollover works directly off your Net Leftover from the previous period - the better you stick to your budget, the more it has to carry forward.",
     guide_rollover_connect2:'This is different from Sinking Funds, which are for planned future goals - Rollover is just about not losing track of money you already have.',
     guide_rollover_connect3:"A string of good months compounds nicely here, since each period's leftover adds to the next.",
-    guide_rollover_tip:"If a big rollover amount is burning a hole in your pocket, consider moving some of it into a Sinking Fund so it's earmarked for something specific.",
+    guide_rollover_tip:"If a big rollover amount is burning a hole in your pocket, consider moving some of it into a Sinking Fund so it's earmarked for something specific.",guide_rollover_usecase_h:'See it in action',guide_rollover_usecase_p:"<p>At the end of June, <strong>Noor</strong> has $180 left over after covering everything. Because <strong>Auto-carry</strong> is turned on, the moment she moves her budget period into July, that $180 automatically shows up as her rollover amount - added straight to her Net Leftover, instead of her having to calculate and re-type it herself.</p>",
     guide_automation_title:'Automation',
     guide_automation_big:'Automation takes the recurring rules you set up in Transactions and posts them for you automatically, so your regular bills, paychecks, and subscriptions show up right on schedule without you lifting a finger.',
     guide_automation_step1:'Open <strong>Settings</strong> and find the <strong>Automation</strong> card.',
@@ -927,7 +927,7 @@ const TRANSLATIONS = {
     guide_automation_connect1:"This feature only works with recurring rules you've already created in Transactions - set those up first.",
     guide_automation_connect2:'Every transaction it posts flows into Budget, Debt Payoff, and Subscriptions exactly like one you entered by hand.',
     guide_automation_connect3:"It's the difference between a budgeting app you have to remember to update, and one that keeps itself current.",
-    guide_automation_tip:'Turn on Automation once your recurring rules feel accurate - it is most useful once you trust the numbers it will post.',
+    guide_automation_tip:'Turn on Automation once your recurring rules feel accurate - it is most useful once you trust the numbers it will post.',guide_automation_usecase_h:'See it in action',guide_automation_usecase_p:"<p><strong>Tom</strong> has three things that repeat every month: rent, his car loan payment, and a Netflix subscription. Instead of typing all three in by hand each period, he turns on <strong>Automate</strong> for each one.</p><p>Every time he opens the app in a new period, Evo Budget has already logged them as transactions on schedule, and Tom only needs to review what's new instead of re-entering what's routine.</p>",
     guide_penny_title:'Penny',
     guide_penny_big:'Penny is your own AI budget assistant, built right into the app - ask her a question about your money in plain English, and she reads your real budget data to give you a real answer, complete with charts when it helps.',
     guide_penny_step1:"Open <strong>Settings</strong>, turn on Penny, and paste in your own Gemini API key (there's a link right there showing exactly how to get one for free).",
@@ -937,19 +937,19 @@ const TRANSLATIONS = {
     guide_penny_connect1:'Penny can only see your budget data to answer questions - she can never add, edit, or delete anything for you.',
     guide_penny_connect2:"She pulls straight from Dashboard, Transactions, Debt Payoff, Subscriptions, and Sinking Funds, so her answers always match what you'd see on those pages yourself.",
     guide_penny_connect3:"Your API key is encrypted and stored only on your own device - it's never sent anywhere except directly to Google when you ask Penny a question.",
-    guide_penny_tip:"Start with one of the quick-question buttons the first time - it's the fastest way to see what she can do before asking your own questions.",
+    guide_penny_tip:"Start with one of the quick-question buttons the first time - it's the fastest way to see what she can do before asking your own questions.",guide_penny_usecase_h:'See it in action',guide_penny_usecase_p:'<p>Whenever <strong>Diane</strong> isn\'t sure where her money went this month, she opens Penny and asks "why is my spending higher than usual this month?"</p><p>Penny looks at her actual transactions and gives her a plain-language answer - pointing out, say, that Dining spending doubled - instead of her having to dig through the Transactions list herself.</p>',
     guide_settings_title:'Settings',
     guide_settings_big:'Settings is where the app adapts to you - currency, budgeting period, rollover, automation, appearance, language, and how your data is stored and backed up.',
     guide_settings_step1:'Pick your <strong>Currency</strong> and <strong>Budget Period</strong> so the app matches how you actually get paid and spend.',
     guide_settings_step2:'Turn on <strong>Rollover</strong> and <strong>Automation</strong> if you want unspent money and recurring transactions to be handled for you automatically.',
-    guide_settings_step3:'Switch <strong>Appearance</strong> between light and dark, and choose your <strong>Language</strong> from the list.',
+    guide_settings_step3:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage Ledger, or Terminal), and choose your <strong>Language</strong> from the list.',
     guide_settings_step4:'Set up <strong>Allocation Buckets</strong> if you want to budget by percentage (like 50% needs, 30% wants, 20% savings) instead of fixed category amounts.',
     guide_settings_step5:'Choose how your data is stored under <strong>Data & Sync</strong> - locally on this device, or synced with Google Drive so it follows you across devices.',
     guide_settings_step6:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
     guide_settings_connect1:'Your Currency, Budget Period, Rollover, and Automation choices here shape how every other page in the app calculates and displays numbers.',
     guide_settings_connect2:'Turning on Google sync here is what lets your data follow you if you open the app on a different device.',
     guide_settings_connect3:"Exporting your data here is the safest habit to build before making any big change you're not sure about.",
-    guide_settings_tip:'Set up Currency, Budget Period, and Data & Sync first, before anything else - they are the foundation everything else in the app is built on.',
+    guide_settings_tip:'Set up Currency, Budget Period, and Data & Sync first, before anything else - they are the foundation everything else in the app is built on.',guide_settings_usecase_h:'See it in action',guide_settings_usecase_p:'<p>When <strong>Ben</strong> switches to freelance work, his income no longer lines up with the calendar month. He opens Settings and changes his Budget Period to a custom date range that matches his actual pay cycle.</p><p>He picks USD as his currency, and turns off the Automation master switch temporarily while he re-plans his budget from scratch.</p>',
     upg_chip_tx:'{0} / {0} free transactions used',
     upg_chip_recurring:'{0} / {0} free automatic transactions used',
     upg_chip_subs:'{0} / {0} free subscription used',
@@ -1001,7 +1001,7 @@ const TRANSLATIONS = {
     this_month:'Diesen Monat',this_week:'Diese Woche',last_week:'Letzte Woche',last_month:'Letzter Monat',last_30_days:'Letzte 30 Tage',this_quarter:'Dieses Quartal',this_year:'Dieses Jahr',
     currency:'Währung',rollover:'Übertrag',appearance:'Erscheinungsbild',
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
-    light:'Hell',dark:'Dunkel',
+    light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage-Kontobuch',theme_terminal:'Terminal',
     changes_autosaved:'✅ Änderungen werden automatisch gespeichert.',
     rollover_desc:'Überträgt nicht ausgegebenes Geld aus der vorherigen Periode.',rollover_autocarry_label:'Automatisch aus der vorherigen Periode übertragen',rollover_autocarry_hint:'Wenn du den Budgetzeitraum änderst, wird dieser Betrag automatisch aus dem tatsächlichen Restbetrag der letzten Periode neu berechnet. Deaktiviere dies, um ihn manuell festzulegen.',toast_rollover_autoset:'Übertrag automatisch auf {0} aus der letzten Periode gesetzt',
     rollover_amount:'Übertragsbetrag',
@@ -1016,10 +1016,10 @@ const TRANSLATIONS = {
     upgrade_now:'Jetzt upgraden →',
     mon:'Mo',tue:'Di',wed:'Mi',thu:'Do',fri:'Fr',sat:'Sa',sun:'So',
     quick_presets:'Schnellauswahl:',select_currency:'Währung auswählen',select_language:'Sprache auswählen',
-    appearance_desc:'Zwischen hellem und dunklem Modus wechseln.',video_tutorial:'▶ Video-Tutorial',
+    appearance_desc:'Wähle ein Farbthema.',video_tutorial:'▶ Video-Tutorial',
     help_sett_intro:'Alle deine Einstellungen für den Ultimate Budget Planner. Änderungen werden automatisch gespeichert, sobald du sie vornimmst.',
     help_sett_currency_p:'Ändert das Währungssymbol sofort bei Auswahl überall in der App.',
-    help_sett_appearance_p:'Zwischen Hell- und Dunkelmodus wechseln. Deine Einstellung wird sitzungsübergreifend gespeichert.',
+    help_sett_appearance_p:'Wähle aus fünf Farbthemen - Hell, Dunkel, Synthwave, Vintage-Kontobuch oder Terminal. Deine Einstellung wird sitzungsübergreifend gespeichert.',
     help_sett_nav_h:'Navigation',
     help_sett_nav_top:'Obere Navigation - Klassische horizontale Tab-Leiste oben (Standard).',
     help_sett_nav_side:'Seitennavigation - Eine schwebende Icon-Leiste links neben deinem Inhalt. Klicke auf den Pfeil, um sie zu erweitern und vollständige Beschriftungen zu sehen.',
@@ -1462,7 +1462,7 @@ const TRANSLATIONS = {
     guide_settings_big:'In den Einstellungen passt sich die App an dich an - Währung, Budgetzeitraum, Übertrag, Automatisierung, Erscheinungsbild, Sprache und wie deine Daten gespeichert und gesichert werden.',
     guide_settings_step1:'Wähle deine <strong>Währung</strong> und deinen <strong>Budgetzeitraum</strong>, damit die App zu deinem tatsächlichen Zahlungs- und Ausgabenrhythmus passt.',
     guide_settings_step2:'Schalte <strong>Übertrag</strong> und <strong>Automatisierung</strong> ein, wenn nicht ausgegebenes Geld und wiederkehrende Transaktionen automatisch für dich erledigt werden sollen.',
-    guide_settings_step3:'Wechsle das <strong>Erscheinungsbild</strong> zwischen Hell und Dunkel und wähle deine <strong>Sprache</strong> aus der Liste.',
+    guide_settings_step3:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage-Kontobuch oder Terminal) und deine <strong>Sprache</strong> aus der Liste.',
     guide_settings_step4:'Richte <strong>Budget-Buckets</strong> ein, wenn du lieber prozentual budgetieren möchtest (etwa 50 % Bedürfnisse, 30 % Wünsche, 20 % Sparen) statt mit festen Kategoriebeträgen.',
     guide_settings_step5:'Wähle unter <strong>Daten & Sync</strong>, wie deine Daten gespeichert werden - lokal auf diesem Gerät oder mit Google Drive synchronisiert, sodass sie dir auf andere Geräte folgen.',
     guide_settings_step6:'Nutze <strong>Daten exportieren</strong>, um alles zu sichern, oder <strong>Daten zurücksetzen</strong>, wenn du jemals ganz neu anfangen möchtest.',
@@ -1521,7 +1521,7 @@ const TRANSLATIONS = {
     this_month:'Ce mois',this_week:'Cette semaine',last_week:'Semaine pr\u00e9c.',last_month:'Mois pr\u00e9c.',last_30_days:'30 derniers jours',this_quarter:'Ce trimestre',this_year:'Cette ann\u00e9e',
     currency:'Devise',rollover:'Report',appearance:'Apparence',
     language:'Langue',reset_data:'Réinitialiser les données',
-    light:'Clair',dark:'Sombre',
+    light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Registre vintage',theme_terminal:'Terminal',
     changes_autosaved:'✅ Les modifications sont enregistrées automatiquement.',
     rollover_desc:"Reporte l'argent non dépensé de la période précédente.",rollover_autocarry_label:'Report automatique depuis la période précédente',rollover_autocarry_hint:"Quand vous changez la période budgétaire, ce montant est recalculé automatiquement à partir de ce qu'il restait réellement la dernière fois. Décochez pour le définir manuellement.",toast_rollover_autoset:'Report automatiquement défini sur {0} depuis la dernière période',
     rollover_amount:'Montant du report',
@@ -1536,10 +1536,10 @@ const TRANSLATIONS = {
     upgrade_now:'Mettre à niveau →',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim',
     quick_presets:'Raccourcis :',select_currency:'Sélectionnez votre devise',select_language:'Sélectionner la langue',
-    appearance_desc:'Basculer entre le mode clair et sombre.',video_tutorial:'▶ Tutoriel vidéo',
+    appearance_desc:'Choisissez un thème de couleur.',video_tutorial:'▶ Tutoriel vidéo',
     help_sett_intro:'Toutes vos préférences pour Ultimate Budget Planner. Les modifications sont enregistrées automatiquement à mesure que vous les effectuez.',
     help_sett_currency_p:"Change le symbole de devise partout dans l'application dès la sélection.",
-    help_sett_appearance_p:'Basculer entre le mode clair et sombre. Votre préférence est mémorisée entre les sessions.',
+    help_sett_appearance_p:'Choisissez parmi cinq thèmes de couleur - Clair, Sombre, Synthwave, Registre vintage ou Terminal. Votre préférence est mémorisée entre les sessions.',
     help_sett_nav_h:'Navigation',
     help_sett_nav_top:"Navigation supérieure - Barre d'onglets horizontale classique en haut (par défaut).",
     help_sett_nav_side:"Navigation latérale - Une barre d'icônes flottante à gauche de votre contenu. Cliquez sur la flèche pour développer et voir les libellés complets.",
@@ -1982,7 +1982,7 @@ const TRANSLATIONS = {
     guide_settings_big:"Les Paramètres, c'est là où l'application s'adapte à vous - devise, période budgétaire, report, automatisation, apparence, langue, et la façon dont vos données sont stockées et sauvegardées.",
     guide_settings_step1:"Choisissez votre <strong>Devise</strong> et votre <strong>Période budgétaire</strong> pour que l'application corresponde à votre rythme réel de paiement et de dépenses.",
     guide_settings_step2:"Activez <strong>Report</strong> et <strong>Automatisation</strong> si vous voulez que l'argent non dépensé et les transactions récurrentes soient gérés automatiquement pour vous.",
-    guide_settings_step3:"Basculez l'<strong>Apparence</strong> entre clair et sombre, et choisissez votre <strong>Langue</strong> dans la liste.",
+    guide_settings_step3:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Registre vintage ou Terminal), et votre <strong>Langue</strong> dans la liste.",
     guide_settings_step4:"Configurez les <strong>Enveloppes budgétaires</strong> si vous préférez budgétiser par pourcentage (comme 50 % besoins, 30 % envies, 20 % épargne) plutôt qu'avec des montants de catégorie fixes.",
     guide_settings_step5:"Choisissez comment vos données sont stockées sous <strong>Données et synchronisation</strong> - localement sur cet appareil, ou synchronisées avec Google Drive pour qu'elles vous suivent sur d'autres appareils.",
     guide_settings_step6:"Utilisez <strong>Exporter les données</strong> pour tout sauvegarder, ou <strong>Réinitialiser les données</strong> si vous voulez repartir complètement à zéro.",
@@ -2041,7 +2041,7 @@ const TRANSLATIONS = {
     this_month:'Este mes',this_week:'Esta semana',last_week:'Sem. pasada',last_month:'Mes pasado',last_30_days:'\u00daltimos 30 d\u00edas',this_quarter:'Este trimestre',this_year:'Este a\u00f1o',
     currency:'Moneda',rollover:'Saldo anterior',appearance:'Apariencia',
     language:'Idioma',reset_data:'Restablecer datos',
-    light:'Claro',dark:'Oscuro',
+    light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Libro contable vintage',theme_terminal:'Terminal',
     changes_autosaved:'✅ Los cambios se guardan automáticamente.',
     rollover_desc:'Traspasa el dinero no gastado del período anterior.',rollover_autocarry_label:'Trasladar automáticamente del período anterior',rollover_autocarry_hint:'Cuando cambias el período de presupuesto, este importe se recalcula automáticamente según lo que realmente sobró la última vez. Desmarca para configurarlo manualmente.',toast_rollover_autoset:'Remanente ajustado automáticamente a {0} del período anterior',
     rollover_amount:'Importe de saldo anterior',
@@ -2056,10 +2056,10 @@ const TRANSLATIONS = {
     upgrade_now:'Actualizar ahora →',
     mon:'Lun',tue:'Mar',wed:'Mié',thu:'Jue',fri:'Vie',sat:'Sáb',sun:'Dom',
     quick_presets:'Accesos rápidos:',select_currency:'Selecciona tu moneda',select_language:'Seleccionar idioma',
-    appearance_desc:'Cambiar entre modo claro y oscuro.',video_tutorial:'▶ Tutorial en vídeo',
+    appearance_desc:'Elige un tema de color.',video_tutorial:'▶ Tutorial en vídeo',
     help_sett_intro:'Todas tus preferencias para Ultimate Budget Planner. Los cambios se guardan automáticamente a medida que los realizas.',
     help_sett_currency_p:'Cambia el símbolo de moneda en toda la aplicación inmediatamente al seleccionarlo.',
-    help_sett_appearance_p:'Cambiar entre modo claro y oscuro. Tu preferencia se recuerda entre sesiones.',
+    help_sett_appearance_p:'Elige entre cinco temas de color - Claro, Oscuro, Synthwave, Libro contable vintage o Terminal. Tu preferencia se recuerda entre sesiones.',
     help_sett_nav_h:'Navegación',
     help_sett_nav_top:'Navegación superior - Barra de pestañas horizontal clásica en la parte superior (predeterminado).',
     help_sett_nav_side:'Navegación lateral - Una barra de iconos flotante a la izquierda de tu contenido. Haz clic en la flecha para expandirla y ver las etiquetas completas.',
@@ -2502,7 +2502,7 @@ const TRANSLATIONS = {
     guide_settings_big:'Ajustes es donde la app se adapta a ti - moneda, período de presupuesto, saldo anterior, automatización, apariencia, idioma y cómo se guardan y respaldan tus datos.',
     guide_settings_step1:'Elige tu <strong>Moneda</strong> y tu <strong>Período de presupuesto</strong> para que la app coincida con tu ritmo real de pago y gasto.',
     guide_settings_step2:'Activa <strong>Saldo anterior</strong> y <strong>Automatización</strong> si quieres que el dinero no gastado y las transacciones recurrentes se manejen automáticamente por ti.',
-    guide_settings_step3:'Cambia la <strong>Apariencia</strong> entre clara y oscura, y elige tu <strong>Idioma</strong> de la lista.',
+    guide_settings_step3:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Libro contable vintage o Terminal), y tu <strong>Idioma</strong> de la lista.',
     guide_settings_step4:'Configura la <strong>Distribución por porcentajes</strong> si prefieres presupuestar por porcentaje (como 50% necesidades, 30% deseos, 20% ahorro) en lugar de importes fijos por categoría.',
     guide_settings_step5:'Elige cómo se guardan tus datos en <strong>Datos y sincronización</strong> - localmente en este dispositivo, o sincronizados con Google Drive para que te sigan a otros dispositivos.',
     guide_settings_step6:'Usa <strong>Exportar datos</strong> para respaldar todo, o <strong>Restablecer datos</strong> si alguna vez quieres empezar completamente de cero.',
@@ -2561,7 +2561,7 @@ const TRANSLATIONS = {
     this_month:'Questo mese',this_week:'Questa settimana',last_week:'Sett. scorsa',last_month:'Mese scorso',last_30_days:'Ultimi 30 giorni',this_quarter:'Questo trimestre',this_year:'Quest\u2019anno',
     currency:'Valuta',rollover:'Riporto',appearance:'Aspetto',
     language:'Lingua',reset_data:'Reimposta dati',
-    light:'Chiaro',dark:'Scuro',
+    light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Registro vintage',theme_terminal:'Terminal',
     changes_autosaved:'✅ Le modifiche vengono salvate automaticamente.',
     rollover_desc:'Riporta il denaro non speso dal periodo precedente.',rollover_autocarry_label:'Riporto automatico dal periodo precedente',rollover_autocarry_hint:"Quando cambi il periodo di budget, questo importo viene ricalcolato automaticamente in base a quanto è effettivamente avanzato l'ultima volta. Deseleziona per impostarlo manualmente.",toast_rollover_autoset:"Riporto impostato automaticamente su {0} dall'ultimo periodo",
     rollover_amount:'Importo riporto',
@@ -2576,10 +2576,10 @@ const TRANSLATIONS = {
     upgrade_now:'Aggiorna ora →',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Gio',fri:'Ven',sat:'Sab',sun:'Dom',
     quick_presets:'Selezione rapida:',select_currency:'Seleziona la tua valuta',select_language:'Seleziona lingua',
-    appearance_desc:'Passa dalla modalità chiara a quella scura.',video_tutorial:'▶ Video Tutorial',
+    appearance_desc:'Scegli un tema di colore.',video_tutorial:'▶ Video Tutorial',
     help_sett_intro:'Tutte le tue preferenze per Ultimate Budget Planner. Le modifiche vengono salvate automaticamente man mano che le apporti.',
     help_sett_currency_p:"Modifica il simbolo di valuta ovunque nell'app immediatamente alla selezione.",
-    help_sett_appearance_p:'Passa dalla modalità chiara a quella scura. Le tue preferenze vengono ricordate tra le sessioni.',
+    help_sett_appearance_p:'Scegli tra cinque temi di colore - Chiaro, Scuro, Synthwave, Registro vintage o Terminal. Le tue preferenze vengono ricordate tra le sessioni.',
     help_sett_nav_h:'Navigazione',
     help_sett_nav_top:'Navigazione superiore - Barra a schede orizzontale classica in alto (predefinita).',
     help_sett_nav_side:'Navigazione laterale - Una barra di icone fluttuante a sinistra del tuo contenuto. Fai clic sulla freccia per espanderla e vedere le etichette complete.',
@@ -3023,7 +3023,7 @@ const TRANSLATIONS = {
     guide_settings_big:"Le Impostazioni sono dove l'app si adatta a te - valuta, periodo di budget, riporto, automazione, aspetto, lingua e come vengono salvati e sottoposti a backup i tuoi dati.",
     guide_settings_step1:"Scegli la tua <strong>Valuta</strong> e il tuo <strong>Periodo di budget</strong> così l'app corrisponde al tuo reale ritmo di pagamento e spesa.",
     guide_settings_step2:"Attiva <strong>Riporto</strong> e <strong>Automazione</strong> se vuoi che il denaro non speso e le transazioni ricorrenti vengano gestiti automaticamente per te.",
-    guide_settings_step3:"Passa dall'<strong>Aspetto</strong> chiaro a scuro, e scegli la tua <strong>Lingua</strong> dall'elenco.",
+    guide_settings_step3:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Registro vintage o Terminal), e la tua <strong>Lingua</strong> dall'elenco.",
     guide_settings_step4:"Configura le <strong>Distribuzioni percentuali</strong> se preferisci fare budget per percentuale (come 50% bisogni, 30% desideri, 20% risparmio) invece di importi fissi per categoria.",
     guide_settings_step5:"Scegli come vengono salvati i tuoi dati in <strong>Dati e sincronizzazione</strong> - localmente su questo dispositivo, o sincronizzati con Google Drive così ti seguono su altri dispositivi.",
     guide_settings_step6:"Usa <strong>Esporta dati</strong> per fare un backup di tutto, o <strong>Ripristina dati</strong> se vuoi mai ricominciare completamente da zero.",
@@ -3082,7 +3082,7 @@ const TRANSLATIONS = {
     this_month:'Ten miesiąc',this_week:'Ten tydzień',last_week:'Poprz. tydzień',last_month:'Poprz. miesiąc',last_30_days:'Ostatnie 30 dni',this_quarter:'Ten kwartał',this_year:'Ten rok',
     currency:'Waluta',rollover:'Przeniesienie',appearance:'Wygląd',
     language:'Język',reset_data:'Zresetuj dane',
-    light:'Jasny',dark:'Ciemny',
+    light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Retro księga',theme_terminal:'Terminal',
     changes_autosaved:'✅ Zmiany są zapisywane automatycznie.',
     rollover_desc:'Przenieś niewydane środki z poprzedniego okresu.',rollover_autocarry_label:'Automatyczne przenoszenie z poprzedniego okresu',rollover_autocarry_hint:'Gdy zmienisz okres budżetowy, ta kwota zostanie automatycznie przeliczona na podstawie tego, co faktycznie zostało ostatnim razem. Odznacz, aby ustawić ją ręcznie.',toast_rollover_autoset:'Przeniesienie automatycznie ustawione na {0} z poprzedniego okresu',
     rollover_amount:'Kwota przeniesienia',
@@ -3097,10 +3097,10 @@ const TRANSLATIONS = {
     upgrade_now:'Ulepsz teraz →',
     mon:'Pon',tue:'Wt',wed:'Śr',thu:'Czw',fri:'Pt',sat:'Sob',sun:'Nd',
     quick_presets:'Szybki wybór:',select_currency:'Wybierz walutę',select_language:'Wybierz język',
-    appearance_desc:'Przełącz między trybem jasnym a ciemnym.',video_tutorial:'▶ Samouczek wideo',
+    appearance_desc:'Wybierz motyw kolorystyczny.',video_tutorial:'▶ Samouczek wideo',
     help_sett_intro:'Wszystkie Twoje preferencje dla Ultimate Budget Planner. Zmiany są zapisywane automatycznie w trakcie ich wprowadzania.',
     help_sett_currency_p:'Zmienia symbol waluty wszędzie w aplikacji natychmiast po wybraniu.',
-    help_sett_appearance_p:'Przełącz między trybem jasnym a ciemnym. Twoje ustawienie jest zapamiętywane między sesjami.',
+    help_sett_appearance_p:'Wybierz spośród pięciu motywów kolorystycznych - Jasny, Ciemny, Synthwave, Retro księga lub Terminal. Twoje ustawienie jest zapamiętywane między sesjami.',
     help_sett_nav_h:'Nawigacja',
     help_sett_nav_top:'Górna nawigacja - Klasyczny poziomy pasek kart na górze (domyślny).',
     help_sett_nav_side:'Boczna nawigacja - Pływający pasek ikon po lewej stronie treści. Kliknij strzałkę, aby rozwinąć i zobaczyć pełne etykiety.',
@@ -3543,7 +3543,7 @@ const TRANSLATIONS = {
     guide_settings_big:'Ustawienia to miejsce, w którym aplikacja dostosowuje się do ciebie - waluta, okres budżetowy, przeniesienie, automatyzacja, wygląd, język oraz sposób zapisywania i tworzenia kopii zapasowych twoich danych.',
     guide_settings_step1:'Wybierz swoją <strong>Walutę</strong> i <strong>Okres budżetowy</strong>, aby aplikacja pasowała do twojego rzeczywistego rytmu płatności i wydatków.',
     guide_settings_step2:'Włącz <strong>Przeniesienie</strong> i <strong>Automatyzację</strong>, jeśli chcesz, aby niewydane pieniądze i cykliczne transakcje były obsługiwane automatycznie za ciebie.',
-    guide_settings_step3:'Przełącz <strong>Wygląd</strong> między jasnym a ciemnym i wybierz swój <strong>Język</strong> z listy.',
+    guide_settings_step3:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Retro księga lub Terminal) i swój <strong>Język</strong> z listy.',
     guide_settings_step4:'Skonfiguruj <strong>Podział procentowy budżetu</strong>, jeśli wolisz budżetować procentowo (na przykład 50% potrzeby, 30% zachcianki, 20% oszczędności) zamiast stałych kwot dla kategorii.',
     guide_settings_step5:'Wybierz, jak przechowywane są twoje dane w <strong>Danych i synchronizacji</strong> - lokalnie na tym urządzeniu lub zsynchronizowane z Google Drive, aby podążały za tobą na inne urządzenia.',
     guide_settings_step6:'Użyj <strong>Eksportuj dane</strong>, aby zrobić kopię zapasową wszystkiego, lub <strong>Zresetuj dane</strong>, jeśli kiedykolwiek zechcesz zacząć zupełnie od nowa.',
@@ -5272,14 +5272,26 @@ function renderSettings(){
         <div class="settings-card-title">🌙 ${t('appearance')}</div>
         <p class="settings-desc">${t('appearance_desc')}</p>
         <div class="theme-setting-row">
-          <div class="theme-pill" role="group" aria-label="Colour theme">
-            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='light'?' is-active':''}" data-theme-val="light" type="button" title="Light mode">
+          <div class="theme-pill" role="group" aria-label="${t('appearance')}">
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='light'?' is-active':''}" data-theme-val="light" type="button" title="${t('light')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               ${t('light')}
             </button>
-            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='dark'?' is-active':''}" data-theme-val="dark" type="button" title="Dark mode">
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='dark'?' is-active':''}" data-theme-val="dark" type="button" title="${t('dark')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               ${t('dark')}
+            </button>
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='synthwave'?' is-active':''}" data-theme-val="synthwave" type="button" title="${t('theme_synthwave')}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 0 1 16 0"/><line x1="4" y1="16" x2="20" y2="16"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
+              ${t('theme_synthwave')}
+            </button>
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='vintage-ledger'?' is-active':''}" data-theme-val="vintage-ledger" type="button" title="${t('theme_vintage_ledger')}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5z"/><path d="M20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/></svg>
+              ${t('theme_vintage_ledger')}
+            </button>
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='terminal'?' is-active':''}" data-theme-val="terminal" type="button" title="${t('theme_terminal')}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3"/><line x1="12" y1="15" x2="16" y2="15"/></svg>
+              ${t('theme_terminal')}
             </button>
           </div>
         </div>
@@ -5859,6 +5871,11 @@ function renderGuideTopic(id) {
        </div>` : '';
   const tipHtml = topic.tip
     ? `<div class="guide-section"><div class="guide-tip"><span class="guide-tip-icon">💡</span><span>${t('guide_' + id + '_tip')}</span></div></div>` : '';
+  const useCaseHtml = topic.steps > 0
+    ? `<div class="guide-section"><details class="recurring-panel panel guide-usecase">
+        <summary class="recurring-summary"><span class="recurring-summary-title"><span class="recurring-summary-icon" aria-hidden="true">👤</span>${esc(t('guide_' + id + '_usecase_h'))}</span></summary>
+        <div class="recurring-body">${t('guide_' + id + '_usecase_p')}</div>
+      </details></div>` : '';
   content.innerHTML = `
     <button class="guide-back-btn" type="button">← ${esc(t('guide_back'))}</button>
     <div class="guide-topic-header">
@@ -5866,7 +5883,7 @@ function renderGuideTopic(id) {
       <h3 class="guide-topic-title">${esc(t('guide_' + id + '_title'))}</h3>
     </div>
     <div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_big'))}</div><p class="guide-big-picture">${t('guide_' + id + '_big')}</p></div>
-    ${stepsHtml}${connectsHtml}${tipHtml}`;
+    ${stepsHtml}${connectsHtml}${tipHtml}${useCaseHtml}`;
   content.querySelector('.guide-back-btn')?.addEventListener('click', () => {
     document.getElementById('guideModal')?.classList.remove('is-topic-open');
   });
