@@ -156,9 +156,9 @@ const TRANSLATIONS = {
     help_exp_modal_title:'How Expenses work',help_exp_intro:'Set spending limits per category. Progress bars update live and turn red when you go over.',
     help_exp_expected_li:'Your spending limit; bar updates as you type.',help_exp_actual_li:'Totalled from Expense transactions.',
     help_bills_modal_title:'How Bills work',help_bills_intro:'Track recurring bills with due dates and paid status.',
-    help_bills_duedate_li:'Set when each bill is due.',help_bills_paid_li:'Tick when you\'ve made the payment.',help_bills_actual_li:'Populated from Bill transactions with matching category name.',
+    help_bills_duedate_li:'Set when each bill is due.',help_bills_paid_li:"Tick when you've made the payment - you'll be asked for the actual amount, which gets logged as a transaction since bills like utilities rarely match your budgeted amount exactly.",help_bills_actual_li:'Populated from Bill transactions with matching category name.',
     help_debt_modal_title:'How Debt works',help_debt_intro:'Stay on top of loan repayments and mortgages.',
-    help_debt_expected_li:'Your planned monthly payment.',help_debt_duedate_li:'When the payment is due.',help_debt_paid_li:'Mark when the payment clears.',
+    help_debt_expected_li:'Your planned monthly payment.',help_debt_duedate_li:'When the payment is due.',help_debt_paid_li:"Mark when the payment clears - you'll be asked for the actual amount paid, which gets logged as a transaction, since it can differ from your planned payment.",
     help_sav_modal_title:'How Savings work',help_sav_intro:'Set savings goals and track contributions.',
     help_sav_expected_li:'Your savings target for this period.',help_sav_actual_li:'From Savings type transactions.',
     help_sav_tip:'💡 Tip: Treat savings like a fixed expense - budget it first, spend the rest.',
@@ -248,7 +248,7 @@ const TRANSLATIONS = {
     mod_desc_debt:'Stay on top of loan and mortgage repayments. Set expected amounts and mark each as paid.',
     mod_desc_savings:'Set a savings goal for each bucket. Actual contributions come from your logged transactions.',
     mod_add_category:'+ Add category',mod_add_new_category:'Add new category',mod_cat_name_label:'Name',
-    mod_set_date:'Set date',mod_remove:'Remove',mod_mark_paid:'Mark as paid',mod_total:'Total',
+    mod_set_date:'Set date',mod_remove:'Remove',mod_mark_paid:'Mark as paid',mod_total:'Total',mod_paid_amount_label:'Amount paid',mod_paid_amount_hint:"How much you actually paid - this gets logged as a transaction so your spending history stays accurate, even if it's different from your budgeted amount.",mod_paid_save_btn:'Log payment',mod_paid_budgeted_hint:'Budgeted: {0}',mod_paid_amount_required:'Please enter a valid amount.',toast_mod_paid:'Payment logged',
     dash_period_title:'Click to change budget period',
     onboard_welcome:"👋 Welcome! Here's how to get started:",
     onboard_step1_html:'Go to <strong>Income, Expenses, Bills</strong> etc. and enter your expected amounts.',
@@ -409,9 +409,9 @@ const TRANSLATIONS = {
     help_exp_modal_title:'Wie Ausgaben funktionieren',help_exp_intro:'Lege Ausgabenlimits pro Kategorie fest. Fortschrittsbalken aktualisieren sich live und werden rot, wenn du das Limit überschreitest.',
     help_exp_expected_li:'Dein Ausgabenlimit; der Balken aktualisiert sich, während du tippst.',help_exp_actual_li:'Wird aus Ausgabe-Transaktionen summiert.',
     help_bills_modal_title:'Wie Rechnungen funktionieren',help_bills_intro:'Behalte wiederkehrende Rechnungen mit Fälligkeitsdatum und Zahlungsstatus im Blick.',
-    help_bills_duedate_li:'Lege fest, wann jede Rechnung fällig ist.',help_bills_paid_li:'Hake ab, sobald du die Zahlung geleistet hast.',help_bills_actual_li:'Wird aus Rechnung-Transaktionen mit passendem Kategorienamen befüllt.',
+    help_bills_duedate_li:'Lege fest, wann jede Rechnung fällig ist.',help_bills_paid_li:'Hake ab, sobald du die Zahlung geleistet hast - du wirst nach dem tatsächlichen Betrag gefragt, der als Transaktion erfasst wird, da Rechnungen wie Nebenkosten selten genau dem budgetierten Betrag entsprechen.',help_bills_actual_li:'Wird aus Rechnung-Transaktionen mit passendem Kategorienamen befüllt.',
     help_debt_modal_title:'Wie Schulden funktionieren',help_debt_intro:'Behalte Kredit- und Hypothekenzahlungen im Blick.',
-    help_debt_expected_li:'Deine geplante monatliche Zahlung.',help_debt_duedate_li:'Wann die Zahlung fällig ist.',help_debt_paid_li:'Markiere sie, sobald die Zahlung erfolgt ist.',
+    help_debt_expected_li:'Deine geplante monatliche Zahlung.',help_debt_duedate_li:'Wann die Zahlung fällig ist.',help_debt_paid_li:'Markiere sie, sobald die Zahlung erfolgt ist - du wirst nach dem tatsächlich gezahlten Betrag gefragt, der als Transaktion erfasst wird, da er von deiner geplanten Zahlung abweichen kann.',
     help_sav_modal_title:'Wie Ersparnisse funktionieren',help_sav_intro:'Lege Sparziele fest und verfolge deine Einzahlungen.',
     help_sav_expected_li:'Dein Sparziel für diesen Zeitraum.',help_sav_actual_li:'Aus Transaktionen vom Typ Ersparnisse.',
     help_sav_tip:'💡 Tipp: Behandle Sparen wie eine feste Ausgabe - budgetiere es zuerst und gib danach den Rest aus.',
@@ -501,7 +501,7 @@ const TRANSLATIONS = {
     mod_desc_debt:'Behalte Kredit- und Hypothekenzahlungen im Blick. Lege erwartete Beträge fest und markiere jede als bezahlt.',
     mod_desc_savings:'Lege ein Sparziel für jeden Topf fest. Tatsächliche Beiträge stammen aus deinen erfassten Transaktionen.',
     mod_add_category:'+ Kategorie hinzufügen',mod_add_new_category:'Neue Kategorie hinzufügen',mod_cat_name_label:'Name',
-    mod_set_date:'Datum festlegen',mod_remove:'Entfernen',mod_mark_paid:'Als bezahlt markieren',mod_total:'Gesamt',
+    mod_set_date:'Datum festlegen',mod_remove:'Entfernen',mod_mark_paid:'Als bezahlt markieren',mod_total:'Gesamt',mod_paid_amount_label:'Bezahlter Betrag',mod_paid_amount_hint:'Wie viel du tatsächlich bezahlt hast - wird als Transaktion erfasst, damit deine Ausgabenhistorie stimmt, auch wenn es vom budgetierten Betrag abweicht.',mod_paid_save_btn:'Zahlung erfassen',mod_paid_budgeted_hint:'Budgetiert: {0}',mod_paid_amount_required:'Bitte gib einen gültigen Betrag ein.',toast_mod_paid:'Zahlung erfasst',
     dash_period_title:'Klicken, um den Budgetzeitraum zu ändern',
     onboard_welcome:'👋 Willkommen! So kommst du los:',
     onboard_step1_html:'Gehe zu <strong>Einnahmen, Ausgaben, Rechnungen</strong> usw. und trage deine erwarteten Beträge ein.',
@@ -662,9 +662,9 @@ const TRANSLATIONS = {
     help_exp_modal_title:'Comment fonctionnent les dépenses',help_exp_intro:'Définissez une limite de dépenses par catégorie. Les barres de progression se mettent à jour en direct et passent au rouge en cas de dépassement.',
     help_exp_expected_li:'Votre limite de dépenses ; la barre se met à jour au fur et à mesure de votre saisie.',help_exp_actual_li:'Cumulé à partir des transactions de type Dépense.',
     help_bills_modal_title:'Comment fonctionnent les factures',help_bills_intro:"Suivez vos factures récurrentes avec leur date d'échéance et leur statut de paiement.",
-    help_bills_duedate_li:"Définissez la date d'échéance de chaque facture.",help_bills_paid_li:'Cochez une fois le paiement effectué.',help_bills_actual_li:'Renseigné à partir des transactions de type Facture portant le même nom de catégorie.',
+    help_bills_duedate_li:"Définissez la date d'échéance de chaque facture.",help_bills_paid_li:"Cochez une fois le paiement effectué - le montant réellement payé vous sera demandé et enregistré comme transaction, car des factures comme les charges correspondent rarement exactement au montant budgété.",help_bills_actual_li:'Renseigné à partir des transactions de type Facture portant le même nom de catégorie.',
     help_debt_modal_title:'Comment fonctionnent les dettes',help_debt_intro:'Gardez le contrôle sur vos remboursements de prêts et de crédits immobiliers.',
-    help_debt_expected_li:'Votre paiement mensuel prévu.',help_debt_duedate_li:"La date d'échéance du paiement.",help_debt_paid_li:'Marquez-le une fois le paiement effectué.',
+    help_debt_expected_li:'Votre paiement mensuel prévu.',help_debt_duedate_li:"La date d'échéance du paiement.",help_debt_paid_li:"Marquez-le une fois le paiement effectué - le montant réellement payé vous sera demandé et enregistré comme transaction, car il peut différer de votre paiement prévu.",
     help_sav_modal_title:"Comment fonctionne l'épargne",help_sav_intro:"Définissez des objectifs d'épargne et suivez vos versements.",
     help_sav_expected_li:"Votre objectif d'épargne pour cette période.",help_sav_actual_li:'À partir des transactions de type Épargne.',
     help_sav_tip:"💡 Astuce : Traitez l'épargne comme une dépense fixe - budgétez-la en premier, puis dépensez le reste.",
@@ -754,7 +754,7 @@ const TRANSLATIONS = {
     mod_desc_debt:'Gardez le contrôle de vos remboursements de prêts et d’hypothèque. Définissez les montants prévus et marquez chacun comme payé.',
     mod_desc_savings:'Définissez un objectif d’épargne pour chaque tirelire. Les contributions réelles proviennent de vos transactions enregistrées.',
     mod_add_category:'+ Ajouter une catégorie',mod_add_new_category:'Ajouter une nouvelle catégorie',mod_cat_name_label:'Nom',
-    mod_set_date:'Définir la date',mod_remove:'Supprimer',mod_mark_paid:'Marquer comme payé',mod_total:'Total',
+    mod_set_date:'Définir la date',mod_remove:'Supprimer',mod_mark_paid:'Marquer comme payé',mod_total:'Total',mod_paid_amount_label:'Montant payé',mod_paid_amount_hint:"Le montant que vous avez réellement payé - il sera enregistré comme transaction afin que votre historique reste exact, même s'il diffère du montant budgété.",mod_paid_save_btn:'Enregistrer le paiement',mod_paid_budgeted_hint:'Budgété : {0}',mod_paid_amount_required:'Veuillez saisir un montant valide.',toast_mod_paid:'Paiement enregistré',
     dash_period_title:'Cliquez pour changer la période budgétaire',
     onboard_welcome:'👋 Bienvenue ! Voici comment commencer :',
     onboard_step1_html:'Allez dans <strong>Revenus, Dépenses, Factures</strong>, etc. et saisissez vos montants prévus.',
@@ -915,9 +915,9 @@ const TRANSLATIONS = {
     help_exp_modal_title:'Cómo funcionan los gastos',help_exp_intro:'Establece un límite de gasto por categoría. Las barras de progreso se actualizan en vivo y se ponen en rojo si te pasas.',
     help_exp_expected_li:'Tu límite de gasto; la barra se actualiza mientras escribes.',help_exp_actual_li:'Se totaliza a partir de las transacciones de Gasto.',
     help_bills_modal_title:'Cómo funcionan las facturas',help_bills_intro:'Controla tus facturas recurrentes con fechas de vencimiento y estado de pago.',
-    help_bills_duedate_li:'Establece cuándo vence cada factura.',help_bills_paid_li:'Marca la casilla cuando hayas realizado el pago.',help_bills_actual_li:'Se rellena a partir de las transacciones de Factura con el mismo nombre de categoría.',
+    help_bills_duedate_li:'Establece cuándo vence cada factura.',help_bills_paid_li:'Marca la casilla cuando hayas realizado el pago - se te pedirá el importe realmente pagado, que se registrará como transacción, ya que facturas como las de suministros rara vez coinciden exactamente con el importe presupuestado.',help_bills_actual_li:'Se rellena a partir de las transacciones de Factura con el mismo nombre de categoría.',
     help_debt_modal_title:'Cómo funcionan las deudas',help_debt_intro:'Mantente al día con los pagos de préstamos e hipotecas.',
-    help_debt_expected_li:'Tu pago mensual previsto.',help_debt_duedate_li:'Cuándo vence el pago.',help_debt_paid_li:'Márcalo cuando se haga efectivo el pago.',
+    help_debt_expected_li:'Tu pago mensual previsto.',help_debt_duedate_li:'Cuándo vence el pago.',help_debt_paid_li:'Márcalo cuando se haga efectivo el pago - se te pedirá el importe realmente pagado, que se registrará como transacción, ya que puede diferir de tu pago previsto.',
     help_sav_modal_title:'Cómo funcionan los ahorros',help_sav_intro:'Establece metas de ahorro y controla tus aportaciones.',
     help_sav_expected_li:'Tu objetivo de ahorro para este período.',help_sav_actual_li:'De las transacciones de tipo Ahorro.',
     help_sav_tip:'💡 Consejo: Trata el ahorro como un gasto fijo: presupuéstalo primero y gasta el resto.',
@@ -1007,7 +1007,7 @@ const TRANSLATIONS = {
     mod_desc_debt:'Mantente al día con tus pagos de préstamos e hipoteca. Define los montos previstos y marca cada uno como pagado.',
     mod_desc_savings:'Define una meta de ahorro para cada fondo. Las contribuciones reales provienen de tus transacciones registradas.',
     mod_add_category:'+ Añadir categoría',mod_add_new_category:'Añadir nueva categoría',mod_cat_name_label:'Nombre',
-    mod_set_date:'Definir fecha',mod_remove:'Eliminar',mod_mark_paid:'Marcar como pagado',mod_total:'Total',
+    mod_set_date:'Definir fecha',mod_remove:'Eliminar',mod_mark_paid:'Marcar como pagado',mod_total:'Total',mod_paid_amount_label:'Importe pagado',mod_paid_amount_hint:'Cuánto pagaste realmente - se registrará como transacción para que tu historial de gastos sea exacto, aunque sea distinto del importe presupuestado.',mod_paid_save_btn:'Registrar pago',mod_paid_budgeted_hint:'Presupuestado: {0}',mod_paid_amount_required:'Introduce un importe válido.',toast_mod_paid:'Pago registrado',
     dash_period_title:'Haz clic para cambiar el período de presupuesto',
     onboard_welcome:'👋 ¡Bienvenido! Así es como empezar:',
     onboard_step1_html:'Ve a <strong>Ingresos, Gastos, Facturas</strong>, etc. e introduce tus montos previstos.',
@@ -1168,9 +1168,9 @@ const TRANSLATIONS = {
     help_exp_modal_title:'Come funzionano le Spese',help_exp_intro:'Imposta un limite di spesa per ogni categoria. Le barre di avanzamento si aggiornano dal vivo e diventano rosse quando lo superi.',
     help_exp_expected_li:'Il tuo limite di spesa; la barra si aggiorna mentre digiti.',help_exp_actual_li:'Totalizzato dalle transazioni di tipo Spesa.',
     help_bills_modal_title:'Come funzionano le Bollette',help_bills_intro:'Tieni traccia delle bollette ricorrenti con scadenze e stato di pagamento.',
-    help_bills_duedate_li:'Imposta quando scade ogni bolletta.',help_bills_paid_li:'Spunta la casella quando hai effettuato il pagamento.',help_bills_actual_li:'Popolato dalle transazioni di tipo Bolletta con lo stesso nome di categoria.',
+    help_bills_duedate_li:'Imposta quando scade ogni bolletta.',help_bills_paid_li:"Spunta la casella quando hai effettuato il pagamento - ti verrà chiesto l'importo effettivamente pagato, che viene registrato come transazione, poiché bollette come le utenze raramente corrispondono esattamente all'importo previsto.",help_bills_actual_li:'Popolato dalle transazioni di tipo Bolletta con lo stesso nome di categoria.',
     help_debt_modal_title:'Come funzionano i Debiti',help_debt_intro:'Tieni sotto controllo i rimborsi di prestiti e mutui.',
-    help_debt_expected_li:'Il tuo pagamento mensile previsto.',help_debt_duedate_li:'Quando scade il pagamento.',help_debt_paid_li:'Segnalo quando il pagamento viene saldato.',
+    help_debt_expected_li:'Il tuo pagamento mensile previsto.',help_debt_duedate_li:'Quando scade il pagamento.',help_debt_paid_li:"Segnalo quando il pagamento viene saldato - ti verrà chiesto l'importo effettivamente pagato, che viene registrato come transazione, poiché può differire dal pagamento previsto.",
     help_sav_modal_title:'Come funzionano i Risparmi',help_sav_intro:'Imposta obiettivi di risparmio e monitora i tuoi versamenti.',
     help_sav_expected_li:'Il tuo obiettivo di risparmio per questo periodo.',help_sav_actual_li:'Dalle transazioni di tipo Risparmio.',
     help_sav_tip:'💡 Suggerimento: tratta il risparmio come una spesa fissa - mettilo a budget per primo e spendi il resto.',
@@ -1260,7 +1260,7 @@ const TRANSLATIONS = {
     mod_desc_debt:'Resta al passo con i pagamenti di prestiti e mutui. Imposta gli importi previsti e segna ciascuno come pagato.',
     mod_desc_savings:'Imposta un obiettivo di risparmio per ogni salvadanaio. I contributi effettivi provengono dalle transazioni registrate.',
     mod_add_category:'+ Aggiungi categoria',mod_add_new_category:'Aggiungi nuova categoria',mod_cat_name_label:'Nome',
-    mod_set_date:'Imposta data',mod_remove:'Rimuovi',mod_mark_paid:'Segna come pagato',mod_total:'Totale',
+    mod_set_date:'Imposta data',mod_remove:'Rimuovi',mod_mark_paid:'Segna come pagato',mod_total:'Totale',mod_paid_amount_label:'Importo pagato',mod_paid_amount_hint:"Quanto hai effettivamente pagato - viene registrato come transazione così la tua cronologia di spesa resta accurata, anche se diverso dall'importo previsto.",mod_paid_save_btn:'Registra pagamento',mod_paid_budgeted_hint:'Preventivato: {0}',mod_paid_amount_required:'Inserisci un importo valido.',toast_mod_paid:'Pagamento registrato',
     dash_period_title:'Clicca per cambiare il periodo di budget',
     onboard_welcome:'👋 Benvenuto! Ecco come iniziare:',
     onboard_step1_html:'Vai su <strong>Entrate, Spese, Bollette</strong> ecc. e inserisci gli importi previsti.',
@@ -1421,9 +1421,9 @@ const TRANSLATIONS = {
     help_exp_modal_title:'Jak działają Wydatki',help_exp_intro:'Ustaw limit wydatków dla każdej kategorii. Paski postępu aktualizują się na bieżąco i zmieniają kolor na czerwony po przekroczeniu limitu.',
     help_exp_expected_li:'Twój limit wydatków; pasek aktualizuje się podczas wpisywania.',help_exp_actual_li:'Sumowane na podstawie transakcji typu Wydatek.',
     help_bills_modal_title:'Jak działają Rachunki',help_bills_intro:'Śledź cykliczne rachunki wraz z terminami płatności i statusem opłacenia.',
-    help_bills_duedate_li:'Ustaw termin płatności każdego rachunku.',help_bills_paid_li:'Zaznacz, gdy dokonasz płatności.',help_bills_actual_li:'Uzupełniane na podstawie transakcji typu Rachunek o tej samej nazwie kategorii.',
+    help_bills_duedate_li:'Ustaw termin płatności każdego rachunku.',help_bills_paid_li:'Zaznacz, gdy dokonasz płatności - zostaniesz poproszony o rzeczywiście zapłaconą kwotę, która zostanie zapisana jako transakcja, ponieważ rachunki takie jak media rzadko dokładnie odpowiadają zaplanowanej kwocie.',help_bills_actual_li:'Uzupełniane na podstawie transakcji typu Rachunek o tej samej nazwie kategorii.',
     help_debt_modal_title:'Jak działają Długi',help_debt_intro:'Panuj nad spłatami kredytów i hipotek.',
-    help_debt_expected_li:'Twoja planowana miesięczna płatność.',help_debt_duedate_li:'Termin płatności.',help_debt_paid_li:'Zaznacz, gdy płatność zostanie zaksięgowana.',
+    help_debt_expected_li:'Twoja planowana miesięczna płatność.',help_debt_duedate_li:'Termin płatności.',help_debt_paid_li:'Zaznacz, gdy płatność zostanie zaksięgowana - zostaniesz poproszony o rzeczywiście zapłaconą kwotę, która zostanie zapisana jako transakcja, ponieważ może różnić się od planowanej płatności.',
     help_sav_modal_title:'Jak działają Oszczędności',help_sav_intro:'Ustal cele oszczędnościowe i śledź swoje wpłaty.',
     help_sav_expected_li:'Twój cel oszczędnościowy na ten okres.',help_sav_actual_li:'Z transakcji typu Oszczędności.',
     help_sav_tip:'💡 Wskazówka: Traktuj oszczędności jak stały wydatek - zaplanuj je najpierw, a resztę wydaj.',
@@ -1513,7 +1513,7 @@ const TRANSLATIONS = {
     mod_desc_debt:'Trzymaj rękę na pulsie spłat kredytów i hipotek. Ustal spodziewane kwoty i oznacz każdą jako opłaconą.',
     mod_desc_savings:'Ustal cel oszczędnościowy dla każdego funduszu. Rzeczywiste wpłaty pochodzą z zarejestrowanych transakcji.',
     mod_add_category:'+ Dodaj kategorię',mod_add_new_category:'Dodaj nową kategorię',mod_cat_name_label:'Nazwa',
-    mod_set_date:'Ustaw datę',mod_remove:'Usuń',mod_mark_paid:'Oznacz jako opłacone',mod_total:'Suma',
+    mod_set_date:'Ustaw datę',mod_remove:'Usuń',mod_mark_paid:'Oznacz jako opłacone',mod_total:'Suma',mod_paid_amount_label:'Zapłacona kwota',mod_paid_amount_hint:'Ile faktycznie zapłaciłeś - zostanie to zapisane jako transakcja, aby Twoja historia wydatków była dokładna, nawet jeśli różni się od zaplanowanej kwoty.',mod_paid_save_btn:'Zapisz płatność',mod_paid_budgeted_hint:'Zaplanowano: {0}',mod_paid_amount_required:'Podaj prawidłową kwotę.',toast_mod_paid:'Płatność zapisana',
     dash_period_title:'Kliknij, aby zmienić okres budżetowy',
     onboard_welcome:'👋 Witaj! Oto jak zacząć:',
     onboard_step1_html:'Przejdź do <strong>Przychody, Wydatki, Rachunki</strong> itd. i wprowadź spodziewane kwoty.',
@@ -2529,6 +2529,70 @@ const MODULE_META = {
   savings:  { icon:'🏦', titleKey:'tab_savings',  hasDates:false, descKey:'mod_desc_savings' }
 };
 
+const TX_TYPE_FOR_MODULE = { income:'income', expenses:'expense', bills:'bill', debt:'debt', savings:'savings' };
+
+// Marking a bill or debt row paid logs the actual amount as a real transaction
+// rather than just flipping a status flag - the flag alone would leave "paid"
+// disconnected from what was actually spent (both bills and debt payments
+// commonly differ from the budgeted/minimum figure).
+function promptMarkModulePaid(type, rowId, onDone) {
+  const row = (state.budgets[type] || []).find(r => r.id === rowId);
+  if (!row) return;
+  document.getElementById('modalTitle').textContent = `${t('mod_mark_paid')} - ${esc(row.category)}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="field"><label class="field-label field-label--tip">${tipLabel(t('mod_paid_amount_label'), 'mod_paid_amount_hint', true)}</label>
+      <input class="input" type="number" id="modPaidAmt" min="0" step="0.01" placeholder="0.00" autocomplete="off">
+      ${row.expected ? `<p class="field-hint">${tf('mod_paid_budgeted_hint', fmt(row.expected))}</p>` : ''}
+    </div>
+    <div class="tx-error" id="modPaidErr" hidden></div>
+    <div class="edit-tx-actions">
+      <button class="btn btn-primary" id="modPaidSaveBtn" type="button">${t('mod_paid_save_btn')}</button>
+      <button class="btn btn-ghost btn-sm" id="modPaidCancelBtn" type="button">${t('cancel')}</button>
+    </div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+  initFieldTips(document.getElementById('modalBody'));
+  setTimeout(() => document.getElementById('modPaidAmt')?.focus(), 50);
+  const amtEl = document.getElementById('modPaidAmt');
+  amtEl?.addEventListener('input', () => { amtEl.classList.remove('fk-invalid'); const e = document.getElementById('modPaidErr'); if (e) e.hidden = true; });
+  document.getElementById('modPaidSaveBtn')?.addEventListener('click', () => {
+    const amt = parseFloat(amtEl?.value);
+    if (!(amt > 0)) {
+      amtEl?.classList.add('fk-invalid');
+      const e = document.getElementById('modPaidErr'); if (e) { e.textContent = t('mod_paid_amount_required'); e.hidden = false; }
+      return;
+    }
+    const tx = { id: uid(), date: today(), type: TX_TYPE_FOR_MODULE[type], category: row.category, amount: amt, description: '' };
+    state.transactions.push(tx);
+    row.paid = true; row.paidTxId = tx.id;
+    saveState();
+    document.getElementById('tutorialOverlay').hidden = true;
+    onDone();
+    showToast(t('toast_mod_paid'));
+  });
+  document.getElementById('modPaidCancelBtn')?.addEventListener('click', () => { document.getElementById('tutorialOverlay').hidden = true; });
+}
+function unmarkModulePaid(type, rowId, onDone) {
+  const row = (state.budgets[type] || []).find(r => r.id === rowId);
+  if (!row) return;
+  if (row.paidTxId) state.transactions = state.transactions.filter(tx => tx.id !== row.paidTxId);
+  row.paid = false; row.paidTxId = null;
+  saveState();
+  onDone();
+}
+// Keeps bill/debt "paid" status honest whenever a transaction is removed through
+// any of the delete paths (single delete, edit-modal delete, clear all) - a row
+// linked to a since-deleted transaction can't stay marked paid.
+function syncModulePaidLinks() {
+  const liveIds = new Set(state.transactions.map(tx => tx.id));
+  let changed = false;
+  ['bills', 'debt'].forEach(type => {
+    (state.budgets[type] || []).forEach(row => {
+      if (row.paid && row.paidTxId && !liveIds.has(row.paidTxId)) { row.paid = false; row.paidTxId = null; changed = true; }
+    });
+  });
+  return changed;
+}
+
 function renderModule(type) {
   const meta    = MODULE_META[type];
   const rows    = state.budgets[type];
@@ -2717,13 +2781,12 @@ function renderModule(type) {
   // Paid checkboxes
   el.querySelectorAll('.paid-cb').forEach(cb => {
     cb.addEventListener('change', () => {
-      const row = state.budgets[type].find(r => r.id === cb.dataset.id);
-      if (row) { row.paid = cb.checked; saveState(); }
+      if (cb.checked) { cb.checked = false; promptMarkModulePaid(type, cb.dataset.id, () => renderModule(type)); }
+      else { unmarkModulePaid(type, cb.dataset.id, () => renderModule(type)); }
     });
   });
 
   // Delete row
-  const TX_TYPE_FOR_MODULE = { income:'income', expenses:'expense', bills:'bill', debt:'debt', savings:'savings' };
   el.querySelectorAll('.del-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const row = state.budgets[type].find(r => r.id === btn.dataset.id);
@@ -2805,8 +2868,8 @@ function renderTxList(){
           <td><div class="tx-actions"><button class="edit-btn" data-tx="${tx.id}" type="button" title="${t('edit')}" aria-label="${t('edit')}">\u270f\ufe0f</button><button class="del-btn" data-tx="${tx.id}" type="button" title="${t('delete')}" aria-label="${t('delete')}">\xd7</button></div></td>
         </tr>`).join('')}</tbody></table></div></div>${pagination}`}`;
   el.querySelectorAll('.edit-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>openEditTx(b.dataset.tx)));
-  el.querySelectorAll('.del-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>{state.transactions=state.transactions.filter(t=>t.id!==b.dataset.tx);saveState();renderTxList();}));
-  document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{if(await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')})){state.transactions=[];saveState();renderTxList();}});
+  el.querySelectorAll('.del-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>{state.transactions=state.transactions.filter(t=>t.id!==b.dataset.tx);syncModulePaidLinks();saveState();renderTxList();}));
+  document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{if(await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')})){state.transactions=[];syncModulePaidLinks();saveState();renderTxList();}});
   document.getElementById('txPrevBtn')?.addEventListener('click',()=>{if(txPage>0){txPage--;renderTxList();}});
   document.getElementById('txNextBtn')?.addEventListener('click',()=>{if(txPage<totalPages-1){txPage++;renderTxList();}});
 }
@@ -2984,6 +3047,7 @@ function openEditTx(txId) {
   document.getElementById('deleteEditBtn')?.addEventListener('click', async () => {
     if (!await confirmDialog({ message: t('confirm_delete_tx'), confirmText: t('delete') })) return;
     state.transactions = state.transactions.filter(t => t.id !== txId);
+    syncModulePaidLinks();
     saveState(); closeModal(); renderTxList();
     showToast(t('toast_tx_deleted'));
   });
