@@ -263,6 +263,7 @@ const TRANSLATIONS = {
     dash_lf_income:'income',dash_lf_exp_bills:'exp &amp; bills',dash_lf_debt:'debt',dash_lf_savings:'savings',dash_lf_rollover:'rollover',
     dash_cash_flow:'Cash Flow - Expected vs Actual',dash_expected:'Expected',dash_actual:'Actual',
     dash_expected_vs_actual:'Expected vs Actual', dash_of_expected_sfx:'of expected',
+    dash_flow_story:'Cash Flow Trajectory', dash_bill_timeline:'Bill Due-Date Timeline', dash_no_bill_dates:'No bills with due dates yet.',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',dash_add_tx_link:'Add transactions →',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
     upgrade_feat_debt:'💳 Debt Payoff',upgrade_feat_sinking:'🏺 Sinking Funds',upgrade_feat_calendar:'📅 Smart Calendar',
@@ -2733,9 +2734,214 @@ function renderDashboardLayout2() {
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
 }
 
-// Alternate dashboard layouts (3-5) - built out incrementally; fall back
+// ── Layout 3: "Flow Story" - timeline/narrative feel ────────────────────
+function buildCashFlowSeries() {
+  const start = new Date(state.settings.periodStart + 'T00:00:00');
+  const end   = new Date(state.settings.periodEnd + 'T00:00:00');
+  const days  = Math.max(1, Math.round((end - start) / 86400000) + 1);
+  const daily = new Array(days).fill(0);
+  state.transactions.forEach(tx => {
+    if (tx.date < state.settings.periodStart || tx.date > state.settings.periodEnd) return;
+    const idx = Math.round((new Date(tx.date + 'T00:00:00') - start) / 86400000);
+    if (idx < 0 || idx >= days) return;
+    daily[idx] += tx.type === 'income' ? (tx.amount || 0) : -(tx.amount || 0);
+  });
+  const step = days > 31 ? Math.ceil(days / 31) : 1;
+  let cum = 0;
+  const points = [];
+  for (let i = 0; i < days; i++) {
+    cum += daily[i];
+    if (i % step === 0 || i === days - 1) {
+      const dt = new Date(start.getTime() + i * 86400000);
+      points.push({ label: dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), value: cum });
+    }
+  }
+  return points;
+}
+
+function renderDashboardLayout3() {
+  const actuals = computeActuals();
+  const sum     = computeSummary(actuals);
+
+  const expIncome   = state.budgets.income.reduce((t, r) => t + (r.expected || 0), 0);
+  const expExpenses = state.budgets.expenses.reduce((t, r) => t + (r.expected || 0), 0);
+  const expBills    = state.budgets.bills.reduce((t, r) => t + (r.expected || 0), 0);
+  const expDebt     = state.budgets.debt.reduce((t, r) => t + (r.expected || 0), 0);
+  const expSavings  = state.budgets.savings.reduce((t, r) => t + (r.expected || 0), 0);
+  const expExpBills = expExpenses + expBills;
+
+  const incItems = state.budgets.income
+    .map((r, i) => ({ label: r.category, value: actuals.income[r.category] || 0, color: COLOR_WHEEL[i % COLOR_WHEEL.length] }))
+    .filter(s => s.value > 0).sort((a, b) => b.value - a.value);
+  const incTotal = incItems.reduce((t, s) => t + s.value, 0);
+  const incSegs  = incItems.map(s => ({ ...s, pct: incTotal > 0 ? s.value / incTotal * 100 : 0 }));
+
+  const spendItems = [
+    ...state.budgets.expenses.map((r, i) => ({ label: r.category, value: actuals.expenses[r.category] || 0, color: COLOR_WHEEL[i % COLOR_WHEEL.length] })),
+    ...state.budgets.bills.map((r, i)    => ({ label: r.category, value: actuals.bills[r.category]    || 0, color: COLOR_WHEEL[(i + 5) % COLOR_WHEEL.length] })),
+    ...state.budgets.debt.map((r, i)     => ({ label: r.category, value: actuals.debt[r.category]     || 0, color: COLOR_WHEEL[(i + 9) % COLOR_WHEEL.length] }))
+  ].filter(s => s.value > 0).sort((a, b) => b.value - a.value);
+  const spendTotal = spendItems.reduce((t, s) => t + s.value, 0);
+  const spendSegs  = spendItems.slice(0, 50).map(s => ({ ...s, pct: spendTotal > 0 ? s.value / spendTotal * 100 : 0 }));
+
+  const leftColor = sum.leftover >= 0 ? '#10b981' : '#f43f5e';
+  const flowSeries = buildCashFlowSeries();
+
+  const stackCols = [
+    { label: t('dash_expected'), segments: [
+        { label: t('tab_expenses'), value: expExpenses, color: '#f43f5e' },
+        { label: t('tab_bills'),    value: expBills,    color: '#fb923c' },
+        { label: t('tab_debt'),     value: expDebt,     color: '#a855f7' },
+        { label: t('tab_savings'),  value: expSavings,  color: '#3b82f6' } ] },
+    { label: t('dash_actual'), segments: [
+        { label: t('tab_expenses'), value: sum.totalExpenses, color: '#f43f5e' },
+        { label: t('tab_bills'),    value: sum.totalBills,    color: '#fb923c' },
+        { label: t('tab_debt'),     value: sum.totalDebt,     color: '#a855f7' },
+        { label: t('tab_savings'),  value: sum.totalSavings,  color: '#3b82f6' } ] }
+  ];
+
+  const periodDays = Math.max(1, Math.round((new Date(state.settings.periodEnd) - new Date(state.settings.periodStart)) / 86400000) + 1);
+  const pStart = new Date(state.settings.periodStart + 'T00:00:00');
+  const billRanges = state.budgets.bills.filter(b => b.dueDate).map((b, i) => {
+    const dayOffset = Math.round((new Date(b.dueDate + 'T00:00:00') - pStart) / 86400000);
+    return { label: b.category, min: 0, max: periodDays, marker: Math.max(0, Math.min(periodDays, dayOffset)), color: COLOR_WHEEL[i % COLOR_WHEEL.length] };
+  });
+
+  const onboardHTML = !hasAnyData() ? `
+    <div class="onboard-banner">
+      <div class="onboard-title">${t('onboard_welcome')}</div>
+      <div class="onboard-steps">
+        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
+      </div>
+    </div>` : '';
+
+  const el = document.getElementById('bview-dashboard');
+  el.innerHTML = `
+    <div class="section-header">
+      <h2 class="section-title">${t('tab_dashboard')}</h2>
+      <button class="period-badge period-badge--btn" id="periodBadgeBtn" type="button" title="${t('dash_period_title')}">
+        ${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}
+      </button>
+      <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
+    </div>
+    ${onboardHTML}
+
+    <div class="summary-cards">
+      <div class="scard scard--income">
+        <div class="scard-label">${t('dash_stat_income')}</div>
+        <div class="scard-value">${fmt(sum.totalIncome)}</div>
+        <div class="scard-sub">${tf('dash_stat_of_expected',fmt(expIncome))}</div>
+      </div>
+      <div class="scard scard--expenses">
+        <div class="scard-label">${t('dash_stat_exp_bills')}</div>
+        <div class="scard-value">${fmt(sum.totalExpBills)}</div>
+        <div class="scard-sub">${tf('dash_stat_of_budgeted',fmt(expExpBills))}</div>
+      </div>
+      <div class="scard scard--debt">
+        <div class="scard-label">${t('dash_stat_debt')}</div>
+        <div class="scard-value">${fmt(sum.totalDebt)}</div>
+        <div class="scard-sub">${tf('dash_stat_of_budgeted',fmt(expDebt))}</div>
+      </div>
+      <div class="scard scard--savings">
+        <div class="scard-label">${t('dash_stat_savings')}</div>
+        <div class="scard-value">${fmt(sum.totalSavings)}</div>
+        <div class="scard-sub">${tf('dash_stat_of_goal',fmt(expSavings))}</div>
+      </div>
+    </div>
+
+    <div class="panel leftover-panel">
+      <div class="leftover-inner">
+        <div>
+          <div class="leftover-label">${t('dash_net_leftover_period')}</div>
+          <div class="leftover-value" style="color:${leftColor}">${sum.leftover < 0 ? '−' : ''}${fmt(Math.abs(sum.leftover))}</div>
+          ${state.rollover ? `<div class="leftover-rollover">${tf('dash_includes_rollover',fmt(state.rollover))}</div>` : ''}
+        </div>
+        <div class="leftover-formula">
+          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_lf_income')}</span>
+          <span class="lf-sep">−</span>
+          <span class="lf-chip lf-expense">${fmt(sum.totalExpBills)} ${t('dash_lf_exp_bills')}</span>
+          <span class="lf-sep">−</span>
+          <span class="lf-chip lf-debt">${fmt(sum.totalDebt)} ${t('dash_lf_debt')}</span>
+          <span class="lf-sep">−</span>
+          <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_lf_savings')}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_flow_story')}</div>
+        <div class="spline-wrap">${svgAreaSpline(flowSeries, 900, 190, leftColor)}</div>
+      </div>
+    </div>
+
+    <div class="flow-story-duo">
+      <div class="panel" data-chart-scope>
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_spending_breakdown')}</div>
+          ${spendSegs.length === 0 ? `<div class="chart-empty">${t('dash_no_spending')}</div>` : `
+            <div class="nightingale-block">
+              ${svgNightingale(spendSegs, 200)}
+              <div class="donut-legend">${spendSegs.slice(0,6).map((s,idx) => `
+                <div class="dleg-row" data-idx="${idx}">
+                  <span class="dleg-swatch" style="background:${s.color}"></span>
+                  <span class="dleg-label">${esc(s.label)}</span>
+                  <span class="dleg-pct">${s.pct.toFixed(0)}%</span>
+                </div>`).join('')}</div>
+            </div>`}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_expected_vs_actual')}</div>
+          <div class="stackcol-wrap">${svgStackedColumns(stackCols, 220, 220)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-story-duo">
+      <div class="panel chart-panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
+          ${incSegs.length === 0
+            ? `<div class="chart-empty">${t('dash_no_income')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
+            : `<div class="donut-block">
+                ${svgDonut(incSegs, 110, 16)}
+                <div class="donut-legend">${incSegs.slice(0,5).map((s,idx) => `
+                  <div class="dleg-row" data-idx="${idx}">
+                    <span class="dleg-swatch" style="background:${s.color}"></span>
+                    <span class="dleg-label">${esc(s.label)}</span>
+                    <span class="dleg-pct">${s.pct.toFixed(0)}%</span>
+                  </div>`).join('')}</div>
+              </div>`}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_bill_timeline')}</div>
+          ${billRanges.length === 0 ? `<div class="chart-empty">${t('dash_no_bill_dates')}</div>` : `<div class="rangebar-wrap">${svgRangeBar(billRanges, 420)}</div>`}
+        </div>
+      </div>
+    </div>
+  `;
+
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
+  requestAnimationFrame(() => {
+    initDonuts(el);
+    el.querySelectorAll('[data-chart-scope]').forEach(scope => wireChartHover(scope, '.nightingale-seg', { legendScope: scope }));
+    wireChartHover(el, '.stackcol-seg', {});
+    wireChartHover(el, '.rangebar-fill', {});
+    const splineSvg = el.querySelector('.spline-svg');
+    if (splineSvg) wireSplineHover(splineSvg, flowSeries);
+  });
+  el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
+  el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
+}
+
+// Alternate dashboard layouts (4-5) - built out incrementally; fall back
 // to Layout 1's design until each is implemented.
-function renderDashboardLayout3() { renderDashboardLayout1(); }
 function renderDashboardLayout4() { renderDashboardLayout1(); }
 function renderDashboardLayout5() { renderDashboardLayout1(); }
 

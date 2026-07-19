@@ -692,6 +692,7 @@ const TRANSLATIONS = {
     dash_includes:'Includes',dash_rollover_sfx:'rollover',
     dash_cash_flow:'Cash Flow',
     dash_expected_vs_actual:'Expected vs Actual', dash_of_expected_sfx:'of expected',
+    dash_flow_story:'Cash Flow Trajectory', dash_bill_timeline:'Bill Due-Date Timeline', dash_no_bill_dates:'No bills with due dates yet.',
     dash_expected_legend:'Expected',dash_actual_legend:'Actual',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -4048,9 +4049,183 @@ function renderDashboardLayout2() {
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
 }
 
-// Alternate dashboard layouts (3-5) - built out incrementally; fall back
+// ── Layout 3: "Flow Story" - timeline/narrative feel ────────────────────
+function buildCashFlowSeries() {
+  const start = new Date(state.settings.periodStart + 'T00:00:00');
+  const end   = new Date(state.settings.periodEnd + 'T00:00:00');
+  const days  = Math.max(1, Math.round((end - start) / 86400000) + 1);
+  const daily = new Array(days).fill(0);
+  state.transactions.forEach(tx => {
+    if (tx.date < state.settings.periodStart || tx.date > state.settings.periodEnd) return;
+    const idx = Math.round((new Date(tx.date + 'T00:00:00') - start) / 86400000);
+    if (idx < 0 || idx >= days) return;
+    daily[idx] += tx.type === 'income' ? (tx.amount || 0) : -(tx.amount || 0);
+  });
+  const step = days > 31 ? Math.ceil(days / 31) : 1;
+  let cum = 0;
+  const points = [];
+  for (let i = 0; i < days; i++) {
+    cum += daily[i];
+    if (i % step === 0 || i === days - 1) {
+      const dt = new Date(start.getTime() + i * 86400000);
+      points.push({ label: dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), value: cum });
+    }
+  }
+  return points;
+}
+
+function renderDashboardLayout3() {
+  const act=computeActuals(),sum=computeSummary(act),result=runDebtPayoff(),subMo=totalSubMonthly();
+  const expInc=state.budgets.income.reduce((t,r)=>t+(r.expected||0),0);
+  const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
+  const expBil=state.budgets.bills.reduce((t,r)=>t+(r.expected||0),0);
+  const expSav=state.budgets.savings.reduce((t,r)=>t+(r.expected||0),0);
+  const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
+  const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
+  const upcomingDays=state.settings?.upcomingDays||7;
+  const upcoming=getUpcomingEvents(upcomingDays,act);
+  const incSegs=state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const incTot=incSegs.reduce((t,s)=>t+s.value,0);
+  const spendSegs=[
+    ...state.budgets.expenses.map((r,i)=>({label:r.category,value:act.expenses[r.category]||0,color:COLORS[i%COLORS.length]})),
+    ...state.budgets.bills.map((r,i)=>({label:r.category,value:act.bills[r.category]||0,color:COLORS[(i+5)%COLORS.length]})),
+    ...Object.entries(act.debt||{}).map(([name,val],i)=>({label:name,value:val,color:['#a855f7','#9333ea','#7c3aed','#c026d3'][i%4]})),
+    ...Object.entries(act.subscription||{}).map(([name,val],i)=>({label:name,value:val,color:['#10b981','#06b6d4','#14b8a6','#059669'][i%4]})),
+  ].filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const spTot=spendSegs.reduce((t,s)=>t+s.value,0);
+  const flowSeries = buildCashFlowSeries();
+
+  const stackCols = [
+    { label: t('dash_expected_legend'), segments: [
+        { label: t('bud_section_expenses'), value: expExp, color: '#f43f5e' },
+        { label: t('bud_section_bills'),    value: expBil, color: '#fb923c' },
+        { label: t('dash_debt_payments'),   value: expDebt, color: '#a855f7' },
+        { label: t('bud_section_savings'),  value: expSav, color: '#3b82f6' },
+        { label: t('dash_subscriptions'),   value: subMo,  color: '#10b981' } ] },
+    { label: t('dash_actual_legend'), segments: [
+        { label: t('bud_section_expenses'), value: sum.totalExpenses, color: '#f43f5e' },
+        { label: t('bud_section_bills'),    value: sum.totalBills,    color: '#fb923c' },
+        { label: t('dash_debt_payments'),   value: sum.totalDebt||0,  color: '#a855f7' },
+        { label: t('bud_section_savings'),  value: sum.totalSavings,  color: '#3b82f6' },
+        { label: t('dash_subscriptions'),   value: sum.totalSubscriptions||0, color: '#10b981' } ] }
+  ];
+
+  const periodDays = Math.max(1, Math.round((new Date(state.settings.periodEnd) - new Date(state.settings.periodStart)) / 86400000) + 1);
+  const pStart = new Date(state.settings.periodStart + 'T00:00:00');
+  const billRanges = state.budgets.bills.filter(b => b.dueDate).map((b, i) => {
+    const dayOffset = Math.round((new Date(b.dueDate + 'T00:00:00') - pStart) / 86400000);
+    return { label: b.category, min: 0, max: periodDays, marker: Math.max(0, Math.min(periodDays, dayOffset)), color: COLORS[i % COLORS.length] };
+  });
+
+  const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
+  const welcomeHtml = showWelcome ? `
+    <div class="onboard-banner">
+      <div class="onboard-title">${t('onboard_welcome')}</div>
+      <div class="onboard-steps">
+        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
+      </div>
+    </div>` : '';
+
+  const el=document.getElementById('bview-dashboard');
+  el.innerHTML=welcomeHtml+`
+    <div class="section-header">
+      <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
+      <button class="period-badge period-badge--btn" id="periodBadgeBtn" title="Change period">${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}</button>
+      ${helpBtn('dashboard')}
+    </div>
+    <div class="pro-stats-row">
+      <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_income')}</div><div class="pro-stat-value" style="color:#10b981">${fmt(sum.totalIncome)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}</div></div>
+      <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_outgoing')}</div><div class="pro-stat-value" style="color:#f43f5e">${fmt(sum.totalOut)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}</div></div>
+      <div class="pro-stat"><div class="pro-stat-label">${t('dash_savings_rate')}</div><div class="pro-stat-value" style="color:#6366f1">${sum.savingsRate}%</div><div class="pro-stat-sub">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</div></div>
+      <div class="pro-stat"><div class="pro-stat-label">${t('dash_subscriptions')}</div><div class="pro-stat-value" style="color:#a855f7">${fmt(subMo)}${t('sf_per_month')}</div><div class="pro-stat-sub">${fmt(subMo*12)}${t('dash_per_year')}</div></div>
+    </div>
+    <div class="panel leftover-panel">
+      <div class="leftover-inner">
+        <div><div class="leftover-label">${t('dash_net_leftover')}</div><div class="leftover-value" style="color:${leftColor}">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}</div>
+        <div class="leftover-formula">
+          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>${state.rollover?`<span class="lf-sep">+</span><span class="lf-chip lf-rollover">${fmt(state.rollover)} ${t('dash_rollover_sfx')}</span>`:''}
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_flow_story')}</div>
+        <div class="spline-wrap">${svgAreaSpline(flowSeries, 900, 190, leftColor)}</div>
+      </div>
+    </div>
+
+    <div class="flow-story-duo">
+      <div class="panel" data-chart-scope>
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_spending_breakdown')}</div>
+          ${spendSegs.length === 0 ? `<div class="chart-empty">${t('dash_no_spending')}</div>` : `
+            <div class="nightingale-block">
+              ${svgNightingale(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})), 200)}
+              <div class="donut-legend">${spendSegs.slice(0,6).map((s,idx) => `
+                <div class="dleg-row" data-idx="${idx}">
+                  <span class="dleg-swatch" style="background:${s.color}"></span>
+                  <span class="dleg-label">${esc(s.label)}</span>
+                  <span class="dleg-pct">${(spTot>0?s.value/spTot*100:0).toFixed(0)}%</span>
+                </div>`).join('')}</div>
+            </div>`}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_expected_vs_actual')}</div>
+          <div class="stackcol-wrap">${svgStackedColumns(stackCols, 260, 220)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-story-duo">
+      <div class="panel chart-panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
+          ${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgDonut(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})),110,16)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_bill_timeline')}</div>
+          ${billRanges.length === 0 ? `<div class="chart-empty">${t('dash_no_bill_dates')}</div>` : `<div class="rangebar-wrap">${svgRangeBar(billRanges, 420)}</div>`}
+        </div>
+      </div>
+    </div>
+
+    <div class="pro-bottom-row">
+      <div class="panel pro-card"><div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:12px">💳 ${t('tab_debt')}</div>
+        ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
+      </div></div>
+      <div class="panel pro-card"><div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:12px">${tf('dash_upcoming_tpl',upcomingDays)}</div>
+        ${upcoming.length===0?`<div class="chart-empty">${t('dash_nothing_scheduled')}</div>`:`<div class="upcoming-list">${upcoming.slice(0,6).map(ev=>{const p=ev.paid;return`<div class="upcoming-item"><span class="up-dot" style="background:${p?'var(--text-faint)':ev.color}"></span><span class="up-label" style="${p?'text-decoration:line-through;color:var(--text-faint)':''}">${esc(ev.label)}</span><span class="up-date" style="${p?'color:var(--text-faint)':''}">${formatDateDisplay(ev.date)}</span><span class="up-amt" style="${p?'color:var(--text-faint)':''}">${fmt(ev.amount)}</span></div>`;}).join('')}</div>`}
+      </div></div>
+      <div class="panel pro-card"><div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:12px">🏺 ${t('tab_sinking')}</div>
+        ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
+      </div></div>
+    </div>`;
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
+  requestAnimationFrame(()=>{
+    initDonuts(el);
+    el.querySelectorAll('[data-chart-scope]').forEach(scope => wireChartHover(scope, '.nightingale-seg', { legendScope: scope }));
+    wireChartHover(el, '.stackcol-seg', {});
+    wireChartHover(el, '.rangebar-fill', {});
+    const splineSvg = el.querySelector('.spline-svg');
+    if (splineSvg) wireSplineHover(splineSvg, flowSeries);
+  });
+  el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
+  el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
+}
+
+// Alternate dashboard layouts (4-5) - built out incrementally; fall back
 // to Layout 1's design until each is implemented.
-function renderDashboardLayout3() { renderDashboardLayout1(); }
 function renderDashboardLayout4() { renderDashboardLayout1(); }
 function renderDashboardLayout5() { renderDashboardLayout1(); }
 
