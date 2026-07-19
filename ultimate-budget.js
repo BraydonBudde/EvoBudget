@@ -479,7 +479,7 @@ const TRANSLATIONS = {
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
     dashboard_layout:'Dashboard Layout', dashboard_layout_desc:'Choose how your Dashboard is designed and visualised.',
-    layout_1:'Classic', layout_2:'Radial Pulse', layout_3:'Flow Story', layout_4:'Bubble Map', layout_5:'Analyst Grid',
+    layout_1:'Classic', layout_2:'Radial Pulse', layout_3:'Flow Story',
     changes_autosaved:'✅ Changes are saved automatically.',
     rollover_desc:'Carry unspent money from your previous period into this one.',rollover_autocarry_label:'Auto-carry from previous period',rollover_autocarry_hint:'When you change the budget period, this amount is recalculated automatically from what was actually left over last time. Uncheck to set it manually instead.',toast_rollover_autoset:'Rollover auto-set to {0} from last period',
     rollover_amount:'Rollover amount',
@@ -501,7 +501,7 @@ const TRANSLATIONS = {
     help_sett_intro:'All your preferences for the Ultimate Budget Planner. Changes are saved automatically as you make them.',
     help_sett_currency_p:'Changes the currency symbol everywhere in the app immediately on selection.',
     help_sett_appearance_p:'Choose from five colour themes - Light, Dark, Synthwave, Vintage, or Terminal. Your preference is remembered across sessions.',
-    help_sett_layout_p:'Choose from five Dashboard designs - Classic, Radial Pulse, Flow Story, Bubble Map, or Analyst Grid. Each shows the same underlying data with its own charts and arrangement.',
+    help_sett_layout_p:'Choose from three Dashboard designs - Classic, Radial Pulse, or Flow Story. Each shows the same underlying data with its own charts and arrangement.',
     help_sett_nav_h:'Navigation',
     help_sett_nav_top:'Top Navigation - Classic horizontal tab bar at the top (default).',
     help_sett_nav_side:'Side Navigation - A floating icon rail to the left of your content. Click the arrow to expand and see full labels.',
@@ -694,10 +694,6 @@ const TRANSLATIONS = {
     dash_cash_flow:'Cash Flow',
     dash_expected_vs_actual:'Expected vs Actual', dash_of_expected_sfx:'of expected',
     dash_flow_story:'Cash Flow Trajectory', dash_bill_timeline:'Bill Due-Date Timeline', dash_no_bill_dates:'No bills with due dates yet.',
-    dash_bubble_map:'Category Bubble Map', dash_bubble_map_hint:'Size = amount · position = % of budget used',
-    dash_category_heatmap:'Category Heatmap', dash_heatmap_hint:'Deeper color = higher amount',
-    dash_tx_density:'Transaction Amount Distribution', dash_not_enough_tx:'Not enough transactions yet to show a distribution.',
-    dash_budget_headroom:'Budget Headroom', dash_no_budgets:'No budgeted categories yet.', dash_tx_count_sfx:'transactions',
     dash_expected_legend:'Expected',dash_actual_legend:'Actual',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -951,7 +947,7 @@ const TRANSLATIONS = {
     guide_settings_big:'Settings is where the app adapts to you - currency, budgeting period, rollover, automation, appearance, language, and how your data is stored and backed up.',
     guide_settings_step1:'Pick your <strong>Currency</strong> and <strong>Budget Period</strong> so the app matches how you actually get paid and spend.',
     guide_settings_step2:'Turn on <strong>Rollover</strong> and <strong>Automation</strong> if you want unspent money and recurring transactions to be handled for you automatically.',
-    guide_settings_step3:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), a <strong>Dashboard Layout</strong> (5 designs to choose from), and your <strong>Language</strong> from the list.',
+    guide_settings_step3:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), a <strong>Dashboard Layout</strong> (3 designs to choose from), and your <strong>Language</strong> from the list.',
     guide_settings_step4:'Set up <strong>Allocation Buckets</strong> if you want to budget by percentage (like 50% needs, 30% wants, 20% savings) instead of fixed category amounts.',
     guide_settings_step5:'Choose how your data is stored under <strong>Data & Sync</strong> - locally on this device, or synced with Google Drive so it follows you across devices.',
     guide_settings_step6:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
@@ -1012,7 +1008,7 @@ const TRANSLATIONS = {
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
     light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Dashboard-Layout',dashboard_layout_desc:'Wähle, wie dein Dashboard gestaltet und visualisiert wird.',
-    layout_1:'Klassisch',layout_2:'Radialer Puls',layout_3:'Fluss-Geschichte',layout_4:'Blasenkarte',layout_5:'Analysten-Raster',
+    layout_1:'Klassisch',layout_2:'Radialer Puls',layout_3:'Fluss-Geschichte',
     changes_autosaved:'✅ Änderungen werden automatisch gespeichert.',
     rollover_desc:'Überträgt nicht ausgegebenes Geld aus der vorherigen Periode.',rollover_autocarry_label:'Automatisch aus der vorherigen Periode übertragen',rollover_autocarry_hint:'Wenn du den Budgetzeitraum änderst, wird dieser Betrag automatisch aus dem tatsächlichen Restbetrag der letzten Periode neu berechnet. Deaktiviere dies, um ihn manuell festzulegen.',toast_rollover_autoset:'Übertrag automatisch auf {0} aus der letzten Periode gesetzt',
     rollover_amount:'Übertragsbetrag',
@@ -1031,7 +1027,7 @@ const TRANSLATIONS = {
     help_sett_intro:'Alle deine Einstellungen für den Ultimate Budget Planner. Änderungen werden automatisch gespeichert, sobald du sie vornimmst.',
     help_sett_currency_p:'Ändert das Währungssymbol sofort bei Auswahl überall in der App.',
     help_sett_appearance_p:'Wähle aus fünf Farbthemen - Hell, Dunkel, Synthwave, Vintage oder Terminal. Deine Einstellung wird sitzungsübergreifend gespeichert.',
-    help_sett_layout_p:'Wähle aus fünf Dashboard-Designs - Klassisch, Radialer Puls, Fluss-Geschichte, Blasenkarte oder Analysten-Raster. Jedes zeigt dieselben Daten mit eigenen Diagrammen und eigener Anordnung.',
+    help_sett_layout_p:'Wähle aus drei Dashboard-Designs - Klassisch, Radialer Puls oder Fluss-Geschichte. Jedes zeigt dieselben Daten mit eigenen Diagrammen und eigener Anordnung.',
     help_sett_nav_h:'Navigation',
     help_sett_nav_top:'Obere Navigation - Klassische horizontale Tab-Leiste oben (Standard).',
     help_sett_nav_side:'Seitennavigation - Eine schwebende Icon-Leiste links neben deinem Inhalt. Klicke auf den Pfeil, um sie zu erweitern und vollständige Beschriftungen zu sehen.',
@@ -1223,10 +1219,6 @@ const TRANSLATIONS = {
     dash_cash_flow:'Cashflow',
     dash_expected_vs_actual:'Erwartet vs. Tatsächlich',dash_of_expected_sfx:'vom Erwarteten',
     dash_flow_story:'Cashflow-Verlauf',dash_bill_timeline:'Fälligkeits-Zeitleiste',dash_no_bill_dates:'Noch keine Rechnungen mit Fälligkeitsdatum.',
-    dash_bubble_map:'Kategorie-Blasenkarte',dash_bubble_map_hint:'Größe = Betrag · Position = % des genutzten Budgets',
-    dash_category_heatmap:'Kategorie-Heatmap',dash_heatmap_hint:'Kräftigere Farbe = höherer Betrag',
-    dash_tx_density:'Verteilung der Transaktionsbeträge',dash_not_enough_tx:'Noch nicht genug Transaktionen für eine Verteilung.',
-    dash_budget_headroom:'Budgetspielraum',dash_no_budgets:'Noch keine budgetierten Kategorien.',dash_tx_count_sfx:'Transaktionen',
     dash_expected_legend:'Geplant',dash_actual_legend:'Tatsächlich',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
@@ -1480,7 +1472,7 @@ const TRANSLATIONS = {
     guide_settings_big:'In den Einstellungen passt sich die App an dich an - Währung, Budgetzeitraum, Übertrag, Automatisierung, Erscheinungsbild, Sprache und wie deine Daten gespeichert und gesichert werden.',
     guide_settings_step1:'Wähle deine <strong>Währung</strong> und deinen <strong>Budgetzeitraum</strong>, damit die App zu deinem tatsächlichen Zahlungs- und Ausgabenrhythmus passt.',
     guide_settings_step2:'Schalte <strong>Übertrag</strong> und <strong>Automatisierung</strong> ein, wenn nicht ausgegebenes Geld und wiederkehrende Transaktionen automatisch für dich erledigt werden sollen.',
-    guide_settings_step3:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage oder Terminal), ein <strong>Dashboard-Layout</strong> (5 Designs zur Auswahl) und deine <strong>Sprache</strong> aus der Liste.',
+    guide_settings_step3:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage oder Terminal), ein <strong>Dashboard-Layout</strong> (3 Designs zur Auswahl) und deine <strong>Sprache</strong> aus der Liste.',
     guide_settings_step4:'Richte <strong>Budget-Buckets</strong> ein, wenn du lieber prozentual budgetieren möchtest (etwa 50 % Bedürfnisse, 30 % Wünsche, 20 % Sparen) statt mit festen Kategoriebeträgen.',
     guide_settings_step5:'Wähle unter <strong>Daten & Sync</strong>, wie deine Daten gespeichert werden - lokal auf diesem Gerät oder mit Google Drive synchronisiert, sodass sie dir auf andere Geräte folgen.',
     guide_settings_step6:'Nutze <strong>Daten exportieren</strong>, um alles zu sichern, oder <strong>Daten zurücksetzen</strong>, wenn du jemals ganz neu anfangen möchtest.',
@@ -1541,7 +1533,7 @@ const TRANSLATIONS = {
     language:'Langue',reset_data:'Réinitialiser les données',
     light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Disposition du tableau de bord',dashboard_layout_desc:"Choisissez comment votre tableau de bord est conçu et visualisé.",
-    layout_1:'Classique',layout_2:'Pulsation radiale',layout_3:'Histoire du flux',layout_4:'Carte à bulles',layout_5:"Grille d'analyste",
+    layout_1:'Classique',layout_2:'Pulsation radiale',layout_3:'Histoire du flux',
     changes_autosaved:'✅ Les modifications sont enregistrées automatiquement.',
     rollover_desc:"Reporte l'argent non dépensé de la période précédente.",rollover_autocarry_label:'Report automatique depuis la période précédente',rollover_autocarry_hint:"Quand vous changez la période budgétaire, ce montant est recalculé automatiquement à partir de ce qu'il restait réellement la dernière fois. Décochez pour le définir manuellement.",toast_rollover_autoset:'Report automatiquement défini sur {0} depuis la dernière période',
     rollover_amount:'Montant du report',
@@ -1560,7 +1552,7 @@ const TRANSLATIONS = {
     help_sett_intro:'Toutes vos préférences pour Ultimate Budget Planner. Les modifications sont enregistrées automatiquement à mesure que vous les effectuez.',
     help_sett_currency_p:"Change le symbole de devise partout dans l'application dès la sélection.",
     help_sett_appearance_p:'Choisissez parmi cinq thèmes de couleur - Clair, Sombre, Synthwave, Vintage ou Terminal. Votre préférence est mémorisée entre les sessions.',
-    help_sett_layout_p:"Choisissez parmi cinq designs de tableau de bord - Classique, Pulsation radiale, Histoire du flux, Carte à bulles ou Grille d'analyste. Chacun affiche les mêmes données avec ses propres graphiques et sa disposition.",
+    help_sett_layout_p:"Choisissez parmi trois designs de tableau de bord - Classique, Pulsation radiale, ou Histoire du flux. Chacun affiche les mêmes données avec ses propres graphiques et sa disposition.",
     help_sett_nav_h:'Navigation',
     help_sett_nav_top:"Navigation supérieure - Barre d'onglets horizontale classique en haut (par défaut).",
     help_sett_nav_side:"Navigation latérale - Une barre d'icônes flottante à gauche de votre contenu. Cliquez sur la flèche pour développer et voir les libellés complets.",
@@ -1752,10 +1744,6 @@ const TRANSLATIONS = {
     dash_cash_flow:'Flux de trésorerie',
     dash_expected_vs_actual:'Prévu vs Réel',dash_of_expected_sfx:'du prévu',
     dash_flow_story:'Trajectoire de trésorerie',dash_bill_timeline:'Chronologie des échéances',dash_no_bill_dates:"Aucune facture avec date d'échéance pour le moment.",
-    dash_bubble_map:'Carte à bulles des catégories',dash_bubble_map_hint:'Taille = montant · position = % du budget utilisé',
-    dash_category_heatmap:'Carte de chaleur des catégories',dash_heatmap_hint:'Couleur plus intense = montant plus élevé',
-    dash_tx_density:'Répartition des montants des transactions',dash_not_enough_tx:'Pas encore assez de transactions pour afficher une répartition.',
-    dash_budget_headroom:'Marge budgétaire',dash_no_budgets:'Aucune catégorie budgétée pour le moment.',dash_tx_count_sfx:'transactions',
     dash_expected_legend:'Prévu',dash_actual_legend:'Réel',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
@@ -2009,7 +1997,7 @@ const TRANSLATIONS = {
     guide_settings_big:"Les Paramètres, c'est là où l'application s'adapte à vous - devise, période budgétaire, report, automatisation, apparence, langue, et la façon dont vos données sont stockées et sauvegardées.",
     guide_settings_step1:"Choisissez votre <strong>Devise</strong> et votre <strong>Période budgétaire</strong> pour que l'application corresponde à votre rythme réel de paiement et de dépenses.",
     guide_settings_step2:"Activez <strong>Report</strong> et <strong>Automatisation</strong> si vous voulez que l'argent non dépensé et les transactions récurrentes soient gérés automatiquement pour vous.",
-    guide_settings_step3:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Vintage ou Terminal), une <strong>Disposition du tableau de bord</strong> (5 designs au choix), et votre <strong>Langue</strong> dans la liste.",
+    guide_settings_step3:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Vintage ou Terminal), une <strong>Disposition du tableau de bord</strong> (3 designs au choix), et votre <strong>Langue</strong> dans la liste.",
     guide_settings_step4:"Configurez les <strong>Enveloppes budgétaires</strong> si vous préférez budgétiser par pourcentage (comme 50 % besoins, 30 % envies, 20 % épargne) plutôt qu'avec des montants de catégorie fixes.",
     guide_settings_step5:"Choisissez comment vos données sont stockées sous <strong>Données et synchronisation</strong> - localement sur cet appareil, ou synchronisées avec Google Drive pour qu'elles vous suivent sur d'autres appareils.",
     guide_settings_step6:"Utilisez <strong>Exporter les données</strong> pour tout sauvegarder, ou <strong>Réinitialiser les données</strong> si vous voulez repartir complètement à zéro.",
@@ -2070,7 +2058,7 @@ const TRANSLATIONS = {
     language:'Idioma',reset_data:'Restablecer datos',
     light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Diseño del panel',dashboard_layout_desc:'Elige cómo se diseña y visualiza tu panel.',
-    layout_1:'Clásico',layout_2:'Pulso radial',layout_3:'Historia del flujo',layout_4:'Mapa de burbujas',layout_5:'Cuadrícula de analista',
+    layout_1:'Clásico',layout_2:'Pulso radial',layout_3:'Historia del flujo',
     changes_autosaved:'✅ Los cambios se guardan automáticamente.',
     rollover_desc:'Traspasa el dinero no gastado del período anterior.',rollover_autocarry_label:'Trasladar automáticamente del período anterior',rollover_autocarry_hint:'Cuando cambias el período de presupuesto, este importe se recalcula automáticamente según lo que realmente sobró la última vez. Desmarca para configurarlo manualmente.',toast_rollover_autoset:'Remanente ajustado automáticamente a {0} del período anterior',
     rollover_amount:'Importe de saldo anterior',
@@ -2089,7 +2077,7 @@ const TRANSLATIONS = {
     help_sett_intro:'Todas tus preferencias para Ultimate Budget Planner. Los cambios se guardan automáticamente a medida que los realizas.',
     help_sett_currency_p:'Cambia el símbolo de moneda en toda la aplicación inmediatamente al seleccionarlo.',
     help_sett_appearance_p:'Elige entre cinco temas de color - Claro, Oscuro, Synthwave, Vintage o Terminal. Tu preferencia se recuerda entre sesiones.',
-    help_sett_layout_p:'Elige entre cinco diseños de panel - Clásico, Pulso radial, Historia del flujo, Mapa de burbujas o Cuadrícula de analista. Cada uno muestra los mismos datos con sus propios gráficos y disposición.',
+    help_sett_layout_p:'Elige entre tres diseños de panel - Clásico, Pulso radial, o Historia del flujo. Cada uno muestra los mismos datos con sus propios gráficos y disposición.',
     help_sett_nav_h:'Navegación',
     help_sett_nav_top:'Navegación superior - Barra de pestañas horizontal clásica en la parte superior (predeterminado).',
     help_sett_nav_side:'Navegación lateral - Una barra de iconos flotante a la izquierda de tu contenido. Haz clic en la flecha para expandirla y ver las etiquetas completas.',
@@ -2281,10 +2269,6 @@ const TRANSLATIONS = {
     dash_cash_flow:'Flujo de caja',
     dash_expected_vs_actual:'Previsto vs Real',dash_of_expected_sfx:'de lo previsto',
     dash_flow_story:'Trayectoria del flujo de caja',dash_bill_timeline:'Cronología de vencimientos',dash_no_bill_dates:'Aún no hay facturas con fecha de vencimiento.',
-    dash_bubble_map:'Mapa de burbujas por categoría',dash_bubble_map_hint:'Tamaño = importe · posición = % del presupuesto usado',
-    dash_category_heatmap:'Mapa de calor por categoría',dash_heatmap_hint:'Color más intenso = importe más alto',
-    dash_tx_density:'Distribución de los importes de transacciones',dash_not_enough_tx:'Aún no hay suficientes transacciones para mostrar una distribución.',
-    dash_budget_headroom:'Margen de presupuesto',dash_no_budgets:'Aún no hay categorías presupuestadas.',dash_tx_count_sfx:'transacciones',
     dash_expected_legend:'Previsto',dash_actual_legend:'Real',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
@@ -2538,7 +2522,7 @@ const TRANSLATIONS = {
     guide_settings_big:'Ajustes es donde la app se adapta a ti - moneda, período de presupuesto, saldo anterior, automatización, apariencia, idioma y cómo se guardan y respaldan tus datos.',
     guide_settings_step1:'Elige tu <strong>Moneda</strong> y tu <strong>Período de presupuesto</strong> para que la app coincida con tu ritmo real de pago y gasto.',
     guide_settings_step2:'Activa <strong>Saldo anterior</strong> y <strong>Automatización</strong> si quieres que el dinero no gastado y las transacciones recurrentes se manejen automáticamente por ti.',
-    guide_settings_step3:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Vintage o Terminal), un <strong>Diseño del panel</strong> (5 diseños a elegir), y tu <strong>Idioma</strong> de la lista.',
+    guide_settings_step3:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Vintage o Terminal), un <strong>Diseño del panel</strong> (3 diseños a elegir), y tu <strong>Idioma</strong> de la lista.',
     guide_settings_step4:'Configura la <strong>Distribución por porcentajes</strong> si prefieres presupuestar por porcentaje (como 50% necesidades, 30% deseos, 20% ahorro) en lugar de importes fijos por categoría.',
     guide_settings_step5:'Elige cómo se guardan tus datos en <strong>Datos y sincronización</strong> - localmente en este dispositivo, o sincronizados con Google Drive para que te sigan a otros dispositivos.',
     guide_settings_step6:'Usa <strong>Exportar datos</strong> para respaldar todo, o <strong>Restablecer datos</strong> si alguna vez quieres empezar completamente de cero.',
@@ -2599,7 +2583,7 @@ const TRANSLATIONS = {
     language:'Lingua',reset_data:'Reimposta dati',
     light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Layout della dashboard',dashboard_layout_desc:'Scegli come viene progettata e visualizzata la tua dashboard.',
-    layout_1:'Classico',layout_2:'Impulso radiale',layout_3:'Storia del flusso',layout_4:'Mappa a bolle',layout_5:'Griglia analista',
+    layout_1:'Classico',layout_2:'Impulso radiale',layout_3:'Storia del flusso',
     changes_autosaved:'✅ Le modifiche vengono salvate automaticamente.',
     rollover_desc:'Riporta il denaro non speso dal periodo precedente.',rollover_autocarry_label:'Riporto automatico dal periodo precedente',rollover_autocarry_hint:"Quando cambi il periodo di budget, questo importo viene ricalcolato automaticamente in base a quanto è effettivamente avanzato l'ultima volta. Deseleziona per impostarlo manualmente.",toast_rollover_autoset:"Riporto impostato automaticamente su {0} dall'ultimo periodo",
     rollover_amount:'Importo riporto',
@@ -2618,7 +2602,7 @@ const TRANSLATIONS = {
     help_sett_intro:'Tutte le tue preferenze per Ultimate Budget Planner. Le modifiche vengono salvate automaticamente man mano che le apporti.',
     help_sett_currency_p:"Modifica il simbolo di valuta ovunque nell'app immediatamente alla selezione.",
     help_sett_appearance_p:'Scegli tra cinque temi di colore - Chiaro, Scuro, Synthwave, Vintage o Terminal. Le tue preferenze vengono ricordate tra le sessioni.',
-    help_sett_layout_p:'Scegli tra cinque design della dashboard - Classico, Impulso radiale, Storia del flusso, Mappa a bolle o Griglia analista. Ognuno mostra gli stessi dati con grafici e disposizione propri.',
+    help_sett_layout_p:'Scegli tra tre design della dashboard - Classico, Impulso radiale, o Storia del flusso. Ognuno mostra gli stessi dati con grafici e disposizione propri.',
     help_sett_nav_h:'Navigazione',
     help_sett_nav_top:'Navigazione superiore - Barra a schede orizzontale classica in alto (predefinita).',
     help_sett_nav_side:'Navigazione laterale - Una barra di icone fluttuante a sinistra del tuo contenuto. Fai clic sulla freccia per espanderla e vedere le etichette complete.',
@@ -2811,10 +2795,6 @@ const TRANSLATIONS = {
     dash_cash_flow:'Flusso di cassa',
     dash_expected_vs_actual:'Previsto vs Effettivo',dash_of_expected_sfx:'del previsto',
     dash_flow_story:'Traiettoria del flusso di cassa',dash_bill_timeline:'Cronologia delle scadenze',dash_no_bill_dates:'Ancora nessuna bolletta con data di scadenza.',
-    dash_bubble_map:'Mappa a bolle per categoria',dash_bubble_map_hint:'Dimensione = importo · posizione = % di budget utilizzato',
-    dash_category_heatmap:'Mappa di calore per categoria',dash_heatmap_hint:'Colore più intenso = importo più alto',
-    dash_tx_density:'Distribuzione degli importi delle transazioni',dash_not_enough_tx:'Non ci sono ancora abbastanza transazioni per mostrare una distribuzione.',
-    dash_budget_headroom:'Margine di budget',dash_no_budgets:'Ancora nessuna categoria con budget.',dash_tx_count_sfx:'transazioni',
     dash_expected_legend:'Previsto',dash_actual_legend:'Effettivo',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
@@ -3068,7 +3048,7 @@ const TRANSLATIONS = {
     guide_settings_big:"Le Impostazioni sono dove l'app si adatta a te - valuta, periodo di budget, riporto, automazione, aspetto, lingua e come vengono salvati e sottoposti a backup i tuoi dati.",
     guide_settings_step1:"Scegli la tua <strong>Valuta</strong> e il tuo <strong>Periodo di budget</strong> così l'app corrisponde al tuo reale ritmo di pagamento e spesa.",
     guide_settings_step2:"Attiva <strong>Riporto</strong> e <strong>Automazione</strong> se vuoi che il denaro non speso e le transazioni ricorrenti vengano gestiti automaticamente per te.",
-    guide_settings_step3:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Vintage o Terminal), un <strong>Layout della dashboard</strong> (5 design tra cui scegliere), e la tua <strong>Lingua</strong> dall'elenco.",
+    guide_settings_step3:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Vintage o Terminal), un <strong>Layout della dashboard</strong> (3 design tra cui scegliere), e la tua <strong>Lingua</strong> dall'elenco.",
     guide_settings_step4:"Configura le <strong>Distribuzioni percentuali</strong> se preferisci fare budget per percentuale (come 50% bisogni, 30% desideri, 20% risparmio) invece di importi fissi per categoria.",
     guide_settings_step5:"Scegli come vengono salvati i tuoi dati in <strong>Dati e sincronizzazione</strong> - localmente su questo dispositivo, o sincronizzati con Google Drive così ti seguono su altri dispositivi.",
     guide_settings_step6:"Usa <strong>Esporta dati</strong> per fare un backup di tutto, o <strong>Ripristina dati</strong> se vuoi mai ricominciare completamente da zero.",
@@ -3129,7 +3109,7 @@ const TRANSLATIONS = {
     language:'Język',reset_data:'Zresetuj dane',
     light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Układ pulpitu',dashboard_layout_desc:'Wybierz, jak Twój pulpit jest zaprojektowany i wizualizowany.',
-    layout_1:'Klasyczny',layout_2:'Puls promienisty',layout_3:'Historia przepływu',layout_4:'Mapa bąbelkowa',layout_5:'Siatka analityka',
+    layout_1:'Klasyczny',layout_2:'Puls promienisty',layout_3:'Historia przepływu',
     changes_autosaved:'✅ Zmiany są zapisywane automatycznie.',
     rollover_desc:'Przenieś niewydane środki z poprzedniego okresu.',rollover_autocarry_label:'Automatyczne przenoszenie z poprzedniego okresu',rollover_autocarry_hint:'Gdy zmienisz okres budżetowy, ta kwota zostanie automatycznie przeliczona na podstawie tego, co faktycznie zostało ostatnim razem. Odznacz, aby ustawić ją ręcznie.',toast_rollover_autoset:'Przeniesienie automatycznie ustawione na {0} z poprzedniego okresu',
     rollover_amount:'Kwota przeniesienia',
@@ -3148,7 +3128,7 @@ const TRANSLATIONS = {
     help_sett_intro:'Wszystkie Twoje preferencje dla Ultimate Budget Planner. Zmiany są zapisywane automatycznie w trakcie ich wprowadzania.',
     help_sett_currency_p:'Zmienia symbol waluty wszędzie w aplikacji natychmiast po wybraniu.',
     help_sett_appearance_p:'Wybierz spośród pięciu motywów kolorystycznych - Jasny, Ciemny, Synthwave, Vintage lub Terminal. Twoje ustawienie jest zapamiętywane między sesjami.',
-    help_sett_layout_p:'Wybierz spośród pięciu projektów pulpitu - Klasyczny, Puls promienisty, Historia przepływu, Mapa bąbelkowa lub Siatka analityka. Każdy pokazuje te same dane z własnymi wykresami i układem.',
+    help_sett_layout_p:'Wybierz spośród trzech projektów pulpitu - Klasyczny, Puls promienisty, lub Historia przepływu. Każdy pokazuje te same dane z własnymi wykresami i układem.',
     help_sett_nav_h:'Nawigacja',
     help_sett_nav_top:'Górna nawigacja - Klasyczny poziomy pasek kart na górze (domyślny).',
     help_sett_nav_side:'Boczna nawigacja - Pływający pasek ikon po lewej stronie treści. Kliknij strzałkę, aby rozwinąć i zobaczyć pełne etykiety.',
@@ -3340,10 +3320,6 @@ const TRANSLATIONS = {
     dash_cash_flow:'Przepływ gotówki',
     dash_expected_vs_actual:'Spodziewane vs Rzeczywiste',dash_of_expected_sfx:'spodziewanego',
     dash_flow_story:'Trajektoria przepływu gotówki',dash_bill_timeline:'Oś czasu terminów płatności',dash_no_bill_dates:'Brak jeszcze rachunków z terminem płatności.',
-    dash_bubble_map:'Mapa bąbelkowa kategorii',dash_bubble_map_hint:'Rozmiar = kwota · pozycja = % wykorzystanego budżetu',
-    dash_category_heatmap:'Mapa cieplna kategorii',dash_heatmap_hint:'Głębszy kolor = wyższa kwota',
-    dash_tx_density:'Rozkład kwot transakcji',dash_not_enough_tx:'Za mało transakcji, aby pokazać rozkład.',
-    dash_budget_headroom:'Zapas budżetowy',dash_no_budgets:'Brak jeszcze zbudżetowanych kategorii.',dash_tx_count_sfx:'transakcje',
     dash_expected_legend:'Planowane',dash_actual_legend:'Rzeczywiste',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
@@ -3597,7 +3573,7 @@ const TRANSLATIONS = {
     guide_settings_big:'Ustawienia to miejsce, w którym aplikacja dostosowuje się do ciebie - waluta, okres budżetowy, przeniesienie, automatyzacja, wygląd, język oraz sposób zapisywania i tworzenia kopii zapasowych twoich danych.',
     guide_settings_step1:'Wybierz swoją <strong>Walutę</strong> i <strong>Okres budżetowy</strong>, aby aplikacja pasowała do twojego rzeczywistego rytmu płatności i wydatków.',
     guide_settings_step2:'Włącz <strong>Przeniesienie</strong> i <strong>Automatyzację</strong>, jeśli chcesz, aby niewydane pieniądze i cykliczne transakcje były obsługiwane automatycznie za ciebie.',
-    guide_settings_step3:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Vintage lub Terminal), <strong>Układ pulpitu</strong> (5 projektów do wyboru) i swój <strong>Język</strong> z listy.',
+    guide_settings_step3:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Vintage lub Terminal), <strong>Układ pulpitu</strong> (3 projekty do wyboru) i swój <strong>Język</strong> z listy.',
     guide_settings_step4:'Skonfiguruj <strong>Podział procentowy budżetu</strong>, jeśli wolisz budżetować procentowo (na przykład 50% potrzeby, 30% zachcianki, 20% oszczędności) zamiast stałych kwot dla kategorii.',
     guide_settings_step5:'Wybierz, jak przechowywane są twoje dane w <strong>Danych i synchronizacji</strong> - lokalnie na tym urządzeniu lub zsynchronizowane z Google Drive, aby podążały za tobą na inne urządzenia.',
     guide_settings_step6:'Użyj <strong>Eksportuj dane</strong>, aby zrobić kopię zapasową wszystkiego, lub <strong>Zresetuj dane</strong>, jeśli kiedykolwiek zechcesz zacząć zupełnie od nowa.',
@@ -3767,13 +3743,12 @@ function initTheme(){applyTheme(localStorage.getItem('evobudget_theme')||'dark')
 const DASHBOARD_LAYOUT_ICONS = {
   1: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
   2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>',
-  3: '<path d="M2 15c3-7 6 7 9 0s6-7 9 0" stroke-linejoin="round"/>',
-  4: '<circle cx="7" cy="16" r="3"/><circle cx="15" cy="8" r="5"/><circle cx="19" cy="18" r="2"/>',
-  5: '<path d="M12 2.5 20 7v10l-8 4.5-8-4.5V7z" stroke-linejoin="round"/>'
+  3: '<path d="M2 15c3-7 6 7 9 0s6-7 9 0" stroke-linejoin="round"/>'
 };
 function dashboardLayoutCardHtml() {
+  if ((state.settings.dashboardLayout || 1) > 3) state.settings.dashboardLayout = 1;
   const cur = state.settings.dashboardLayout || 1;
-  const opts = [1, 2, 3, 4, 5].map(n => `
+  const opts = [1, 2, 3].map(n => `
     <button class="layout-opt${cur === n ? ' is-active' : ''}" data-layout-val="${n}" type="button" title="${t('layout_' + n)}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${DASHBOARD_LAYOUT_ICONS[n]}</svg>
       ${t('layout_' + n)}
@@ -3823,9 +3798,7 @@ function renderDashboard() {
   ({
     1: renderDashboardLayout1,
     2: renderDashboardLayout2,
-    3: renderDashboardLayout3,
-    4: renderDashboardLayout4,
-    5: renderDashboardLayout5
+    3: renderDashboardLayout3
   }[layout] || renderDashboardLayout1)();
 }
 
@@ -4048,21 +4021,28 @@ function renderDashboardLayout2() {
                 <span class="dleg-swatch" style="background:${r.color}"></span>
                 <span class="dleg-label">${esc(r.label)}</span>
                 <span class="dleg-pct">${r.expected>0?Math.round(r.value/r.expected*100):0}%</span>
+                <span class="dleg-amt">${fmt(r.value)}</span>
               </div>`).join('')}</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="panel" data-chart-scope style="margin-bottom:14px">
-      <div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_expected_vs_actual')}</div>
-        <div class="radar-block">${svgRadar(radarAxes, radarExpected, radarActual, 260)}
-          <div class="radar-legend">
-            <span class="legend-item"><span class="legend-dot" style="background:#9ca3af"></span>${t('dash_expected_legend')}</span>
-            <span class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>${t('dash_actual_legend')}</span>
+    <div class="dashboard-grid" style="margin-bottom:14px">
+      <div class="panel radar-panel" data-chart-scope>
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_expected_vs_actual')}</div>
+          <div class="radar-block">${svgRadar(radarAxes, radarExpected, radarActual, 340)}
+            <div class="radar-legend">
+              <span class="legend-item"><span class="legend-dot" style="background:#9ca3af"></span>${t('dash_expected_legend')}</span>
+              <span class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>${t('dash_actual_legend')}</span>
+            </div>
           </div>
         </div>
+      </div>
+      <div class="charts-col">
+        <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgDonut(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})),110,16)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
+        <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="donut-block">${svgDonut(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})).slice(0,50),110,16)}<div class="donut-legend">${spendSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(spTot>0?s.value/spTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
       </div>
     </div>
 
@@ -4081,17 +4061,12 @@ function renderDashboardLayout2() {
         <div class="panel-title-sm" style="margin-bottom:12px">🏺 ${t('tab_sinking')}</div>
         ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
       </div></div>
-    </div>
-
-    <div class="donut-duo-row" style="margin-top:14px">
-      <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgDonut(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})),110,16)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
-      <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="donut-block">${svgDonut(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})).slice(0,50),110,16)}<div class="donut-legend">${spendSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(spTot>0?s.value/spTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
     </div>`;
   el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
   requestAnimationFrame(()=>{
     initDonuts(el);
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.rbar-seg', { legendScope: scope });
+      wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false });
       wireChartHover(scope, '.radar-pt', { format: d => `<strong>${esc(d.label)}</strong><br>${Math.round(parseFloat(d.val) || 0)}% ${esc(t('dash_of_expected_sfx'))}` });
     });
   });
@@ -4269,256 +4244,6 @@ function renderDashboardLayout3() {
     wireChartHover(el, '.rangebar-fill', {});
     const splineSvg = el.querySelector('.spline-svg');
     if (splineSvg) wireSplineHover(splineSvg, flowSeries);
-  });
-  el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
-  el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
-}
-
-// ── Layout 4: "Bubble Map" - spatial/comparative feel ───────────────────
-function buildBubbleMapData(typeRows) {
-  const chartW = 620, chartH = typeRows.length * 56, rowH = chartH / typeRows.length, padX = 32;
-  const allItems = [];
-  typeRows.forEach((row, ri) => {
-    row.items.filter(it => it.value > 0).forEach(it => allItems.push({ ...it, color: row.color, rowIdx: ri }));
-  });
-  const maxVal = Math.max(1, ...allItems.map(i => i.value));
-  const points = allItems.map(it => {
-    const pct = it.expected > 0 ? Math.min(160, it.value / it.expected * 100) : (it.value > 0 ? 100 : 0);
-    const r = 6 + 24 * Math.sqrt(it.value / maxVal);
-    const cy = it.rowIdx * rowH + rowH / 2;
-    return { cx: padX + Math.min(1, pct / 160) * (chartW - padX * 2), cy, r, color: it.color, label: it.label, value: it.value };
-  });
-  const refX = padX + Math.min(1, 100 / 160) * (chartW - padX * 2);
-  return { points, chartW, chartH, refX };
-}
-
-function renderDashboardLayout4() {
-  const act=computeActuals(),sum=computeSummary(act),subMo=totalSubMonthly();
-  const expInc=state.budgets.income.reduce((t,r)=>t+(r.expected||0),0);
-  const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
-  const expBil=state.budgets.bills.reduce((t,r)=>t+(r.expected||0),0);
-  const expSav=state.budgets.savings.reduce((t,r)=>t+(r.expected||0),0);
-  const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
-  const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
-
-  const debtActuals = {};
-  state.debts.forEach(d => { debtActuals[d.name] = (act.debt||{})[d.name] || 0; });
-  const subActuals = {};
-  (state.subscriptions||[]).forEach(s => { subActuals[s.name] = (act.subscription||{})[s.name] || 0; });
-
-  const typeRows = [
-    { key:'income',   label:t('bud_section_income'),   color:'#10b981', items: state.budgets.income.map(r=>({label:r.category, value:act.income[r.category]||0, expected:r.expected||0})) },
-    { key:'expenses', label:t('bud_section_expenses'), color:'#f43f5e', items: state.budgets.expenses.map(r=>({label:r.category, value:act.expenses[r.category]||0, expected:r.expected||0})) },
-    { key:'bills',    label:t('bud_section_bills'),    color:'#fb923c', items: state.budgets.bills.map(r=>({label:r.category, value:act.bills[r.category]||0, expected:r.expected||0})) },
-    { key:'debt',     label:t('dash_debt_payments'),   color:'#a855f7', items: state.debts.map(d=>({label:d.name, value:debtActuals[d.name]||0, expected:totalMonthlyDebtCost(d)})) },
-    { key:'savings',  label:t('bud_section_savings'),  color:'#3b82f6', items: state.budgets.savings.map(r=>({label:r.category, value:act.savings[r.category]||0, expected:r.expected||0})) },
-    { key:'sub',      label:t('dash_subscriptions'),   color:'#06b6d4', items: (state.subscriptions||[]).map(s=>({label:s.name, value:subActuals[s.name]||0, expected:s.amount||0})) }
-  ];
-  const bubbleData = buildBubbleMapData(typeRows);
-
-  const savingsRate = sum.savingsRate || 0;
-
-  const sfPoints = state.sinkingFunds.map((f,i) => {
-    const p = f.targetAmount>0 ? Math.min(100,(f.currentSaved||0)/f.targetAmount*100) : 0;
-    return { pct:p, saved:f.currentSaved||0, name:f.name, icon:f.icon||'🏺' };
-  });
-  const maxSf = Math.max(1, ...sfPoints.map(f=>f.saved));
-  const sfChartW = 300, sfChartH = 130;
-  const sfBubblePoints = sfPoints.map((f,i) => ({
-    cx: 30 + (f.pct/100) * (sfChartW-60), cy: sfChartH/2 + (i%2===0?-20:20),
-    r: 10 + 22*Math.sqrt(f.saved/maxSf), color:'#fb923c', label:f.name, value:f.saved
-  }));
-
-  const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
-  const welcomeHtml = showWelcome ? `
-    <div class="onboard-banner">
-      <div class="onboard-title">${t('onboard_welcome')}</div>
-      <div class="onboard-steps">
-        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
-      </div>
-    </div>` : '';
-
-  const el=document.getElementById('bview-dashboard');
-  el.innerHTML=welcomeHtml+`
-    <div class="section-header">
-      <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
-      <button class="period-badge period-badge--btn" id="periodBadgeBtn" title="Change period">${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}</button>
-      ${helpBtn('dashboard')}
-    </div>
-
-    <div class="ist-row ist-row--2x2">
-      ${iconStatTile('💰', t('dash_total_income'), fmt(sum.totalIncome), `${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}`, '#10b981')}
-      ${iconStatTile('🧾', t('dash_total_outgoing'), fmt(sum.totalOut), `${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}`, '#f43f5e')}
-      ${iconStatTile('💳', t('tab_debt'), fmt(sum.totalDebt||0), '', '#a855f7')}
-      ${iconStatTile('🔁', t('dash_subscriptions'), fmt(subMo)+t('sf_per_month'), '', '#06b6d4')}
-    </div>
-
-    <div class="panel leftover-panel">
-      <div class="leftover-inner">
-        <div><div class="leftover-label">${t('dash_net_leftover')}</div><div class="leftover-value" style="color:${leftColor}">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}</div>
-        <div class="leftover-formula">
-          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="bubble-map-grid">
-      <div class="panel chart-hero-panel">
-        <div class="chart-hero-label">${t('dash_savings_rate')}</div>
-        ${svgSemiGauge(Math.max(0, savingsRate), 190, '#3b82f6')}
-        <div class="chart-hero-sub">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</div>
-      </div>
-      <div class="panel">
-        <div class="panel-inner-sm">
-          <div class="panel-titlebar">
-            <span class="panel-title-sm">${t('dash_bubble_map')}</span>
-            <span class="chart-hero-sub">${t('dash_bubble_map_hint')}</span>
-          </div>
-          <div class="bubble-map-wrap" style="width:${bubbleData.chartW}px">
-            <div class="bubble-map-labels">${typeRows.map(r => `<div class="bmap-row-label" style="color:${r.color}">${esc(r.label)}</div>`).join('')}</div>
-            <div class="bubble-map-chart" style="width:${bubbleData.chartW}px;height:${bubbleData.chartH}px">
-              <div class="bmap-refline" style="left:${bubbleData.refX}px" title="100%"></div>
-              ${svgBubbles(bubbleData.points, bubbleData.chartW, bubbleData.chartH)}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    ${state.sinkingFunds.length ? `
-    <div class="panel" style="margin-top:14px">
-      <div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:10px">🏺 ${t('tab_sinking')}</div>
-        <div class="bubble-map-chart" style="width:${sfChartW}px;height:${sfChartH}px;margin:0 auto">
-          <div class="bmap-refline" style="left:${sfChartW-30}px" title="100%"></div>
-          ${svgBubbles(sfBubblePoints, sfChartW, sfChartH)}
-        </div>
-      </div>
-    </div>` : ''}
-  `;
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
-  requestAnimationFrame(()=>{
-    wireChartHover(el, '.bubble-mark', {});
-  });
-  el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
-  el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
-}
-
-// Alternate dashboard layout (5) - built out incrementally; falls back
-// to Layout 1's design until implemented.
-// ── Layout 5: "Analyst Grid" - data-dense feel ──────────────────────────
-function renderDashboardLayout5() {
-  const act=computeActuals(),sum=computeSummary(act),subMo=totalSubMonthly();
-  const expInc=state.budgets.income.reduce((t,r)=>t+(r.expected||0),0);
-  const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
-  const expBil=state.budgets.bills.reduce((t,r)=>t+(r.expected||0),0);
-  const expSav=state.budgets.savings.reduce((t,r)=>t+(r.expected||0),0);
-  const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
-  const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
-
-  const incSegs=state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
-  const incTot=incSegs.reduce((t,s)=>t+s.value,0);
-  const incPieSegs=incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0}));
-
-  const typeColors={income:'#10b981',expenses:'#f43f5e',bills:'#fb923c',debt:'#a855f7',savings:'#3b82f6',sub:'#06b6d4'};
-  const debtActuals={}; state.debts.forEach(d=>{debtActuals[d.name]=(act.debt||{})[d.name]||0;});
-  const subActuals={}; (state.subscriptions||[]).forEach(s=>{subActuals[s.name]=(act.subscription||{})[s.name]||0;});
-  const hexCells=[
-    ...state.budgets.income.map(r=>({label:r.category,value:act.income[r.category]||0,color:typeColors.income})),
-    ...state.budgets.expenses.map(r=>({label:r.category,value:act.expenses[r.category]||0,color:typeColors.expenses})),
-    ...state.budgets.bills.map(r=>({label:r.category,value:act.bills[r.category]||0,color:typeColors.bills})),
-    ...state.debts.map(d=>({label:d.name,value:debtActuals[d.name]||0,color:typeColors.debt})),
-    ...state.budgets.savings.map(r=>({label:r.category,value:act.savings[r.category]||0,color:typeColors.savings})),
-    ...(state.subscriptions||[]).map(s=>({label:s.name,value:subActuals[s.name]||0,color:typeColors.sub}))
-  ].filter(c=>c.value>0).sort((a,b)=>b.value-a.value);
-
-  const periodTx = state.transactions.filter(tx => tx.date >= state.settings.periodStart && tx.date <= state.settings.periodEnd);
-  const txAmounts = periodTx.map(tx => tx.amount || 0);
-
-  const headroomRanges=[
-    {label:t('bud_section_expenses'),min:0,max:expExp,marker:sum.totalExpenses,color:'#f43f5e'},
-    {label:t('bud_section_bills'),   min:0,max:expBil,marker:sum.totalBills,   color:'#fb923c'},
-    {label:t('dash_debt_payments'),  min:0,max:expDebt,marker:sum.totalDebt||0,color:'#a855f7'},
-    {label:t('bud_section_savings'), min:0,max:expSav,marker:sum.totalSavings,color:'#3b82f6'},
-    {label:t('dash_subscriptions'),  min:0,max:subMo, marker:sum.totalSubscriptions||0,color:'#06b6d4'}
-  ].filter(r=>r.max>0);
-
-  const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
-  const welcomeHtml = showWelcome ? `
-    <div class="onboard-banner">
-      <div class="onboard-title">${t('onboard_welcome')}</div>
-      <div class="onboard-steps">
-        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
-      </div>
-    </div>` : '';
-
-  const el=document.getElementById('bview-dashboard');
-  el.innerHTML=welcomeHtml+`
-    <div class="section-header">
-      <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
-      <button class="period-badge period-badge--btn" id="periodBadgeBtn" title="Change period">${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}</button>
-      ${helpBtn('dashboard')}
-    </div>
-    <div class="pro-stats-row">
-      <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_income')}</div><div class="pro-stat-value" style="color:#10b981">${fmt(sum.totalIncome)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}</div></div>
-      <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_outgoing')}</div><div class="pro-stat-value" style="color:#f43f5e">${fmt(sum.totalOut)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}</div></div>
-      <div class="pro-stat"><div class="pro-stat-label">${t('dash_savings_rate')}</div><div class="pro-stat-value" style="color:#6366f1">${sum.savingsRate}%</div><div class="pro-stat-sub">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</div></div>
-      <div class="pro-stat"><div class="pro-stat-label">${t('dash_subscriptions')}</div><div class="pro-stat-value" style="color:#a855f7">${fmt(subMo)}${t('sf_per_month')}</div><div class="pro-stat-sub">${fmt(subMo*12)}${t('dash_per_year')}</div></div>
-    </div>
-    <div class="panel leftover-panel">
-      <div class="leftover-inner">
-        <div><div class="leftover-label">${t('dash_net_leftover')}</div><div class="leftover-value" style="color:${leftColor}">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}</div>
-        <div class="leftover-formula">
-          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="analyst-grid">
-      <div class="panel">
-        <div class="panel-inner-sm">
-          <div class="panel-titlebar">
-            <span class="panel-title-sm">${t('dash_category_heatmap')}</span>
-            <span class="chart-hero-sub">${t('dash_heatmap_hint')}</span>
-          </div>
-          ${hexCells.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="hexgrid-wrap">${svgHexGrid(hexCells, 320)}</div>`}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_tx_density')}</div>
-          ${txAmounts.length<2?`<div class="chart-empty">${t('dash_not_enough_tx')}</div>`:`<div class="density-wrap">${svgDensityPlot(txAmounts, 420, 150)}</div>`}
-        </div>
-      </div>
-    </div>
-
-    <div class="analyst-grid">
-      <div class="panel chart-panel">
-        <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
-          ${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgPie(incPieSegs,130)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_budget_headroom')}</div>
-          ${headroomRanges.length===0?`<div class="chart-empty">${t('dash_no_budgets')}</div>`:`<div class="rangebar-wrap">${svgRangeBar(headroomRanges, 420)}</div>`}
-        </div>
-      </div>
-    </div>`;
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
-  requestAnimationFrame(()=>{
-    initDonuts(el);
-    wireChartHover(el, '.hex-cell', {});
-    wireChartHover(el, '.pie-seg', { legendScope: el, format: d => `<strong>${esc(d.label)}</strong><br>${d.pct}%` });
-    wireChartHover(el, '.rangebar-fill', {});
-    wireChartHover(el, '.density-bin', { format: d => `${d.value} ${esc(t('dash_tx_count_sfx'))}<br>${esc(d.label)}` });
   });
   el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));

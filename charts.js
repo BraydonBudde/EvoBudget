@@ -22,9 +22,12 @@ function svgSemiGauge(pct, size = 160, color = '#6366f1') {
   const boxH = cy + 4;
   const cFull = 2 * Math.PI * r, cHalf = cFull / 2;
   const p = Math.max(0, Math.min(100, pct || 0));
-  const dash = (p / 100) * cHalf, gap = cFull - dash;
+  // Floor the dash at ~3% of the half-circumference so a rounded-cap "nub"
+  // is always visible at the start of the arc, even at a literal 0% - an
+  // empty gauge should still read as "a gauge", not as blank space.
+  const dash = Math.max(cHalf * 0.03, (p / 100) * cHalf), gap = cFull - dash;
   return `<svg class="gauge-svg" width="${size}" height="${boxH.toFixed(1)}" viewBox="0 0 ${size} ${boxH.toFixed(1)}">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(30,27,46,.10)" stroke-width="${sw}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.32" stroke-width="${sw}"/>
     <circle class="gauge-arc" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"
       stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(180 ${cx} ${cy})"
       style="transition:stroke-dasharray .3s"/>
@@ -44,9 +47,11 @@ function svgRadialBars(rings, size = 220) {
     if (r <= sw) return;
     const c = 2 * Math.PI * r;
     const pct = ring.expected > 0 ? Math.min(150, (ring.value / ring.expected) * 100) : (ring.value > 0 ? 100 : 0);
-    const dash = Math.min(100, pct) / 100 * c, gapLen = c - dash;
+    // Same rounded-cap "nub" floor as svgSemiGauge - a ring at 0% should
+    // still read as an active ring in the chart, not as an empty gap.
+    const dash = Math.max(c * 0.02, Math.min(100, pct) / 100 * c), gapLen = c - dash;
     const over = ring.expected > 0 && ring.value > ring.expected;
-    out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(30,27,46,.07)" stroke-width="${sw}"/>
+    out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.28" stroke-width="${sw}"/>
       <circle class="rbar-seg" data-idx="${idx}" data-label="${esc(ring.label || '')}" data-val="${ring.value || 0}" data-pct="${pct.toFixed(0)}"
         cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${over ? '#f43f5e' : ring.color}" stroke-width="${sw}" stroke-linecap="round"
         stroke-dasharray="${dash.toFixed(2)} ${gapLen.toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"
@@ -57,32 +62,50 @@ function svgRadialBars(rings, size = 220) {
 }
 
 // ── Radar chart: two overlaid series (Expected vs Actual) across N axes ─
-function svgRadar(axes, seriesA, seriesB, size = 260) {
+function svgRadar(axes, seriesA, seriesB, size = 340) {
   const n = axes.length;
   if (n < 3) return `<svg width="${size}" height="${size}"></svg>`;
-  const cx = size / 2, cy = size / 2 - 6, r = size / 2 - 40;
+  const gid = 'rg' + Math.random().toString(36).slice(2, 8);
+  const labelPad = Math.max(26, size * 0.09);
+  const cx = size / 2, cy = size / 2 - 4, r = size / 2 - labelPad;
+  const fontSize = Math.max(11, Math.round(size * 0.038));
   const max = Math.max(1, ...seriesA, ...seriesB) * 1.15;
-  const rings = [0.25, 0.5, 0.75, 1].map(f => {
-    const pts = axes.map((_, i) => polar(cx, cy, r * f, i * 360 / n));
-    return `<polygon points="${pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ')}" fill="none" stroke="rgba(30,27,46,.10)" stroke-width="1"/>`;
+  const rings = [0.2, 0.4, 0.6, 0.8, 1].map((f, i) => {
+    const pts = axes.map((_, k) => polar(cx, cy, r * f, k * 360 / n));
+    const ptsStr = pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+    return i === 4
+      ? `<polygon points="${ptsStr}" fill="url(#${gid}bg)" stroke="var(--text-faint)" stroke-opacity="0.35" stroke-width="1"/>`
+      : `<polygon points="${ptsStr}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.22" stroke-width="1"/>`;
   }).join('');
   const spokes = axes.map((ax, i) => {
     const p = polar(cx, cy, r, i * 360 / n);
-    const lp = polar(cx, cy, r + 18, i * 360 / n);
-    return `<line x1="${cx}" y1="${cy}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke="rgba(30,27,46,.10)" stroke-width="1"/>
-      <text x="${lp.x.toFixed(1)}" y="${lp.y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" style="font-size:11px;fill:var(--text-secondary);font-weight:600">${esc(ax.label)}</text>`;
+    const lp = polar(cx, cy, r + labelPad * 0.72, i * 360 / n);
+    return `<line x1="${cx}" y1="${cy}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke="var(--text-faint)" stroke-opacity="0.22" stroke-width="1"/>
+      <text x="${lp.x.toFixed(1)}" y="${lp.y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" style="font-size:${fontSize}px;fill:var(--text-secondary);font-weight:700">${esc(ax.label)}</text>`;
   }).join('');
-  const poly = (series, color, fillOpacity) => {
+  const poly = (series, color, fillOpacity, dotR, useGradientFill) => {
     const pts = series.map((v, i) => polar(cx, cy, r * Math.min(1, v / max), i * 360 / n));
     const dots = pts.map((p, i) => `<circle class="radar-pt" data-idx="${i}" data-series="${color}" data-label="${esc(axes[i].label)}" data-val="${series[i]}"
-      cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${color}" stroke="var(--surface-solid)" stroke-width="1.5"
-      style="cursor:pointer;transition:r .15s"/>`).join('');
-    return `<polygon points="${pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ')}" fill="${color}" fill-opacity="${fillOpacity}" stroke="${color}" stroke-width="2"/>${dots}`;
+      cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${dotR}" fill="${color}" stroke="var(--surface-solid)" stroke-width="2"
+      style="cursor:pointer;transition:r .15s;filter:drop-shadow(0 1px 3px rgba(0,0,0,.25))"/>`).join('');
+    const fill = useGradientFill ? `url(#${gid}fill)` : color;
+    return `<polygon points="${pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ')}" fill="${fill}" fill-opacity="${fillOpacity}"
+      stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>${dots}`;
   };
   return `<svg class="radar-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">
+    <defs>
+      <radialGradient id="${gid}bg" cx="50%" cy="45%" r="65%">
+        <stop offset="0%" stop-color="var(--text-faint)" stop-opacity="0.07"/>
+        <stop offset="100%" stop-color="var(--text-faint)" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="${gid}fill" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#818cf8"/>
+        <stop offset="100%" stop-color="#6366f1"/>
+      </linearGradient>
+    </defs>
     ${rings}${spokes}
-    ${poly(seriesA, '#9ca3af', 0.10)}
-    ${poly(seriesB, '#6366f1', 0.22)}
+    ${poly(seriesA, '#9ca3af', 0.08, 3.5, false)}
+    ${poly(seriesB, '#6366f1', 0.28, 5, true)}
   </svg>`;
 }
 
@@ -106,18 +129,6 @@ function svgNightingale(segments, size = 220) {
       style="cursor:pointer;transition:opacity .18s,fill-opacity .18s"/>`;
   });
   return `<svg class="nightingale-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${out}</svg>`;
-}
-
-// ── Bubble chart: caller supplies pre-scaled cx/cy/r ────────────────────
-function svgBubbles(points, w = 320, h = 200) {
-  if (!points.length) return `<svg width="${w}" height="${h}"></svg>`;
-  const marks = points.map((p, idx) => `<circle class="bubble-mark" data-idx="${idx}" data-label="${esc(p.label || '')}" data-val="${p.value || 0}"
-    cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="${p.r.toFixed(1)}" fill="${p.color}" fill-opacity="0.75" stroke="${p.color}" stroke-width="1.5"
-    tabindex="0" role="img" aria-label="${esc(p.label || '')}: ${esc(fmt(p.value || 0))}"
-    style="cursor:pointer;transition:opacity .18s,r .18s"/>`).join('');
-  const labels = points.map(p => p.r > 20 ? `<text x="${p.cx.toFixed(1)}" y="${p.cy.toFixed(1)}" text-anchor="middle" dominant-baseline="middle"
-    pointer-events="none" style="font-size:10px;font-weight:700;fill:#fff">${esc((p.label || '').slice(0, 10))}</text>` : '').join('');
-  return `<svg class="bubble-svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible">${marks}${labels}</svg>`;
 }
 
 // ── Area / spline chart over a period (cumulative cash flow) ───────────
@@ -201,100 +212,6 @@ function svgRangeBar(ranges, w = 320) {
   return `<svg class="rangebar-svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible">${out}</svg>`;
 }
 
-// ── Hexagonal grid: honeycomb heatmap, fill intensity = value ──────────
-function svgHexGrid(cells, size = 260) {
-  const n = cells.length;
-  if (!n) return `<svg width="${size}" height="${size}"></svg>`;
-  const cols = Math.min(4, Math.ceil(Math.sqrt(n * 1.4)));
-  const hexR = Math.min(38, (size / cols) / 1.9);
-  const hexW = hexR * Math.sqrt(3), hexH = hexR * 2;
-  const rows = Math.ceil(n / cols);
-  const w = cols * hexW + hexW / 2 + 8, h = rows * hexH * 0.75 + hexH * 0.5 + 8;
-  const max = Math.max(1, ...cells.map(c => c.value));
-  const hexPoints = (cx, cy, r) => Array.from({ length: 6 }, (_, i) => {
-    const a = Math.PI / 180 * (60 * i - 30);
-    return `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`;
-  }).join(' ');
-  let out = '';
-  cells.forEach((cell, idx) => {
-    const col = idx % cols, row = Math.floor(idx / cols);
-    const cx = hexW / 2 + col * hexW + (row % 2 ? hexW / 2 : 0) + 4;
-    const cy = hexH * 0.5 + row * hexH * 0.75 + 4;
-    const intensity = 0.22 + 0.72 * ((cell.value || 0) / max);
-    out += `<polygon class="hex-cell" data-idx="${idx}" data-label="${esc(cell.label || '')}" data-val="${cell.value || 0}"
-      points="${hexPoints(cx, cy, hexR - 2)}" fill="${cell.color}" fill-opacity="${intensity.toFixed(2)}" stroke="${cell.color}" stroke-width="1.5"
-      tabindex="0" role="img" aria-label="${esc(cell.label || '')}: ${esc(fmt(cell.value || 0))}"
-      style="cursor:pointer;transition:fill-opacity .18s,opacity .18s"/>
-      <text x="${cx.toFixed(1)}" y="${cy.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" pointer-events="none"
-        style="font-size:9.5px;font-weight:700;fill:var(--text-primary)">${esc((cell.label || '').slice(0, 8))}</text>`;
-  });
-  return `<svg class="hexgrid-svg" width="${w.toFixed(0)}" height="${h.toFixed(0)}" viewBox="0 0 ${w.toFixed(0)} ${h.toFixed(0)}" style="overflow:visible">${out}</svg>`;
-}
-
-// ── Density plot: smoothed distribution of transaction amounts ─────────
-function svgDensityPlot(values, w = 420, h = 140, color = '#6366f1') {
-  const nums = (values || []).filter(v => v > 0);
-  if (nums.length < 2) return `<svg width="${w}" height="${h}"></svg>`;
-  const max = Math.max(...nums), bins = 14;
-  const counts = Array.from({ length: bins }, () => 0);
-  nums.forEach(v => { const b = Math.min(bins - 1, Math.floor((v / max) * bins)); counts[b]++; });
-  const maxCount = Math.max(1, ...counts);
-  const pad = 6;
-  const xAt = i => pad + (i / (bins - 1)) * (w - pad * 2);
-  const yAt = c => h - pad - (c / maxCount) * (h - pad * 2 - 18);
-  const pts = counts.map((c, i) => ({ x: xAt(i), y: yAt(c) }));
-  let d = `M ${pts[0].x.toFixed(1)} ${(h - pad).toFixed(1)} L ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
-  for (let i = 1; i < pts.length; i++) {
-    const p0 = pts[i - 1], p1 = pts[i], mx = (p0.x + p1.x) / 2;
-    d += ` C ${mx.toFixed(1)} ${p0.y.toFixed(1)}, ${mx.toFixed(1)} ${p1.y.toFixed(1)}, ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
-  }
-  d += ` L ${pts[pts.length - 1].x.toFixed(1)} ${(h - pad).toFixed(1)} Z`;
-  const gid = 'dp' + Math.random().toString(36).slice(2, 8);
-  const marks = counts.map((c, i) => `<rect class="density-bin" data-idx="${i}" data-label="${esc(fmt(i / bins * max))} - ${esc(fmt((i + 1) / bins * max))}" data-val="${c}"
-    x="${(xAt(i) - (w - pad * 2) / bins / 2).toFixed(1)}" y="${pad}" width="${((w - pad * 2) / bins).toFixed(1)}" height="${(h - pad * 2)}" fill="transparent"
-    tabindex="0" role="img" aria-label="${c} transactions" style="cursor:pointer"/>`).join('');
-  return `<svg class="density-svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible">
-    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="${color}" stop-opacity="0.4"/><stop offset="100%" stop-color="${color}" stop-opacity="0.03"/>
-    </linearGradient></defs>
-    <path d="${d}" fill="url(#${gid})" stroke="${color}" stroke-width="2"/>
-    ${marks}
-  </svg>`;
-}
-
-// ── Plain pie chart (true wedges, no donut hole) ────────────────────────
-function svgPie(segments, size = 150) {
-  const cx = size / 2, cy = size / 2, r = size / 2 - 3;
-  if (!segments || !segments.length) return `<svg width="${size}" height="${size}"></svg>`;
-  const nonZero = segments.filter(s => (s.pct || 0) > 0);
-  // A single 100% wedge degenerates an SVG arc command (start point == end
-  // point at the 360/0 boundary, so it renders nothing) - draw a plain
-  // circle instead in that case.
-  if (nonZero.length === 1) {
-    const seg = nonZero[0], idx = segments.indexOf(seg);
-    return `<svg class="pie-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">
-      <circle class="pie-seg" data-idx="${idx}" data-label="${esc(seg.label || '')}" data-val="${seg.value || 0}" data-pct="${seg.pct.toFixed(1)}"
-        cx="${cx}" cy="${cy}" r="${r}" fill="${seg.color}" stroke="var(--surface-solid)" stroke-width="1.5"
-        tabindex="0" role="img" aria-label="${esc(seg.label || '')}: ${seg.pct.toFixed(0)}%"
-        style="cursor:pointer;transition:opacity .18s"/>
-    </svg>`;
-  }
-  let out = '', cum = 0;
-  segments.forEach((seg, idx) => {
-    const p = seg.pct || 0; if (p <= 0) { return; }
-    const a0 = cum / 100 * 360, a1 = (cum + p) / 100 * 360;
-    const p0 = polar(cx, cy, r, a0), p1 = polar(cx, cy, r, a1);
-    const large = (a1 - a0) > 180 ? 1 : 0;
-    out += `<path class="pie-seg" data-idx="${idx}" data-label="${esc(seg.label || '')}" data-val="${seg.value || 0}" data-pct="${p.toFixed(1)}"
-      d="M ${cx} ${cy} L ${p0.x.toFixed(2)} ${p0.y.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${p1.x.toFixed(2)} ${p1.y.toFixed(2)} Z"
-      fill="${seg.color}" stroke="var(--surface-solid)" stroke-width="1.5"
-      tabindex="0" role="img" aria-label="${esc(seg.label || '')}: ${p.toFixed(0)}%"
-      style="cursor:pointer;transition:opacity .18s,transform .18s;transform-origin:${cx}px ${cy}px"/>`;
-    cum += p;
-  });
-  return `<svg class="pie-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${out}</svg>`;
-}
-
 // ── Icon-forward stat tile (markup helper, not SVG) ─────────────────────
 function iconStatTile(icon, label, value, sub, color) {
   // label/sub are pre-formatted translated strings (same convention as the
@@ -345,8 +262,10 @@ function wireChartHover(scope, markSelector, opts) {
     const row = legend.find(r => r.dataset.idx === mark.dataset.idx);
     if (row) {
       row.classList.add('is-active');
-      const amtEl = row.querySelector('.dleg-pct');
-      if (amtEl) { if (amtEl.dataset.origText === undefined) amtEl.dataset.origText = amtEl.textContent; amtEl.textContent = fmt(parseFloat(mark.dataset.val) || 0); }
+      if (opts.swapText !== false) {
+        const amtEl = row.querySelector('.dleg-pct');
+        if (amtEl) { if (amtEl.dataset.origText === undefined) amtEl.dataset.origText = amtEl.textContent; amtEl.textContent = fmt(parseFloat(mark.dataset.val) || 0); }
+      }
     }
     tip.innerHTML = fmtTip(mark.dataset);
     tip.style.opacity = '1';
@@ -356,8 +275,10 @@ function wireChartHover(scope, markSelector, opts) {
     marks.forEach(m => { m.style.opacity = '1'; if (opts.highlightClass) m.classList.remove(opts.highlightClass); });
     legend.forEach(row => {
       row.classList.remove('is-active');
-      const amtEl = row.querySelector('.dleg-pct');
-      if (amtEl && amtEl.dataset.origText !== undefined) amtEl.textContent = amtEl.dataset.origText;
+      if (opts.swapText !== false) {
+        const amtEl = row.querySelector('.dleg-pct');
+        if (amtEl && amtEl.dataset.origText !== undefined) amtEl.textContent = amtEl.dataset.origText;
+      }
     });
     tip.style.opacity = '0';
   };
