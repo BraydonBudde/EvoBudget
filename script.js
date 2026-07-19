@@ -113,6 +113,8 @@ const TRANSLATIONS = {
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
+    dashboard_layout:'Dashboard Layout', dashboard_layout_desc:'Choose how your Dashboard is designed and visualised.',
+    layout_1:'Classic', layout_2:'Radial Pulse', layout_3:'Flow Story', layout_4:'Bubble Map', layout_5:'Analyst Grid',
     changes_autosaved:'✅ Changes are saved automatically.',
     rollover_desc:'Carry unspent money from your previous period into this one.',
     rollover_amount:'Rollover amount',
@@ -1612,7 +1614,7 @@ function applyLanguage() {
 function defaultState() {
   const { start, end } = getMonthBounds();
   return {
-    settings: { currency: 'USD', symbol: '$', periodStart: start, periodEnd: end, language: 'en', hideUpgrade: false },
+    settings: { currency: 'USD', symbol: '$', periodStart: start, periodEnd: end, language: 'en', hideUpgrade: false, dashboardLayout: 1 },
     rollover: 0,
     budgets: {
       income: [
@@ -2099,6 +2101,41 @@ function applyTheme(theme) {
 }
 function initTheme() { applyTheme(localStorage.getItem('evobudget_theme') || 'dark'); }
 
+// ── Dashboard Layout picker (Settings) ─────────────────────────────────
+const DASHBOARD_LAYOUT_ICONS = {
+  1: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>',
+  3: '<path d="M2 15c3-7 6 7 9 0s6-7 9 0" stroke-linejoin="round"/>',
+  4: '<circle cx="7" cy="16" r="3"/><circle cx="15" cy="8" r="5"/><circle cx="19" cy="18" r="2"/>',
+  5: '<path d="M12 2.5 20 7v10l-8 4.5-8-4.5V7z" stroke-linejoin="round"/>'
+};
+function dashboardLayoutCardHtml() {
+  const cur = state.settings.dashboardLayout || 1;
+  const opts = [1, 2, 3, 4, 5].map(n => `
+    <button class="layout-opt${cur === n ? ' is-active' : ''}" data-layout-val="${n}" type="button" title="${t('layout_' + n)}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${DASHBOARD_LAYOUT_ICONS[n]}</svg>
+      ${t('layout_' + n)}
+    </button>`).join('');
+  return `<div class="panel"><div class="panel-inner">
+    <div class="settings-card-title">📊 ${t('dashboard_layout')}</div>
+    <p class="settings-desc">${t('dashboard_layout_desc')}</p>
+    <div class="layout-setting-row">
+      <div class="layout-pill theme-pill" role="group" aria-label="${t('dashboard_layout')}">${opts}</div>
+    </div>
+  </div></div>`;
+}
+function wireDashboardLayoutPicker(el) {
+  el.querySelectorAll('.layout-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const n = parseInt(btn.dataset.layoutVal, 10) || 1;
+      state.settings.dashboardLayout = n;
+      saveState();
+      el.querySelectorAll('.layout-opt').forEach(b => b.classList.toggle('is-active', b === btn));
+      renderDashboard();
+    });
+  });
+}
+
 // ── Navigation ────────────────────────────────────────────────────────
 let currentView = 'hub';
 let currentBTab = 'dashboard';
@@ -2307,6 +2344,17 @@ window.addEventListener('scroll',()=>document.querySelectorAll('.cc-tip-pop').fo
 
 // ── Dashboard ─────────────────────────────────────────────────────────
 function renderDashboard() {
+  const layout = state.settings.dashboardLayout || 1;
+  ({
+    1: renderDashboardLayout1,
+    2: renderDashboardLayout2,
+    3: renderDashboardLayout3,
+    4: renderDashboardLayout4,
+    5: renderDashboardLayout5
+  }[layout] || renderDashboardLayout1)();
+}
+
+function renderDashboardLayout1() {
   const actuals = computeActuals();
   const sum     = computeSummary(actuals);
 
@@ -2519,6 +2567,13 @@ function renderDashboard() {
     });
   }
 }
+
+// Alternate dashboard layouts (2-5) - built out incrementally; fall back
+// to Layout 1's design until each is implemented.
+function renderDashboardLayout2() { renderDashboardLayout1(); }
+function renderDashboardLayout3() { renderDashboardLayout1(); }
+function renderDashboardLayout4() { renderDashboardLayout1(); }
+function renderDashboardLayout5() { renderDashboardLayout1(); }
 
 // ── Budget Modules ─────────────────────────────────────────────────────
 const MODULE_META = {
@@ -3192,6 +3247,7 @@ function renderSettings() {
           </div>
         </div>
       </div></div>
+      ${dashboardLayoutCardHtml()}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">${t('sync_card_title')}</div>
         <p class="settings-desc">${t('sync_card_desc')}</p>
@@ -3244,6 +3300,7 @@ function renderSettings() {
   el.querySelectorAll('.theme-opt').forEach(btn => {
     btn.addEventListener('click', () => applyTheme(btn.dataset.themeVal));
   });
+  wireDashboardLayoutPicker(el);
 
   el.querySelectorAll('[data-sync-mode]').forEach(btn => {
     btn.addEventListener('click', async () => {
