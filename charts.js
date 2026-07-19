@@ -11,21 +11,24 @@ function polar(cx, cy, r, angleDeg) {
   return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
 }
 
-// ── Semi-circle gauge (single KPI, 0-100%) ─────────────────────────────
+// ── Semi-circle gauge (single KPI, 0-100%) ──────────────────────────────
+// Same circle+stroke-dasharray+rotate technique as svgDonut (proven), just
+// scaled to a half circumference and relying on the SVG's own viewBox to
+// crop the bottom half - avoids hand-rolled path arc-flag geometry.
 function svgSemiGauge(pct, size = 160, color = '#6366f1') {
-  const w = size, h = size * 0.62, sw = size * 0.11, cx = w / 2, cy = h - sw / 2, r = w / 2 - sw / 2 - 2;
+  const sw = Math.max(10, size * 0.11);
+  const r = size / 2 - sw / 2 - 2;
+  const cx = size / 2, cy = r + sw / 2 + 2;
+  const boxH = cy + 4;
+  const cFull = 2 * Math.PI * r, cHalf = cFull / 2;
   const p = Math.max(0, Math.min(100, pct || 0));
-  const a0 = polar(cx, cy, r, -90), a1 = polar(cx, cy, r, 90);
-  const bg = `M ${a0.x.toFixed(2)} ${a0.y.toFixed(2)} A ${r} ${r} 0 0 1 ${a1.x.toFixed(2)} ${a1.y.toFixed(2)}`;
-  const angle = -90 + (p / 100) * 180;
-  const ap = polar(cx, cy, r, angle);
-  const large = p > 50 ? 1 : 0;
-  const fg = `M ${a0.x.toFixed(2)} ${a0.y.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${ap.x.toFixed(2)} ${ap.y.toFixed(2)}`;
-  return `<svg class="gauge-svg" width="${w}" height="${h + 4}" viewBox="0 0 ${w} ${h + 4}" style="overflow:visible">
-    <path d="${bg}" fill="none" stroke="rgba(30,27,46,.08)" stroke-width="${sw}" stroke-linecap="round"/>
-    <path class="gauge-arc" d="${fg}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"
-      style="transition:stroke-dashoffset .3s"/>
-    <text x="${cx}" y="${cy - h * 0.10}" text-anchor="middle" style="font-family:Sora,sans-serif;font-weight:800;font-size:${(size * .16).toFixed(0)}px;fill:var(--text-primary)">${Math.round(p)}%</text>
+  const dash = (p / 100) * cHalf, gap = cFull - dash;
+  return `<svg class="gauge-svg" width="${size}" height="${boxH.toFixed(1)}" viewBox="0 0 ${size} ${boxH.toFixed(1)}">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(30,27,46,.10)" stroke-width="${sw}"/>
+    <circle class="gauge-arc" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"
+      stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(180 ${cx} ${cy})"
+      style="transition:stroke-dasharray .3s"/>
+    <text x="${cx}" y="${(cy - sw * 0.25).toFixed(1)}" text-anchor="middle" style="font-family:Sora,sans-serif;font-weight:800;font-size:${(size * .16).toFixed(0)}px;fill:var(--text-primary)">${Math.round(p)}%</text>
   </svg>`;
 }
 
@@ -281,10 +284,13 @@ function svgPie(segments, size = 150) {
 
 // ── Icon-forward stat tile (markup helper, not SVG) ─────────────────────
 function iconStatTile(icon, label, value, sub, color) {
+  // label/sub are pre-formatted translated strings (same convention as the
+  // stat cards in Layout 1) - not re-escaped here to avoid double-escaping
+  // entities like "&amp;" that already live in the translation tables.
   return `<div class="icon-stat-tile">
     <div class="ist-icon" style="background:${color}22;color:${color}">${icon}</div>
     <div class="ist-body">
-      <div class="ist-label">${esc(label)}</div>
+      <div class="ist-label">${label}</div>
       <div class="ist-value" style="color:${color}">${value}</div>
       ${sub ? `<div class="ist-sub">${sub}</div>` : ''}
     </div>

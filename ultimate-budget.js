@@ -691,6 +691,7 @@ const TRANSLATIONS = {
     dash_in_sfx:'in',dash_out_sfx:'out',
     dash_includes:'Includes',dash_rollover_sfx:'rollover',
     dash_cash_flow:'Cash Flow',
+    dash_expected_vs_actual:'Expected vs Actual', dash_of_expected_sfx:'of expected',
     dash_expected_legend:'Expected',dash_actual_legend:'Actual',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -3892,9 +3893,163 @@ function renderDashboardLayout1() {
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
 }
 
-// Alternate dashboard layouts (2-5) - built out incrementally; fall back
+// ── Layout 2: "Radial Pulse" - KPI-cockpit feel ─────────────────────────
+function renderDashboardLayout2() {
+  const act=computeActuals(),sum=computeSummary(act),result=runDebtPayoff(),subMo=totalSubMonthly();
+  const expInc=state.budgets.income.reduce((t,r)=>t+(r.expected||0),0);
+  const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
+  const expBil=state.budgets.bills.reduce((t,r)=>t+(r.expected||0),0);
+  const expSav=state.budgets.savings.reduce((t,r)=>t+(r.expected||0),0);
+  const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
+  const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
+  const upcomingDays=state.settings?.upcomingDays||7;
+  const upcoming=getUpcomingEvents(upcomingDays,act);
+  const incSegs=state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const incTot=incSegs.reduce((t,s)=>t+s.value,0);
+  const spendSegs=[
+    ...state.budgets.expenses.map((r,i)=>({label:r.category,value:act.expenses[r.category]||0,color:COLORS[i%COLORS.length]})),
+    ...state.budgets.bills.map((r,i)=>({label:r.category,value:act.bills[r.category]||0,color:COLORS[(i+5)%COLORS.length]})),
+    ...Object.entries(act.debt||{}).map(([name,val],i)=>({label:name,value:val,color:['#a855f7','#9333ea','#7c3aed','#c026d3'][i%4]})),
+    ...Object.entries(act.subscription||{}).map(([name,val],i)=>({label:name,value:val,color:['#10b981','#06b6d4','#14b8a6','#059669'][i%4]})),
+  ].filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const spTot=spendSegs.reduce((t,s)=>t+s.value,0);
+
+  const gaugePct = sum.totalIncome>0 ? Math.max(0,Math.min(100, sum.leftover/sum.totalIncome*100)) : 0;
+  const rings=[
+    {label:t('bud_section_expenses'),value:sum.totalExpenses,expected:expExp,color:'#f43f5e'},
+    {label:t('bud_section_bills'),   value:sum.totalBills,   expected:expBil,color:'#fb923c'},
+    {label:t('dash_debt_payments'),  value:sum.totalDebt||0, expected:expDebt,color:'#a855f7'},
+    {label:t('bud_section_savings'), value:sum.totalSavings, expected:expSav,color:'#3b82f6'},
+    {label:t('dash_subscriptions'),  value:sum.totalSubscriptions||0, expected:subMo,color:'#10b981'}
+  ];
+  // Radar is normalized to %-of-expected per axis (see SBP layout2 for rationale).
+  const radarAxes=rings.map(r=>({label:r.label}));
+  const radarExpected=rings.map(()=>100);
+  const radarActual=rings.map(r=>r.expected>0?Math.min(160, r.value/r.expected*100):(r.value>0?100:0));
+
+  const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
+  const welcomeHtml = showWelcome ? `
+    <div class="onboard-banner">
+      <div class="onboard-title">${t('onboard_welcome')}</div>
+      <div class="onboard-steps">
+        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
+      </div>
+    </div>` : '';
+
+  const allocHtml = (() => {
+    if (!state.allocation?.enabled) return '';
+    const {totals} = computeAllocation();
+    const income = sum.totalIncome > 0 ? sum.totalIncome : expInc;
+    const buckets = state.allocation.buckets || [];
+    if (income <= 0 && Object.values(totals).every(v=>v===0)) return '';
+    const tiles = buckets.map(b => {
+      const actual = totals[b.id] || 0;
+      const ap = income > 0 ? (actual/income*100) : 0;
+      const displayName = getAllocBucketDisplayName(b);
+      return `<div class="chart-hero-panel" style="padding:12px 8px">
+        ${svgSemiGauge(Math.min(100, ap), 110, b.color)}
+        <div class="chart-hero-label" style="margin-top:-4px">${esc(displayName)}</div>
+        <div class="chart-hero-sub">${t('alloc_target')} ${b.pct}%</div>
+      </div>`;
+    }).join('');
+    return `<div class="panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:10px">${t('alloc_title')}</div>
+      <div class="ist-row" style="grid-template-columns:repeat(${buckets.length},1fr)">${tiles}</div>
+    </div></div>`;
+  })();
+
+  const el=document.getElementById('bview-dashboard');
+  el.innerHTML=welcomeHtml+`
+    <div class="section-header">
+      <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
+      <button class="period-badge period-badge--btn" id="periodBadgeBtn" title="Change period">${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}</button>
+      ${helpBtn('dashboard')}
+    </div>
+
+    <div class="ist-row">
+      ${iconStatTile('💰', t('dash_total_income'), fmt(sum.totalIncome), `${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}`, '#10b981')}
+      ${iconStatTile('🧾', t('dash_total_outgoing'), fmt(sum.totalOut), `${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}`, '#f43f5e')}
+      ${iconStatTile('📈', t('dash_savings_rate'), sum.savingsRate+'%', `${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}`, '#6366f1')}
+      ${iconStatTile('🔁', t('dash_subscriptions'), fmt(subMo)+t('sf_per_month'), `${fmt(subMo*12)}${t('dash_per_year')}`, '#a855f7')}
+    </div>
+
+    <div class="radial-pulse-grid">
+      <div class="panel chart-hero-panel" data-chart-scope>
+        <div class="chart-hero-label">${t('dash_net_leftover')}</div>
+        ${svgSemiGauge(gaugePct, 190, leftColor)}
+        <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>
+        ${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}
+        <div class="leftover-formula" style="justify-content:center">
+          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span>
+          <span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span>
+          <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>
+        </div>
+      </div>
+      <div class="panel" data-chart-scope>
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_cash_flow')}</div>
+          <div class="radial-bars-block">
+            ${svgRadialBars(rings, 190)}
+            <div class="donut-legend">${rings.map((r,idx) => `
+              <div class="dleg-row" data-idx="${idx}">
+                <span class="dleg-swatch" style="background:${r.color}"></span>
+                <span class="dleg-label">${esc(r.label)}</span>
+                <span class="dleg-pct">${r.expected>0?Math.round(r.value/r.expected*100):0}%</span>
+              </div>`).join('')}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" data-chart-scope style="margin-bottom:14px">
+      <div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_expected_vs_actual')}</div>
+        <div class="radar-block">${svgRadar(radarAxes, radarExpected, radarActual, 260)}
+          <div class="radar-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:#9ca3af"></span>${t('dash_expected_legend')}</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>${t('dash_actual_legend')}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${allocHtml}
+
+    <div class="pro-bottom-row" style="margin-top:14px">
+      <div class="panel pro-card"><div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:12px">💳 ${t('tab_debt')}</div>
+        ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
+      </div></div>
+      <div class="panel pro-card"><div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:12px">${tf('dash_upcoming_tpl',upcomingDays)}</div>
+        ${upcoming.length===0?`<div class="chart-empty">${t('dash_nothing_scheduled')}</div>`:`<div class="upcoming-list">${upcoming.slice(0,6).map(ev=>{const p=ev.paid;return`<div class="upcoming-item"><span class="up-dot" style="background:${p?'var(--text-faint)':ev.color}"></span><span class="up-label" style="${p?'text-decoration:line-through;color:var(--text-faint)':''}">${esc(ev.label)}</span><span class="up-date" style="${p?'color:var(--text-faint)':''}">${formatDateDisplay(ev.date)}</span><span class="up-amt" style="${p?'color:var(--text-faint)':''}">${fmt(ev.amount)}</span></div>`;}).join('')}</div>`}
+      </div></div>
+      <div class="panel pro-card"><div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:12px">🏺 ${t('tab_sinking')}</div>
+        ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
+      </div></div>
+    </div>
+
+    <div class="donut-duo-row" style="margin-top:14px">
+      <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgDonut(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})),110,16)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="donut-block">${svgDonut(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})).slice(0,50),110,16)}<div class="donut-legend">${spendSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(spTot>0?s.value/spTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
+    </div>`;
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
+  requestAnimationFrame(()=>{
+    initDonuts(el);
+    el.querySelectorAll('[data-chart-scope]').forEach(scope => {
+      wireChartHover(scope, '.rbar-seg', { legendScope: scope });
+      wireChartHover(scope, '.radar-pt', { format: d => `<strong>${esc(d.label)}</strong><br>${Math.round(parseFloat(d.val) || 0)}% ${esc(t('dash_of_expected_sfx'))}` });
+    });
+  });
+  el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
+  el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
+}
+
+// Alternate dashboard layouts (3-5) - built out incrementally; fall back
 // to Layout 1's design until each is implemented.
-function renderDashboardLayout2() { renderDashboardLayout1(); }
 function renderDashboardLayout3() { renderDashboardLayout1(); }
 function renderDashboardLayout4() { renderDashboardLayout1(); }
 function renderDashboardLayout5() { renderDashboardLayout1(); }
