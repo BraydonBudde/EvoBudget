@@ -694,6 +694,9 @@ const TRANSLATIONS = {
     dash_expected_vs_actual:'Expected vs Actual', dash_of_expected_sfx:'of expected',
     dash_flow_story:'Cash Flow Trajectory', dash_bill_timeline:'Bill Due-Date Timeline', dash_no_bill_dates:'No bills with due dates yet.',
     dash_bubble_map:'Category Bubble Map', dash_bubble_map_hint:'Size = amount · position = % of budget used',
+    dash_category_heatmap:'Category Heatmap', dash_heatmap_hint:'Deeper color = higher amount',
+    dash_tx_density:'Transaction Amount Distribution', dash_not_enough_tx:'Not enough transactions yet to show a distribution.',
+    dash_budget_headroom:'Budget Headroom', dash_no_budgets:'No budgeted categories yet.', dash_tx_count_sfx:'transactions',
     dash_expected_legend:'Expected',dash_actual_legend:'Actual',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -4360,7 +4363,120 @@ function renderDashboardLayout4() {
 
 // Alternate dashboard layout (5) - built out incrementally; falls back
 // to Layout 1's design until implemented.
-function renderDashboardLayout5() { renderDashboardLayout1(); }
+// ── Layout 5: "Analyst Grid" - data-dense feel ──────────────────────────
+function renderDashboardLayout5() {
+  const act=computeActuals(),sum=computeSummary(act),subMo=totalSubMonthly();
+  const expInc=state.budgets.income.reduce((t,r)=>t+(r.expected||0),0);
+  const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
+  const expBil=state.budgets.bills.reduce((t,r)=>t+(r.expected||0),0);
+  const expSav=state.budgets.savings.reduce((t,r)=>t+(r.expected||0),0);
+  const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
+  const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
+
+  const incSegs=state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const incTot=incSegs.reduce((t,s)=>t+s.value,0);
+  const incPieSegs=incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0}));
+
+  const typeColors={income:'#10b981',expenses:'#f43f5e',bills:'#fb923c',debt:'#a855f7',savings:'#3b82f6',sub:'#06b6d4'};
+  const debtActuals={}; state.debts.forEach(d=>{debtActuals[d.name]=(act.debt||{})[d.name]||0;});
+  const subActuals={}; (state.subscriptions||[]).forEach(s=>{subActuals[s.name]=(act.subscription||{})[s.name]||0;});
+  const hexCells=[
+    ...state.budgets.income.map(r=>({label:r.category,value:act.income[r.category]||0,color:typeColors.income})),
+    ...state.budgets.expenses.map(r=>({label:r.category,value:act.expenses[r.category]||0,color:typeColors.expenses})),
+    ...state.budgets.bills.map(r=>({label:r.category,value:act.bills[r.category]||0,color:typeColors.bills})),
+    ...state.debts.map(d=>({label:d.name,value:debtActuals[d.name]||0,color:typeColors.debt})),
+    ...state.budgets.savings.map(r=>({label:r.category,value:act.savings[r.category]||0,color:typeColors.savings})),
+    ...(state.subscriptions||[]).map(s=>({label:s.name,value:subActuals[s.name]||0,color:typeColors.sub}))
+  ].filter(c=>c.value>0).sort((a,b)=>b.value-a.value);
+
+  const periodTx = state.transactions.filter(tx => tx.date >= state.settings.periodStart && tx.date <= state.settings.periodEnd);
+  const txAmounts = periodTx.map(tx => tx.amount || 0);
+
+  const headroomRanges=[
+    {label:t('bud_section_expenses'),min:0,max:expExp,marker:sum.totalExpenses,color:'#f43f5e'},
+    {label:t('bud_section_bills'),   min:0,max:expBil,marker:sum.totalBills,   color:'#fb923c'},
+    {label:t('dash_debt_payments'),  min:0,max:expDebt,marker:sum.totalDebt||0,color:'#a855f7'},
+    {label:t('bud_section_savings'), min:0,max:expSav,marker:sum.totalSavings,color:'#3b82f6'},
+    {label:t('dash_subscriptions'),  min:0,max:subMo, marker:sum.totalSubscriptions||0,color:'#06b6d4'}
+  ].filter(r=>r.max>0);
+
+  const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
+  const welcomeHtml = showWelcome ? `
+    <div class="onboard-banner">
+      <div class="onboard-title">${t('onboard_welcome')}</div>
+      <div class="onboard-steps">
+        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
+      </div>
+    </div>` : '';
+
+  const el=document.getElementById('bview-dashboard');
+  el.innerHTML=welcomeHtml+`
+    <div class="section-header">
+      <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
+      <button class="period-badge period-badge--btn" id="periodBadgeBtn" title="Change period">${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}</button>
+      ${helpBtn('dashboard')}
+    </div>
+    <div class="pro-stats-row">
+      <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_income')}</div><div class="pro-stat-value" style="color:#10b981">${fmt(sum.totalIncome)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}</div></div>
+      <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_outgoing')}</div><div class="pro-stat-value" style="color:#f43f5e">${fmt(sum.totalOut)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}</div></div>
+      <div class="pro-stat"><div class="pro-stat-label">${t('dash_savings_rate')}</div><div class="pro-stat-value" style="color:#6366f1">${sum.savingsRate}%</div><div class="pro-stat-sub">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</div></div>
+      <div class="pro-stat"><div class="pro-stat-label">${t('dash_subscriptions')}</div><div class="pro-stat-value" style="color:#a855f7">${fmt(subMo)}${t('sf_per_month')}</div><div class="pro-stat-sub">${fmt(subMo*12)}${t('dash_per_year')}</div></div>
+    </div>
+    <div class="panel leftover-panel">
+      <div class="leftover-inner">
+        <div><div class="leftover-label">${t('dash_net_leftover')}</div><div class="leftover-value" style="color:${leftColor}">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}</div>
+        <div class="leftover-formula">
+          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="analyst-grid">
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-titlebar">
+            <span class="panel-title-sm">${t('dash_category_heatmap')}</span>
+            <span class="chart-hero-sub">${t('dash_heatmap_hint')}</span>
+          </div>
+          ${hexCells.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="hexgrid-wrap">${svgHexGrid(hexCells, 320)}</div>`}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_tx_density')}</div>
+          ${txAmounts.length<2?`<div class="chart-empty">${t('dash_not_enough_tx')}</div>`:`<div class="density-wrap">${svgDensityPlot(txAmounts, 420, 150)}</div>`}
+        </div>
+      </div>
+    </div>
+
+    <div class="analyst-grid">
+      <div class="panel chart-panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
+          ${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgPie(incPieSegs,130)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_budget_headroom')}</div>
+          ${headroomRanges.length===0?`<div class="chart-empty">${t('dash_no_budgets')}</div>`:`<div class="rangebar-wrap">${svgRangeBar(headroomRanges, 420)}</div>`}
+        </div>
+      </div>
+    </div>`;
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
+  requestAnimationFrame(()=>{
+    initDonuts(el);
+    wireChartHover(el, '.hex-cell', {});
+    wireChartHover(el, '.pie-seg', { legendScope: el, format: d => `<strong>${esc(d.label)}</strong><br>${d.pct}%` });
+    wireChartHover(el, '.rangebar-fill', {});
+    wireChartHover(el, '.density-bin', { format: d => `${d.value} ${esc(t('dash_tx_count_sfx'))}<br>${esc(d.label)}` });
+  });
+  el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
+  el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
+}
 
 // ── Spending Allocation ────────────────────────────────────────────────
 function computeAllocation() {

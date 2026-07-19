@@ -266,6 +266,19 @@ function svgDensityPlot(values, w = 420, h = 140, color = '#6366f1') {
 function svgPie(segments, size = 150) {
   const cx = size / 2, cy = size / 2, r = size / 2 - 3;
   if (!segments || !segments.length) return `<svg width="${size}" height="${size}"></svg>`;
+  const nonZero = segments.filter(s => (s.pct || 0) > 0);
+  // A single 100% wedge degenerates an SVG arc command (start point == end
+  // point at the 360/0 boundary, so it renders nothing) - draw a plain
+  // circle instead in that case.
+  if (nonZero.length === 1) {
+    const seg = nonZero[0], idx = segments.indexOf(seg);
+    return `<svg class="pie-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">
+      <circle class="pie-seg" data-idx="${idx}" data-label="${esc(seg.label || '')}" data-val="${seg.value || 0}" data-pct="${seg.pct.toFixed(1)}"
+        cx="${cx}" cy="${cy}" r="${r}" fill="${seg.color}" stroke="var(--surface-solid)" stroke-width="1.5"
+        tabindex="0" role="img" aria-label="${esc(seg.label || '')}: ${seg.pct.toFixed(0)}%"
+        style="cursor:pointer;transition:opacity .18s"/>
+    </svg>`;
+  }
   let out = '', cum = 0;
   segments.forEach((seg, idx) => {
     const p = seg.pct || 0; if (p <= 0) { return; }
