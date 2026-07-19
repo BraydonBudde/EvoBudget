@@ -693,6 +693,7 @@ const TRANSLATIONS = {
     dash_cash_flow:'Cash Flow',
     dash_expected_vs_actual:'Expected vs Actual', dash_of_expected_sfx:'of expected',
     dash_flow_story:'Cash Flow Trajectory', dash_bill_timeline:'Bill Due-Date Timeline', dash_no_bill_dates:'No bills with due dates yet.',
+    dash_bubble_map:'Category Bubble Map', dash_bubble_map_hint:'Size = amount · position = % of budget used',
     dash_expected_legend:'Expected',dash_actual_legend:'Actual',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -4224,9 +4225,141 @@ function renderDashboardLayout3() {
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
 }
 
-// Alternate dashboard layouts (4-5) - built out incrementally; fall back
-// to Layout 1's design until each is implemented.
-function renderDashboardLayout4() { renderDashboardLayout1(); }
+// ── Layout 4: "Bubble Map" - spatial/comparative feel ───────────────────
+function buildBubbleMapData(typeRows) {
+  const chartW = 620, chartH = typeRows.length * 56, rowH = chartH / typeRows.length, padX = 32;
+  const allItems = [];
+  typeRows.forEach((row, ri) => {
+    row.items.filter(it => it.value > 0).forEach(it => allItems.push({ ...it, color: row.color, rowIdx: ri }));
+  });
+  const maxVal = Math.max(1, ...allItems.map(i => i.value));
+  const points = allItems.map(it => {
+    const pct = it.expected > 0 ? Math.min(160, it.value / it.expected * 100) : (it.value > 0 ? 100 : 0);
+    const r = 6 + 24 * Math.sqrt(it.value / maxVal);
+    const cy = it.rowIdx * rowH + rowH / 2;
+    return { cx: padX + Math.min(1, pct / 160) * (chartW - padX * 2), cy, r, color: it.color, label: it.label, value: it.value };
+  });
+  const refX = padX + Math.min(1, 100 / 160) * (chartW - padX * 2);
+  return { points, chartW, chartH, refX };
+}
+
+function renderDashboardLayout4() {
+  const act=computeActuals(),sum=computeSummary(act),subMo=totalSubMonthly();
+  const expInc=state.budgets.income.reduce((t,r)=>t+(r.expected||0),0);
+  const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
+  const expBil=state.budgets.bills.reduce((t,r)=>t+(r.expected||0),0);
+  const expSav=state.budgets.savings.reduce((t,r)=>t+(r.expected||0),0);
+  const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
+  const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
+
+  const debtActuals = {};
+  state.debts.forEach(d => { debtActuals[d.name] = (act.debt||{})[d.name] || 0; });
+  const subActuals = {};
+  (state.subscriptions||[]).forEach(s => { subActuals[s.name] = (act.subscription||{})[s.name] || 0; });
+
+  const typeRows = [
+    { key:'income',   label:t('bud_section_income'),   color:'#10b981', items: state.budgets.income.map(r=>({label:r.category, value:act.income[r.category]||0, expected:r.expected||0})) },
+    { key:'expenses', label:t('bud_section_expenses'), color:'#f43f5e', items: state.budgets.expenses.map(r=>({label:r.category, value:act.expenses[r.category]||0, expected:r.expected||0})) },
+    { key:'bills',    label:t('bud_section_bills'),    color:'#fb923c', items: state.budgets.bills.map(r=>({label:r.category, value:act.bills[r.category]||0, expected:r.expected||0})) },
+    { key:'debt',     label:t('dash_debt_payments'),   color:'#a855f7', items: state.debts.map(d=>({label:d.name, value:debtActuals[d.name]||0, expected:totalMonthlyDebtCost(d)})) },
+    { key:'savings',  label:t('bud_section_savings'),  color:'#3b82f6', items: state.budgets.savings.map(r=>({label:r.category, value:act.savings[r.category]||0, expected:r.expected||0})) },
+    { key:'sub',      label:t('dash_subscriptions'),   color:'#06b6d4', items: (state.subscriptions||[]).map(s=>({label:s.name, value:subActuals[s.name]||0, expected:s.amount||0})) }
+  ];
+  const bubbleData = buildBubbleMapData(typeRows);
+
+  const savingsRate = sum.savingsRate || 0;
+
+  const sfPoints = state.sinkingFunds.map((f,i) => {
+    const p = f.targetAmount>0 ? Math.min(100,(f.currentSaved||0)/f.targetAmount*100) : 0;
+    return { pct:p, saved:f.currentSaved||0, name:f.name, icon:f.icon||'🏺' };
+  });
+  const maxSf = Math.max(1, ...sfPoints.map(f=>f.saved));
+  const sfChartW = 300, sfChartH = 130;
+  const sfBubblePoints = sfPoints.map((f,i) => ({
+    cx: 30 + (f.pct/100) * (sfChartW-60), cy: sfChartH/2 + (i%2===0?-20:20),
+    r: 10 + 22*Math.sqrt(f.saved/maxSf), color:'#fb923c', label:f.name, value:f.saved
+  }));
+
+  const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
+  const welcomeHtml = showWelcome ? `
+    <div class="onboard-banner">
+      <div class="onboard-title">${t('onboard_welcome')}</div>
+      <div class="onboard-steps">
+        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
+      </div>
+    </div>` : '';
+
+  const el=document.getElementById('bview-dashboard');
+  el.innerHTML=welcomeHtml+`
+    <div class="section-header">
+      <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
+      <button class="period-badge period-badge--btn" id="periodBadgeBtn" title="Change period">${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}</button>
+      ${helpBtn('dashboard')}
+    </div>
+
+    <div class="ist-row ist-row--2x2">
+      ${iconStatTile('💰', t('dash_total_income'), fmt(sum.totalIncome), `${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}`, '#10b981')}
+      ${iconStatTile('🧾', t('dash_total_outgoing'), fmt(sum.totalOut), `${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}`, '#f43f5e')}
+      ${iconStatTile('💳', t('tab_debt'), fmt(sum.totalDebt||0), '', '#a855f7')}
+      ${iconStatTile('🔁', t('dash_subscriptions'), fmt(subMo)+t('sf_per_month'), '', '#06b6d4')}
+    </div>
+
+    <div class="panel leftover-panel">
+      <div class="leftover-inner">
+        <div><div class="leftover-label">${t('dash_net_leftover')}</div><div class="leftover-value" style="color:${leftColor}">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}</div>
+        <div class="leftover-formula">
+          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span><span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-map-grid">
+      <div class="panel chart-hero-panel">
+        <div class="chart-hero-label">${t('dash_savings_rate')}</div>
+        ${svgSemiGauge(Math.max(0, savingsRate), 190, '#3b82f6')}
+        <div class="chart-hero-sub">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</div>
+      </div>
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-titlebar">
+            <span class="panel-title-sm">${t('dash_bubble_map')}</span>
+            <span class="chart-hero-sub">${t('dash_bubble_map_hint')}</span>
+          </div>
+          <div class="bubble-map-wrap" style="width:${bubbleData.chartW}px">
+            <div class="bubble-map-labels">${typeRows.map(r => `<div class="bmap-row-label" style="color:${r.color}">${esc(r.label)}</div>`).join('')}</div>
+            <div class="bubble-map-chart" style="width:${bubbleData.chartW}px;height:${bubbleData.chartH}px">
+              <div class="bmap-refline" style="left:${bubbleData.refX}px" title="100%"></div>
+              ${svgBubbles(bubbleData.points, bubbleData.chartW, bubbleData.chartH)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${state.sinkingFunds.length ? `
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:10px">🏺 ${t('tab_sinking')}</div>
+        <div class="bubble-map-chart" style="width:${sfChartW}px;height:${sfChartH}px;margin:0 auto">
+          <div class="bmap-refline" style="left:${sfChartW-30}px" title="100%"></div>
+          ${svgBubbles(sfBubblePoints, sfChartW, sfChartH)}
+        </div>
+      </div>
+    </div>` : ''}
+  `;
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
+  requestAnimationFrame(()=>{
+    wireChartHover(el, '.bubble-mark', {});
+  });
+  el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
+  el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
+}
+
+// Alternate dashboard layout (5) - built out incrementally; falls back
+// to Layout 1's design until implemented.
 function renderDashboardLayout5() { renderDashboardLayout1(); }
 
 // ── Spending Allocation ────────────────────────────────────────────────

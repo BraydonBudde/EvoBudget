@@ -264,6 +264,8 @@ const TRANSLATIONS = {
     dash_cash_flow:'Cash Flow - Expected vs Actual',dash_expected:'Expected',dash_actual:'Actual',
     dash_expected_vs_actual:'Expected vs Actual', dash_of_expected_sfx:'of expected',
     dash_flow_story:'Cash Flow Trajectory', dash_bill_timeline:'Bill Due-Date Timeline', dash_no_bill_dates:'No bills with due dates yet.',
+    dash_bubble_map:'Category Bubble Map', dash_bubble_map_hint:'Size = amount · position = % of budget used',
+    dash_savings_rate:'Savings Rate', dash_saved_sfx:'saved',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',dash_add_tx_link:'Add transactions →',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
     upgrade_feat_debt:'💳 Debt Payoff',upgrade_feat_sinking:'🏺 Sinking Funds',upgrade_feat_calendar:'📅 Smart Calendar',
@@ -2940,9 +2942,127 @@ function renderDashboardLayout3() {
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
 }
 
-// Alternate dashboard layouts (4-5) - built out incrementally; fall back
-// to Layout 1's design until each is implemented.
-function renderDashboardLayout4() { renderDashboardLayout1(); }
+// ── Layout 4: "Bubble Map" - spatial/comparative feel ───────────────────
+function buildBubbleMapData(typeRows) {
+  const chartW = 620, chartH = 280, rowH = chartH / typeRows.length, padX = 32;
+  const allItems = [];
+  typeRows.forEach((row, ri) => {
+    row.items.filter(it => it.value > 0).forEach(it => allItems.push({ ...it, color: row.color, rowIdx: ri }));
+  });
+  const maxVal = Math.max(1, ...allItems.map(i => i.value));
+  const points = allItems.map(it => {
+    const pct = it.expected > 0 ? Math.min(160, it.value / it.expected * 100) : (it.value > 0 ? 100 : 0);
+    const r = 6 + 26 * Math.sqrt(it.value / maxVal);
+    const cy = it.rowIdx * rowH + rowH / 2;
+    return { cx: padX + Math.min(1, pct / 160) * (chartW - padX * 2), cy, r, color: it.color, label: it.label, value: it.value };
+  });
+  const refX = padX + Math.min(1, 100 / 160) * (chartW - padX * 2);
+  return { points, chartW, chartH, refX };
+}
+
+function renderDashboardLayout4() {
+  const actuals = computeActuals();
+  const sum     = computeSummary(actuals);
+
+  const expIncome   = state.budgets.income.reduce((t, r) => t + (r.expected || 0), 0);
+  const expExpenses = state.budgets.expenses.reduce((t, r) => t + (r.expected || 0), 0);
+  const expBills    = state.budgets.bills.reduce((t, r) => t + (r.expected || 0), 0);
+  const expDebt     = state.budgets.debt.reduce((t, r) => t + (r.expected || 0), 0);
+  const expSavings  = state.budgets.savings.reduce((t, r) => t + (r.expected || 0), 0);
+  const expExpBills = expExpenses + expBills;
+  const leftColor = sum.leftover >= 0 ? '#10b981' : '#f43f5e';
+  const savingsRate = sum.totalIncome > 0 ? Math.round(sum.totalSavings / sum.totalIncome * 100) : 0;
+
+  const typeRows = [
+    { key: 'income',   label: t('tab_income'),   color: '#10b981', items: state.budgets.income.map(r => ({ label: r.category, value: actuals.income[r.category] || 0, expected: r.expected || 0 })) },
+    { key: 'expenses', label: t('tab_expenses'), color: '#f43f5e', items: state.budgets.expenses.map(r => ({ label: r.category, value: actuals.expenses[r.category] || 0, expected: r.expected || 0 })) },
+    { key: 'bills',    label: t('tab_bills'),    color: '#fb923c', items: state.budgets.bills.map(r => ({ label: r.category, value: actuals.bills[r.category] || 0, expected: r.expected || 0 })) },
+    { key: 'debt',     label: t('tab_debt'),     color: '#a855f7', items: state.budgets.debt.map(r => ({ label: r.category, value: actuals.debt[r.category] || 0, expected: r.expected || 0 })) },
+    { key: 'savings',  label: t('tab_savings'),  color: '#3b82f6', items: state.budgets.savings.map(r => ({ label: r.category, value: actuals.savings[r.category] || 0, expected: r.expected || 0 })) }
+  ];
+  const bubbleData = buildBubbleMapData(typeRows);
+
+  const onboardHTML = !hasAnyData() ? `
+    <div class="onboard-banner">
+      <div class="onboard-title">${t('onboard_welcome')}</div>
+      <div class="onboard-steps">
+        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
+        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
+      </div>
+    </div>` : '';
+
+  const el = document.getElementById('bview-dashboard');
+  el.innerHTML = `
+    <div class="section-header">
+      <h2 class="section-title">${t('tab_dashboard')}</h2>
+      <button class="period-badge period-badge--btn" id="periodBadgeBtn" type="button" title="${t('dash_period_title')}">
+        ${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}
+      </button>
+      <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
+    </div>
+    ${onboardHTML}
+
+    <div class="ist-row ist-row--2x2">
+      ${iconStatTile('💰', t('dash_stat_income'), fmt(sum.totalIncome), tf('dash_stat_of_expected', fmt(expIncome)), '#10b981')}
+      ${iconStatTile('🧾', t('dash_stat_exp_bills'), fmt(sum.totalExpBills), tf('dash_stat_of_budgeted', fmt(expExpBills)), '#f43f5e')}
+      ${iconStatTile('💳', t('dash_stat_debt'), fmt(sum.totalDebt), tf('dash_stat_of_budgeted', fmt(expDebt)), '#a855f7')}
+      ${iconStatTile('🏦', t('dash_stat_savings'), fmt(sum.totalSavings), tf('dash_stat_of_goal', fmt(expSavings)), '#3b82f6')}
+    </div>
+
+    <div class="panel leftover-panel">
+      <div class="leftover-inner">
+        <div>
+          <div class="leftover-label">${t('dash_net_leftover_period')}</div>
+          <div class="leftover-value" style="color:${leftColor}">${sum.leftover < 0 ? '−' : ''}${fmt(Math.abs(sum.leftover))}</div>
+          ${state.rollover ? `<div class="leftover-rollover">${tf('dash_includes_rollover',fmt(state.rollover))}</div>` : ''}
+        </div>
+        <div class="leftover-formula">
+          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_lf_income')}</span>
+          <span class="lf-sep">−</span>
+          <span class="lf-chip lf-expense">${fmt(sum.totalExpBills)} ${t('dash_lf_exp_bills')}</span>
+          <span class="lf-sep">−</span>
+          <span class="lf-chip lf-debt">${fmt(sum.totalDebt)} ${t('dash_lf_debt')}</span>
+          <span class="lf-sep">−</span>
+          <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_lf_savings')}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-map-grid">
+      <div class="panel chart-hero-panel">
+        <div class="chart-hero-label">${t('dash_savings_rate')}</div>
+        ${svgSemiGauge(Math.max(0, savingsRate), 190, '#3b82f6')}
+        <div class="chart-hero-sub">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</div>
+      </div>
+      <div class="panel">
+        <div class="panel-inner-sm">
+          <div class="panel-titlebar">
+            <span class="panel-title-sm">${t('dash_bubble_map')}</span>
+            <span class="chart-hero-sub">${t('dash_bubble_map_hint')}</span>
+          </div>
+          <div class="bubble-map-wrap" style="width:${bubbleData.chartW}px">
+            <div class="bubble-map-labels">${typeRows.map(r => `<div class="bmap-row-label" style="color:${r.color}">${esc(r.label)}</div>`).join('')}</div>
+            <div class="bubble-map-chart" style="width:${bubbleData.chartW}px;height:${bubbleData.chartH}px">
+              <div class="bmap-refline" style="left:${bubbleData.refX}px" title="100%"></div>
+              ${svgBubbles(bubbleData.points, bubbleData.chartW, bubbleData.chartH)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
+  requestAnimationFrame(() => {
+    wireChartHover(el, '.bubble-mark', {});
+  });
+  el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
+  el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
+}
+
+// Alternate dashboard layout (5) - built out incrementally; falls back
+// to Layout 1's design until implemented.
 function renderDashboardLayout5() { renderDashboardLayout1(); }
 
 // ── Budget Modules ─────────────────────────────────────────────────────
