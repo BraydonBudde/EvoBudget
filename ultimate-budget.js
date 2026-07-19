@@ -4021,7 +4021,6 @@ function renderDashboardLayout2() {
                 <span class="dleg-swatch" style="background:${r.color}"></span>
                 <span class="dleg-label">${esc(r.label)}</span>
                 <span class="dleg-pct">${r.expected>0?Math.round(r.value/r.expected*100):0}%</span>
-                <span class="dleg-amt">${fmt(r.value)}</span>
               </div>`).join('')}</div>
           </div>
         </div>
@@ -4066,7 +4065,10 @@ function renderDashboardLayout2() {
   requestAnimationFrame(()=>{
     initDonuts(el);
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false });
+      wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>
+        `<strong>${esc(d.label)}</strong><br>` +
+        `<span style="color:var(--text-faint)">${esc(t('dash_expected_legend'))}: ${esc(fmt(parseFloat(d.expected) || 0))}</span><br>` +
+        `<span style="color:${d.color || 'var(--text-primary)'};font-weight:800">${esc(t('dash_actual_legend'))}: ${esc(fmt(parseFloat(d.val) || 0))}</span>` });
       wireChartHover(scope, '.radar-pt', { format: d => `<strong>${esc(d.label)}</strong><br>${Math.round(parseFloat(d.val) || 0)}% ${esc(t('dash_of_expected_sfx'))}` });
     });
   });
@@ -5673,6 +5675,7 @@ function renderSettings(){
           <span class="recurring-toggle"><input type="checkbox" id="settAutomation" ${automationOn()?'checked':''}><span class="rec-toggle-track"></span></span>
         </label>
       </div></div>
+      ${dashboardLayoutCardHtml()}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌙 ${t('appearance')}</div>
         <p class="settings-desc">${t('appearance_desc')}</p>
@@ -5701,7 +5704,6 @@ function renderSettings(){
           </div>
         </div>
       </div></div>
-      ${dashboardLayoutCardHtml()}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">${t('sync_card_title')}</div>
         <p class="settings-desc">${t('sync_card_desc')}</p>

@@ -11,6 +11,24 @@ function polar(cx, cy, r, angleDeg) {
   return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
 }
 
+// Builds a closed SVG path string for a polygon with slightly rounded
+// corners (each vertex replaced by a quadratic curve using the original
+// vertex as control point), matching the app's rounded-corner aesthetic
+// instead of a sharp-cornered <polygon>.
+function roundedPolygonPath(pts, frac = 0.14) {
+  const n = pts.length;
+  if (n < 3) return '';
+  let d = '';
+  for (let i = 0; i < n; i++) {
+    const prev = pts[(i - 1 + n) % n], curr = pts[i], next = pts[(i + 1) % n];
+    const p1 = { x: curr.x + (prev.x - curr.x) * frac, y: curr.y + (prev.y - curr.y) * frac };
+    const p2 = { x: curr.x + (next.x - curr.x) * frac, y: curr.y + (next.y - curr.y) * frac };
+    d += (i === 0 ? `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} ` : `L ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} `);
+    d += `Q ${curr.x.toFixed(1)} ${curr.y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)} `;
+  }
+  return d + 'Z';
+}
+
 // ── Semi-circle gauge (single KPI, 0-100%) ──────────────────────────────
 // Same circle+stroke-dasharray+rotate technique as svgDonut (proven), just
 // scaled to a half circumference and relying on the SVG's own viewBox to
@@ -51,9 +69,10 @@ function svgRadialBars(rings, size = 220) {
     // still read as an active ring in the chart, not as an empty gap.
     const dash = Math.max(c * 0.02, Math.min(100, pct) / 100 * c), gapLen = c - dash;
     const over = ring.expected > 0 && ring.value > ring.expected;
+    const segColor = over ? '#f43f5e' : ring.color;
     out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.28" stroke-width="${sw}"/>
-      <circle class="rbar-seg" data-idx="${idx}" data-label="${esc(ring.label || '')}" data-val="${ring.value || 0}" data-pct="${pct.toFixed(0)}"
-        cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${over ? '#f43f5e' : ring.color}" stroke-width="${sw}" stroke-linecap="round"
+      <circle class="rbar-seg" data-idx="${idx}" data-label="${esc(ring.label || '')}" data-val="${ring.value || 0}" data-expected="${ring.expected || 0}" data-color="${segColor}" data-pct="${pct.toFixed(0)}"
+        cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${segColor}" stroke-width="${sw}" stroke-linecap="round"
         stroke-dasharray="${dash.toFixed(2)} ${gapLen.toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"
         tabindex="0" role="img" aria-label="${esc(ring.label || '')}: ${pct.toFixed(0)}%"
         style="cursor:pointer;transition:opacity .18s"/>`;
@@ -72,10 +91,10 @@ function svgRadar(axes, seriesA, seriesB, size = 340) {
   const max = Math.max(1, ...seriesA, ...seriesB) * 1.15;
   const rings = [0.2, 0.4, 0.6, 0.8, 1].map((f, i) => {
     const pts = axes.map((_, k) => polar(cx, cy, r * f, k * 360 / n));
-    const ptsStr = pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+    const path = roundedPolygonPath(pts, 0.1);
     return i === 4
-      ? `<polygon points="${ptsStr}" fill="url(#${gid}bg)" stroke="var(--text-faint)" stroke-opacity="0.35" stroke-width="1"/>`
-      : `<polygon points="${ptsStr}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.22" stroke-width="1"/>`;
+      ? `<path d="${path}" fill="url(#${gid}bg)" stroke="var(--text-faint)" stroke-opacity="0.35" stroke-width="1" stroke-linejoin="round"/>`
+      : `<path d="${path}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.22" stroke-width="1" stroke-linejoin="round"/>`;
   }).join('');
   const spokes = axes.map((ax, i) => {
     const p = polar(cx, cy, r, i * 360 / n);
@@ -89,7 +108,7 @@ function svgRadar(axes, seriesA, seriesB, size = 340) {
       cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${dotR}" fill="${color}" stroke="var(--surface-solid)" stroke-width="2"
       style="cursor:pointer;transition:r .15s;filter:drop-shadow(0 1px 3px rgba(0,0,0,.25))"/>`).join('');
     const fill = useGradientFill ? `url(#${gid}fill)` : color;
-    return `<polygon points="${pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ')}" fill="${fill}" fill-opacity="${fillOpacity}"
+    return `<path d="${roundedPolygonPath(pts, 0.14)}" fill="${fill}" fill-opacity="${fillOpacity}"
       stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>${dots}`;
   };
   return `<svg class="radar-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">

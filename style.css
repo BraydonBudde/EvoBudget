@@ -635,7 +635,6 @@ p { margin: 0; }
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .dleg-pct { font-size: 11px; font-weight: 700; color: var(--text-primary); }
-.dleg-amt { font-size: 10.5px; font-weight: 600; color: var(--text-faint); min-width: 52px; text-align: right; }
 
 /* ── Shared chart primitives (Dashboard Layouts 2-5, charts.js) ──────── */
 .chart-tooltip {
