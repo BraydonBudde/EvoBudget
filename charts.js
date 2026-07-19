@@ -33,7 +33,7 @@ function roundedPolygonPath(pts, frac = 0.14) {
 // Same circle+stroke-dasharray+rotate technique as svgDonut (proven), just
 // scaled to a half circumference and relying on the SVG's own viewBox to
 // crop the bottom half - avoids hand-rolled path arc-flag geometry.
-function svgSemiGauge(pct, size = 160, color = '#6366f1') {
+function svgSemiGauge(pct, size = 160, color = '#6366f1', centerText) {
   const sw = Math.max(10, size * 0.11);
   const r = size / 2 - sw / 2 - 2;
   const cx = size / 2, cy = r + sw / 2 + 2;
@@ -44,12 +44,16 @@ function svgSemiGauge(pct, size = 160, color = '#6366f1') {
   // is always visible at the start of the arc, even at a literal 0% - an
   // empty gauge should still read as "a gauge", not as blank space.
   const dash = Math.max(cHalf * 0.03, (p / 100) * cHalf), gap = cFull - dash;
+  // centerText lets a caller decouple the displayed number from the fill -
+  // e.g. a goal-progress ring where the fill is capped at "100% of target"
+  // but the real (possibly >100%) figure still needs to be shown.
+  const label = centerText != null ? centerText : `${Math.round(p)}%`;
   return `<svg class="gauge-svg" width="${size}" height="${boxH.toFixed(1)}" viewBox="0 0 ${size} ${boxH.toFixed(1)}">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.32" stroke-width="${sw}"/>
     <circle class="gauge-arc" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"
       stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(180 ${cx} ${cy})"
       style="transition:stroke-dasharray .3s"/>
-    <text x="${cx}" y="${(cy - sw * 0.25).toFixed(1)}" text-anchor="middle" style="font-family:Sora,sans-serif;font-weight:800;font-size:${(size * .16).toFixed(0)}px;fill:var(--text-primary)">${Math.round(p)}%</text>
+    <text x="${cx}" y="${(cy - sw * 0.25).toFixed(1)}" text-anchor="middle" style="font-family:Sora,sans-serif;font-weight:800;font-size:${(size * .16).toFixed(0)}px;fill:var(--text-primary)">${esc(String(label))}</text>
   </svg>`;
 }
 

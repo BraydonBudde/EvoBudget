@@ -658,6 +658,7 @@ p { margin: 0; }
 .chart-hero-panel { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 22px 20px; }
 .chart-hero-label { font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--text-secondary); }
 .chart-hero-sub { font-size: 12px; color: var(--text-faint); }
+.chart-hero-status { font-size: 10px; font-weight: 700; margin-top: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
 
 /* ── Layout 2: Radial Pulse ───────────────────────────────────── */
 .ist-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }

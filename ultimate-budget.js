@@ -3969,14 +3969,31 @@ function renderDashboardLayout2() {
     const income = sum.totalIncome > 0 ? sum.totalIncome : expInc;
     const buckets = state.allocation.buckets || [];
     if (income <= 0 && Object.values(totals).every(v=>v===0)) return '';
+    // Same over/nearing/under classification as the Classic layout's
+    // allocation cards (computeAllocation-derived), so both layouts agree
+    // on what counts as "over budget" for a bucket.
+    const pctOf = v => income > 0 ? (v / income * 100) : 0;
     const tiles = buckets.map(b => {
       const actual = totals[b.id] || 0;
-      const ap = income > 0 ? (actual/income*100) : 0;
+      const ap = pctOf(actual);
+      const tp = b.pct;
+      // Fill = progress toward the target (100% = "at target"), capped so
+      // the ring itself never needs to exceed a full sweep - going over is
+      // instead conveyed by colour + the status line below, not by an
+      // ever-growing arc.
+      const fill = tp > 0 ? Math.min(ap / tp * 100, 100) : (ap > 0 ? 100 : 0);
+      const over = ap > tp && tp > 0;
+      const nearing = !over && tp > 0 && (tp - ap) <= 5 && ap > 0;
+      const accentColor = over ? '#f43f5e' : nearing ? '#fb923c' : b.color;
+      const statusKey = over ? 'alloc_over' : nearing ? 'alloc_nearing' : 'alloc_under';
+      const statusIcon = over ? t('alloc_icon_over') : nearing ? t('alloc_icon_near') : t('alloc_icon_ok');
       const displayName = getAllocBucketDisplayName(b);
       return `<div class="chart-hero-panel" style="padding:12px 8px">
-        ${svgSemiGauge(Math.min(100, ap), 110, b.color)}
+        ${svgSemiGauge(fill, 110, accentColor, ap.toFixed(0) + '%')}
         <div class="chart-hero-label" style="margin-top:-4px">${esc(displayName)}</div>
-        <div class="chart-hero-sub">${t('alloc_target')} ${b.pct}%</div>
+        <div class="chart-hero-sub" style="font-weight:700;color:var(--text-secondary)">${fmt(actual)}</div>
+        <div class="chart-hero-sub">${t('alloc_target')} ${tp}%</div>
+        <div class="chart-hero-status" style="color:${accentColor}">${statusIcon} ${esc(t(statusKey))}</div>
       </div>`;
     }).join('');
     return `<div class="panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:10px">${t('alloc_title')}</div>
