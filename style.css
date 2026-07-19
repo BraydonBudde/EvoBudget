@@ -1309,6 +1309,11 @@ input[type="number"].expected-input {
   --shadow-card: 0 20px 60px -20px rgba(107,68,35,.22), 0 2px 8px rgba(107,68,35,.08);
   --shadow-pop:  0 12px 32px -8px rgba(107,68,35,.30);
 }
+/* Belt-and-braces, same technique as the Terminal theme: gives every icon
+   (including emoji, which can't be recoloured via CSS color/currentColor)
+   a warm sepia cast instead of their native platform colours, so the whole
+   UI reads as one aged-paper palette rather than full monochrome. */
+[data-theme="vintage-ledger"] { filter: grayscale(0.55) sepia(0.35) contrast(1.02); }
 
 /* Muted parchment backdrop - the default vivid indigo/pink/orange blobs clash with the paper aesthetic */
 [data-theme="vintage-ledger"] .backdrop { background: #f3e6cc; }
