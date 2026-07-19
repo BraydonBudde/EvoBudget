@@ -114,7 +114,7 @@ const TRANSLATIONS = {
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
     dashboard_layout:'Dashboard Layout', dashboard_layout_desc:'Choose how your Dashboard is designed and visualised.',
-    layout_1:'Classic', layout_2:'Radial Pulse', layout_3:'Flow Story',
+    layout_1:'Classic', layout_2:'Radial Pulse', layout_coming_soon:'More Coming Soon!',
     changes_autosaved:'✅ Changes are saved automatically.',
     rollover_desc:'Carry unspent money from your previous period into this one.',
     rollover_amount:'Rollover amount',
@@ -141,7 +141,7 @@ const TRANSLATIONS = {
     help_sett_period_li:'Set your date range. Click the date badge on Dashboard to jump here quickly.',
     help_sett_rollover_li:'Carry forward unspent money from the last period.',
     help_sett_theme_li:'Choose from five colour themes - Light, Dark, Synthwave, Vintage, or Terminal.',
-    help_sett_layout_li:'Choose from three Dashboard designs - Classic, Radial Pulse, or Flow Story - each with its own charts and layout.',
+    help_sett_layout_li:'Choose from two Dashboard designs - Classic or Radial Pulse - each with its own charts and layout, with more designs coming soon.',
     help_dash_modal_title:'How the Dashboard works',help_dash_intro:'The Dashboard is your real-time financial snapshot. Everything updates automatically as you log transactions.',
     help_dash_cards_h:'Summary cards',help_dash_cards_li:'Totals for income, expenses &amp; bills, debt payments, and savings for the current period.',
     help_dash_leftover_li:'What\'s left after all outgoings. <span style="color:#10b981;font-weight:600">Green</span> = surplus, <span style="color:#f43f5e;font-weight:600">red</span> = over budget.',
@@ -239,7 +239,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Pick your <strong>Currency</strong> so every amount in the app displays the way you expect.',
     guide_settings_step2:'Choose your <strong>Budget Period</strong> (like monthly or biweekly) to match how you actually get paid and pay bills.',
     guide_settings_step3:"Enter a <strong>Rollover</strong> amount if you want unspent money from last period to carry into this one's Net Leftover.",
-    guide_settings_step4:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), a <strong>Dashboard Layout</strong> (3 designs to choose from), and your <strong>Language</strong> from the list.',
+    guide_settings_step4:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), a <strong>Dashboard Layout</strong> (2 designs to choose from, with more on the way), and your <strong>Language</strong> from the list.',
     guide_settings_step5:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
     guide_settings_connect1:'Your Currency and Budget Period choices shape how every other page in the app displays and calculates numbers.',
     guide_settings_connect2:'The Rollover amount you set here flows directly into the Net Leftover shown on your Dashboard.',
@@ -263,8 +263,6 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Net Leftover this period',dash_includes_rollover:'Includes {0} rollover from last period',
     dash_lf_income:'income',dash_lf_exp_bills:'exp &amp; bills',dash_lf_debt:'debt',dash_lf_savings:'savings',dash_lf_rollover:'rollover',
     dash_cash_flow:'Cash Flow - Expected vs Actual',dash_expected:'Expected',dash_actual:'Actual',
-    dash_expected_vs_actual:'Expected vs Actual', dash_of_expected_sfx:'of expected',
-    dash_flow_story:'Cash Flow Trajectory', dash_bill_timeline:'Bill Due-Date Timeline', dash_no_bill_dates:'No bills with due dates yet.',
     dash_savings_rate:'Savings Rate', dash_saved_sfx:'saved',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',dash_add_tx_link:'Add transactions →',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -376,7 +374,7 @@ const TRANSLATIONS = {
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
     light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Dashboard-Layout',dashboard_layout_desc:'Wähle, wie dein Dashboard gestaltet und visualisiert wird.',
-    layout_1:'Klassisch',layout_2:'Radialer Puls',layout_3:'Fluss-Geschichte',
+    layout_1:'Klassisch',layout_2:'Radialer Puls',layout_coming_soon:'Bald mehr!',
     changes_autosaved:'✅ Änderungen werden automatisch gespeichert.',
     rollover_desc:'Überträgt nicht ausgegebenes Geld aus der vorherigen Periode.',
     rollover_amount:'Übertragsbetrag',
@@ -400,7 +398,7 @@ const TRANSLATIONS = {
     help_sett_period_li:'Lege deinen Datumsbereich fest. Klicke auf das Datums-Badge im Dashboard, um schnell hierher zu gelangen.',
     help_sett_rollover_li:'Überträgt nicht ausgegebenes Geld aus der letzten Periode.',
     help_sett_theme_li:'Wähle aus fünf Farbthemen - Hell, Dunkel, Synthwave, Vintage oder Terminal.',
-    help_sett_layout_li:'Wähle aus drei Dashboard-Designs - Klassisch, Radialer Puls oder Fluss-Geschichte - jedes mit eigenen Diagrammen und Layout.',
+    help_sett_layout_li:'Wähle aus zwei Dashboard-Designs - Klassisch oder Radialer Puls - jedes mit eigenen Diagrammen und Layout; weitere Designs folgen bald.',
     help_dash_modal_title:'Wie das Dashboard funktioniert',help_dash_intro:'Das Dashboard ist deine Finanzübersicht in Echtzeit. Alles aktualisiert sich automatisch, sobald du Transaktionen erfasst.',
     help_dash_cards_h:'Übersichtskarten',help_dash_cards_li:'Summen für Einnahmen, Ausgaben &amp; Rechnungen, Schuldenzahlungen und Ersparnisse für den aktuellen Zeitraum.',
     help_dash_leftover_li:'Was nach allen Ausgaben übrig bleibt. <span style="color:#10b981;font-weight:600">Grün</span> = Überschuss, <span style="color:#f43f5e;font-weight:600">Rot</span> = über dem Budget.',
@@ -498,7 +496,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Wähle deine <strong>Währung</strong>, damit jeder Betrag in der App so angezeigt wird, wie du es erwartest.',
     guide_settings_step2:'Wähle deinen <strong>Budgetzeitraum</strong> (etwa monatlich oder zweiwöchentlich) passend dazu, wie du tatsächlich bezahlt wirst und Rechnungen begleichst.',
     guide_settings_step3:'Trage einen <strong>Übertrag</strong>-Betrag ein, wenn nicht ausgegebenes Geld aus der letzten Periode in den Nettoüberschuss dieser Periode einfließen soll.',
-    guide_settings_step4:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage oder Terminal), ein <strong>Dashboard-Layout</strong> (3 Designs zur Auswahl) und deine <strong>Sprache</strong> aus der Liste.',
+    guide_settings_step4:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage oder Terminal), ein <strong>Dashboard-Layout</strong> (2 Designs zur Auswahl, weitere folgen bald) und deine <strong>Sprache</strong> aus der Liste.',
     guide_settings_step5:'Nutze <strong>Daten exportieren</strong>, um alles zu sichern, oder <strong>Daten zurücksetzen</strong>, wenn du jemals ganz neu anfangen möchtest.',
     guide_settings_connect1:'Deine Wahl von Währung und Budgetzeitraum bestimmt, wie jede andere Seite in der App Zahlen anzeigt und berechnet.',
     guide_settings_connect2:'Der hier festgelegte Übertrag-Betrag fließt direkt in den im Dashboard angezeigten Nettoüberschuss ein.',
@@ -522,8 +520,6 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Nettosaldo dieser Periode',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
     dash_lf_income:'Einnahmen',dash_lf_exp_bills:'Ausg. &amp; Rechn.',dash_lf_debt:'Schulden',dash_lf_savings:'Ersparnisse',dash_lf_rollover:'Übertrag',
     dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
-    dash_expected_vs_actual:'Erwartet vs. Tatsächlich',dash_of_expected_sfx:'vom Erwarteten',
-    dash_flow_story:'Cashflow-Verlauf',dash_bill_timeline:'Fälligkeits-Zeitleiste',dash_no_bill_dates:'Noch keine Rechnungen mit Fälligkeitsdatum.',
     dash_savings_rate:'Sparquote',dash_saved_sfx:'gespart',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',dash_add_tx_link:'Transaktionen hinzufügen →',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
@@ -635,7 +631,7 @@ const TRANSLATIONS = {
     language:'Langue',reset_data:'Réinitialiser les données',
     light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Disposition du tableau de bord',dashboard_layout_desc:"Choisissez comment votre tableau de bord est conçu et visualisé.",
-    layout_1:'Classique',layout_2:'Pulsation radiale',layout_3:'Histoire du flux',
+    layout_1:'Classique',layout_2:'Pulsation radiale',layout_coming_soon:'Bientôt plus !',
     changes_autosaved:'✅ Les modifications sont enregistrées automatiquement.',
     rollover_desc:"Reporte l'argent non dépensé de la période précédente.",
     rollover_amount:'Montant du report',
@@ -659,7 +655,7 @@ const TRANSLATIONS = {
     help_sett_period_li:'Définissez votre plage de dates. Cliquez sur le badge de date du tableau de bord pour y accéder rapidement.',
     help_sett_rollover_li:"Reporte l'argent non dépensé de la dernière période.",
     help_sett_theme_li:'Choisissez parmi cinq thèmes de couleur - Clair, Sombre, Synthwave, Vintage ou Terminal.',
-    help_sett_layout_li:"Choisissez parmi trois designs de tableau de bord - Classique, Pulsation radiale, ou Histoire du flux - chacun avec ses propres graphiques et sa disposition.",
+    help_sett_layout_li:"Choisissez parmi deux designs de tableau de bord - Classique ou Pulsation radiale - chacun avec ses propres graphiques et sa disposition ; d'autres designs arrivent bientôt.",
     help_dash_modal_title:'Comment fonctionne le tableau de bord',help_dash_intro:'Le tableau de bord est votre aperçu financier en temps réel. Tout se met à jour automatiquement dès que vous enregistrez des transactions.',
     help_dash_cards_h:'Cartes de synthèse',help_dash_cards_li:'Totaux des revenus, dépenses &amp; factures, remboursements de dettes et épargne pour la période en cours.',
     help_dash_leftover_li:"Ce qu'il reste après toutes les sorties d'argent. <span style=\"color:#10b981;font-weight:600\">Vert</span> = excédent, <span style=\"color:#f43f5e;font-weight:600\">rouge</span> = dépassement de budget.",
@@ -757,7 +753,7 @@ const TRANSLATIONS = {
     guide_settings_step1:"Choisissez votre <strong>Devise</strong> pour que chaque montant s'affiche comme vous l'attendez.",
     guide_settings_step2:"Choisissez votre <strong>Période budgétaire</strong> (mensuelle, aux deux semaines...) pour correspondre à votre rythme réel de paiement et de factures.",
     guide_settings_step3:"Saisissez un montant de <strong>Report</strong> si vous voulez que l'argent non dépensé de la période précédente se répercute sur le Solde net de celle-ci.",
-    guide_settings_step4:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Vintage ou Terminal), une <strong>Disposition du tableau de bord</strong> (3 designs au choix), et votre <strong>Langue</strong> dans la liste.",
+    guide_settings_step4:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Vintage ou Terminal), une <strong>Disposition du tableau de bord</strong> (2 designs au choix, d'autres à venir), et votre <strong>Langue</strong> dans la liste.",
     guide_settings_step5:"Utilisez <strong>Exporter les données</strong> pour tout sauvegarder, ou <strong>Réinitialiser les données</strong> si vous voulez repartir complètement à zéro.",
     guide_settings_connect1:"Vos choix de Devise et de Période budgétaire déterminent comment chaque autre page de l'application affiche et calcule les chiffres.",
     guide_settings_connect2:"Le montant de Report défini ici se répercute directement sur le Solde net affiché sur votre tableau de bord.",
@@ -781,8 +777,6 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Solde net de cette période',dash_includes_rollover:'Inclut {0} de report de la période précédente',
     dash_lf_income:'revenus',dash_lf_exp_bills:'dép. &amp; fact.',dash_lf_debt:'dettes',dash_lf_savings:'épargne',dash_lf_rollover:'report',
     dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_expected:'Prévu',dash_actual:'Réel',
-    dash_expected_vs_actual:'Prévu vs Réel',dash_of_expected_sfx:'du prévu',
-    dash_flow_story:'Trajectoire de trésorerie',dash_bill_timeline:'Chronologie des échéances',dash_no_bill_dates:"Aucune facture avec date d'échéance pour le moment.",
     dash_savings_rate:"Taux d'épargne",dash_saved_sfx:'épargné',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',dash_add_tx_link:'Ajouter des transactions →',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
@@ -894,7 +888,7 @@ const TRANSLATIONS = {
     language:'Idioma',reset_data:'Restablecer datos',
     light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Diseño del panel',dashboard_layout_desc:'Elige cómo se diseña y visualiza tu panel.',
-    layout_1:'Clásico',layout_2:'Pulso radial',layout_3:'Historia del flujo',
+    layout_1:'Clásico',layout_2:'Pulso radial',layout_coming_soon:'¡Más próximamente!',
     changes_autosaved:'✅ Los cambios se guardan automáticamente.',
     rollover_desc:'Traspasa el dinero no gastado del período anterior.',
     rollover_amount:'Importe de saldo anterior',
@@ -918,7 +912,7 @@ const TRANSLATIONS = {
     help_sett_period_li:'Establece tu rango de fechas. Haz clic en el distintivo de fecha del panel para acceder rápidamente aquí.',
     help_sett_rollover_li:'Traspasa el dinero no gastado del último período.',
     help_sett_theme_li:'Elige entre cinco temas de color - Claro, Oscuro, Synthwave, Vintage o Terminal.',
-    help_sett_layout_li:'Elige entre tres diseños de panel - Clásico, Pulso radial, o Historia del flujo - cada uno con sus propios gráficos y disposición.',
+    help_sett_layout_li:'Elige entre dos diseños de panel - Clásico o Pulso radial - cada uno con sus propios gráficos y disposición; más diseños próximamente.',
     help_dash_modal_title:'Cómo funciona el panel',help_dash_intro:'El panel es tu instantánea financiera en tiempo real. Todo se actualiza automáticamente a medida que registras transacciones.',
     help_dash_cards_h:'Tarjetas de resumen',help_dash_cards_li:'Totales de ingresos, gastos &amp; facturas, pagos de deudas y ahorros del período actual.',
     help_dash_leftover_li:'Lo que queda después de todos los gastos. <span style="color:#10b981;font-weight:600">Verde</span> = superávit, <span style="color:#f43f5e;font-weight:600">rojo</span> = por encima del presupuesto.',
@@ -1016,7 +1010,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Elige tu <strong>Moneda</strong> para que cada importe en la app se muestre como esperas.',
     guide_settings_step2:'Elige tu <strong>Período de presupuesto</strong> (mensual, quincenal, etc.) para que coincida con cómo realmente cobras y pagas.',
     guide_settings_step3:'Ingresa un importe de <strong>Saldo anterior</strong> si quieres que el dinero no gastado del último período pase al Sobrante neto de este.',
-    guide_settings_step4:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Vintage o Terminal), un <strong>Diseño del panel</strong> (3 diseños a elegir), y tu <strong>Idioma</strong> de la lista.',
+    guide_settings_step4:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Vintage o Terminal), un <strong>Diseño del panel</strong> (2 diseños a elegir, más próximamente), y tu <strong>Idioma</strong> de la lista.',
     guide_settings_step5:'Usa <strong>Exportar datos</strong> para respaldar todo, o <strong>Restablecer datos</strong> si alguna vez quieres empezar completamente de cero.',
     guide_settings_connect1:'Tus elecciones de Moneda y Período de presupuesto determinan cómo cada otra página de la app muestra y calcula los números.',
     guide_settings_connect2:'El importe de Saldo anterior que fijas aquí pasa directamente al Sobrante neto que se muestra en tu Panel.',
@@ -1040,8 +1034,6 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Saldo neto de este período',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
     dash_lf_income:'ingresos',dash_lf_exp_bills:'gastos &amp; fact.',dash_lf_debt:'deudas',dash_lf_savings:'ahorros',dash_lf_rollover:'arrastre',
     dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_expected:'Previsto',dash_actual:'Real',
-    dash_expected_vs_actual:'Previsto vs Real',dash_of_expected_sfx:'de lo previsto',
-    dash_flow_story:'Trayectoria del flujo de caja',dash_bill_timeline:'Cronología de vencimientos',dash_no_bill_dates:'Aún no hay facturas con fecha de vencimiento.',
     dash_savings_rate:'Tasa de ahorro',dash_saved_sfx:'ahorrado',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',dash_add_tx_link:'Añadir transacciones →',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
@@ -1153,7 +1145,7 @@ const TRANSLATIONS = {
     language:'Lingua',reset_data:'Reimposta dati',
     light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Layout della dashboard',dashboard_layout_desc:'Scegli come viene progettata e visualizzata la tua dashboard.',
-    layout_1:'Classico',layout_2:'Impulso radiale',layout_3:'Storia del flusso',
+    layout_1:'Classico',layout_2:'Impulso radiale',layout_coming_soon:'Presto altri!',
     changes_autosaved:'✅ Le modifiche vengono salvate automaticamente.',
     rollover_desc:'Riporta il denaro non speso dal periodo precedente.',
     rollover_amount:'Importo riporto',
@@ -1177,7 +1169,7 @@ const TRANSLATIONS = {
     help_sett_period_li:'Imposta il tuo intervallo di date. Fai clic sul badge della data nel pannello per accedervi rapidamente.',
     help_sett_rollover_li:"Riporta il denaro non speso dall'ultimo periodo.",
     help_sett_theme_li:'Scegli tra cinque temi di colore - Chiaro, Scuro, Synthwave, Vintage o Terminal.',
-    help_sett_layout_li:'Scegli tra tre design della dashboard - Classico, Impulso radiale, o Storia del flusso - ognuno con i propri grafici e layout.',
+    help_sett_layout_li:'Scegli tra due design della dashboard - Classico o Impulso radiale - ognuno con i propri grafici e layout; altri design in arrivo.',
     help_dash_modal_title:'Come funziona la Dashboard',help_dash_intro:'La Dashboard è la tua panoramica finanziaria in tempo reale. Tutto si aggiorna automaticamente man mano che registri le transazioni.',
     help_dash_cards_h:'Schede di riepilogo',help_dash_cards_li:'Totali di entrate, spese &amp; bollette, pagamenti dei debiti e risparmi per il periodo corrente.',
     help_dash_leftover_li:'Ciò che resta dopo tutte le uscite. <span style="color:#10b981;font-weight:600">Verde</span> = surplus, <span style="color:#f43f5e;font-weight:600">rosso</span> = oltre il budget.',
@@ -1275,7 +1267,7 @@ const TRANSLATIONS = {
     guide_settings_step1:"Scegli la tua <strong>Valuta</strong> così ogni importo nell'app viene mostrato come ti aspetti.",
     guide_settings_step2:"Scegli il tuo <strong>Periodo di budget</strong> (mensile, quindicinale, ecc.) per adattarlo a come vieni pagato e paghi davvero.",
     guide_settings_step3:"Inserisci un importo di <strong>Riporto</strong> se vuoi che i soldi non spesi del periodo precedente confluiscano nell'Avanzo netto di questo.",
-    guide_settings_step4:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Vintage o Terminal), un <strong>Layout della dashboard</strong> (3 design tra cui scegliere), e la tua <strong>Lingua</strong> dall'elenco.",
+    guide_settings_step4:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Vintage o Terminal), un <strong>Layout della dashboard</strong> (2 design tra cui scegliere, altri in arrivo), e la tua <strong>Lingua</strong> dall'elenco.",
     guide_settings_step5:"Usa <strong>Esporta dati</strong> per fare un backup di tutto, o <strong>Ripristina dati</strong> se vuoi mai ricominciare completamente da zero.",
     guide_settings_connect1:"Le tue scelte di Valuta e Periodo di budget determinano come ogni altra pagina dell'app mostra e calcola i numeri.",
     guide_settings_connect2:"L'importo di Riporto impostato qui confluisce direttamente nell'Avanzo netto mostrato nella tua Dashboard.",
@@ -1299,8 +1291,6 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Saldo netto di questo periodo',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
     dash_lf_income:'entrate',dash_lf_exp_bills:'spese &amp; boll.',dash_lf_debt:'debiti',dash_lf_savings:'risparmi',dash_lf_rollover:'riporto',
     dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_expected:'Previsto',dash_actual:'Effettivo',
-    dash_expected_vs_actual:'Previsto vs Effettivo',dash_of_expected_sfx:'del previsto',
-    dash_flow_story:'Traiettoria del flusso di cassa',dash_bill_timeline:'Cronologia delle scadenze',dash_no_bill_dates:'Ancora nessuna bolletta con data di scadenza.',
     dash_savings_rate:'Tasso di risparmio',dash_saved_sfx:'risparmiato',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',dash_add_tx_link:'Aggiungi transazioni →',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
@@ -1412,7 +1402,7 @@ const TRANSLATIONS = {
     language:'Język',reset_data:'Zresetuj dane',
     light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     dashboard_layout:'Układ pulpitu',dashboard_layout_desc:'Wybierz, jak Twój pulpit jest zaprojektowany i wizualizowany.',
-    layout_1:'Klasyczny',layout_2:'Puls promienisty',layout_3:'Historia przepływu',
+    layout_1:'Klasyczny',layout_2:'Puls promienisty',layout_coming_soon:'Wkrótce więcej!',
     changes_autosaved:'✅ Zmiany są zapisywane automatycznie.',
     rollover_desc:'Przenieś niewydane środki z poprzedniego okresu.',
     rollover_amount:'Kwota przeniesienia',
@@ -1436,7 +1426,7 @@ const TRANSLATIONS = {
     help_sett_period_li:'Ustaw zakres dat. Kliknij znacznik daty na panelu, aby szybko przejść tutaj.',
     help_sett_rollover_li:'Przenieś niewydane środki z ostatniego okresu.',
     help_sett_theme_li:'Wybierz spośród pięciu motywów kolorystycznych - Jasny, Ciemny, Synthwave, Vintage lub Terminal.',
-    help_sett_layout_li:'Wybierz spośród trzech projektów pulpitu - Klasyczny, Puls promienisty, lub Historia przepływu - każdy z własnymi wykresami i układem.',
+    help_sett_layout_li:'Wybierz spośród dwóch projektów pulpitu - Klasyczny lub Puls promienisty - każdy z własnymi wykresami i układem; więcej projektów wkrótce.',
     help_dash_modal_title:'Jak działa Panel',help_dash_intro:'Panel to Twój migawkowy obraz finansów w czasie rzeczywistym. Wszystko aktualizuje się automatycznie podczas rejestrowania transakcji.',
     help_dash_cards_h:'Karty podsumowania',help_dash_cards_li:'Sumy przychodów, wydatków &amp; rachunków, spłat długów i oszczędności za bieżący okres.',
     help_dash_leftover_li:'To, co zostaje po wszystkich wydatkach. <span style="color:#10b981;font-weight:600">Zielony</span> = nadwyżka, <span style="color:#f43f5e;font-weight:600">czerwony</span> = przekroczenie budżetu.',
@@ -1534,7 +1524,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Wybierz swoją <strong>Walutę</strong>, aby każda kwota w aplikacji wyświetlała się tak, jak oczekujesz.',
     guide_settings_step2:'Wybierz swój <strong>Okres budżetowy</strong> (na przykład miesięczny lub dwutygodniowy), aby pasował do tego, jak faktycznie otrzymujesz wypłatę i płacisz rachunki.',
     guide_settings_step3:'Wpisz kwotę <strong>Przeniesienia</strong>, jeśli chcesz, aby niewydane pieniądze z ostatniego okresu przeszły do Salda netto bieżącego okresu.',
-    guide_settings_step4:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Vintage lub Terminal), <strong>Układ pulpitu</strong> (3 projekty do wyboru) i swój <strong>Język</strong> z listy.',
+    guide_settings_step4:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Vintage lub Terminal), <strong>Układ pulpitu</strong> (2 projekty do wyboru, więcej wkrótce) i swój <strong>Język</strong> z listy.',
     guide_settings_step5:'Użyj <strong>Eksportuj dane</strong>, aby zrobić kopię zapasową wszystkiego, lub <strong>Zresetuj dane</strong>, jeśli kiedykolwiek zechcesz zacząć zupełnie od nowa.',
     guide_settings_connect1:'Twój wybór Waluty i Okresu budżetowego określa, jak każda inna strona aplikacji wyświetla i oblicza liczby.',
     guide_settings_connect2:'Kwota Przeniesienia ustawiona tutaj trafia bezpośrednio do Salda netto pokazanego na twoim Pulpicie.',
@@ -1558,8 +1548,6 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Saldo netto tego okresu',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
     dash_lf_income:'przychody',dash_lf_exp_bills:'wyd. &amp; rach.',dash_lf_debt:'długi',dash_lf_savings:'oszczędności',dash_lf_rollover:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
-    dash_expected_vs_actual:'Spodziewane vs Rzeczywiste',dash_of_expected_sfx:'spodziewanego',
-    dash_flow_story:'Trajektoria przepływu gotówki',dash_bill_timeline:'Oś czasu terminów płatności',dash_no_bill_dates:'Brak jeszcze rachunków z terminem płatności.',
     dash_savings_rate:'Stopa oszczędności',dash_saved_sfx:'zaoszczędzono',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',dash_add_tx_link:'Dodaj transakcje →',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
@@ -2138,17 +2126,20 @@ function initTheme() { applyTheme(localStorage.getItem('evobudget_theme') || 'da
 // ── Dashboard Layout picker (Settings) ─────────────────────────────────
 const DASHBOARD_LAYOUT_ICONS = {
   1: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
-  2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>',
-  3: '<path d="M2 15c3-7 6 7 9 0s6-7 9 0" stroke-linejoin="round"/>'
+  2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>'
 };
 function dashboardLayoutCardHtml() {
-  if ((state.settings.dashboardLayout || 1) > 3) state.settings.dashboardLayout = 1;
+  if ((state.settings.dashboardLayout || 1) > 2) state.settings.dashboardLayout = 1;
   const cur = state.settings.dashboardLayout || 1;
-  const opts = [1, 2, 3].map(n => `
+  const opts = [1, 2].map(n => `
     <button class="layout-opt${cur === n ? ' is-active' : ''}" data-layout-val="${n}" type="button" title="${t('layout_' + n)}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${DASHBOARD_LAYOUT_ICONS[n]}</svg>
       ${t('layout_' + n)}
-    </button>`).join('');
+    </button>`).join('') + `
+    <button class="layout-opt layout-opt--soon" type="button" disabled title="${t('layout_coming_soon')}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>
+      ${t('layout_coming_soon')}
+    </button>`;
   return `<div class="panel"><div class="panel-inner">
     <div class="settings-card-title">📊 ${t('dashboard_layout')}</div>
     <p class="settings-desc">${t('dashboard_layout_desc')}</p>
@@ -2380,8 +2371,7 @@ function renderDashboard() {
   const layout = state.settings.dashboardLayout || 1;
   ({
     1: renderDashboardLayout1,
-    2: renderDashboardLayout2,
-    3: renderDashboardLayout3
+    2: renderDashboardLayout2
   }[layout] || renderDashboardLayout1)();
 }
 
@@ -2634,13 +2624,6 @@ function renderDashboardLayout2() {
     { label: t('tab_debt'),     value: sum.totalDebt,     expected: expDebt,     color: '#a855f7' },
     { label: t('tab_savings'),  value: sum.totalSavings,  expected: expSavings,  color: '#3b82f6' }
   ];
-  // Radar is normalized to %-of-expected per axis (rather than raw $) so
-  // categories of very different natural scale stay visually comparable -
-  // "Expected" is a perfect regular polygon (always 100), "Actual" bulges
-  // out/in per category based on over/under spend.
-  const radarAxes = rings.map(r => ({ label: r.label }));
-  const radarExpected = rings.map(() => 100);
-  const radarActual   = rings.map(r => r.expected > 0 ? Math.min(160, r.value / r.expected * 100) : (r.value > 0 ? 100 : 0));
 
   const onboardHTML = !hasAnyData() ? `
     <div class="onboard-banner">
@@ -2670,13 +2653,17 @@ function renderDashboardLayout2() {
       ${iconStatTile('🏦', t('dash_stat_savings'), fmt(sum.totalSavings), tf('dash_stat_of_goal', fmt(expSavings)), '#3b82f6')}
     </div>
 
-    <div class="radial-pulse-grid">
-      <div class="panel chart-hero-panel" data-chart-scope>
-        <div class="chart-hero-label">${t('dash_net_leftover_period')}</div>
-        ${svgSemiGauge(gaugePct, 190, leftColor)}
-        <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover < 0 ? '−' : ''}${fmt(Math.abs(sum.leftover))}</div>
-        ${state.rollover ? `<div class="leftover-rollover">${tf('dash_includes_rollover', fmt(state.rollover))}</div>` : ''}
-        <div class="leftover-formula" style="justify-content:center">
+    <div class="panel leftover-hero-panel" data-chart-scope>
+      <div class="panel-inner-sm leftover-hero-inner">
+        <div class="leftover-hero-left">
+          ${svgSemiGauge(gaugePct, 170, leftColor)}
+          <div class="leftover-hero-text">
+            <div class="chart-hero-label">${t('dash_net_leftover_period')}</div>
+            <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover < 0 ? '−' : ''}${fmt(Math.abs(sum.leftover))}</div>
+            ${state.rollover ? `<div class="leftover-rollover">${tf('dash_includes_rollover', fmt(state.rollover))}</div>` : ''}
+          </div>
+        </div>
+        <div class="leftover-formula leftover-hero-formula">
           <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_lf_income')}</span>
           <span class="lf-sep">−</span>
           <span class="lf-chip lf-expense">${fmt(sum.totalExpBills)} ${t('dash_lf_exp_bills')}</span>
@@ -2686,12 +2673,14 @@ function renderDashboardLayout2() {
           <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_lf_savings')}</span>
         </div>
       </div>
+    </div>
 
-      <div class="panel" data-chart-scope>
+    <div class="dashboard-grid">
+      <div class="panel cash-flow-hero-panel" data-chart-scope>
         <div class="panel-inner-sm">
           <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_cash_flow')}</div>
           <div class="radial-bars-block">
-            ${svgRadialBars(rings, 190)}
+            ${svgRadialBars(rings, 240)}
             <div class="donut-legend">${rings.map((r, idx) => `
               <div class="dleg-row" data-idx="${idx}">
                 <span class="dleg-swatch" style="background:${r.color}"></span>
@@ -2701,52 +2690,22 @@ function renderDashboardLayout2() {
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="dashboard-grid">
-      <div class="panel radar-panel" data-chart-scope>
-        <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_expected_vs_actual')}</div>
-          <div class="radar-block">${svgRadar(radarAxes, radarExpected, radarActual, 340)}
-            <div class="radar-legend">
-              <span class="legend-item"><span class="legend-dot" style="background:#9ca3af"></span>${t('dash_expected')}</span>
-              <span class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>${t('dash_actual')}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="charts-col">
-        <div class="panel chart-panel">
+      <div class="charts-col pulse-charts-col">
+        <div class="panel chart-panel" data-chart-scope>
           <div class="panel-inner-sm">
             <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
             ${incSegs.length === 0
               ? `<div class="chart-empty">${t('dash_no_income')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-              : `<div class="donut-block">
-                  ${svgDonut(incSegs, 110, 16)}
-                  <div class="donut-legend">${incSegs.slice(0,5).map((s,idx) => `
-                    <div class="dleg-row" data-idx="${idx}">
-                      <span class="dleg-swatch" style="background:${s.color}"></span>
-                      <span class="dleg-label">${esc(s.label)}</span>
-                      <span class="dleg-pct">${s.pct.toFixed(0)}%</span>
-                    </div>`).join('')}</div>
-                </div>`}
+              : `<div class="hbar-scroll">${hBarChartHtml(incSegs, { limit: 6 })}</div>`}
           </div>
         </div>
-        <div class="panel chart-panel">
+        <div class="panel chart-panel" data-chart-scope>
           <div class="panel-inner-sm">
             <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>
             ${spendSegs.length === 0
               ? `<div class="chart-empty">${t('dash_no_spending')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-              : `<div class="donut-block">
-                  ${svgDonut(spendSegs, 110, 16)}
-                  <div class="donut-legend">${spendSegs.slice(0,5).map((s,idx) => `
-                    <div class="dleg-row" data-idx="${idx}">
-                      <span class="dleg-swatch" style="background:${s.color}"></span>
-                      <span class="dleg-label">${esc(s.label)}</span>
-                      <span class="dleg-pct">${s.pct.toFixed(0)}%</span>
-                    </div>`).join('')}</div>
-                </div>`}
+              : `<div class="hbar-scroll">${hBarChartHtml(spendSegs, { limit: 6 })}</div>`}
           </div>
         </div>
       </div>
@@ -2755,220 +2714,16 @@ function renderDashboardLayout2() {
 
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
   requestAnimationFrame(() => {
-    initDonuts(el);
+    wireHBarGrowIn(el);
+    wireHBarScrollFade(el);
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
       wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>
         `<strong>${esc(d.label)}</strong><br>` +
         `<span style="color:var(--text-faint)">${esc(t('dash_expected'))}: ${esc(fmt(parseFloat(d.expected) || 0))}</span><br>` +
         `<span style="color:${d.color || 'var(--text-primary)'};font-weight:800">${esc(t('dash_actual'))}: ${esc(fmt(parseFloat(d.val) || 0))}</span>` });
-      wireChartHover(scope, '.radar-pt', { format: d => `<strong>${esc(d.label)}</strong><br>${Math.round(parseFloat(d.val) || 0)}% ${esc(t('dash_of_expected_sfx'))}` });
+      wireChartHover(scope, '.hbar-row', { highlightClass: 'is-hbar-active', format: d =>
+        `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
     });
-  });
-  el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
-  el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
-}
-
-// ── Layout 3: "Flow Story" - timeline/narrative feel ────────────────────
-function buildCashFlowSeries() {
-  const start = new Date(state.settings.periodStart + 'T00:00:00');
-  const end   = new Date(state.settings.periodEnd + 'T00:00:00');
-  const days  = Math.max(1, Math.round((end - start) / 86400000) + 1);
-  const daily = new Array(days).fill(0);
-  state.transactions.forEach(tx => {
-    if (tx.date < state.settings.periodStart || tx.date > state.settings.periodEnd) return;
-    const idx = Math.round((new Date(tx.date + 'T00:00:00') - start) / 86400000);
-    if (idx < 0 || idx >= days) return;
-    daily[idx] += tx.type === 'income' ? (tx.amount || 0) : -(tx.amount || 0);
-  });
-  const step = days > 31 ? Math.ceil(days / 31) : 1;
-  let cum = 0;
-  const points = [];
-  for (let i = 0; i < days; i++) {
-    cum += daily[i];
-    if (i % step === 0 || i === days - 1) {
-      const dt = new Date(start.getTime() + i * 86400000);
-      points.push({ label: dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), value: cum });
-    }
-  }
-  return points;
-}
-
-function renderDashboardLayout3() {
-  const actuals = computeActuals();
-  const sum     = computeSummary(actuals);
-
-  const expIncome   = state.budgets.income.reduce((t, r) => t + (r.expected || 0), 0);
-  const expExpenses = state.budgets.expenses.reduce((t, r) => t + (r.expected || 0), 0);
-  const expBills    = state.budgets.bills.reduce((t, r) => t + (r.expected || 0), 0);
-  const expDebt     = state.budgets.debt.reduce((t, r) => t + (r.expected || 0), 0);
-  const expSavings  = state.budgets.savings.reduce((t, r) => t + (r.expected || 0), 0);
-  const expExpBills = expExpenses + expBills;
-
-  const incItems = state.budgets.income
-    .map((r, i) => ({ label: r.category, value: actuals.income[r.category] || 0, color: COLOR_WHEEL[i % COLOR_WHEEL.length] }))
-    .filter(s => s.value > 0).sort((a, b) => b.value - a.value);
-  const incTotal = incItems.reduce((t, s) => t + s.value, 0);
-  const incSegs  = incItems.map(s => ({ ...s, pct: incTotal > 0 ? s.value / incTotal * 100 : 0 }));
-
-  const spendItems = [
-    ...state.budgets.expenses.map((r, i) => ({ label: r.category, value: actuals.expenses[r.category] || 0, color: COLOR_WHEEL[i % COLOR_WHEEL.length] })),
-    ...state.budgets.bills.map((r, i)    => ({ label: r.category, value: actuals.bills[r.category]    || 0, color: COLOR_WHEEL[(i + 5) % COLOR_WHEEL.length] })),
-    ...state.budgets.debt.map((r, i)     => ({ label: r.category, value: actuals.debt[r.category]     || 0, color: COLOR_WHEEL[(i + 9) % COLOR_WHEEL.length] }))
-  ].filter(s => s.value > 0).sort((a, b) => b.value - a.value);
-  const spendTotal = spendItems.reduce((t, s) => t + s.value, 0);
-  const spendSegs  = spendItems.slice(0, 50).map(s => ({ ...s, pct: spendTotal > 0 ? s.value / spendTotal * 100 : 0 }));
-
-  const leftColor = sum.leftover >= 0 ? '#10b981' : '#f43f5e';
-  const flowSeries = buildCashFlowSeries();
-
-  const stackCols = [
-    { label: t('dash_expected'), segments: [
-        { label: t('tab_expenses'), value: expExpenses, color: '#f43f5e' },
-        { label: t('tab_bills'),    value: expBills,    color: '#fb923c' },
-        { label: t('tab_debt'),     value: expDebt,     color: '#a855f7' },
-        { label: t('tab_savings'),  value: expSavings,  color: '#3b82f6' } ] },
-    { label: t('dash_actual'), segments: [
-        { label: t('tab_expenses'), value: sum.totalExpenses, color: '#f43f5e' },
-        { label: t('tab_bills'),    value: sum.totalBills,    color: '#fb923c' },
-        { label: t('tab_debt'),     value: sum.totalDebt,     color: '#a855f7' },
-        { label: t('tab_savings'),  value: sum.totalSavings,  color: '#3b82f6' } ] }
-  ];
-
-  const periodDays = Math.max(1, Math.round((new Date(state.settings.periodEnd) - new Date(state.settings.periodStart)) / 86400000) + 1);
-  const pStart = new Date(state.settings.periodStart + 'T00:00:00');
-  const billRanges = state.budgets.bills.filter(b => b.dueDate).map((b, i) => {
-    const dayOffset = Math.round((new Date(b.dueDate + 'T00:00:00') - pStart) / 86400000);
-    return { label: b.category, min: 0, max: periodDays, marker: Math.max(0, Math.min(periodDays, dayOffset)), color: COLOR_WHEEL[i % COLOR_WHEEL.length] };
-  });
-
-  const onboardHTML = !hasAnyData() ? `
-    <div class="onboard-banner">
-      <div class="onboard-title">${t('onboard_welcome')}</div>
-      <div class="onboard-steps">
-        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
-      </div>
-    </div>` : '';
-
-  const el = document.getElementById('bview-dashboard');
-  el.innerHTML = `
-    <div class="section-header">
-      <h2 class="section-title">${t('tab_dashboard')}</h2>
-      <button class="period-badge period-badge--btn" id="periodBadgeBtn" type="button" title="${t('dash_period_title')}">
-        ${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}
-      </button>
-      <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
-    </div>
-    ${onboardHTML}
-
-    <div class="summary-cards">
-      <div class="scard scard--income">
-        <div class="scard-label">${t('dash_stat_income')}</div>
-        <div class="scard-value">${fmt(sum.totalIncome)}</div>
-        <div class="scard-sub">${tf('dash_stat_of_expected',fmt(expIncome))}</div>
-      </div>
-      <div class="scard scard--expenses">
-        <div class="scard-label">${t('dash_stat_exp_bills')}</div>
-        <div class="scard-value">${fmt(sum.totalExpBills)}</div>
-        <div class="scard-sub">${tf('dash_stat_of_budgeted',fmt(expExpBills))}</div>
-      </div>
-      <div class="scard scard--debt">
-        <div class="scard-label">${t('dash_stat_debt')}</div>
-        <div class="scard-value">${fmt(sum.totalDebt)}</div>
-        <div class="scard-sub">${tf('dash_stat_of_budgeted',fmt(expDebt))}</div>
-      </div>
-      <div class="scard scard--savings">
-        <div class="scard-label">${t('dash_stat_savings')}</div>
-        <div class="scard-value">${fmt(sum.totalSavings)}</div>
-        <div class="scard-sub">${tf('dash_stat_of_goal',fmt(expSavings))}</div>
-      </div>
-    </div>
-
-    <div class="panel leftover-panel">
-      <div class="leftover-inner">
-        <div>
-          <div class="leftover-label">${t('dash_net_leftover_period')}</div>
-          <div class="leftover-value" style="color:${leftColor}">${sum.leftover < 0 ? '−' : ''}${fmt(Math.abs(sum.leftover))}</div>
-          ${state.rollover ? `<div class="leftover-rollover">${tf('dash_includes_rollover',fmt(state.rollover))}</div>` : ''}
-        </div>
-        <div class="leftover-formula">
-          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_lf_income')}</span>
-          <span class="lf-sep">−</span>
-          <span class="lf-chip lf-expense">${fmt(sum.totalExpBills)} ${t('dash_lf_exp_bills')}</span>
-          <span class="lf-sep">−</span>
-          <span class="lf-chip lf-debt">${fmt(sum.totalDebt)} ${t('dash_lf_debt')}</span>
-          <span class="lf-sep">−</span>
-          <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_lf_savings')}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel" style="margin-bottom:14px">
-      <div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_flow_story')}</div>
-        <div class="spline-wrap">${svgAreaSpline(flowSeries, 900, 190, leftColor)}</div>
-      </div>
-    </div>
-
-    <div class="flow-story-duo">
-      <div class="panel" data-chart-scope>
-        <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_spending_breakdown')}</div>
-          ${spendSegs.length === 0 ? `<div class="chart-empty">${t('dash_no_spending')}</div>` : `
-            <div class="nightingale-block">
-              ${svgNightingale(spendSegs, 200)}
-              <div class="donut-legend">${spendSegs.slice(0,6).map((s,idx) => `
-                <div class="dleg-row" data-idx="${idx}">
-                  <span class="dleg-swatch" style="background:${s.color}"></span>
-                  <span class="dleg-label">${esc(s.label)}</span>
-                  <span class="dleg-pct">${s.pct.toFixed(0)}%</span>
-                </div>`).join('')}</div>
-            </div>`}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_expected_vs_actual')}</div>
-          <div class="stackcol-wrap">${svgStackedColumns(stackCols, 220, 220)}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="flow-story-duo">
-      <div class="panel chart-panel">
-        <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
-          ${incSegs.length === 0
-            ? `<div class="chart-empty">${t('dash_no_income')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-            : `<div class="donut-block">
-                ${svgDonut(incSegs, 110, 16)}
-                <div class="donut-legend">${incSegs.slice(0,5).map((s,idx) => `
-                  <div class="dleg-row" data-idx="${idx}">
-                    <span class="dleg-swatch" style="background:${s.color}"></span>
-                    <span class="dleg-label">${esc(s.label)}</span>
-                    <span class="dleg-pct">${s.pct.toFixed(0)}%</span>
-                  </div>`).join('')}</div>
-              </div>`}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_bill_timeline')}</div>
-          ${billRanges.length === 0 ? `<div class="chart-empty">${t('dash_no_bill_dates')}</div>` : `<div class="rangebar-wrap">${svgRangeBar(billRanges, 420)}</div>`}
-        </div>
-      </div>
-    </div>
-  `;
-
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
-  requestAnimationFrame(() => {
-    initDonuts(el);
-    el.querySelectorAll('[data-chart-scope]').forEach(scope => wireChartHover(scope, '.nightingale-seg', { legendScope: scope }));
-    wireChartHover(el, '.stackcol-seg', {});
-    wireChartHover(el, '.rangebar-fill', {});
-    const splineSvg = el.querySelector('.spline-svg');
-    if (splineSvg) wireSplineHover(splineSvg, flowSeries);
   });
   el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
