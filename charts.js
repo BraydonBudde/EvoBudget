@@ -61,54 +61,61 @@ function svgRadialBars(rings, size = 220) {
   return `<svg class="radial-bars-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${out}</svg>`;
 }
 
-// ── Horizontal bar chart: ranked category comparison ────────────────────
-// Plain HTML rather than hand-rolled SVG text layout - a gradient-filled,
-// rounded-pill bar per category with the label/value shown inline. Marks
-// carry the same data-idx/data-label/data-val convention as the SVG chart
-// primitives so wireChartHover() works on it unmodified.
-function hBarChartHtml(segments, opts) {
+// ── Segmented pie chart: rounded-cap wedges with a gap between each ─────
+// Same circle+stroke-dasharray technique as svgDonut/svgRadialBars, but as
+// a single chunky ring (thick stroke relative to its radius, reading as a
+// pie rather than a thin donut) with a small angular gap subtracted from
+// each segment's dash and stroke-linecap:round on every arc, so segments
+// read as separate rounded wedges instead of one continuous ring.
+function svgSegmentedPie(segments, size = 200) {
+  const sw = size * 0.2;
+  const r = size / 2 - sw / 2 - 2, c = 2 * Math.PI * r, cx = size / 2, cy = size / 2;
+  const list = (segments || []).filter(s => (s.value || 0) > 0);
+  const bg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.24" stroke-width="${sw}"/>`;
+  if (!list.length) return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${bg}</svg>`;
+  // A stroke-linecap:round cap bulges the visible arc past its mathematical
+  // dash endpoint by sw/2 in each direction, so two neighboring segments'
+  // caps alone eat ~sw of arc length at a shared boundary - reserve that
+  // plus a few px of true daylight, or the "gap" just gets swallowed by
+  // the caps and segments look like one continuous ring (the bug this
+  // replaced: a fixed degree-based gap was fine at thin stroke widths but
+  // vanished once the stroke got pie-thick).
+  const visualGapPx = 6;
+  const gapLen = list.length > 1 ? sw + visualGapPx : 0;
+  let cum = 0, arcs = '';
+  list.forEach((seg, idx) => {
+    const p = seg.pct || 0;
+    if (p <= 0) return;
+    const segLen = (p / 100) * c;
+    const dash = Math.max(sw * 0.5, segLen - gapLen);
+    const rot = -90 + (cum / 100) * 360;
+    arcs += `<circle class="pie-seg" data-idx="${idx}" data-label="${esc(seg.label || '')}" data-val="${seg.value || 0}" data-pct="${p.toFixed(1)}"
+      cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${sw}" stroke-linecap="round"
+      stroke-dasharray="${dash.toFixed(2)} ${(c - dash).toFixed(2)}"
+      transform="rotate(${rot.toFixed(2)} ${cx} ${cy})"
+      tabindex="0" role="img" aria-label="${esc(seg.label || '')}: ${p.toFixed(0)}%"
+      style="cursor:pointer;transition:opacity .18s"/>`;
+    cum += p;
+  });
+  return `<svg class="pie-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${bg}${arcs}</svg>`;
+}
+// Full pie+legend composition (chart on the left, a value-per-row legend on
+// the right), reusing the same .radial-bars-block/.donut-legend classes as
+// the Cash Flow rings so both circular charts in Layout 2 share one visual
+// language. Legend rows show the raw value (not %) since that's what these
+// two callers (Income Sources/Spending Breakdown) actually care about.
+function pieChartHtml(segments, opts) {
   opts = opts || {};
   const valueFmt = opts.valueFormat || (v => fmt(v));
-  const list = (segments || []).filter(s => (s.value || 0) > 0).slice(0, opts.limit || 8);
+  const list = (segments || []).filter(s => (s.value || 0) > 0).slice(0, opts.limit || 6);
   if (!list.length) return '';
-  const max = Math.max(1, ...list.map(s => s.value));
-  const rows = list.map((s, idx) => {
-    const pct = s.value / max * 100;
-    return `<div class="hbar-row" data-idx="${idx}" data-label="${esc(s.label || '')}" data-val="${s.value || 0}" data-pct="${(s.pct || 0).toFixed(1)}"
-      tabindex="0" role="img" aria-label="${esc(s.label || '')}: ${esc(valueFmt(s.value || 0))}">
-      <div class="hbar-row-top">
-        <span class="hbar-label"><span class="hbar-swatch" style="background:${s.color}"></span>${esc(s.label || '')}</span>
-        <span class="hbar-value">${esc(valueFmt(s.value || 0))}</span>
-      </div>
-      <div class="hbar-track"><div class="hbar-fill" data-target-width="${pct.toFixed(1)}"
-        style="width:0%;background:linear-gradient(90deg, color-mix(in srgb, ${s.color} 65%, white), ${s.color})"></div></div>
-    </div>`;
-  }).join('');
-  return `<div class="hbar-chart">${rows}</div>`;
-}
-// Animates each bar from 0 to its target width shortly after insertion, a
-// small "grow in" touch instead of appearing already fully drawn.
-function wireHBarGrowIn(scope) {
-  const fills = Array.from((scope || document).querySelectorAll('.hbar-fill'));
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    fills.forEach(el => { el.style.width = (el.dataset.targetWidth || 0) + '%'; });
-  }));
-}
-// On wide screens .hbar-scroll caps the chart's height (see CSS) so a long
-// category list doesn't overlap the surrounding card. Toggles a fade class
-// only when the list actually overflows, and clears it once scrolled to the
-// bottom so the fade reads as "more below", not decoration.
-function wireHBarScrollFade(scope) {
-  const wraps = Array.from((scope || document).querySelectorAll('.hbar-scroll'));
-  wraps.forEach(w => {
-    const update = () => {
-      const overflowing = w.scrollHeight - w.clientHeight > 4;
-      const atBottom = w.scrollHeight - w.clientHeight - w.scrollTop <= 4;
-      w.classList.toggle('is-scrollable', overflowing && !atBottom);
-    };
-    update();
-    w.addEventListener('scroll', update);
-  });
+  const legend = list.map((s, idx) => `
+    <div class="dleg-row" data-idx="${idx}">
+      <span class="dleg-swatch" style="background:${s.color}"></span>
+      <span class="dleg-label">${esc(s.label || '')}</span>
+      <span class="dleg-pct">${esc(valueFmt(s.value || 0))}</span>
+    </div>`).join('');
+  return `<div class="radial-bars-block">${svgSegmentedPie(list, opts.size || 200)}<div class="donut-legend">${legend}</div></div>`;
 }
 
 // ── Icon-forward stat tile (markup helper, not SVG) ─────────────────────

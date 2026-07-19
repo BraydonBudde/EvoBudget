@@ -4003,19 +4003,21 @@ function renderDashboardLayout2() {
     </div>
 
     <div class="panel leftover-hero-panel" data-chart-scope>
-      <div class="panel-inner-sm leftover-hero-inner">
-        <div class="leftover-hero-left">
-          ${svgSemiGauge(gaugePct, 170, leftColor)}
-          <div class="leftover-hero-text">
-            <div class="chart-hero-label">${t('dash_net_leftover')}</div>
-            <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>
-            ${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}
+      <div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_net_leftover')}</div>
+        <div class="leftover-hero-inner">
+          <div class="leftover-hero-left">
+            ${svgSemiGauge(gaugePct, 170, leftColor)}
+            <div class="leftover-hero-text">
+              <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>
+              ${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}
+            </div>
           </div>
-        </div>
-        <div class="leftover-formula leftover-hero-formula">
-          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span>
-          <span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span>
-          <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>
+          <div class="leftover-formula leftover-hero-formula">
+            <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span>
+            <span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span>
+            <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -4035,9 +4037,9 @@ function renderDashboardLayout2() {
           </div>
         </div>
       </div>
-      <div class="panel chart-panel dg-inc" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="hbar-scroll">${hBarChartHtml(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})), {limit:6})}</div>`}</div></div>
+      <div class="panel chart-panel dg-inc" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:pieChartHtml(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})), {limit:6})}</div></div>
       ${allocHtml}
-      <div class="panel chart-panel dg-spend" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="hbar-scroll">${hBarChartHtml(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})), {limit:6})}</div>`}</div></div>
+      <div class="panel chart-panel dg-spend" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:pieChartHtml(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})), {limit:6})}</div></div>
     </div>
 
     <div class="pro-bottom-row" style="margin-top:14px">
@@ -4056,14 +4058,12 @@ function renderDashboardLayout2() {
     </div>`;
   el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
   requestAnimationFrame(()=>{
-    wireHBarGrowIn(el);
-    wireHBarScrollFade(el);
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
       wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>
         `<strong>${esc(d.label)}</strong><br>` +
         `<span style="color:var(--text-faint)">${esc(t('dash_expected_legend'))}: ${esc(fmt(parseFloat(d.expected) || 0))}</span><br>` +
         `<span style="color:${d.color || 'var(--text-primary)'};font-weight:800">${esc(t('dash_actual_legend'))}: ${esc(fmt(parseFloat(d.val) || 0))}</span>` });
-      wireChartHover(scope, '.hbar-row', { highlightClass: 'is-hbar-active', format: d =>
+      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, format: d =>
         `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
     });
   });

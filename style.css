@@ -688,7 +688,7 @@ p { margin: 0; }
 .ist-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
 .leftover-hero-panel { margin-bottom: 14px; }
 .leftover-hero-inner {
-  padding: 20px 26px; display: flex;
+  display: flex;
   align-items: center; justify-content: space-between;
   gap: 28px; flex-wrap: wrap;
 }
@@ -713,41 +713,10 @@ p { margin: 0; }
   .leftover-hero-left { justify-content: center; }
 }
 
-/* Income Sources/Spending Breakdown run ~20% taller than their natural
-   (grid-stretched-to-match-the-ring-panel) height, giving the scrollable
-   list more breathing room before the fade kicks in. Scoped to Layout 2's
-   charts-col specifically - Classic's charts-col reuses the same base
-   classes and should keep its own sizing. */
-.pulse-charts-col > .panel { min-height: 162px; }
-
-/* Horizontal bar chart (Income Sources / Spending Breakdown, Layout 2) */
-.hbar-chart { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-.hbar-row { cursor: pointer; border-radius: 8px; padding: 4px 6px; margin: -4px -6px; transition: opacity .18s, background .15s; }
-.hbar-row:hover, .hbar-row.is-hbar-active { background: rgba(99,102,241,.06); }
-[data-theme="dark"] .hbar-row:hover, [data-theme="dark"] .hbar-row.is-hbar-active { background: rgba(var(--grad-indigo-rgb),.08); }
-.hbar-row-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
-.hbar-label { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hbar-swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.hbar-value { font-size: 12.5px; font-weight: 800; color: var(--text-primary); flex-shrink: 0; }
-.hbar-track { height: 9px; border-radius: 999px; background: rgba(30,27,46,.07); overflow: hidden; }
-[data-theme="dark"] .hbar-track { background: rgba(255,255,255,.06); }
-.hbar-fill { height: 100%; border-radius: 999px; transition: width .7s cubic-bezier(.16,1,.3,1), filter .15s; }
-.hbar-row:hover .hbar-fill, .hbar-row.is-hbar-active .hbar-fill { filter: brightness(1.12) saturate(1.1); }
-/* On larger displays, Income Sources/Spending Breakdown scroll inside
-   their own card (vertically only - never sideways) rather than
-   overlapping/growing the panel. Sized with flex:1 (not a fixed height)
-   so it always fills whatever room its card actually has - the card's
-   own height comes from the grid row it shares with Cash Flow or Budget
-   Allocation, and that varies by layout/screen, so a hardcoded px value
-   would drift out of sync with it. A bottom fade (only shown while
-   there's more to scroll to) signals extra content past what fits, and
-   the right-side padding keeps the scrollbar from crowding the bars/
-   amounts. Left alone on narrow viewports, where each panel already has
-   the full width to itself and just shows everything. */
-@media (min-width: 901px) {
-  .hbar-scroll { flex: 1; min-height: 40px; overflow-y: auto; overflow-x: hidden; padding-right: 10px; }
-  .hbar-scroll.is-scrollable { mask-image: linear-gradient(to bottom, black calc(100% - 20px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 20px), transparent 100%); }
-}
+/* Pie chart (Income Sources / Spending Breakdown, Layout 2) reuses
+   .radial-bars-block/.donut-legend above for the centered chart+legend
+   composition and gap sizing - no chart-specific CSS needed beyond the
+   svg itself (see svgSegmentedPie in charts.js). */
 
 /* Onboarding banner */
 .onboard-banner {

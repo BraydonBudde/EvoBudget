@@ -2654,11 +2654,12 @@ function renderDashboardLayout2() {
     </div>
 
     <div class="panel leftover-hero-panel" data-chart-scope>
-      <div class="panel-inner-sm leftover-hero-inner">
+      <div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_net_leftover_period')}</div>
+        <div class="leftover-hero-inner">
         <div class="leftover-hero-left">
           ${svgSemiGauge(gaugePct, 170, leftColor)}
           <div class="leftover-hero-text">
-            <div class="chart-hero-label">${t('dash_net_leftover_period')}</div>
             <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover < 0 ? '−' : ''}${fmt(Math.abs(sum.leftover))}</div>
             ${state.rollover ? `<div class="leftover-rollover">${tf('dash_includes_rollover', fmt(state.rollover))}</div>` : ''}
           </div>
@@ -2671,6 +2672,7 @@ function renderDashboardLayout2() {
           <span class="lf-chip lf-debt">${fmt(sum.totalDebt)} ${t('dash_lf_debt')}</span>
           <span class="lf-sep">−</span>
           <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_lf_savings')}</span>
+        </div>
         </div>
       </div>
     </div>
@@ -2697,7 +2699,7 @@ function renderDashboardLayout2() {
             <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
             ${incSegs.length === 0
               ? `<div class="chart-empty">${t('dash_no_income')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-              : `<div class="hbar-scroll">${hBarChartHtml(incSegs, { limit: 6 })}</div>`}
+              : pieChartHtml(incSegs, { limit: 6 })}
           </div>
         </div>
         <div class="panel chart-panel" data-chart-scope>
@@ -2705,7 +2707,7 @@ function renderDashboardLayout2() {
             <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>
             ${spendSegs.length === 0
               ? `<div class="chart-empty">${t('dash_no_spending')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-              : `<div class="hbar-scroll">${hBarChartHtml(spendSegs, { limit: 6 })}</div>`}
+              : pieChartHtml(spendSegs, { limit: 6 })}
           </div>
         </div>
       </div>
@@ -2714,14 +2716,12 @@ function renderDashboardLayout2() {
 
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
   requestAnimationFrame(() => {
-    wireHBarGrowIn(el);
-    wireHBarScrollFade(el);
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
       wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>
         `<strong>${esc(d.label)}</strong><br>` +
         `<span style="color:var(--text-faint)">${esc(t('dash_expected'))}: ${esc(fmt(parseFloat(d.expected) || 0))}</span><br>` +
         `<span style="color:${d.color || 'var(--text-primary)'};font-weight:800">${esc(t('dash_actual'))}: ${esc(fmt(parseFloat(d.val) || 0))}</span>` });
-      wireChartHover(scope, '.hbar-row', { highlightClass: 'is-hbar-active', format: d =>
+      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, format: d =>
         `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
     });
   });
