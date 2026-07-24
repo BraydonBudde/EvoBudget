@@ -6,6 +6,16 @@
 // app's own script (esc/fmt/t are available by the time these run).
 // ══════════════════════════════════════════════════════════════════════
 
+// ── Post-sort palette assignment ────────────────────────────────────────
+// Re-assign palette colors AFTER segments are sorted by value, so the
+// largest (adjacent in the legend and on the ring) segments always get
+// strongly contrasting hues - assigning by original category index let two
+// near-identical teals land next to each other.
+function assignSegColors(segs, palette) {
+  segs.forEach((s, i) => { s.color = palette[i % palette.length]; });
+  return segs;
+}
+
 // ── Semi-circle gauge (single KPI, 0-100%) ──────────────────────────────
 // Same circle+stroke-dasharray+rotate technique as svgDonut (proven), just
 // scaled to a half circumference and relying on the SVG's own viewBox to
@@ -30,7 +40,7 @@ function svgSemiGauge(pct, size = 160, color = '#6366f1', centerText) {
     <circle class="gauge-arc" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"
       stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(180 ${cx} ${cy})"
       style="transition:stroke-dasharray .3s"/>
-    <text x="${cx}" y="${(cy - sw * 0.25).toFixed(1)}" text-anchor="middle" style="font-family:Sora,sans-serif;font-weight:800;font-size:${(size * .16).toFixed(0)}px;fill:var(--text-primary)">${esc(String(label))}</text>
+    <text x="${cx}" y="${(cy - sw * 0.25).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-display);font-weight:800;font-size:${(size * .16).toFixed(0)}px;fill:var(--text-primary)">${esc(String(label))}</text>
   </svg>`;
 }
 
@@ -52,7 +62,7 @@ function svgRadialBars(rings, size = 220) {
     const over = ring.expected > 0 && ring.value > ring.expected;
     const segColor = over ? '#f43f5e' : ring.color;
     out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.28" stroke-width="${sw}"/>
-      <circle class="rbar-seg" data-idx="${idx}" data-label="${esc(ring.label || '')}" data-val="${ring.value || 0}" data-expected="${ring.expected || 0}" data-color="${segColor}" data-pct="${pct.toFixed(0)}"
+      <circle class="rbar-seg${over ? ' rbar-seg--over' : ''}" data-idx="${idx}" data-label="${esc(ring.label || '')}" data-val="${ring.value || 0}" data-expected="${ring.expected || 0}" data-color="${segColor}" data-pct="${pct.toFixed(0)}"
         cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${segColor}" stroke-width="${sw}" stroke-linecap="round"
         stroke-dasharray="${dash.toFixed(2)} ${gapLen.toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"
         tabindex="0" role="img" aria-label="${esc(ring.label || '')}: ${pct.toFixed(0)}%"
@@ -61,61 +71,102 @@ function svgRadialBars(rings, size = 220) {
   return `<svg class="radial-bars-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${out}</svg>`;
 }
 
-// ── Segmented pie chart: rounded-cap wedges with a gap between each ─────
-// Same circle+stroke-dasharray technique as svgDonut/svgRadialBars, but as
-// a single chunky ring (thick stroke relative to its radius, reading as a
-// pie rather than a thin donut) with a small angular gap subtracted from
-// each segment's dash and stroke-linecap:round on every arc, so segments
-// read as separate rounded wedges instead of one continuous ring.
+// ── Segmented pie chart: deconstructed rounded wedges ───────────────────
+// Each segment is a true annular-sector <path> (not a dashed stroke), so
+// even a wide 60%+ segment keeps square-cut ends instead of sausage caps.
+// The pie is "deconstructed": neighbouring wedges are separated by an
+// angular gap and every corner is rounded (stroking each path with its own
+// fill colour + stroke-linejoin:round, geometry inset by half the stroke so
+// the rounded shape stays on its true footprint). At rest the wedges form a
+// clean circle; each wedge carries its own outward "explode" vector as CSS
+// vars (--ex/--ey) that only the .is-exploded hover state applies, so a
+// slice animates outward when it (or its legend row) is highlighted.
 function svgSegmentedPie(segments, size = 200) {
-  const sw = size * 0.2;
-  const r = size / 2 - sw / 2 - 2, c = 2 * Math.PI * r, cx = size / 2, cy = size / 2;
+  const cx = size / 2, cy = size / 2;
   const list = (segments || []).filter(s => (s.value || 0) > 0);
-  const bg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.24" stroke-width="${sw}"/>`;
-  if (!list.length) return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${bg}</svg>`;
-  // A stroke-linecap:round cap bulges the visible arc past its mathematical
-  // dash endpoint by sw/2 in each direction, so two neighboring segments'
-  // caps alone eat ~sw of arc length at a shared boundary - reserve that
-  // plus a few px of true daylight, or the "gap" just gets swallowed by
-  // the caps and segments look like one continuous ring (the bug this
-  // replaced: a fixed degree-based gap was fine at thin stroke widths but
-  // vanished once the stroke got pie-thick).
-  const visualGapPx = 6;
-  const gapLen = list.length > 1 ? sw + visualGapPx : 0;
-  let cum = 0, arcs = '';
+  // Headroom so a hovered wedge can pop outward without clipping; at rest
+  // the pie is a full circle within the box.
+  const pop = Math.max(7, size * 0.05);               // hover extrude distance
+  const R = size / 2 - 3;                              // outer radius (fills the box)
+  const r = R * 0.56;                                  // inner (hole) radius
+  const bgRing = `<circle cx="${cx}" cy="${cy}" r="${((R + r) / 2).toFixed(1)}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.24" stroke-width="${(R - r).toFixed(1)}"/>`;
+  if (!list.length) return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${bgRing}</svg>`;
+  const attrs = (seg, idx, p) => `class="pie-seg" data-idx="${idx}" data-label="${esc(seg.label || '')}" data-val="${seg.value || 0}" data-pct="${p.toFixed(1)}" tabindex="0" role="img" aria-label="${esc(seg.label || '')}: ${p.toFixed(0)}%"`;
+  // dispPct (when set by pieChartHtml) is a redistributed share that gives
+  // tiny segments a legible minimum sweep; data-pct keeps the truth.
+  const shown = list.map(seg => seg.dispPct != null ? seg.dispPct : (seg.pct || 0));
+  // A lone segment is just a full ring - no gaps or corners to round.
+  if (list.length === 1) {
+    return `<svg class="pie-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible"><circle ${attrs(list[0], 0, shown[0])} cx="${cx}" cy="${cy}" r="${((R + r) / 2).toFixed(1)}" fill="none" stroke="${list[0].color}" stroke-width="${(R - r).toFixed(1)}"/></svg>`;
+  }
+  const rad = a => a * Math.PI / 180;
+  const px = (rr, a) => (cx + rr * Math.cos(rad(a))).toFixed(2);
+  const py = (rr, a) => (cy + rr * Math.sin(rad(a))).toFixed(2);
+  const cr = Math.max(7, size * 0.055);               // corner stroke (radius ≈ cr/2)
+  const gapDeg = 3.4;                                 // daylight between wedges
+  const Rp = R - cr / 2, rp = r + cr / 2;             // inset for the rounding stroke
+  const insetO = (cr / 2) / Rp * 180 / Math.PI;       // angular inset, outer edge
+  const insetI = (cr / 2) / rp * 180 / Math.PI;       // angular inset, inner edge
+  let cum = -90, arcs = '';
   list.forEach((seg, idx) => {
-    const p = seg.pct || 0;
+    const p = shown[idx];
     if (p <= 0) return;
-    const segLen = (p / 100) * c;
-    const dash = Math.max(sw * 0.5, segLen - gapLen);
-    const rot = -90 + (cum / 100) * 360;
-    arcs += `<circle class="pie-seg" data-idx="${idx}" data-label="${esc(seg.label || '')}" data-val="${seg.value || 0}" data-pct="${p.toFixed(1)}"
-      cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${sw}" stroke-linecap="round"
-      stroke-dasharray="${dash.toFixed(2)} ${(c - dash).toFixed(2)}"
-      transform="rotate(${rot.toFixed(2)} ${cx} ${cy})"
-      tabindex="0" role="img" aria-label="${esc(seg.label || '')}: ${p.toFixed(0)}%"
-      style="cursor:pointer;transition:opacity .18s"/>`;
-    cum += p;
+    const sweep = p / 100 * 360;
+    const startA = cum + gapDeg / 2, endA = cum + sweep - gapDeg / 2;
+    const mid = (startA + endA) / 2;
+    // Clamp each edge pair so very small wedges degrade to a rounded nub
+    // instead of inverting.
+    let oa1 = startA + insetO, oa2 = endA - insetO;
+    if (oa2 <= oa1) { oa1 = oa2 = mid; }
+    let ia1 = startA + insetI, ia2 = endA - insetI;
+    if (ia2 <= ia1) { ia1 = ia2 = mid; }
+    const largeO = (oa2 - oa1) > 180 ? 1 : 0;
+    const largeI = (ia2 - ia1) > 180 ? 1 : 0;
+    const d = `M ${px(Rp, oa1)} ${py(Rp, oa1)} A ${Rp.toFixed(2)} ${Rp.toFixed(2)} 0 ${largeO} 1 ${px(Rp, oa2)} ${py(Rp, oa2)} L ${px(rp, ia2)} ${py(rp, ia2)} A ${rp.toFixed(2)} ${rp.toFixed(2)} 0 ${largeI} 0 ${px(rp, ia1)} ${py(rp, ia1)} Z`;
+    // Outward explode vector for THIS wedge, exposed (in user units) as CSS
+    // vars; only .is-exploded (hover/focus) actually applies the translate.
+    const ex = (pop * Math.cos(rad(mid))).toFixed(2), ey = (pop * Math.sin(rad(mid))).toFixed(2);
+    arcs += `<path ${attrs(seg, idx, p)} d="${d}" fill="${seg.color}" stroke="${seg.color}" stroke-width="${cr}" stroke-linejoin="round" style="--ex:${ex}px;--ey:${ey}px"/>`;
+    cum += sweep;
   });
-  return `<svg class="pie-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${bg}${arcs}</svg>`;
+  return `<svg class="pie-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${arcs}</svg>`;
 }
-// Full pie+legend composition (chart on the left, a value-per-row legend on
-// the right), reusing the same .radial-bars-block/.donut-legend classes as
-// the Cash Flow rings so both circular charts in Layout 2 share one visual
-// language. Legend rows show the raw value (not %) since that's what these
-// two callers (Income Sources/Spending Breakdown) actually care about.
+// Full pie+legend composition (chart on the left, a legend on the right),
+// reusing the same .radial-bars-block/.donut-legend classes as the rings so
+// both circular charts in Layout 2 share one visual language. Legend rows
+// default to the segment's % share - the same convention as the Layout 1
+// donut legends and the ring legend - and hover swaps in the $ value
+// (wireChartHover). Pass opts.valueFormat for value-based legends (e.g. the
+// Subscriptions "$X/month" breakdown).
 function pieChartHtml(segments, opts) {
   opts = opts || {};
-  const valueFmt = opts.valueFormat || (v => fmt(v));
   const list = (segments || []).filter(s => (s.value || 0) > 0).slice(0, opts.limit || 6);
   if (!list.length) return '';
+  // Give sub-4% segments a legible minimum sweep by shaving the excess off
+  // the larger segments proportionally. Rounded caps otherwise collapse
+  // tiny segments into overlapping dots at the ring joint. data-pct and the
+  // legend keep the true share - only the drawn geometry is adjusted.
+  const MIN_SHARE = 4;
+  if (list.length > 1) {
+    let deficit = 0, flexTotal = 0;
+    list.forEach(s => { const p = s.pct || 0; if (p < MIN_SHARE) deficit += MIN_SHARE - p; else flexTotal += p - MIN_SHARE; });
+    if (deficit > 0 && flexTotal > 0) {
+      list.forEach(s => {
+        const p = s.pct || 0;
+        s.dispPct = p < MIN_SHARE ? MIN_SHARE : p - (p - MIN_SHARE) / flexTotal * deficit;
+      });
+    }
+  }
+  const valueFmt = opts.valueFormat;
   const legend = list.map((s, idx) => `
     <div class="dleg-row" data-idx="${idx}">
       <span class="dleg-swatch" style="background:${s.color}"></span>
       <span class="dleg-label">${esc(s.label || '')}</span>
-      <span class="dleg-pct">${esc(valueFmt(s.value || 0))}</span>
+      <span class="dleg-pct">${esc(valueFmt ? valueFmt(s.value || 0) : Math.round(s.pct || 0) + '%')}</span>
     </div>`).join('');
-  return `<div class="radial-bars-block">${svgSegmentedPie(list, opts.size || 200)}<div class="donut-legend">${legend}</div></div>`;
+  // .pie-chart-block keeps the chart + legend side-by-side (legend to the
+  // right) instead of the wrap-below behaviour of .radial-bars-block.
+  return `<div class="pie-chart-block">${svgSegmentedPie(list, opts.size || 200)}<div class="donut-legend">${legend}</div></div>`;
 }
 
 // ── Icon-forward stat tile (markup helper, not SVG) ─────────────────────
@@ -150,9 +201,15 @@ function ensureChartTooltip() {
 function positionChartTooltip(tip, evt) {
   if (!evt) return;
   const x = (evt.clientX || 0), y = (evt.clientY || 0);
-  const vw = window.innerWidth, vh = window.innerHeight;
-  tip.style.left = Math.min(x + 16, vw - 180) + 'px';
-  tip.style.top = Math.max(8, y - 12 > vh - 80 ? y - 80 : y + 16) + 'px';
+  const vw = window.innerWidth;
+  const tw = tip.offsetWidth || 160, th = tip.offsetHeight || 48;
+  // Centered above the cursor so the tip doesn't blanket the legend that
+  // sits to the right of these charts; flip below only when out of room.
+  const left = Math.max(8, Math.min(x - tw / 2, vw - tw - 8));
+  let top = y - th - 14;
+  if (top < 8) top = y + 18;
+  tip.style.left = left + 'px';
+  tip.style.top = top + 'px';
 }
 function wireChartHover(scope, markSelector, opts) {
   opts = opts || {};

@@ -453,7 +453,7 @@ function templateDatesInRange(tmpl, startISO, endISO){
 }
 
 // ── SVG Donut ─────────────────────────────────────────────────────────
-const COLORS=['#6366f1','#10b981','#fb923c','#a855f7','#ec4899','#06b6d4','#eab308','#8b5cf6','#f43f5e','#3b82f6','#14b8a6','#f97316'];
+const COLORS=['#06b6d4','#ec4899','#fb923c','#8b5cf6','#10b981','#eab308','#3b82f6','#f43f5e','#14b8a6','#a855f7','#f97316','#6366f1'];
 // ── Internationalisation ─────────────────────────────────────────────
 const TRANSLATIONS = {
   en: {
@@ -533,7 +533,7 @@ const TRANSLATIONS = {
     sf_empty_sub:'Great for: holidays, car repairs, weddings, new tech, annual bills.',
     sf_pct_complete:'complete',
     sf_save_prefix:'Save',sf_per_month:'/month',
-    sf_mo_left_tpl:'{0}/mo left',
+    sf_mo_left_tpl:'{0} months left',
     sf_total_contrib:'Total monthly contributions needed:',
     sf_modal_new:'\uD83C\uDFFA New Sinking Fund',sf_modal_edit:'\u270F\uFE0F Edit Fund',
     sf_fund_name_label:'Fund name',sf_fund_name_ph:'e.g. Holiday Fund',
@@ -582,7 +582,7 @@ const TRANSLATIONS = {
     dpc_escrow_label:'Escrow (taxes & insurance)',
     dpc_escrow_hint:"Adds to your real monthly cost, but is excluded from the payoff simulation since it doesn't reduce your balance.",
     dpc_min_pct_caption:'{0}% of balance',dpc_escrow_note:'{0} escrow',
-    dpc_term_note_faster:'{0}/mo faster than your {1}-yr term',dpc_term_note_slower:'{0}/mo slower than your {1}-yr term',
+    dpc_term_note_faster:'{0} months faster than your {1}-yr term',dpc_term_note_slower:'{0} months slower than your {1}-yr term',
     dpc_term_note_onschedule:'right on schedule for your {0}-yr term',
     dpc_escrow_mode_label:'Escrow type',dpc_escrow_mode_fixed:'Fixed amount',dpc_escrow_mode_declining:'Declining with balance',
     dpc_escrow_mode_hint:"This only affects the payment schedule below. Today's automated amount and dashboard total always use the current flat escrow amount.",
@@ -602,7 +602,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Credit Card',dtype_student_loan:'Student Loan',
     dtype_mortgage:'Mortgage',dtype_car_loan:'Car Loan',
     dtype_personal_loan:'Personal Loan',dtype_other:'Other',
-    dpc_debt_free_label:'\uD83C\uDFAF Debt-free date',dpc_months_from_now:'{0}/mo from now',
+    dpc_debt_free_label:'\uD83C\uDFAF Debt-free date',dpc_months_from_now:'{0} months from now',
     dpc_interest_label:'\uD83D\uDCB8 Total interest',dpc_on_top:'on top of',dpc_principal:'principal',
     dpc_monthly_label:'\uD83D\uDCC5 Monthly total',dpc_min_abbr:'min',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Payoff order - \u26c4 Snowball (lowest balance first)',
@@ -641,7 +641,7 @@ const TRANSLATIONS = {
     tx_desc_hint:'An optional note to help you remember what this was, like "Grocery run".',
     tx_add_btn:'Add',tx_error_required:'Please fill all required fields.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
-    tx_clear_all:'Clear all',tx_empty:'No transactions yet.',tx_select_all_page:'Select all on this page',tx_n_selected:'{0} selected',tx_delete_selected:'Delete selected',tx_clear_selection:'Clear selection',tx_select_all_matching:'Select all {0} matching',confirm_delete_selected_tx:'Delete {0} selected transactions? This cannot be undone.',
+    tx_clear_all:'Clear all',tx_empty:'No transactions yet.',tx_select_all_page:'Select all on this page',tx_n_selected:'{0} selected',tx_delete_selected:'Delete selected',tx_clear_selection:'Clear selection',tx_select_all_matching:'Select all {0} matching',tx_tag_as:'Tag as:',tx_tagged_toast:'{0} transactions tagged',confirm_delete_selected_tx:'Delete {0} selected transactions? This cannot be undone.',
     tx_type_income:'Income',tx_type_expense:'Expense',tx_type_bill:'Bill',tx_type_savings:'Savings',
     tx_th_amount:'Amount',tx_th_desc:'Description',
     tx_edit_title:'\u270F\uFE0F Edit Transaction',tx_save_changes:'Save changes',
@@ -692,6 +692,7 @@ const TRANSLATIONS = {
     dash_in_sfx:'in',dash_out_sfx:'out',
     dash_includes:'Includes',dash_rollover_sfx:'rollover',
     dash_cash_flow:'Cash Flow',
+    dash_spend_vs_plan:'Spending vs Plan',dash_income_kept:'of income kept',
     dash_expected_legend:'Expected',dash_actual_legend:'Actual',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -729,6 +730,7 @@ const TRANSLATIONS = {
     alloc_def_need:'Need',alloc_def_want:'Want',alloc_def_save:'Save',
     alloc_sett_title:'\uD83C\uDFAF Spending Allocation',
     alloc_nearing:'Nearing',
+    alloc_behind:'Behind',
     alloc_required:'Allocation is required for spending transactions.',
     toast_tx_added:'Transaction added \u2713',toast_tx_updated:'Updated \u2713',toast_tx_deleted:'Deleted',
     toast_period_updated:'Period updated \u2713',toast_period_error:'End date must be after start date',
@@ -973,6 +975,7 @@ const TRANSLATIONS = {
     upg_upsell_lead:'💰 Just need the basics?',upg_upsell_cta:'Get Simple for {0} →',
     upg_later:'Maybe later',
     onboard_welcome:"👋 Welcome! Here's how to get started:",
+    onboard_sample_btn:'Load sample data',onboard_sample_hint:'See the planner in action with demo numbers.',sample_loaded_toast:'Sample data loaded',
     onboard_step1_html:'Open <strong>Settings</strong> to set your currency and budget period.',
     onboard_step2_html:'Go to <strong>Budget</strong> and enter expected amounts for Income, Expenses, Bills &amp; Savings.',
     onboard_step3_html:'Use <strong>Transactions</strong> to log what you actually earn and spend.',
@@ -1056,7 +1059,7 @@ const TRANSLATIONS = {
     sf_empty_sub:'Ideal für: Urlaub, Autoreparaturen, Hochzeiten, neue Technik, Jahresrechnungen.',
     sf_pct_complete:'erreicht',
     sf_save_prefix:'Sparen',sf_per_month:'/Monat',
-    sf_mo_left_tpl:'{0}/Mon. übrig',
+    sf_mo_left_tpl:'{0} Monate übrig',
     sf_total_contrib:'Gesamt benötigte monatliche Beiträge:',
     sf_modal_new:'🏺 Neuer Sparzielfonds',sf_modal_edit:'✏️ Fonds bearbeiten',
     sf_fund_name_label:'Fondsname',sf_fund_name_ph:'z.B. Urlaubsfonds',
@@ -1105,7 +1108,7 @@ const TRANSLATIONS = {
     dpc_escrow_label:'Treuhand (Steuern & Versicherung)',
     dpc_escrow_hint:'Wird zu deinen tatsächlichen monatlichen Kosten addiert, aber von der Tilgungssimulation ausgeschlossen, da es den Saldo nicht verringert.',
     dpc_min_pct_caption:'{0}% vom Saldo',dpc_escrow_note:'{0} Treuhand',
-    dpc_term_note_faster:'{0}/Mon. schneller als deine {1}-jährige Laufzeit',dpc_term_note_slower:'{0}/Mon. langsamer als deine {1}-jährige Laufzeit',
+    dpc_term_note_faster:'{0} Monate schneller als deine {1}-jährige Laufzeit',dpc_term_note_slower:'{0} Monate langsamer als deine {1}-jährige Laufzeit',
     dpc_term_note_onschedule:'genau im Zeitplan für deine {0}-jährige Laufzeit',
     dpc_escrow_mode_label:'Treuhandart',dpc_escrow_mode_fixed:'Fester Betrag',dpc_escrow_mode_declining:'Fallend mit dem Saldo',
     dpc_escrow_mode_hint:'Dies wirkt sich nur auf den Zahlungsplan unten aus. Dein automatisierter Betrag und die Dashboard-Summe verwenden immer den aktuellen festen Treuhandbetrag.',
@@ -1125,7 +1128,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Kreditkarte',dtype_student_loan:'Studienkredit',
     dtype_mortgage:'Hypothek',dtype_car_loan:'Autokredit',
     dtype_personal_loan:'Privatkredit',dtype_other:'Sonstiges',
-    dpc_debt_free_label:'🎯 Schuldenfreiheit',dpc_months_from_now:'{0}/Mon. ab jetzt',
+    dpc_debt_free_label:'🎯 Schuldenfreiheit',dpc_months_from_now:'{0} Monate ab jetzt',
     dpc_interest_label:'💸 Gesamtzinsen',dpc_on_top:'zusätzlich zu',dpc_principal:'Hauptbetrag',
     dpc_monthly_label:'📅 Monatlich gesamt',dpc_min_abbr:'Min.',dpc_extra_abbr:'Extra',
     dpc_payoff_order_sf:'Tilgungsreihenfolge - ⛄ Schneeball (niedrigstes Saldo zuerst)',
@@ -1164,7 +1167,7 @@ const TRANSLATIONS = {
     tx_desc_hint:'Eine optionale Notiz, damit du dich erinnerst, worum es ging, z.B. "Einkaufen".',
     tx_add_btn:'Hinzufügen',tx_error_required:'Bitte alle Pflichtfelder ausfüllen.',
     tx_transaction_one:'Transaktion',tx_transaction_many:'Transaktionen',
-    tx_clear_all:'Alle löschen',tx_empty:'Noch keine Transaktionen.',tx_select_all_page:'Alle auf dieser Seite auswählen',tx_n_selected:'{0} ausgewählt',tx_delete_selected:'Auswahl löschen',tx_clear_selection:'Auswahl aufheben',tx_select_all_matching:'Alle {0} übereinstimmenden auswählen',confirm_delete_selected_tx:'{0} ausgewählte Transaktionen löschen? Dies kann nicht rückgängig gemacht werden.',
+    tx_clear_all:'Alle löschen',tx_empty:'Noch keine Transaktionen.',tx_select_all_page:'Alle auf dieser Seite auswählen',tx_n_selected:'{0} ausgewählt',tx_delete_selected:'Auswahl löschen',tx_clear_selection:'Auswahl aufheben',tx_select_all_matching:'Alle {0} übereinstimmenden auswählen',tx_tag_as:'Taggen als:',tx_tagged_toast:'{0} Transaktionen getaggt',confirm_delete_selected_tx:'{0} ausgewählte Transaktionen löschen? Dies kann nicht rückgängig gemacht werden.',
     tx_type_income:'Einnahmen',tx_type_expense:'Ausgaben',tx_type_bill:'Rechnung',tx_type_savings:'Ersparnisse',
     tx_th_amount:'Betrag',tx_th_desc:'Beschreibung',
     tx_edit_title:'\u270F\uFE0F Transaktion bearbeiten',tx_save_changes:'Änderungen speichern',
@@ -1215,6 +1218,7 @@ const TRANSLATIONS = {
     dash_in_sfx:'eingenommen',dash_out_sfx:'ausgegeben',
     dash_includes:'Inkl.',dash_rollover_sfx:'Übertrag',
     dash_cash_flow:'Cashflow',
+    dash_spend_vs_plan:'Ausgaben vs. Plan',dash_income_kept:'des Einkommens behalten',
     dash_expected_legend:'Geplant',dash_actual_legend:'Tatsächlich',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
@@ -1252,6 +1256,7 @@ const TRANSLATIONS = {
     alloc_def_need:'Bedarf',alloc_def_want:'Wunsch',alloc_def_save:'Sparen',
     alloc_sett_title:'\uD83C\uDFAF Ausgabenaufteilung',
     alloc_nearing:'Nähert sich',
+    alloc_behind:'Im Rückstand',
     alloc_required:'Zuordnung ist für Ausgabentransaktionen erforderlich.',
     toast_tx_added:'Transaktion hinzugef\u00fcgt \u2713',toast_tx_updated:'Aktualisiert \u2713',toast_tx_deleted:'Gel\u00f6scht',
     toast_period_updated:'Zeitraum aktualisiert \u2713',toast_period_error:'Enddatum muss nach dem Startdatum liegen',
@@ -1496,6 +1501,7 @@ const TRANSLATIONS = {
     upg_upsell_lead:'💰 Brauchst du nur die Grundlagen?',upg_upsell_cta:'Simple holen für {0} →',
     upg_later:'Vielleicht später',
     onboard_welcome:'👋 Willkommen! So kommst du los:',
+    onboard_sample_btn:'Beispieldaten laden',onboard_sample_hint:'Sieh den Planer mit Demo-Zahlen in Aktion.',sample_loaded_toast:'Beispieldaten geladen',
     onboard_step1_html:'Öffne <strong>Einstellungen</strong>, um deine Währung und deinen Budgetzeitraum festzulegen.',
     onboard_step2_html:'Gehe zu <strong>Budget</strong> und trage erwartete Beträge für Einnahmen, Ausgaben, Rechnungen &amp; Ersparnisse ein.',
     onboard_step3_html:'Nutze <strong>Transaktionen</strong>, um zu erfassen, was du tatsächlich einnimmst und ausgibst.',
@@ -1579,7 +1585,7 @@ const TRANSLATIONS = {
     sf_empty_sub:'Idéal pour : vacances, réparations auto, mariages, nouvelles technologies, factures annuelles.',
     sf_pct_complete:'atteint',
     sf_save_prefix:'Épargner',sf_per_month:'/mois',
-    sf_mo_left_tpl:'{0}/mois restants',
+    sf_mo_left_tpl:'{0} mois restants',
     sf_total_contrib:'Total des contributions mensuelles nécessaires :',
     sf_modal_new:'🏺 Nouveau fonds de prévision',sf_modal_edit:'✏️ Modifier le fonds',
     sf_fund_name_label:'Nom du fonds',sf_fund_name_ph:'ex. Fonds vacances',
@@ -1628,7 +1634,7 @@ const TRANSLATIONS = {
     dpc_escrow_label:'Séquestre (taxes & assurance)',
     dpc_escrow_hint:"S'ajoute à votre coût mensuel réel, mais est exclu de la simulation de remboursement puisque cela ne réduit pas votre solde.",
     dpc_min_pct_caption:'{0}% du solde',dpc_escrow_note:'{0} séquestre',
-    dpc_term_note_faster:'{0}/mois plus rapide que votre durée de {1} ans',dpc_term_note_slower:'{0}/mois plus lent que votre durée de {1} ans',
+    dpc_term_note_faster:'{0} mois plus rapide que votre durée de {1} ans',dpc_term_note_slower:'{0} mois plus lent que votre durée de {1} ans',
     dpc_term_note_onschedule:'exactement dans les temps pour votre durée de {0} ans',
     dpc_escrow_mode_label:'Type de séquestre',dpc_escrow_mode_fixed:'Montant fixe',dpc_escrow_mode_declining:'Dégressif avec le solde',
     dpc_escrow_mode_hint:"Cela n'affecte que l'échéancier ci-dessous. Votre montant automatisé et le total du tableau de bord utilisent toujours le montant de séquestre fixe actuel.",
@@ -1648,7 +1654,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Carte de crédit',dtype_student_loan:'Prêt étudiant',
     dtype_mortgage:'Hypothèque',dtype_car_loan:'Prêt auto',
     dtype_personal_loan:'Prêt personnel',dtype_other:'Autre',
-    dpc_debt_free_label:'🎯 Date sans dette',dpc_months_from_now:'{0}/mois à partir de maintenant',
+    dpc_debt_free_label:'🎯 Date sans dette',dpc_months_from_now:'{0} mois à partir de maintenant',
     dpc_interest_label:'💸 Intérêts totaux',dpc_on_top:'en plus de',dpc_principal:'principal',
     dpc_monthly_label:'📅 Total mensuel',dpc_min_abbr:'min',dpc_extra_abbr:'suppl.',
     dpc_payoff_order_sf:"Ordre de remboursement - ⛄ Boule de neige (solde le plus bas d'abord)",
@@ -1687,7 +1693,7 @@ const TRANSLATIONS = {
     tx_desc_hint:"Une note facultative pour vous rappeler de quoi il s'agissait, comme \u00ab Courses \u00bb.",
     tx_add_btn:'Ajouter',tx_error_required:'Veuillez remplir tous les champs obligatoires.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
-    tx_clear_all:'Tout effacer',tx_empty:'Aucune transaction encore.',tx_select_all_page:'Tout sélectionner sur cette page',tx_n_selected:'{0} sélectionnée(s)',tx_delete_selected:'Supprimer la sélection',tx_clear_selection:'Effacer la sélection',tx_select_all_matching:'Sélectionner les {0} correspondantes',confirm_delete_selected_tx:'Supprimer {0} transactions sélectionnées ? Cette action est irréversible.',
+    tx_clear_all:'Tout effacer',tx_empty:'Aucune transaction encore.',tx_select_all_page:'Tout sélectionner sur cette page',tx_n_selected:'{0} sélectionnée(s)',tx_delete_selected:'Supprimer la sélection',tx_clear_selection:'Effacer la sélection',tx_select_all_matching:'Sélectionner les {0} correspondantes',tx_tag_as:'Taguer :',tx_tagged_toast:'{0} transactions taguées',confirm_delete_selected_tx:'Supprimer {0} transactions sélectionnées ? Cette action est irréversible.',
     tx_type_income:'Revenu',tx_type_expense:'Dépense',tx_type_bill:'Facture',tx_type_savings:'Épargne',
     tx_th_amount:'Montant',tx_th_desc:'Description',
     tx_edit_title:'\u270F\uFE0F Modifier la transaction',tx_save_changes:'Enregistrer les modifications',
@@ -1738,6 +1744,7 @@ const TRANSLATIONS = {
     dash_in_sfx:'perçu',dash_out_sfx:'dépensé',
     dash_includes:'Dont',dash_rollover_sfx:'report',
     dash_cash_flow:'Flux de trésorerie',
+    dash_spend_vs_plan:'Dépenses vs plan',dash_income_kept:'du revenu conservé',
     dash_expected_legend:'Prévu',dash_actual_legend:'Réel',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
@@ -1775,6 +1782,7 @@ const TRANSLATIONS = {
     alloc_def_need:'Besoin',alloc_def_want:'Envie',alloc_def_save:'Épargne',
     alloc_sett_title:'\uD83C\uDFAF Répartition des dépenses',
     alloc_nearing:'Proche',
+    alloc_behind:'En retard',
     alloc_required:'La répartition est obligatoire pour les transactions de dépenses.',
     toast_tx_added:'Transaction ajout\u00e9e \u2713',toast_tx_updated:'Mis \u00e0 jour \u2713',toast_tx_deleted:'Supprim\u00e9',
     toast_period_updated:'P\u00e9riode mise \u00e0 jour \u2713',toast_period_error:'La date de fin doit \u00eatre apr\u00e8s la date de d\u00e9but',
@@ -2019,6 +2027,7 @@ const TRANSLATIONS = {
     upg_upsell_lead:'💰 Besoin seulement des bases ?',upg_upsell_cta:'Obtenir Simple pour {0} →',
     upg_later:'Plus tard',
     onboard_welcome:'👋 Bienvenue ! Voici comment commencer :',
+    onboard_sample_btn:'Charger des données d’exemple',onboard_sample_hint:'Découvrez le planificateur avec des chiffres de démonstration.',sample_loaded_toast:'Données d’exemple chargées',
     onboard_step1_html:'Ouvrez <strong>Paramètres</strong> pour définir votre devise et votre période budgétaire.',
     onboard_step2_html:'Allez dans <strong>Budget</strong> et saisissez les montants prévus pour Revenus, Dépenses, Factures &amp; Épargne.',
     onboard_step3_html:'Utilisez <strong>Transactions</strong> pour enregistrer ce que vous gagnez et dépensez réellement.',
@@ -2102,7 +2111,7 @@ const TRANSLATIONS = {
     sf_empty_sub:'Perfecto para: vacaciones, reparaciones de coche, bodas, nueva tecnología, facturas anuales.',
     sf_pct_complete:'completado',
     sf_save_prefix:'Ahorrar',sf_per_month:'/mes',
-    sf_mo_left_tpl:'{0}/meses restantes',
+    sf_mo_left_tpl:'{0} meses restantes',
     sf_total_contrib:'Total de contribuciones mensuales necesarias:',
     sf_modal_new:'🏺 Nuevo fondo de ahorro',sf_modal_edit:'✏️ Editar fondo',
     sf_fund_name_label:'Nombre del fondo',sf_fund_name_ph:'p.ej. Fondo vacaciones',
@@ -2151,7 +2160,7 @@ const TRANSLATIONS = {
     dpc_escrow_label:'Depósito en garantía (impuestos y seguro)',
     dpc_escrow_hint:'Se suma a tu costo mensual real, pero se excluye de la simulación de pago ya que no reduce tu saldo.',
     dpc_min_pct_caption:'{0}% del saldo',dpc_escrow_note:'{0} en depósito',
-    dpc_term_note_faster:'{0}/meses más rápido que tu plazo de {1} años',dpc_term_note_slower:'{0}/meses más lento que tu plazo de {1} años',
+    dpc_term_note_faster:'{0} meses más rápido que tu plazo de {1} años',dpc_term_note_slower:'{0} meses más lento que tu plazo de {1} años',
     dpc_term_note_onschedule:'justo a tiempo para tu plazo de {0} años',
     dpc_escrow_mode_label:'Tipo de depósito en garantía',dpc_escrow_mode_fixed:'Monto fijo',dpc_escrow_mode_declining:'Decreciente con el saldo',
     dpc_escrow_mode_hint:'Esto solo afecta el cronograma de pagos de abajo. Tu monto automatizado y el total del panel siempre usan el monto fijo actual del depósito en garantía.',
@@ -2171,7 +2180,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Tarjeta de crédito',dtype_student_loan:'Préstamo estudiantil',
     dtype_mortgage:'Hipoteca',dtype_car_loan:'Préstamo de coche',
     dtype_personal_loan:'Préstamo personal',dtype_other:'Otro',
-    dpc_debt_free_label:'🎯 Fecha libre de deudas',dpc_months_from_now:'{0}/meses desde ahora',
+    dpc_debt_free_label:'🎯 Fecha libre de deudas',dpc_months_from_now:'{0} meses desde ahora',
     dpc_interest_label:'💸 Intereses totales',dpc_on_top:'además de',dpc_principal:'principal',
     dpc_monthly_label:'📅 Total mensual',dpc_min_abbr:'mín',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Orden de pago - ⛄ Bola de nieve (saldo más bajo primero)',
@@ -2210,7 +2219,7 @@ const TRANSLATIONS = {
     tx_desc_label:'Descripción',tx_desc_ph:'p.ej. Compra en supermercado\u2026',
     tx_add_btn:'Añadir',tx_error_required:'Por favor, completa todos los campos obligatorios.',
     tx_transaction_one:'transacción',tx_transaction_many:'transacciones',
-    tx_clear_all:'Borrar todo',tx_empty:'Aún no hay transacciones.',tx_select_all_page:'Seleccionar todo en esta página',tx_n_selected:'{0} seleccionadas',tx_delete_selected:'Eliminar seleccionadas',tx_clear_selection:'Borrar selección',tx_select_all_matching:'Seleccionar las {0} coincidentes',confirm_delete_selected_tx:'¿Eliminar {0} transacciones seleccionadas? Esta acción no se puede deshacer.',
+    tx_clear_all:'Borrar todo',tx_empty:'Aún no hay transacciones.',tx_select_all_page:'Seleccionar todo en esta página',tx_n_selected:'{0} seleccionadas',tx_delete_selected:'Eliminar seleccionadas',tx_clear_selection:'Borrar selección',tx_select_all_matching:'Seleccionar las {0} coincidentes',tx_tag_as:'Etiquetar:',tx_tagged_toast:'{0} transacciones etiquetadas',confirm_delete_selected_tx:'¿Eliminar {0} transacciones seleccionadas? Esta acción no se puede deshacer.',
     tx_type_income:'Ingreso',tx_type_expense:'Gasto',tx_type_bill:'Factura',tx_type_savings:'Ahorro',
     tx_th_amount:'Importe',tx_th_desc:'Descripción',
     tx_edit_title:'\u270F\uFE0F Editar transacción',tx_save_changes:'Guardar cambios',
@@ -2261,6 +2270,7 @@ const TRANSLATIONS = {
     dash_in_sfx:'recibido',dash_out_sfx:'gastado',
     dash_includes:'Incluye',dash_rollover_sfx:'arrastre',
     dash_cash_flow:'Flujo de caja',
+    dash_spend_vs_plan:'Gastos vs plan',dash_income_kept:'de ingresos conservados',
     dash_expected_legend:'Previsto',dash_actual_legend:'Real',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
@@ -2298,6 +2308,7 @@ const TRANSLATIONS = {
     alloc_def_need:'Necesidad',alloc_def_want:'Deseo',alloc_def_save:'Ahorro',
     alloc_sett_title:'\uD83C\uDFAF Distribución del gasto',
     alloc_nearing:'Cercano',
+    alloc_behind:'Atrasado',
     alloc_required:'La distribución es obligatoria para las transacciones de gasto.',
     toast_tx_added:'Transacci\u00f3n a\u00f1adida \u2713',toast_tx_updated:'Actualizado \u2713',toast_tx_deleted:'Eliminado',
     toast_period_updated:'Per\u00edodo actualizado \u2713',toast_period_error:'La fecha de fin debe ser posterior a la fecha de inicio',
@@ -2542,6 +2553,7 @@ const TRANSLATIONS = {
     upg_upsell_lead:'💰 ¿Solo necesitas lo básico?',upg_upsell_cta:'Obtener Simple por {0} →',
     upg_later:'Quizás más tarde',
     onboard_welcome:'👋 ¡Bienvenido! Así es como empezar:',
+    onboard_sample_btn:'Cargar datos de ejemplo',onboard_sample_hint:'Mira el planificador en acción con cifras de demostración.',sample_loaded_toast:'Datos de ejemplo cargados',
     onboard_step1_html:'Abre <strong>Ajustes</strong> para definir tu moneda y período de presupuesto.',
     onboard_step2_html:'Ve a <strong>Presupuesto</strong> e introduce los montos previstos para Ingresos, Gastos, Facturas &amp; Ahorros.',
     onboard_step3_html:'Usa <strong>Transacciones</strong> para registrar lo que realmente ganas y gastas.',
@@ -2626,7 +2638,7 @@ const TRANSLATIONS = {
     sf_empty_sub:'Ottimo per: vacanze, riparazioni auto, matrimoni, nuova tecnologia, bollette annuali.',
     sf_pct_complete:'completato',
     sf_save_prefix:'Risparmiare',sf_per_month:'/mese',
-    sf_mo_left_tpl:'{0}/mesi rimasti',
+    sf_mo_left_tpl:'{0} mesi rimasti',
     sf_total_contrib:'Contributi mensili totali necessari:',
     sf_modal_new:'🏺 Nuovo fondo di accantonamento',sf_modal_edit:'✏️ Modifica fondo',
     sf_fund_name_label:'Nome del fondo',sf_fund_name_ph:'es. Fondo vacanze',
@@ -2675,7 +2687,7 @@ const TRANSLATIONS = {
     dpc_escrow_label:'Deposito vincolato (tasse e assicurazione)',
     dpc_escrow_hint:'Si aggiunge al tuo costo mensile reale, ma è escluso dalla simulazione di rimborso poiché non riduce il saldo.',
     dpc_min_pct_caption:'{0}% del saldo',dpc_escrow_note:'{0} deposito vincolato',
-    dpc_term_note_faster:'{0}/mesi più veloce della tua durata di {1} anni',dpc_term_note_slower:'{0}/mesi più lento della tua durata di {1} anni',
+    dpc_term_note_faster:'{0} mesi più veloce della tua durata di {1} anni',dpc_term_note_slower:'{0} mesi più lento della tua durata di {1} anni',
     dpc_term_note_onschedule:'perfettamente in linea con la tua durata di {0} anni',
     dpc_escrow_mode_label:'Tipo di deposito vincolato',dpc_escrow_mode_fixed:'Importo fisso',dpc_escrow_mode_declining:'Decrescente con il saldo',
     dpc_escrow_mode_hint:'Questo influisce solo sul piano di ammortamento qui sotto. Il tuo importo automatizzato e il totale della dashboard usano sempre l’importo fisso attuale del deposito vincolato.',
@@ -2695,7 +2707,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Carta di credito',dtype_student_loan:'Prestito studentesco',
     dtype_mortgage:'Mutuo',dtype_car_loan:'Prestito auto',
     dtype_personal_loan:'Prestito personale',dtype_other:'Altro',
-    dpc_debt_free_label:'🎯 Data libera dai debiti',dpc_months_from_now:'{0}/mesi da ora',
+    dpc_debt_free_label:'🎯 Data libera dai debiti',dpc_months_from_now:'{0} mesi da ora',
     dpc_interest_label:'💸 Interessi totali',dpc_on_top:'oltre a',dpc_principal:'capitale',
     dpc_monthly_label:'📅 Totale mensile',dpc_min_abbr:'min',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Ordine di rimborso - ⛄ Palla di neve (saldo più basso prima)',
@@ -2734,7 +2746,7 @@ const TRANSLATIONS = {
     tx_desc_label:'Descrizione',tx_desc_ph:'es. Spesa al supermercato\u2026',
     tx_add_btn:'Aggiungi',tx_error_required:'Compila tutti i campi obbligatori.',
     tx_transaction_one:'transazione',tx_transaction_many:'transazioni',
-    tx_clear_all:'Cancella tutto',tx_empty:'Nessuna transazione ancora.',tx_select_all_page:'Seleziona tutto in questa pagina',tx_n_selected:'{0} selezionate',tx_delete_selected:'Elimina selezionate',tx_clear_selection:'Deseleziona',tx_select_all_matching:'Seleziona tutte le {0} corrispondenti',confirm_delete_selected_tx:'Eliminare {0} transazioni selezionate? Questa azione non può essere annullata.',
+    tx_clear_all:'Cancella tutto',tx_empty:'Nessuna transazione ancora.',tx_select_all_page:'Seleziona tutto in questa pagina',tx_n_selected:'{0} selezionate',tx_delete_selected:'Elimina selezionate',tx_clear_selection:'Deseleziona',tx_select_all_matching:'Seleziona tutte le {0} corrispondenti',tx_tag_as:'Tagga:',tx_tagged_toast:'{0} transazioni taggate',confirm_delete_selected_tx:'Eliminare {0} transazioni selezionate? Questa azione non può essere annullata.',
     tx_type_income:'Entrata',tx_type_expense:'Spesa',tx_type_bill:'Bolletta',tx_type_savings:'Risparmio',
     tx_th_amount:'Importo',tx_th_desc:'Descrizione',
     tx_edit_title:'\u270F\uFE0F Modifica transazione',tx_save_changes:'Salva modifiche',
@@ -2785,6 +2797,7 @@ const TRANSLATIONS = {
     dash_in_sfx:'ricevuto',dash_out_sfx:'speso',
     dash_includes:'Incluso',dash_rollover_sfx:'riporto',
     dash_cash_flow:'Flusso di cassa',
+    dash_spend_vs_plan:'Spese vs piano',dash_income_kept:'di reddito trattenuto',
     dash_expected_legend:'Previsto',dash_actual_legend:'Effettivo',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
@@ -2822,6 +2835,7 @@ const TRANSLATIONS = {
     alloc_def_need:'Bisogno',alloc_def_want:'Desiderio',alloc_def_save:'Risparmio',
     alloc_sett_title:'\uD83C\uDFAF Distribuzione spese',
     alloc_nearing:'Vicino',
+    alloc_behind:'In ritardo',
     alloc_required:'La distribuzione è obbligatoria per le transazioni di spesa.',
     toast_tx_added:'Transazione aggiunta \u2713',toast_tx_updated:'Aggiornato \u2713',toast_tx_deleted:'Eliminato',
     toast_period_updated:'Periodo aggiornato \u2713',toast_period_error:'La data di fine deve essere successiva alla data di inizio',
@@ -3066,6 +3080,7 @@ const TRANSLATIONS = {
     upg_upsell_lead:'💰 Ti servono solo le basi?',upg_upsell_cta:'Ottieni Simple per {0} →',
     upg_later:'Forse più tardi',
     onboard_welcome:'👋 Benvenuto! Ecco come iniziare:',
+    onboard_sample_btn:'Carica dati di esempio',onboard_sample_hint:'Guarda il planner in azione con numeri dimostrativi.',sample_loaded_toast:'Dati di esempio caricati',
     onboard_step1_html:'Apri <strong>Impostazioni</strong> per impostare la tua valuta e il periodo di budget.',
     onboard_step2_html:'Vai su <strong>Budget</strong> e inserisci gli importi previsti per Entrate, Spese, Bollette &amp; Risparmi.',
     onboard_step3_html:'Usa <strong>Transazioni</strong> per registrare ciò che guadagni e spendi realmente.',
@@ -3149,7 +3164,7 @@ const TRANSLATIONS = {
     sf_empty_sub:'Idealny na: wakacje, naprawy samochodu, wesela, nowy sprzęt, rachunki roczne.',
     sf_pct_complete:'ukończono',
     sf_save_prefix:'Oszczędź',sf_per_month:'/miesiąc',
-    sf_mo_left_tpl:'{0}/mies. pozostało',
+    sf_mo_left_tpl:'{0} mies. pozostało',
     sf_total_contrib:'Łączne wymagane miesięczne wpłaty:',
     sf_modal_new:'🏺 Nowy fundusz celowy',sf_modal_edit:'✏️ Edytuj fundusz',
     sf_fund_name_label:'Nazwa funduszu',sf_fund_name_ph:'np. Fundusz wakacyjny',
@@ -3198,7 +3213,7 @@ const TRANSLATIONS = {
     dpc_escrow_label:'Depozyt (podatki i ubezpieczenie)',
     dpc_escrow_hint:'Dolicza się do rzeczywistego kosztu miesięcznego, ale jest wykluczony z symulacji spłaty, ponieważ nie zmniejsza salda.',
     dpc_min_pct_caption:'{0}% salda',dpc_escrow_note:'{0} depozytu',
-    dpc_term_note_faster:'{0}/mies. szybciej niż Twój {1}-letni okres',dpc_term_note_slower:'{0}/mies. wolniej niż Twój {1}-letni okres',
+    dpc_term_note_faster:'{0} mies. szybciej niż Twój {1}-letni okres',dpc_term_note_slower:'{0} mies. wolniej niż Twój {1}-letni okres',
     dpc_term_note_onschedule:'dokładnie zgodnie z harmonogramem dla {0}-letniego okresu',
     dpc_escrow_mode_label:'Typ depozytu',dpc_escrow_mode_fixed:'Stała kwota',dpc_escrow_mode_declining:'Malejący wraz z saldem',
     dpc_escrow_mode_hint:'Dotyczy to tylko harmonogramu spłat poniżej. Twoja zautomatyzowana kwota i suma na pulpicie zawsze używają aktualnej stałej kwoty depozytu.',
@@ -3218,7 +3233,7 @@ const TRANSLATIONS = {
     dtype_credit_card:'Karta kredytowa',dtype_student_loan:'Kredyt studencki',
     dtype_mortgage:'Hipoteka',dtype_car_loan:'Kredyt samochodowy',
     dtype_personal_loan:'Kredyt osobisty',dtype_other:'Inne',
-    dpc_debt_free_label:'🎯 Data wolności od długów',dpc_months_from_now:'{0}/mies. od teraz',
+    dpc_debt_free_label:'🎯 Data wolności od długów',dpc_months_from_now:'{0} mies. od teraz',
     dpc_interest_label:'💸 Łączne odsetki',dpc_on_top:'ponad',dpc_principal:'kapitału',
     dpc_monthly_label:'📅 Suma miesięczna',dpc_min_abbr:'min',dpc_extra_abbr:'dod.',
     dpc_payoff_order_sf:'Kolejność spłaty - ⛄ Śnieżka (najniższe saldo najpierw)',
@@ -3257,7 +3272,7 @@ const TRANSLATIONS = {
     tx_desc_label:'Opis',tx_desc_ph:'np. Zakupy spożywcze\u2026',
     tx_add_btn:'Dodaj',tx_error_required:'Proszę wypełnić wszystkie wymagane pola.',
     tx_transaction_one:'transakcja',tx_transaction_many:'transakcji',
-    tx_clear_all:'Wyczyść wszystko',tx_empty:'Brak transakcji.',tx_select_all_page:'Zaznacz wszystkie na tej stronie',tx_n_selected:'Zaznaczono: {0}',tx_delete_selected:'Usuń zaznaczone',tx_clear_selection:'Wyczyść zaznaczenie',tx_select_all_matching:'Zaznacz wszystkie pasujące ({0})',confirm_delete_selected_tx:'Usunąć {0} zaznaczonych transakcji? Tej operacji nie można cofnąć.',
+    tx_clear_all:'Wyczyść wszystko',tx_empty:'Brak transakcji.',tx_select_all_page:'Zaznacz wszystkie na tej stronie',tx_n_selected:'Zaznaczono: {0}',tx_delete_selected:'Usuń zaznaczone',tx_clear_selection:'Wyczyść zaznaczenie',tx_select_all_matching:'Zaznacz wszystkie pasujące ({0})',tx_tag_as:'Oznacz jako:',tx_tagged_toast:'Oznaczono transakcji: {0}',confirm_delete_selected_tx:'Usunąć {0} zaznaczonych transakcji? Tej operacji nie można cofnąć.',
     tx_type_income:'Przychód',tx_type_expense:'Wydatek',tx_type_bill:'Rachunek',tx_type_savings:'Oszczędności',
     tx_th_amount:'Kwota',tx_th_desc:'Opis',
     tx_edit_title:'\u270F\uFE0F Edytuj transakcję',tx_save_changes:'Zapisz zmiany',
@@ -3308,6 +3323,7 @@ const TRANSLATIONS = {
     dash_in_sfx:'wpłynęło',dash_out_sfx:'wyszło',
     dash_includes:'W tym',dash_rollover_sfx:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki',
+    dash_spend_vs_plan:'Wydatki vs plan',dash_income_kept:'zachowanego dochodu',
     dash_expected_legend:'Planowane',dash_actual_legend:'Rzeczywiste',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
@@ -3345,6 +3361,7 @@ const TRANSLATIONS = {
     alloc_def_need:'Potrzeba',alloc_def_want:'Chęć',alloc_def_save:'Oszczędność',
     alloc_sett_title:'\uD83C\uDFAF Podział wydatków',
     alloc_nearing:'Blisko',
+    alloc_behind:'Opóźnione',
     alloc_required:'Podział jest wymagany dla transakcji wydatkowych.',
     toast_tx_added:'Transakcja dodana \u2713',toast_tx_updated:'Zaktualizowano \u2713',toast_tx_deleted:'Usuni\u0119to',
     toast_period_updated:'Okres zaktualizowany \u2713',toast_period_error:'Data ko\u0144cowa musi by\u0107 po dacie pocz\u0105tkowej',
@@ -3589,6 +3606,7 @@ const TRANSLATIONS = {
     upg_upsell_lead:'💰 Potrzebujesz tylko podstaw?',upg_upsell_cta:'Zdobądź Simple za {0} →',
     upg_later:'Może później',
     onboard_welcome:'👋 Witaj! Oto jak zacząć:',
+    onboard_sample_btn:'Wczytaj przykładowe dane',onboard_sample_hint:'Zobacz planer w akcji na przykładowych liczbach.',sample_loaded_toast:'Wczytano przykładowe dane',
     onboard_step1_html:'Otwórz <strong>Ustawienia</strong>, aby ustawić walutę i okres budżetowy.',
     onboard_step2_html:'Przejdź do <strong>Budżetu</strong> i wprowadź spodziewane kwoty dla Przychodów, Wydatków, Rachunków &amp; Oszczędności.',
     onboard_step3_html:'Użyj <strong>Transakcji</strong>, aby zapisywać to, co faktycznie zarabiasz i wydajesz.',
@@ -3655,7 +3673,7 @@ function svgDonut(segs,size=130,sw=17) {
   const fs1=(size*.14).toFixed(0),fs2=(size*.085).toFixed(0);
   const center=`<g class="donut-center" pointer-events="none">
     <text class="donut-hover-pct" x="${cx}" y="${cy+2}" text-anchor="middle" dominant-baseline="middle"
-      style="font-family:Sora,sans-serif;font-weight:800;font-size:${fs1}px;fill:var(--text-primary);opacity:0;transition:opacity .15s"></text>
+      style="font-family:var(--font-display);font-weight:800;font-size:${fs1}px;fill:var(--text-primary);opacity:0;transition:opacity .15s"></text>
     <text class="donut-hover-lbl" x="${cx}" y="${cy+parseInt(fs1)+4}" text-anchor="middle"
       style="font-size:${fs2}px;fill:var(--text-secondary);opacity:0;transition:opacity .15s"></text>
   </g>`;
@@ -3781,6 +3799,64 @@ function switchTab(tab) {
   document.getElementById(`bview-${tab}`)?.classList.add('is-active');
   if(tab==='transactions'){const g=processRecurring();if(g>0)setTimeout(()=>showToast(tf('recurring_generated',g)),300);}
   ({dashboard:renderDashboard,budget:renderBudget,transactions:renderTransactions,debt:renderDebt,sinking:renderSinking,calendar:renderCalendar,subscriptions:renderSubscriptions,settings:renderSettings}[tab]||renderDashboard)();
+  document.querySelector('.app-scroll')?.scrollTo({top:0});   // new tab starts at the top of the content region
+}
+
+// ── SAMPLE DATA ───────────────────────────────────────────────────────
+// One-click demo dataset for the empty-state welcome banner, so a new (or
+// trial) user sees the dashboards working before entering anything real.
+// Only reachable from the welcome banner, which itself only renders while
+// the planner is empty - so this never clobbers real data.
+function loadSampleData(){
+  const ps=state.settings.periodStart, pe=state.settings.periodEnd;
+  const day=n=>{const d=new Date(ps+'T00:00:00');d.setDate(d.getDate()+n);const iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return iso>pe?pe:iso;};
+  state.budgets={
+    income:[{id:uid(),category:'Paycheck',expected:4200},{id:uid(),category:'Freelance',expected:800}],
+    expenses:[{id:uid(),category:'Food',expected:600},{id:uid(),category:'Gas',expected:200},{id:uid(),category:'Entertainment',expected:150},{id:uid(),category:'Shopping',expected:250}],
+    bills:[{id:uid(),category:'Rent',expected:1400,dueDate:day(0),paid:false},{id:uid(),category:'Electric',expected:120,dueDate:day(21),paid:false},{id:uid(),category:'Internet',expected:70,dueDate:day(24),paid:false},{id:uid(),category:'Phone',expected:65,dueDate:day(19),paid:false}],
+    savings:[{id:uid(),category:'Emergency Fund',expected:400},{id:uid(),category:'Retirement',expected:250}]
+  };
+  state.transactions=[
+    {id:uid(),date:day(0),type:'income',category:'Paycheck',amount:2100,description:'Payday',allocation:null},
+    {id:uid(),date:day(14),type:'income',category:'Paycheck',amount:2100,description:'Payday',allocation:null},
+    {id:uid(),date:day(9),type:'income',category:'Freelance',amount:450,description:'Side project',allocation:null},
+    {id:uid(),date:day(2),type:'expense',category:'Food',amount:112.45,description:'Groceries',allocation:'need'},
+    {id:uid(),date:day(5),type:'expense',category:'Food',amount:64.20,description:'Groceries',allocation:'need'},
+    {id:uid(),date:day(7),type:'expense',category:'Gas',amount:48,description:'',allocation:'need'},
+    {id:uid(),date:day(8),type:'expense',category:'Entertainment',amount:32.50,description:'Movies',allocation:'want'},
+    {id:uid(),date:day(10),type:'expense',category:'Shopping',amount:89.99,description:'Shoes',allocation:'want'},
+    {id:uid(),date:day(11),type:'expense',category:'Food',amount:73.10,description:'Groceries',allocation:'need'},
+    {id:uid(),date:day(13),type:'expense',category:'Entertainment',amount:55,description:'Concert',allocation:'want'},
+    {id:uid(),date:day(15),type:'expense',category:'Gas',amount:51.25,description:'',allocation:'need'},
+    {id:uid(),date:day(16),type:'expense',category:'Food',amount:96.80,description:'Groceries + takeout',allocation:'need'},
+    {id:uid(),date:day(4),type:'savings',category:'Emergency Fund',amount:200,description:'',allocation:'save'},
+    {id:uid(),date:day(14),type:'savings',category:'Retirement',amount:250,description:'',allocation:'save'},
+    {id:uid(),date:day(6),type:'subscription',category:'Streaming',amount:15.99,description:'Netflix',allocation:'want'},
+    {id:uid(),date:day(15),type:'debt',category:'Credit Card',amount:150,description:'Card payment',allocation:'need'},
+    {id:uid(),date:day(0),type:'bill',category:'Rent',amount:1400,description:'',allocation:'need'}
+  ];
+  // Link the rent payment to its bill row so it shows as paid, not duplicated
+  const rentRow=state.budgets.bills.find(b=>b.category==='Rent');
+  const rentTx=state.transactions.find(tx=>tx.type==='bill'&&tx.category==='Rent');
+  if(rentRow&&rentTx){rentRow.paid=true;rentRow.paidTxId=rentTx.id;}
+  state.debts=[
+    {id:uid(),name:'Credit Card',type:'credit_card',balance:3200,interestRate:24.99,minimumPayment:96,dueDay:16,minPayMode:'fixed'},
+    {id:uid(),name:'Car Loan',type:'car_loan',balance:11800,interestRate:6.4,minimumPayment:315,dueDay:5,termMonths:48,amortType:'equal_payment'}
+  ];
+  state.debtSettings={method:'avalanche',extraPayment:100};
+  const yr=new Date(ps+'T00:00:00').getFullYear();
+  state.sinkingFunds=[
+    {id:uid(),name:'Holidays',icon:'🎄',targetAmount:900,currentSaved:340,targetDate:(yr+'-12-15'),billingDay:null},
+    {id:uid(),name:'Car Repairs',icon:'🔧',targetAmount:600,currentSaved:180,targetDate:day(27),billingDay:null}
+  ];
+  state.subscriptions=[
+    {id:uid(),name:'Netflix',amount:15.99,frequency:'monthly',category:'Streaming',nextBillingDate:day(28),active:true,allocation:'want'},
+    {id:uid(),name:'Spotify',amount:10.99,frequency:'monthly',category:'Music',nextBillingDate:day(25),active:true,allocation:'want'},
+    {id:uid(),name:'Cloud Storage',amount:2.99,frequency:'monthly',category:'Storage',nextBillingDate:day(23),active:true,allocation:'need'}
+  ];
+  saveState();
+  renderDashboard();
+  showToast(t('sample_loaded_toast'));
 }
 
 // ── PRO DASHBOARD ─────────────────────────────────────────────────────
@@ -3802,18 +3878,18 @@ function renderDashboardLayout1() {
   const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
   const upcomingDays=state.settings?.upcomingDays||7;
   const upcoming=getUpcomingEvents(upcomingDays,act);
-  const incSegs=state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const incSegs=assignSegColors(state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value), COLORS);
   const incTot=incSegs.reduce((t,s)=>t+s.value,0);
-  const spendSegs=[
-    ...state.budgets.expenses.map((r,i)=>({label:r.category,value:act.expenses[r.category]||0,color:COLORS[i%COLORS.length]})),
-    ...state.budgets.bills.map((r,i)=>({label:r.category,value:act.bills[r.category]||0,color:COLORS[(i+5)%COLORS.length]})),
-    ...Object.entries(act.debt||{}).map(([name,val],i)=>({label:name,value:val,color:['#a855f7','#9333ea','#7c3aed','#c026d3'][i%4]})),
-    ...Object.entries(act.subscription||{}).map(([name,val],i)=>({label:name,value:val,color:['#10b981','#06b6d4','#14b8a6','#059669'][i%4]})),
-  ].filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const spendSegs=assignSegColors([
+    ...state.budgets.expenses.map(r=>({label:r.category,value:act.expenses[r.category]||0})),
+    ...state.budgets.bills.map(r=>({label:r.category,value:act.bills[r.category]||0})),
+    ...Object.entries(act.debt||{}).map(([name,val])=>({label:name,value:val})),
+    ...Object.entries(act.subscription||{}).map(([name,val])=>({label:name,value:val})),
+  ].filter(s=>s.value>0).sort((a,b)=>b.value-a.value), COLORS);
   const spTot=spendSegs.reduce((t,s)=>t+s.value,0);
   const flowRows=[
     {label:t('bud_section_income'),  exp:expInc, act:sum.totalIncome,          color:'#10b981',isInc:true},
-    {label:t('bud_section_expenses'),exp:expExp, act:sum.totalExpenses,        color:'#f43f5e',isInc:false},
+    {label:t('bud_section_expenses'),exp:expExp, act:sum.totalExpenses,        color:'#ec4899',isInc:false},
     {label:t('bud_section_bills'),   exp:expBil, act:sum.totalBills,           color:'#fb923c',isInc:false},
     {label:t('bud_section_savings'), exp:expSav, act:sum.totalSavings,         color:'#3b82f6',isInc:false},
     {label:t('dash_debt_payments'),  exp:expDebt,act:sum.totalDebt||0,         color:'#a855f7',isInc:false},
@@ -3831,6 +3907,7 @@ function renderDashboardLayout1() {
         <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
         <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
       </div>
+      <div class="onboard-sample-row"><button class="btn btn-ghost btn-sm" id="loadSampleBtn" type="button">✨ ${t('onboard_sample_btn')}</button><span class="onboard-sample-hint">${t('onboard_sample_hint')}</span></div>
     </div>` : '';
   const el=document.getElementById('bview-dashboard');
   el.innerHTML=welcomeHtml+`
@@ -3876,13 +3953,9 @@ function renderDashboardLayout1() {
         const ap = pctOf(actual);
         const tp = b.pct;
         const fill = tp > 0 ? Math.min(ap / tp * 100, 100) : 0;
-        const over = ap > tp && tp > 0;
-        const nearing = !over && tp > 0 && (tp - ap) <= 5 && ap > 0;
-        const accentColor = over ? '#f43f5e' : nearing ? '#fb923c' : b.color;
-        const statusKey = over ? 'alloc_over' : nearing ? 'alloc_nearing' : 'alloc_under';
-        const statusColor = over ? '#f43f5e' : nearing ? '#fb923c' : '#10b981';
+        const {accentColor, statusColor, statusKey, statusIcon} = allocBucketStatus(b, ap, tp);
         const displayName = getAllocBucketDisplayName(b);
-        return `<div class="alloc-card"><div class="alloc-card-header"><span class="alloc-card-name">${esc(displayName)}</span><span class="alloc-target-badge">${t('alloc_target')} ${tp}%</span></div><div class="alloc-pct-big" style="color:${accentColor}">${ap.toFixed(1)}%</div><div class="alloc-amount">${fmt(actual)}</div><div class="alloc-bar-row"><div class="alloc-strip-wrap"><div class="alloc-strip" style="width:${fill}%;background:${accentColor}"></div></div><span class="alloc-fill-pct" style="color:${accentColor}">${Math.round(fill)}%</span></div><div class="alloc-status" style="color:${statusColor}"><span class="alloc-status-icon">${over?t('alloc_icon_over'):nearing?t('alloc_icon_near'):t('alloc_icon_ok')}</span> ${t(statusKey)}</div></div>`;
+        return `<div class="alloc-card"><div class="alloc-card-header"><span class="alloc-card-name">${esc(displayName)}</span><span class="alloc-target-badge">${t('alloc_target')} ${tp}%</span></div><div class="alloc-pct-big" style="color:${accentColor}">${ap.toFixed(1)}%</div><div class="alloc-amount">${fmt(actual)}</div><div class="alloc-bar-row"><div class="alloc-strip-wrap"><div class="alloc-strip" style="width:${fill}%;background:${accentColor}"></div></div><span class="alloc-fill-pct" style="color:${accentColor}">${Math.round(fill)}%</span></div><div class="alloc-status" style="color:${statusColor}"><span class="alloc-status-icon">${statusIcon}</span> ${t(statusKey)}</div></div>`;
       }).join('');
       const untaggedLine = untagged > 0 ? `<div class="alloc-untagged">⚠ ${fmt(untagged)} ${t('alloc_untagged_desc')}</div>` : '';
       return `<div class="panel alloc-panel"><div class="panel-inner-sm"><div class="alloc-header"><span class="panel-title-sm">${t('alloc_title')}</span><span class="alloc-income-base">${t('alloc_based_on')} ${fmt(income)} ${t('alloc_income_period')}</span></div><div class="alloc-grid">${cards}</div>${untaggedLine}</div></div>`;
@@ -3890,7 +3963,7 @@ function renderDashboardLayout1() {
     <div class="pro-bottom-row">
       <div class="panel pro-card"><div class="panel-inner-sm">
         <div class="panel-title-sm" style="margin-bottom:12px">💳 ${t('tab_debt')}</div>
-        ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>${(()=>{const dp=act.debt||{},paid=state.debts.filter(d=>(dp[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0).length,total=state.debts.filter(d=>d.minimumPayment>0).length;return total>0?`<div style="margin-top:7px;font-size:11px;color:${paid===total?'#10b981':'#f43f5e'};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paid}/${total} ${paid===1?t('dash_debts_paid'):t('dash_debts_paid_many')}</div>`:'';})()}`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
+        ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>${(()=>{const dp=act.debt||{},paid=state.debts.filter(d=>(dp[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0).length,total=state.debts.filter(d=>d.minimumPayment>0).length;return total>0?`<div style="margin-top:7px;font-size:11px;color:${paid===total?'#10b981':'#fb923c'};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paid} ${t('dash_of')} ${total} ${total===1?t('dash_debts_paid'):t('dash_debts_paid_many')}</div>`:'';})()}`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
       </div></div>
       <div class="panel pro-card"><div class="panel-inner-sm">
         <div class="panel-title-sm" style="margin-bottom:12px">${tf('dash_upcoming_tpl',upcomingDays)}</div>
@@ -3902,6 +3975,7 @@ function renderDashboardLayout1() {
       </div></div>
     </div>`;
   el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
+  el.querySelector('#loadSampleBtn')?.addEventListener('click',loadSampleData);
   requestAnimationFrame(()=>initDonuts(el));
   el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
@@ -3918,19 +3992,19 @@ function renderDashboardLayout2() {
   const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
   const upcomingDays=state.settings?.upcomingDays||7;
   const upcoming=getUpcomingEvents(upcomingDays,act);
-  const incSegs=state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const incSegs=assignSegColors(state.budgets.income.map((r,i)=>({label:r.category,value:act.income[r.category]||0,color:COLORS[i%COLORS.length]})).filter(s=>s.value>0).sort((a,b)=>b.value-a.value), COLORS);
   const incTot=incSegs.reduce((t,s)=>t+s.value,0);
-  const spendSegs=[
-    ...state.budgets.expenses.map((r,i)=>({label:r.category,value:act.expenses[r.category]||0,color:COLORS[i%COLORS.length]})),
-    ...state.budgets.bills.map((r,i)=>({label:r.category,value:act.bills[r.category]||0,color:COLORS[(i+5)%COLORS.length]})),
-    ...Object.entries(act.debt||{}).map(([name,val],i)=>({label:name,value:val,color:['#a855f7','#9333ea','#7c3aed','#c026d3'][i%4]})),
-    ...Object.entries(act.subscription||{}).map(([name,val],i)=>({label:name,value:val,color:['#10b981','#06b6d4','#14b8a6','#059669'][i%4]})),
-  ].filter(s=>s.value>0).sort((a,b)=>b.value-a.value);
+  const spendSegs=assignSegColors([
+    ...state.budgets.expenses.map(r=>({label:r.category,value:act.expenses[r.category]||0})),
+    ...state.budgets.bills.map(r=>({label:r.category,value:act.bills[r.category]||0})),
+    ...Object.entries(act.debt||{}).map(([name,val])=>({label:name,value:val})),
+    ...Object.entries(act.subscription||{}).map(([name,val])=>({label:name,value:val})),
+  ].filter(s=>s.value>0).sort((a,b)=>b.value-a.value), COLORS);
   const spTot=spendSegs.reduce((t,s)=>t+s.value,0);
 
   const gaugePct = sum.totalIncome>0 ? Math.max(0,Math.min(100, sum.leftover/sum.totalIncome*100)) : 0;
   const rings=[
-    {label:t('bud_section_expenses'),value:sum.totalExpenses,expected:expExp,color:'#f43f5e'},
+    {label:t('bud_section_expenses'),value:sum.totalExpenses,expected:expExp,color:'#ec4899'},
     {label:t('bud_section_bills'),   value:sum.totalBills,   expected:expBil,color:'#fb923c'},
     {label:t('dash_debt_payments'),  value:sum.totalDebt||0, expected:expDebt,color:'#a855f7'},
     {label:t('bud_section_savings'), value:sum.totalSavings, expected:expSav,color:'#3b82f6'},
@@ -3947,6 +4021,7 @@ function renderDashboardLayout2() {
         <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
         <div class="onboard-step"><span class="onboard-num">4</span>${t('onboard_step4_html')}</div>
       </div>
+      <div class="onboard-sample-row"><button class="btn btn-ghost btn-sm" id="loadSampleBtn" type="button">✨ ${t('onboard_sample_btn')}</button><span class="onboard-sample-hint">${t('onboard_sample_hint')}</span></div>
     </div>` : '';
 
   const allocHtml = (() => {
@@ -3968,11 +4043,7 @@ function renderDashboardLayout2() {
       // instead conveyed by colour + the status line below, not by an
       // ever-growing arc.
       const fill = tp > 0 ? Math.min(ap / tp * 100, 100) : (ap > 0 ? 100 : 0);
-      const over = ap > tp && tp > 0;
-      const nearing = !over && tp > 0 && (tp - ap) <= 5 && ap > 0;
-      const accentColor = over ? '#f43f5e' : nearing ? '#fb923c' : b.color;
-      const statusKey = over ? 'alloc_over' : nearing ? 'alloc_nearing' : 'alloc_under';
-      const statusIcon = over ? t('alloc_icon_over') : nearing ? t('alloc_icon_near') : t('alloc_icon_ok');
+      const {accentColor, statusKey, statusIcon} = allocBucketStatus(b, ap, tp);
       const displayName = getAllocBucketDisplayName(b);
       return `<div class="chart-hero-panel" style="padding:12px 8px">
         ${svgSemiGauge(fill, 110, accentColor, ap.toFixed(0) + '%')}
@@ -4007,7 +4078,7 @@ function renderDashboardLayout2() {
         <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_net_leftover')}</div>
         <div class="leftover-hero-inner">
           <div class="leftover-hero-left">
-            ${svgSemiGauge(gaugePct, 170, leftColor)}
+            <div class="leftover-gauge-wrap">${svgSemiGauge(gaugePct, 170, leftColor)}<div class="leftover-gauge-caption">${t('dash_income_kept')}</div></div>
             <div class="leftover-hero-text">
               <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>
               ${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}
@@ -4025,15 +4096,17 @@ function renderDashboardLayout2() {
     <div class="dashboard-grid" style="margin-bottom:14px">
       <div class="panel cash-flow-hero-panel dg-cf" data-chart-scope>
         <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_cash_flow')}</div>
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_spend_vs_plan')}</div>
           <div class="radial-bars-block">
             ${svgRadialBars(rings, 240)}
-            <div class="donut-legend">${rings.map((r,idx) => `
+            <div class="donut-legend">${rings.map((r,idx) => {
+              const over = r.expected>0 && r.value>r.expected;
+              return `
               <div class="dleg-row" data-idx="${idx}">
-                <span class="dleg-swatch" style="background:${r.color}"></span>
+                <span class="dleg-swatch" style="background:${over?'#f43f5e':r.color}"></span>
                 <span class="dleg-label">${esc(r.label)}</span>
-                <span class="dleg-pct">${r.expected>0?Math.round(r.value/r.expected*100):0}%</span>
-              </div>`).join('')}</div>
+                <span class="dleg-pct"${over?' style="color:#f43f5e;font-weight:800"':''}>${r.expected>0?Math.round(r.value/r.expected*100):0}%</span>
+              </div>`;}).join('')}</div>
           </div>
         </div>
       </div>
@@ -4057,13 +4130,14 @@ function renderDashboardLayout2() {
       </div></div>
     </div>`;
   el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
+  el.querySelector('#loadSampleBtn')?.addEventListener('click',loadSampleData);
   requestAnimationFrame(()=>{
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
       wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>
         `<strong>${esc(d.label)}</strong><br>` +
         `<span style="color:var(--text-faint)">${esc(t('dash_expected_legend'))}: ${esc(fmt(parseFloat(d.expected) || 0))}</span><br>` +
         `<span style="color:${d.color || 'var(--text-primary)'};font-weight:800">${esc(t('dash_actual_legend'))}: ${esc(fmt(parseFloat(d.val) || 0))}</span>` });
-      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, format: d =>
+      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d =>
         `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
     });
   });
@@ -4095,6 +4169,30 @@ const ALLOC_DEFAULTS = {
   save: new Set(['Save','Sparen','Épargne','Ahorro','Risparmio','Oszczędność']),
 };
 const BUCKET_COLORS=['#6366f1','#ec4899','#10b981','#fb923c','#a855f7','#3b82f6','#eab308','#f43f5e','#06b6d4','#84cc16'];
+// Shared over/nearing/under classification for allocation buckets.
+// For spending buckets (Need/Want) being under target is good; for the Save
+// bucket the meaning flips - under target means you're behind on savings.
+function allocBucketStatus(b, ap, tp) {
+  if (b.id === 'save') {
+    const met = tp > 0 ? ap >= tp : ap > 0;
+    const nearing = !met && tp > 0 && (tp - ap) <= 5 && ap > 0;
+    const behind = !met && !nearing;
+    return {
+      accentColor: behind ? '#f43f5e' : nearing ? '#fb923c' : b.color,
+      statusColor: behind ? '#f43f5e' : nearing ? '#fb923c' : '#10b981',
+      statusKey:   behind ? 'alloc_behind' : nearing ? 'alloc_nearing' : 'alloc_on_track',
+      statusIcon:  behind ? '▼' : nearing ? t('alloc_icon_near') : t('alloc_icon_ok')
+    };
+  }
+  const over = ap > tp && tp > 0;
+  const nearing = !over && tp > 0 && (tp - ap) <= 5 && ap > 0;
+  return {
+    accentColor: over ? '#f43f5e' : nearing ? '#fb923c' : b.color,
+    statusColor: over ? '#f43f5e' : nearing ? '#fb923c' : '#10b981',
+    statusKey:   over ? 'alloc_over' : nearing ? 'alloc_nearing' : 'alloc_under',
+    statusIcon:  over ? t('alloc_icon_over') : nearing ? t('alloc_icon_near') : t('alloc_icon_ok')
+  };
+}
 function getAllocBucketDisplayName(b) {
   const keyMap = {need:'alloc_def_need', want:'alloc_def_want', save:'alloc_def_save'};
   if (keyMap[b.id] && ALLOC_DEFAULTS[b.id]?.has(b.name)) return t(keyMap[b.id]);
@@ -4316,10 +4414,12 @@ function renderTxList(){
   const pagination=count>TX_PAGE_SIZE?`<div class="tx-pagination"><button class="btn btn-ghost btn-sm" id="txPrevBtn" ${page===0?'disabled':''}>${t('tx_prev')}</button><span class="tx-page-label">${t('tx_page_of').replace('{n}',page+1).replace('{total}',totalPages)}</span><button class="btn btn-ghost btn-sm" id="txNextBtn" ${page>=totalPages-1?'disabled':''}>${t('tx_next')}</button></div>`:'';
   const pageIds=paged.map(tx=>tx.id);
   const allPageSelected=pageIds.length>0&&pageIds.every(id=>txSelected.has(id));
+  const bulkTagBtns=state.allocation?.enabled?`<span class="tx-bulk-tag-group"><span class="tx-bulk-tag-label">${t('tx_tag_as')}</span>${(state.allocation.buckets||[]).map(b=>`<button class="tx-bulk-tag-btn" data-bucket="${b.id}" type="button" style="--bk:${b.color}">${esc(getAllocBucketDisplayName(b))}</button>`).join('')}</span>`:'';
   const bulkBar=txSelected.size>0?`<div class="tx-bulk-bar">
       <span class="tx-bulk-count">${tf('tx_n_selected',txSelected.size)}</span>
       ${count>txSelected.size?`<button class="link-btn" id="txSelectAllMatching">${tf('tx_select_all_matching',count)}</button>`:''}
       <button class="link-btn" id="txClearSelection">${t('tx_clear_selection')}</button>
+      ${bulkTagBtns}
       <button class="btn btn-danger btn-sm" id="txDeleteSelected">${t('tx_delete_selected')}</button>
     </div>`:'';
   el.innerHTML=`<div class="tx-list-header"><span>${countLabel}</span>${total>0?`<button class="link-btn" id="clearAllBtn2">${t('tx_clear_all')}</button>`:''}</div>
@@ -4352,6 +4452,15 @@ function renderTxList(){
   el.querySelectorAll('.tx-sel-cb[data-tx]').forEach(cb=>cb.addEventListener('change',()=>{if(cb.checked)txSelected.add(cb.dataset.tx);else txSelected.delete(cb.dataset.tx);renderTxList();}));
   document.getElementById('txSelectAllMatching')?.addEventListener('click',()=>{filtered.forEach(tx=>txSelected.add(tx.id));renderTxList();});
   document.getElementById('txClearSelection')?.addEventListener('click',()=>{txSelected.clear();renderTxList();});
+  el.querySelectorAll('.tx-bulk-tag-btn[data-bucket]').forEach(btn=>btn.addEventListener('click',()=>{
+    const bid=btn.dataset.bucket;let n=0;
+    state.transactions.forEach(tx=>{
+      // income / savings / sinking fund entries aren't taggable (savings map
+      // to the Save bucket automatically in computeAllocation)
+      if(txSelected.has(tx.id)&&tx.type!=='income'&&tx.type!=='savings'&&tx.type!=='sinking_fund'){tx.allocation=bid;n++;}
+    });
+    saveState();renderTxList();showToast(tf('tx_tagged_toast',n));
+  }));
   document.getElementById('txDeleteSelected')?.addEventListener('click',async()=>{
     if(!await confirmDialog({message:tf('confirm_delete_selected_tx',txSelected.size),confirmText:t('delete')}))return;
     state.transactions.forEach(tx=>{if(txSelected.has(tx.id))applySinkingFundDelta(tx,-1);});
@@ -4451,6 +4560,10 @@ function renderTransactions() {
   };
   document.getElementById('txType')?.addEventListener('change',()=>{populateTxCats();updateAllocVisibility();});
   document.getElementById('txAlloc')?.addEventListener('change',()=>{document.getElementById('txAlloc')?.classList.remove('select--error');document.getElementById('txAllocWrap')?.querySelector('.field-error-msg')?.remove();});
+  // Clear per-field invalid state as soon as the user fixes the field
+  document.getElementById('txAmount')?.addEventListener('input',e=>e.target.classList.remove('fk-invalid'));
+  document.getElementById('txCategory')?.addEventListener('change',e=>e.target.classList.remove('fk-invalid'));
+  document.getElementById('txDate')?.addEventListener('change',()=>document.getElementById('txDateWrap')?.classList.remove('fk-invalid'));
   updateAllocVisibility();
   document.getElementById('addTxBtn')?.addEventListener('click',addTransaction);
   document.getElementById('txEmptyAdd')?.addEventListener('click',()=>{const a=document.getElementById('txAmount');a?.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>a?.focus(),200);});
@@ -4499,9 +4612,16 @@ function addTransaction(){
         errEl=document.getElementById('txError');
   let alloc=document.getElementById('txAlloc')?.value||'';
   if(!date||!type||!cat||isNaN(amount)||amount<=0){
+    // Highlight the actual offending fields, same treatment the allocation
+    // check below gives - a bare banner left users hunting for the problem.
+    const amtEl=document.getElementById('txAmount'),catEl=document.getElementById('txCategory'),dateWrap=document.getElementById('txDateWrap');
+    if(amtEl)amtEl.classList.toggle('fk-invalid',isNaN(amount)||amount<=0);
+    if(catEl)catEl.classList.toggle('fk-invalid',!cat);
+    if(dateWrap)dateWrap.classList.toggle('fk-invalid',!date);
     if(errEl){errEl.textContent=t('tx_error_required');errEl.hidden=false;}
     return;
   }
+  ['txAmount','txCategory','txDateWrap'].forEach(id=>document.getElementById(id)?.classList.remove('fk-invalid'));
   if(errEl) errEl.hidden=true;
   const allocRequired=state.allocation?.enabled&&type!=='income'&&type!=='savings'&&type!=='sinking_fund';
   if(allocRequired&&!alloc){
@@ -5123,7 +5243,11 @@ function renderCalendar(){
   for(const d of state.debts)if(d.dueDay&&d.dueDay>=1&&d.dueDay<=daysInMo)addEv(d.dueDay,{type:'debt',label:d.name,amount:d.minimumPayment||0,color:'#a855f7'});
   for(const s of state.subscriptions.filter(s=>s.active!==false))if(s.nextBillingDate){const d=parseInt(s.nextBillingDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'subscription',label:s.name,amount:monthlySubAmt(s),color:'#10b981'});}
   const monthStr=`${y}-${String(m+1).padStart(2,'0')}`;
-  for(const tx of state.transactions)if(tx.date.startsWith(monthStr)){const d=parseInt(tx.date.split('-')[2]);addEv(d,{type:'transaction',label:tx.category,amount:tx.amount,color:'#6366f1'});}
+  // A transaction created by ticking a bill "paid" is the same money as the
+  // bill event above (which already shows the ✓ Paid state + real amount) -
+  // listing both made 1 Rent look like 2 charges on the same day.
+  const linkedPaidTxIds=new Set((state.budgets.bills||[]).filter(b=>b.paidTxId).map(b=>b.paidTxId));
+  for(const tx of state.transactions)if(tx.date.startsWith(monthStr)&&!linkedPaidTxIds.has(tx.id)){const d=parseInt(tx.date.split('-')[2]);addEv(d,{type:'transaction',label:tx.category,amount:tx.amount,color:'#6366f1'});}
   // Sinking fund goal/target dates (milestones)
   for(const f of state.sinkingFunds||[])if(f.targetDate&&f.targetDate.startsWith(monthStr)){const d=parseInt(f.targetDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'goal',label:f.name,amount:f.targetAmount||0,color:'#ec4899'});}
   // Scheduled automatic transactions: manual ones + sinking-fund contributions
@@ -6107,17 +6231,27 @@ function renderGuideTopic(id) {
         <summary class="recurring-summary"><span class="recurring-summary-title"><span class="recurring-summary-icon" aria-hidden="true">👤</span>${esc(t('guide_' + id + '_usecase_h'))}</span></summary>
         <div class="recurring-body">${t('guide_' + id + '_usecase_p')}</div>
       </details></div>` : '';
+  // Prev/next footer so the guide also reads linearly, like a short book
+  const topicIdx = GUIDE_TOPICS.findIndex(x => x.id === id);
+  const prev = GUIDE_TOPICS[topicIdx - 1], next = GUIDE_TOPICS[topicIdx + 1];
+  const pagerHtml = `<div class="guide-pager">
+      ${prev ? `<button class="guide-pager-btn guide-pager-btn--prev" data-goto="${prev.id}" type="button"><span class="guide-pager-dir">←</span><span class="guide-pager-label">${prev.icon} ${esc(t('guide_' + prev.id + '_title'))}</span></button>` : '<span></span>'}
+      ${next ? `<button class="guide-pager-btn guide-pager-btn--next" data-goto="${next.id}" type="button"><span class="guide-pager-label">${next.icon} ${esc(t('guide_' + next.id + '_title'))}</span><span class="guide-pager-dir">→</span></button>` : '<span></span>'}
+    </div>`;
   content.innerHTML = `
     <button class="guide-back-btn" type="button">← ${esc(t('guide_back'))}</button>
     <div class="guide-topic-header">
       <div class="guide-topic-icon-badge">${topic.icon}</div>
       <h3 class="guide-topic-title">${esc(t('guide_' + id + '_title'))}</h3>
+      <span class="guide-topic-count">${topicIdx + 1} / ${GUIDE_TOPICS.length}</span>
     </div>
     <div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_big'))}</div><p class="guide-big-picture">${t('guide_' + id + '_big')}</p></div>
-    ${stepsHtml}${connectsHtml}${tipHtml}${useCaseHtml}`;
+    ${stepsHtml}${connectsHtml}${tipHtml}${useCaseHtml}${pagerHtml}`;
   content.querySelector('.guide-back-btn')?.addEventListener('click', () => {
     document.getElementById('guideModal')?.classList.remove('is-topic-open');
   });
+  content.querySelectorAll('.guide-pager-btn[data-goto]').forEach(btn =>
+    btn.addEventListener('click', () => selectGuideTopic(btn.dataset.goto)));
 }
 function selectGuideTopic(id, userInitiated = true) {
   guideActiveTopic = id;
@@ -6430,6 +6564,11 @@ async function init(){
     document.getElementById('ubpTabs')?.querySelectorAll('.btab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
     enableDragScroll(document.getElementById('ubpTabs'));
 
+    // Content dissolves under the empty nav ONLY while scrolled - at rest the
+    // scroll region is fully transparent with no fade (see .app-scroll.is-scrolled).
+    const _scroller=document.querySelector('.app-scroll');
+    if(_scroller)_scroller.addEventListener('scroll',()=>_scroller.classList.toggle('is-scrolled',_scroller.scrollTop>4),{passive:true});
+
     // Command nav items
     document.getElementById('heroHeader')?.querySelectorAll('.cnav-btn[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
 
@@ -6440,7 +6579,12 @@ async function init(){
     document.getElementById('settingsNavBtn')?.addEventListener('click',()=>switchTab('settings'));
 
     // Guide
-    document.getElementById('guideNavBtn')?.addEventListener('click',()=>openGuide());
+    // Open the guide on the topic for wherever the user currently is -
+    // opening it from the Debt tab should land on the Debt guide page.
+    document.getElementById('guideNavBtn')?.addEventListener('click',()=>{
+      const topicIds=new Set(GUIDE_TOPICS.map(x=>x.id));
+      openGuide(topicIds.has(currentTab)?currentTab:undefined);
+    });
     document.getElementById('guideClose')?.addEventListener('click',closeGuide);
     document.getElementById('guideOverlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeGuide();});
     document.getElementById('debtSchedClose')?.addEventListener('click',closeDebtSchedule);

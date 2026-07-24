@@ -262,7 +262,7 @@ const TRANSLATIONS = {
     dash_stat_debt:'Debt Payments',dash_stat_savings:'Total Savings',dash_stat_of_goal:'of {0} goal',
     dash_net_leftover_period:'Net Leftover this period',dash_includes_rollover:'Includes {0} rollover from last period',
     dash_lf_income:'income',dash_lf_exp_bills:'exp &amp; bills',dash_lf_debt:'debt',dash_lf_savings:'savings',dash_lf_rollover:'rollover',
-    dash_cash_flow:'Cash Flow - Expected vs Actual',dash_expected:'Expected',dash_actual:'Actual',
+    dash_cash_flow:'Cash Flow - Expected vs Actual',dash_spend_vs_plan:'Spending vs Plan',dash_income_kept:'of income kept',dash_expected:'Expected',dash_actual:'Actual',
     dash_savings_rate:'Savings Rate', dash_saved_sfx:'saved',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',dash_add_tx_link:'Add transactions →',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -519,7 +519,7 @@ const TRANSLATIONS = {
     dash_stat_debt:'Schuldenzahlungen',dash_stat_savings:'Gesamtersparnisse',dash_stat_of_goal:'von {0} Ziel',
     dash_net_leftover_period:'Nettosaldo dieser Periode',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
     dash_lf_income:'Einnahmen',dash_lf_exp_bills:'Ausg. &amp; Rechn.',dash_lf_debt:'Schulden',dash_lf_savings:'Ersparnisse',dash_lf_rollover:'Übertrag',
-    dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
+    dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_spend_vs_plan:'Ausgaben vs. Plan',dash_income_kept:'des Einkommens behalten',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
     dash_savings_rate:'Sparquote',dash_saved_sfx:'gespart',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',dash_add_tx_link:'Transaktionen hinzufügen →',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
@@ -776,7 +776,7 @@ const TRANSLATIONS = {
     dash_stat_debt:'Paiements de dettes',dash_stat_savings:'Épargne totale',dash_stat_of_goal:'sur {0} objectif',
     dash_net_leftover_period:'Solde net de cette période',dash_includes_rollover:'Inclut {0} de report de la période précédente',
     dash_lf_income:'revenus',dash_lf_exp_bills:'dép. &amp; fact.',dash_lf_debt:'dettes',dash_lf_savings:'épargne',dash_lf_rollover:'report',
-    dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_expected:'Prévu',dash_actual:'Réel',
+    dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_spend_vs_plan:'Dépenses vs plan',dash_income_kept:'du revenu conservé',dash_expected:'Prévu',dash_actual:'Réel',
     dash_savings_rate:"Taux d'épargne",dash_saved_sfx:'épargné',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',dash_add_tx_link:'Ajouter des transactions →',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
@@ -1033,7 +1033,7 @@ const TRANSLATIONS = {
     dash_stat_debt:'Pagos de deudas',dash_stat_savings:'Ahorros totales',dash_stat_of_goal:'de {0} objetivo',
     dash_net_leftover_period:'Saldo neto de este período',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
     dash_lf_income:'ingresos',dash_lf_exp_bills:'gastos &amp; fact.',dash_lf_debt:'deudas',dash_lf_savings:'ahorros',dash_lf_rollover:'arrastre',
-    dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_expected:'Previsto',dash_actual:'Real',
+    dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_spend_vs_plan:'Gastos vs plan',dash_income_kept:'de ingresos conservados',dash_expected:'Previsto',dash_actual:'Real',
     dash_savings_rate:'Tasa de ahorro',dash_saved_sfx:'ahorrado',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',dash_add_tx_link:'Añadir transacciones →',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
@@ -1290,7 +1290,7 @@ const TRANSLATIONS = {
     dash_stat_debt:'Pagamenti debiti',dash_stat_savings:'Risparmi totali',dash_stat_of_goal:'di {0} obiettivo',
     dash_net_leftover_period:'Saldo netto di questo periodo',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
     dash_lf_income:'entrate',dash_lf_exp_bills:'spese &amp; boll.',dash_lf_debt:'debiti',dash_lf_savings:'risparmi',dash_lf_rollover:'riporto',
-    dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_expected:'Previsto',dash_actual:'Effettivo',
+    dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_spend_vs_plan:'Spese vs piano',dash_income_kept:'di reddito trattenuto',dash_expected:'Previsto',dash_actual:'Effettivo',
     dash_savings_rate:'Tasso di risparmio',dash_saved_sfx:'risparmiato',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',dash_add_tx_link:'Aggiungi transazioni →',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
@@ -1547,7 +1547,7 @@ const TRANSLATIONS = {
     dash_stat_debt:'Spłaty długów',dash_stat_savings:'Łączne oszczędności',dash_stat_of_goal:'z {0} celu',
     dash_net_leftover_period:'Saldo netto tego okresu',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
     dash_lf_income:'przychody',dash_lf_exp_bills:'wyd. &amp; rach.',dash_lf_debt:'długi',dash_lf_savings:'oszczędności',dash_lf_rollover:'przeniesienie',
-    dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
+    dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_spend_vs_plan:'Wydatki vs plan',dash_income_kept:'zachowanego dochodu',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
     dash_savings_rate:'Stopa oszczędności',dash_saved_sfx:'zaoszczędzono',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',dash_add_tx_link:'Dodaj transakcje →',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
@@ -2023,7 +2023,7 @@ function hasAnyData() {
 }
 
 // ── SVG Donut Chart ───────────────────────────────────────────────────
-const COLOR_WHEEL = ['#6366f1','#10b981','#fb923c','#a855f7','#ec4899','#06b6d4','#eab308','#8b5cf6','#f43f5e','#3b82f6','#14b8a6','#f97316'];
+const COLOR_WHEEL = ['#06b6d4','#ec4899','#fb923c','#8b5cf6','#10b981','#eab308','#3b82f6','#f43f5e','#14b8a6','#a855f7','#f97316','#6366f1'];
 let _did=0;
 
 function svgDonut(segments, size = 130, sw = 17) {
@@ -2047,7 +2047,7 @@ function svgDonut(segments, size = 130, sw = 17) {
   const fs1=(size*.14).toFixed(0), fs2=(size*.085).toFixed(0);
   const center=`<g class="donut-center" pointer-events="none">
     <text class="donut-hover-pct" x="${cx}" y="${cy+2}" text-anchor="middle" dominant-baseline="middle"
-      style="font-family:Sora,sans-serif;font-weight:800;font-size:${fs1}px;fill:var(--text-primary);opacity:0;transition:opacity .15s"></text>
+      style="font-family:var(--font-display);font-weight:800;font-size:${fs1}px;fill:var(--text-primary);opacity:0;transition:opacity .15s"></text>
     <text class="donut-hover-lbl" x="${cx}" y="${cy+parseInt(fs1)+4}" text-anchor="middle"
       style="font-size:${fs2}px;fill:var(--text-secondary);opacity:0;transition:opacity .15s"></text>
   </g>`;
@@ -2186,6 +2186,7 @@ function switchBTab(tab) {
   document.querySelectorAll('.bview').forEach(v => v.classList.remove('is-active'));
   document.getElementById(`bview-${tab}`)?.classList.add('is-active');
   dispatchRender(tab);
+  document.querySelector('#view-budget .app-scroll')?.scrollTo({top:0});   // new tab starts at the top
 }
 
 function dispatchRender(tab) {
@@ -2387,19 +2388,19 @@ function renderDashboardLayout1() {
   const expExpBills = expExpenses + expBills;
 
   // Income donut
-  const incItems = state.budgets.income
-    .map((r, i) => ({ label: r.category, value: actuals.income[r.category] || 0, color: COLOR_WHEEL[i % COLOR_WHEEL.length] }))
+  const incItems = assignSegColors(state.budgets.income
+    .map(r => ({ label: r.category, value: actuals.income[r.category] || 0 }))
     .filter(s => s.value > 0)
-    .sort((a, b) => b.value - a.value);
+    .sort((a, b) => b.value - a.value), COLOR_WHEEL);
   const incTotal = incItems.reduce((t, s) => t + s.value, 0);
   const incSegs  = incItems.map(s => ({ ...s, pct: incTotal > 0 ? s.value / incTotal * 100 : 0 }));
 
   // Spending donut
-  const spendItems = [
-    ...state.budgets.expenses.map((r, i)  => ({ label: r.category, value: actuals.expenses[r.category] || 0, color: COLOR_WHEEL[i % COLOR_WHEEL.length] })),
-    ...state.budgets.bills.map((r, i)     => ({ label: r.category, value: actuals.bills[r.category]    || 0, color: COLOR_WHEEL[(i + 5) % COLOR_WHEEL.length] })),
-    ...state.budgets.debt.map((r, i)      => ({ label: r.category, value: actuals.debt[r.category]     || 0, color: COLOR_WHEEL[(i + 9) % COLOR_WHEEL.length] }))
-  ].filter(s => s.value > 0).sort((a, b) => b.value - a.value);
+  const spendItems = assignSegColors([
+    ...state.budgets.expenses.map(r  => ({ label: r.category, value: actuals.expenses[r.category] || 0 })),
+    ...state.budgets.bills.map(r     => ({ label: r.category, value: actuals.bills[r.category]    || 0 })),
+    ...state.budgets.debt.map(r      => ({ label: r.category, value: actuals.debt[r.category]     || 0 }))
+  ].filter(s => s.value > 0).sort((a, b) => b.value - a.value), COLOR_WHEEL);
   const spendTotal = spendItems.reduce((t, s) => t + s.value, 0);
   const spendSegs  = spendItems.slice(0, 50).map(s => ({ ...s, pct: spendTotal > 0 ? s.value / spendTotal * 100 : 0 }));
 
@@ -2407,7 +2408,7 @@ function renderDashboardLayout1() {
 
   const flowRows = [
     { label:t('tab_income'),   exp:expIncome,   act:sum.totalIncome,   color:'#10b981', isIncome:true  },
-    { label:t('tab_expenses'), exp:expExpenses,  act:sum.totalExpenses, color:'#f43f5e', isIncome:false },
+    { label:t('tab_expenses'), exp:expExpenses,  act:sum.totalExpenses, color:'#ec4899', isIncome:false },
     { label:t('tab_bills'),    exp:expBills,     act:sum.totalBills,    color:'#fb923c', isIncome:false },
     { label:t('tab_debt'),     exp:expDebt,      act:sum.totalDebt,     color:'#a855f7', isIncome:false },
     { label:t('tab_savings'),  exp:expSavings,   act:sum.totalSavings,  color:'#3b82f6', isIncome:false }
@@ -2601,17 +2602,17 @@ function renderDashboardLayout2() {
   const expSavings  = state.budgets.savings.reduce((t, r) => t + (r.expected || 0), 0);
   const expExpBills = expExpenses + expBills;
 
-  const incItems = state.budgets.income
-    .map((r, i) => ({ label: r.category, value: actuals.income[r.category] || 0, color: COLOR_WHEEL[i % COLOR_WHEEL.length] }))
-    .filter(s => s.value > 0).sort((a, b) => b.value - a.value);
+  const incItems = assignSegColors(state.budgets.income
+    .map(r => ({ label: r.category, value: actuals.income[r.category] || 0 }))
+    .filter(s => s.value > 0).sort((a, b) => b.value - a.value), COLOR_WHEEL);
   const incTotal = incItems.reduce((t, s) => t + s.value, 0);
   const incSegs  = incItems.map(s => ({ ...s, pct: incTotal > 0 ? s.value / incTotal * 100 : 0 }));
 
-  const spendItems = [
-    ...state.budgets.expenses.map((r, i) => ({ label: r.category, value: actuals.expenses[r.category] || 0, color: COLOR_WHEEL[i % COLOR_WHEEL.length] })),
-    ...state.budgets.bills.map((r, i)    => ({ label: r.category, value: actuals.bills[r.category]    || 0, color: COLOR_WHEEL[(i + 5) % COLOR_WHEEL.length] })),
-    ...state.budgets.debt.map((r, i)     => ({ label: r.category, value: actuals.debt[r.category]     || 0, color: COLOR_WHEEL[(i + 9) % COLOR_WHEEL.length] }))
-  ].filter(s => s.value > 0).sort((a, b) => b.value - a.value);
+  const spendItems = assignSegColors([
+    ...state.budgets.expenses.map(r => ({ label: r.category, value: actuals.expenses[r.category] || 0 })),
+    ...state.budgets.bills.map(r    => ({ label: r.category, value: actuals.bills[r.category]    || 0 })),
+    ...state.budgets.debt.map(r     => ({ label: r.category, value: actuals.debt[r.category]     || 0 }))
+  ].filter(s => s.value > 0).sort((a, b) => b.value - a.value), COLOR_WHEEL);
   const spendTotal = spendItems.reduce((t, s) => t + s.value, 0);
   const spendSegs  = spendItems.slice(0, 50).map(s => ({ ...s, pct: spendTotal > 0 ? s.value / spendTotal * 100 : 0 }));
 
@@ -2619,7 +2620,7 @@ function renderDashboardLayout2() {
   const gaugePct  = sum.totalIncome > 0 ? Math.max(0, Math.min(100, sum.leftover / sum.totalIncome * 100)) : 0;
 
   const rings = [
-    { label: t('tab_expenses'), value: sum.totalExpenses, expected: expExpenses, color: '#f43f5e' },
+    { label: t('tab_expenses'), value: sum.totalExpenses, expected: expExpenses, color: '#ec4899' },
     { label: t('tab_bills'),    value: sum.totalBills,    expected: expBills,    color: '#fb923c' },
     { label: t('tab_debt'),     value: sum.totalDebt,     expected: expDebt,     color: '#a855f7' },
     { label: t('tab_savings'),  value: sum.totalSavings,  expected: expSavings,  color: '#3b82f6' }
@@ -2658,7 +2659,7 @@ function renderDashboardLayout2() {
         <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_net_leftover_period')}</div>
         <div class="leftover-hero-inner">
         <div class="leftover-hero-left">
-          ${svgSemiGauge(gaugePct, 170, leftColor)}
+          <div class="leftover-gauge-wrap">${svgSemiGauge(gaugePct, 170, leftColor)}<div class="leftover-gauge-caption">${t('dash_income_kept')}</div></div>
           <div class="leftover-hero-text">
             <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover < 0 ? '−' : ''}${fmt(Math.abs(sum.leftover))}</div>
             ${state.rollover ? `<div class="leftover-rollover">${tf('dash_includes_rollover', fmt(state.rollover))}</div>` : ''}
@@ -2680,15 +2681,17 @@ function renderDashboardLayout2() {
     <div class="dashboard-grid">
       <div class="panel cash-flow-hero-panel" data-chart-scope>
         <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_cash_flow')}</div>
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_spend_vs_plan')}</div>
           <div class="radial-bars-block">
             ${svgRadialBars(rings, 240)}
-            <div class="donut-legend">${rings.map((r, idx) => `
+            <div class="donut-legend">${rings.map((r, idx) => {
+              const over = r.expected > 0 && r.value > r.expected;
+              return `
               <div class="dleg-row" data-idx="${idx}">
-                <span class="dleg-swatch" style="background:${r.color}"></span>
+                <span class="dleg-swatch" style="background:${over ? '#f43f5e' : r.color}"></span>
                 <span class="dleg-label">${esc(r.label)}</span>
-                <span class="dleg-pct">${r.expected > 0 ? Math.round(r.value / r.expected * 100) : 0}%</span>
-              </div>`).join('')}</div>
+                <span class="dleg-pct"${over ? ' style="color:#f43f5e;font-weight:800"' : ''}>${r.expected > 0 ? Math.round(r.value / r.expected * 100) : 0}%</span>
+              </div>`;}).join('')}</div>
           </div>
         </div>
       </div>
@@ -2721,7 +2724,7 @@ function renderDashboardLayout2() {
         `<strong>${esc(d.label)}</strong><br>` +
         `<span style="color:var(--text-faint)">${esc(t('dash_expected'))}: ${esc(fmt(parseFloat(d.expected) || 0))}</span><br>` +
         `<span style="color:${d.color || 'var(--text-primary)'};font-weight:800">${esc(t('dash_actual'))}: ${esc(fmt(parseFloat(d.val) || 0))}</span>` });
-      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, format: d =>
+      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d =>
         `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
     });
   });
@@ -3751,17 +3754,27 @@ function renderGuideTopic(id) {
         <summary class="recurring-summary"><span class="recurring-summary-title"><span class="recurring-summary-icon" aria-hidden="true">👤</span>${esc(t('guide_' + id + '_usecase_h'))}</span></summary>
         <div class="recurring-body">${t('guide_' + id + '_usecase_p')}</div>
       </details></div>` : '';
+  // Prev/next footer so the guide also reads linearly, like a short book
+  const topicIdx = GUIDE_TOPICS.findIndex(x => x.id === id);
+  const prev = GUIDE_TOPICS[topicIdx - 1], next = GUIDE_TOPICS[topicIdx + 1];
+  const pagerHtml = `<div class="guide-pager">
+      ${prev ? `<button class="guide-pager-btn guide-pager-btn--prev" data-goto="${prev.id}" type="button"><span class="guide-pager-dir">←</span><span class="guide-pager-label">${prev.icon} ${esc(t('guide_' + prev.id + '_title'))}</span></button>` : '<span></span>'}
+      ${next ? `<button class="guide-pager-btn guide-pager-btn--next" data-goto="${next.id}" type="button"><span class="guide-pager-label">${next.icon} ${esc(t('guide_' + next.id + '_title'))}</span><span class="guide-pager-dir">→</span></button>` : '<span></span>'}
+    </div>`;
   content.innerHTML = `
     <button class="guide-back-btn" type="button">← ${esc(t('guide_back'))}</button>
     <div class="guide-topic-header">
       <div class="guide-topic-icon-badge">${topic.icon}</div>
       <h3 class="guide-topic-title">${esc(t('guide_' + id + '_title'))}</h3>
+      <span class="guide-topic-count">${topicIdx + 1} / ${GUIDE_TOPICS.length}</span>
     </div>
     <div class="guide-section"><div class="guide-section-label">${esc(t('guide_section_big'))}</div><p class="guide-big-picture">${t('guide_' + id + '_big')}</p></div>
-    ${stepsHtml}${connectsHtml}${tipHtml}${useCaseHtml}`;
+    ${stepsHtml}${connectsHtml}${tipHtml}${useCaseHtml}${pagerHtml}`;
   content.querySelector('.guide-back-btn')?.addEventListener('click', () => {
     document.getElementById('guideModal')?.classList.remove('is-topic-open');
   });
+  content.querySelectorAll('.guide-pager-btn[data-goto]').forEach(btn =>
+    btn.addEventListener('click', () => selectGuideTopic(btn.dataset.goto)));
 }
 function selectGuideTopic(id, userInitiated = true) {
   guideActiveTopic = id;
@@ -4034,14 +4047,21 @@ function init() {
   // Mouse drag-to-scroll on tab bar
   enableDragScroll(document.getElementById('budgetTabs'));
 
+  // Content dissolves under the empty nav ONLY while scrolled (none at rest)
+  const _scroller = document.querySelector('#view-budget .app-scroll');
+  if (_scroller) _scroller.addEventListener('scroll', () => _scroller.classList.toggle('is-scrolled', _scroller.scrollTop > 4), { passive: true });
+
   // Back to hub
   document.getElementById('backToHub')?.addEventListener('click', () => navigateTo('hub'));
 
   // Settings gear → Settings tab
   document.getElementById('settingsNavBtn')?.addEventListener('click', () => switchBTab('settings'));
 
-  // Guide
-  document.getElementById('guideNavBtn')?.addEventListener('click', () => openGuide());
+  // Guide - open on the topic for the tab the user is currently viewing
+  document.getElementById('guideNavBtn')?.addEventListener('click', () => {
+    const topicIds = new Set(GUIDE_TOPICS.map(x => x.id));
+    openGuide(topicIds.has(currentBTab) ? currentBTab : undefined);
+  });
   document.getElementById('guideClose')?.addEventListener('click', closeGuide);
   document.getElementById('guideOverlay')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) closeGuide();
