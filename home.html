@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evo Hub | Smart, Simple Tools to Run Your Life</title>
+  <meta name="description" content="Evo Hub is a growing home for no-nonsense life-admin tools. Start with Evo Budget, a free personal budget planner - with task planning, habit tracking, wedding planning, and more on the way." />
+  <meta name="keywords" content="evo hub, productivity tools, budget planner, task planner, habit tracker, wedding planner, meal planner, fitness planner, life admin tools" />
+  <meta property="og:title" content="Evo Hub | Smart, Simple Tools to Run Your Life" />
+  <meta property="og:description" content="One home for the tools that keep your life on track. Start with Evo Budget - free, no bank login, no subscription." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://evohub.com/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>html{scroll-behavior:smooth}</style>
+</head>
+<body>
+
+  <!-- Ambient gradient backdrop -->
+  <div class="backdrop" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
+
+  <div class="app" id="app">
+    <div class="view is-active">
+
+      <header class="topbar">
+        <a class="wordmark" href="home.html">
+          <div class="wordmark-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
+              <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
+              <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
+              <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white"/>
+            </svg>
+          </div>
+          Evo Hub
+        </a>
+        <a href="#tools" class="btn btn-secondary btn-sm">Explore tools</a>
+      </header>
+
+      <!-- ── Hero ────────────────────────────────────────── -->
+      <section class="hub-hero">
+        <span class="hub-hero-badge">🚀 New tools launching soon</span>
+        <h1 class="hub-title">One hub.<br>Every tool for <span class="grad-text">your life.</span></h1>
+        <p class="hub-sub">Start with Evo Budget, a free personal budget planner. Task planning, habit tracking, wedding planning, and more are on the way - all under one roof, all built with the same simple philosophy.</p>
+        <div class="hub-hero-ctas">
+          <a href="index.html" class="btn btn-primary btn-lg">Open Evo Budget →</a>
+          <a href="#tools" class="btn btn-ghost">See what's coming</a>
+        </div>
+      </section>
+
+      <!-- ── USP strip ──────────────────────────────────── -->
+      <div class="lp-strip" aria-label="Key benefits">
+        <div class="lp-strip-inner">
+          <div class="lp-strip-item"><span class="lp-strip-icon">💳</span><span class="lp-strip-text">No bank login required</span></div>
+          <div class="lp-strip-sep" aria-hidden="true"></div>
+          <div class="lp-strip-item"><span class="lp-strip-icon">🚫</span><span class="lp-strip-text">No subscription fees</span></div>
+          <div class="lp-strip-sep" aria-hidden="true"></div>
+          <div class="lp-strip-item"><span class="lp-strip-icon">⚡</span><span class="lp-strip-text">Instant setup</span></div>
+        </div>
+      </div>
+
+      <!-- ── Tool grid ─────────────────────────────────────── -->
+      <section class="lp-section lp-section--tools" id="tools" aria-labelledby="toolsTitle">
+        <h2 class="lp-heading" id="toolsTitle">Tools built for <span class="grad-text">real life</span></h2>
+        <p class="lp-sub">One live today. Five more on the way. All under one roof, all starting free.</p>
+
+        <div class="tool-grid tool-grid--hub">
+          <!-- Live: Evo Budget -->
+          <div class="tool-card tool-card--indigo is-live">
+            <div class="tool-card-inner">
+              <span class="tool-card-badge tool-card-badge--live">🟢 Live now</span>
+              <div class="tool-card-top">
+                <span class="tool-card-icon">💰</span>
+                <h3 class="tool-card-name">Evo Budget</h3>
+              </div>
+              <p class="tool-card-desc">Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more.</p>
+              <div class="tool-card-actions">
+                <a href="index.html" class="btn tool-open-btn">Open Evo Budget →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coming soon placeholders -->
+          <div class="tool-card tool-card--soon">
+            <div class="tool-card-inner">
+              <span class="tool-card-badge tool-card-badge--soon">Coming soon</span>
+              <div class="tool-card-top">
+                <span class="tool-card-icon">📝</span>
+                <h3 class="tool-card-name">Task Planner</h3>
+              </div>
+              <p class="tool-card-desc">Organize your to-dos and projects without the clutter of an over-built app.</p>
+            </div>
+          </div>
+
+          <div class="tool-card tool-card--soon">
+            <div class="tool-card-inner">
+              <span class="tool-card-badge tool-card-badge--soon">Coming soon</span>
+              <div class="tool-card-top">
+                <span class="tool-card-icon">🔁</span>
+                <h3 class="tool-card-name">Habit Tracker</h3>
+              </div>
+              <p class="tool-card-desc">Build streaks that stick, with a clean daily view that makes consistency easy.</p>
+            </div>
+          </div>
+
+          <div class="tool-card tool-card--soon">
+            <div class="tool-card-inner">
+              <span class="tool-card-badge tool-card-badge--soon">Coming soon</span>
+              <div class="tool-card-top">
+                <span class="tool-card-icon">💍</span>
+                <h3 class="tool-card-name">Wedding Planner</h3>
+              </div>
+              <p class="tool-card-desc">Guest lists, budgets, vendors, and timelines for the big day, all in one place.</p>
+            </div>
+          </div>
+
+          <div class="tool-card tool-card--soon">
+            <div class="tool-card-inner">
+              <span class="tool-card-badge tool-card-badge--soon">Coming soon</span>
+              <div class="tool-card-top">
+                <span class="tool-card-icon">🍽️</span>
+                <h3 class="tool-card-name">Meal Planner</h3>
+              </div>
+              <p class="tool-card-desc">Plan the week's meals, build a grocery list automatically, and cut food waste.</p>
+            </div>
+          </div>
+
+          <div class="tool-card tool-card--soon">
+            <div class="tool-card-inner">
+              <span class="tool-card-badge tool-card-badge--soon">Coming soon</span>
+              <div class="tool-card-top">
+                <span class="tool-card-icon">🏋️</span>
+                <h3 class="tool-card-name">Fitness Planner</h3>
+              </div>
+              <p class="tool-card-desc">Plan workouts, track progress, and build routines that actually fit your week.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Why Evo Hub ───────────────────────────────────── -->
+      <section class="lp-section" id="why" aria-labelledby="whyTitle">
+        <h2 class="lp-heading" id="whyTitle">Why <span class="grad-text">Evo Hub?</span></h2>
+        <p class="lp-sub">One set of values, applied to every tool we build.</p>
+        <div class="why-grid">
+          <div class="why-card">
+            <div class="why-num">01</div>
+            <h3 class="why-title">Everything in one place</h3>
+            <p class="why-desc">As new tools launch, they all live under one roof. No more juggling five different apps and five different logins for the parts of life you actually need to manage.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-num">02</div>
+            <h3 class="why-title">Your data, your control</h3>
+            <p class="why-desc">Every Evo Hub tool follows the same rule: your data is stored on your device by default, with no account required. Sync across devices is always optional, never mandatory.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-num">03</div>
+            <h3 class="why-title">Pay once, not monthly</h3>
+            <p class="why-desc">No subscriptions, no recurring fees, no "premium tier" nagging. Try every tool for free, and unlock full access with a single one-time purchase if it's right for you.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-num">04</div>
+            <h3 class="why-title">Simple enough to actually use</h3>
+            <p class="why-desc">No onboarding wizards, no 30-minute setup. Every tool in the hub gets out of your way so you can focus on the thing it's actually there to help with.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CTA banner ────────────────────────────────────── -->
+      <section class="lp-section" aria-label="Get started">
+        <div class="cta-banner">
+          <div class="cta-banner-glow" aria-hidden="true"></div>
+          <div class="cta-banner-text">
+            <h3 class="cta-banner-title">Ready to get organized?</h3>
+            <p class="cta-banner-sub">Start with Evo Budget - free to try, nothing to install.</p>
+          </div>
+          <div class="cta-banner-btns">
+            <a href="index.html" class="cta-banner-btn cta-banner-btn--solid">Open Evo Budget</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FAQ ───────────────────────────────────────────── -->
+      <section class="lp-section" id="faq" aria-labelledby="faqTitle">
+        <h2 class="lp-heading" id="faqTitle">Frequently asked <span class="grad-text">questions</span></h2>
+
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary class="faq-q">What is Evo Hub?</summary>
+            <div class="faq-a">Evo Hub is a growing collection of straightforward, no-nonsense tools for everyday life admin. It starts with Evo Budget, a personal budget planner, and will keep growing with tools like task planning, habit tracking, and wedding planning - all sharing the same simple design and the same respect for your data.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">What tools are available right now?</summary>
+            <div class="faq-a">Evo Budget is live today, with two planners to choose from: the Simple Budget Planner and the Ultimate Budget Planner. Both are free to try, with no bank login and no subscription required.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">What's coming next?</summary>
+            <div class="faq-a">We're working on a Task Planner, Habit Tracker, Wedding Planner, Meal Planner, and Fitness Planner. Each one will follow the same principles as Evo Budget: fast to start, free to try, and built around keeping your data under your control.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Do I need an account to use Evo Hub?</summary>
+            <div class="faq-a">No. You can open any live tool and start using it immediately. If a tool offers optional cloud sync, that's always opt-in - never required to get started.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">Is Evo Hub free?</summary>
+            <div class="faq-a">Every tool offers a free way to try it. Where a paid upgrade exists, it's a single one-time purchase rather than a subscription - so you pay once and keep using it, including future updates to that tool.</div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">How is my data stored?</summary>
+            <div class="faq-a">By default, your data is stored locally on your own device - nothing is sent to a server. Where a tool offers optional sync, your data goes to your own personal cloud storage, never to our servers.</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ── Footer ──────────────────────────────────────── -->
+      <footer class="lp-footer">
+        <div class="lp-footer-inner">
+          <div class="lp-footer-brand">
+            <div class="wordmark wordmark-sm">
+              <div class="wordmark-icon wordmark-icon-sm">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
+                  <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
+                  <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
+                  <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white"/>
+                </svg>
+              </div>
+              Evo Hub
+            </div>
+            <p class="lp-footer-tagline">Smart, simple tools to run your life.</p>
+          </div>
+          <p class="lp-footer-copy">&copy; 2026 Evo Hub. All rights reserved.</p>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    // Standalone marketing page - no dependency on script.js/the app bundle,
+    // just enough to respect a theme already chosen inside the tools.
+    (function () {
+      var t = localStorage.getItem('evobudget_theme') || 'dark';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
+</body>
+</html>
