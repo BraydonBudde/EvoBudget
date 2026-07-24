@@ -244,7 +244,8 @@ p { margin: 0; }
    shadow (e.g. a vivid pink in Synthwave), not a neutral drop shadow, so
    it reads as its own glow around every card regardless of the blur fix. */
 .tool-shell .app-scroll .panel,
-.tool-shell .app-scroll .scard {
+.tool-shell .app-scroll .scard,
+.tool-shell .app-scroll .pro-stat {
   backdrop-filter: none; -webkit-backdrop-filter: none;
   box-shadow: none;
 }
