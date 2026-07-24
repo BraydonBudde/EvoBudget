@@ -229,15 +229,20 @@ p { margin: 0; }
   flex: 1 1 auto; min-height: 0;
   overflow-y: auto; overflow-x: hidden;
   padding: 0 24px 48px;
-  /* Opaque (not transparent like .tool-sticky above) - the content here is
-     dense, near-edge-to-edge cards, unlike the hub page's much roomier
-     layout. Letting the animated backdrop blobs show through was fine
-     there but reads as an ugly hard-edged glow here: the cards block most
-     of the width, so the blob is only visible in a thin gutter right next
-     to them, with nowhere near enough room to fade out gradually first. */
-  background: var(--surface-solid); border: none;
+  background: none; border: none;         /* no fill, no edge - fully transparent */
   scrollbar-width: none;                  /* Firefox: no visible scrollbar */
   -ms-overflow-style: none;               /* legacy Edge */
+}
+/* .panel/.scard normally use backdrop-filter:blur() for a frosted-glass
+   look, which is fine over the hub page's large, sparsely-spaced
+   .tool-card - but here the cards run near edge-to-edge against a vividly
+   colored animated backdrop, and the blur samples that color from just
+   outside each card, smearing it into a glowing rim right at the border.
+   Dropping the blur keeps the same transparent surface color without that
+   halo, everywhere in the scrollable dashboard content. */
+.tool-shell .app-scroll .panel,
+.tool-shell .app-scroll .scard {
+  backdrop-filter: none; -webkit-backdrop-filter: none;
 }
 /* WebKit/Blink: no visible scrollbar (still scrolls, still wheel/touch/keys) */
 .tool-shell .app-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
