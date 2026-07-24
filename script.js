@@ -2368,6 +2368,11 @@ document.addEventListener('click',()=>document.querySelectorAll('.cc-tip-pop').f
 window.addEventListener('scroll',()=>document.querySelectorAll('.cc-tip-pop').forEach(el=>el.remove()),true);
 
 // ── Dashboard ─────────────────────────────────────────────────────────
+function dismissWelcomeCard() {
+  state.settings.welcomeDismissed = true;
+  saveState();
+  renderDashboard();
+}
 function renderDashboard() {
   const layout = state.settings.dashboardLayout || 1;
   ({
@@ -2414,8 +2419,9 @@ function renderDashboardLayout1() {
     { label:t('tab_savings'),  exp:expSavings,   act:sum.totalSavings,  color:'#3b82f6', isIncome:false }
   ];
 
-  const onboardHTML = !hasAnyData() ? `
+  const onboardHTML = (!hasAnyData() && !state.settings.welcomeDismissed) ? `
     <div class="onboard-banner">
+      <button class="onboard-close-btn" id="dismissWelcomeBtn" type="button" aria-label="${t('dismiss_aria')}">✕</button>
       <div class="onboard-title">${t('onboard_welcome')}</div>
       <div class="onboard-steps">
         <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
@@ -2553,6 +2559,7 @@ function renderDashboardLayout1() {
 
   // Period badge → go to settings
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
+  el.querySelector('#dismissWelcomeBtn')?.addEventListener('click', dismissWelcomeCard);
   requestAnimationFrame(()=>initDonuts(el));
   el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
@@ -2626,8 +2633,9 @@ function renderDashboardLayout2() {
     { label: t('tab_savings'),  value: sum.totalSavings,  expected: expSavings,  color: '#3b82f6' }
   ];
 
-  const onboardHTML = !hasAnyData() ? `
+  const onboardHTML = (!hasAnyData() && !state.settings.welcomeDismissed) ? `
     <div class="onboard-banner">
+      <button class="onboard-close-btn" id="dismissWelcomeBtn" type="button" aria-label="${t('dismiss_aria')}">✕</button>
       <div class="onboard-title">${t('onboard_welcome')}</div>
       <div class="onboard-steps">
         <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
@@ -2718,6 +2726,7 @@ function renderDashboardLayout2() {
   `;
 
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
+  el.querySelector('#dismissWelcomeBtn')?.addEventListener('click', dismissWelcomeCard);
   requestAnimationFrame(() => {
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
       wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>

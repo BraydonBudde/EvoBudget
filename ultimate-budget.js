@@ -3858,6 +3858,11 @@ function loadSampleData(){
   renderDashboard();
   showToast(t('sample_loaded_toast'));
 }
+function dismissWelcomeCard(){
+  state.settings.welcomeDismissed = true;
+  saveState();
+  renderDashboard();
+}
 
 // ── PRO DASHBOARD ─────────────────────────────────────────────────────
 function renderDashboard() {
@@ -3897,9 +3902,10 @@ function renderDashboardLayout1() {
   ];
 
   // Welcome card - show when state is fresh
-  const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
+  const showWelcome = !state.settings.welcomeDismissed && state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
   const welcomeHtml = showWelcome ? `
     <div class="onboard-banner">
+      <button class="onboard-close-btn" id="dismissWelcomeBtn" type="button" aria-label="${t('close_aria')}">✕</button>
       <div class="onboard-title">${t('onboard_welcome')}</div>
       <div class="onboard-steps">
         <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
@@ -3976,6 +3982,7 @@ function renderDashboardLayout1() {
     </div>`;
   el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
   el.querySelector('#loadSampleBtn')?.addEventListener('click',loadSampleData);
+  el.querySelector('#dismissWelcomeBtn')?.addEventListener('click',dismissWelcomeCard);
   requestAnimationFrame(()=>initDonuts(el));
   el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
@@ -4011,9 +4018,10 @@ function renderDashboardLayout2() {
     {label:t('dash_subscriptions'),  value:sum.totalSubscriptions||0, expected:subMo,color:'#10b981'}
   ];
 
-  const showWelcome = state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
+  const showWelcome = !state.settings.welcomeDismissed && state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
   const welcomeHtml = showWelcome ? `
     <div class="onboard-banner">
+      <button class="onboard-close-btn" id="dismissWelcomeBtn" type="button" aria-label="${t('close_aria')}">✕</button>
       <div class="onboard-title">${t('onboard_welcome')}</div>
       <div class="onboard-steps">
         <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
@@ -4131,6 +4139,7 @@ function renderDashboardLayout2() {
     </div>`;
   el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
   el.querySelector('#loadSampleBtn')?.addEventListener('click',loadSampleData);
+  el.querySelector('#dismissWelcomeBtn')?.addEventListener('click',dismissWelcomeCard);
   requestAnimationFrame(()=>{
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
       wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>
