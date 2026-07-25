@@ -442,30 +442,13 @@ a.btn-back-round { text-decoration: none; }
   font-size: 15px; color: var(--text-secondary); max-width: 680px;
   margin: 0 auto; line-height: 1.75;
 }
-/* Evo Hub landing page (home.html) - a level above the Evo Budget hub
-   above: same visual language, reused verbatim where possible. */
-.hub-hero-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 700; color: var(--grad-indigo);
-  background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25);
-  padding: 6px 14px; border-radius: var(--radius-pill); margin-bottom: 18px;
-}
-.hub-hero-ctas { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+/* home.html (Evo Hub landing page) intentionally does NOT reuse this hub's
+   layout - it has its own bespoke component CSS inline in its own <head>,
+   so it reads as a distinct page rather than an extension of this one.
+   a.btn stays here since it's a genuinely shared fix (anchors styled as
+   .btn need the underline removed, same as everywhere else this class
+   is used). */
 a.btn { text-decoration: none; }
-.lp-section--tools { max-width: 1120px; }
-.tool-grid--hub { grid-template-columns: repeat(3, 1fr); max-width: 1120px; }
-@media (max-width: 900px) { .tool-grid--hub { grid-template-columns: repeat(2, 1fr); max-width: 620px; } }
-@media (max-width: 560px) { .tool-grid--hub { grid-template-columns: 1fr; max-width: 380px; } }
-.tool-card-badge {
-  display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
-  font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
-  padding: 4px 10px; border-radius: var(--radius-pill);
-}
-.tool-card-badge--live { background: rgba(16,185,129,.14); color: #10b981; }
-.tool-card-badge--soon { background: rgba(148,132,255,.14); color: var(--text-faint); }
-.tool-card--soon { opacity: .6; }
-.tool-card--soon:hover { transform: none; box-shadow: var(--shadow-card); }
-.tool-card--soon .tool-card-icon { filter: grayscale(.4); }
 .tool-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: 18px; max-width: 880px; margin: 0 auto;
