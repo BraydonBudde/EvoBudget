@@ -22,10 +22,13 @@
        .tool-grid, .lp-section, .why-grid, ...) - this page needs to read as
        a distinct, modern "main site", not an extra section bolted onto the
        tool menu. Shared brand primitives only: CSS variables, fonts, the
-       animated .backdrop/.blob, .btn buttons, and the .faq-item accordion.
+       animated .backdrop/.blob, .btn buttons, .grad-text, and the
+       .faq-item accordion.
        ═══════════════════════════════════════════════════════════════ -->
   <style>
     html { scroll-behavior: smooth; }
+    section[id] { scroll-margin-top: 84px; }
+    .eh-bento-tile[id] { scroll-margin-top: 100px; }
 
     /* ── Sticky glass nav ─────────────────────────────────────────── */
     .eh-nav {
@@ -36,10 +39,26 @@
       border-bottom: 1px solid var(--border-faint);
     }
     .eh-nav-links { display: flex; align-items: center; gap: 30px; }
-    .eh-nav-links a { font-size: 13.5px; font-weight: 600; color: var(--text-secondary); text-decoration: none; transition: color .15s; }
+    .eh-nav-links a { position: relative; font-size: 13.5px; font-weight: 600; color: var(--text-secondary); text-decoration: none; transition: color .15s; padding-bottom: 3px; }
+    .eh-nav-links a::after {
+      content: ''; position: absolute; left: 0; right: 100%; bottom: -3px; height: 2px; border-radius: 2px;
+      background: linear-gradient(90deg, var(--grad-indigo), var(--grad-pink)); transition: right .25s var(--ease);
+    }
     .eh-nav-links a:hover { color: var(--text-primary); }
+    .eh-nav-links a:hover::after { right: 0; }
     .eh-nav-cta { display: flex; align-items: center; gap: 14px; }
     @media (max-width: 700px) { .eh-nav-links { display: none; } }
+
+    /* ── Shine-sweep hover for key CTAs ──────────────────────────── */
+    .eh-shine { position: relative; overflow: hidden; }
+    .eh-shine::after {
+      content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.55), transparent);
+      transform: skewX(-20deg);
+    }
+    .eh-shine:hover::after { animation: eh-shine .85s ease; }
+    @keyframes eh-shine { from { left: -60%; } to { left: 130%; } }
+    @media (prefers-reduced-motion: reduce) { .eh-shine:hover::after { animation: none; } }
 
     /* ── Split hero ───────────────────────────────────────────────── */
     .eh-hero {
@@ -53,9 +72,11 @@
       padding: 6px 14px; border-radius: var(--radius-pill); margin-bottom: 20px;
     }
     .eh-hero-title {
-      font-family: var(--font-display); font-size: clamp(2.2rem, 4.4vw, 3.4rem); font-weight: 800;
-      line-height: 1.1; letter-spacing: -.025em; color: var(--text-primary); margin: 0 0 18px;
+      font-family: var(--font-display); font-size: clamp(2.1rem, 4.2vw, 3.3rem); font-weight: 800;
+      line-height: 1.14; letter-spacing: -.025em; color: var(--text-primary); margin: 0 0 18px;
+      white-space: normal;
     }
+    .eh-hero-title span.line { display: block; }
     .eh-hero-sub { font-size: 15.5px; line-height: 1.75; color: var(--text-secondary); max-width: 480px; margin: 0 0 30px; }
     .eh-hero-ctas { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
     .eh-hero-trust { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-faint); }
@@ -67,47 +88,79 @@
       .eh-hero-visual { order: -1; margin-bottom: 8px; }
     }
 
-    /* ── Orbit visual ─────────────────────────────────────────────── */
-    .eh-orbit { position: relative; width: min(400px, 84vw); height: min(400px, 84vw); margin: 0 auto; }
+    /* ── Orbit visual (bigger + genuinely interactive) ───────────── */
+    .eh-orbit { position: relative; width: min(460px, 86vw); height: min(460px, 86vw); margin: 0 auto; }
     .eh-orbit-ring {
       position: absolute; inset: 0; border-radius: 50%;
       border: 1.5px dashed rgba(99,102,241,.28);
       animation: eh-spin 50s linear infinite;
+      transition: animation-duration .3s;
     }
     .eh-orbit-ring--inner { inset: 15%; border-color: rgba(236,72,153,.22); animation-duration: 38s; animation-direction: reverse; }
     @keyframes eh-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { .eh-orbit-ring { animation: none; } }
+    .eh-orbit:hover .eh-orbit-ring { animation-duration: 16s; }
+    .eh-orbit:hover .eh-orbit-ring--inner { animation-duration: 12s; }
     .eh-orbit-core {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 116px; height: 116px; border-radius: 50%;
+      width: 140px; height: 140px; border-radius: 50%;
       background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink));
-      display: flex; align-items: center; justify-content: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px;
       box-shadow: 0 20px 50px -14px rgba(76,29,149,.55);
     }
-    .eh-orbit-core span { font-size: 13px; font-weight: 800; font-family: var(--font-display); color: #fff; text-align: center; line-height: 1.25; }
+    .eh-orbit-core svg { display: block; }
+    .eh-orbit-core span { font-size: 13px; font-weight: 800; font-family: var(--font-display); color: #fff; text-align: center; line-height: 1.2; }
+    .eh-orbit-node-pos { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
     .eh-orbit-node {
-      position: absolute; top: 50%; left: 50%; width: 58px; height: 58px; margin: -29px;
+      position: absolute; width: 64px; height: 64px; margin: -32px; top: 0; left: 0;
       border-radius: 50%; background: var(--surface-strong); border: 1px solid var(--border-soft);
-      display: flex; align-items: center; justify-content: center; font-size: 24px;
-      box-shadow: var(--shadow-card);
+      display: flex; align-items: center; justify-content: center; font-size: 25px;
+      box-shadow: var(--shadow-card); text-decoration: none; cursor: pointer;
+      /* --cr (counter-rotation) undoes the positioning wrapper's own rotation
+         so the emoji renders upright - kept as a custom property, not an
+         inline transform, so this rule and the :hover rule below (which
+         adds scale on top) can both come from the stylesheet and cascade
+         normally. An inline transform would beat the :hover rule outright,
+         since inline style always wins over a class selector. */
+      transform: rotate(var(--cr, 0deg));
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+    }
+    .eh-orbit-node:hover, .eh-orbit-node:focus-visible {
+      transform: rotate(var(--cr, 0deg)) scale(1.2);
+      box-shadow: var(--shadow-pop); z-index: 5; outline: none;
     }
     .eh-orbit-node--live { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); box-shadow: 0 10px 24px -6px rgba(76,29,149,.5); }
+    .eh-orbit-node::after {
+      content: attr(data-label); position: absolute; bottom: calc(100% + 12px); left: 50%;
+      background: var(--surface-solid); border: 1px solid var(--border-faint); border-radius: 8px;
+      padding: 6px 11px; font-size: 11.5px; font-weight: 700; color: var(--text-primary); white-space: nowrap;
+      opacity: 0; pointer-events: none; box-shadow: var(--shadow-card);
+      transform: translate(-50%, 4px); transition: opacity .15s, transform .15s;
+    }
+    .eh-orbit-node:hover::after, .eh-orbit-node:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
 
-    /* ── Marquee strip ────────────────────────────────────────────── */
+    /* ── Marquee strip (interactive: pauses, links into the showcase) ── */
     .eh-marquee { overflow: hidden; border-top: 1px solid var(--border-faint); border-bottom: 1px solid var(--border-faint); padding: 15px 0; }
     .eh-marquee-track { display: flex; width: max-content; gap: 44px; animation: eh-marquee 30s linear infinite; }
+    .eh-marquee:hover .eh-marquee-track { animation-play-state: paused; }
     @keyframes eh-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     @media (prefers-reduced-motion: reduce) { .eh-marquee-track { animation: none; } }
-    .eh-marquee-item { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap; }
-    .eh-marquee-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--grad-indigo); }
+    .eh-marquee-item {
+      display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap;
+      text-decoration: none; cursor: pointer; transition: color .15s;
+    }
+    .eh-marquee-item:hover { color: var(--grad-indigo); }
+    .eh-marquee-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--grad-indigo); transition: background .15s, transform .15s; }
+    .eh-marquee-item:hover .eh-marquee-dot { background: var(--grad-pink); transform: scale(1.4); }
 
-    /* ── Stats bar ────────────────────────────────────────────────── */
+    /* ── Stats bar (count up on scroll into view) ────────────────── */
     .eh-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 940px; margin: 54px auto 0; padding: 0 24px; text-align: center; }
     .eh-stat-num { font-family: var(--font-display); font-size: clamp(1.7rem, 3.4vw, 2.3rem); font-weight: 800; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .eh-stat-label { font-size: 11.5px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
     @media (max-width: 640px) { .eh-stats { grid-template-columns: repeat(2, 1fr); row-gap: 28px; } }
 
-    /* ── Bento tool showcase ──────────────────────────────────────── */
+    /* ── Bento tool showcase (spotlight-glow, coming-soon still alive) ── */
     .eh-showcase { padding: 76px 24px; margin-top: 70px; background: var(--surface-strong); border-top: 1px solid var(--border-faint); border-bottom: 1px solid var(--border-faint); }
     .eh-showcase-inner { max-width: 1040px; margin: 0 auto; }
     .eh-showcase-head { text-align: center; max-width: 560px; margin: 0 auto 44px; }
@@ -118,8 +171,13 @@
       position: relative; border-radius: var(--radius-lg); padding: 22px; overflow: hidden;
       background: var(--surface); border: 1px solid var(--border-soft);
       display: flex; flex-direction: column; gap: 8px;
-      transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease);
+      transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease), opacity .2s var(--ease);
     }
+    .eh-bento-tile::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .25s;
+      background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(99,102,241,.16), transparent 70%);
+    }
+    .eh-bento-tile:hover::before { opacity: 1; }
     .eh-bento-tile--featured { grid-column: 1 / 3; grid-row: 1 / 3; padding: 30px; justify-content: space-between; }
     .eh-b2 { grid-column: 3; grid-row: 1; }
     .eh-b3 { grid-column: 3; grid-row: 2; }
@@ -131,57 +189,75 @@
       border-color: rgba(99,102,241,.3);
     }
     .eh-bento-tile--featured:hover { transform: translateY(-3px); box-shadow: var(--shadow-pop); }
-    .eh-bento-tile--soon { opacity: .62; }
-    .eh-bento-tile--soon .eh-bento-icon { filter: grayscale(.5); }
+    .eh-bento-tile--soon { opacity: .68; }
+    .eh-bento-tile--soon:hover { opacity: 1; transform: translateY(-3px); box-shadow: var(--shadow-pop); border-color: rgba(99,102,241,.3); }
+    .eh-bento-tile--soon .eh-bento-icon { filter: grayscale(.5); transition: filter .2s; }
+    .eh-bento-tile--soon:hover .eh-bento-icon { filter: grayscale(0); }
     .eh-bento-icon { font-size: 1.8rem; line-height: 1; }
     .eh-bento-tile--featured .eh-bento-icon { font-size: 2.6rem; }
     .eh-bento-name { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; color: var(--text-primary); margin: 0; }
     .eh-bento-tile--featured .eh-bento-name { font-size: 20px; }
     .eh-bento-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.55; margin: 0; }
     .eh-bento-tile--featured .eh-bento-desc { font-size: 13.5px; max-width: 320px; }
-    .eh-bento-checklist { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .eh-bento-checklist { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
     .eh-bento-checklist li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-secondary); }
     .eh-bento-checklist li::before { content: '✓'; color: #10b981; font-weight: 800; font-size: 12px; }
     .eh-bento-badge {
-      position: absolute; top: 16px; right: 16px;
+      position: absolute; top: 16px; right: 16px; z-index: 1;
       font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
       padding: 3px 9px; border-radius: var(--radius-pill);
     }
     .eh-bento-badge--live { background: rgba(16,185,129,.16); color: #10b981; }
     .eh-bento-badge--soon { background: rgba(148,132,255,.16); color: var(--text-faint); }
-    .eh-bento-cta { margin-top: auto; }
+    .eh-bento-cta { margin-top: auto; position: relative; z-index: 1; }
+    .eh-bento-notify {
+      position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700; color: var(--grad-indigo); text-decoration: none;
+      margin-top: auto; opacity: 0; transform: translateY(4px);
+      transition: opacity .2s, transform .2s;
+    }
+    .eh-bento-tile--soon:hover .eh-bento-notify, .eh-bento-tile--soon:focus-within .eh-bento-notify { opacity: 1; transform: translateY(0); }
+    .eh-bento-notify:hover { text-decoration: underline; }
     @media (max-width: 760px) {
       .eh-bento { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; }
       .eh-bento-tile--featured { grid-column: 1 / 3; grid-row: auto; }
       .eh-b2, .eh-b3, .eh-b4, .eh-b5, .eh-b6 { grid-column: auto; grid-row: auto; }
+      .eh-bento-notify { opacity: 1; transform: none; } /* no hover on touch - always visible */
     }
     @media (max-width: 480px) {
       .eh-bento { grid-template-columns: 1fr; }
       .eh-bento-tile--featured { grid-column: auto; }
     }
 
-    /* ── Why: sticky-left rows ────────────────────────────────────── */
+    /* ── Why: sticky-left heading, 2-column feature cards ────────── */
     .eh-why { display: grid; grid-template-columns: .85fr 1.3fr; gap: 50px; max-width: 1040px; margin: 84px auto 0; padding: 0 24px; }
     .eh-why-head { position: sticky; top: 90px; align-self: start; }
     .eh-why-head h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 800; color: var(--text-primary); margin: 0 0 12px; }
     .eh-why-head p { font-size: 14.5px; color: var(--text-secondary); line-height: 1.7; margin: 0; max-width: 320px; }
-    .eh-why-rows { display: flex; flex-direction: column; }
-    .eh-why-row { display: flex; gap: 18px; align-items: flex-start; padding: 22px 0; border-bottom: 1px solid var(--border-faint); }
-    .eh-why-row:first-child { padding-top: 4px; }
-    .eh-why-row:last-child { border-bottom: none; }
-    .eh-why-icon { width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 19px; background: linear-gradient(135deg, rgba(99,102,241,.16), rgba(236,72,153,.12)); }
-    .eh-why-row h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0 0 5px; }
-    .eh-why-row p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; margin: 0; }
+    .eh-why-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .eh-why-row {
+      display: flex; gap: 14px; align-items: flex-start; padding: 20px;
+      border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--border-soft);
+      transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease);
+    }
+    .eh-why-row:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); border-color: rgba(99,102,241,.3); }
+    .eh-why-icon {
+      width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; background: linear-gradient(135deg, rgba(99,102,241,.16), rgba(236,72,153,.12));
+      transition: transform .25s var(--ease);
+    }
+    .eh-why-row:hover .eh-why-icon { transform: scale(1.12) rotate(-6deg); }
+    .eh-why-row h3 { font-size: 14.5px; font-weight: 700; color: var(--text-primary); margin: 0 0 5px; }
+    .eh-why-row p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
     @media (max-width: 820px) {
       .eh-why { grid-template-columns: 1fr; margin-top: 60px; }
       .eh-why-head { position: static; margin-bottom: 8px; }
       .eh-why-head p { max-width: none; }
     }
+    @media (max-width: 560px) { .eh-why-rows { grid-template-columns: 1fr; } }
 
     /* ── CTA band ─────────────────────────────────────────────────── */
-    .eh-cta {
-      max-width: 1040px; margin: 84px auto 0; padding: 0 24px;
-    }
+    .eh-cta { max-width: 1040px; margin: 84px auto 0; padding: 0 24px; }
     .eh-cta-inner {
       position: relative; overflow: hidden; text-align: center;
       padding: 54px 28px; border-radius: var(--radius-lg);
@@ -242,7 +318,7 @@
       <a href="#faq">FAQ</a>
     </div>
     <div class="eh-nav-cta">
-      <a href="index.html" class="btn btn-primary btn-sm">Open Evo Budget</a>
+      <a href="index.html" class="btn btn-primary btn-sm eh-shine">Open Evo Budget</a>
     </div>
   </nav>
 
@@ -250,10 +326,10 @@
   <section class="eh-hero">
     <div class="eh-hero-copy">
       <span class="eh-hero-eyebrow">🚀 New tools launching soon</span>
-      <h1 class="eh-hero-title">One hub.<br>Every tool for your life.</h1>
+      <h1 class="eh-hero-title">One hub.<br><span class="grad-text">Every tool you need.</span></h1>
       <p class="eh-hero-sub">Start with Evo Budget, a free personal budget planner. Task planning, habit tracking, wedding planning, and more are on the way - all under one roof, all built with the same simple philosophy.</p>
       <div class="eh-hero-ctas">
-        <a href="index.html" class="btn btn-primary btn-lg">Open Evo Budget →</a>
+        <a href="index.html" class="btn btn-primary btn-lg eh-shine">Open Evo Budget →</a>
         <a href="#tools" class="btn btn-ghost">See what's coming</a>
       </div>
       <div class="eh-hero-trust"><strong>No bank login</strong> · <strong>No subscription</strong> · <strong>Free to start</strong></div>
@@ -262,52 +338,72 @@
       <div class="eh-orbit">
         <div class="eh-orbit-ring"></div>
         <div class="eh-orbit-ring eh-orbit-ring--inner"></div>
-        <div class="eh-orbit-core"><span>Evo<br>Hub</span></div>
-        <div class="eh-orbit-node eh-orbit-node--live" style="transform:rotate(-90deg) translate(190px) rotate(90deg)" title="Evo Budget - live">💰</div>
-        <div class="eh-orbit-node" style="transform:rotate(-30deg) translate(190px) rotate(30deg)" title="Task Planner - coming soon">📝</div>
-        <div class="eh-orbit-node" style="transform:rotate(30deg) translate(190px) rotate(-30deg)" title="Habit Tracker - coming soon">🔁</div>
-        <div class="eh-orbit-node" style="transform:rotate(90deg) translate(190px) rotate(-90deg)" title="Wedding Planner - coming soon">💍</div>
-        <div class="eh-orbit-node" style="transform:rotate(150deg) translate(190px) rotate(-150deg)" title="Meal Planner - coming soon">🍽️</div>
-        <div class="eh-orbit-node" style="transform:rotate(210deg) translate(190px) rotate(-210deg)" title="Fitness Planner - coming soon">🏋️</div>
+        <div class="eh-orbit-core">
+          <svg width="30" height="30" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
+            <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" fill-opacity=".65"/>
+            <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" fill-opacity=".65"/>
+            <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white"/>
+          </svg>
+          <span>Evo Hub</span>
+        </div>
+        <div class="eh-orbit-node-pos" style="transform:rotate(-90deg) translate(205px)">
+          <a class="eh-orbit-node eh-orbit-node--live" href="index.html" data-label="Evo Budget — Live now" style="--cr:90deg">💰</a>
+        </div>
+        <div class="eh-orbit-node-pos" style="transform:rotate(-30deg) translate(205px)">
+          <a class="eh-orbit-node" href="#tool-tasks" data-label="Task Planner — Coming soon" style="--cr:30deg">📝</a>
+        </div>
+        <div class="eh-orbit-node-pos" style="transform:rotate(30deg) translate(205px)">
+          <a class="eh-orbit-node" href="#tool-habits" data-label="Habit Tracker — Coming soon" style="--cr:-30deg">🔁</a>
+        </div>
+        <div class="eh-orbit-node-pos" style="transform:rotate(90deg) translate(205px)">
+          <a class="eh-orbit-node" href="#tool-wedding" data-label="Wedding Planner — Coming soon" style="--cr:-90deg">💍</a>
+        </div>
+        <div class="eh-orbit-node-pos" style="transform:rotate(150deg) translate(205px)">
+          <a class="eh-orbit-node" href="#tool-meals" data-label="Meal Planner — Coming soon" style="--cr:-150deg">🍽️</a>
+        </div>
+        <div class="eh-orbit-node-pos" style="transform:rotate(210deg) translate(205px)">
+          <a class="eh-orbit-node" href="#tool-fitness" data-label="Fitness Planner — Coming soon" style="--cr:-210deg">🏋️</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Marquee ───────────────────────────────────────────────── -->
-  <div class="eh-marquee" aria-hidden="true">
+  <!-- ── Marquee (pauses on hover, jumps to each tool) ────────────── -->
+  <div class="eh-marquee">
     <div class="eh-marquee-track">
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Budgeting</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Tasks</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Habits</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Weddings</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Meals</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Fitness</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Budgeting</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Tasks</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Habits</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Weddings</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Meals</span>
-      <span class="eh-marquee-item"><span class="eh-marquee-dot"></span>Fitness</span>
+      <a class="eh-marquee-item" href="#tool-budget"><span class="eh-marquee-dot"></span>Budgeting</a>
+      <a class="eh-marquee-item" href="#tool-tasks"><span class="eh-marquee-dot"></span>Tasks</a>
+      <a class="eh-marquee-item" href="#tool-habits"><span class="eh-marquee-dot"></span>Habits</a>
+      <a class="eh-marquee-item" href="#tool-wedding"><span class="eh-marquee-dot"></span>Weddings</a>
+      <a class="eh-marquee-item" href="#tool-meals"><span class="eh-marquee-dot"></span>Meals</a>
+      <a class="eh-marquee-item" href="#tool-fitness"><span class="eh-marquee-dot"></span>Fitness</a>
+      <a class="eh-marquee-item" href="#tool-budget" aria-hidden="true" tabindex="-1"><span class="eh-marquee-dot"></span>Budgeting</a>
+      <a class="eh-marquee-item" href="#tool-tasks" aria-hidden="true" tabindex="-1"><span class="eh-marquee-dot"></span>Tasks</a>
+      <a class="eh-marquee-item" href="#tool-habits" aria-hidden="true" tabindex="-1"><span class="eh-marquee-dot"></span>Habits</a>
+      <a class="eh-marquee-item" href="#tool-wedding" aria-hidden="true" tabindex="-1"><span class="eh-marquee-dot"></span>Weddings</a>
+      <a class="eh-marquee-item" href="#tool-meals" aria-hidden="true" tabindex="-1"><span class="eh-marquee-dot"></span>Meals</a>
+      <a class="eh-marquee-item" href="#tool-fitness" aria-hidden="true" tabindex="-1"><span class="eh-marquee-dot"></span>Fitness</a>
     </div>
   </div>
 
   <!-- ── Stats ─────────────────────────────────────────────────── -->
   <div class="eh-stats">
-    <div><div class="eh-stat-num">6</div><div class="eh-stat-label">Tools planned</div></div>
-    <div><div class="eh-stat-num">2</div><div class="eh-stat-label">Live today</div></div>
-    <div><div class="eh-stat-num">$0</div><div class="eh-stat-label">To start</div></div>
-    <div><div class="eh-stat-num">100%</div><div class="eh-stat-label">Your data, your control</div></div>
+    <div><div class="eh-stat-num" data-target="6">0</div><div class="eh-stat-label">Tools planned</div></div>
+    <div><div class="eh-stat-num" data-target="2">0</div><div class="eh-stat-label">Live today</div></div>
+    <div><div class="eh-stat-num" data-target="0" data-prefix="$">$0</div><div class="eh-stat-label">To start</div></div>
+    <div><div class="eh-stat-num" data-target="100" data-suffix="%">0%</div><div class="eh-stat-label">Your data, your control</div></div>
   </div>
 
   <!-- ── Bento tool showcase ───────────────────────────────────── -->
   <section class="eh-showcase" id="tools">
     <div class="eh-showcase-inner">
       <div class="eh-showcase-head">
-        <h2>Tools built for real life</h2>
+        <h2>Tools built for <span class="grad-text">real life</span></h2>
         <p>One live today. Five more on the way. All under one roof, all starting free.</p>
       </div>
       <div class="eh-bento">
-        <div class="eh-bento-tile eh-bento-tile--featured">
+        <div class="eh-bento-tile eh-bento-tile--featured" id="tool-budget">
           <span class="eh-bento-badge eh-bento-badge--live">🟢 Live now</span>
           <div>
             <div class="eh-bento-icon">💰</div>
@@ -322,48 +418,53 @@
           <a href="index.html" class="btn tool-open-btn eh-bento-cta">Open Evo Budget →</a>
         </div>
 
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b2">
+        <div class="eh-bento-tile eh-bento-tile--soon eh-b2" id="tool-tasks">
           <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
           <div class="eh-bento-icon">📝</div>
           <h3 class="eh-bento-name">Task Planner</h3>
           <p class="eh-bento-desc">To-dos without the clutter.</p>
+          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Task%20Planner%20launches">🔔 Notify me</a>
         </div>
 
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b3">
+        <div class="eh-bento-tile eh-bento-tile--soon eh-b3" id="tool-habits">
           <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
           <div class="eh-bento-icon">🔁</div>
           <h3 class="eh-bento-name">Habit Tracker</h3>
           <p class="eh-bento-desc">Streaks that actually stick.</p>
+          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Habit%20Tracker%20launches">🔔 Notify me</a>
         </div>
 
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b4">
+        <div class="eh-bento-tile eh-bento-tile--soon eh-b4" id="tool-wedding">
           <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
           <div class="eh-bento-icon">💍</div>
           <h3 class="eh-bento-name">Wedding Planner</h3>
           <p class="eh-bento-desc">Guests, budget, timeline - one place.</p>
+          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Wedding%20Planner%20launches">🔔 Notify me</a>
         </div>
 
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b5">
+        <div class="eh-bento-tile eh-bento-tile--soon eh-b5" id="tool-meals">
           <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
           <div class="eh-bento-icon">🍽️</div>
           <h3 class="eh-bento-name">Meal Planner</h3>
           <p class="eh-bento-desc">Meals and grocery lists, sorted.</p>
+          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Meal%20Planner%20launches">🔔 Notify me</a>
         </div>
 
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b6">
+        <div class="eh-bento-tile eh-bento-tile--soon eh-b6" id="tool-fitness">
           <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
           <div class="eh-bento-icon">🏋️</div>
           <h3 class="eh-bento-name">Fitness Planner</h3>
           <p class="eh-bento-desc">Workouts that fit your week.</p>
+          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Fitness%20Planner%20launches">🔔 Notify me</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Why Evo Hub (sticky-left) ─────────────────────────────── -->
+  <!-- ── Why Evo Hub (sticky-left, 2-col cards) ───────────────────── -->
   <section class="eh-why" id="why">
     <div class="eh-why-head">
-      <h2>Why Evo Hub?</h2>
+      <h2>Why <span class="grad-text">Evo Hub?</span></h2>
       <p>One set of values, applied to every tool we build.</p>
     </div>
     <div class="eh-why-rows">
@@ -371,28 +472,28 @@
         <div class="eh-why-icon">🧩</div>
         <div>
           <h3>Everything in one place</h3>
-          <p>As new tools launch, they all live under one roof. No more juggling five different apps and five different logins for the parts of life you actually need to manage.</p>
+          <p>As new tools launch, they all live under one roof. No more juggling five different apps and logins.</p>
         </div>
       </div>
       <div class="eh-why-row">
         <div class="eh-why-icon">🔒</div>
         <div>
           <h3>Your data, your control</h3>
-          <p>Every Evo Hub tool follows the same rule: your data is stored on your device by default, with no account required. Sync across devices is always optional, never mandatory.</p>
+          <p>Every tool stores your data on your device by default, with no account required. Sync is always optional.</p>
         </div>
       </div>
       <div class="eh-why-row">
         <div class="eh-why-icon">💸</div>
         <div>
           <h3>Pay once, not monthly</h3>
-          <p>No subscriptions, no recurring fees, no "premium tier" nagging. Try every tool for free, and unlock full access with a single one-time purchase if it's right for you.</p>
+          <p>No subscriptions, no recurring fees. Try every tool free, and unlock full access with one purchase.</p>
         </div>
       </div>
       <div class="eh-why-row">
         <div class="eh-why-icon">⚡</div>
         <div>
-          <h3>Simple enough to actually use</h3>
-          <p>No onboarding wizards, no 30-minute setup. Every tool in the hub gets out of your way so you can focus on the thing it's actually there to help with.</p>
+          <h3>Simple enough to use</h3>
+          <p>No onboarding wizards, no 30-minute setup. Every tool gets out of your way so you can get things done.</p>
         </div>
       </div>
     </div>
@@ -403,13 +504,13 @@
     <div class="eh-cta-inner">
       <h2>Ready to get organized?</h2>
       <p>Start with Evo Budget - free to try, nothing to install.</p>
-      <a href="index.html" class="btn btn-primary btn-lg">Open Evo Budget</a>
+      <a href="index.html" class="btn btn-primary btn-lg eh-shine">Open Evo Budget</a>
     </div>
   </section>
 
   <!-- ── FAQ ───────────────────────────────────────────────────── -->
   <section class="eh-faq" id="faq">
-    <div class="eh-faq-head"><h2>Frequently asked questions</h2></div>
+    <div class="eh-faq-head"><h2>Frequently asked <span class="grad-text">questions</span></h2></div>
     <div class="eh-faq-grid">
       <details class="faq-item">
         <summary class="faq-q">What is Evo Hub?</summary>
@@ -459,9 +560,9 @@
         <p class="eh-footer-col-title">Tools</p>
         <ul class="eh-footer-list">
           <li><a href="index.html">Evo Budget</a></li>
-          <li><span>Task Planner - soon</span></li>
-          <li><span>Habit Tracker - soon</span></li>
-          <li><span>Wedding Planner - soon</span></li>
+          <li><a href="#tool-tasks">Task Planner - soon</a></li>
+          <li><a href="#tool-habits">Habit Tracker - soon</a></li>
+          <li><a href="#tool-wedding">Wedding Planner - soon</a></li>
         </ul>
       </div>
       <div>
@@ -480,11 +581,48 @@
 
   <script>
     // Standalone marketing page - no dependency on script.js/the app bundle,
-    // just enough to respect a theme already chosen inside the tools.
+    // just enough to respect a theme already chosen inside the tools, plus
+    // a couple of small, self-contained interaction touches.
     (function () {
       var t = localStorage.getItem('evobudget_theme') || 'dark';
       document.documentElement.dataset.theme = t;
     })();
+
+    // Cursor-following spotlight glow on bento tiles.
+    document.querySelectorAll('.eh-bento-tile').forEach(function (tile) {
+      tile.addEventListener('mousemove', function (e) {
+        var r = tile.getBoundingClientRect();
+        tile.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        tile.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+
+    // Count-up stats once they scroll into view.
+    function animateStat(el) {
+      var target = parseInt(el.dataset.target, 10) || 0;
+      var prefix = el.dataset.prefix || '';
+      var suffix = el.dataset.suffix || '';
+      var start = null, dur = 1100;
+      function tick(now) {
+        if (start === null) start = now;
+        var p = Math.min(1, (now - start) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = prefix + Math.round(target * eased) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    var statEls = document.querySelectorAll('.eh-stat-num');
+    if ('IntersectionObserver' in window) {
+      var statObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { animateStat(entry.target); statObserver.unobserve(entry.target); }
+        });
+      }, { threshold: 0.6 });
+      statEls.forEach(function (el) { statObserver.observe(el); });
+    } else {
+      statEls.forEach(function (el) { el.textContent = (el.dataset.prefix || '') + el.dataset.target + (el.dataset.suffix || ''); });
+    }
   </script>
 </body>
 </html>
