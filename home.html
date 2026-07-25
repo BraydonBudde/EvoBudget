@@ -117,17 +117,21 @@
     .eh-orbit-node {
       --node-size: 64px;
       position: absolute; width: var(--node-size); height: var(--node-size); margin: calc(var(--node-size) / -2); top: 0; left: 0;
-      clip-path: url(#ehHexClip); background: var(--surface-strong); border: 1px solid var(--border-soft);
+      clip-path: url(#ehHexClip); background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); border: 1px solid var(--border-soft);
       display: flex; align-items: center; justify-content: center; font-size: calc(var(--node-size) * .39);
-      box-shadow: var(--shadow-card); text-decoration: none; cursor: pointer; pointer-events: auto;
-      transform: rotate(var(--cr, 0deg));
-      transition: transform .35s cubic-bezier(.34, 1.65, .64, 1), box-shadow .25s var(--ease);
+      box-shadow: 0 10px 24px -6px rgba(76,29,149,.5); text-decoration: none; cursor: pointer; pointer-events: auto;
+      /* rotate/scale as independent CSS properties (not the `transform`
+         shorthand) so only `scale` is transitioned - `rotate` is driven by
+         --cr on every rAF frame and must apply instantly, or a transition
+         on it would constantly "chase" a fast-moving target (worst during
+         the speed-pulse bursts) and stutter instead of spinning smoothly. */
+      rotate: var(--cr, 0deg); scale: 1;
+      transition: scale .35s cubic-bezier(.34, 1.65, .64, 1), box-shadow .25s var(--ease);
     }
     .eh-orbit-node:hover, .eh-orbit-node:focus-visible, .eh-orbit-node.is-current {
-      transform: rotate(var(--cr, 0deg)) scale(1.22);
+      scale: 1.22;
       box-shadow: var(--shadow-pop); z-index: 5; outline: none;
     }
-    .eh-orbit-node--live { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); box-shadow: 0 10px 24px -6px rgba(76,29,149,.5); }
     @media (max-width: 520px) { .eh-orbit-node { --node-size: 52px; } }
 
     /* ── Marquee strip (interactive: pauses, links into the showcase) ── */
