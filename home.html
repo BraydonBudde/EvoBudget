@@ -104,13 +104,13 @@
       box-shadow: 0 20px 50px -14px rgba(76,29,149,.55);
     }
     .eh-orbit-core svg { display: block; width: 60px; height: 60px; }
-    .eh-orbit-spin { position: absolute; inset: 0; }
+    .eh-orbit-spin { position: absolute; inset: 0; pointer-events: none; }
     .eh-orbit-node-pos { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
     .eh-orbit-node {
       position: absolute; width: 64px; height: 64px; margin: -32px; top: 0; left: 0;
       border-radius: 50%; background: var(--surface-strong); border: 1px solid var(--border-soft);
       display: flex; align-items: center; justify-content: center; font-size: 25px;
-      box-shadow: var(--shadow-card); text-decoration: none; cursor: pointer;
+      box-shadow: var(--shadow-card); text-decoration: none; cursor: pointer; pointer-events: auto;
       transform: rotate(var(--cr, 0deg));
       transition: transform .25s var(--ease), box-shadow .25s var(--ease);
     }
@@ -119,6 +119,7 @@
       box-shadow: var(--shadow-pop); z-index: 5; outline: none;
     }
     .eh-orbit-node--live { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); box-shadow: 0 10px 24px -6px rgba(76,29,149,.5); }
+    .eh-orbit-node--inner { width: 52px; height: 52px; margin: -26px; font-size: 20px; }
 
     /* ── Marquee strip (interactive: pauses, links into the showcase) ── */
     .eh-marquee { overflow: hidden; border-top: 1px solid var(--border-faint); border-bottom: 1px solid var(--border-faint); padding: 15px 0; }
@@ -326,42 +327,46 @@
             <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white"/>
           </svg>
         </div>
-        <div class="eh-orbit-spin" id="ehOrbitSpin">
+        <!-- Outer ring: 3 tools, spins one way -->
+        <div class="eh-orbit-spin eh-orbit-spin--outer" id="ehOrbitSpinOuter">
           <div class="eh-orbit-node-pos" data-angle="-90">
             <a class="eh-orbit-node eh-orbit-node--live" href="index.html"
                data-name="Evo Budget" data-icon="💰" data-status="live"
                data-desc="Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more."
                data-cta-label="Open Evo Budget →" data-cta-href="index.html">💰</a>
           </div>
-          <div class="eh-orbit-node-pos" data-angle="-30">
-            <a class="eh-orbit-node" href="#tool-tasks"
-               data-name="Task Planner" data-icon="📝" data-status="soon"
-               data-desc="Organize your to-dos and projects without the clutter of an over-built app."
-               data-cta-label="See in showcase ↓" data-cta-href="#tool-tasks">📝</a>
-          </div>
           <div class="eh-orbit-node-pos" data-angle="30">
-            <a class="eh-orbit-node" href="#tool-habits"
-               data-name="Habit Tracker" data-icon="🔁" data-status="soon"
-               data-desc="Build streaks that stick, with a clean daily view that makes consistency easy."
-               data-cta-label="See in showcase ↓" data-cta-href="#tool-habits">🔁</a>
-          </div>
-          <div class="eh-orbit-node-pos" data-angle="90">
             <a class="eh-orbit-node" href="#tool-wedding"
                data-name="Wedding Planner" data-icon="💍" data-status="soon"
                data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place."
                data-cta-label="See in showcase ↓" data-cta-href="#tool-wedding">💍</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="150">
-            <a class="eh-orbit-node" href="#tool-meals"
-               data-name="Meal Planner" data-icon="🍽️" data-status="soon"
-               data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste."
-               data-cta-label="See in showcase ↓" data-cta-href="#tool-meals">🍽️</a>
-          </div>
-          <div class="eh-orbit-node-pos" data-angle="210">
             <a class="eh-orbit-node" href="#tool-fitness"
                data-name="Fitness Planner" data-icon="🏋️" data-status="soon"
                data-desc="Plan workouts, track progress, and build routines that actually fit your week."
                data-cta-label="See in showcase ↓" data-cta-href="#tool-fitness">🏋️</a>
+          </div>
+        </div>
+        <!-- Inner ring: 3 tools, spins the opposite way -->
+        <div class="eh-orbit-spin eh-orbit-spin--inner" id="ehOrbitSpinInner">
+          <div class="eh-orbit-node-pos" data-angle="-30">
+            <a class="eh-orbit-node eh-orbit-node--inner" href="#tool-tasks"
+               data-name="Task Planner" data-icon="📝" data-status="soon"
+               data-desc="Organize your to-dos and projects without the clutter of an over-built app."
+               data-cta-label="See in showcase ↓" data-cta-href="#tool-tasks">📝</a>
+          </div>
+          <div class="eh-orbit-node-pos" data-angle="90">
+            <a class="eh-orbit-node eh-orbit-node--inner" href="#tool-habits"
+               data-name="Habit Tracker" data-icon="🔁" data-status="soon"
+               data-desc="Build streaks that stick, with a clean daily view that makes consistency easy."
+               data-cta-label="See in showcase ↓" data-cta-href="#tool-habits">🔁</a>
+          </div>
+          <div class="eh-orbit-node-pos" data-angle="210">
+            <a class="eh-orbit-node eh-orbit-node--inner" href="#tool-meals"
+               data-name="Meal Planner" data-icon="🍽️" data-status="soon"
+               data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste."
+               data-cta-label="See in showcase ↓" data-cta-href="#tool-meals">🍽️</a>
           </div>
         </div>
       </div>
@@ -590,35 +595,45 @@
       document.documentElement.dataset.theme = t;
     })();
 
-    // ── Orbit: continuous slow revolution (rAF-driven), freezes on hover/
-    // tap and hands the hero copy panel a live preview of that tool. ──
+    // ── Orbit: two independently-rotating rings (3 tools each) spinning in
+    // opposite directions (rAF-driven), both freeze on hover/tap and hand
+    // the hero copy panel a live preview of that tool. ──
     (function () {
       var orbitEl = document.getElementById('ehOrbit');
-      var spin = document.getElementById('ehOrbitSpin');
+      var spinOuter = document.getElementById('ehOrbitSpinOuter');
+      var spinInner = document.getElementById('ehOrbitSpinInner');
       var heroCopy = document.getElementById('ehHeroCopy');
-      if (!orbitEl || !spin || !heroCopy) return;
+      if (!orbitEl || !spinOuter || !spinInner || !heroCopy) return;
 
-      var positions = Array.prototype.slice.call(spin.querySelectorAll('.eh-orbit-node-pos'));
       // Radius as a fraction of the orbit's own rendered size (not a fixed
       // px value) - .eh-orbit is min(460px, 86vw), so on a narrow phone a
       // hardcoded desktop radius would push nodes past the viewport edge.
-      var radius = orbitEl.getBoundingClientRect().width * 0.445;
+      var orbitWidth = orbitEl.getBoundingClientRect().width;
+      var rings = [
+        { positions: Array.prototype.slice.call(spinOuter.querySelectorAll('.eh-orbit-node-pos')), radius: orbitWidth * 0.445, dir: 1, rotation: 0 },
+        { positions: Array.prototype.slice.call(spinInner.querySelectorAll('.eh-orbit-node-pos')), radius: orbitWidth * 0.26, dir: -1, rotation: 0 }
+      ];
       var degPerSec = 360 / 52; // one revolution every 52s - slow enough to track/click
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var rotation = 0, paused = false, lastTime = null;
+      var paused = false, lastTime = null;
 
       function applyPositions() {
-        positions.forEach(function (posEl) {
-          var base = parseFloat(posEl.dataset.angle);
-          var angle = base + rotation;
-          posEl.style.transform = 'rotate(' + angle + 'deg) translate(' + radius + 'px)';
-          var node = posEl.querySelector('.eh-orbit-node');
-          if (node) node.style.setProperty('--cr', (-angle) + 'deg');
+        rings.forEach(function (ring) {
+          ring.positions.forEach(function (posEl) {
+            var base = parseFloat(posEl.dataset.angle);
+            var angle = base + ring.rotation;
+            posEl.style.transform = 'rotate(' + angle + 'deg) translate(' + ring.radius + 'px)';
+            var node = posEl.querySelector('.eh-orbit-node');
+            if (node) node.style.setProperty('--cr', (-angle) + 'deg');
+          });
         });
       }
       function tick(now) {
         if (!paused && !reduceMotion) {
-          if (lastTime !== null) rotation = (rotation + degPerSec * (now - lastTime) / 1000) % 360;
+          if (lastTime !== null) {
+            var delta = degPerSec * (now - lastTime) / 1000;
+            rings.forEach(function (ring) { ring.rotation = (ring.rotation + delta * ring.dir + 360) % 360; });
+          }
           lastTime = now;
           applyPositions();
         } else {
