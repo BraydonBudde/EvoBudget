@@ -95,15 +95,15 @@
     }
 
     /* ── Orbit visual: slowly revolves, freezes + hands off to the hero
-       copy panel on hover (desktop) or tap (touch). Node positions and
-       counter-rotation are driven by JS (rAF), not CSS keyframes, so the
-       "freeze in place, resume from the same spot" behaviour is exact. ── */
+       copy panel on hover (desktop) or tap (touch). Node positions AND the
+       ring lines they sit on are both driven by the same JS (rAF) rotation
+       values (not CSS keyframes), so the lines and buttons can never drift
+       out of sync, and "freeze in place, resume from the same spot" is
+       exact for both at once. Ring size/position (width/height/margin) is
+       also set from JS, computed from the exact same radius used to place
+       the nodes, so each ring line and its buttons are always concentric. ── */
     .eh-orbit { position: relative; width: min(460px, 86vw); height: min(460px, 86vw); margin: 0 auto; }
-    .eh-orbit-ring { position: absolute; inset: 3%; display: block; animation: eh-spin 50s linear infinite; }
-    .eh-orbit-ring--inner { inset: 15%; animation-duration: 38s; animation-direction: reverse; }
-    @keyframes eh-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .eh-orbit.is-paused .eh-orbit-ring { animation-play-state: paused; }
-    @media (prefers-reduced-motion: reduce) { .eh-orbit-ring { animation: none; } }
+    .eh-orbit-ring { position: absolute; top: 50%; left: 50%; pointer-events: none; }
     .eh-orbit-core {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 30%; height: 30%; border-radius: 50%;
@@ -117,7 +117,7 @@
     .eh-orbit-node {
       --node-size: 64px;
       position: absolute; width: var(--node-size); height: var(--node-size); margin: calc(var(--node-size) / -2); top: 0; left: 0;
-      border-radius: 50%; background: var(--surface-strong); border: 1px solid var(--border-soft);
+      clip-path: url(#ehHexClip); background: var(--surface-strong); border: 1px solid var(--border-soft);
       display: flex; align-items: center; justify-content: center; font-size: calc(var(--node-size) * .39);
       box-shadow: var(--shadow-card); text-decoration: none; cursor: pointer; pointer-events: auto;
       transform: rotate(var(--cr, 0deg));
@@ -344,6 +344,12 @@
               <stop offset="55%" stop-color="#ec4899" stop-opacity=".3"/>
               <stop offset="100%" stop-color="#6366f1" stop-opacity=".15"/>
             </linearGradient>
+            <!-- Rounded-hexagon clip for the orbit node buttons, in
+                 objectBoundingBox (0-1) units so it scales cleanly with
+                 both the 64px and 52px node sizes. -->
+            <clipPath id="ehHexClip" clipPathUnits="objectBoundingBox">
+              <path d="M0.4221,0.045 Q0.5,0 0.5779,0.045 L0.8551,0.205 Q0.933,0.25 0.933,0.34 L0.933,0.66 Q0.933,0.75 0.8551,0.795 L0.5779,0.955 Q0.5,1 0.4221,0.955 L0.1449,0.795 Q0.067,0.75 0.067,0.66 L0.067,0.34 Q0.067,0.25 0.1449,0.205 Z"/>
+            </clipPath>
           </defs>
         </svg>
         <div class="eh-orbit-core">
@@ -635,28 +641,36 @@
       // Radius as a fraction of the orbit's own rendered size (not a fixed
       // px value) - .eh-orbit is min(460px, 86vw), so on a narrow phone a
       // hardcoded desktop radius would push nodes past the viewport edge.
-      // The outer radius matches the outer dashed ring's own geometry
-      // (inset 3% -> 47% of width) so nodes sit centered right on the line.
-      // The inner radius is then measured/clamped against the ACTUAL
-      // rendered core size and node size (not assumed constants) so inner
-      // and outer nodes can never overlap each other or the core, on any
-      // screen size - see clampInnerRadius() below.
-      var orbitWidth = orbitEl.getBoundingClientRect().width;
-      var outerRadius = orbitWidth * 0.47;
-      var coreRadius = orbitEl.querySelector('.eh-orbit-core').getBoundingClientRect().width / 2;
-      var nodeSize = orbitEl.querySelector('.eh-orbit-node').getBoundingClientRect().width;
-      var clearGap = 12; // desired visual breathing room between circles, px
-
-      function clampInnerRadius(desired) {
-        var maxByOuter = outerRadius - nodeSize - clearGap; // stay clear of outer-ring nodes
-        var minByCore = coreRadius + nodeSize / 2 + clearGap; // stay clear of the center core
-        if (maxByOuter < minByCore) return (maxByOuter + minByCore) / 2; // impossibly tight screen: split the difference
-        return Math.max(minByCore, Math.min(desired, maxByOuter));
+      // The inner radius is measured/clamped against the ACTUAL rendered
+      // core size and node size (not assumed constants) so inner and outer
+      // nodes can never overlap each other or the core, on any screen size.
+      // The ring *lines* are then drawn at these exact same radii (see
+      // measureAndLayout() below) so the buttons always sit centered right
+      // on their line, never floating off it.
+      var ringOuterEl = orbitEl.querySelector('.eh-orbit-ring:not(.eh-orbit-ring--inner)');
+      var ringInnerEl = orbitEl.querySelector('.eh-orbit-ring--inner');
+      function sizeRing(el, radius) {
+        // Circle is drawn at r=49 inside a 0-100 viewBox, i.e. 49/50 = .98
+        // of the box's own half-width - size the box so that maps to radius.
+        var box = (radius / 0.98) * 2;
+        el.style.width = box + 'px';
+        el.style.height = box + 'px';
+        el.style.marginLeft = (-box / 2) + 'px';
+        el.style.marginTop = (-box / 2) + 'px';
       }
 
+      // Outer nodes sit at data-angle -90/30/150, inner nodes at -30/90/210
+      // - a fixed 60deg offset, so at rotation 0 every inner node is
+      // exactly halfway between two outer ones (see the screenshots). A
+      // node from one ring only ever lines up with a node from the other
+      // when (outer rotation - inner rotation) crosses 60deg (mod 120,
+      // since each ring repeats every 120deg) - that's the one moment per
+      // cycle we want the "passing" speed burst to peak at.
+      var PASS_PHASE_OFFSET = 60;
+
       var rings = [
-        { positions: Array.prototype.slice.call(spinOuter.querySelectorAll('.eh-orbit-node-pos')), radius: outerRadius, dir: 1, rotation: 0 },
-        { positions: Array.prototype.slice.call(spinInner.querySelectorAll('.eh-orbit-node-pos')), radius: clampInnerRadius(orbitWidth * 0.35), dir: -1, rotation: 0 }
+        { el: ringOuterEl, positions: Array.prototype.slice.call(spinOuter.querySelectorAll('.eh-orbit-node-pos')), radius: 0, dir: 1, rotation: 0 },
+        { el: ringInnerEl, positions: Array.prototype.slice.call(spinInner.querySelectorAll('.eh-orbit-node-pos')), radius: 0, dir: -1, rotation: 0 }
       ];
       var baseDegPerSec = 360 / 52; // one revolution every 52s - slow enough to track/click
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -671,20 +685,63 @@
             var node = posEl.querySelector('.eh-orbit-node');
             if (node) node.style.setProperty('--cr', (-angle) + 'deg');
           });
+          // The ring line rotates with the exact same value driving its
+          // nodes, so the dashes and the buttons can never drift apart.
+          if (ring.el) ring.el.style.transform = 'rotate(' + ring.rotation + 'deg)';
         });
       }
+
+      // Measures the orbit/core/node sizes and (re)computes both radii from
+      // them, then re-applies. Run on load AND once webfonts finish
+      // swapping in (they can reflow .eh-hero's grid columns a beat after
+      // first paint) and on resize, so the never-overlap guarantee holds
+      // against the orbit's ACTUAL current size, not a stale one-time read.
+      function measureAndLayout() {
+        var orbitWidth = orbitEl.getBoundingClientRect().width;
+        var outerRadius = orbitWidth * 0.47;
+        var coreRadius = orbitEl.querySelector('.eh-orbit-core').getBoundingClientRect().width / 2;
+        var nodeSize = orbitEl.querySelector('.eh-orbit-node').getBoundingClientRect().width;
+        var clearGap = 12; // desired visual breathing room between circles, px
+
+        function clampInnerRadius(desired) {
+          // On very tight screens the full clearGap on both sides won't
+          // fit - shrink the gap (down to 0, i.e. circles just touch but
+          // never overlap) rather than keep a fixed gap and let something
+          // overlap.
+          var maxFeasibleGap = (outerRadius - 1.5 * nodeSize - coreRadius) / 2;
+          var gap = Math.max(0, Math.min(clearGap, maxFeasibleGap));
+          var maxByOuter = outerRadius - nodeSize - gap; // stay clear of outer-ring nodes
+          var minByCore = coreRadius + nodeSize / 2 + gap; // stay clear of the center core
+          return Math.max(minByCore, Math.min(desired, maxByOuter));
+        }
+
+        rings[0].radius = outerRadius;
+        rings[1].radius = clampInnerRadius(orbitWidth * 0.35);
+        if (ringOuterEl) sizeRing(ringOuterEl, rings[0].radius);
+        if (ringInnerEl) sizeRing(ringInnerEl, rings[1].radius);
+        applyPositions();
+      }
+      measureAndLayout();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureAndLayout);
+      var resizeTimer = null;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(measureAndLayout, 150);
+      });
+
       function tick(now) {
         if (!paused && !reduceMotion) {
           if (lastTime !== null) {
             // Each ring has 3 evenly-spaced nodes, so their relative angle
-            // repeats every 120deg - use that 3-fold symmetry to spot the
-            // moments a node from one ring is passing a node from the
-            // other, and give both rings a burst of extra speed right
-            // then, so the motion feels alive instead of a flat constant
-            // crawl.
-            var relRad = (rings[0].rotation - rings[1].rotation) * Math.PI / 180 * 3;
+            // repeats every 120deg - use that 3-fold symmetry, phase-
+            // shifted by PASS_PHASE_OFFSET, to spot the exact moments a
+            // node from one ring is passing a node from the other, and
+            // give both rings a brief burst of extra speed right then (and
+            // only then), so the motion feels alive instead of a flat
+            // constant crawl.
+            var relRad = (rings[0].rotation - rings[1].rotation - PASS_PHASE_OFFSET) * Math.PI / 180 * 3;
             var closeness = Math.max(0, Math.cos(relRad));
-            var speedMul = 1 + closeness * closeness * closeness * 2.2;
+            var speedMul = 1 + Math.pow(closeness, 5) * 2.6;
             var delta = baseDegPerSec * speedMul * (now - lastTime) / 1000;
             rings.forEach(function (ring) { ring.rotation = (ring.rotation + delta * ring.dir + 360) % 360; });
           }
@@ -695,7 +752,6 @@
         }
         requestAnimationFrame(tick);
       }
-      applyPositions();
       requestAnimationFrame(tick);
 
       function setPaused(p) {
