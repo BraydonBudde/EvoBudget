@@ -64,6 +64,14 @@
       max-width: 1180px; margin: 0 auto; padding: clamp(40px, 7vw, 88px) clamp(20px, 4vw, 56px) 50px;
     }
     .eh-hero-copy { transition: opacity .15s; }
+    /* Bounce in whenever the hero copy swaps (tool preview <-> default). */
+    .eh-hero-copy.eh-bounce-in { animation: eh-hero-bounce .5s cubic-bezier(.34, 1.56, .64, 1); }
+    @keyframes eh-hero-bounce {
+      0% { opacity: 0; transform: translateY(14px) scale(.97); }
+      60% { opacity: 1; transform: translateY(-4px) scale(1.015); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) { .eh-hero-copy.eh-bounce-in { animation: none; } }
     .eh-hero-eyebrow {
       display: inline-flex; align-items: center; gap: 7px;
       font-size: 12px; font-weight: 700; color: var(--grad-indigo);
@@ -91,34 +99,36 @@
        counter-rotation are driven by JS (rAF), not CSS keyframes, so the
        "freeze in place, resume from the same spot" behaviour is exact. ── */
     .eh-orbit { position: relative; width: min(460px, 86vw); height: min(460px, 86vw); margin: 0 auto; }
-    .eh-orbit-ring { position: absolute; inset: 3%; border-radius: 50%; border: 1.5px dashed rgba(99,102,241,.28); animation: eh-spin 50s linear infinite; }
-    .eh-orbit-ring--inner { inset: 15%; border-color: rgba(236,72,153,.22); animation-duration: 38s; animation-direction: reverse; }
+    .eh-orbit-ring { position: absolute; inset: 3%; display: block; animation: eh-spin 50s linear infinite; }
+    .eh-orbit-ring--inner { inset: 15%; animation-duration: 38s; animation-direction: reverse; }
     @keyframes eh-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .eh-orbit.is-paused .eh-orbit-ring { animation-play-state: paused; }
     @media (prefers-reduced-motion: reduce) { .eh-orbit-ring { animation: none; } }
     .eh-orbit-core {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 140px; height: 140px; border-radius: 50%;
+      width: 30%; height: 30%; border-radius: 50%;
       background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink));
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 20px 50px -14px rgba(76,29,149,.55);
     }
-    .eh-orbit-core svg { display: block; width: 60px; height: 60px; }
+    .eh-orbit-core svg { display: block; width: 42%; height: 42%; }
     .eh-orbit-spin { position: absolute; inset: 0; pointer-events: none; }
     .eh-orbit-node-pos { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
     .eh-orbit-node {
-      position: absolute; width: 64px; height: 64px; margin: -32px; top: 0; left: 0;
+      --node-size: 64px;
+      position: absolute; width: var(--node-size); height: var(--node-size); margin: calc(var(--node-size) / -2); top: 0; left: 0;
       border-radius: 50%; background: var(--surface-strong); border: 1px solid var(--border-soft);
-      display: flex; align-items: center; justify-content: center; font-size: 25px;
+      display: flex; align-items: center; justify-content: center; font-size: calc(var(--node-size) * .39);
       box-shadow: var(--shadow-card); text-decoration: none; cursor: pointer; pointer-events: auto;
       transform: rotate(var(--cr, 0deg));
-      transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+      transition: transform .35s cubic-bezier(.34, 1.65, .64, 1), box-shadow .25s var(--ease);
     }
     .eh-orbit-node:hover, .eh-orbit-node:focus-visible, .eh-orbit-node.is-current {
       transform: rotate(var(--cr, 0deg)) scale(1.22);
       box-shadow: var(--shadow-pop); z-index: 5; outline: none;
     }
     .eh-orbit-node--live { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); box-shadow: 0 10px 24px -6px rgba(76,29,149,.5); }
+    @media (max-width: 520px) { .eh-orbit-node { --node-size: 52px; } }
 
     /* ── Marquee strip (interactive: pauses, links into the showcase) ── */
     .eh-marquee { overflow: hidden; border-top: 1px solid var(--border-faint); border-bottom: 1px solid var(--border-faint); padding: 15px 0; }
@@ -316,8 +326,26 @@
     </div>
     <div class="eh-hero-visual">
       <div class="eh-orbit" id="ehOrbit">
-        <div class="eh-orbit-ring"></div>
-        <div class="eh-orbit-ring eh-orbit-ring--inner"></div>
+        <svg class="eh-orbit-ring" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="49" fill="none" stroke="url(#ehRingGradOuter)" stroke-width="1.5" stroke-dasharray="3.2 4.6" stroke-linecap="round"/>
+        </svg>
+        <svg class="eh-orbit-ring eh-orbit-ring--inner" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="49" fill="none" stroke="url(#ehRingGradInner)" stroke-width="1.5" stroke-dasharray="3.2 4.6" stroke-linecap="round"/>
+        </svg>
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+          <defs>
+            <linearGradient id="ehRingGradOuter" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#818cf8" stop-opacity=".75"/>
+              <stop offset="55%" stop-color="#6366f1" stop-opacity=".35"/>
+              <stop offset="100%" stop-color="#ec4899" stop-opacity=".18"/>
+            </linearGradient>
+            <linearGradient id="ehRingGradInner" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#f9a8d4" stop-opacity=".7"/>
+              <stop offset="55%" stop-color="#ec4899" stop-opacity=".3"/>
+              <stop offset="100%" stop-color="#6366f1" stop-opacity=".15"/>
+            </linearGradient>
+          </defs>
+        </svg>
         <div class="eh-orbit-core">
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
@@ -607,16 +635,30 @@
       // Radius as a fraction of the orbit's own rendered size (not a fixed
       // px value) - .eh-orbit is min(460px, 86vw), so on a narrow phone a
       // hardcoded desktop radius would push nodes past the viewport edge.
-      // Radius fractions match the decorative dashed rings' own geometry
-      // exactly (outer ring: inset 3% -> radius = 47% of width; inner ring:
-      // inset 15% -> radius = 35% of width) so each node's center sits
-      // right on its ring's line, not floating inside or outside it.
+      // The outer radius matches the outer dashed ring's own geometry
+      // (inset 3% -> 47% of width) so nodes sit centered right on the line.
+      // The inner radius is then measured/clamped against the ACTUAL
+      // rendered core size and node size (not assumed constants) so inner
+      // and outer nodes can never overlap each other or the core, on any
+      // screen size - see clampInnerRadius() below.
       var orbitWidth = orbitEl.getBoundingClientRect().width;
+      var outerRadius = orbitWidth * 0.47;
+      var coreRadius = orbitEl.querySelector('.eh-orbit-core').getBoundingClientRect().width / 2;
+      var nodeSize = orbitEl.querySelector('.eh-orbit-node').getBoundingClientRect().width;
+      var clearGap = 12; // desired visual breathing room between circles, px
+
+      function clampInnerRadius(desired) {
+        var maxByOuter = outerRadius - nodeSize - clearGap; // stay clear of outer-ring nodes
+        var minByCore = coreRadius + nodeSize / 2 + clearGap; // stay clear of the center core
+        if (maxByOuter < minByCore) return (maxByOuter + minByCore) / 2; // impossibly tight screen: split the difference
+        return Math.max(minByCore, Math.min(desired, maxByOuter));
+      }
+
       var rings = [
-        { positions: Array.prototype.slice.call(spinOuter.querySelectorAll('.eh-orbit-node-pos')), radius: orbitWidth * 0.47, dir: 1, rotation: 0 },
-        { positions: Array.prototype.slice.call(spinInner.querySelectorAll('.eh-orbit-node-pos')), radius: orbitWidth * 0.35, dir: -1, rotation: 0 }
+        { positions: Array.prototype.slice.call(spinOuter.querySelectorAll('.eh-orbit-node-pos')), radius: outerRadius, dir: 1, rotation: 0 },
+        { positions: Array.prototype.slice.call(spinInner.querySelectorAll('.eh-orbit-node-pos')), radius: clampInnerRadius(orbitWidth * 0.35), dir: -1, rotation: 0 }
       ];
-      var degPerSec = 360 / 52; // one revolution every 52s - slow enough to track/click
+      var baseDegPerSec = 360 / 52; // one revolution every 52s - slow enough to track/click
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var paused = false, lastTime = null;
 
@@ -634,7 +676,16 @@
       function tick(now) {
         if (!paused && !reduceMotion) {
           if (lastTime !== null) {
-            var delta = degPerSec * (now - lastTime) / 1000;
+            // Each ring has 3 evenly-spaced nodes, so their relative angle
+            // repeats every 120deg - use that 3-fold symmetry to spot the
+            // moments a node from one ring is passing a node from the
+            // other, and give both rings a burst of extra speed right
+            // then, so the motion feels alive instead of a flat constant
+            // crawl.
+            var relRad = (rings[0].rotation - rings[1].rotation) * Math.PI / 180 * 3;
+            var closeness = Math.max(0, Math.cos(relRad));
+            var speedMul = 1 + closeness * closeness * closeness * 2.2;
+            var delta = baseDegPerSec * speedMul * (now - lastTime) / 1000;
             rings.forEach(function (ring) { ring.rotation = (ring.rotation + delta * ring.dir + 360) % 360; });
           }
           lastTime = now;
@@ -661,6 +712,14 @@
       var revertTimer = null;
       var nodes = Array.prototype.slice.call(orbitEl.querySelectorAll('.eh-orbit-node'));
 
+      // Restart the bounce-in animation every time the hero copy's content
+      // changes (both showing a preview and reverting to the default).
+      function bounceHeroCopy() {
+        heroCopy.classList.remove('eh-bounce-in');
+        void heroCopy.offsetWidth; // force reflow so the animation restarts
+        heroCopy.classList.add('eh-bounce-in');
+      }
+
       function showPreview(node) {
         clearTimeout(revertTimer);
         setPaused(true);
@@ -679,12 +738,14 @@
           '</div>';
         var resetBtn = heroCopy.querySelector('.eh-hero-reset');
         if (resetBtn) resetBtn.addEventListener('click', resetPreview);
+        bounceHeroCopy();
       }
       function resetPreview() {
         clearTimeout(revertTimer);
         setPaused(false);
         nodes.forEach(function (n) { n.classList.remove('is-current'); });
         heroCopy.innerHTML = defaultHeroHTML;
+        bounceHeroCopy();
       }
 
       nodes.forEach(function (node) {
