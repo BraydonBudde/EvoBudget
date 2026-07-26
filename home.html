@@ -26,7 +26,7 @@
   <style>
     html { scroll-behavior: smooth; }
     section[id] { scroll-margin-top: 84px; }
-    .eh-bento-tile[id] { scroll-margin-top: 100px; }
+    .eh-switcher-tab[id] { scroll-margin-top: 100px; }
 
     /* ── Sticky glass nav ─────────────────────────────────────────── */
     .eh-nav {
@@ -155,77 +155,119 @@
     .eh-stat-label { font-size: 11.5px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
     @media (max-width: 640px) { .eh-stats { grid-template-columns: repeat(2, 1fr); row-gap: 28px; } }
 
-    /* ── Bento tool showcase ──────────────────────────────────────── */
-    .eh-showcase { padding: 76px 24px; margin-top: 70px; background: var(--surface-strong); border-top: 1px solid var(--border-faint); border-bottom: 1px solid var(--border-faint); }
+    /* ── App-switcher tool showcase ──────────────────────────────────
+       A device-window mockup + caption on the left that morphs to match
+       whichever tool is selected from the tab list on the right - reads
+       like browsing a real product demo rather than a static grid. ── */
+    /* overflow-x: clip guards against the entrance transforms below (a
+       translateX slide-in on the stage/tabs) ever contributing transient
+       horizontal scroll while mid-animation - same reasoning as body's
+       overflow-x: clip further up. */
+    .eh-showcase { padding: 76px 24px; margin-top: 70px; background: var(--surface-strong); border-top: 1px solid var(--border-faint); border-bottom: 1px solid var(--border-faint); overflow-x: clip; }
     .eh-showcase-inner { max-width: 1040px; margin: 0 auto; }
     .eh-showcase-head { text-align: center; max-width: 560px; margin: 0 auto 44px; }
     .eh-showcase-head h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 800; color: var(--text-primary); margin: 0 0 10px; }
     .eh-showcase-head p { font-size: 14.5px; color: var(--text-secondary); margin: 0; }
-    .eh-bento { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 160px; gap: 16px; }
-    .eh-bento-tile {
-      position: relative; border-radius: var(--radius-lg); padding: 22px; overflow: hidden;
-      background: var(--surface); border: 1px solid var(--border-soft);
-      display: flex; flex-direction: column; gap: 8px;
-      transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease), opacity .2s var(--ease);
+
+    .eh-switcher { display: grid; grid-template-columns: 1.15fr .85fr; gap: 30px; align-items: start; }
+
+    /* Entrance: stage slides in from the left, tabs from the right, the
+       first time the section scrolls into view. */
+    .eh-switcher-stage, .eh-switcher-tabs { opacity: 0; transition: opacity .6s var(--ease), transform .6s var(--ease); }
+    .eh-switcher-stage { transform: translateX(-18px); }
+    .eh-switcher-tabs { transform: translateX(18px); transition-delay: .1s; }
+    .eh-showcase.is-visible .eh-switcher-stage, .eh-showcase.is-visible .eh-switcher-tabs { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .eh-switcher-stage, .eh-switcher-tabs { opacity: 1; transform: none; transition: none; } }
+
+    /* LEFT: device-window mockup + caption */
+    .eh-switcher-stage { display: flex; flex-direction: column; gap: 22px; }
+    .eh-switcher-window {
+      border-radius: var(--radius-lg); overflow: hidden; background: var(--surface);
+      border: 1px solid var(--border-soft); box-shadow: var(--shadow-card);
     }
-    .eh-bento-tile::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .25s;
-      background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(99,102,241,.16), transparent 70%);
+    .eh-switcher-window-bar { display: flex; gap: 6px; padding: 12px 14px; background: var(--surface-strong); border-bottom: 1px solid var(--border-faint); }
+    .eh-switcher-window-bar span { width: 9px; height: 9px; border-radius: 50%; background: var(--border-soft); }
+    .eh-switcher-window-body {
+      position: relative; height: 260px; padding: 26px;
+      display: flex; flex-direction: column; justify-content: center; gap: 14px;
+      background: linear-gradient(160deg, rgba(99,102,241,.07), rgba(236,72,153,.05));
     }
-    .eh-bento-tile:hover::before { opacity: 1; }
-    .eh-bento-tile--featured { grid-column: 1 / 3; grid-row: 1 / 3; padding: 30px; justify-content: space-between; }
-    .eh-b2 { grid-column: 3; grid-row: 1; }
-    .eh-b3 { grid-column: 3; grid-row: 2; }
-    .eh-b4 { grid-column: 1; grid-row: 3; }
-    .eh-b5 { grid-column: 2; grid-row: 3; }
-    .eh-b6 { grid-column: 3; grid-row: 3; }
-    .eh-bento-tile--featured { background: linear-gradient(150deg, rgba(99,102,241,.16), rgba(236,72,153,.1)); border-color: rgba(99,102,241,.3); }
-    .eh-bento-tile--featured:hover { transform: translateY(-3px); box-shadow: var(--shadow-pop); }
-    .eh-bento-tile--soon { opacity: .68; cursor: pointer; }
-    .eh-bento-tile--soon:hover, .eh-bento-tile--soon:focus-within, .eh-bento-tile--soon.is-active {
-      opacity: 1; transform: translateY(-3px); box-shadow: var(--shadow-pop); border-color: rgba(99,102,241,.3);
+
+    /* Mockup primitives - every tool reuses the same brand gradient, only
+       the SHAPE changes, so switching tabs always feels like one product. */
+    .mk-fade { animation: mk-fade-in .45s var(--ease); }
+    @keyframes mk-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .mk-fade { animation: none; } }
+    .mk-donut { display: flex; align-items: center; gap: 22px; }
+    .mk-donut svg { display: block; flex-shrink: 0; }
+    .mk-donut-stats { display: flex; flex-direction: column; gap: 11px; flex: 1; }
+    .mk-donut-stat-row { display: flex; align-items: center; font-size: 11px; color: var(--text-secondary); }
+    .mk-donut-stat-row span:first-child { width: 60px; flex-shrink: 0; }
+    .mk-donut-stat-bar { flex: 1; height: 6px; border-radius: 4px; background: var(--border-faint); margin: 0 10px; overflow: hidden; }
+    .mk-donut-stat-bar > i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--grad-indigo), var(--grad-pink)); }
+    .mk-rows { display: flex; flex-direction: column; gap: 13px; }
+    .mk-row { display: flex; align-items: center; gap: 12px; }
+    .mk-row-dot { width: 18px; height: 18px; border-radius: 6px; border: 2px solid var(--grad-indigo); flex-shrink: 0; }
+    .mk-row-dot.is-done { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); border-color: transparent; }
+    .mk-row-bar { flex: 1; height: 9px; border-radius: 5px; background: var(--border-faint); }
+    .mk-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .mk-grid-cell { aspect-ratio: 1; border-radius: 4px; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); }
+    .mk-bars { display: flex; align-items: flex-end; gap: 10px; height: 130px; }
+    .mk-bar { flex: 1; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--grad-pink), var(--grad-indigo)); }
+
+    .eh-switcher-caption { padding: 0 4px; }
+    .eh-switcher-badge {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700;
+      color: var(--grad-indigo); background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25);
+      padding: 4px 11px; border-radius: var(--radius-pill); margin-bottom: 12px;
     }
-    .eh-bento-tile--soon .eh-bento-icon { filter: grayscale(.5); transition: filter .2s; }
-    .eh-bento-tile--soon:hover .eh-bento-icon, .eh-bento-tile--soon:focus-within .eh-bento-icon, .eh-bento-tile--soon.is-active .eh-bento-icon { filter: grayscale(0); }
-    .eh-bento-icon { font-size: 1.8rem; line-height: 1; }
-    .eh-bento-tile--featured .eh-bento-icon { font-size: 2.6rem; }
-    .eh-bento-name { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; color: var(--text-primary); margin: 0; }
-    .eh-bento-tile--featured .eh-bento-name { font-size: 20px; }
-    .eh-bento-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.55; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .eh-bento-tile--featured .eh-bento-desc { font-size: 13.5px; max-width: 320px; white-space: normal; }
-    /* One-line feature summary swaps in for the description on hover/focus/
-       tap - same line, same space, so nothing shifts or clips. */
-    .eh-bento-desc--hover { display: none; }
-    .eh-bento-tile--soon:hover .eh-bento-desc--default,
-    .eh-bento-tile--soon:focus-within .eh-bento-desc--default,
-    .eh-bento-tile--soon.is-active .eh-bento-desc--default { display: none; }
-    .eh-bento-tile--soon:hover .eh-bento-desc--hover,
-    .eh-bento-tile--soon:focus-within .eh-bento-desc--hover,
-    .eh-bento-tile--soon.is-active .eh-bento-desc--hover { display: block; color: var(--grad-indigo); font-weight: 600; }
-    .eh-bento-checklist { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+    .eh-switcher-badge--live { color: #10b981; background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.3); }
+    .eh-switcher-caption h3 { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px; }
+    .eh-switcher-caption p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; margin: 0 0 16px; max-width: 420px; }
+    .eh-switcher-caption .eh-bento-checklist { margin-bottom: 20px; }
+
+    /* RIGHT: tab list */
+    .eh-switcher-tabs { display: flex; flex-direction: column; gap: 8px; }
+    .eh-switcher-tab {
+      display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+      padding: 13px 14px; border-radius: var(--radius-md); border: 1px solid transparent;
+      background: transparent; font-family: inherit; cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .eh-switcher-tab:hover { background: var(--surface); }
+    .eh-switcher-tab.is-active { background: var(--surface); border-color: rgba(99,102,241,.3); box-shadow: var(--shadow-card); }
+    .eh-switcher-tab:focus-visible { outline: 2px solid var(--grad-indigo); outline-offset: 2px; }
+    .eh-switcher-tab-icon {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+      background: var(--surface-strong); border: 1px solid var(--border-soft); transition: background .2s, border-color .2s;
+    }
+    .eh-switcher-tab.is-active .eh-switcher-tab-icon { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); border-color: transparent; }
+    .eh-switcher-tab-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .eh-switcher-tab-text strong { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
+    .eh-switcher-tab-text small { font-size: 11px; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .eh-switcher-tab-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); flex-shrink: 0; }
+    .eh-switcher-tab-badge--live { color: #10b981; }
+
+    .eh-bento-checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
     .eh-bento-checklist li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-secondary); }
     .eh-bento-checklist li::before { content: '✓'; color: #10b981; font-weight: 800; font-size: 12px; }
-    .eh-bento-badge {
-      position: absolute; top: 16px; right: 16px; z-index: 1;
-      font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
-      padding: 3px 9px; border-radius: var(--radius-pill);
-    }
-    .eh-bento-badge--live { background: rgba(16,185,129,.16); color: #10b981; }
-    .eh-bento-badge--soon { background: rgba(148,132,255,.16); color: var(--text-faint); }
-    .eh-bento-cta { margin-top: auto; position: relative; z-index: 1; }
     .eh-bento-notify {
-      position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 700; color: var(--grad-indigo); text-decoration: none; margin-top: auto;
+      display: inline-flex; align-items: center; gap: 5px; width: fit-content;
+      font-size: 11.5px; font-weight: 700; color: var(--grad-indigo); text-decoration: none;
+      background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25);
+      padding: 9px 16px; border-radius: var(--radius-pill); transition: background .15s;
     }
-    .eh-bento-notify:hover { text-decoration: underline; }
-    @media (max-width: 760px) {
-      .eh-bento { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; }
-      .eh-bento-tile--featured { grid-column: 1 / 3; grid-row: auto; }
-      .eh-b2, .eh-b3, .eh-b4, .eh-b5, .eh-b6 { grid-column: auto; grid-row: auto; }
+    .eh-bento-notify:hover { background: rgba(99,102,241,.18); }
+
+    @media (max-width: 860px) {
+      .eh-switcher { grid-template-columns: 1fr; }
+      .eh-switcher-tabs { flex-direction: row; overflow-x: auto; gap: 8px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; min-width: 0; }
+      .eh-switcher-tab { flex-direction: column; align-items: flex-start; gap: 6px; width: auto; min-width: 108px; flex-shrink: 0; }
+      .eh-switcher-tab-text small { display: none; }
     }
     @media (max-width: 480px) {
-      .eh-bento { grid-template-columns: 1fr; }
-      .eh-bento-tile--featured { grid-column: auto; }
+      .eh-switcher-window-body { height: 220px; padding: 20px; }
     }
 
     /* ── Why Evo Hub: centered heading, 2-col cards below ─────────── */
@@ -436,72 +478,78 @@
     <div><div class="eh-stat-num" data-target="100" data-suffix="%">0%</div><div class="eh-stat-label">Your data, your control</div></div>
   </div>
 
-  <!-- ── Bento tool showcase ───────────────────────────────────── -->
+  <!-- ── App-switcher tool showcase ───────────────────────────────── -->
   <section class="eh-showcase" id="tools">
     <div class="eh-showcase-inner">
       <div class="eh-showcase-head">
         <h2>Tools built for <span class="grad-text">real life</span></h2>
         <p>One live today. Five more on the way. All under one roof, all starting free.</p>
       </div>
-      <div class="eh-bento">
-        <div class="eh-bento-tile eh-bento-tile--featured" id="tool-budget">
-          <span class="eh-bento-badge eh-bento-badge--live">🟢 Live now</span>
-          <div>
-            <div class="eh-bento-icon">💰</div>
-            <h3 class="eh-bento-name">Evo Budget</h3>
-            <p class="eh-bento-desc">Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more.</p>
-            <ul class="eh-bento-checklist">
-              <li>Income, expenses &amp; bill tracking</li>
-              <li>Debt payoff calculator</li>
-              <li>No bank login required</li>
-            </ul>
+
+      <div class="eh-switcher">
+        <div class="eh-switcher-stage" role="tabpanel" aria-labelledby="tool-budget">
+          <div class="eh-switcher-window">
+            <div class="eh-switcher-window-bar"><span></span><span></span><span></span></div>
+            <div class="eh-switcher-window-body" id="ehSwitcherBody"></div>
           </div>
-          <a href="index.html" class="btn tool-open-btn eh-bento-cta">Open Evo Budget →</a>
+          <div class="eh-switcher-caption" id="ehSwitcherCaption"></div>
         </div>
 
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b2" id="tool-tasks" tabindex="0">
-          <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
-          <div class="eh-bento-icon">📝</div>
-          <h3 class="eh-bento-name">Task Planner</h3>
-          <p class="eh-bento-desc eh-bento-desc--default">To-dos without the clutter.</p>
-          <p class="eh-bento-desc eh-bento-desc--hover">Lists · Reminders · Drag &amp; drop</p>
-          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Task%20Planner%20launches">🔔 Notify me</a>
-        </div>
-
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b3" id="tool-habits" tabindex="0">
-          <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
-          <div class="eh-bento-icon">🔁</div>
-          <h3 class="eh-bento-name">Habit Tracker</h3>
-          <p class="eh-bento-desc eh-bento-desc--default">Streaks that actually stick.</p>
-          <p class="eh-bento-desc eh-bento-desc--hover">Daily streaks · Progress charts</p>
-          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Habit%20Tracker%20launches">🔔 Notify me</a>
-        </div>
-
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b4" id="tool-wedding" tabindex="0">
-          <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
-          <div class="eh-bento-icon">💍</div>
-          <h3 class="eh-bento-name">Wedding Planner</h3>
-          <p class="eh-bento-desc eh-bento-desc--default">Plan the big day, stress-free.</p>
-          <p class="eh-bento-desc eh-bento-desc--hover">Guests · Budget · Vendors</p>
-          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Wedding%20Planner%20launches">🔔 Notify me</a>
-        </div>
-
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b5" id="tool-meals" tabindex="0">
-          <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
-          <div class="eh-bento-icon">🍽️</div>
-          <h3 class="eh-bento-name">Meal Planner</h3>
-          <p class="eh-bento-desc eh-bento-desc--default">Meals &amp; groceries, planned.</p>
-          <p class="eh-bento-desc eh-bento-desc--hover">Meal calendar · Grocery lists</p>
-          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Meal%20Planner%20launches">🔔 Notify me</a>
-        </div>
-
-        <div class="eh-bento-tile eh-bento-tile--soon eh-b6" id="tool-fitness" tabindex="0">
-          <span class="eh-bento-badge eh-bento-badge--soon">Soon</span>
-          <div class="eh-bento-icon">🏋️</div>
-          <h3 class="eh-bento-name">Fitness Planner</h3>
-          <p class="eh-bento-desc eh-bento-desc--default">Workouts that fit your week.</p>
-          <p class="eh-bento-desc eh-bento-desc--hover">Workouts · Progress · Routines</p>
-          <a class="eh-bento-notify" href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Fitness%20Planner%20launches">🔔 Notify me</a>
+        <div class="eh-switcher-tabs" role="tablist" aria-label="Evo Hub tools" id="ehSwitcherTabs">
+          <button type="button" class="eh-switcher-tab is-active" id="tool-budget" role="tab" aria-selected="true"
+            data-icon="💰" data-name="Evo Budget" data-status="live" data-mockup="donut"
+            data-desc="Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more."
+            data-checklist="Income, expenses &amp; bill tracking|Debt payoff calculator|No bank login required"
+            data-cta-label="Open Evo Budget →" data-cta-href="index.html">
+            <span class="eh-switcher-tab-icon">💰</span>
+            <span class="eh-switcher-tab-text"><strong>Evo Budget</strong><small>Total money clarity</small></span>
+            <span class="eh-switcher-tab-badge eh-switcher-tab-badge--live">Live</span>
+          </button>
+          <button type="button" class="eh-switcher-tab" id="tool-tasks" role="tab" aria-selected="false"
+            data-icon="📝" data-name="Task Planner" data-status="soon" data-mockup="rows"
+            data-desc="Organize your to-dos and projects without the clutter of an over-built app."
+            data-checklist="Lists &amp; reminders|Drag &amp; drop reorder|Zero clutter, zero setup"
+            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Task%20Planner%20launches">
+            <span class="eh-switcher-tab-icon">📝</span>
+            <span class="eh-switcher-tab-text"><strong>Task Planner</strong><small>To-dos without the clutter</small></span>
+            <span class="eh-switcher-tab-badge">Soon</span>
+          </button>
+          <button type="button" class="eh-switcher-tab" id="tool-habits" role="tab" aria-selected="false"
+            data-icon="🔁" data-name="Habit Tracker" data-status="soon" data-mockup="grid"
+            data-desc="Build streaks that stick, with a clean daily view that makes consistency easy."
+            data-checklist="Daily streak tracking|Visual progress charts|Reminders that don't nag"
+            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Habit%20Tracker%20launches">
+            <span class="eh-switcher-tab-icon">🔁</span>
+            <span class="eh-switcher-tab-text"><strong>Habit Tracker</strong><small>Streaks that actually stick</small></span>
+            <span class="eh-switcher-tab-badge">Soon</span>
+          </button>
+          <button type="button" class="eh-switcher-tab" id="tool-wedding" role="tab" aria-selected="false"
+            data-icon="💍" data-name="Wedding Planner" data-status="soon" data-mockup="rows"
+            data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place."
+            data-checklist="Guest list &amp; RSVPs|Budget &amp; vendor tracking|Shared timeline view"
+            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Wedding%20Planner%20launches">
+            <span class="eh-switcher-tab-icon">💍</span>
+            <span class="eh-switcher-tab-text"><strong>Wedding Planner</strong><small>Plan the big day, stress-free</small></span>
+            <span class="eh-switcher-tab-badge">Soon</span>
+          </button>
+          <button type="button" class="eh-switcher-tab" id="tool-meals" role="tab" aria-selected="false"
+            data-icon="🍽️" data-name="Meal Planner" data-status="soon" data-mockup="grid"
+            data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste."
+            data-checklist="Weekly meal calendar|Auto-generated grocery list|Cuts food waste"
+            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Meal%20Planner%20launches">
+            <span class="eh-switcher-tab-icon">🍽️</span>
+            <span class="eh-switcher-tab-text"><strong>Meal Planner</strong><small>Meals &amp; groceries, planned</small></span>
+            <span class="eh-switcher-tab-badge">Soon</span>
+          </button>
+          <button type="button" class="eh-switcher-tab" id="tool-fitness" role="tab" aria-selected="false"
+            data-icon="🏋️" data-name="Fitness Planner" data-status="soon" data-mockup="bars"
+            data-desc="Plan workouts, track progress, and build routines that actually fit your week."
+            data-checklist="Custom workout plans|Progress tracking|Routines that fit your week"
+            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Fitness%20Planner%20launches">
+            <span class="eh-switcher-tab-icon">🏋️</span>
+            <span class="eh-switcher-tab-text"><strong>Fitness Planner</strong><small>Workouts that fit your week</small></span>
+            <span class="eh-switcher-tab-badge">Soon</span>
+          </button>
         </div>
       </div>
     </div>
@@ -824,23 +872,137 @@
       });
     })();
 
-    // ── Bento "coming soon" tiles: tap toggles the same info reveal
-    // that :hover/:focus-within already provide on desktop. ──
-    document.querySelectorAll('.eh-bento-tile--soon').forEach(function (tile) {
-      tile.addEventListener('click', function (e) {
-        if (e.target.closest('a')) return; // let the real notify-me link work
-        tile.classList.toggle('is-active');
-      });
-    });
+    // ── App-switcher tool showcase: selecting a tab morphs a device-
+    // window mockup + caption to match, like browsing a real product demo
+    // rather than scanning a static grid. ──
+    (function () {
+      var tabsEl = document.getElementById('ehSwitcherTabs');
+      var bodyEl = document.getElementById('ehSwitcherBody');
+      var captionEl = document.getElementById('ehSwitcherCaption');
+      var stageEl = document.querySelector('.eh-switcher-stage');
+      if (!tabsEl || !bodyEl || !captionEl || !stageEl) return;
+      var tabs = Array.prototype.slice.call(tabsEl.querySelectorAll('.eh-switcher-tab'));
 
-    // Cursor-following spotlight glow on bento tiles.
-    document.querySelectorAll('.eh-bento-tile').forEach(function (tile) {
-      tile.addEventListener('mousemove', function (e) {
-        var r = tile.getBoundingClientRect();
-        tile.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-        tile.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      // Tiny inline-SVG donut, same spirit as the app's own donut charts -
+      // a stroked circle with a dash-offset "fill" percentage.
+      function donutSvg(pct) {
+        var r = 34, c = 2 * Math.PI * r, offset = c * (1 - pct);
+        return '<svg width="88" height="88" viewBox="0 0 88 88">' +
+          '<circle cx="44" cy="44" r="' + r + '" fill="none" stroke="var(--border-faint)" stroke-width="10"/>' +
+          '<circle cx="44" cy="44" r="' + r + '" fill="none" stroke="url(#ehSwitcherDonutGrad)" stroke-width="10" ' +
+            'stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 44 44)"/>' +
+          '<defs><linearGradient id="ehSwitcherDonutGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+            '<stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#f472b6"/>' +
+          '</linearGradient></defs></svg>';
+      }
+
+      // Every tool reuses the same 4 shape primitives (donut/rows/grid/
+      // bars) in the brand gradient - only the shape changes per tool, so
+      // switching tabs always reads as one consistent product.
+      function mockupHTML(type) {
+        if (type === 'donut') {
+          return '<div class="mk-donut mk-fade">' + donutSvg(0.64) +
+            '<div class="mk-donut-stats">' +
+              '<div class="mk-donut-stat-row"><span>Income</span><span class="mk-donut-stat-bar"><i style="width:90%"></i></span></div>' +
+              '<div class="mk-donut-stat-row"><span>Bills</span><span class="mk-donut-stat-bar"><i style="width:55%"></i></span></div>' +
+              '<div class="mk-donut-stat-row"><span>Savings</span><span class="mk-donut-stat-bar"><i style="width:35%"></i></span></div>' +
+            '</div></div>';
+        }
+        if (type === 'rows') {
+          var widths = [86, 62, 74, 48];
+          return '<div class="mk-rows mk-fade">' + widths.map(function (w, i) {
+            return '<div class="mk-row"><div class="mk-row-dot' + (i < 2 ? ' is-done' : '') + '"></div>' +
+              '<div class="mk-row-bar" style="width:' + w + '%"></div></div>';
+          }).join('') + '</div>';
+        }
+        if (type === 'grid') {
+          var pattern = [.9, .3, .7, .2, .85, .4, .15, .5, .95, .25, .6, .35, .8, .1, .2, .65, .9, .45, .3, .75, .55];
+          return '<div class="mk-grid mk-fade">' + pattern.map(function (o) {
+            return '<div class="mk-grid-cell" style="opacity:' + o + '"></div>';
+          }).join('') + '</div>';
+        }
+        if (type === 'bars') {
+          var heights = [45, 70, 55, 95, 65];
+          return '<div class="mk-bars mk-fade">' + heights.map(function (h) {
+            return '<div class="mk-bar" style="height:' + h + '%"></div>';
+          }).join('') + '</div>';
+        }
+        return '';
+      }
+
+      function captionHTML(tab) {
+        var isLive = tab.dataset.status === 'live';
+        var badge = isLive
+          ? '<span class="eh-switcher-badge eh-switcher-badge--live">🟢 Live now</span>'
+          : '<span class="eh-switcher-badge">🕒 Coming soon</span>';
+        var items = tab.dataset.checklist.split('|').map(function (i) { return '<li>' + i + '</li>'; }).join('');
+        var ctaClass = isLive ? 'btn tool-open-btn' : 'eh-bento-notify';
+        return badge +
+          '<h3>' + tab.dataset.name + '</h3>' +
+          '<p>' + tab.dataset.desc + '</p>' +
+          '<ul class="eh-bento-checklist">' + items + '</ul>' +
+          '<a class="' + ctaClass + '" href="' + tab.dataset.ctaHref + '">' + tab.dataset.ctaLabel + '</a>';
+      }
+
+      function selectTab(tab, opts) {
+        opts = opts || {};
+        tabs.forEach(function (t) {
+          var active = t === tab;
+          t.classList.toggle('is-active', active);
+          t.setAttribute('aria-selected', active ? 'true' : 'false');
+          t.tabIndex = active ? 0 : -1;
+        });
+        stageEl.setAttribute('aria-labelledby', tab.id);
+        bodyEl.innerHTML = mockupHTML(tab.dataset.mockup);
+        captionEl.innerHTML = captionHTML(tab);
+        captionEl.classList.remove('mk-fade');
+        void captionEl.offsetWidth; // force reflow so the fade restarts
+        captionEl.classList.add('mk-fade');
+        if (opts.focus) tab.focus();
+      }
+
+      // Full ARIA tablist keyboard pattern: roving tabindex, arrow keys
+      // move both focus and selection, Home/End jump to the ends.
+      tabs.forEach(function (tab, i) {
+        tab.tabIndex = tab.classList.contains('is-active') ? 0 : -1;
+        tab.addEventListener('click', function () { selectTab(tab); });
+        tab.addEventListener('keydown', function (e) {
+          var dir = 0;
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') dir = 1;
+          else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') dir = -1;
+          else if (e.key === 'Home') { e.preventDefault(); selectTab(tabs[0], { focus: true }); return; }
+          else if (e.key === 'End') { e.preventDefault(); selectTab(tabs[tabs.length - 1], { focus: true }); return; }
+          else return;
+          e.preventDefault();
+          selectTab(tabs[(i + dir + tabs.length) % tabs.length], { focus: true });
+        });
       });
-    });
+
+      // Clicking a marquee item (or the orbit's "soon" nodes, which also
+      // link to #tool-xxx) also selects that tab, not just scrolls to it.
+      document.querySelectorAll('a[href^="#tool-"]').forEach(function (link) {
+        link.addEventListener('click', function () {
+          var tab = document.getElementById(link.getAttribute('href').slice(1));
+          if (tab && tab.classList.contains('eh-switcher-tab')) selectTab(tab);
+        });
+      });
+
+      selectTab(tabs[0]);
+
+      var showcase = document.querySelector('.eh-showcase');
+      if (showcase) {
+        if ('IntersectionObserver' in window) {
+          var showcaseObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) { showcase.classList.add('is-visible'); showcaseObserver.unobserve(showcase); }
+            });
+          }, { threshold: 0.15 });
+          showcaseObserver.observe(showcase);
+        } else {
+          showcase.classList.add('is-visible');
+        }
+      }
+    })();
 
     // Count-up stats once they scroll into view.
     function animateStat(el) {
