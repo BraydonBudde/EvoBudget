@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Evo Hub | Smart, Simple Tools to Run Your Life</title>
-  <meta name="description" content="Evo Hub is a growing home for no-nonsense life-admin tools. Start with Evo Budget, a free personal budget planner - with task planning, habit tracking, wedding planning, and more on the way." />
+  <meta name="description" content="Evo Hub is a home for no-nonsense life-admin tools: Evo Budget, task planning, habit tracking, wedding planning, meal planning, and fitness planning, all in one place." />
   <meta name="keywords" content="evo hub, productivity tools, budget planner, task planner, habit tracker, wedding planner, meal planner, fitness planner, life admin tools" />
   <meta property="og:title" content="Evo Hub | Smart, Simple Tools to Run Your Life" />
   <meta property="og:description" content="One home for the tools that keep your life on track. Start with Evo Budget - free, no bank login, no subscription." />
@@ -78,19 +78,34 @@
       background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25);
       padding: 6px 14px; border-radius: var(--radius-pill); margin-bottom: 20px;
     }
-    .eh-hero-eyebrow--live { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.3); color: #10b981; }
     .eh-hero-title {
       font-family: var(--font-display); font-size: clamp(2.1rem, 4.2vw, 3.3rem); font-weight: 800;
       line-height: 1.14; letter-spacing: -.025em; color: var(--text-primary); margin: 0 0 18px;
     }
+    /* Sized independently from the "EVO HUB" line above it (big brand
+       headline + smaller tagline) so the longer second line always fits
+       on its own single line - see the hero title comment in home.html. */
+    .eh-hero-title-sub { display: inline-block; font-size: clamp(1.15rem, 2.3vw, 1.85rem); letter-spacing: -.01em; margin-top: 2px; }
     .eh-hero-sub { font-size: 15.5px; line-height: 1.75; color: var(--text-secondary); max-width: 480px; margin: 0 0 30px; }
-    .eh-hero-ctas { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-    .eh-hero-trust { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-faint); }
-    .eh-hero-trust strong { color: var(--text-secondary); }
+    .eh-hero-reset { margin-bottom: 24px; }
+    /* Same USP-strip treatment as the tool menu's .lp-strip: a glass pill
+       of icon+text items separated by small dot dividers. */
+    .eh-hero-trust {
+      display: inline-flex; align-items: center; gap: 0;
+      padding: 10px 18px; border-radius: var(--radius-pill);
+      background: var(--surface); border: 1px solid var(--border-faint);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    .eh-trust-item { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+    .eh-trust-icon { font-size: 14px; }
+    .eh-trust-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--text-faint); margin: 0 16px; flex-shrink: 0; }
+    @media (max-width: 480px) {
+      .eh-hero-trust { flex-wrap: wrap; justify-content: center; padding: 10px 14px; }
+      .eh-trust-sep { display: none; }
+    }
     @media (max-width: 900px) {
       .eh-hero { grid-template-columns: 1fr; text-align: center; padding-top: 36px; }
       .eh-hero-sub { margin-left: auto; margin-right: auto; }
-      .eh-hero-ctas, .eh-hero-trust { justify-content: center; }
       .eh-hero-visual { order: -1; margin-bottom: 8px; }
     }
 
@@ -216,12 +231,6 @@
     .mk-bar { flex: 1; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--grad-pink), var(--grad-indigo)); }
 
     .eh-switcher-caption { padding: 0 4px; }
-    .eh-switcher-badge {
-      display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700;
-      color: var(--grad-indigo); background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25);
-      padding: 4px 11px; border-radius: var(--radius-pill); margin-bottom: 12px;
-    }
-    .eh-switcher-badge--live { color: #10b981; background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.3); }
     .eh-switcher-caption h3 { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px; }
     .eh-switcher-caption p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; margin: 0 0 16px; max-width: 420px; }
     .eh-switcher-caption .eh-bento-checklist { margin-bottom: 20px; }
@@ -246,19 +255,10 @@
     .eh-switcher-tab-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .eh-switcher-tab-text strong { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
     .eh-switcher-tab-text small { font-size: 11px; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .eh-switcher-tab-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); flex-shrink: 0; }
-    .eh-switcher-tab-badge--live { color: #10b981; }
 
     .eh-bento-checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
     .eh-bento-checklist li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-secondary); }
     .eh-bento-checklist li::before { content: '✓'; color: #10b981; font-weight: 800; font-size: 12px; }
-    .eh-bento-notify {
-      display: inline-flex; align-items: center; gap: 5px; width: fit-content;
-      font-size: 11.5px; font-weight: 700; color: var(--grad-indigo); text-decoration: none;
-      background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25);
-      padding: 9px 16px; border-radius: var(--radius-pill); transition: background .15s;
-    }
-    .eh-bento-notify:hover { background: rgba(99,102,241,.18); }
 
     @media (max-width: 860px) {
       .eh-switcher { grid-template-columns: 1fr; }
@@ -340,10 +340,16 @@
     <a class="wordmark" href="home.html">
       <div class="wordmark-icon">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
-          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
-          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
-          <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white"/>
+          <defs>
+            <linearGradient id="wmGradNav" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity=".72"/>
+            </linearGradient>
+          </defs>
+          <path d="M4,1 L5.5,1 A1.5,1.5 0 0 1 7,2.5 L7,5.5 A1.5,1.5 0 0 1 5.5,7 L2.5,7 A1.5,1.5 0 0 1 1,5.5 L1,4 A3,3 0 0 1 4,1 Z" fill="url(#wmGradNav)"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="url(#wmGradNav)" fill-opacity=".55"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="url(#wmGradNav)" fill-opacity=".55"/>
+          <path d="M10.5,9 L13.5,9 A1.5,1.5 0 0 1 15,10.5 L15,12 A3,3 0 0 1 12,15 L10.5,15 A1.5,1.5 0 0 1 9,13.5 L9,10.5 A1.5,1.5 0 0 1 10.5,9 Z" fill="url(#wmGradNav)"/>
         </svg>
       </div>
       Evo Hub
@@ -361,14 +367,16 @@
   <!-- ── Split hero ────────────────────────────────────────────── -->
   <section class="eh-hero">
     <div class="eh-hero-copy" id="ehHeroCopy">
-      <span class="eh-hero-eyebrow">🚀 New tools launching soon</span>
-      <h1 class="eh-hero-title">One hub.<br><span class="grad-text">Every tool you need.</span></h1>
-      <p class="eh-hero-sub">Start with Evo Budget, a free personal budget planner. Task planning, habit tracking, wedding planning, and more are on the way - all under one roof, all built with the same simple philosophy.</p>
-      <div class="eh-hero-ctas">
-        <a href="index.html" class="btn btn-primary btn-lg eh-shine">Open Evo Budget →</a>
-        <a href="#tools" class="btn btn-ghost">See what's coming</a>
+      <span class="eh-hero-eyebrow">✨ Six tools, one simple hub</span>
+      <h1 class="eh-hero-title">EVO HUB<br><span class="grad-text eh-hero-title-sub">Your day to day in one place</span></h1>
+      <p class="eh-hero-sub">Evo Budget, task planning, habit tracking, wedding planning, meal planning, and fitness planning - all under one roof, all built with the same simple philosophy.</p>
+      <div class="eh-hero-trust" aria-label="Key benefits">
+        <div class="eh-trust-item"><span class="eh-trust-icon">💳</span><span>No bank login</span></div>
+        <div class="eh-trust-sep" aria-hidden="true"></div>
+        <div class="eh-trust-item"><span class="eh-trust-icon">🚫</span><span>No subscription</span></div>
+        <div class="eh-trust-sep" aria-hidden="true"></div>
+        <div class="eh-trust-item"><span class="eh-trust-icon">⚡</span><span>Free to start</span></div>
       </div>
-      <div class="eh-hero-trust"><strong>No bank login</strong> · <strong>No subscription</strong> · <strong>Free to start</strong></div>
     </div>
     <div class="eh-hero-visual">
       <div class="eh-orbit" id="ehOrbit">
@@ -400,52 +408,52 @@
         </svg>
         <div class="eh-orbit-core">
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
-            <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" fill-opacity=".65"/>
-            <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" fill-opacity=".65"/>
-            <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white"/>
+            <defs>
+              <linearGradient id="wmGradOrbit" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fff"/>
+                <stop offset="100%" stop-color="#fff" stop-opacity=".72"/>
+              </linearGradient>
+            </defs>
+            <path d="M4,1 L5.5,1 A1.5,1.5 0 0 1 7,2.5 L7,5.5 A1.5,1.5 0 0 1 5.5,7 L2.5,7 A1.5,1.5 0 0 1 1,5.5 L1,4 A3,3 0 0 1 4,1 Z" fill="url(#wmGradOrbit)"/>
+            <rect x="9" y="1" width="6" height="6" rx="1.5" fill="url(#wmGradOrbit)" fill-opacity=".65"/>
+            <rect x="1" y="9" width="6" height="6" rx="1.5" fill="url(#wmGradOrbit)" fill-opacity=".65"/>
+            <path d="M10.5,9 L13.5,9 A1.5,1.5 0 0 1 15,10.5 L15,12 A3,3 0 0 1 12,15 L10.5,15 A1.5,1.5 0 0 1 9,13.5 L9,10.5 A1.5,1.5 0 0 1 10.5,9 Z" fill="url(#wmGradOrbit)"/>
           </svg>
         </div>
         <!-- Outer ring: 3 tools, spins one way -->
         <div class="eh-orbit-spin eh-orbit-spin--outer" id="ehOrbitSpinOuter">
           <div class="eh-orbit-node-pos" data-angle="-90">
             <a class="eh-orbit-node eh-orbit-node--live" href="index.html"
-               data-name="Evo Budget" data-icon="💰" data-status="live"
-               data-desc="Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more."
-               data-cta-label="Open Evo Budget →" data-cta-href="index.html">💰</a>
+               data-name="Evo Budget" data-icon="💰"
+               data-desc="Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more.">💰</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="30">
             <a class="eh-orbit-node" href="#tool-wedding"
-               data-name="Wedding Planner" data-icon="💍" data-status="soon"
-               data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place."
-               data-cta-label="See in showcase ↓" data-cta-href="#tool-wedding">💍</a>
+               data-name="Wedding Planner" data-icon="💍"
+               data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place.">💍</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="150">
             <a class="eh-orbit-node" href="#tool-fitness"
-               data-name="Fitness Planner" data-icon="🏋️" data-status="soon"
-               data-desc="Plan workouts, track progress, and build routines that actually fit your week."
-               data-cta-label="See in showcase ↓" data-cta-href="#tool-fitness">🏋️</a>
+               data-name="Fitness Planner" data-icon="🏋️"
+               data-desc="Plan workouts, track progress, and build routines that actually fit your week.">🏋️</a>
           </div>
         </div>
         <!-- Inner ring: 3 tools, spins the opposite way -->
         <div class="eh-orbit-spin eh-orbit-spin--inner" id="ehOrbitSpinInner">
           <div class="eh-orbit-node-pos" data-angle="-30">
             <a class="eh-orbit-node" href="#tool-tasks"
-               data-name="Task Planner" data-icon="📝" data-status="soon"
-               data-desc="Organize your to-dos and projects without the clutter of an over-built app."
-               data-cta-label="See in showcase ↓" data-cta-href="#tool-tasks">📝</a>
+               data-name="Task Planner" data-icon="📝"
+               data-desc="Organize your to-dos and projects without the clutter of an over-built app.">📝</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="90">
             <a class="eh-orbit-node" href="#tool-habits"
-               data-name="Habit Tracker" data-icon="🔁" data-status="soon"
-               data-desc="Build streaks that stick, with a clean daily view that makes consistency easy."
-               data-cta-label="See in showcase ↓" data-cta-href="#tool-habits">🔁</a>
+               data-name="Habit Tracker" data-icon="🔁"
+               data-desc="Build streaks that stick, with a clean daily view that makes consistency easy.">🔁</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="210">
             <a class="eh-orbit-node" href="#tool-meals"
-               data-name="Meal Planner" data-icon="🍽️" data-status="soon"
-               data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste."
-               data-cta-label="See in showcase ↓" data-cta-href="#tool-meals">🍽️</a>
+               data-name="Meal Planner" data-icon="🍽️"
+               data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste.">🍽️</a>
           </div>
         </div>
       </div>
@@ -472,8 +480,8 @@
 
   <!-- ── Stats ─────────────────────────────────────────────────── -->
   <div class="eh-stats">
-    <div><div class="eh-stat-num" data-target="6">0</div><div class="eh-stat-label">Tools planned</div></div>
-    <div><div class="eh-stat-num" data-target="2">0</div><div class="eh-stat-label">Live today</div></div>
+    <div><div class="eh-stat-num" data-target="6">0</div><div class="eh-stat-label">Tools in one hub</div></div>
+    <div><div class="eh-stat-num" data-target="2">0</div><div class="eh-stat-label">Budget planners</div></div>
     <div><div class="eh-stat-num" data-target="0" data-prefix="$">$0</div><div class="eh-stat-label">To start</div></div>
     <div><div class="eh-stat-num" data-target="100" data-suffix="%">0%</div><div class="eh-stat-label">Your data, your control</div></div>
   </div>
@@ -483,7 +491,7 @@
     <div class="eh-showcase-inner">
       <div class="eh-showcase-head">
         <h2>Tools built for <span class="grad-text">real life</span></h2>
-        <p>One live today. Five more on the way. All under one roof, all starting free.</p>
+        <p>Six tools, one simple hub. All under one roof, all starting free.</p>
       </div>
 
       <div class="eh-switcher">
@@ -497,58 +505,52 @@
 
         <div class="eh-switcher-tabs" role="tablist" aria-label="Evo Hub tools" id="ehSwitcherTabs">
           <button type="button" class="eh-switcher-tab is-active" id="tool-budget" role="tab" aria-selected="true"
-            data-icon="💰" data-name="Evo Budget" data-status="live" data-mockup="donut"
+            data-icon="💰" data-name="Evo Budget" data-mockup="donut"
             data-desc="Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more."
             data-checklist="Income, expenses &amp; bill tracking|Debt payoff calculator|No bank login required"
             data-cta-label="Open Evo Budget →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">💰</span>
             <span class="eh-switcher-tab-text"><strong>Evo Budget</strong><small>Total money clarity</small></span>
-            <span class="eh-switcher-tab-badge eh-switcher-tab-badge--live">Live</span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-tasks" role="tab" aria-selected="false"
-            data-icon="📝" data-name="Task Planner" data-status="soon" data-mockup="rows"
+            data-icon="📝" data-name="Task Planner" data-mockup="rows"
             data-desc="Organize your to-dos and projects without the clutter of an over-built app."
             data-checklist="Lists &amp; reminders|Drag &amp; drop reorder|Zero clutter, zero setup"
-            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Task%20Planner%20launches">
+            data-cta-label="Open Task Planner →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">📝</span>
             <span class="eh-switcher-tab-text"><strong>Task Planner</strong><small>To-dos without the clutter</small></span>
-            <span class="eh-switcher-tab-badge">Soon</span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-habits" role="tab" aria-selected="false"
-            data-icon="🔁" data-name="Habit Tracker" data-status="soon" data-mockup="grid"
+            data-icon="🔁" data-name="Habit Tracker" data-mockup="grid"
             data-desc="Build streaks that stick, with a clean daily view that makes consistency easy."
             data-checklist="Daily streak tracking|Visual progress charts|Reminders that don't nag"
-            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Habit%20Tracker%20launches">
+            data-cta-label="Open Habit Tracker →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">🔁</span>
             <span class="eh-switcher-tab-text"><strong>Habit Tracker</strong><small>Streaks that actually stick</small></span>
-            <span class="eh-switcher-tab-badge">Soon</span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-wedding" role="tab" aria-selected="false"
-            data-icon="💍" data-name="Wedding Planner" data-status="soon" data-mockup="rows"
+            data-icon="💍" data-name="Wedding Planner" data-mockup="rows"
             data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place."
             data-checklist="Guest list &amp; RSVPs|Budget &amp; vendor tracking|Shared timeline view"
-            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Wedding%20Planner%20launches">
+            data-cta-label="Open Wedding Planner →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">💍</span>
             <span class="eh-switcher-tab-text"><strong>Wedding Planner</strong><small>Plan the big day, stress-free</small></span>
-            <span class="eh-switcher-tab-badge">Soon</span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-meals" role="tab" aria-selected="false"
-            data-icon="🍽️" data-name="Meal Planner" data-status="soon" data-mockup="grid"
+            data-icon="🍽️" data-name="Meal Planner" data-mockup="grid"
             data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste."
             data-checklist="Weekly meal calendar|Auto-generated grocery list|Cuts food waste"
-            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Meal%20Planner%20launches">
+            data-cta-label="Open Meal Planner →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">🍽️</span>
             <span class="eh-switcher-tab-text"><strong>Meal Planner</strong><small>Meals &amp; groceries, planned</small></span>
-            <span class="eh-switcher-tab-badge">Soon</span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-fitness" role="tab" aria-selected="false"
-            data-icon="🏋️" data-name="Fitness Planner" data-status="soon" data-mockup="bars"
+            data-icon="🏋️" data-name="Fitness Planner" data-mockup="bars"
             data-desc="Plan workouts, track progress, and build routines that actually fit your week."
             data-checklist="Custom workout plans|Progress tracking|Routines that fit your week"
-            data-cta-label="🔔 Notify me" data-cta-href="mailto:hello@evohub.com?subject=Notify%20me%20when%20Fitness%20Planner%20launches">
+            data-cta-label="Open Fitness Planner →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">🏋️</span>
             <span class="eh-switcher-tab-text"><strong>Fitness Planner</strong><small>Workouts that fit your week</small></span>
-            <span class="eh-switcher-tab-badge">Soon</span>
           </button>
         </div>
       </div>
@@ -566,7 +568,7 @@
         <div class="eh-why-icon">🧩</div>
         <div>
           <h3>Everything in one place</h3>
-          <p>As new tools launch, they all live under one roof. No more juggling five different apps and logins.</p>
+          <p>Every tool lives under one roof. No more juggling five different apps and logins.</p>
         </div>
       </div>
       <div class="eh-why-row">
@@ -608,19 +610,15 @@
     <div class="eh-faq-grid">
       <details class="faq-item">
         <summary class="faq-q">What is Evo Hub?</summary>
-        <div class="faq-a">Evo Hub is a growing collection of straightforward, no-nonsense tools for everyday life admin. It starts with Evo Budget, a personal budget planner, and will keep growing with tools like task planning, habit tracking, and wedding planning - all sharing the same simple design and the same respect for your data.</div>
+        <div class="faq-a">Evo Hub is a collection of straightforward, no-nonsense tools for everyday life admin: Evo Budget, task planning, habit tracking, wedding planning, meal planning, and fitness planning - all sharing the same simple design and the same respect for your data.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">What tools are available right now?</summary>
-        <div class="faq-a">Evo Budget is live today, with two planners to choose from: the Simple Budget Planner and the Ultimate Budget Planner. Both are free to try, with no bank login and no subscription required.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">What's coming next?</summary>
-        <div class="faq-a">We're working on a Task Planner, Habit Tracker, Wedding Planner, Meal Planner, and Fitness Planner. Each one will follow the same principles as Evo Budget: fast to start, free to try, and built around keeping your data under your control.</div>
+        <summary class="faq-q">What tools does Evo Hub include?</summary>
+        <div class="faq-a">Evo Budget (with two planners to choose from: Simple and Ultimate), a Task Planner, a Habit Tracker, a Wedding Planner, a Meal Planner, and a Fitness Planner. Each one follows the same principles: fast to start, free to try, and built around keeping your data under your control.</div>
       </details>
       <details class="faq-item">
         <summary class="faq-q">Do I need an account to use Evo Hub?</summary>
-        <div class="faq-a">No. You can open any live tool and start using it immediately. If a tool offers optional cloud sync, that's always opt-in - never required to get started.</div>
+        <div class="faq-a">No. You can open any tool and start using it immediately. If a tool offers optional cloud sync, that's always opt-in - never required to get started.</div>
       </details>
       <details class="faq-item">
         <summary class="faq-q">Is Evo Hub free?</summary>
@@ -640,23 +638,31 @@
         <div class="wordmark wordmark-sm">
           <div class="wordmark-icon wordmark-icon-sm">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
-              <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
-              <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
-              <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white"/>
+              <defs>
+                <linearGradient id="wmGradFooter" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fff"/>
+                  <stop offset="100%" stop-color="#fff" stop-opacity=".72"/>
+                </linearGradient>
+              </defs>
+              <path d="M4,1 L5.5,1 A1.5,1.5 0 0 1 7,2.5 L7,5.5 A1.5,1.5 0 0 1 5.5,7 L2.5,7 A1.5,1.5 0 0 1 1,5.5 L1,4 A3,3 0 0 1 4,1 Z" fill="url(#wmGradFooter)"/>
+              <rect x="9" y="1" width="6" height="6" rx="1.5" fill="url(#wmGradFooter)" fill-opacity=".55"/>
+              <rect x="1" y="9" width="6" height="6" rx="1.5" fill="url(#wmGradFooter)" fill-opacity=".55"/>
+              <path d="M10.5,9 L13.5,9 A1.5,1.5 0 0 1 15,10.5 L15,12 A3,3 0 0 1 12,15 L10.5,15 A1.5,1.5 0 0 1 9,13.5 L9,10.5 A1.5,1.5 0 0 1 10.5,9 Z" fill="url(#wmGradFooter)"/>
             </svg>
           </div>
           Evo Hub
         </div>
-        <p class="eh-footer-blurb">Smart, simple tools to run your life. One hub, no clutter, growing steadily.</p>
+        <p class="eh-footer-blurb">Smart, simple tools to run your life. One hub, no clutter.</p>
       </div>
       <div>
         <p class="eh-footer-col-title">Tools</p>
         <ul class="eh-footer-list">
           <li><a href="index.html">Evo Budget</a></li>
-          <li><a href="#tool-tasks">Task Planner - soon</a></li>
-          <li><a href="#tool-habits">Habit Tracker - soon</a></li>
-          <li><a href="#tool-wedding">Wedding Planner - soon</a></li>
+          <li><a href="#tool-tasks">Task Planner</a></li>
+          <li><a href="#tool-habits">Habit Tracker</a></li>
+          <li><a href="#tool-wedding">Wedding Planner</a></li>
+          <li><a href="#tool-meals">Meal Planner</a></li>
+          <li><a href="#tool-fitness">Fitness Planner</a></li>
         </ul>
       </div>
       <div>
@@ -832,18 +838,10 @@
         clearTimeout(revertTimer);
         setPaused(true);
         nodes.forEach(function (n) { n.classList.toggle('is-current', n === node); });
-        var isLive = node.dataset.status === 'live';
-        var badgeHtml = isLive
-          ? '<span class="eh-hero-eyebrow eh-hero-eyebrow--live">🟢 Live now</span>'
-          : '<span class="eh-hero-eyebrow">🕒 Coming soon</span>';
         heroCopy.innerHTML =
-          badgeHtml +
           '<h1 class="eh-hero-title">' + node.dataset.icon + ' ' + node.dataset.name + '</h1>' +
           '<p class="eh-hero-sub">' + node.dataset.desc + '</p>' +
-          '<div class="eh-hero-ctas">' +
-            '<a href="' + node.dataset.ctaHref + '" class="btn btn-primary btn-lg eh-shine">' + node.dataset.ctaLabel + '</a>' +
-            '<button type="button" class="btn btn-ghost eh-hero-reset">← Back to overview</button>' +
-          '</div>';
+          '<button type="button" class="btn btn-ghost eh-hero-reset">← Back to overview</button>';
         var resetBtn = heroCopy.querySelector('.eh-hero-reset');
         if (resetBtn) resetBtn.addEventListener('click', resetPreview);
         bounceHeroCopy();
@@ -931,17 +929,11 @@
       }
 
       function captionHTML(tab) {
-        var isLive = tab.dataset.status === 'live';
-        var badge = isLive
-          ? '<span class="eh-switcher-badge eh-switcher-badge--live">🟢 Live now</span>'
-          : '<span class="eh-switcher-badge">🕒 Coming soon</span>';
         var items = tab.dataset.checklist.split('|').map(function (i) { return '<li>' + i + '</li>'; }).join('');
-        var ctaClass = isLive ? 'btn tool-open-btn' : 'eh-bento-notify';
-        return badge +
-          '<h3>' + tab.dataset.name + '</h3>' +
+        return '<h3>' + tab.dataset.name + '</h3>' +
           '<p>' + tab.dataset.desc + '</p>' +
           '<ul class="eh-bento-checklist">' + items + '</ul>' +
-          '<a class="' + ctaClass + '" href="' + tab.dataset.ctaHref + '">' + tab.dataset.ctaLabel + '</a>';
+          '<a class="btn tool-open-btn" href="' + tab.dataset.ctaHref + '">' + tab.dataset.ctaLabel + '</a>';
       }
 
       function selectTab(tab, opts) {
@@ -978,8 +970,8 @@
         });
       });
 
-      // Clicking a marquee item (or the orbit's "soon" nodes, which also
-      // link to #tool-xxx) also selects that tab, not just scrolls to it.
+      // Clicking a marquee item (or an orbit node that links to #tool-xxx)
+      // also selects that tab, not just scrolls to it.
       document.querySelectorAll('a[href^="#tool-"]').forEach(function (link) {
         link.addEventListener('click', function () {
           var tab = document.getElementById(link.getAttribute('href').slice(1));
