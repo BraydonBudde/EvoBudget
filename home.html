@@ -173,55 +173,98 @@
     .eh-showcase-head h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 800; color: var(--text-primary); margin: 0 0 10px; }
     .eh-showcase-head p { font-size: 14.5px; color: var(--text-secondary); margin: 0; }
 
-    .eh-switcher { display: grid; grid-template-columns: 1.15fr .85fr; gap: 30px; align-items: start; }
+    .eh-switcher { display: grid; grid-template-columns: 1.25fr .75fr; gap: 26px; align-items: stretch; }
 
-    /* Entrance: stage slides in from the left, tabs from the right, the
+    /* Entrance: window slides in from the left, tabs from the right, the
        first time the section scrolls into view. */
-    .eh-switcher-stage, .eh-switcher-tabs { opacity: 0; transition: opacity .6s var(--ease), transform .6s var(--ease); }
-    .eh-switcher-stage { transform: translateX(-18px); }
+    .eh-switcher-window, .eh-switcher-tabs { opacity: 0; transition: opacity .6s var(--ease), transform .6s var(--ease); }
+    .eh-switcher-window { transform: translateX(-18px); }
     .eh-switcher-tabs { transform: translateX(18px); transition-delay: .1s; }
-    .eh-showcase.is-visible .eh-switcher-stage, .eh-showcase.is-visible .eh-switcher-tabs { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) { .eh-switcher-stage, .eh-switcher-tabs { opacity: 1; transform: none; transition: none; } }
+    .eh-showcase.is-visible .eh-switcher-window, .eh-showcase.is-visible .eh-switcher-tabs { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .eh-switcher-window, .eh-switcher-tabs { opacity: 1; transform: none; transition: none; } }
 
-    /* LEFT: device-window mockup + caption */
-    .eh-switcher-stage { display: flex; flex-direction: column; gap: 22px; }
+    /* LEFT: one structured card - chrome bar, animated preview, then
+       title/description/checklist/CTA, all inside the same box. Height
+       stretches (via the grid's align-items: stretch) to match the tab
+       list on the right; the preview area absorbs any extra space so the
+       text content below always keeps its natural, compact height. */
     .eh-switcher-window {
+      display: flex; flex-direction: column; height: 100%;
       border-radius: var(--radius-lg); overflow: hidden; background: var(--surface);
       border: 1px solid var(--border-soft); box-shadow: var(--shadow-card);
     }
-    .eh-switcher-window-bar { display: flex; gap: 6px; padding: 12px 14px; background: var(--surface-strong); border-bottom: 1px solid var(--border-faint); }
+    .eh-switcher-window-bar { flex-shrink: 0; display: flex; gap: 6px; padding: 12px 14px; background: var(--surface-strong); border-bottom: 1px solid var(--border-faint); }
     .eh-switcher-window-bar span { width: 9px; height: 9px; border-radius: 50%; background: var(--border-soft); }
     .eh-switcher-window-body {
-      position: relative; height: 260px; padding: 26px;
+      position: relative; flex: 1; min-height: 160px; padding: 24px;
       display: flex; flex-direction: column; justify-content: center; gap: 14px;
       background: linear-gradient(160deg, rgba(99,102,241,.07), rgba(236,72,153,.05));
+      border-bottom: 1px solid var(--border-faint);
     }
+    .eh-switcher-window-content { flex-shrink: 0; padding: 22px 24px 24px; }
 
     /* Mockup primitives - every tool reuses the same brand gradient, only
-       the SHAPE changes, so switching tabs always feels like one product. */
+       the SHAPE changes, so switching tabs always feels like one product.
+       Each one is a genuinely live demo: a JS interval swaps in a new
+       dataset every couple of seconds and a CSS transition animates the
+       change, instead of a fixed shape just idly pulsing in place. */
     .mk-fade { animation: mk-fade-in .45s var(--ease); }
     @keyframes mk-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    @media (prefers-reduced-motion: reduce) { .mk-fade { animation: none; } }
-    .mk-donut { display: flex; align-items: center; gap: 22px; }
-    .mk-donut svg { display: block; flex-shrink: 0; }
+
+    .mk-donut { position: relative; display: flex; align-items: center; gap: 22px; }
+    .mk-donut-ring-wrap { position: relative; flex-shrink: 0; width: 88px; height: 88px; }
+    .mk-donut-scan {
+      position: absolute; inset: -6px; border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0deg, rgba(129,140,248,.35) 35deg, transparent 95deg);
+      animation: mk-scan-spin 3.2s linear infinite;
+    }
+    @keyframes mk-scan-spin { to { transform: rotate(360deg); } }
+    .mk-donut svg { display: block; position: relative; z-index: 1; }
+    .mk-donut-ring-fill { transition: stroke-dashoffset 1.2s cubic-bezier(.65, 0, .35, 1); }
+    .mk-donut-pct {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--text-primary);
+      z-index: 1; transition: opacity .25s;
+    }
     .mk-donut-stats { display: flex; flex-direction: column; gap: 11px; flex: 1; }
     .mk-donut-stat-row { display: flex; align-items: center; font-size: 11px; color: var(--text-secondary); }
     .mk-donut-stat-row span:first-child { width: 60px; flex-shrink: 0; }
     .mk-donut-stat-bar { flex: 1; height: 6px; border-radius: 4px; background: var(--border-faint); margin: 0 10px; overflow: hidden; }
-    .mk-donut-stat-bar > i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--grad-indigo), var(--grad-pink)); }
+    .mk-donut-stat-bar > i {
+      display: block; height: 100%; border-radius: 4px; width: 0;
+      background: linear-gradient(90deg, var(--grad-indigo), var(--grad-pink));
+      transition: width 1.2s cubic-bezier(.65, 0, .35, 1);
+    }
+
     .mk-rows { display: flex; flex-direction: column; gap: 13px; }
     .mk-row { display: flex; align-items: center; gap: 12px; }
-    .mk-row-dot { width: 18px; height: 18px; border-radius: 6px; border: 2px solid var(--grad-indigo); flex-shrink: 0; }
-    .mk-row-dot.is-done { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); border-color: transparent; }
-    .mk-row-bar { flex: 1; height: 9px; border-radius: 5px; background: var(--border-faint); }
-    .mk-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-    .mk-grid-cell { aspect-ratio: 1; border-radius: 4px; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); }
-    .mk-bars { display: flex; align-items: flex-end; gap: 10px; height: 130px; }
-    .mk-bar { flex: 1; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--grad-pink), var(--grad-indigo)); }
+    .mk-row-dot {
+      width: 18px; height: 18px; border-radius: 6px; border: 2px solid var(--grad-indigo); flex-shrink: 0;
+      transition: background .35s, border-color .35s, transform .45s cubic-bezier(.34, 1.56, .64, 1);
+    }
+    .mk-row-dot.is-done { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); border-color: transparent; transform: scale(1.08); }
+    .mk-row-bar { flex: 1; height: 9px; border-radius: 5px; background: var(--border-faint); transition: width .8s cubic-bezier(.65, 0, .35, 1), opacity .35s; }
+    .mk-row.is-done .mk-row-bar { opacity: .5; }
 
-    .eh-switcher-caption { padding: 0 4px; }
+    .mk-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .mk-grid-cell {
+      aspect-ratio: 1; border-radius: 4px; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink));
+      transition: opacity .7s ease;
+    }
+
+    .mk-bars { display: flex; align-items: flex-end; gap: 10px; height: 130px; }
+    .mk-bar {
+      flex: 1; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--grad-pink), var(--grad-indigo));
+      transition: height 1s cubic-bezier(.65, 0, .35, 1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mk-fade, .mk-donut-scan { animation: none; }
+      .mk-donut-ring-fill, .mk-donut-stat-bar > i, .mk-row-dot, .mk-row-bar, .mk-grid-cell, .mk-bar { transition: none; }
+    }
+
     .eh-switcher-caption h3 { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px; }
-    .eh-switcher-caption p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; margin: 0 0 16px; max-width: 420px; }
+    .eh-switcher-caption p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; margin: 0 0 16px; }
     .eh-switcher-caption .eh-bento-checklist { margin-bottom: 20px; }
 
     /* RIGHT: tab list */
@@ -245,9 +288,22 @@
     .eh-switcher-tab-text strong { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
     .eh-switcher-tab-text small { font-size: 11px; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    .eh-bento-checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-    .eh-bento-checklist li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-secondary); }
-    .eh-bento-checklist li::before { content: '✓'; color: #10b981; font-weight: 800; font-size: 12px; }
+    /* Checklist as one clean bordered strip - same "icon + text, dot
+       dividers" language as the hero trust pill, so it reads as one
+       structured feature row instead of a loose list. Wraps if it has
+       to, but fits one line at desktop widths. */
+    .eh-bento-checklist {
+      list-style: none; margin: 0; padding: 11px 16px; display: flex; align-items: center; flex-wrap: wrap;
+      background: var(--surface-strong); border: 1px solid var(--border-faint); border-radius: var(--radius-md);
+    }
+    .eh-bento-checklist li { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+    .eh-bento-checklist li.eh-checklist-sep { display: inline-flex; }
+    .eh-bento-checklist li:not(.eh-checklist-sep)::before {
+      content: '✓'; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+      width: 14px; height: 14px; border-radius: 50%; background: #10b981; color: #fff; font-size: 8.5px; font-weight: 800;
+    }
+    .eh-checklist-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-faint); margin: 0 14px; flex-shrink: 0; }
+    @media (max-width: 480px) { .eh-bento-checklist li.eh-checklist-sep { display: none; } .eh-bento-checklist { gap: 10px; } }
 
     @media (max-width: 860px) {
       .eh-switcher { grid-template-columns: 1fr; }
@@ -483,19 +539,17 @@
       </div>
 
       <div class="eh-switcher">
-        <div class="eh-switcher-stage" role="tabpanel" aria-labelledby="tool-budget">
-          <div class="eh-switcher-window">
-            <div class="eh-switcher-window-bar"><span></span><span></span><span></span></div>
-            <div class="eh-switcher-window-body" id="ehSwitcherBody"></div>
-          </div>
-          <div class="eh-switcher-caption" id="ehSwitcherCaption"></div>
+        <div class="eh-switcher-window" role="tabpanel" aria-labelledby="tool-budget">
+          <div class="eh-switcher-window-bar"><span></span><span></span><span></span></div>
+          <div class="eh-switcher-window-body" id="ehSwitcherBody"></div>
+          <div class="eh-switcher-window-content eh-switcher-caption" id="ehSwitcherCaption"></div>
         </div>
 
         <div class="eh-switcher-tabs" role="tablist" aria-label="Evo Hub tools" id="ehSwitcherTabs">
           <button type="button" class="eh-switcher-tab is-active" id="tool-budget" role="tab" aria-selected="true"
             data-icon="💰" data-name="Evo Budget" data-mockup="donut"
             data-desc="Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more."
-            data-checklist="Income, expenses &amp; bill tracking|Debt payoff calculator|No bank login required"
+            data-checklist="Income &amp; bill tracking|Debt payoff calculator|No bank login required"
             data-cta-label="Open Evo Budget →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">💰</span>
             <span class="eh-switcher-tab-text"><strong>Evo Budget</strong><small>Total money clarity</small></span>
@@ -862,26 +916,36 @@
       var tabsEl = document.getElementById('ehSwitcherTabs');
       var bodyEl = document.getElementById('ehSwitcherBody');
       var captionEl = document.getElementById('ehSwitcherCaption');
-      var stageEl = document.querySelector('.eh-switcher-stage');
-      if (!tabsEl || !bodyEl || !captionEl || !stageEl) return;
+      var windowEl = document.querySelector('.eh-switcher-window');
+      if (!tabsEl || !bodyEl || !captionEl || !windowEl) return;
       var tabs = Array.prototype.slice.call(tabsEl.querySelectorAll('.eh-switcher-tab'));
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function rand(min, max) { return min + Math.random() * (max - min); }
 
       // Tiny inline-SVG donut, same spirit as the app's own donut charts -
-      // a stroked circle with a dash-offset "fill" percentage.
+      // a stroked circle with a dash-offset "fill" percentage, plus a
+      // slow rotating radar-scan glow and a live percentage readout.
       function donutSvg(pct) {
         var r = 34, c = 2 * Math.PI * r, offset = c * (1 - pct);
-        return '<svg width="88" height="88" viewBox="0 0 88 88">' +
-          '<circle cx="44" cy="44" r="' + r + '" fill="none" stroke="var(--border-faint)" stroke-width="10"/>' +
-          '<circle cx="44" cy="44" r="' + r + '" fill="none" stroke="url(#ehSwitcherDonutGrad)" stroke-width="10" ' +
-            'stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 44 44)"/>' +
-          '<defs><linearGradient id="ehSwitcherDonutGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
-            '<stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#f472b6"/>' +
-          '</linearGradient></defs></svg>';
+        return '<div class="mk-donut-ring-wrap"><div class="mk-donut-scan"></div>' +
+          '<svg width="88" height="88" viewBox="0 0 88 88">' +
+            '<circle cx="44" cy="44" r="' + r + '" fill="none" stroke="var(--border-faint)" stroke-width="10"/>' +
+            '<circle class="mk-donut-ring-fill" cx="44" cy="44" r="' + r + '" fill="none" stroke="url(#ehSwitcherDonutGrad)" stroke-width="10" ' +
+              'stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 44 44)"/>' +
+            '<defs><linearGradient id="ehSwitcherDonutGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+              '<stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#f472b6"/>' +
+            '</linearGradient></defs>' +
+          '</svg>' +
+          '<div class="mk-donut-pct">' + Math.round(pct * 100) + '%</div></div>';
       }
 
       // Every tool reuses the same 4 shape primitives (donut/rows/grid/
       // bars) in the brand gradient - only the shape changes per tool, so
-      // switching tabs always reads as one consistent product.
+      // switching tabs always reads as one consistent product. This just
+      // renders the STARTING frame; startMockupAnimation() below keeps it
+      // genuinely live by swapping in a new dataset every couple of
+      // seconds, animated in with a CSS transition each time.
       function mockupHTML(type) {
         if (type === 'donut') {
           return '<div class="mk-donut mk-fade">' + donutSvg(0.64) +
@@ -892,9 +956,9 @@
             '</div></div>';
         }
         if (type === 'rows') {
-          var widths = [86, 62, 74, 48];
+          var widths = [86, 62, 74, 48], done = [true, true, false, false];
           return '<div class="mk-rows mk-fade">' + widths.map(function (w, i) {
-            return '<div class="mk-row"><div class="mk-row-dot' + (i < 2 ? ' is-done' : '') + '"></div>' +
+            return '<div class="mk-row' + (done[i] ? ' is-done' : '') + '"><div class="mk-row-dot' + (done[i] ? ' is-done' : '') + '"></div>' +
               '<div class="mk-row-bar" style="width:' + w + '%"></div></div>';
           }).join('') + '</div>';
         }
@@ -913,8 +977,60 @@
         return '';
       }
 
+      // Live-cycle functions: each swaps a NEW plausible dataset into the
+      // currently-mounted mockup. The CSS transitions declared on these
+      // elements (width/height/stroke-dashoffset/opacity) do the animating.
+      function cycleDonut() {
+        var ring = bodyEl.querySelector('.mk-donut-ring-fill');
+        if (!ring) return;
+        var pctEl = bodyEl.querySelector('.mk-donut-pct');
+        var bars = bodyEl.querySelectorAll('.mk-donut-stat-bar > i');
+        var r = 34, c = 2 * Math.PI * r, pct = rand(0.5, 0.85);
+        ring.style.strokeDashoffset = c * (1 - pct);
+        if (pctEl) pctEl.textContent = Math.round(pct * 100) + '%';
+        var targets = [rand(0.65, 0.98), rand(0.3, 0.75), rand(0.15, 0.55)];
+        bars.forEach(function (bar, i) { bar.style.width = Math.round(targets[i] * 100) + '%'; });
+      }
+      function cycleRows() {
+        var rows = bodyEl.querySelectorAll('.mk-row');
+        rows.forEach(function (row) {
+          var done = Math.random() > 0.5;
+          row.classList.toggle('is-done', done);
+          row.querySelector('.mk-row-dot').classList.toggle('is-done', done);
+          row.querySelector('.mk-row-bar').style.width = Math.round(rand(38, 92)) + '%';
+        });
+      }
+      function cycleGrid() {
+        bodyEl.querySelectorAll('.mk-grid-cell').forEach(function (cell) { cell.style.opacity = rand(0.15, 1).toFixed(2); });
+      }
+      function cycleBars() {
+        bodyEl.querySelectorAll('.mk-bar').forEach(function (bar) { bar.style.height = Math.round(rand(20, 96)) + '%'; });
+      }
+
+      var mockupTimer = null, mockupBoot = null;
+      function stopMockupAnimation() {
+        clearInterval(mockupTimer); mockupTimer = null;
+        clearTimeout(mockupBoot); mockupBoot = null;
+      }
+      function startMockupAnimation(type) {
+        stopMockupAnimation();
+        if (reduceMotion) return;
+        var cycle = { donut: cycleDonut, rows: cycleRows, grid: cycleGrid, bars: cycleBars }[type];
+        if (!cycle) return;
+        var interval = { donut: 2600, rows: 2400, grid: 2800, bars: 2200 }[type];
+        mockupBoot = setTimeout(function () {
+          cycle();
+          mockupTimer = setInterval(cycle, interval);
+        }, 1100);
+      }
+
       function captionHTML(tab) {
-        var items = tab.dataset.checklist.split('|').map(function (i) { return '<li>' + i + '</li>'; }).join('');
+        var parts = tab.dataset.checklist.split('|');
+        var items = parts.map(function (text, idx) {
+          var li = '<li>' + text + '</li>';
+          if (idx < parts.length - 1) li += '<li class="eh-checklist-sep" aria-hidden="true"></li>';
+          return li;
+        }).join('');
         return '<h3>' + tab.dataset.name + '</h3>' +
           '<p>' + tab.dataset.desc + '</p>' +
           '<ul class="eh-bento-checklist">' + items + '</ul>' +
@@ -929,12 +1045,14 @@
           t.setAttribute('aria-selected', active ? 'true' : 'false');
           t.tabIndex = active ? 0 : -1;
         });
-        stageEl.setAttribute('aria-labelledby', tab.id);
+        windowEl.setAttribute('aria-labelledby', tab.id);
+        stopMockupAnimation();
         bodyEl.innerHTML = mockupHTML(tab.dataset.mockup);
         captionEl.innerHTML = captionHTML(tab);
         captionEl.classList.remove('mk-fade');
         void captionEl.offsetWidth; // force reflow so the fade restarts
         captionEl.classList.add('mk-fade');
+        startMockupAnimation(tab.dataset.mockup);
         if (opts.focus) tab.focus();
       }
 
