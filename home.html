@@ -72,22 +72,11 @@
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
     @media (prefers-reduced-motion: reduce) { .eh-hero-copy.eh-bounce-in { animation: none; } }
-    .eh-hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-size: 12px; font-weight: 700; color: var(--grad-indigo);
-      background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25);
-      padding: 6px 14px; border-radius: var(--radius-pill); margin-bottom: 20px;
-    }
     .eh-hero-title {
       font-family: var(--font-display); font-size: clamp(2.1rem, 4.2vw, 3.3rem); font-weight: 800;
       line-height: 1.14; letter-spacing: -.025em; color: var(--text-primary); margin: 0 0 18px;
     }
-    /* Sized independently from the "EVO HUB" line above it (big brand
-       headline + smaller tagline) so the longer second line always fits
-       on its own single line - see the hero title comment in home.html. */
-    .eh-hero-title-sub { display: inline-block; font-size: clamp(1.15rem, 2.3vw, 1.85rem); letter-spacing: -.01em; margin-top: 2px; }
     .eh-hero-sub { font-size: 15.5px; line-height: 1.75; color: var(--text-secondary); max-width: 480px; margin: 0 0 30px; }
-    .eh-hero-reset { margin-bottom: 24px; }
     /* Same USP-strip treatment as the tool menu's .lp-strip: a glass pill
        of icon+text items separated by small dot dividers. */
     .eh-hero-trust {
@@ -367,8 +356,7 @@
   <!-- ── Split hero ────────────────────────────────────────────── -->
   <section class="eh-hero">
     <div class="eh-hero-copy" id="ehHeroCopy">
-      <span class="eh-hero-eyebrow">✨ Six tools, one simple hub</span>
-      <h1 class="eh-hero-title">EVO HUB<br><span class="grad-text eh-hero-title-sub">Your day to day in one place</span></h1>
+      <h1 class="eh-hero-title">Evo Hub<br><span class="grad-text">Plan your life here</span></h1>
       <p class="eh-hero-sub">Evo Budget, task planning, habit tracking, wedding planning, meal planning, and fitness planning - all under one roof, all built with the same simple philosophy.</p>
       <div class="eh-hero-trust" aria-label="Key benefits">
         <div class="eh-trust-item"><span class="eh-trust-icon">💳</span><span>No bank login</span></div>
@@ -840,10 +828,7 @@
         nodes.forEach(function (n) { n.classList.toggle('is-current', n === node); });
         heroCopy.innerHTML =
           '<h1 class="eh-hero-title">' + node.dataset.icon + ' ' + node.dataset.name + '</h1>' +
-          '<p class="eh-hero-sub">' + node.dataset.desc + '</p>' +
-          '<button type="button" class="btn btn-ghost eh-hero-reset">← Back to overview</button>';
-        var resetBtn = heroCopy.querySelector('.eh-hero-reset');
-        if (resetBtn) resetBtn.addEventListener('click', resetPreview);
+          '<p class="eh-hero-sub">' + node.dataset.desc + '</p>';
         bounceHeroCopy();
       }
       function resetPreview() {
