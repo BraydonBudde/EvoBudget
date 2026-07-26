@@ -196,12 +196,28 @@
     .eh-switcher-window-bar { flex-shrink: 0; display: flex; gap: 6px; padding: 12px 14px; background: var(--surface-strong); border-bottom: 1px solid var(--border-faint); }
     .eh-switcher-window-bar span { width: 9px; height: 9px; border-radius: 50%; background: var(--border-soft); }
     .eh-switcher-window-body {
-      position: relative; flex: 1; min-height: 160px; padding: 24px;
+      /* 180px = the tallest scene content (130px, several primitives fix
+         their own height there) + this box's own 24px top/bottom padding.
+         Every scene reserves this same floor regardless of its own actual
+         content height, so the window's total height can never shift
+         between tabs OR mid-cycle as a single tool's own two scenes swap. */
+      position: relative; flex: 1; min-height: 180px; padding: 24px;
       display: flex; flex-direction: column; justify-content: center; gap: 14px;
       background: linear-gradient(160deg, rgba(99,102,241,.07), rgba(236,72,153,.05));
       border-bottom: 1px solid var(--border-faint);
     }
-    .eh-switcher-window-content { flex-shrink: 0; padding: 22px 24px 24px; }
+    /* Title/description sit above the animated preview, checklist/CTA sit
+       below it - split from one padded block into two, but the total
+       vertical padding (22 top + 24 bottom) is kept identical to before
+       (just moved to the outer edges of the two new blocks, none added at
+       the seam against the body) so the window's overall height doesn't
+       grow relative to what it measured as a single block. */
+    .eh-switcher-window-header { flex-shrink: 0; padding: 22px 24px 0; }
+    /* Equal padding-top/checklist margin-bottom (both 18px) puts the
+       ticker exactly halfway between the animation above and the CTA
+       button below it. */
+    .eh-switcher-window-content { flex-shrink: 0; padding: 18px 24px 24px; display: flex; flex-direction: column; align-items: center; }
+    .eh-switcher-window-content .eh-checklist-marquee { width: 100%; }
 
     /* Mockup primitives - every tool reuses the same brand gradient, only
        the SHAPE changes, so switching tabs always feels like one product.
@@ -246,9 +262,12 @@
     .mk-row-bar { flex: 1; height: 9px; border-radius: 5px; background: var(--border-faint); transition: width .8s cubic-bezier(.65, 0, .35, 1), opacity .35s; }
     .mk-row.is-done .mk-row-bar { opacity: .5; }
 
-    .mk-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    /* Fixed overall height (not aspect-ratio on the cells) so the grid can
+       never blow past its budget just because the window happens to be
+       wide - width and height are fully decoupled. */
+    .mk-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; gap: 6px; height: 130px; width: 100%; }
     .mk-grid-cell {
-      aspect-ratio: 1; border-radius: 4px; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink));
+      border-radius: 4px; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink));
       transition: opacity .7s ease;
     }
 
@@ -258,17 +277,106 @@
       transition: height 1s cubic-bezier(.65, 0, .35, 1);
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .mk-fade, .mk-donut-scan { animation: none; }
-      .mk-donut-ring-fill, .mk-donut-stat-bar > i, .mk-row-dot, .mk-row-bar, .mk-grid-cell, .mk-bar { transition: none; }
+    .mk-spark { width: 100%; }
+    /* 98px, not 130px like the other primitives - the caption row below it
+       (num + label) makes up the rest of the shared 130px content budget,
+       so this scene reserves the same total height as every other one. */
+    .mk-spark svg { display: block; width: 100%; height: 98px; }
+    .mk-spark-line { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.5s cubic-bezier(.65, 0, .35, 1); }
+    .mk-spark-area { opacity: 0; transition: opacity 1s ease .5s; }
+    .mk-spark-dot { fill: #f472b6; opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: center; transition: opacity .3s, transform .3s cubic-bezier(.34, 1.56, .64, 1); }
+    .mk-spark-caption { display: flex; align-items: baseline; gap: 8px; justify-content: center; margin-top: 8px; }
+    .mk-spark-num { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--text-primary); }
+    .mk-spark-label { font-size: 11px; color: var(--text-faint); }
+
+    /* Gauge: ring on the left + a couple of related stat rows on the
+       right (same "ring + stats" shape as the donut) so it fills the
+       width edge to edge instead of sitting as a lonely centered circle. */
+    .mk-gauge { display: flex; align-items: center; gap: 22px; width: 100%; }
+    .mk-gauge-ring-wrap { position: relative; flex-shrink: 0; width: 108px; height: 108px; }
+    .mk-gauge-ring-fill { transition: stroke-dashoffset 1.3s cubic-bezier(.65, 0, .35, 1); }
+    .mk-gauge-pct {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 21px; font-weight: 800; color: var(--text-primary);
+      transition: opacity .25s;
+    }
+    .mk-gauge-side { display: flex; flex-direction: column; gap: 11px; flex: 1; }
+    .mk-gauge-label { font-size: 13px; color: var(--text-primary); font-weight: 700; }
+    .mk-gauge-stat-row { display: flex; align-items: center; font-size: 11px; color: var(--text-secondary); }
+    .mk-gauge-stat-row span:first-child { width: 76px; flex-shrink: 0; }
+    .mk-gauge-stat-bar { flex: 1; height: 6px; border-radius: 4px; background: var(--border-faint); margin: 0 10px; overflow: hidden; }
+    .mk-gauge-stat-bar > i { display: block; height: 100%; border-radius: 4px; width: 0; background: linear-gradient(90deg, var(--grad-indigo), var(--grad-pink)); transition: width 1.1s cubic-bezier(.65, 0, .35, 1); }
+
+    .mk-stackbars { display: flex; align-items: flex-end; gap: 10px; height: 130px; width: 100%; }
+    .mk-stackbar { flex: 1; display: flex; flex-direction: column-reverse; height: 100%; border-radius: 6px 6px 0 0; overflow: hidden; background: var(--border-faint); }
+    .mk-stackbar-seg { width: 100%; transition: height 1s cubic-bezier(.65, 0, .35, 1); }
+    .mk-stackbar-seg--a { background: linear-gradient(180deg, var(--grad-pink), var(--grad-indigo)); }
+    .mk-stackbar-seg--b { background: linear-gradient(180deg, var(--grad-indigo), var(--grad-purple)); opacity: .5; }
+
+    .mk-timeline { width: 100%; padding: 44px 4px; }
+    .mk-timeline-line { position: relative; height: 4px; background: var(--border-faint); border-radius: 2px; width: 100%; }
+    .mk-timeline-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--grad-indigo), var(--grad-pink)); width: 0; transition: width 1.2s cubic-bezier(.65, 0, .35, 1); }
+    .mk-timeline-dot {
+      position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--surface-strong); border: 3px solid var(--grad-pink);
+      opacity: 0; transform: translate(-50%, -50%) scale(0);
+      transition: opacity .3s, transform .4s cubic-bezier(.34, 1.56, .64, 1), left 1.2s cubic-bezier(.65, 0, .35, 1);
     }
 
-    .eh-switcher-caption h3 { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px; }
-    .eh-switcher-caption p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; margin: 0 0 16px; }
-    .eh-switcher-caption .eh-bento-checklist { margin-bottom: 20px; }
+    .mk-avatars { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+    .mk-avatars-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .mk-avatar {
+      width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink));
+      color: #fff; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: scale(.4); transition: opacity .3s, transform .3s cubic-bezier(.34, 1.56, .64, 1);
+    }
+    .mk-avatars-bar { width: 100%; height: 8px; border-radius: 5px; background: var(--border-faint); overflow: hidden; }
+    .mk-avatars-bar > i { display: block; height: 100%; width: 0; border-radius: 5px; background: linear-gradient(90deg, var(--grad-indigo), var(--grad-pink)); transition: width 1.1s cubic-bezier(.65, 0, .35, 1); }
+    .mk-avatars-caption { font-size: 11.5px; color: var(--text-secondary); text-align: center; }
+
+    .mk-radial-multi { display: flex; align-items: center; gap: 22px; width: 100%; }
+    .mk-radial-multi svg { flex-shrink: 0; }
+    .mk-radial-ring-fill { transition: stroke-dashoffset 1.2s cubic-bezier(.65, 0, .35, 1); }
+    .mk-radial-multi-legend { display: flex; flex-direction: column; gap: 9px; flex: 1; }
+    .mk-radial-legend-item { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--text-secondary); }
+    .mk-radial-legend-dot { width: 9px; height: 9px; border-radius: 50%; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); flex-shrink: 0; }
+
+    .mk-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; height: 130px; }
+    .mk-cal-cell {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      border-radius: 8px; background: var(--surface); border: 1px solid var(--border-faint); opacity: 0; transition: opacity .4s;
+    }
+    .mk-cal-cell.is-today { background: linear-gradient(160deg, rgba(99,102,241,.16), rgba(236,72,153,.1)); border-color: rgba(99,102,241,.35); }
+    .mk-cal-day { font-size: 10.5px; font-weight: 700; color: var(--text-faint); text-transform: uppercase; }
+    .mk-cal-dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); opacity: 0; transition: opacity .3s; }
+
+    .mk-cmp { display: flex; align-items: flex-end; gap: 14px; height: 130px; width: 100%; }
+    .mk-cmp-pair { flex: 1; display: flex; align-items: flex-end; gap: 4px; height: 100%; }
+    .mk-cmp-bar { flex: 1; border-radius: 4px 4px 0 0; height: 0; transition: height 1s cubic-bezier(.65, 0, .35, 1); }
+    .mk-cmp-bar--a { background: var(--border-faint); }
+    .mk-cmp-bar--b { background: linear-gradient(180deg, var(--grad-pink), var(--grad-indigo)); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mk-fade, .mk-donut-scan { animation: none; }
+      .mk-donut-ring-fill, .mk-donut-stat-bar > i, .mk-row-dot, .mk-row-bar, .mk-grid-cell, .mk-bar,
+      .mk-stackbar-seg, .mk-timeline-fill, .mk-timeline-dot, .mk-avatar, .mk-avatars-bar > i,
+      .mk-radial-ring-fill, .mk-cal-cell, .mk-cal-dot, .mk-cmp-bar, .mk-gauge-stat-bar > i,
+      .mk-spark-line, .mk-spark-area, .mk-spark-dot, .mk-gauge-ring-fill { transition: none; }
+    }
+
+    .eh-switcher-caption-top h3 { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px; }
+    /* min-height reserves 2 lines' worth of space regardless of actual
+       text length, so a slightly longer/shorter description never nudges
+       the window's own natural height (and by extension the whole card's
+       height) around between tools. */
+    .eh-switcher-caption-top p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; margin: 0; min-height: calc(1.65em * 2); }
+    .eh-switcher-caption-bottom .eh-checklist-marquee { margin-bottom: 18px; }
 
     /* RIGHT: tab list */
-    .eh-switcher-tabs { display: flex; flex-direction: column; gap: 8px; }
+    /* justify-content: space-between means that if the stretched row ever
+       ends up a hair taller than the tabs' own natural content (window
+       needing a touch more room), the SPACING between tabs absorbs it
+       evenly instead of leaving dead space under the last tab. */
+    .eh-switcher-tabs { display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
     .eh-switcher-tab {
       display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
       padding: 13px 14px; border-radius: var(--radius-md); border: 1px solid transparent;
@@ -288,22 +396,24 @@
     .eh-switcher-tab-text strong { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
     .eh-switcher-tab-text small { font-size: 11px; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    /* Checklist as one clean bordered strip - same "icon + text, dot
-       dividers" language as the hero trust pill, so it reads as one
-       structured feature row instead of a loose list. Wraps if it has
-       to, but fits one line at desktop widths. */
-    .eh-bento-checklist {
-      list-style: none; margin: 0; padding: 11px 16px; display: flex; align-items: center; flex-wrap: wrap;
-      background: var(--surface-strong); border: 1px solid var(--border-faint); border-radius: var(--radius-md);
+    /* Checklist as an icon-based, endlessly-scrolling ticker (same
+       technique as the marquee strip near the top of the page) so each
+       tool can list a handful of features instead of being capped at
+       whatever fits on one static line. Icons are per-feature, not a
+       generic checkmark. Pauses on hover so it's still readable. */
+    .eh-checklist-marquee {
+      overflow: hidden; background: var(--surface-strong); border: 1px solid transparent;
+      border-radius: var(--radius-md); padding: 13px 0;
     }
-    .eh-bento-checklist li { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
-    .eh-bento-checklist li.eh-checklist-sep { display: inline-flex; }
-    .eh-bento-checklist li:not(.eh-checklist-sep)::before {
-      content: '✓'; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
-      width: 14px; height: 14px; border-radius: 50%; background: #10b981; color: #fff; font-size: 8.5px; font-weight: 800;
-    }
-    .eh-checklist-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-faint); margin: 0 14px; flex-shrink: 0; }
-    @media (max-width: 480px) { .eh-bento-checklist li.eh-checklist-sep { display: none; } .eh-bento-checklist { gap: 10px; } }
+    .eh-checklist-track { display: flex; width: max-content; animation: eh-checklist-scroll 20s linear infinite; }
+    .eh-checklist-marquee:hover .eh-checklist-track { animation-play-state: paused; }
+    @keyframes eh-checklist-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    /* No separator dot between items - the per-feature icon already does
+       that job, so generous horizontal padding alone keeps items feeling
+       distinct as they scroll past. */
+    .eh-checklist-item { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text-primary); white-space: nowrap; padding: 0 22px; }
+    .eh-checklist-item-icon { font-size: 15px; line-height: 1; }
+    @media (prefers-reduced-motion: reduce) { .eh-checklist-track { animation: none; } }
 
     @media (max-width: 860px) {
       .eh-switcher { grid-template-columns: 1fr; }
@@ -541,55 +651,56 @@
       <div class="eh-switcher">
         <div class="eh-switcher-window" role="tabpanel" aria-labelledby="tool-budget">
           <div class="eh-switcher-window-bar"><span></span><span></span><span></span></div>
+          <div class="eh-switcher-window-header eh-switcher-caption-top" id="ehSwitcherCaptionTop"></div>
           <div class="eh-switcher-window-body" id="ehSwitcherBody"></div>
-          <div class="eh-switcher-window-content eh-switcher-caption" id="ehSwitcherCaption"></div>
+          <div class="eh-switcher-window-content eh-switcher-caption-bottom" id="ehSwitcherCaptionBottom"></div>
         </div>
 
         <div class="eh-switcher-tabs" role="tablist" aria-label="Evo Hub tools" id="ehSwitcherTabs">
           <button type="button" class="eh-switcher-tab is-active" id="tool-budget" role="tab" aria-selected="true"
-            data-icon="💰" data-name="Evo Budget" data-mockup="donut"
-            data-desc="Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more."
-            data-checklist="Income &amp; bill tracking|Debt payoff calculator|No bank login required"
+            data-icon="💰" data-name="Evo Budget"
+            data-desc="Two free budget planners for total money clarity - track income, expenses, bills, debt, savings, and everything in between."
+            data-checklist="💰:Income tracking|🧾:Bill reminders|📉:Debt payoff calculator|🔒:No bank login|💳:Expense categories|🎯:Savings goals"
             data-cta-label="Open Evo Budget →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">💰</span>
             <span class="eh-switcher-tab-text"><strong>Evo Budget</strong><small>Total money clarity</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-tasks" role="tab" aria-selected="false"
-            data-icon="📝" data-name="Task Planner" data-mockup="rows"
-            data-desc="Organize your to-dos and projects without the clutter of an over-built app."
-            data-checklist="Lists &amp; reminders|Drag &amp; drop reorder|Zero clutter, zero setup"
+            data-icon="📝" data-name="Task Planner"
+            data-desc="Organize your to-dos and projects without the clutter of an over-built app, so you can stay focused on what needs to get done."
+            data-checklist="✅:Simple to-do lists|🔔:Smart reminders|🖱️:Drag &amp; drop reorder|🗂️:Zero clutter setup|📅:Due date tracking|⚡:Instant capture"
             data-cta-label="Open Task Planner →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">📝</span>
             <span class="eh-switcher-tab-text"><strong>Task Planner</strong><small>To-dos without the clutter</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-habits" role="tab" aria-selected="false"
-            data-icon="🔁" data-name="Habit Tracker" data-mockup="grid"
-            data-desc="Build streaks that stick, with a clean daily view that makes consistency easy."
-            data-checklist="Daily streak tracking|Visual progress charts|Reminders that don't nag"
+            data-icon="🔁" data-name="Habit Tracker"
+            data-desc="Build streaks that stick, with a clean daily view that makes consistency easy and keeps your momentum visible every day."
+            data-checklist="🔥:Daily streak tracking|📊:Visual progress charts|🔕:Reminders that don't nag|🎯:Custom goals|📈:Weekly trends|✨:Momentum boosts"
             data-cta-label="Open Habit Tracker →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">🔁</span>
             <span class="eh-switcher-tab-text"><strong>Habit Tracker</strong><small>Streaks that actually stick</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-wedding" role="tab" aria-selected="false"
-            data-icon="💍" data-name="Wedding Planner" data-mockup="rows"
-            data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place."
-            data-checklist="Guest list &amp; RSVPs|Budget &amp; vendor tracking|Shared timeline view"
+            data-icon="💍" data-name="Wedding Planner"
+            data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place, so nothing slips through the cracks."
+            data-checklist="💌:Guest list &amp; RSVPs|💰:Budget &amp; vendor tracking|🗓️:Shared timeline view|🥂:Seating charts|📸:Vendor contacts|💍:Countdown tracker"
             data-cta-label="Open Wedding Planner →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">💍</span>
             <span class="eh-switcher-tab-text"><strong>Wedding Planner</strong><small>Plan the big day, stress-free</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-meals" role="tab" aria-selected="false"
-            data-icon="🍽️" data-name="Meal Planner" data-mockup="grid"
-            data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste."
-            data-checklist="Weekly meal calendar|Auto-generated grocery list|Cuts food waste"
+            data-icon="🍽️" data-name="Meal Planner"
+            data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste with a system that fits your routine."
+            data-checklist="📆:Weekly meal calendar|🛒:Auto-generated grocery list|♻️:Cuts food waste|🍽️:Recipe library|⏱️:Prep time estimates|🥗:Nutrition notes"
             data-cta-label="Open Meal Planner →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">🍽️</span>
             <span class="eh-switcher-tab-text"><strong>Meal Planner</strong><small>Meals &amp; groceries, planned</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-fitness" role="tab" aria-selected="false"
-            data-icon="🏋️" data-name="Fitness Planner" data-mockup="bars"
-            data-desc="Plan workouts, track progress, and build routines that actually fit your week."
-            data-checklist="Custom workout plans|Progress tracking|Routines that fit your week"
+            data-icon="🏋️" data-name="Fitness Planner"
+            data-desc="Plan workouts, track progress, and build routines that actually fit your week instead of fighting your schedule."
+            data-checklist="🏋️:Custom workout plans|📈:Progress tracking|📅:Routines that fit your week|💪:Strength &amp; cardio mix|⏰:Rest day reminders|🏆:Milestone badges"
             data-cta-label="Open Fitness Planner →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">🏋️</span>
             <span class="eh-switcher-tab-text"><strong>Fitness Planner</strong><small>Workouts that fit your week</small></span>
@@ -915,125 +1026,352 @@
     (function () {
       var tabsEl = document.getElementById('ehSwitcherTabs');
       var bodyEl = document.getElementById('ehSwitcherBody');
-      var captionEl = document.getElementById('ehSwitcherCaption');
+      var captionTopEl = document.getElementById('ehSwitcherCaptionTop');
+      var captionBottomEl = document.getElementById('ehSwitcherCaptionBottom');
       var windowEl = document.querySelector('.eh-switcher-window');
-      if (!tabsEl || !bodyEl || !captionEl || !windowEl) return;
+      if (!tabsEl || !bodyEl || !captionTopEl || !captionBottomEl || !windowEl) return;
       var tabs = Array.prototype.slice.call(tabsEl.querySelectorAll('.eh-switcher-tab'));
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      function rand(min, max) { return min + Math.random() * (max - min); }
-
-      // Tiny inline-SVG donut, same spirit as the app's own donut charts -
-      // a stroked circle with a dash-offset "fill" percentage, plus a
-      // slow rotating radar-scan glow and a live percentage readout.
-      function donutSvg(pct) {
-        var r = 34, c = 2 * Math.PI * r, offset = c * (1 - pct);
-        return '<div class="mk-donut-ring-wrap"><div class="mk-donut-scan"></div>' +
-          '<svg width="88" height="88" viewBox="0 0 88 88">' +
-            '<circle cx="44" cy="44" r="' + r + '" fill="none" stroke="var(--border-faint)" stroke-width="10"/>' +
-            '<circle class="mk-donut-ring-fill" cx="44" cy="44" r="' + r + '" fill="none" stroke="url(#ehSwitcherDonutGrad)" stroke-width="10" ' +
-              'stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 44 44)"/>' +
-            '<defs><linearGradient id="ehSwitcherDonutGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
-              '<stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#f472b6"/>' +
-            '</linearGradient></defs>' +
-          '</svg>' +
-          '<div class="mk-donut-pct">' + Math.round(pct * 100) + '%</div></div>';
+      function rnd(min, max) { return min + Math.random() * (max - min); }
+      function sparkPoints(n) {
+        var pts = [], v = rnd(.3, .6);
+        for (var i = 0; i < n; i++) { v = Math.min(1, Math.max(.08, v + rnd(-.22, .28))); pts.push(v); }
+        return pts;
+      }
+      function gridPattern(n) {
+        var out = [];
+        for (var i = 0; i < n; i++) out.push(Number(rnd(.12, 1).toFixed(2)));
+        return out;
       }
 
-      // Every tool reuses the same 4 shape primitives (donut/rows/grid/
-      // bars) in the brand gradient - only the shape changes per tool, so
-      // switching tabs always reads as one consistent product. This just
-      // renders the STARTING frame; startMockupAnimation() below keeps it
-      // genuinely live by swapping in a new dataset every couple of
-      // seconds, animated in with a CSS transition each time.
-      function mockupHTML(type) {
-        if (type === 'donut') {
-          return '<div class="mk-donut mk-fade">' + donutSvg(0.64) +
-            '<div class="mk-donut-stats">' +
-              '<div class="mk-donut-stat-row"><span>Income</span><span class="mk-donut-stat-bar"><i style="width:90%"></i></span></div>' +
-              '<div class="mk-donut-stat-row"><span>Bills</span><span class="mk-donut-stat-bar"><i style="width:55%"></i></span></div>' +
-              '<div class="mk-donut-stat-row"><span>Savings</span><span class="mk-donut-stat-bar"><i style="width:35%"></i></span></div>' +
-            '</div></div>';
-        }
-        if (type === 'rows') {
-          var widths = [86, 62, 74, 48], done = [true, true, false, false];
-          return '<div class="mk-rows mk-fade">' + widths.map(function (w, i) {
-            return '<div class="mk-row' + (done[i] ? ' is-done' : '') + '"><div class="mk-row-dot' + (done[i] ? ' is-done' : '') + '"></div>' +
-              '<div class="mk-row-bar" style="width:' + w + '%"></div></div>';
-          }).join('') + '</div>';
-        }
-        if (type === 'grid') {
-          var pattern = [.9, .3, .7, .2, .85, .4, .15, .5, .95, .25, .6, .35, .8, .1, .2, .65, .9, .45, .3, .75, .55];
-          return '<div class="mk-grid mk-fade">' + pattern.map(function (o) {
-            return '<div class="mk-grid-cell" style="opacity:' + o + '"></div>';
-          }).join('') + '</div>';
-        }
-        if (type === 'bars') {
-          var heights = [45, 70, 55, 95, 65];
-          return '<div class="mk-bars mk-fade">' + heights.map(function (h) {
-            return '<div class="mk-bar" style="height:' + h + '%"></div>';
-          }).join('') + '</div>';
-        }
-        return '';
-      }
-
-      // Live-cycle functions: each swaps a NEW plausible dataset into the
-      // currently-mounted mockup. The CSS transitions declared on these
-      // elements (width/height/stroke-dashoffset/opacity) do the animating.
-      function cycleDonut() {
-        var ring = bodyEl.querySelector('.mk-donut-ring-fill');
-        if (!ring) return;
-        var pctEl = bodyEl.querySelector('.mk-donut-pct');
-        var bars = bodyEl.querySelectorAll('.mk-donut-stat-bar > i');
-        var r = 34, c = 2 * Math.PI * r, pct = rand(0.5, 0.85);
-        ring.style.strokeDashoffset = c * (1 - pct);
-        if (pctEl) pctEl.textContent = Math.round(pct * 100) + '%';
-        var targets = [rand(0.65, 0.98), rand(0.3, 0.75), rand(0.15, 0.55)];
-        bars.forEach(function (bar, i) { bar.style.width = Math.round(targets[i] * 100) + '%'; });
-      }
-      function cycleRows() {
-        var rows = bodyEl.querySelectorAll('.mk-row');
-        rows.forEach(function (row) {
-          var done = Math.random() > 0.5;
-          row.classList.toggle('is-done', done);
-          row.querySelector('.mk-row-dot').classList.toggle('is-done', done);
-          row.querySelector('.mk-row-bar').style.width = Math.round(rand(38, 92)) + '%';
-        });
-      }
-      function cycleGrid() {
-        bodyEl.querySelectorAll('.mk-grid-cell').forEach(function (cell) { cell.style.opacity = rand(0.15, 1).toFixed(2); });
-      }
-      function cycleBars() {
-        bodyEl.querySelectorAll('.mk-bar').forEach(function (bar) { bar.style.height = Math.round(rand(20, 96)) + '%'; });
-      }
-
-      var mockupTimer = null, mockupBoot = null;
-      function stopMockupAnimation() {
-        clearInterval(mockupTimer); mockupTimer = null;
-        clearTimeout(mockupBoot); mockupBoot = null;
-      }
-      function startMockupAnimation(type) {
-        stopMockupAnimation();
-        if (reduceMotion) return;
-        var cycle = { donut: cycleDonut, rows: cycleRows, grid: cycleGrid, bars: cycleBars }[type];
-        if (!cycle) return;
-        var interval = { donut: 2600, rows: 2400, grid: 2800, bars: 2200 }[type];
-        mockupBoot = setTimeout(function () {
-          cycle();
-          mockupTimer = setInterval(cycle, interval);
-        }, 1100);
-      }
-
-      function captionHTML(tab) {
-        var parts = tab.dataset.checklist.split('|');
-        var items = parts.map(function (text, idx) {
-          var li = '<li>' + text + '</li>';
-          if (idx < parts.length - 1) li += '<li class="eh-checklist-sep" aria-hidden="true"></li>';
-          return li;
+      // ── 6 chart primitives, all in the brand gradient. Each builder
+      // returns { html, grow(root) }: html mounts in an "empty" state
+      // (0% widths/heights/dashoffsets) and grow() applies the real
+      // target values a frame later, so the SAME draw-in transition
+      // plays every time - first paint AND every later scene switch,
+      // not just once. ──
+      function buildDonutScene(data) {
+        var r = 34, c = 2 * Math.PI * r;
+        var barsHtml = data.bars.map(function (b) {
+          return '<div class="mk-donut-stat-row"><span>' + b.label + '</span><span class="mk-donut-stat-bar"><i style="width:0"></i></span></div>';
         }).join('');
-        return '<h3>' + tab.dataset.name + '</h3>' +
-          '<p>' + tab.dataset.desc + '</p>' +
-          '<ul class="eh-bento-checklist">' + items + '</ul>' +
+        var html = '<div class="mk-donut mk-fade">' +
+          '<div class="mk-donut-ring-wrap"><div class="mk-donut-scan"></div>' +
+            '<svg width="88" height="88" viewBox="0 0 88 88">' +
+              '<circle cx="44" cy="44" r="' + r + '" fill="none" stroke="var(--border-faint)" stroke-width="10"/>' +
+              '<circle class="mk-donut-ring-fill" cx="44" cy="44" r="' + r + '" fill="none" stroke="url(#ehSwitcherDonutGrad)" stroke-width="10" ' +
+                'stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + c + '" transform="rotate(-90 44 44)"/>' +
+              '<defs><linearGradient id="ehSwitcherDonutGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                '<stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#f472b6"/>' +
+              '</linearGradient></defs>' +
+            '</svg>' +
+            '<div class="mk-donut-pct" style="opacity:0">0%</div></div>' +
+          '<div class="mk-donut-stats">' + barsHtml + '</div></div>';
+        return { html: html, grow: function (root) {
+          var ring = root.querySelector('.mk-donut-ring-fill'), pctEl = root.querySelector('.mk-donut-pct');
+          ring.style.strokeDashoffset = c * (1 - data.pct);
+          pctEl.style.opacity = 1;
+          pctEl.textContent = Math.round(data.pct * 100) + '%';
+          root.querySelectorAll('.mk-donut-stat-bar > i').forEach(function (bar, i) { bar.style.width = Math.round(data.bars[i].target * 100) + '%'; });
+        } };
+      }
+      function buildRowsScene(data) {
+        var html = '<div class="mk-rows mk-fade">' + data.items.map(function () {
+          return '<div class="mk-row"><div class="mk-row-dot"></div><div class="mk-row-bar" style="width:0"></div></div>';
+        }).join('') + '</div>';
+        return { html: html, grow: function (root) {
+          root.querySelectorAll('.mk-row').forEach(function (row, i) {
+            var it = data.items[i];
+            row.classList.toggle('is-done', it.done);
+            row.querySelector('.mk-row-dot').classList.toggle('is-done', it.done);
+            row.querySelector('.mk-row-bar').style.width = it.width + '%';
+          });
+        } };
+      }
+      function buildGridScene(data) {
+        var html = '<div class="mk-grid mk-fade" style="grid-template-columns:repeat(' + data.cols + ',1fr)">' +
+          data.cells.map(function () { return '<div class="mk-grid-cell" style="opacity:0"></div>'; }).join('') + '</div>';
+        return { html: html, grow: function (root) {
+          root.querySelectorAll('.mk-grid-cell').forEach(function (cell, i) { cell.style.opacity = data.cells[i]; });
+        } };
+      }
+      function buildBarsScene(data) {
+        var html = '<div class="mk-bars mk-fade">' + data.heights.map(function () {
+          return '<div class="mk-bar" style="height:0"></div>';
+        }).join('') + '</div>';
+        return { html: html, grow: function (root) {
+          root.querySelectorAll('.mk-bar').forEach(function (bar, i) { bar.style.height = data.heights[i] + '%'; });
+        } };
+      }
+      function buildSparkScene(data) {
+        // viewBox aspect matches the rendered box's real aspect ratio (wide
+        // and short, not the old 220x90 ~2.44:1 square-ish box) so the
+        // preserveAspectRatio="none" stretch needed to fill the full-width
+        // scene area is minimal instead of squashing the line/dots.
+        var w = 580, h = 98, pad = 10;
+        var stepX = (w - pad * 2) / (data.points.length - 1);
+        var coords = data.points.map(function (p, i) { return [pad + i * stepX, pad + (1 - p) * (h - pad * 2)]; });
+        var pathD = 'M' + coords.map(function (c) { return c[0].toFixed(1) + ',' + c[1].toFixed(1); }).join(' L');
+        var areaD = pathD + ' L' + coords[coords.length - 1][0].toFixed(1) + ',' + (h - pad) + ' L' + coords[0][0].toFixed(1) + ',' + (h - pad) + ' Z';
+        var dotsHtml = coords.map(function (c, i) {
+          return '<circle class="mk-spark-dot" cx="' + c[0].toFixed(1) + '" cy="' + c[1].toFixed(1) + '" r="4.5" style="transition-delay:' + (1.1 + i * 0.06).toFixed(2) + 's"></circle>';
+        }).join('');
+        var html = '<div class="mk-spark mk-fade"><div>' +
+          '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
+            '<path class="mk-spark-area" d="' + areaD + '" fill="url(#ehSparkFill)"/>' +
+            '<path class="mk-spark-line" d="' + pathD + '" fill="none" stroke="url(#ehSwitcherDonutGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" vector-effect="non-scaling-stroke"/>' +
+            dotsHtml +
+            '<defs>' +
+              '<linearGradient id="ehSwitcherDonutGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#f472b6"/></linearGradient>' +
+              '<linearGradient id="ehSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#818cf8" stop-opacity=".35"/><stop offset="100%" stop-color="#818cf8" stop-opacity="0"/></linearGradient>' +
+            '</defs>' +
+          '</svg>' +
+          '<div class="mk-spark-caption"><span class="mk-spark-num">' + data.num + '</span><span class="mk-spark-label">' + data.label + '</span></div>' +
+        '</div></div>';
+        return { html: html, grow: function (root) {
+          root.querySelector('.mk-spark-line').style.strokeDashoffset = '0';
+          root.querySelector('.mk-spark-area').style.opacity = '1';
+          root.querySelectorAll('.mk-spark-dot').forEach(function (d) { d.style.opacity = '1'; d.style.transform = 'scale(1)'; });
+        } };
+      }
+      function buildGaugeScene(data) {
+        // data: { pct, label, stats: [{label, target}] }
+        var r = 40, c = 2 * Math.PI * r;
+        var statsHtml = data.stats.map(function (s) {
+          return '<div class="mk-gauge-stat-row"><span>' + s.label + '</span><span class="mk-gauge-stat-bar"><i style="width:0"></i></span></div>';
+        }).join('');
+        var html = '<div class="mk-gauge mk-fade">' +
+          '<div class="mk-gauge-ring-wrap">' +
+            '<svg width="108" height="108" viewBox="0 0 108 108">' +
+              '<circle cx="54" cy="54" r="' + r + '" fill="none" stroke="var(--border-faint)" stroke-width="9"/>' +
+              '<circle class="mk-gauge-ring-fill" cx="54" cy="54" r="' + r + '" fill="none" stroke="url(#ehSwitcherDonutGrad)" stroke-width="9" ' +
+                'stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + c + '" transform="rotate(-90 54 54)"/>' +
+              '<defs><linearGradient id="ehSwitcherDonutGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>' +
+            '</svg>' +
+            '<div class="mk-gauge-pct" style="opacity:0">0%</div>' +
+          '</div>' +
+          '<div class="mk-gauge-side"><div class="mk-gauge-label">' + data.label + '</div>' + statsHtml + '</div></div>';
+        return { html: html, grow: function (root) {
+          var ring = root.querySelector('.mk-gauge-ring-fill'), pctEl = root.querySelector('.mk-gauge-pct');
+          ring.style.strokeDashoffset = c * (1 - data.pct);
+          pctEl.style.opacity = 1;
+          pctEl.textContent = Math.round(data.pct * 100) + '%';
+          root.querySelectorAll('.mk-gauge-stat-bar > i').forEach(function (bar, i) { bar.style.width = Math.round(data.stats[i].target * 100) + '%'; });
+        } };
+      }
+      function buildStackedBarsScene(data) {
+        // data: { bars: [{a, b}] } a/b are stacked % segments
+        var html = '<div class="mk-stackbars mk-fade">' + data.bars.map(function () {
+          return '<div class="mk-stackbar"><div class="mk-stackbar-seg mk-stackbar-seg--a" style="height:0"></div><div class="mk-stackbar-seg mk-stackbar-seg--b" style="height:0"></div></div>';
+        }).join('') + '</div>';
+        return { html: html, grow: function (root) {
+          root.querySelectorAll('.mk-stackbar').forEach(function (bar, i) {
+            var segs = bar.querySelectorAll('.mk-stackbar-seg');
+            segs[0].style.height = data.bars[i].a + '%';
+            segs[1].style.height = data.bars[i].b + '%';
+          });
+        } };
+      }
+      function buildTimelineScene(data) {
+        // data: { points: [0-1,...] } positions along the line
+        var maxPos = Math.max.apply(null, data.points);
+        var dotsHtml = data.points.map(function () { return '<div class="mk-timeline-dot"></div>'; }).join('');
+        var html = '<div class="mk-timeline mk-fade"><div class="mk-timeline-line"><div class="mk-timeline-fill"></div>' + dotsHtml + '</div></div>';
+        return { html: html, grow: function (root) {
+          root.querySelector('.mk-timeline-fill').style.width = Math.round(maxPos * 100) + '%';
+          root.querySelectorAll('.mk-timeline-dot').forEach(function (dot, i) {
+            dot.style.left = Math.round(data.points[i] * 100) + '%';
+            dot.style.opacity = '1';
+            dot.style.transform = 'translate(-50%, -50%) scale(1)';
+          });
+        } };
+      }
+      function buildAvatarsScene(data) {
+        // data: { total, confirmed, initials: [...] }
+        var html = '<div class="mk-avatars mk-fade">' +
+          '<div class="mk-avatars-row">' + data.initials.map(function (label) { return '<div class="mk-avatar">' + label + '</div>'; }).join('') + '</div>' +
+          '<div class="mk-avatars-bar"><i></i></div>' +
+          '<div class="mk-avatars-caption">' + data.confirmed + ' of ' + data.total + ' confirmed</div></div>';
+        return { html: html, grow: function (root) {
+          root.querySelectorAll('.mk-avatar').forEach(function (a, i) {
+            setTimeout(function () { a.style.opacity = '1'; a.style.transform = 'scale(1)'; }, i * 55);
+          });
+          root.querySelector('.mk-avatars-bar > i').style.width = Math.round((data.confirmed / data.total) * 100) + '%';
+        } };
+      }
+      function buildRadialMultiScene(data) {
+        // data: { rings: [{r, pct, label}] } concentric, outer to inner
+        var svgRings = data.rings.map(function (ring, i) {
+          var c = 2 * Math.PI * ring.r;
+          return '<circle cx="60" cy="60" r="' + ring.r + '" fill="none" stroke="var(--border-faint)" stroke-width="8"/>' +
+            '<circle class="mk-radial-ring-fill" data-i="' + i + '" cx="60" cy="60" r="' + ring.r + '" fill="none" stroke="url(#ehSwitcherDonutGrad)" stroke-width="8" ' +
+              'stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + c + '" transform="rotate(-90 60 60)" style="opacity:' + (1 - i * 0.25).toFixed(2) + '"/>';
+        }).join('');
+        var legendHtml = data.rings.map(function (ring, i) {
+          return '<div class="mk-radial-legend-item"><span class="mk-radial-legend-dot" style="opacity:' + (1 - i * 0.25).toFixed(2) + '"></span>' + ring.label + '</div>';
+        }).join('');
+        var html = '<div class="mk-radial-multi mk-fade"><svg width="120" height="120" viewBox="0 0 120 120">' + svgRings +
+          '<defs><linearGradient id="ehSwitcherDonutGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#818cf8"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs>' +
+          '</svg><div class="mk-radial-multi-legend">' + legendHtml + '</div></div>';
+        return { html: html, grow: function (root) {
+          data.rings.forEach(function (ring, i) {
+            var c = 2 * Math.PI * ring.r;
+            var el = root.querySelector('.mk-radial-ring-fill[data-i="' + i + '"]');
+            if (el) el.style.strokeDashoffset = c * (1 - ring.pct);
+          });
+        } };
+      }
+      function buildCalendarScene(data) {
+        // data: { days: [...7 letters], planned: [bool,...], todayIdx }
+        var html = '<div class="mk-calendar mk-fade">' + data.days.map(function (d, i) {
+          return '<div class="mk-cal-cell' + (i === data.todayIdx ? ' is-today' : '') + '"><span class="mk-cal-day">' + d + '</span><span class="mk-cal-dot"></span></div>';
+        }).join('') + '</div>';
+        return { html: html, grow: function (root) {
+          root.querySelectorAll('.mk-cal-cell').forEach(function (cell, i) {
+            setTimeout(function () {
+              cell.style.opacity = '1';
+              if (data.planned[i]) cell.querySelector('.mk-cal-dot').style.opacity = '1';
+            }, i * 55);
+          });
+        } };
+      }
+      function buildComparisonScene(data) {
+        // data: { pairs: [{planned, actual}] }
+        var html = '<div class="mk-cmp mk-fade">' + data.pairs.map(function () {
+          return '<div class="mk-cmp-pair"><div class="mk-cmp-bar mk-cmp-bar--a"></div><div class="mk-cmp-bar mk-cmp-bar--b"></div></div>';
+        }).join('') + '</div>';
+        return { html: html, grow: function (root) {
+          root.querySelectorAll('.mk-cmp-pair').forEach(function (pair, i) {
+            pair.querySelector('.mk-cmp-bar--a').style.height = data.pairs[i].planned + '%';
+            pair.querySelector('.mk-cmp-bar--b').style.height = data.pairs[i].actual + '%';
+          });
+        } };
+      }
+      var SCENE_BUILDERS = {
+        donut: buildDonutScene, rows: buildRowsScene, grid: buildGridScene, bars: buildBarsScene, spark: buildSparkScene, gauge: buildGaugeScene,
+        stackbars: buildStackedBarsScene, timeline: buildTimelineScene, avatars: buildAvatarsScene, radial: buildRadialMultiScene, calendar: buildCalendarScene, comparison: buildComparisonScene
+      };
+
+      // Each tool cycles through its OWN pair of chart types, and every
+      // one of the 12 slots below (6 tools x 2 scenes) uses a DIFFERENT
+      // primitive - no type is ever reused across two different tools, so
+      // no two tools can ever look like the same widget.
+      var TOOL_SCENES = {
+        'tool-budget': [
+          { type: 'donut', data: function () { return { pct: rnd(.5, .85), bars: [
+            { label: 'Income', target: rnd(.65, .98) }, { label: 'Bills', target: rnd(.35, .7) }, { label: 'Savings', target: rnd(.15, .5) }
+          ] }; } },
+          { type: 'stackbars', data: function () { return { bars: [
+            { a: rnd(25, 45), b: rnd(15, 35) }, { a: rnd(30, 55), b: rnd(10, 30) }, { a: rnd(20, 40), b: rnd(20, 40) }, { a: rnd(35, 60), b: rnd(10, 25) }
+          ] }; } }
+        ],
+        'tool-tasks': [
+          { type: 'rows', data: function () { return { items: [
+            { done: true, width: rnd(60, 90) }, { done: true, width: rnd(50, 85) },
+            { done: Math.random() > .4, width: rnd(40, 80) }, { done: false, width: rnd(30, 60) }
+          ] }; } },
+          { type: 'timeline', data: function () { return { points: [rnd(.1, .25), rnd(.3, .5), rnd(.55, .75), rnd(.8, .98)] }; } }
+        ],
+        'tool-habits': [
+          { type: 'grid', data: function () { return { cols: 7, cells: gridPattern(21) }; } },
+          { type: 'gauge', data: function () { return { pct: rnd(.55, .95), label: Math.round(rnd(5, 21)) + '-day streak', stats: [
+            { label: 'Best streak', target: rnd(.6, .95) }, { label: 'This month', target: rnd(.4, .85) }
+          ] }; } }
+        ],
+        'tool-wedding': [
+          { type: 'avatars', data: function () { var n = Math.round(rnd(8, 12)); var names = ['JS', 'MK', 'TL', 'AB', 'RC', 'KP', 'NW', 'DV', 'EL', 'GH', 'YT', 'BQ'];
+            return { total: Math.round(rnd(60, 140)), confirmed: Math.round(rnd(20, 55)), initials: names.slice(0, n) }; } },
+          { type: 'radial', data: function () { return { rings: [
+            { r: 50, pct: rnd(.6, .95), label: 'Family' }, { r: 38, pct: rnd(.4, .8), label: 'Friends' }, { r: 26, pct: rnd(.25, .6), label: 'Colleagues' }
+          ] }; } }
+        ],
+        'tool-meals': [
+          { type: 'calendar', data: function () { return { days: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], todayIdx: Math.floor(rnd(0, 7)),
+            planned: [0, 1, 2, 3, 4, 5, 6].map(function () { return Math.random() > .3; }) }; } },
+          { type: 'spark', data: function () { return { points: sparkPoints(12), num: '$' + Math.round(rnd(60, 140)), label: 'grocery spend' }; } }
+        ],
+        'tool-fitness': [
+          { type: 'bars', data: function () { return { heights: [rnd(35, 70), rnd(50, 90), rnd(30, 60), rnd(65, 98), rnd(40, 80)] }; } },
+          { type: 'comparison', data: function () { return { pairs: [
+            { planned: rnd(40, 70), actual: rnd(45, 90) }, { planned: rnd(50, 80), actual: rnd(35, 75) }, { planned: rnd(30, 60), actual: rnd(40, 85) }
+          ] }; } }
+        ]
+      };
+
+      var mockupTimer = null, renderTimer = null, sceneIndex = 0, currentToolId = null;
+      function stopMockupAnimation() {
+        clearTimeout(mockupTimer); mockupTimer = null;
+        clearTimeout(renderTimer); renderTimer = null; // cancel any in-flight crossfade too, or a stale scene can land after a fast tab switch
+      }
+      function renderScene(spec) {
+        var scene = SCENE_BUILDERS[spec.type](spec.data());
+        var outgoing = bodyEl.firstElementChild;
+        function mount() {
+          bodyEl.innerHTML = scene.html;
+          var root = bodyEl.firstElementChild;
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              // Guard: only grow if this exact node is still mounted - if
+              // another renderScene() ran in between (fast tab switching),
+              // root has already been replaced/removed and querying its
+              // now-stale selectors would throw.
+              if (bodyEl.firstElementChild === root) scene.grow(root);
+            });
+          });
+        }
+        if (outgoing && !reduceMotion) {
+          // Crossfade: the outgoing scene fades out in place first (the
+          // window frame's own size never changes - only this inner
+          // content fades), THEN the new one mounts and fades in via
+          // mk-fade. Avoids an abrupt pop when the shape itself changes
+          // (e.g. donut -> bar chart), so the switch always reads as one
+          // clean transition instead of a jump cut.
+          outgoing.style.transition = 'opacity .22s ease, transform .22s ease';
+          outgoing.style.opacity = '0';
+          outgoing.style.transform = 'translateY(-4px)';
+          renderTimer = setTimeout(mount, 220);
+        } else {
+          mount();
+        }
+      }
+      function scheduleNextScene(toolId, sequence) {
+        mockupTimer = setTimeout(function () {
+          if (currentToolId !== toolId) return; // a newer tab switch already took over
+          sceneIndex = (sceneIndex + 1) % sequence.length;
+          renderScene(sequence[sceneIndex]);
+          scheduleNextScene(toolId, sequence);
+        }, 3400);
+      }
+      function startMockupAnimation(toolId) {
+        stopMockupAnimation();
+        var sequence = TOOL_SCENES[toolId];
+        if (!sequence) return;
+        currentToolId = toolId;
+        sceneIndex = 0;
+        renderScene(sequence[0]);
+        if (!reduceMotion) scheduleNextScene(toolId, sequence);
+      }
+
+      // Checklist as an endlessly-scrolling icon ticker (duplicated item
+      // set for a seamless loop, second copy hidden from AT) instead of a
+      // fixed 3-item line, so each tool can list more features than would
+      // ever fit statically.
+      function captionTopHTML(tab) {
+        return '<h3>' + tab.dataset.name + '</h3>' + '<p>' + tab.dataset.desc + '</p>';
+      }
+      function captionBottomHTML(tab) {
+        var items = tab.dataset.checklist.split('|').map(function (raw) {
+          var idx = raw.indexOf(':');
+          return { icon: raw.slice(0, idx), text: raw.slice(idx + 1) };
+        });
+        function renderSet(hidden) {
+          return items.map(function (it) {
+            return '<span class="eh-checklist-item"' + (hidden ? ' aria-hidden="true"' : '') + '>' +
+              '<span class="eh-checklist-item-icon">' + it.icon + '</span>' + it.text + '</span>';
+          }).join('');
+        }
+        return '<div class="eh-checklist-marquee"><div class="eh-checklist-track">' + renderSet(false) + renderSet(true) + '</div></div>' +
           '<a class="btn tool-open-btn" href="' + tab.dataset.ctaHref + '">' + tab.dataset.ctaLabel + '</a>';
       }
 
@@ -1046,13 +1384,14 @@
           t.tabIndex = active ? 0 : -1;
         });
         windowEl.setAttribute('aria-labelledby', tab.id);
-        stopMockupAnimation();
-        bodyEl.innerHTML = mockupHTML(tab.dataset.mockup);
-        captionEl.innerHTML = captionHTML(tab);
-        captionEl.classList.remove('mk-fade');
-        void captionEl.offsetWidth; // force reflow so the fade restarts
-        captionEl.classList.add('mk-fade');
-        startMockupAnimation(tab.dataset.mockup);
+        captionTopEl.innerHTML = captionTopHTML(tab);
+        captionBottomEl.innerHTML = captionBottomHTML(tab);
+        [captionTopEl, captionBottomEl].forEach(function (el) {
+          el.classList.remove('mk-fade');
+          void el.offsetWidth; // force reflow so the fade restarts
+          el.classList.add('mk-fade');
+        });
+        startMockupAnimation(tab.id);
         if (opts.focus) tab.focus();
       }
 
