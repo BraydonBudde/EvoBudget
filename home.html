@@ -70,19 +70,41 @@
       max-width: 1180px; margin: 0 auto; padding: clamp(40px, 7vw, 88px) clamp(20px, 4vw, 56px) 50px;
     }
     .eh-hero-copy { transition: opacity .15s; }
-    /* Bounce in whenever the hero copy swaps (tool preview <-> default). */
-    .eh-hero-copy.eh-bounce-in { animation: eh-hero-bounce .5s cubic-bezier(.34, 1.56, .64, 1); }
-    @keyframes eh-hero-bounce {
-      0% { opacity: 0; transform: translateY(14px) scale(.97); }
-      60% { opacity: 1; transform: translateY(-4px) scale(1.015); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
+    /* Subtle fade+rise whenever the hero copy swaps (tool preview <->
+       default) - no overshoot/bounce, just a clean settle. */
+    .eh-hero-copy.is-swapping { animation: eh-hero-swap .32s ease; }
+    @keyframes eh-hero-swap {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    @media (prefers-reduced-motion: reduce) { .eh-hero-copy.eh-bounce-in { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { .eh-hero-copy.is-swapping { animation: none; } }
     .eh-hero-title {
       font-family: var(--font-display); font-size: clamp(2.1rem, 4.2vw, 3.3rem); font-weight: 800;
       line-height: 1.14; letter-spacing: -.025em; color: var(--text-primary); margin: 0 0 18px;
     }
-    .eh-hero-sub { font-size: 15.5px; line-height: 1.75; color: var(--text-secondary); max-width: 480px; margin: 0 0 30px; }
+    .eh-hero-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin: 0 0 18px; }
+    .eh-hero-title-row .eh-hero-title { margin: 0; }
+    /* min-height reserves 2 lines regardless of actual text length, so
+       whichever orbit node is hovered - short desc or long - the preview
+       always renders at the same height (paired with the worst-case
+       height measurement in JS below for the hero-copy panel as a whole). */
+    .eh-hero-sub { font-size: 15.5px; line-height: 1.75; color: var(--text-secondary); max-width: 480px; margin: 0 0 30px; min-height: calc(1.75em * 2); }
+    /* Orbit hover preview: a short cascade of feature chips pulled straight
+       from that tool's own switcher checklist (one source of truth, no
+       content duplicated), each popping in with a stagger - a compact,
+       one-time reveal rather than the switcher's continuously scrolling
+       ticker, since this is a quick glanceable teaser, not the full card. */
+    .eh-hero-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+    .eh-hero-chip {
+      display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600;
+      color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-faint);
+      padding: 7px 13px; border-radius: var(--radius-pill);
+      opacity: 0; transform: translateY(6px) scale(.94);
+      animation: eh-hero-chip-in .4s cubic-bezier(.34, 1.4, .64, 1) forwards;
+      animation-delay: var(--chip-delay, 0ms);
+    }
+    @keyframes eh-hero-chip-in { to { opacity: 1; transform: translateY(0) scale(1); } }
+    @media (prefers-reduced-motion: reduce) { .eh-hero-chip { animation: none; opacity: 1; transform: none; } }
     /* Reuses the tool menu's exact .lp-strip-inner/-item/-icon/-sep classes
        (and every theme's background override on them) for pixel-identical
        chrome - the only difference here is `display`, since this strip
@@ -371,7 +393,8 @@
       .mk-spark-line, .mk-spark-area, .mk-spark-dot, .mk-gauge-ring-fill { transition: none; }
     }
 
-    .eh-switcher-caption-top h3 { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--text-primary); margin: 0 0 8px; }
+    .eh-switcher-title-row { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; }
+    .eh-switcher-caption-top h3 { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--text-primary); margin: 0; }
     /* min-height reserves 2 lines' worth of space regardless of actual
        text length, so a slightly longer/shorter description never nudges
        the window's own natural height (and by extension the whole card's
@@ -401,8 +424,19 @@
     }
     .eh-switcher-tab.is-active .eh-switcher-tab-icon { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-pink)); border-color: transparent; }
     .eh-switcher-tab-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-    .eh-switcher-tab-text strong { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
+    .eh-switcher-tab-name-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .eh-switcher-tab-text strong { font-size: 13.5px; font-weight: 700; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; }
     .eh-switcher-tab-text small { font-size: 11px; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Shared "Soon" tag - tab list, window header, and the orbit hover
+       preview all use this one class so the coming-soon signal always
+       looks identical wherever it appears. */
+    .eh-soon-badge {
+      display: inline-flex; align-items: center; flex-shrink: 0; white-space: nowrap;
+      font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+      color: var(--grad-pink); background: rgba(236,72,153,.12); border: 1px solid rgba(236,72,153,.3);
+      padding: 3px 8px; border-radius: var(--radius-pill);
+    }
 
     /* Checklist as an icon-based, endlessly-scrolling ticker (same
        technique as the marquee strip near the top of the page) so each
@@ -531,7 +565,7 @@
   <section class="eh-hero">
     <div class="eh-hero-copy" id="ehHeroCopy">
       <h1 class="eh-hero-title">Evo Hub<br><span class="grad-text">Plan your life here</span></h1>
-      <p class="eh-hero-sub">Evo Budget, task planning, habit tracking, wedding planning, meal planning, and fitness planning - all under one roof, all built with the same simple philosophy.</p>
+      <p class="eh-hero-sub">Evo Budget is live and free today. Task planning, habit tracking, wedding planning, meal planning, and fitness planning are coming soon - all under one roof, all built with the same simple philosophy.</p>
       <div class="eh-hero-trust lp-strip-inner" aria-label="Key benefits">
         <div class="lp-strip-item"><span class="lp-strip-icon">💳</span><span class="lp-strip-text">No bank login</span></div>
         <div class="lp-strip-sep" aria-hidden="true"></div>
@@ -642,10 +676,10 @@
 
   <!-- ── Stats ─────────────────────────────────────────────────── -->
   <div class="eh-stats">
-    <div><div class="eh-stat-num" data-target="6">0</div><div class="eh-stat-label">Tools in one hub</div></div>
-    <div><div class="eh-stat-num" data-target="2">0</div><div class="eh-stat-label">Budget planners</div></div>
-    <div><div class="eh-stat-num" data-target="0" data-prefix="$">$0</div><div class="eh-stat-label">To start</div></div>
-    <div><div class="eh-stat-num" data-target="100" data-suffix="%">0%</div><div class="eh-stat-label">Your data, your control</div></div>
+    <div><div class="eh-stat-num" data-target="2">0</div><div class="eh-stat-label">Live planners</div></div>
+    <div><div class="eh-stat-num" data-target="10">0</div><div class="eh-stat-label">More on the way</div></div>
+    <div><div class="eh-stat-num" data-target="0" data-prefix="$">$0</div><div class="eh-stat-label">Free to try</div></div>
+    <div><div class="eh-stat-num" data-target="0">0</div><div class="eh-stat-label">Subscriptions, ever</div></div>
   </div>
 
   <!-- ── App-switcher tool showcase ───────────────────────────────── -->
@@ -653,7 +687,7 @@
     <div class="eh-showcase-inner">
       <div class="eh-showcase-head">
         <h2>Tools built for <span class="grad-text">real life</span></h2>
-        <p>Six tools, one simple hub. All under one roof, all starting free.</p>
+        <p>Evo Budget is free and ready today. Five more tools are on the way - hit "Notify me" on any of them below to hear the moment they launch.</p>
       </div>
 
       <div class="eh-switcher">
@@ -666,52 +700,52 @@
 
         <div class="eh-switcher-tabs" role="tablist" aria-label="Evo Hub tools" id="ehSwitcherTabs">
           <button type="button" class="eh-switcher-tab is-active" id="tool-budget" role="tab" aria-selected="true"
-            data-icon="💰" data-name="Evo Budget"
+            data-icon="💰" data-name="Evo Budget" data-live="true"
             data-desc="Two free budget planners for total money clarity - track income, expenses, bills, debt, savings, and everything in between."
             data-checklist="💰:Income tracking|🧾:Bill reminders|📉:Debt payoff calculator|🔒:No bank login|💳:Expense categories|🎯:Savings goals"
             data-cta-label="Open Evo Budget →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">💰</span>
-            <span class="eh-switcher-tab-text"><strong>Evo Budget</strong><small>Total money clarity</small></span>
+            <span class="eh-switcher-tab-text"><span class="eh-switcher-tab-name-row"><strong>Evo Budget</strong></span><small>Total money clarity</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-tasks" role="tab" aria-selected="false"
             data-icon="📝" data-name="Task Planner"
             data-desc="Organize your to-dos and projects without the clutter of an over-built app, so you can stay focused on what needs to get done."
             data-checklist="✅:Simple to-do lists|🔔:Smart reminders|🖱️:Drag &amp; drop reorder|🗂️:Zero clutter setup|📅:Due date tracking|⚡:Instant capture"
-            data-cta-label="Open Task Planner →" data-cta-href="index.html">
+            data-cta-label="🔔 Notify me">
             <span class="eh-switcher-tab-icon">📝</span>
-            <span class="eh-switcher-tab-text"><strong>Task Planner</strong><small>To-dos without the clutter</small></span>
+            <span class="eh-switcher-tab-text"><span class="eh-switcher-tab-name-row"><strong>Task Planner</strong><span class="eh-soon-badge">Soon</span></span><small>To-dos without the clutter</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-habits" role="tab" aria-selected="false"
             data-icon="🔁" data-name="Habit Tracker"
             data-desc="Build streaks that stick, with a clean daily view that makes consistency easy and keeps your momentum visible every day."
             data-checklist="🔥:Daily streak tracking|📊:Visual progress charts|🔕:Reminders that don't nag|🎯:Custom goals|📈:Weekly trends|✨:Momentum boosts"
-            data-cta-label="Open Habit Tracker →" data-cta-href="index.html">
+            data-cta-label="🔔 Notify me">
             <span class="eh-switcher-tab-icon">🔁</span>
-            <span class="eh-switcher-tab-text"><strong>Habit Tracker</strong><small>Streaks that actually stick</small></span>
+            <span class="eh-switcher-tab-text"><span class="eh-switcher-tab-name-row"><strong>Habit Tracker</strong><span class="eh-soon-badge">Soon</span></span><small>Streaks that actually stick</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-wedding" role="tab" aria-selected="false"
             data-icon="💍" data-name="Wedding Planner"
             data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place, so nothing slips through the cracks."
             data-checklist="💌:Guest list &amp; RSVPs|💰:Budget &amp; vendor tracking|🗓️:Shared timeline view|🥂:Seating charts|📸:Vendor contacts|💍:Countdown tracker"
-            data-cta-label="Open Wedding Planner →" data-cta-href="index.html">
+            data-cta-label="🔔 Notify me">
             <span class="eh-switcher-tab-icon">💍</span>
-            <span class="eh-switcher-tab-text"><strong>Wedding Planner</strong><small>Plan the big day, stress-free</small></span>
+            <span class="eh-switcher-tab-text"><span class="eh-switcher-tab-name-row"><strong>Wedding Planner</strong><span class="eh-soon-badge">Soon</span></span><small>Plan the big day, stress-free</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-meals" role="tab" aria-selected="false"
             data-icon="🍽️" data-name="Meal Planner"
             data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste with a system that fits your routine."
             data-checklist="📆:Weekly meal calendar|🛒:Auto-generated grocery list|♻️:Cuts food waste|🍽️:Recipe library|⏱️:Prep time estimates|🥗:Nutrition notes"
-            data-cta-label="Open Meal Planner →" data-cta-href="index.html">
+            data-cta-label="🔔 Notify me">
             <span class="eh-switcher-tab-icon">🍽️</span>
-            <span class="eh-switcher-tab-text"><strong>Meal Planner</strong><small>Meals &amp; groceries, planned</small></span>
+            <span class="eh-switcher-tab-text"><span class="eh-switcher-tab-name-row"><strong>Meal Planner</strong><span class="eh-soon-badge">Soon</span></span><small>Meals &amp; groceries, planned</small></span>
           </button>
           <button type="button" class="eh-switcher-tab" id="tool-fitness" role="tab" aria-selected="false"
             data-icon="🏋️" data-name="Fitness Planner"
             data-desc="Plan workouts, track progress, and build routines that actually fit your week instead of fighting your schedule."
             data-checklist="🏋️:Custom workout plans|📈:Progress tracking|📅:Routines that fit your week|💪:Strength &amp; cardio mix|⏰:Rest day reminders|🏆:Milestone badges"
-            data-cta-label="Open Fitness Planner →" data-cta-href="index.html">
+            data-cta-label="🔔 Notify me">
             <span class="eh-switcher-tab-icon">🏋️</span>
-            <span class="eh-switcher-tab-text"><strong>Fitness Planner</strong><small>Workouts that fit your week</small></span>
+            <span class="eh-switcher-tab-text"><span class="eh-switcher-tab-name-row"><strong>Fitness Planner</strong><span class="eh-soon-badge">Soon</span></span><small>Workouts that fit your week</small></span>
           </button>
         </div>
       </div>
@@ -729,7 +763,7 @@
         <div class="eh-why-icon">🧩</div>
         <div>
           <h3>Everything in one place</h3>
-          <p>Every tool lives under one roof. No more juggling five different apps and logins.</p>
+          <p>Every tool will live under one roof, so you'll never juggle five different apps and logins.</p>
         </div>
       </div>
       <div class="eh-why-row">
@@ -771,23 +805,27 @@
     <div class="eh-faq-grid">
       <details class="faq-item">
         <summary class="faq-q">What is Evo Hub?</summary>
-        <div class="faq-a">Evo Hub is a collection of straightforward, no-nonsense tools for everyday life admin: Evo Budget, task planning, habit tracking, wedding planning, meal planning, and fitness planning - all sharing the same simple design and the same respect for your data.</div>
+        <div class="faq-a">Evo Hub is a growing collection of straightforward, no-nonsense tools for everyday life admin: Evo Budget, task planning, habit tracking, wedding planning, meal planning, and fitness planning - all sharing the same simple design and the same respect for your data.</div>
       </details>
       <details class="faq-item">
         <summary class="faq-q">What tools does Evo Hub include?</summary>
-        <div class="faq-a">Evo Budget (with two planners to choose from: Simple and Ultimate), a Task Planner, a Habit Tracker, a Wedding Planner, a Meal Planner, and a Fitness Planner. Each one follows the same principles: fast to start, free to try, and built around keeping your data under your control.</div>
+        <div class="faq-a">Evo Budget (with two planners to choose from: Simple and Ultimate) is live today. A Task Planner, Habit Tracker, Wedding Planner, Meal Planner, and Fitness Planner are all coming soon. Each one follows the same principles: fast to start, free to try, and built around keeping your data under your control.</div>
       </details>
       <details class="faq-item">
         <summary class="faq-q">Do I need an account to use Evo Hub?</summary>
-        <div class="faq-a">No. You can open any tool and start using it immediately. If a tool offers optional cloud sync, that's always opt-in - never required to get started.</div>
+        <div class="faq-a">No. Evo Budget is available today and you can start using it immediately - no account needed. If a tool offers optional cloud sync, that's always opt-in - never required to get started.</div>
       </details>
       <details class="faq-item">
         <summary class="faq-q">Is Evo Hub free?</summary>
-        <div class="faq-a">Every tool offers a free way to try it. Where a paid upgrade exists, it's a single one-time purchase rather than a subscription - so you pay once and keep using it, including future updates to that tool.</div>
+        <div class="faq-a">Evo Budget is free to try today. Where a paid upgrade exists, it's a single one-time purchase rather than a subscription - so you pay once and keep using it, including future updates. Every future tool will follow the same model.</div>
       </details>
       <details class="faq-item">
         <summary class="faq-q">How is my data stored?</summary>
         <div class="faq-a">By default, your data is stored locally on your own device - nothing is sent to a server. Where a tool offers optional sync, your data goes to your own personal cloud storage, never to our servers.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">When will the other tools launch?</summary>
+        <div class="faq-a">We're building them one at a time so each one is solid, not rushing all five out at once. Hit "Notify me" on any tool's card in the section above and we'll reach out the moment it's ready.</div>
       </details>
     </div>
   </section>
@@ -1026,38 +1064,71 @@
         orbitEl.classList.toggle('is-paused', p);
       }
 
-      // Lock the hero-copy panel's height so swapping its content on
-      // hover/tap never shifts anything below it.
-      var defaultHeroHTML = heroCopy.innerHTML;
-      heroCopy.style.minHeight = heroCopy.getBoundingClientRect().height + 'px';
-
       var canHover = window.matchMedia('(hover: hover)').matches;
       var revertTimer = null;
       var nodes = Array.prototype.slice.call(orbitEl.querySelectorAll('.eh-orbit-node'));
 
-      // Restart the bounce-in animation every time the hero copy's content
+      // The switcher tab for this node is the single source of truth for
+      // its checklist - the orbit preview borrows its first 3 items rather
+      // than duplicating feature copy in a second place in the markup.
+      function toolIdFor(node) {
+        var href = node.getAttribute('href') || '';
+        return href.charAt(0) === '#' ? href.slice(1) : 'tool-budget';
+      }
+      function previewChipsHTML(node) {
+        var tabEl = document.getElementById(toolIdFor(node));
+        if (!tabEl || !tabEl.dataset.checklist) return '';
+        var items = tabEl.dataset.checklist.split('|').slice(0, 3).map(function (raw) {
+          var idx = raw.indexOf(':');
+          return { icon: raw.slice(0, idx), text: raw.slice(idx + 1) };
+        });
+        return '<div class="eh-hero-chips">' + items.map(function (it, i) {
+          return '<span class="eh-hero-chip" style="--chip-delay:' + (i * 70) + 'ms">' + it.icon + ' ' + it.text + '</span>';
+        }).join('') + '</div>';
+      }
+      function previewHTML(node) {
+        var isLive = node.classList.contains('eh-orbit-node--live');
+        var badge = isLive ? '' : '<span class="eh-soon-badge">Coming soon</span>';
+        return '<div class="eh-hero-title-row"><h1 class="eh-hero-title">' + node.dataset.icon + ' ' + node.dataset.name + '</h1>' + badge + '</div>' +
+          '<p class="eh-hero-sub">' + node.dataset.desc + '</p>' +
+          previewChipsHTML(node);
+      }
+
+      // Lock the hero-copy panel's height to the taller of its default
+      // content and a real rendered preview, so swapping between them (or
+      // between different tools' previews) on hover/tap never shifts
+      // anything below it. Sampled from a non-live node so the "Coming
+      // soon" badge - which only the 5 non-live nodes render - is already
+      // accounted for in the measurement.
+      var defaultHeroHTML = heroCopy.innerHTML;
+      var defaultHeight = heroCopy.getBoundingClientRect().height;
+      var sampleNode = nodes.filter(function (n) { return !n.classList.contains('eh-orbit-node--live'); })[0] || nodes[0];
+      heroCopy.innerHTML = previewHTML(sampleNode);
+      var previewHeight = heroCopy.getBoundingClientRect().height;
+      heroCopy.innerHTML = defaultHeroHTML;
+      heroCopy.style.minHeight = Math.max(defaultHeight, previewHeight) + 'px';
+
+      // Restart the swap animation every time the hero copy's content
       // changes (both showing a preview and reverting to the default).
-      function bounceHeroCopy() {
-        heroCopy.classList.remove('eh-bounce-in');
+      function replaySwapAnim() {
+        heroCopy.classList.remove('is-swapping');
         void heroCopy.offsetWidth; // force reflow so the animation restarts
-        heroCopy.classList.add('eh-bounce-in');
+        heroCopy.classList.add('is-swapping');
       }
 
       function showPreview(node) {
         clearTimeout(revertTimer);
         setPaused(true);
         nodes.forEach(function (n) { n.classList.toggle('is-current', n === node); });
-        heroCopy.innerHTML =
-          '<h1 class="eh-hero-title">' + node.dataset.icon + ' ' + node.dataset.name + '</h1>' +
-          '<p class="eh-hero-sub">' + node.dataset.desc + '</p>';
-        bounceHeroCopy();
+        heroCopy.innerHTML = previewHTML(node);
+        replaySwapAnim();
       }
       function resetPreview() {
         clearTimeout(revertTimer);
         setPaused(false);
         nodes.forEach(function (n) { n.classList.remove('is-current'); });
         heroCopy.innerHTML = defaultHeroHTML;
-        bounceHeroCopy();
+        replaySwapAnim();
       }
 
       nodes.forEach(function (node) {
@@ -1414,7 +1485,31 @@
       // fixed 3-item line, so each tool can list more features than would
       // ever fit statically.
       function captionTopHTML(tab) {
-        return '<h3>' + tab.dataset.name + '</h3>' + '<p>' + tab.dataset.desc + '</p>';
+        var badge = tab.dataset.live === 'true' ? '' : '<span class="eh-soon-badge">Coming soon</span>';
+        return '<div class="eh-switcher-title-row"><h3>' + tab.dataset.name + '</h3>' + badge + '</div>' +
+          '<p>' + tab.dataset.desc + '</p>';
+      }
+      // Evo Budget is the only live tool - its CTA opens the real app.
+      // Every other tool has no backend to submit an email to, so
+      // "Notify me" just records interest in localStorage (per tool, per
+      // browser) and swaps to a confirmation once submitted, instead of
+      // pretending to link anywhere.
+      function notifyStorageKey(toolId) { return 'evohub_notify_' + toolId; }
+      function ctaHTML(tab) {
+        if (tab.dataset.live === 'true') {
+          return '<a class="btn tool-open-btn" href="' + tab.dataset.ctaHref + '">' + tab.dataset.ctaLabel + '</a>';
+        }
+        var saved = localStorage.getItem(notifyStorageKey(tab.id));
+        if (saved) {
+          return '<div class="tool-notify-done"><span aria-hidden="true">✓</span> We\'ll email you when ' + tab.dataset.name + ' launches.</div>';
+        }
+        return '<button type="button" class="btn tool-open-btn" data-notify-open="' + tab.id + '">' + tab.dataset.ctaLabel + '</button>';
+      }
+      function notifyFormHTML(tab) {
+        return '<form class="tool-notify-form" data-tool="' + tab.id + '">' +
+          '<input type="email" required placeholder="you@email.com" aria-label="Email address for ' + tab.dataset.name + ' launch notification">' +
+          '<button type="submit" class="btn tool-open-btn">Notify me</button>' +
+        '</form>';
       }
       function captionBottomHTML(tab) {
         var items = tab.dataset.checklist.split('|').map(function (raw) {
@@ -1428,8 +1523,34 @@
           }).join('');
         }
         return '<div class="eh-checklist-marquee"><div class="eh-checklist-track">' + renderSet(false) + renderSet(true) + '</div></div>' +
-          '<a class="btn tool-open-btn" href="' + tab.dataset.ctaHref + '">' + tab.dataset.ctaLabel + '</a>';
+          '<div class="tool-cta-slot" id="toolCtaSlot">' + ctaHTML(tab) + '</div>';
       }
+
+      // Delegated on the never-replaced captionBottomEl (its innerHTML is
+      // rebuilt on every tab switch) so these keep working after rebuilds,
+      // and so submitting the form only swaps the small CTA slot rather
+      // than re-rendering (and re-animating) the whole checklist ticker.
+      captionBottomEl.addEventListener('click', function (e) {
+        var openBtn = e.target.closest('[data-notify-open]');
+        if (!openBtn) return;
+        var tab = document.getElementById(openBtn.getAttribute('data-notify-open'));
+        var slot = document.getElementById('toolCtaSlot');
+        if (!tab || !slot) return;
+        slot.innerHTML = notifyFormHTML(tab);
+        var input = slot.querySelector('input');
+        if (input) input.focus();
+      });
+      captionBottomEl.addEventListener('submit', function (e) {
+        var form = e.target.closest('.tool-notify-form');
+        if (!form) return;
+        e.preventDefault();
+        var tab = document.getElementById(form.getAttribute('data-tool'));
+        var input = form.querySelector('input[type="email"]');
+        var slot = document.getElementById('toolCtaSlot');
+        if (!tab || !input || !slot || !input.value.trim()) return;
+        localStorage.setItem(notifyStorageKey(tab.id), JSON.stringify({ email: input.value.trim(), ts: Date.now() }));
+        slot.innerHTML = ctaHTML(tab);
+      });
 
       function selectTab(tab, opts) {
         opts = opts || {};
@@ -1469,11 +1590,23 @@
       });
 
       // Clicking a marquee item (or an orbit node that links to #tool-xxx)
-      // also selects that tab, not just scrolls to it.
+      // selects that tab AND scrolls to the whole showcase section - not
+      // the native anchor jump, which would scroll to the clicked tab
+      // BUTTON itself. Since the tab list is a tall stack of 6 buttons
+      // sitting beside the window card, jumping to (say) the 4th button
+      // scrolls the section heading and the window card half off-screen
+      // above the viewport, leaving just a few tabs and no visible
+      // preview - "moves all the way to the selected button" per the
+      // report. Scrolling to the section (matching what the nav's own
+      // "Tools" link already does) keeps the whole card in view instead.
       document.querySelectorAll('a[href^="#tool-"]').forEach(function (link) {
-        link.addEventListener('click', function () {
+        link.addEventListener('click', function (e) {
           var tab = document.getElementById(link.getAttribute('href').slice(1));
-          if (tab && tab.classList.contains('eh-switcher-tab')) selectTab(tab);
+          if (!tab || !tab.classList.contains('eh-switcher-tab')) return;
+          e.preventDefault();
+          selectTab(tab);
+          var section = document.getElementById('tools');
+          if (section) section.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
         });
       });
 
