@@ -523,6 +523,12 @@
     .eh-footer-list span { font-size: 13px; color: var(--text-faint); }
     .eh-footer-bottom { max-width: 1040px; margin: 40px auto 0; padding-top: 22px; border-top: 1px solid var(--border-faint); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .eh-footer-bottom p { font-size: 11.5px; color: var(--text-faint); margin: 0; }
+    .eh-footer-legal { display: flex; gap: 18px; }
+    .eh-footer-legal-link {
+      appearance: none; border: none; background: none; padding: 0; cursor: pointer;
+      font-family: inherit; font-size: 11.5px; color: var(--text-faint); text-decoration: none; transition: color .15s;
+    }
+    .eh-footer-legal-link:hover { color: var(--text-primary); }
     @media (max-width: 640px) { .eh-footer-inner { grid-template-columns: 1fr; gap: 28px; } }
   </style>
 </head>
@@ -872,8 +878,24 @@
     </div>
     <div class="eh-footer-bottom">
       <p>&copy; 2026 Evo Hub. All rights reserved.</p>
+      <div class="eh-footer-legal">
+        <button class="eh-footer-legal-link" id="footerPrivacy" type="button">Privacy Policy</button>
+        <button class="eh-footer-legal-link" id="footerTerms" type="button">Terms of Use</button>
+        <button class="eh-footer-legal-link" id="footerDisclaimer" type="button">Disclaimer</button>
+      </div>
     </div>
   </footer>
+
+  <!-- Legal overlay (Privacy / Terms / Disclaimer) - same content as the
+       Evo Budget app itself (index.html), since Evo Budget is the only
+       live product these terms currently govern. -->
+  <div class="modal-overlay" id="legalOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="legalTitle">
+    <div class="modal modal--legal" id="legalModal">
+      <button class="modal-close" id="legalClose" type="button" aria-label="Close">×</button>
+      <h3 class="modal-title" id="legalTitle"></h3>
+      <div class="modal-body" id="legalBody"></div>
+    </div>
+  </div>
 
   <script>
     // Standalone marketing page - no dependency on script.js/the app bundle.
@@ -1670,6 +1692,62 @@
     } else {
       statEls.forEach(function (el) { el.textContent = (el.dataset.prefix || '') + el.dataset.target + (el.dataset.suffix || ''); });
     }
+
+    // ── Legal modal (Privacy / Terms / Disclaimer) - same content as the
+    // Evo Budget app itself (script.js's openLegal), since Evo Budget is
+    // the only live product these currently govern. Duplicated here
+    // rather than shared, since this page deliberately has no dependency
+    // on script.js/the app bundle. ──
+    (function () {
+      var overlay = document.getElementById('legalOverlay');
+      var closeBtn = document.getElementById('legalClose');
+      if (!overlay || !closeBtn) return;
+
+      var titles = { privacy: 'Privacy Policy', terms: 'Terms of Use', disclaimer: 'Disclaimer' };
+      var bodies = {
+        privacy: '<p><strong>Last updated:</strong> July 2026</p>' +
+          '<p>Evo Budget is designed with your privacy as a core principle.</p>' +
+          '<p><strong>Data storage.</strong> By default, all financial data you enter into Evo Budget is stored exclusively in your browser\'s local storage on your device, and Evo Budget does not collect, transmit, or store any personal or financial information on external servers. You may optionally sign in with Google to sync your data across your own devices - when you choose to do this, your data is saved only in a file in your own Google Drive, which Evo Budget cannot access from anyone else\'s account. This is entirely opt-in and can be turned off at any time from Settings.</p>' +
+          '<p><strong>No account required.</strong> Evo Budget does not require you to create an account, provide an email address, or share any personally identifiable information to use the product. Signing in with Google is entirely optional and only needed if you want your data synced across devices.</p>' +
+          '<p><strong>No bank connections.</strong> Evo Budget never asks for or accesses your bank credentials, account numbers, or any third-party financial service logins.</p>' +
+          '<p><strong>No tracking.</strong> Evo Budget does not use analytics trackers, advertising pixels, or third-party cookies. Your usage is not monitored, profiled, or shared with any external parties.</p>' +
+          '<p><strong>Data control.</strong> Because your data lives entirely on your device (or, if you opt in, your own Google Drive), you have full control over it at all times. You can export your data via CSV or clear it through your browser settings. Clearing your browser data or switching devices will remove your Evo Budget data unless you have exported a backup or enabled Google sync.</p>' +
+          '<p><strong>Third-party services.</strong> Evo Budget loads fonts from Google Fonts, which is subject to Google\'s privacy policy. If you opt in to Google sync, Evo Budget also uses Google Sign-In and the Google Drive API to store your data in your own Drive, subject to Google\'s privacy policy. No other third-party services are used.</p>' +
+          '<p><strong>Changes.</strong> If this policy changes, the updated version will be posted on this page with a revised date.</p>',
+        terms: '<p><strong>Last updated:</strong> July 2026</p>' +
+          '<p>By using Evo Budget, you agree to the following terms.</p>' +
+          '<p><strong>License.</strong> Evo Budget grants you a personal, non-transferable license to use the software for personal financial planning. The free trial allows limited usage. Purchasing an access code unlocks unlimited usage for one user.</p>' +
+          '<p><strong>No financial advice.</strong> Evo Budget is a budgeting and organizational tool, not a financial advisor. The calculators, projections, and summaries provided are for informational purposes only and do not constitute financial, tax, investment, or legal advice. Always consult a qualified professional for financial decisions.</p>' +
+          '<p><strong>Data responsibility.</strong> You are solely responsible for your data. Evo Budget stores data in your browser\'s local storage and does not create backups on your behalf. Use the CSV export feature to keep backup copies of your financial information.</p>' +
+          '<p><strong>No warranty.</strong> Evo Budget is provided "as is" without warranty of any kind, express or implied. We do not guarantee that the software will be error-free, uninterrupted, or free of bugs.</p>' +
+          '<p><strong>Limitation of liability.</strong> Evo Budget and its creators shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the software, including but not limited to financial losses, data loss, or decisions made based on information provided by the software.</p>' +
+          '<p><strong>Refunds.</strong> Due to the digital nature of the product and immediate access upon purchase, all sales are final. We encourage you to use the free trial to evaluate the product before purchasing.</p>' +
+          '<p><strong>Changes.</strong> We reserve the right to modify these terms at any time. Continued use after changes constitutes acceptance of the updated terms.</p>',
+        disclaimer: '<p><strong>Last updated:</strong> July 2026</p>' +
+          '<p><strong>Not financial advice.</strong> Evo Budget is a personal budgeting and expense tracking tool. It is not a substitute for professional financial planning, tax advice, or investment guidance. The debt payoff projections, savings calculations, and budget summaries are estimates based on the information you provide and should not be relied upon as precise financial forecasts.</p>' +
+          '<p><strong>Accuracy of calculations.</strong> While we strive for accuracy in all calculations, Evo Budget does not account for taxes, fees, interest rate changes, inflation, or other factors that may affect your actual financial outcomes. Always verify important financial calculations independently.</p>' +
+          '<p><strong>User responsibility.</strong> You are solely responsible for the financial decisions you make. Evo Budget is a planning aid, and any actions you take based on the information it provides are at your own discretion and risk.</p>' +
+          '<p><strong>Testimonials.</strong> User testimonials displayed on this site reflect individual experiences and are not guaranteed outcomes. Your results may vary based on your financial situation, discipline, and other personal factors.</p>' +
+          '<p><strong>Browser compatibility.</strong> Evo Budget relies on your browser\'s local storage. Clearing your browser cache or cookies may delete your saved data. We strongly recommend regularly exporting your data using the CSV export feature as a backup.</p>'
+      };
+
+      function openLegal(type) {
+        document.getElementById('legalTitle').textContent = titles[type] || '';
+        document.getElementById('legalBody').innerHTML = bodies[type] || '';
+        overlay.hidden = false;
+      }
+      function closeLegal() { overlay.hidden = true; }
+
+      var footerPrivacy = document.getElementById('footerPrivacy');
+      var footerTerms = document.getElementById('footerTerms');
+      var footerDisclaimer = document.getElementById('footerDisclaimer');
+      if (footerPrivacy) footerPrivacy.addEventListener('click', function () { openLegal('privacy'); });
+      if (footerTerms) footerTerms.addEventListener('click', function () { openLegal('terms'); });
+      if (footerDisclaimer) footerDisclaimer.addEventListener('click', function () { openLegal('disclaimer'); });
+      closeBtn.addEventListener('click', closeLegal);
+      overlay.addEventListener('click', function (e) { if (e.target === overlay) closeLegal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !overlay.hidden) closeLegal(); });
+    })();
   </script>
 </body>
 </html>
