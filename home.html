@@ -629,8 +629,8 @@
   </section>
 
   <!-- ── Marquee (pauses on hover, jumps to each tool) ────────────── -->
-  <div class="eh-marquee">
-    <div class="eh-marquee-track">
+  <div class="eh-marquee" id="ehMarquee">
+    <div class="eh-marquee-track" id="ehMarqueeTrack">
       <a class="eh-marquee-item" href="#tool-budget"><span class="eh-marquee-dot"></span>Budgeting</a>
       <a class="eh-marquee-item" href="#tool-tasks"><span class="eh-marquee-dot"></span>Tasks</a>
       <a class="eh-marquee-item" href="#tool-habits"><span class="eh-marquee-dot"></span>Habits</a>
@@ -851,6 +851,54 @@
     (function () {
       var t = localStorage.getItem('evobudget_theme') || 'dark';
       document.documentElement.dataset.theme = t;
+    })();
+
+    // ── Marquee: build however many copies of the 6-item set are needed so
+    // one "side" of the track is always at least as wide as the strip
+    // itself. The static markup only ever duplicates the set ONCE, which
+    // is enough for the translateX(-50%) loop to be seamless in principle,
+    // but only if that single set is already wider than the visible strip.
+    // On a wide monitor a 6-item set can be narrower than the page, so
+    // after it scrolls past there's not enough of the next copy left to
+    // cover the remaining width - a visible empty gap on the right before
+    // the loop wraps. Repeating the set enough times per side removes that
+    // gap on any screen width, and re-measures on resize since that
+    // threshold depends on the strip's actual rendered width. ──
+    (function () {
+      var marquee = document.getElementById('ehMarquee');
+      var track = document.getElementById('ehMarqueeTrack');
+      if (!marquee || !track) return;
+      var baseItems = Array.prototype.slice.call(track.children).filter(function (el) {
+        return el.getAttribute('aria-hidden') !== 'true';
+      });
+      if (!baseItems.length) return;
+
+      function renderSide(repeats, hidden) {
+        var out = '';
+        for (var r = 0; r < repeats; r++) {
+          baseItems.forEach(function (el) {
+            var attrs = hidden || r > 0 ? ' aria-hidden="true" tabindex="-1"' : '';
+            out += el.outerHTML.replace('<a class="eh-marquee-item"', '<a class="eh-marquee-item"' + attrs);
+          });
+        }
+        return out;
+      }
+
+      function build() {
+        var stripWidth = marquee.getBoundingClientRect().width || window.innerWidth;
+        // Measure one un-duplicated set's real rendered width first.
+        track.innerHTML = renderSide(1, false);
+        var oneSetWidth = track.getBoundingClientRect().width;
+        if (oneSetWidth <= 0) return;
+        var repeatsPerSide = Math.max(1, Math.ceil(stripWidth / oneSetWidth));
+        track.innerHTML = renderSide(repeatsPerSide, false) + renderSide(repeatsPerSide, true);
+      }
+      build();
+      var resizeTimer = null;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(build, 200);
+      });
     })();
 
     // ── Orbit: two independently-rotating rings (3 tools each) spinning in
