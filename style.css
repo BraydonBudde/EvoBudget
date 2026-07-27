@@ -3055,22 +3055,27 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 }
 .penny-drawer-panel {
   position: absolute; top: 50%; left: 50%;
-  width: min(572px, 92vw); max-height: min(952px, 92vh);
+  width: min(1040px, 90vw); max-height: min(952px, 92vh);
   background: linear-gradient(160deg, rgba(255,255,255,.8) 0%, rgba(248,247,255,.8) 45%, rgba(253,246,250,.8) 100%);
   backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid var(--border-faint); border-radius: 24px;
   box-shadow: 0 32px 80px -20px rgba(15,12,25,.5), 0 12px 32px -12px rgba(15,12,25,.3);
   display: flex; flex-direction: column; overflow: hidden;
-  transform: translate(-50%, -50%) translateY(10px) scale(.94);
-  opacity: 0;
-  transition: transform .3s var(--ease), opacity .22s var(--ease);
+  /* Sleek entrance: a soft upward drift + scale + blur-in on an
+     ease-out-expo-style curve, rather than a plain fade. */
+  transform: translate(-50%, -50%) translateY(16px) scale(.92);
+  opacity: 0; filter: blur(6px);
+  transition: transform .4s cubic-bezier(.16,1,.3,1), opacity .28s var(--ease), filter .32s var(--ease);
 }
 [data-theme="dark"] .penny-drawer-panel {
   background: linear-gradient(160deg, rgba(23,18,42,.8) 0%, rgba(14,8,32,.8) 55%, rgba(28,16,36,.8) 100%);
 }
 .penny-drawer.is-open { pointer-events: auto; }
 .penny-drawer.is-open .penny-drawer-scrim { opacity: 1; }
-.penny-drawer.is-open .penny-drawer-panel { transform: translate(-50%, -50%) translateY(0) scale(1); opacity: 1; }
+.penny-drawer.is-open .penny-drawer-panel { transform: translate(-50%, -50%) translateY(0) scale(1); opacity: 1; filter: blur(0); }
+@media (prefers-reduced-motion: reduce) {
+  .penny-drawer-panel { transition: opacity .2s ease; filter: none; transform: translate(-50%, -50%); }
+}
 
 .penny-drawer-header { display: flex; align-items: center; gap: 12px; padding: 18px 18px 10px; flex-shrink: 0; }
 .penny-avatar {
@@ -3098,12 +3103,30 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 }
 .penny-msg-avatar svg { display: block; width: 100%; height: 100%; }
 .penny-msg-bubble {
-  max-width: 78%; padding: 9px 13px; border-radius: 16px; font-size: 13px; line-height: 1.5;
+  /* Capped in absolute terms too (not just 78%) - now that the panel can
+     be over 1000px wide, an uncapped percentage would stretch a reply
+     into an uncomfortably long line length. */
+  max-width: min(78%, 620px); padding: 9px 13px; border-radius: 16px; font-size: 13px; line-height: 1.5;
   background: var(--surface-strong); color: var(--text-primary);
 }
 .penny-msg--user .penny-msg-bubble { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink)); color: #fff; border-bottom-right-radius: 4px; }
 .penny-msg--penny .penny-msg-bubble { border-bottom-left-radius: 4px; }
 .penny-msg-text { white-space: pre-wrap; word-break: break-word; }
+/* Lightweight markdown Penny's own replies are formatted into
+   (pennyFormatMarkdown in penny.js) - never used for the user's own
+   messages, which stay as plain text. */
+.penny-msg-text p { margin: 0 0 8px; }
+.penny-msg-text p:last-child { margin-bottom: 0; }
+.penny-msg-text strong { font-weight: 700; color: var(--text-primary); }
+.penny-msg-text h4 {
+  font-family: var(--font-display); font-size: 13px; font-weight: 800;
+  color: var(--text-primary); margin: 10px 0 4px; letter-spacing: -.005em;
+}
+.penny-msg-text h4:first-child { margin-top: 0; }
+.penny-msg-text ul, .penny-msg-text ol { margin: 4px 0 8px; padding-left: 18px; }
+.penny-msg-text ul:last-child, .penny-msg-text ol:last-child { margin-bottom: 0; }
+.penny-msg-text li { margin-bottom: 3px; }
+.penny-msg-text li:last-child { margin-bottom: 0; }
 .penny-msg--error .penny-msg-bubble--error { border: 1px solid rgba(239,68,68,.3); }
 .penny-err-action { margin-top: 8px; }
 
@@ -3125,6 +3148,10 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .penny-chart-block .flow-bar { height: 100%; border-radius: 4px; }
 
 .penny-quick-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 12px; flex-shrink: 0; }
+/* Compact pills, not full-size buttons - on the wider panel a row of
+   default .btn-sm chips would otherwise read as a second, oversized menu
+   rather than a few quick suggestions. */
+.penny-qp-btn { font-size: 11.5px; padding: 6px 11px; }
 .penny-input-row { display: flex; padding: 14px 18px; border-top: 1px solid var(--border-faint); flex-shrink: 0; }
 /* Ask button lives inside the pill, anchored to its right edge, rather
    than sitting beside it as a separate element. */

@@ -323,10 +323,12 @@ function pennyBuildSystemInstruction() {
     "You ONLY answer questions about the user's own budgeting data (income, expenses, bills, savings, debts, subscriptions, sinking funds, transactions, overall budget health) using the tools provided. " +
     "You must call one of the provided functions to fetch real data before stating any dollar amount, percentage, or count - never invent or estimate numbers yourself. " +
     "If asked about anything unrelated to the user's own budget in this app (general knowledge, other people's finances, coding help, current events, etc.), politely decline and redirect to a budgeting question. " +
-    "Keep every answer under about 60 words unless the user explicitly asks for more detail. " +
+    "Keep every answer under about 60 words for a typical question. If the user explicitly asks for more detail, a deeper explanation, or a comparison, you may write up to about 500 words. " +
+    "Format your answers with lightweight markdown so they're easy to scan: **bold** the key dollar amounts and category names, use a short '### Heading' before a distinct section if the answer covers more than one topic, and use '- ' bullet points when listing more than two items instead of one dense paragraph. " +
+    "You may use relevant emoji sparingly to make a longer answer easier to scan - for example 💰 income, 📊 breakdowns, 📈 increases, 📉 decreases, 🎯 goals, ⚠️ warnings, ✅ good news, 💡 tips, 💳 debt, 🏦 savings, 🔁 subscriptions - but don't force one into every sentence. " +
     "Use the currency symbol returned by the tools, not your own assumption. " +
     "If a tool returns no data, say so plainly rather than guessing. " +
-    "You may call render_chart to visualize a breakdown, but only after already retrieving the underlying data via another tool in the same turn. " +
+    "Only call render_chart when the user has explicitly asked to see a chart, graph, or visual breakdown (e.g. \"show me a chart\", \"visualize this\") - do not add one automatically just because you fetched category data for a text answer. When you do call it, only do so after already retrieving the underlying data via another tool in the same turn. " +
     "For general spending questions, prefer get_category_breakdown with section='spending' so the chart covers every spending category, not just one section."
   }] };
 }
@@ -675,7 +677,10 @@ async function pennySendMessage(userText) {
         // than erroring on the value, which is what happened here.
         systemInstruction: pennyBuildSystemInstruction(),
         tools: pennyToolDeclarations(),
-        generationConfig: { maxOutputTokens: 400, temperature: 0.3 },
+        // ~900 tokens gives comfortable headroom above the ~500-word ceiling
+        // the system instruction now allows for in-depth answers (roughly
+        // 650-700 tokens of English text, plus markdown formatting).
+        generationConfig: { maxOutputTokens: 900, temperature: 0.3 },
         contents: _pennyContents,
       }, chunk => {
         const cand = chunk.candidates && chunk.candidates[0];
@@ -709,7 +714,7 @@ async function pennySendMessage(userText) {
             if (!bubbleEl) { pennyHideTyping(); bubbleEl = pennyAppendMessage('penny', ''); }
             accumulatedText += part.text;
             const textEl = bubbleEl.querySelector('.penny-msg-text');
-            if (textEl) textEl.textContent = accumulatedText;
+            if (textEl) textEl.innerHTML = pennyFormatMarkdown(accumulatedText);
             const list = document.getElementById('pennyMessages');
             if (list) list.scrollTop = list.scrollHeight;
           }
@@ -894,6 +899,36 @@ function pennyRenderQuickActions() {
   wrap.innerHTML = prompts.map(k => `<button class="btn btn-ghost btn-sm penny-qp-btn" data-qp="${k}" type="button">${esc(t(k))}</button>`).join('');
   wrap.querySelectorAll('[data-qp]').forEach(b => b.addEventListener('click', () => pennySendMessage(t(b.dataset.qp))));
 }
+// Lightweight, dependency-free markdown -> HTML for Penny's OWN responses
+// only (never the user's own messages, which stay as plain escaped text -
+// see pennyAppendMessage below). Handles just the handful of constructs
+// the system prompt now asks Gemini to use: **bold**, '### heading'
+// lines, '- ' bullet lists, '1. ' numbered lists, and blank-line-
+// separated paragraphs. Escapes HTML first (via the same esc() used
+// elsewhere in the app) so nothing in the model's output can inject
+// markup - this is purely a display formatter over already-received text,
+// it doesn't touch the request/response/tool-calling pipeline at all.
+function pennyFormatMarkdown(raw) {
+  const lines = String(raw ?? '').replace(/\r\n/g, '\n').split('\n');
+  const blocks = [];
+  let list = null;   // { type: 'ul'|'ol', items: [] }
+  let para = [];
+  function flushPara() { if (para.length) { blocks.push('<p>' + para.join('<br>') + '</p>'); para = []; } }
+  function flushList() { if (list) { blocks.push('<' + list.type + '>' + list.items.map(i => '<li>' + i + '</li>').join('') + '</' + list.type + '>'); list = null; } }
+  function inline(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) { flushList(); flushPara(); return; }
+    let m;
+    if ((m = /^#{1,4}\s+(.*)$/.exec(trimmed))) { flushList(); flushPara(); blocks.push('<h4>' + inline(m[1]) + '</h4>'); return; }
+    if ((m = /^[-*]\s+(.*)$/.exec(trimmed))) { flushPara(); if (!list || list.type !== 'ul') { flushList(); list = { type: 'ul', items: [] }; } list.items.push(inline(m[1])); return; }
+    if ((m = /^\d+[.)]\s+(.*)$/.exec(trimmed))) { flushPara(); if (!list || list.type !== 'ol') { flushList(); list = { type: 'ol', items: [] }; } list.items.push(inline(m[1])); return; }
+    flushList();
+    para.push(inline(trimmed));
+  });
+  flushList(); flushPara();
+  return blocks.join('');
+}
 function pennyAppendMessage(role, text) {
   const list = document.getElementById('pennyMessages');
   if (!list) return null;
@@ -905,7 +940,9 @@ function pennyAppendMessage(role, text) {
   const bubble = document.createElement('div');
   bubble.className = 'penny-msg-bubble';
   bubble.innerHTML = `<div class="penny-msg-text"></div>`;
-  bubble.querySelector('.penny-msg-text').textContent = text;
+  const textEl = bubble.querySelector('.penny-msg-text');
+  if (role === 'user') textEl.textContent = text;
+  else textEl.innerHTML = pennyFormatMarkdown(text);
   row.appendChild(bubble);
   list.appendChild(row);
   list.scrollTop = list.scrollHeight;
