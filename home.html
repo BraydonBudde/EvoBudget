@@ -60,7 +60,13 @@
 
     /* ── Split hero (copy swaps to a tool preview on orbit hover/tap) ── */
     .eh-hero {
-      display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 40px;
+      /* minmax(0, ...) instead of a bare fr - a bare fr track's minimum is
+         "auto" (its content's min-content width), so swapping the hero
+         copy on orbit hover to a different title/description could force
+         this column wider (a big heading word at this font-size is wide)
+         and shove the orbit column sideways. minmax(0, ...) pins both
+         columns to the fr ratio always, so hovering can never shift it. */
+      display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); align-items: center; gap: 40px;
       max-width: 1180px; margin: 0 auto; padding: clamp(40px, 7vw, 88px) clamp(20px, 4vw, 56px) 50px;
     }
     .eh-hero-copy { transition: opacity .15s; }
