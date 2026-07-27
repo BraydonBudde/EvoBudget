@@ -104,6 +104,9 @@
       animation-delay: var(--chip-delay, 0ms);
     }
     @keyframes eh-hero-chip-in { to { opacity: 1; transform: translateY(0) scale(1); } }
+    /* Dashed and muted instead of solid, so it reads as "there's more if
+       you click through" rather than a 6th real feature. */
+    .eh-hero-chip--more { color: var(--text-faint); background: transparent; border-style: dashed; }
     @media (prefers-reduced-motion: reduce) { .eh-hero-chip { animation: none; opacity: 1; transform: none; } }
     /* Reuses the tool menu's exact .lp-strip-inner/-item/-icon/-sep classes
        (and every theme's background override on them) for pixel-identical
@@ -565,7 +568,7 @@
   <section class="eh-hero">
     <div class="eh-hero-copy" id="ehHeroCopy">
       <h1 class="eh-hero-title">Evo Hub<br><span class="grad-text">Plan your life here</span></h1>
-      <p class="eh-hero-sub">Evo Budget is live and free today. Task planning, habit tracking, wedding planning, meal planning, and fitness planning are coming soon - all under one roof, all built with the same simple philosophy.</p>
+      <p class="eh-hero-sub">Evo Budget is live today - free to try, one payment to unlock. Task planning, habit tracking, wedding planning, meal planning, and fitness planning are coming soon - all under one roof, all built with the same simple philosophy.</p>
       <div class="eh-hero-trust lp-strip-inner" aria-label="Key benefits">
         <div class="lp-strip-item"><span class="lp-strip-icon">💳</span><span class="lp-strip-text">No bank login</span></div>
         <div class="lp-strip-sep" aria-hidden="true"></div>
@@ -620,36 +623,30 @@
         <div class="eh-orbit-spin eh-orbit-spin--outer" id="ehOrbitSpinOuter">
           <div class="eh-orbit-node-pos" data-angle="-90">
             <a class="eh-orbit-node eh-orbit-node--live" href="index.html"
-               data-name="Evo Budget" data-icon="💰"
-               data-desc="Two free budget planners for total money clarity. Track income, expenses, bills, debt, savings, and more.">💰</a>
+               data-name="Evo Budget" data-icon="💰">💰</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="30">
             <a class="eh-orbit-node" href="#tool-wedding"
-               data-name="Wedding Planner" data-icon="💍"
-               data-desc="Guest lists, budgets, vendors, and timelines for the big day, all in one place.">💍</a>
+               data-name="Wedding Planner" data-icon="💍">💍</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="150">
             <a class="eh-orbit-node" href="#tool-fitness"
-               data-name="Fitness Planner" data-icon="🏋️"
-               data-desc="Plan workouts, track progress, and build routines that actually fit your week.">🏋️</a>
+               data-name="Fitness Planner" data-icon="🏋️">🏋️</a>
           </div>
         </div>
         <!-- Inner ring: 3 tools, spins the opposite way -->
         <div class="eh-orbit-spin eh-orbit-spin--inner" id="ehOrbitSpinInner">
           <div class="eh-orbit-node-pos" data-angle="-30">
             <a class="eh-orbit-node" href="#tool-tasks"
-               data-name="Task Planner" data-icon="📝"
-               data-desc="Organize your to-dos and projects without the clutter of an over-built app.">📝</a>
+               data-name="Task Planner" data-icon="📝">📝</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="90">
             <a class="eh-orbit-node" href="#tool-habits"
-               data-name="Habit Tracker" data-icon="🔁"
-               data-desc="Build streaks that stick, with a clean daily view that makes consistency easy.">🔁</a>
+               data-name="Habit Tracker" data-icon="🔁">🔁</a>
           </div>
           <div class="eh-orbit-node-pos" data-angle="210">
             <a class="eh-orbit-node" href="#tool-meals"
-               data-name="Meal Planner" data-icon="🍽️"
-               data-desc="Plan the week's meals, build a grocery list automatically, and cut food waste.">🍽️</a>
+               data-name="Meal Planner" data-icon="🍽️">🍽️</a>
           </div>
         </div>
       </div>
@@ -679,7 +676,7 @@
     <div><div class="eh-stat-num" data-target="2">0</div><div class="eh-stat-label">Live planners</div></div>
     <div><div class="eh-stat-num" data-target="10">0</div><div class="eh-stat-label">More on the way</div></div>
     <div><div class="eh-stat-num" data-target="0" data-prefix="$">$0</div><div class="eh-stat-label">Free to try</div></div>
-    <div><div class="eh-stat-num" data-target="0">0</div><div class="eh-stat-label">Subscriptions, ever</div></div>
+    <div><div class="eh-stat-num" data-target="100" data-suffix="%">0%</div><div class="eh-stat-label">Yours to keep, forever</div></div>
   </div>
 
   <!-- ── App-switcher tool showcase ───────────────────────────────── -->
@@ -687,7 +684,7 @@
     <div class="eh-showcase-inner">
       <div class="eh-showcase-head">
         <h2>Tools built for <span class="grad-text">real life</span></h2>
-        <p>Evo Budget is free and ready today. Five more tools are on the way - hit "Notify me" on any of them below to hear the moment they launch.</p>
+        <p>Evo Budget is ready today - free to try, one payment to unlock. Five more tools are on the way - hit "Notify me" on any of them below to hear the moment they launch.</p>
       </div>
 
       <div class="eh-switcher">
@@ -701,7 +698,7 @@
         <div class="eh-switcher-tabs" role="tablist" aria-label="Evo Hub tools" id="ehSwitcherTabs">
           <button type="button" class="eh-switcher-tab is-active" id="tool-budget" role="tab" aria-selected="true"
             data-icon="💰" data-name="Evo Budget" data-live="true"
-            data-desc="Two free budget planners for total money clarity - track income, expenses, bills, debt, savings, and everything in between."
+            data-desc="Two full budget planners covering income, expenses, bills, debt, and savings goals - no bank login needed. Free to try, one payment unlocks it all."
             data-checklist="💰:Income tracking|🧾:Bill reminders|📉:Debt payoff calculator|🔒:No bank login|💳:Expense categories|🎯:Savings goals"
             data-cta-label="Open Evo Budget →" data-cta-href="index.html">
             <span class="eh-switcher-tab-icon">💰</span>
@@ -1069,28 +1066,38 @@
       var nodes = Array.prototype.slice.call(orbitEl.querySelectorAll('.eh-orbit-node'));
 
       // The switcher tab for this node is the single source of truth for
-      // its checklist - the orbit preview borrows its first 3 items rather
-      // than duplicating feature copy in a second place in the markup.
+      // both its description and its checklist - the orbit preview
+      // borrows them rather than keeping a second, easily-stale copy of
+      // the same feature/description text in the orbit markup.
       function toolIdFor(node) {
         var href = node.getAttribute('href') || '';
         return href.charAt(0) === '#' ? href.slice(1) : 'tool-budget';
       }
+      // 5 real features + a final "+ More" chip (every tool's checklist
+      // has exactly 6 items, so this always leaves one more to point to)
+      // rather than all 6, so there's still a reason to click through to
+      // the full card below.
       function previewChipsHTML(node) {
         var tabEl = document.getElementById(toolIdFor(node));
         if (!tabEl || !tabEl.dataset.checklist) return '';
-        var items = tabEl.dataset.checklist.split('|').slice(0, 3).map(function (raw) {
+        var items = tabEl.dataset.checklist.split('|').map(function (raw) {
           var idx = raw.indexOf(':');
           return { icon: raw.slice(0, idx), text: raw.slice(idx + 1) };
         });
-        return '<div class="eh-hero-chips">' + items.map(function (it, i) {
+        var shown = items.slice(0, 5);
+        var chips = shown.map(function (it, i) {
           return '<span class="eh-hero-chip" style="--chip-delay:' + (i * 70) + 'ms">' + it.icon + ' ' + it.text + '</span>';
-        }).join('') + '</div>';
+        }).join('');
+        chips += '<span class="eh-hero-chip eh-hero-chip--more" style="--chip-delay:' + (shown.length * 70) + 'ms">+ More</span>';
+        return '<div class="eh-hero-chips">' + chips + '</div>';
       }
       function previewHTML(node) {
         var isLive = node.classList.contains('eh-orbit-node--live');
         var badge = isLive ? '' : '<span class="eh-soon-badge">Coming soon</span>';
+        var tabEl = document.getElementById(toolIdFor(node));
+        var desc = tabEl ? tabEl.dataset.desc : '';
         return '<div class="eh-hero-title-row"><h1 class="eh-hero-title">' + node.dataset.icon + ' ' + node.dataset.name + '</h1>' + badge + '</div>' +
-          '<p class="eh-hero-sub">' + node.dataset.desc + '</p>' +
+          '<p class="eh-hero-sub">' + desc + '</p>' +
           previewChipsHTML(node);
       }
 
@@ -1101,12 +1108,22 @@
       // soon" badge - which only the 5 non-live nodes render - is already
       // accounted for in the measurement.
       var defaultHeroHTML = heroCopy.innerHTML;
-      var defaultHeight = heroCopy.getBoundingClientRect().height;
       var sampleNode = nodes.filter(function (n) { return !n.classList.contains('eh-orbit-node--live'); })[0] || nodes[0];
-      heroCopy.innerHTML = previewHTML(sampleNode);
-      var previewHeight = heroCopy.getBoundingClientRect().height;
-      heroCopy.innerHTML = defaultHeroHTML;
-      heroCopy.style.minHeight = Math.max(defaultHeight, previewHeight) + 'px';
+      // Re-run once webfonts finish swapping in, not just once at parse
+      // time - Sora/Inter load async, and measuring against the fallback
+      // system font first gives a smaller (wrong) floor that real text
+      // then renders past, letting different previews' heights drift
+      // apart again exactly like the bug this lock exists to prevent.
+      function computeHeroMinHeight() {
+        heroCopy.style.minHeight = '';
+        var defaultHeight = heroCopy.getBoundingClientRect().height;
+        heroCopy.innerHTML = previewHTML(sampleNode);
+        var previewHeight = heroCopy.getBoundingClientRect().height;
+        heroCopy.innerHTML = defaultHeroHTML;
+        heroCopy.style.minHeight = Math.max(defaultHeight, previewHeight) + 'px';
+      }
+      computeHeroMinHeight();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(computeHeroMinHeight);
 
       // Restart the swap animation every time the hero copy's content
       // changes (both showing a preview and reverting to the default).
