@@ -705,7 +705,7 @@ a.btn { text-decoration: none; }
 }
 .flow-bar {
   height: 100%; border-radius: var(--radius-pill);
-  transition: width .4s var(--ease);
+  transition: width .5s var(--ease);
 }
 .flow-bar--exp { background: rgba(30,27,46,.18); }
 .flow-amounts { display: flex; flex-direction: column; gap: 2px; text-align: right; }
@@ -922,7 +922,7 @@ input[type="number"].expected-input {
 }
 .prog-bar {
   height: 100%; border-radius: var(--radius-pill);
-  transition: width .35s var(--ease);
+  transition: width .5s var(--ease);
 }
 .prog-bar--normal { background: linear-gradient(90deg, #6366f1, #c026d3); }
 .prog-bar--income { background: linear-gradient(90deg, #10b981, #06b6d4); }

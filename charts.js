@@ -303,7 +303,7 @@ function markDashAnimGen(container) {
 // later is what actually triggers the CSS transition defined on it.
 function animateCardsIn(container, isCurrent) {
   if (!container) return;
-  const sel = '.scard, .panel, .pro-stat, .icon-stat-tile, .alloc-card, .upcoming-item, .sf-snap-item, .chart-hero-panel';
+  const sel = '.scard, .panel, .pro-stat, .icon-stat-tile, .alloc-card, .upcoming-item, .sf-snap-item, .chart-hero-panel, .flow-row, .dleg-row, .lf-chip';
   const els = Array.from(container.querySelectorAll(sel));
   if (!els.length) return;
   els.forEach((el, i) => { el.classList.add('dash-anim-in'); el.style.setProperty('--dash-anim-i', i); });
@@ -313,9 +313,16 @@ function animateCardsIn(container, isCurrent) {
   }));
 }
 
+// Every entrance animation in this file shares one duration, so the whole
+// dashboard feels like a single coordinated reveal rather than a mix of
+// speeds.
+const DASH_ANIM_DUR = 500;
+
 // Bar fills (.flow-bar/.prog-bar/.alloc-strip) already transition `width`
-// via existing CSS - just replay that transition from 0 on mount instead
-// of adding new CSS.
+// via existing CSS (now .5s, matching DASH_ANIM_DUR) - just replay that
+// transition from 0 on mount instead of adding new CSS. Staggered per bar
+// so a multi-row panel (Cash Flow, Sinking Funds) visibly cascades rather
+// than every row snapping into place in one indistinguishable instant.
 function animateBarsIn(container, isCurrent) {
   if (!container) return;
   const bars = Array.from(container.querySelectorAll('.flow-bar, .prog-bar, .alloc-strip'));
@@ -335,55 +342,114 @@ function animateBarsIn(container, isCurrent) {
   void container.offsetWidth; // force reflow so the 0% state actually paints
   requestAnimationFrame(() => requestAnimationFrame(() => {
     if (!isCurrent()) return;
-    bars.forEach((b, i) => { b.style.transition = ''; b.style.width = targets[i]; });
+    bars.forEach((b, i) => {
+      b.style.transitionDelay = Math.min(i * 45, 250) + 'ms';
+      b.style.transition = '';
+      b.style.width = targets[i];
+    });
+    setTimeout(() => { if (isCurrent()) bars.forEach(b => { b.style.transitionDelay = ''; }); }, bars.length * 45 + DASH_ANIM_DUR + 200);
   }));
 }
 
-// Stroke-based arcs (donut .dseg, gauge .gauge-arc, radial-ring .rbar-seg)
-// all already carry their final, correct stroke-dasharray from the
-// template - this "hides" each arc by shifting stroke-dashoffset to that
-// same dash length (so the visible dash portion lands in the gap) and
-// then eases it back to 0, i.e. the arc draws in without the underlying
-// dasharray geometry ever being touched.
+// Grows one arc's visible stroke length from 0 up to its real dash value
+// (dash+gap always kept equal to the ring's circumference, so the arc's
+// rotation/position never moves - only how much of it is drawn does) via
+// a manual rAF tween that rewrites the stroke-dasharray attribute every
+// frame. This has to be driven in JS rather than a CSS transition:
+// stroke-dasharray is a paired list, not a single length, and isn't
+// reliably interpolated by a CSS `transition` the way stroke-dashoffset
+// is. (An earlier version of this animated stroke-dashoffset instead,
+// which seemed like the standard technique - but that only works when
+// dasharray's period is DOUBLE the circumference; here dash+gap already
+// equals the full circumference for every segment, so shifting the
+// offset just relocates the same fixed-length visible arc around the
+// ring instead of changing how much of it is drawn, which is why donuts
+// weren't visibly animating at all.)
+function tweenArcDash(arc, dashFinal, gapFinal, delayMs, durMs, isCurrent) {
+  if (!dashFinal) return;
+  const total = dashFinal + gapFinal;
+  arc.setAttribute('stroke-dasharray', '0 ' + total.toFixed(2));
+  let start = null;
+  function tick(now) {
+    if (isCurrent && !isCurrent()) return;
+    if (start === null) start = now + delayMs;
+    if (now < start) { requestAnimationFrame(tick); return; }
+    const p = Math.min(1, (now - start) / durMs);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const d = dashFinal * eased;
+    arc.setAttribute('stroke-dasharray', d.toFixed(2) + ' ' + (total - d).toFixed(2));
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 function animateArcsIn(container, isCurrent) {
   if (!container) return;
-  const arcs = Array.from(container.querySelectorAll('.dseg, .gauge-arc, .rbar-seg'));
-  if (!arcs.length) return;
-  arcs.forEach((arc, i) => {
-    const dash = parseFloat((arc.getAttribute('stroke-dasharray') || '0').split(/[ ,]/)[0]) || 0;
-    if (!dash) return;
-    arc.style.transition = (arc.style.transition ? arc.style.transition + ', ' : '') + `stroke-dashoffset .8s cubic-bezier(.3,0,.2,1)`;
-    arc.style.transitionDelay = (i * 60) + 'ms';
-    arc.style.strokeDashoffset = dash.toFixed(2);
+
+  // Donut segments (.dseg): several segments share ONE ring and together
+  // sum to it - sequencing each segment's own slice of the shared
+  // duration, back to back in drawing order, makes the whole ring look
+  // like it's being traced in one continuous sweep instead of every
+  // wedge popping in from its own 0 all at once.
+  const rings = new Map();
+  Array.from(container.querySelectorAll('.dseg')).forEach(arc => {
+    const svg = arc.closest('svg');
+    if (!rings.has(svg)) rings.set(svg, []);
+    rings.get(svg).push(arc);
   });
-  void container.offsetWidth;
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    if (!isCurrent()) return;
-    arcs.forEach(arc => { arc.style.strokeDashoffset = '0'; });
-    // These same elements' stroke-width/opacity are also driven on HOVER
-    // (initDonuts/wireChartHover) - left set, transition-delay would make
-    // every hover response feel sluggish by up to arcs.length*60ms forever
-    // after. Clear it once the entrance sweep itself has finished.
-    setTimeout(() => { if (isCurrent()) arcs.forEach(arc => { arc.style.transitionDelay = ''; }); }, arcs.length * 60 + 800);
-  }));
+  rings.forEach(segs => {
+    const parsed = segs.map(arc => {
+      const p = (arc.getAttribute('stroke-dasharray') || '0 0').split(/[ ,]/).map(parseFloat);
+      return { arc, dash: p[0] || 0, gap: p[1] || 0 };
+    });
+    const totalDash = parsed.reduce((s, x) => s + x.dash, 0) || 1;
+    let cum = 0;
+    parsed.forEach(({ arc, dash, gap }) => {
+      const delay = (cum / totalDash) * DASH_ANIM_DUR;
+      tweenArcDash(arc, dash, gap, delay, Math.max(30, (dash / totalDash) * DASH_ANIM_DUR), isCurrent);
+      cum += dash;
+    });
+  });
+
+  // Semi-gauge (.gauge-arc): always a single arc - just grows in place.
+  Array.from(container.querySelectorAll('.gauge-arc')).forEach(arc => {
+    const p = (arc.getAttribute('stroke-dasharray') || '0 0').split(/[ ,]/).map(parseFloat);
+    tweenArcDash(arc, p[0] || 0, p[1] || 0, 0, DASH_ANIM_DUR, isCurrent);
+  });
+
+  // Radial-bar rings (.rbar-seg): each is its OWN independent concentric
+  // ring (a different category), not slices of one ring - grow together
+  // with only a light stagger for a cascading-but-still-prompt reveal.
+  Array.from(container.querySelectorAll('.rbar-seg')).forEach((arc, i) => {
+    const p = (arc.getAttribute('stroke-dasharray') || '0 0').split(/[ ,]/).map(parseFloat);
+    tweenArcDash(arc, p[0] || 0, p[1] || 0, i * 70, DASH_ANIM_DUR, isCurrent);
+  });
 }
 
 // Pie wedges (.pie-seg) are filled paths, not simple stroked circles, so
-// the dashoffset-sweep trick above doesn't read as a meaningful reveal on
-// them - a staggered fade (reusing the opacity transition the class
-// already has for hover) reads cleanly instead.
+// the arc-growth trick above doesn't read as a meaningful reveal on them -
+// a staggered fade reads cleanly instead. The class's own opacity
+// transition (.18s, tuned for the snappy hover dim/highlight) is too
+// quick to read as a deliberate entrance, so this gives it a temporary
+// inline override at the shared DASH_ANIM_DUR instead, restoring the
+// original fast transition once the entrance has finished so hover still
+// feels instant afterward.
 function animatePieIn(container, isCurrent) {
   if (!container) return;
   const segs = Array.from(container.querySelectorAll('.pie-seg'));
   if (!segs.length) return;
-  segs.forEach((seg, i) => { seg.style.transitionDelay = (i * 50) + 'ms'; seg.style.opacity = '0'; });
+  segs.forEach((seg, i) => {
+    seg.style.transition = `opacity ${DASH_ANIM_DUR}ms var(--ease)`;
+    seg.style.transitionDelay = (i * 50) + 'ms';
+    seg.style.opacity = '0';
+  });
   void container.offsetWidth;
   requestAnimationFrame(() => requestAnimationFrame(() => {
     if (!isCurrent()) return;
     segs.forEach(seg => { seg.style.opacity = '1'; });
-    // Same reasoning as the arc cleanup above - .pie-seg's opacity is also
-    // hover-driven (wireChartHover), so the stagger delay must not linger.
-    setTimeout(() => { if (isCurrent()) segs.forEach(seg => { seg.style.transitionDelay = ''; }); }, segs.length * 50 + 500);
+    // Hand opacity's transition back to the CSS class (its fast .18s hover
+    // dim/highlight) once the entrance fade itself has finished.
+    setTimeout(() => { if (isCurrent()) segs.forEach(seg => { seg.style.transition = ''; seg.style.transitionDelay = ''; }); }, segs.length * 50 + DASH_ANIM_DUR + 100);
   }));
 }
 
@@ -394,7 +460,7 @@ function animatePieIn(container, isCurrent) {
 // what the template already rendered.
 function animateCountUp(el, target, render, dur, isCurrent) {
   if (!el || typeof target !== 'number' || !isFinite(target)) return;
-  dur = dur || 900;
+  dur = dur || DASH_ANIM_DUR;
   const startTime = performance.now();
   function tick(now) {
     if (isCurrent && !isCurrent()) return; // a newer render has since taken over this element
