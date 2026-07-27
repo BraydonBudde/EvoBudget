@@ -66,7 +66,7 @@ const SBP_KEY = 'evobudget_v1';
 function defaultState() {
   const {start,end} = getMonthBounds();
   return {
-    settings: { currency:'USD', symbol:'$', periodStart:start, periodEnd:end, language:'en', automationEnabled:true, pennyEnabled:false, upcomingDays:7, dashboardLayout:1 },
+    settings: { currency:'USD', symbol:'$', periodStart:start, periodEnd:end, language:'en', automationEnabled:true, pennyEnabled:false, upcomingDays:7, dashboardLayout:1, dashboardAnimations:true },
     rollover: 0,
     budgets: {
       income:   [{id:uid(),category:'Paycheck',expected:0}],
@@ -497,7 +497,9 @@ const TRANSLATIONS = {
     // Calendar days
     mon:'Mon',tue:'Tue',wed:'Wed',thu:'Thu',fri:'Fri',sat:'Sat',sun:'Sun',
     quick_presets:'Quick presets:',select_currency:'Select your currency',select_language:'Select language',
-    appearance_desc:'Choose a colour theme.',video_tutorial:'▶ Video Tutorial',
+    appearance_desc:'Choose a colour theme.',
+    dash_anim_title:'Dashboard Animations',dash_anim_desc:'Play a subtle entrance animation when the dashboard loads.',dash_anim_label:'Enable animations',
+    video_tutorial:'▶ Video Tutorial',
     help_sett_intro:'All your preferences for the Ultimate Budget Planner. Changes are saved automatically as you make them.',
     help_sett_currency_p:'Changes the currency symbol everywhere in the app immediately on selection.',
     help_sett_appearance_p:'Choose from five colour themes - Light, Dark, Synthwave, Vintage, or Terminal. Your preference is remembered across sessions.',
@@ -1024,7 +1026,9 @@ const TRANSLATIONS = {
     upgrade_now:'Jetzt upgraden →',
     mon:'Mo',tue:'Di',wed:'Mi',thu:'Do',fri:'Fr',sat:'Sa',sun:'So',
     quick_presets:'Schnellauswahl:',select_currency:'Währung auswählen',select_language:'Sprache auswählen',
-    appearance_desc:'Wähle ein Farbthema.',video_tutorial:'▶ Video-Tutorial',
+    appearance_desc:'Wähle ein Farbthema.',
+    dash_anim_title:'Dashboard-Animationen',dash_anim_desc:'Beim Laden des Dashboards eine dezente Eingangsanimation abspielen.',dash_anim_label:'Animationen aktivieren',
+    video_tutorial:'▶ Video-Tutorial',
     help_sett_intro:'Alle deine Einstellungen für den Ultimate Budget Planner. Änderungen werden automatisch gespeichert, sobald du sie vornimmst.',
     help_sett_currency_p:'Ändert das Währungssymbol sofort bei Auswahl überall in der App.',
     help_sett_appearance_p:'Wähle aus fünf Farbthemen - Hell, Dunkel, Synthwave, Vintage oder Terminal. Deine Einstellung wird sitzungsübergreifend gespeichert.',
@@ -1550,7 +1554,9 @@ const TRANSLATIONS = {
     upgrade_now:'Mettre à niveau →',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim',
     quick_presets:'Raccourcis :',select_currency:'Sélectionnez votre devise',select_language:'Sélectionner la langue',
-    appearance_desc:'Choisissez un thème de couleur.',video_tutorial:'▶ Tutoriel vidéo',
+    appearance_desc:'Choisissez un thème de couleur.',
+    dash_anim_title:'Animations du tableau de bord',dash_anim_desc:"Jouer une animation d'entrée subtile au chargement du tableau de bord.",dash_anim_label:'Activer les animations',
+    video_tutorial:'▶ Tutoriel vidéo',
     help_sett_intro:'Toutes vos préférences pour Ultimate Budget Planner. Les modifications sont enregistrées automatiquement à mesure que vous les effectuez.',
     help_sett_currency_p:"Change le symbole de devise partout dans l'application dès la sélection.",
     help_sett_appearance_p:'Choisissez parmi cinq thèmes de couleur - Clair, Sombre, Synthwave, Vintage ou Terminal. Votre préférence est mémorisée entre les sessions.',
@@ -2076,7 +2082,9 @@ const TRANSLATIONS = {
     upgrade_now:'Actualizar ahora →',
     mon:'Lun',tue:'Mar',wed:'Mié',thu:'Jue',fri:'Vie',sat:'Sáb',sun:'Dom',
     quick_presets:'Accesos rápidos:',select_currency:'Selecciona tu moneda',select_language:'Seleccionar idioma',
-    appearance_desc:'Elige un tema de color.',video_tutorial:'▶ Tutorial en vídeo',
+    appearance_desc:'Elige un tema de color.',
+    dash_anim_title:'Animaciones del panel',dash_anim_desc:'Reproduce una animación de entrada sutil al cargar el panel.',dash_anim_label:'Activar animaciones',
+    video_tutorial:'▶ Tutorial en vídeo',
     help_sett_intro:'Todas tus preferencias para Ultimate Budget Planner. Los cambios se guardan automáticamente a medida que los realizas.',
     help_sett_currency_p:'Cambia el símbolo de moneda en toda la aplicación inmediatamente al seleccionarlo.',
     help_sett_appearance_p:'Elige entre cinco temas de color - Claro, Oscuro, Synthwave, Vintage o Terminal. Tu preferencia se recuerda entre sesiones.',
@@ -2602,7 +2610,9 @@ const TRANSLATIONS = {
     upgrade_now:'Aggiorna ora →',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Gio',fri:'Ven',sat:'Sab',sun:'Dom',
     quick_presets:'Selezione rapida:',select_currency:'Seleziona la tua valuta',select_language:'Seleziona lingua',
-    appearance_desc:'Scegli un tema di colore.',video_tutorial:'▶ Video Tutorial',
+    appearance_desc:'Scegli un tema di colore.',
+    dash_anim_title:'Animazioni della dashboard',dash_anim_desc:'Riproduci una sottile animazione di ingresso al caricamento della dashboard.',dash_anim_label:'Attiva animazioni',
+    video_tutorial:'▶ Video Tutorial',
     help_sett_intro:'Tutte le tue preferenze per Ultimate Budget Planner. Le modifiche vengono salvate automaticamente man mano che le apporti.',
     help_sett_currency_p:"Modifica il simbolo di valuta ovunque nell'app immediatamente alla selezione.",
     help_sett_appearance_p:'Scegli tra cinque temi di colore - Chiaro, Scuro, Synthwave, Vintage o Terminal. Le tue preferenze vengono ricordate tra le sessioni.',
@@ -3129,7 +3139,9 @@ const TRANSLATIONS = {
     upgrade_now:'Ulepsz teraz →',
     mon:'Pon',tue:'Wt',wed:'Śr',thu:'Czw',fri:'Pt',sat:'Sob',sun:'Nd',
     quick_presets:'Szybki wybór:',select_currency:'Wybierz walutę',select_language:'Wybierz język',
-    appearance_desc:'Wybierz motyw kolorystyczny.',video_tutorial:'▶ Samouczek wideo',
+    appearance_desc:'Wybierz motyw kolorystyczny.',
+    dash_anim_title:'Animacje pulpitu',dash_anim_desc:'Odtwarzaj delikatną animację wejścia przy ładowaniu pulpitu.',dash_anim_label:'Włącz animacje',
+    video_tutorial:'▶ Samouczek wideo',
     help_sett_intro:'Wszystkie Twoje preferencje dla Ultimate Budget Planner. Zmiany są zapisywane automatycznie w trakcie ich wprowadzania.',
     help_sett_currency_p:'Zmienia symbol waluty wszędzie w aplikacji natychmiast po wybraniu.',
     help_sett_appearance_p:'Wybierz spośród pięciu motywów kolorystycznych - Jasny, Ciemny, Synthwave, Vintage lub Terminal. Twoje ustawienie jest zapamiętywane między sesjami.',
@@ -3983,7 +3995,17 @@ function renderDashboardLayout1() {
   el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
   el.querySelector('#loadSampleBtn')?.addEventListener('click',loadSampleData);
   el.querySelector('#dismissWelcomeBtn')?.addEventListener('click',dismissWelcomeCard);
-  requestAnimationFrame(()=>initDonuts(el));
+  requestAnimationFrame(()=>{
+    initDonuts(el);
+    const proVals = el.querySelectorAll('.pro-stats-row .pro-stat-value');
+    animateDashboardEntrance(el, [
+      { el: proVals[0], target: sum.totalIncome, render: fmt },
+      { el: proVals[1], target: sum.totalOut, render: fmt },
+      { el: proVals[2], target: sum.savingsRate, render: v => Math.round(v) + '%' },
+      { el: proVals[3], target: subMo, render: v => fmt(v) + t('sf_per_month') },
+      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), render: v => (sum.leftover < 0 ? '−' : '') + fmt(v) }
+    ]);
+  });
   el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
 }
@@ -4149,6 +4171,14 @@ function renderDashboardLayout2() {
       wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d =>
         `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
     });
+    const istVals = el.querySelectorAll('.ist-row .ist-value');
+    animateDashboardEntrance(el, [
+      { el: istVals[0], target: sum.totalIncome, render: fmt },
+      { el: istVals[1], target: sum.totalOut, render: fmt },
+      { el: istVals[2], target: sum.savingsRate, render: v => Math.round(v) + '%' },
+      { el: istVals[3], target: subMo, render: v => fmt(v) + t('sf_per_month') },
+      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), render: v => (sum.leftover < 0 ? '−' : '') + fmt(v) }
+    ]);
   });
   el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
@@ -5658,6 +5688,14 @@ function renderSettings(){
         </div>
       </div></div>
       <div class="panel"><div class="panel-inner">
+        <div class="settings-card-title">✨ ${t('dash_anim_title')}</div>
+        <p class="settings-desc">${t('dash_anim_desc')}</p>
+        <label class="automate-row" style="margin-top:8px">
+          <span class="automate-row-text"><span class="automate-row-title">${t('dash_anim_label')}</span></span>
+          <span class="recurring-toggle"><input type="checkbox" id="settDashboardAnimations" ${state.settings.dashboardAnimations===false?'':'checked'}><span class="rec-toggle-track"></span></span>
+        </label>
+      </div></div>
+      <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">${t('sync_card_title')}</div>
         <p class="settings-desc">${t('sync_card_desc')}</p>
         <div class="sync-mode-row">
@@ -5872,6 +5910,10 @@ function renderSettings(){
     saveState();
     if (e.target.checked) { const g = processRecurring(); if (g > 0) setTimeout(() => showToast(tf('recurring_generated', g)), 300); else showToast(t('toast_saved')); }
     else showToast(t('toast_saved'));
+  });
+  document.getElementById('settDashboardAnimations')?.addEventListener('change', e => {
+    state.settings.dashboardAnimations = e.target.checked;
+    saveState();
   });
 
   document.getElementById('allocEnabled')?.addEventListener('change', e => {

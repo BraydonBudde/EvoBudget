@@ -135,7 +135,9 @@ const TRANSLATIONS = {
     // Calendar days
     mon:'Mon',tue:'Tue',wed:'Wed',thu:'Thu',fri:'Fri',sat:'Sat',sun:'Sun',
     quick_presets:'Quick presets:',select_currency:'Select your currency',select_language:'Select language',
-    appearance_desc:'Choose a colour theme.',video_tutorial:'▶ Video Tutorial',
+    appearance_desc:'Choose a colour theme.',
+    dash_anim_title:'Dashboard Animations',dash_anim_desc:'Play a subtle entrance animation when the dashboard loads.',dash_anim_label:'Enable animations',
+    video_tutorial:'▶ Video Tutorial',
     help_sett_modal_title:'How Settings work',help_sett_intro:'Customise Evo Budget to match your situation.',
     help_sett_currency_li:'Updates the symbol everywhere (some currencies like PLN place the symbol after the amount).',
     help_sett_period_li:'Set your date range. Click the date badge on Dashboard to jump here quickly.',
@@ -392,7 +394,9 @@ const TRANSLATIONS = {
     upgrade_now:'Jetzt upgraden →',upgrade_get_now:'JETZT HOLEN',upgrade_compare:'PLANER VERGLEICHEN',sett_upgrade_h:'Upgrade-Banner',sett_upgrade_label:'Upgrade-Banner im Dashboard anzeigen',
     mon:'Mo',tue:'Di',wed:'Mi',thu:'Do',fri:'Fr',sat:'Sa',sun:'So',
     quick_presets:'Schnellauswahl:',select_currency:'Währung auswählen',select_language:'Sprache auswählen',
-    appearance_desc:'Wähle ein Farbthema.',video_tutorial:'▶ Video-Tutorial',
+    appearance_desc:'Wähle ein Farbthema.',
+    dash_anim_title:'Dashboard-Animationen',dash_anim_desc:'Beim Laden des Dashboards eine dezente Eingangsanimation abspielen.',dash_anim_label:'Animationen aktivieren',
+    video_tutorial:'▶ Video-Tutorial',
     help_sett_modal_title:'Einstellungen im Überblick',help_sett_intro:'Passe Evo Budget an deine Situation an.',
     help_sett_currency_li:'Aktualisiert das Symbol überall (manche Währungen wie PLN setzen das Symbol nach dem Betrag).',
     help_sett_period_li:'Lege deinen Datumsbereich fest. Klicke auf das Datums-Badge im Dashboard, um schnell hierher zu gelangen.',
@@ -649,7 +653,9 @@ const TRANSLATIONS = {
     upgrade_now:'Mettre à niveau →',upgrade_get_now:'OBTENIR',upgrade_compare:'COMPARER',sett_upgrade_h:'Bannière de mise à niveau',sett_upgrade_label:'Afficher la bannière sur le tableau de bord',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim',
     quick_presets:'Raccourcis :',select_currency:'Sélectionnez votre devise',select_language:'Sélectionner la langue',
-    appearance_desc:'Choisissez un thème de couleur.',video_tutorial:'▶ Tutoriel vidéo',
+    appearance_desc:'Choisissez un thème de couleur.',
+    dash_anim_title:'Animations du tableau de bord',dash_anim_desc:"Jouer une animation d'entrée subtile au chargement du tableau de bord.",dash_anim_label:'Activer les animations',
+    video_tutorial:'▶ Tutoriel vidéo',
     help_sett_modal_title:'Fonctionnement des paramètres',help_sett_intro:'Personnalisez Evo Budget selon votre situation.',
     help_sett_currency_li:"Met à jour le symbole partout (certaines devises comme le PLN placent le symbole après le montant).",
     help_sett_period_li:'Définissez votre plage de dates. Cliquez sur le badge de date du tableau de bord pour y accéder rapidement.',
@@ -906,7 +912,9 @@ const TRANSLATIONS = {
     upgrade_now:'Actualizar ahora →',upgrade_get_now:'OBTENER',upgrade_compare:'COMPARAR',sett_upgrade_h:'Banner de actualización',sett_upgrade_label:'Mostrar el banner en el panel',
     mon:'Lun',tue:'Mar',wed:'Mié',thu:'Jue',fri:'Vie',sat:'Sáb',sun:'Dom',
     quick_presets:'Accesos rápidos:',select_currency:'Selecciona tu moneda',select_language:'Seleccionar idioma',
-    appearance_desc:'Elige un tema de color.',video_tutorial:'▶ Tutorial en vídeo',
+    appearance_desc:'Elige un tema de color.',
+    dash_anim_title:'Animaciones del panel',dash_anim_desc:'Reproduce una animación de entrada sutil al cargar el panel.',dash_anim_label:'Activar animaciones',
+    video_tutorial:'▶ Tutorial en vídeo',
     help_sett_modal_title:'Cómo funcionan los ajustes',help_sett_intro:'Personaliza Evo Budget según tu situación.',
     help_sett_currency_li:'Actualiza el símbolo en todas partes (algunas monedas como PLN colocan el símbolo después del importe).',
     help_sett_period_li:'Establece tu rango de fechas. Haz clic en el distintivo de fecha del panel para acceder rápidamente aquí.',
@@ -1163,7 +1171,9 @@ const TRANSLATIONS = {
     upgrade_now:'Aggiorna ora →',upgrade_get_now:'OTTIENI',upgrade_compare:'CONFRONTA',sett_upgrade_h:'Banner di upgrade',sett_upgrade_label:'Mostra il banner nella dashboard',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Gio',fri:'Ven',sat:'Sab',sun:'Dom',
     quick_presets:'Selezione rapida:',select_currency:'Seleziona la tua valuta',select_language:'Seleziona lingua',
-    appearance_desc:'Scegli un tema di colore.',video_tutorial:'▶ Video Tutorial',
+    appearance_desc:'Scegli un tema di colore.',
+    dash_anim_title:'Animazioni della dashboard',dash_anim_desc:'Riproduci una sottile animazione di ingresso al caricamento della dashboard.',dash_anim_label:'Attiva animazioni',
+    video_tutorial:'▶ Video Tutorial',
     help_sett_modal_title:'Come funzionano le impostazioni',help_sett_intro:'Personalizza Evo Budget in base alla tua situazione.',
     help_sett_currency_li:"Aggiorna il simbolo ovunque (alcune valute come il PLN inseriscono il simbolo dopo l'importo).",
     help_sett_period_li:'Imposta il tuo intervallo di date. Fai clic sul badge della data nel pannello per accedervi rapidamente.',
@@ -1420,7 +1430,9 @@ const TRANSLATIONS = {
     upgrade_now:'Ulepsz teraz →',upgrade_get_now:'POBIERZ',upgrade_compare:'PORÓWNAJ',sett_upgrade_h:'Baner ulepszenia',sett_upgrade_label:'Pokaż baner na pulpicie',
     mon:'Pon',tue:'Wt',wed:'Śr',thu:'Czw',fri:'Pt',sat:'Sob',sun:'Nd',
     quick_presets:'Szybki wybór:',select_currency:'Wybierz walutę',select_language:'Wybierz język',
-    appearance_desc:'Wybierz motyw kolorystyczny.',video_tutorial:'▶ Samouczek wideo',
+    appearance_desc:'Wybierz motyw kolorystyczny.',
+    dash_anim_title:'Animacje pulpitu',dash_anim_desc:'Odtwarzaj delikatną animację wejścia przy ładowaniu pulpitu.',dash_anim_label:'Włącz animacje',
+    video_tutorial:'▶ Samouczek wideo',
     help_sett_modal_title:'Jak działają ustawienia',help_sett_intro:'Dostosuj Evo Budget do swojej sytuacji.',
     help_sett_currency_li:'Aktualizuje symbol wszędzie (niektóre waluty jak PLN umieszczają symbol po kwocie).',
     help_sett_period_li:'Ustaw zakres dat. Kliknij znacznik daty na panelu, aby szybko przejść tutaj.',
@@ -1636,7 +1648,7 @@ function applyLanguage() {
 function defaultState() {
   const { start, end } = getMonthBounds();
   return {
-    settings: { currency: 'USD', symbol: '$', periodStart: start, periodEnd: end, language: 'en', hideUpgrade: false, dashboardLayout: 1 },
+    settings: { currency: 'USD', symbol: '$', periodStart: start, periodEnd: end, language: 'en', hideUpgrade: false, dashboardLayout: 1, dashboardAnimations: true },
     rollover: 0,
     budgets: {
       income: [
@@ -2560,7 +2572,16 @@ function renderDashboardLayout1() {
   // Period badge → go to settings
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
   el.querySelector('#dismissWelcomeBtn')?.addEventListener('click', dismissWelcomeCard);
-  requestAnimationFrame(()=>initDonuts(el));
+  requestAnimationFrame(()=>{
+    initDonuts(el);
+    animateDashboardEntrance(el, [
+      { el: el.querySelector('.scard--income .scard-value'), target: sum.totalIncome, render: fmt },
+      { el: el.querySelector('.scard--expenses .scard-value'), target: sum.totalExpBills, render: fmt },
+      { el: el.querySelector('.scard--debt .scard-value'), target: sum.totalDebt, render: fmt },
+      { el: el.querySelector('.scard--savings .scard-value'), target: sum.totalSavings, render: fmt },
+      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), render: v => (sum.leftover < 0 ? '−' : '') + fmt(v) }
+    ]);
+  });
   el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
 
@@ -2736,6 +2757,14 @@ function renderDashboardLayout2() {
       wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d =>
         `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
     });
+    const istVals = el.querySelectorAll('.ist-row .ist-value');
+    animateDashboardEntrance(el, [
+      { el: istVals[0], target: sum.totalIncome, render: fmt },
+      { el: istVals[1], target: sum.totalExpBills, render: fmt },
+      { el: istVals[2], target: sum.totalDebt, render: fmt },
+      { el: istVals[3], target: sum.totalSavings, render: fmt },
+      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), render: v => (sum.leftover < 0 ? '−' : '') + fmt(v) }
+    ]);
   });
   el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
@@ -3415,6 +3444,14 @@ function renderSettings() {
         </div>
       </div></div>
       <div class="panel"><div class="panel-inner">
+        <div class="settings-card-title">✨ ${t('dash_anim_title')}</div>
+        <p class="settings-desc">${t('dash_anim_desc')}</p>
+        <label class="automate-row" style="margin-top:8px">
+          <span class="automate-row-text"><span class="automate-row-title">${t('dash_anim_label')}</span></span>
+          <span class="recurring-toggle"><input type="checkbox" id="settDashboardAnimations" ${state.settings.dashboardAnimations===false?'':'checked'}><span class="rec-toggle-track"></span></span>
+        </label>
+      </div></div>
+      <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">${t('sync_card_title')}</div>
         <p class="settings-desc">${t('sync_card_desc')}</p>
         <div class="sync-mode-row">
@@ -3585,6 +3622,10 @@ function renderSettings() {
 
   document.getElementById('settShowUpgrade')?.addEventListener('change', e => {
     state.settings.hideUpgrade = !e.target.checked;
+    saveState();
+  });
+  document.getElementById('settDashboardAnimations')?.addEventListener('change', e => {
+    state.settings.dashboardAnimations = e.target.checked;
     saveState();
   });
   document.getElementById('resetBtn')?.addEventListener('click', async () => {

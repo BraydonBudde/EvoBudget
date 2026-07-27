@@ -262,3 +262,163 @@ function wireChartHover(scope, markSelector, opts) {
   });
 }
 
+// ── Dashboard entrance animation ────────────────────────────────────────
+// Shared by both apps' renderDashboardLayout1/2(): a one-time "draw in"
+// played whenever the dashboard is (re)rendered - navigating to the tab,
+// switching layouts, dismissing the welcome card, etc. Purely additive to
+// the final rendered DOM (every element ends at exactly the value/width/
+// arc the template already computed) - this only ever touches transient
+// inline style used to animate FROM, never anything that changes what's
+// actually displayed once the animation settles, so it can't affect
+// layout or functionality. Gated on both the user's "Dashboard animations"
+// setting and prefers-reduced-motion; if either says no, every function
+// below returns immediately and the dashboard renders exactly as it did
+// before any of this existed.
+function dashboardAnimsEnabled() {
+  try {
+    return (typeof state !== 'undefined') && state && state.settings &&
+      state.settings.dashboardAnimations !== false &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch (e) { return false; }
+}
+
+// Guards every deferred (rAF-scheduled) step below against a second
+// renderDashboardLayoutN() call landing before the first one's animation
+// has finished settling - e.g. navigateTo() and an explicit switchBTab()
+// both firing in the same tick re-render the SAME container twice in one
+// frame. Without this, the second pass's "capture the target width/value"
+// step would read back whatever the FIRST pass had just zeroed things out
+// to, permanently freezing bars/arcs at 0. Tagging the container with a
+// generation number lets a stale pass's deferred callback notice a newer
+// one has since started and bail out instead of clobbering it.
+let _dashAnimGenSeq = 0;
+function markDashAnimGen(container) {
+  const gen = ++_dashAnimGenSeq;
+  container._dashAnimGen = gen;
+  return () => container._dashAnimGen === gen;
+}
+
+// Staggered fade + rise for each card/row - the class itself is the
+// "before" state (opacity:0, translateY), and adding .is-visible a frame
+// later is what actually triggers the CSS transition defined on it.
+function animateCardsIn(container, isCurrent) {
+  if (!container) return;
+  const sel = '.scard, .panel, .pro-stat, .icon-stat-tile, .alloc-card, .upcoming-item, .sf-snap-item, .chart-hero-panel';
+  const els = Array.from(container.querySelectorAll(sel));
+  if (!els.length) return;
+  els.forEach((el, i) => { el.classList.add('dash-anim-in'); el.style.setProperty('--dash-anim-i', i); });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!isCurrent()) return;
+    els.forEach(el => el.classList.add('is-visible'));
+  }));
+}
+
+// Bar fills (.flow-bar/.prog-bar/.alloc-strip) already transition `width`
+// via existing CSS - just replay that transition from 0 on mount instead
+// of adding new CSS.
+function animateBarsIn(container, isCurrent) {
+  if (!container) return;
+  const bars = Array.from(container.querySelectorAll('.flow-bar, .prog-bar, .alloc-strip'));
+  if (!bars.length) return;
+  // Cache each bar's true template-rendered width the first time ANY pass
+  // touches it. If two renders of the same container overlap within one
+  // frame (e.g. navigateTo() and an explicit switchBTab() both firing),
+  // the second pass would otherwise read back the width the first pass
+  // had just zeroed a moment ago and "restore" to 0% forever - reading
+  // from this cache instead means only the true original value is ever
+  // used, no matter how many passes touch the element.
+  const targets = bars.map(b => {
+    if (b.dataset.dashTarget === undefined) b.dataset.dashTarget = b.style.width;
+    return b.dataset.dashTarget;
+  });
+  bars.forEach(b => { b.style.transition = 'none'; b.style.width = '0%'; });
+  void container.offsetWidth; // force reflow so the 0% state actually paints
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!isCurrent()) return;
+    bars.forEach((b, i) => { b.style.transition = ''; b.style.width = targets[i]; });
+  }));
+}
+
+// Stroke-based arcs (donut .dseg, gauge .gauge-arc, radial-ring .rbar-seg)
+// all already carry their final, correct stroke-dasharray from the
+// template - this "hides" each arc by shifting stroke-dashoffset to that
+// same dash length (so the visible dash portion lands in the gap) and
+// then eases it back to 0, i.e. the arc draws in without the underlying
+// dasharray geometry ever being touched.
+function animateArcsIn(container, isCurrent) {
+  if (!container) return;
+  const arcs = Array.from(container.querySelectorAll('.dseg, .gauge-arc, .rbar-seg'));
+  if (!arcs.length) return;
+  arcs.forEach((arc, i) => {
+    const dash = parseFloat((arc.getAttribute('stroke-dasharray') || '0').split(/[ ,]/)[0]) || 0;
+    if (!dash) return;
+    arc.style.transition = (arc.style.transition ? arc.style.transition + ', ' : '') + `stroke-dashoffset .8s cubic-bezier(.3,0,.2,1)`;
+    arc.style.transitionDelay = (i * 60) + 'ms';
+    arc.style.strokeDashoffset = dash.toFixed(2);
+  });
+  void container.offsetWidth;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!isCurrent()) return;
+    arcs.forEach(arc => { arc.style.strokeDashoffset = '0'; });
+    // These same elements' stroke-width/opacity are also driven on HOVER
+    // (initDonuts/wireChartHover) - left set, transition-delay would make
+    // every hover response feel sluggish by up to arcs.length*60ms forever
+    // after. Clear it once the entrance sweep itself has finished.
+    setTimeout(() => { if (isCurrent()) arcs.forEach(arc => { arc.style.transitionDelay = ''; }); }, arcs.length * 60 + 800);
+  }));
+}
+
+// Pie wedges (.pie-seg) are filled paths, not simple stroked circles, so
+// the dashoffset-sweep trick above doesn't read as a meaningful reveal on
+// them - a staggered fade (reusing the opacity transition the class
+// already has for hover) reads cleanly instead.
+function animatePieIn(container, isCurrent) {
+  if (!container) return;
+  const segs = Array.from(container.querySelectorAll('.pie-seg'));
+  if (!segs.length) return;
+  segs.forEach((seg, i) => { seg.style.transitionDelay = (i * 50) + 'ms'; seg.style.opacity = '0'; });
+  void container.offsetWidth;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!isCurrent()) return;
+    segs.forEach(seg => { seg.style.opacity = '1'; });
+    // Same reasoning as the arc cleanup above - .pie-seg's opacity is also
+    // hover-driven (wireChartHover), so the stagger delay must not linger.
+    setTimeout(() => { if (isCurrent()) segs.forEach(seg => { seg.style.transitionDelay = ''; }); }, segs.length * 50 + 500);
+  }));
+}
+
+// Counts a single numeric text value up from 0 (or from its own negative
+// magnitude) to the real target, re-formatting through the SAME formatter
+// the caller already used for the final string - so the animation can
+// never drift from, or briefly show different rounding/formatting than,
+// what the template already rendered.
+function animateCountUp(el, target, render, dur, isCurrent) {
+  if (!el || typeof target !== 'number' || !isFinite(target)) return;
+  dur = dur || 900;
+  const startTime = performance.now();
+  function tick(now) {
+    if (isCurrent && !isCurrent()) return; // a newer render has since taken over this element
+    const p = Math.min(1, (now - startTime) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = render(target * eased);
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = render(target); // exact final value, no float drift
+  }
+  requestAnimationFrame(tick);
+}
+
+// Single entry point each renderDashboardLayoutN() calls once, right
+// alongside its existing initDonuts()/wireChartHover() wiring. `countUps`
+// is an optional array of {el, target, render} for the handful of
+// headline numbers worth counting up (stat cards, Net Leftover) - every
+// other value on the dashboard just rides its parent card's fade-in.
+function animateDashboardEntrance(container, countUps) {
+  if (!dashboardAnimsEnabled()) return;
+  const isCurrent = markDashAnimGen(container);
+  animateCardsIn(container, isCurrent);
+  animateBarsIn(container, isCurrent);
+  animateArcsIn(container, isCurrent);
+  animatePieIn(container, isCurrent);
+  (countUps || []).forEach(c => { if (c && c.el) animateCountUp(c.el, c.target, c.render || fmt, undefined, isCurrent); });
+}
+

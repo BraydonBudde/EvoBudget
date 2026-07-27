@@ -2233,6 +2233,29 @@ input[type="number"].expected-input {
 .donut-hover-pct { transition: opacity .15s; }
 .donut-hover-lbl { transition: opacity .15s; }
 
+/* ── Dashboard entrance animation (SBP + UBP, both layouts) ──────
+   .dash-anim-in IS the "before" state (JS adds it on mount); adding
+   .is-visible a frame later is what triggers the transition, staggered
+   per element via --dash-anim-i (set inline by animateCardsIn). Arc/bar/
+   pie draw-in for donuts, gauges, radial rings and pie wedges is handled
+   entirely through transient inline styles in charts.js's
+   animateDashboardEntrance() - no CSS needed for those, since they reuse
+   transitions those elements already have (or the animator appends one
+   inline). This block only covers the card/row fade+rise. */
+.dash-anim-in {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.dash-anim-in.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .5s var(--ease), transform .5s var(--ease);
+  transition-delay: calc(var(--dash-anim-i, 0) * 45ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dash-anim-in { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
 /* ── Calendar day selection ───────────────────────────────────── */
 .cal-cell { cursor: pointer; transition: background .15s; }
 .cal-cell:hover:not(.cal-empty) { background: rgba(99,102,241,.08); }
