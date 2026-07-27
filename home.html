@@ -146,14 +146,22 @@
 
     /* ── Marquee strip (interactive: pauses, links into the showcase) ── */
     .eh-marquee { overflow: hidden; border-top: 1px solid var(--border-faint); border-bottom: 1px solid var(--border-faint); padding: 15px 0; }
-    .eh-marquee-track { display: flex; width: max-content; gap: 44px; animation: eh-marquee 30s linear infinite; }
+    /* No container `gap` here - with 12 items (6 real + 6 duplicate) a
+       flex gap only sits BETWEEN children, giving 11 gaps total. Splitting
+       that odd count into two "halves" of 6 items each means the halfway
+       *item* boundary and the halfway *pixel* point (translateX(-50%))
+       land 22px (half a gap) apart, so the loop stutter-jumps once per
+       cycle. Padding on every item (real and duplicate alike) instead
+       makes each 6-item set a fully self-contained, identically-sized
+       chunk, so -50% always lands exactly on the duplicate set's start. */
+    .eh-marquee-track { display: flex; width: max-content; animation: eh-marquee 30s linear infinite; }
     .eh-marquee:hover .eh-marquee-track { animation-play-state: paused; }
     @keyframes eh-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     @media (prefers-reduced-motion: reduce) { .eh-marquee-track { animation: none; } }
     .eh-marquee-item {
       display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700;
       letter-spacing: .04em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap;
-      text-decoration: none; cursor: pointer; transition: color .15s;
+      text-decoration: none; cursor: pointer; transition: color .15s; padding: 0 22px;
     }
     .eh-marquee-item:hover { color: var(--grad-indigo); }
     .eh-marquee-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--grad-indigo); transition: background .15s, transform .15s; }
