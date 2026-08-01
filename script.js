@@ -290,7 +290,7 @@ const TRANSLATIONS = {
     sync_status_wait:'Complete the steps in the Google window that just opened. If nothing appeared, check your address bar for a blocked pop-up icon.',
     sync_footer_note:'This can be changed in settings later',
     code_title:'Enter your access code',code_sub:'Unlock the full {0} with the code from your purchase.',
-    code_placeholder:'Access code',code_error:"That code isn't right. Check for exact capitalization and try again.",
+    code_placeholder:'Access code',code_error:"That code isn't right. Double-check it and try again.",
     code_submit:'Submit',code_try_free:'Try for free instead',code_get:'Get a code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Edit Transaction',save_changes:'Save changes',no_categories:'- no categories -',
@@ -549,7 +549,7 @@ const TRANSLATIONS = {
     sync_status_wait:'Schließe die Schritte im gerade geöffneten Google-Fenster ab. Falls nichts erschienen ist, prüfe deine Adressleiste auf ein blockiertes Pop-up-Symbol.',
     sync_footer_note:'Dies kann später in den Einstellungen geändert werden',
     code_title:'Gib deinen Zugangscode ein',code_sub:'Schalte den vollen {0} mit dem Code aus deinem Kauf frei.',
-    code_placeholder:'Zugangscode',code_error:'Dieser Code ist nicht richtig. Prüfe die genaue Groß-/Kleinschreibung und versuche es erneut.',
+    code_placeholder:'Zugangscode',code_error:'Dieser Code ist nicht richtig. Überprüfe ihn und versuche es erneut.',
     code_submit:'Absenden',code_try_free:'Stattdessen kostenlos testen',code_get:'Code holen',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Transaktion bearbeiten',save_changes:'Änderungen speichern',no_categories:'- keine Kategorien -',
@@ -808,7 +808,7 @@ const TRANSLATIONS = {
     sync_status_wait:"Terminez les étapes dans la fenêtre Google qui vient de s'ouvrir. Si rien n'est apparu, vérifiez votre barre d'adresse pour une icône de pop-up bloquée.",
     sync_footer_note:'Cela peut être modifié plus tard dans les paramètres',
     code_title:'Entrez votre code d’accès',code_sub:'Débloquez le {0} complet avec le code de votre achat.',
-    code_placeholder:'Code d’accès',code_error:'Ce code est incorrect. Vérifiez la casse exacte et réessayez.',
+    code_placeholder:'Code d’accès',code_error:'Ce code est incorrect. Vérifiez-le et réessayez.',
     code_submit:'Valider',code_try_free:'Essayer gratuitement à la place',code_get:'Obtenir un code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Modifier la transaction',save_changes:'Enregistrer les modifications',no_categories:'- aucune catégorie -',
@@ -1067,7 +1067,7 @@ const TRANSLATIONS = {
     sync_status_wait:'Completa los pasos en la ventana de Google que acaba de abrirse. Si no apareció nada, revisa tu barra de direcciones por un icono de ventana emergente bloqueada.',
     sync_footer_note:'Esto se puede cambiar más tarde en los ajustes',
     code_title:'Introduce tu código de acceso',code_sub:'Desbloquea el {0} completo con el código de tu compra.',
-    code_placeholder:'Código de acceso',code_error:'Ese código no es correcto. Revisa las mayúsculas exactas e inténtalo de nuevo.',
+    code_placeholder:'Código de acceso',code_error:'Ese código no es correcto. Revísalo e inténtalo de nuevo.',
     code_submit:'Enviar',code_try_free:'Probar gratis en su lugar',code_get:'Obtener un código',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Editar transacción',save_changes:'Guardar cambios',no_categories:'- sin categorías -',
@@ -1326,7 +1326,7 @@ const TRANSLATIONS = {
     sync_status_wait:'Completa i passaggi nella finestra Google appena apertasi. Se non è apparso nulla, controlla la barra degli indirizzi per un’icona di popup bloccato.',
     sync_footer_note:'Questo può essere modificato in seguito nelle impostazioni',
     code_title:'Inserisci il tuo codice di accesso',code_sub:'Sblocca il {0} completo con il codice del tuo acquisto.',
-    code_placeholder:'Codice di accesso',code_error:'Il codice non è corretto. Controlla le maiuscole esatte e riprova.',
+    code_placeholder:'Codice di accesso',code_error:'Il codice non è corretto. Controllalo e riprova.',
     code_submit:'Invia',code_try_free:'Prova gratis invece',code_get:'Ottieni un codice',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Modifica transazione',save_changes:'Salva modifiche',no_categories:'- nessuna categoria -',
@@ -1585,7 +1585,7 @@ const TRANSLATIONS = {
     sync_status_wait:'Ukończ kroki w oknie Google, które właśnie się otworzyło. Jeśli nic się nie pojawiło, sprawdź pasek adresu pod kątem zablokowanej ikony wyskakującego okienka.',
     sync_footer_note:'Można to później zmienić w ustawieniach',
     code_title:'Wprowadź swój kod dostępu',code_sub:'Odblokuj pełny {0} za pomocą kodu z Twojego zakupu.',
-    code_placeholder:'Kod dostępu',code_error:'Ten kod jest nieprawidłowy. Sprawdź dokładną wielkość liter i spróbuj ponownie.',
+    code_placeholder:'Kod dostępu',code_error:'Ten kod jest nieprawidłowy. Sprawdź go i spróbuj ponownie.',
     code_submit:'Wyślij',code_try_free:'Wypróbuj za darmo zamiast tego',code_get:'Zdobądź kod',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Edytuj transakcję',save_changes:'Zapisz zmiany',no_categories:'- brak kategorii -',
@@ -1834,8 +1834,44 @@ function showUpgradeModal(ctx = {}) {
 //  "Open" needs a code (full version); "Try for free" opens the trial.
 // ══════════════════════════════════════════════════════════════════════
 const UBP_MODE_KEY  = 'evobudget_ubp_mode';                // 'trial' | 'full'
-const ACCESS_CODES  = { sbp: 'SBP', ubp: 'UBP' };           // case-sensitive
 const UNLOCK_KEYS   = { sbp: 'evobudget_sbp_unlocked', ubp: 'evobudget_ubp_unlocked' };
+
+// ── Launch codes: unlock the full version AND pre-configure which
+//    dashboard layout + appearance theme the tool opens with. ─────────
+//    Format: [ID tens digit][App][Layout][Theme][ID units digit] - the
+//    2-digit sequential id is split across the front and back of the
+//    code, wrapping the 3 middle letters:
+//      App:    S = Simple (SBP)        U = Ultimate (UBP)
+//      Layout: C = Classic dashboard   R = Radial Pulse dashboard
+//      Theme:  L = Light   D = Dark   S = Synthwave   V = Vintage Ledger   T = Terminal
+//    Matched case-insensitively (input is upper-cased before lookup).
+const LAUNCH_CODES = {
+  '0SCL1': { tool: 'sbp', layout: 1, theme: 'light' },
+  '0SCD2': { tool: 'sbp', layout: 1, theme: 'dark' },
+  '0SCS3': { tool: 'sbp', layout: 1, theme: 'synthwave' },
+  '0SCV4': { tool: 'sbp', layout: 1, theme: 'vintage-ledger' },
+  '0SCT5': { tool: 'sbp', layout: 1, theme: 'terminal' },
+  '0SRL6': { tool: 'sbp', layout: 2, theme: 'light' },
+  '0SRD7': { tool: 'sbp', layout: 2, theme: 'dark' },
+  '0SRS8': { tool: 'sbp', layout: 2, theme: 'synthwave' },
+  '0SRV9': { tool: 'sbp', layout: 2, theme: 'vintage-ledger' },
+  '1SRT0': { tool: 'sbp', layout: 2, theme: 'terminal' },
+  '1UCL1': { tool: 'ubp', layout: 1, theme: 'light' },
+  '1UCD2': { tool: 'ubp', layout: 1, theme: 'dark' },
+  '1UCS3': { tool: 'ubp', layout: 1, theme: 'synthwave' },
+  '1UCV4': { tool: 'ubp', layout: 1, theme: 'vintage-ledger' },
+  '1UCT5': { tool: 'ubp', layout: 1, theme: 'terminal' },
+  '1URL6': { tool: 'ubp', layout: 2, theme: 'light' },
+  '1URD7': { tool: 'ubp', layout: 2, theme: 'dark' },
+  '1URS8': { tool: 'ubp', layout: 2, theme: 'synthwave' },
+  '1URV9': { tool: 'ubp', layout: 2, theme: 'vintage-ledger' },
+  '2URT0': { tool: 'ubp', layout: 2, theme: 'terminal' },
+};
+// One-time handoff for the dashboard layout a code was redeemed with -
+// UBP is a full page navigation away (ultimate-budget.html), so it can't
+// be applied to a live `state` object the way SBP's can; init() there
+// reads and clears this once on load instead.
+const UBP_PENDING_LAYOUT_KEY = 'evobudget_ubp_pending_layout';
 
 function setUbpMode(m)   { localStorage.setItem(UBP_MODE_KEY, m); }
 function isUnlocked(tool){ return localStorage.getItem(UNLOCK_KEYS[tool]) === '1'; }
@@ -1952,7 +1988,6 @@ function showAccessCodeModal(tool) {
   document.getElementById('fkCodeOverlay')?.remove();
   const isU  = tool === 'ubp';
   const name = isU ? t('app_name_ubp') : t('app_name_sbp');
-  const code = ACCESS_CODES[tool];
 
   const ov = document.createElement('div');
   ov.className = 'fk-code-overlay';
@@ -1985,8 +2020,19 @@ function showAccessCodeModal(tool) {
   const close = () => { ov.classList.add('is-leaving'); document.removeEventListener('keydown', onKey); setTimeout(() => { ov.remove(); opener?.focus?.(); }, 180); };
   const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else { modalTabTrap(ov, e); } };
   const submit = () => {
-    if (input.value.trim() === code) { setUnlocked(tool); close(); showSyncChoiceModal(tool); }
-    else {
+    const cfg = LAUNCH_CODES[input.value.trim().toUpperCase()];
+    if (cfg) {
+      // The code names its own tool - honor that even if it differs from
+      // whichever "Open" button opened this modal, rather than rejecting
+      // a valid code just because it was typed in the "other" prompt.
+      setUnlocked(cfg.tool);
+      localStorage.setItem('evobudget_theme', cfg.theme); // theme is a single global preference, shared by both tools
+      if (cfg.tool === 'ubp') localStorage.setItem(UBP_PENDING_LAYOUT_KEY, String(cfg.layout));
+      else { state.settings.dashboardLayout = cfg.layout; saveState(); }
+      applyTheme(cfg.theme);
+      close();
+      showSyncChoiceModal(cfg.tool);
+    } else {
       errEl.hidden = false;
       card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
       input.select();

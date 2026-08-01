@@ -6593,6 +6593,11 @@ async function init(){
   syncAdoptHandoffToken('ubp');
   if(syncGetMode('ubp')==='google'){await syncSilentResync('ubp').catch(()=>{});}
   state=loadState()||defaultState();syncSymbol();
+  // One-time handoff from a launch code redeemed on the hub page (script.js)
+  // - it can't touch this tool's own `state` directly since redeeming
+  // happens on a different page/script before this one ever loads.
+  const pendingLayout=localStorage.getItem('evobudget_ubp_pending_layout');
+  if(pendingLayout){state.settings.dashboardLayout=parseInt(pendingLayout,10)||1;localStorage.removeItem('evobudget_ubp_pending_layout');}
   saveState(); // ensures localStorage always mirrors state, so Google sync has real data to seed a Drive file with right away
 
   // A failure anywhere in this optional setup must never leave the whole
