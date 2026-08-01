@@ -144,8 +144,24 @@ function svgSegmentedPie(segments, size = 200) {
 // Subscriptions "$X/month" breakdown).
 function pieChartHtml(segments, opts) {
   opts = opts || {};
-  const list = (segments || []).filter(s => (s.value || 0) > 0).slice(0, opts.limit || 6);
-  if (!list.length) return '';
+  const full = (segments || []).filter(s => (s.value || 0) > 0);
+  if (!full.length) return '';
+  const limit = opts.limit || 6;
+  // A naive top-N slice would leave the excluded categories' share as a
+  // blank arc - the ring would visibly NOT close into a full circle.
+  // Bucket everything past the top (limit-1) into one "Other" wedge
+  // instead, so the ring always sums to a real 100% and every wedge stays
+  // labeled, while the legend still stays capped at `limit` rows.
+  let list;
+  if (full.length > limit) {
+    const shown = full.slice(0, limit - 1);
+    const rest = full.slice(limit - 1);
+    const otherValue = rest.reduce((s, x) => s + (x.value || 0), 0);
+    const otherPct = rest.reduce((s, x) => s + (x.pct || 0), 0);
+    list = shown.concat([{ label: opts.otherLabel || 'Other', value: otherValue, pct: otherPct, color: '#64748b' }]);
+  } else {
+    list = full;
+  }
   // Give sub-4% segments a legible minimum sweep by shaving the excess off
   // the larger segments proportionally. Rounded caps otherwise collapse
   // tiny segments into overlapping dots at the ring joint. data-pct and the

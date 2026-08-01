@@ -839,21 +839,20 @@ a.btn { text-decoration: none; }
 }
 .leftover-hero-left { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 .leftover-hero-formula { gap: 10px; }
-.radial-bars-block { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; justify-content: center; }
-/* Keep the legend from stretching to fill the panel - without this,
-   flex-grow (from the shared .donut-legend rule) pins the ring to the left
-   and the legend consumes all remaining width, so the ring+legend group as
-   a whole no longer reads as centered even though justify-content:center
-   is set on the flex row. */
-.radial-bars-block .donut-legend { flex: 0 1 240px; max-width: 240px; }
+/* Left-aligned (not centered) so the ring starts flush at the panel's own
+   left padding edge - the same "starts right at the border" feel as the
+   Daily Spend chart below it - instead of floating in extra whitespace.
+   The legend flexes to fill the remaining width rather than being capped
+   to a fixed column, so it reads as extending edge-to-edge too. */
+.radial-bars-block { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-start; }
+.radial-bars-block .donut-legend { flex: 1 1 auto; min-width: 200px; max-width: none; }
 /* The grid row stretches this panel to match its row partner's height
    (Income Sources beside it) - without this, the ring sits pinned to the
    top with dead space below instead of centering in the space available. */
 .cash-flow-hero-panel { display: flex; flex-direction: column; }
-/* Matches the other Layout 2 cards' padding (.chart-panel) instead of the
-   wider default .panel-inner-sm, freeing up more room for the rings chart
-   and its now-two-line legend text. */
-.cash-flow-hero-panel .panel-inner-sm { flex: 1; display: flex; flex-direction: column; padding: 18px 20px; }
+/* Same padding as Daily Spend (.spend-line-panel) directly below it, so
+   both full-width-feeling panels start at the same left/right border. */
+.cash-flow-hero-panel .panel-inner-sm { flex: 1; display: flex; flex-direction: column; padding: 18px 22px; }
 .cash-flow-hero-panel .radial-bars-block { flex: 1; }
 @media (max-width: 900px) {
   .ist-row { grid-template-columns: repeat(2, 1fr); }

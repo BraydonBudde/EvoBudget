@@ -707,7 +707,7 @@ const TRANSLATIONS = {
     dash_includes:'Includes',dash_rollover_sfx:'rollover',
     dash_cash_flow:'Cash Flow',
     dash_income_kept:'of income kept',
-    dash_daily_spend:'Daily Spend',dash_daily_spend_caption:'total spend this period',spend_tip_more:'+{0} more',
+    dash_daily_spend:'Daily Spend',dash_daily_spend_caption:'total spend this period',spend_tip_more:'+{0} more',dash_other_category:'Other',
     dash_expected_legend:'Expected',dash_actual_legend:'Actual',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -1236,7 +1236,7 @@ const TRANSLATIONS = {
     dash_includes:'Inkl.',dash_rollover_sfx:'Übertrag',
     dash_cash_flow:'Cashflow',
     dash_income_kept:'des Einkommens behalten',
-    dash_daily_spend:'Tägliche Ausgaben',dash_daily_spend_caption:'Ausgaben insgesamt in diesem Zeitraum',spend_tip_more:'+{0} weitere',
+    dash_daily_spend:'Tägliche Ausgaben',dash_daily_spend_caption:'Ausgaben insgesamt in diesem Zeitraum',spend_tip_more:'+{0} weitere',dash_other_category:'Sonstiges',
     dash_expected_legend:'Geplant',dash_actual_legend:'Tatsächlich',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
@@ -1765,7 +1765,7 @@ const TRANSLATIONS = {
     dash_includes:'Dont',dash_rollover_sfx:'report',
     dash_cash_flow:'Flux de trésorerie',
     dash_income_kept:'du revenu conservé',
-    dash_daily_spend:'Dépenses quotidiennes',dash_daily_spend_caption:'dépenses totales sur la période',spend_tip_more:'+{0} de plus',
+    dash_daily_spend:'Dépenses quotidiennes',dash_daily_spend_caption:'dépenses totales sur la période',spend_tip_more:'+{0} de plus',dash_other_category:'Autre',
     dash_expected_legend:'Prévu',dash_actual_legend:'Réel',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
@@ -2294,7 +2294,7 @@ const TRANSLATIONS = {
     dash_includes:'Incluye',dash_rollover_sfx:'arrastre',
     dash_cash_flow:'Flujo de caja',
     dash_income_kept:'de ingresos conservados',
-    dash_daily_spend:'Gasto diario',dash_daily_spend_caption:'gasto total en este período',spend_tip_more:'+{0} más',
+    dash_daily_spend:'Gasto diario',dash_daily_spend_caption:'gasto total en este período',spend_tip_more:'+{0} más',dash_other_category:'Otro',
     dash_expected_legend:'Previsto',dash_actual_legend:'Real',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
@@ -2824,7 +2824,7 @@ const TRANSLATIONS = {
     dash_includes:'Incluso',dash_rollover_sfx:'riporto',
     dash_cash_flow:'Flusso di cassa',
     dash_income_kept:'di reddito trattenuto',
-    dash_daily_spend:'Spesa giornaliera',dash_daily_spend_caption:'spesa totale nel periodo',spend_tip_more:'+{0} altri',
+    dash_daily_spend:'Spesa giornaliera',dash_daily_spend_caption:'spesa totale nel periodo',spend_tip_more:'+{0} altri',dash_other_category:'Altro',
     dash_expected_legend:'Previsto',dash_actual_legend:'Effettivo',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
@@ -3353,7 +3353,7 @@ const TRANSLATIONS = {
     dash_includes:'W tym',dash_rollover_sfx:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki',
     dash_income_kept:'zachowanego dochodu',
-    dash_daily_spend:'Wydatki dzienne',dash_daily_spend_caption:'łączne wydatki w tym okresie',spend_tip_more:'+{0} więcej',
+    dash_daily_spend:'Wydatki dzienne',dash_daily_spend_caption:'łączne wydatki w tym okresie',spend_tip_more:'+{0} więcej',dash_other_category:'Inne',
     dash_expected_legend:'Planowane',dash_actual_legend:'Rzeczywiste',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
@@ -4157,7 +4157,7 @@ function renderDashboardLayout2() {
         <div class="panel-inner-sm">
           <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_cash_flow')}</div>
           <div class="radial-bars-block">
-            ${svgRadialBars(rings, 230)}
+            ${svgRadialBars(rings, 250)}
             <div class="donut-legend">${rings.map((r,idx) => {
               const over = r.expected>0 && r.value>r.expected;
               return `
@@ -4175,8 +4175,8 @@ function renderDashboardLayout2() {
         </div>
       </div>
       <div class="charts-col pulse-charts-col">
-        <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:pieChartHtml(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})), {limit:5})}</div></div>
-        <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:pieChartHtml(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})), {limit:5})}</div></div>
+        <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:pieChartHtml(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})), {limit:5,otherLabel:t('dash_other_category')})}</div></div>
+        <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:pieChartHtml(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})), {limit:5,otherLabel:t('dash_other_category')})}</div></div>
       </div>
     </div>
 

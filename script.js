@@ -266,7 +266,7 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Net Leftover this period',dash_includes_rollover:'Includes {0} rollover from last period',
     dash_lf_income:'income',dash_lf_exp_bills:'exp &amp; bills',dash_lf_debt:'debt',dash_lf_savings:'savings',dash_lf_rollover:'rollover',
     dash_cash_flow:'Cash Flow - Expected vs Actual',dash_income_kept:'of income kept',dash_expected:'Expected',dash_actual:'Actual',
-    dash_daily_spend:'Daily Spend',dash_daily_spend_caption:'total spend this period',spend_tip_more:'+{0} more',
+    dash_daily_spend:'Daily Spend',dash_daily_spend_caption:'total spend this period',spend_tip_more:'+{0} more',dash_other_category:'Other',
     dash_savings_rate:'Savings Rate', dash_saved_sfx:'saved',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',dash_add_tx_link:'Add transactions →',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -527,7 +527,7 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Nettosaldo dieser Periode',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
     dash_lf_income:'Einnahmen',dash_lf_exp_bills:'Ausg. &amp; Rechn.',dash_lf_debt:'Schulden',dash_lf_savings:'Ersparnisse',dash_lf_rollover:'Übertrag',
     dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_income_kept:'des Einkommens behalten',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
-    dash_daily_spend:'Tägliche Ausgaben',dash_daily_spend_caption:'Ausgaben insgesamt in diesem Zeitraum',spend_tip_more:'+{0} weitere',
+    dash_daily_spend:'Tägliche Ausgaben',dash_daily_spend_caption:'Ausgaben insgesamt in diesem Zeitraum',spend_tip_more:'+{0} weitere',dash_other_category:'Sonstiges',
     dash_savings_rate:'Sparquote',dash_saved_sfx:'gespart',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',dash_add_tx_link:'Transaktionen hinzufügen →',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
@@ -788,7 +788,7 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Solde net de cette période',dash_includes_rollover:'Inclut {0} de report de la période précédente',
     dash_lf_income:'revenus',dash_lf_exp_bills:'dép. &amp; fact.',dash_lf_debt:'dettes',dash_lf_savings:'épargne',dash_lf_rollover:'report',
     dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_income_kept:'du revenu conservé',dash_expected:'Prévu',dash_actual:'Réel',
-    dash_daily_spend:'Dépenses quotidiennes',dash_daily_spend_caption:'dépenses totales sur la période',spend_tip_more:'+{0} de plus',
+    dash_daily_spend:'Dépenses quotidiennes',dash_daily_spend_caption:'dépenses totales sur la période',spend_tip_more:'+{0} de plus',dash_other_category:'Autre',
     dash_savings_rate:"Taux d'épargne",dash_saved_sfx:'épargné',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',dash_add_tx_link:'Ajouter des transactions →',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
@@ -1049,7 +1049,7 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Saldo neto de este período',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
     dash_lf_income:'ingresos',dash_lf_exp_bills:'gastos &amp; fact.',dash_lf_debt:'deudas',dash_lf_savings:'ahorros',dash_lf_rollover:'arrastre',
     dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_income_kept:'de ingresos conservados',dash_expected:'Previsto',dash_actual:'Real',
-    dash_daily_spend:'Gasto diario',dash_daily_spend_caption:'gasto total en este período',spend_tip_more:'+{0} más',
+    dash_daily_spend:'Gasto diario',dash_daily_spend_caption:'gasto total en este período',spend_tip_more:'+{0} más',dash_other_category:'Otro',
     dash_savings_rate:'Tasa de ahorro',dash_saved_sfx:'ahorrado',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',dash_add_tx_link:'Añadir transacciones →',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
@@ -1309,7 +1309,7 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Saldo netto di questo periodo',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
     dash_lf_income:'entrate',dash_lf_exp_bills:'spese &amp; boll.',dash_lf_debt:'debiti',dash_lf_savings:'risparmi',dash_lf_rollover:'riporto',
     dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_income_kept:'di reddito trattenuto',dash_expected:'Previsto',dash_actual:'Effettivo',
-    dash_daily_spend:'Spesa giornaliera',dash_daily_spend_caption:'spesa totale nel periodo',spend_tip_more:'+{0} altri',
+    dash_daily_spend:'Spesa giornaliera',dash_daily_spend_caption:'spesa totale nel periodo',spend_tip_more:'+{0} altri',dash_other_category:'Altro',
     dash_savings_rate:'Tasso di risparmio',dash_saved_sfx:'risparmiato',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',dash_add_tx_link:'Aggiungi transazioni →',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
@@ -1569,7 +1569,7 @@ const TRANSLATIONS = {
     dash_net_leftover_period:'Saldo netto tego okresu',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
     dash_lf_income:'przychody',dash_lf_exp_bills:'wyd. &amp; rach.',dash_lf_debt:'długi',dash_lf_savings:'oszczędności',dash_lf_rollover:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_income_kept:'zachowanego dochodu',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
-    dash_daily_spend:'Wydatki dzienne',dash_daily_spend_caption:'łączne wydatki w tym okresie',spend_tip_more:'+{0} więcej',
+    dash_daily_spend:'Wydatki dzienne',dash_daily_spend_caption:'łączne wydatki w tym okresie',spend_tip_more:'+{0} więcej',dash_other_category:'Inne',
     dash_savings_rate:'Stopa oszczędności',dash_saved_sfx:'zaoszczędzono',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',dash_add_tx_link:'Dodaj transakcje →',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
@@ -2840,7 +2840,7 @@ function renderDashboardLayout2() {
         <div class="panel-inner-sm">
           <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_cash_flow')}</div>
           <div class="radial-bars-block">
-            ${svgRadialBars(rings, 210)}
+            ${svgRadialBars(rings, 230)}
             <div class="donut-legend">${rings.map((r, idx) => {
               const over = r.expected > 0 && r.value > r.expected;
               return `
@@ -2864,7 +2864,7 @@ function renderDashboardLayout2() {
             <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
             ${incSegs.length === 0
               ? `<div class="chart-empty">${t('dash_no_income')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-              : pieChartHtml(incSegs, { limit: 5 })}
+              : pieChartHtml(incSegs, { limit: 5, otherLabel: t('dash_other_category') })}
           </div>
         </div>
         <div class="panel chart-panel" data-chart-scope>
@@ -2872,7 +2872,7 @@ function renderDashboardLayout2() {
             <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>
             ${spendSegs.length === 0
               ? `<div class="chart-empty">${t('dash_no_spending')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-              : pieChartHtml(spendSegs, { limit: 5 })}
+              : pieChartHtml(spendSegs, { limit: 5, otherLabel: t('dash_other_category') })}
           </div>
         </div>
       </div>

@@ -403,8 +403,16 @@ function pennyToolGetCategoryBreakdown(args) {
     rows = [
       ...Object.entries(act.expenses || {}).map(([category, actual]) => ({ category, actual, expected: round2((state.budgets.expenses.find(r => r.category === category)?.expected) || 0) })),
       ...Object.entries(act.bills || {}).map(([category, actual]) => ({ category, actual, expected: round2((state.budgets.bills.find(r => r.category === category)?.expected) || 0) })),
-      ...Object.entries(act.debt || {}).map(([category, actual]) => ({ category: category + ' (debt)', actual, expected: 0 })),
-      ...Object.entries(act.subscription || {}).map(([category, actual]) => ({ category: category + ' (subscription)', actual, expected: 0 })),
+      // expected here mirrors the Dashboard's own Cash Flow rings, which
+      // treat a debt's monthly minimum+extra (totalMonthlyDebtCost) and a
+      // subscription's monthly-normalized cost (monthlySubAmt) as the
+      // "expected" baseline - NOT state.budgets (debt/subscriptions have no
+      // budgets.* row at all, so this used to always read back as 0 even
+      // when the user had real, known recurring costs).
+      ...Object.entries(act.debt || {}).map(([category, actual]) => ({ category: category + ' (debt)', actual,
+        expected: round2(state.debts.filter(d => (d.name || 'Debt') === category).reduce((sum, d) => sum + totalMonthlyDebtCost(d), 0)) })),
+      ...Object.entries(act.subscription || {}).map(([category, actual]) => ({ category: category + ' (subscription)', actual,
+        expected: round2(state.subscriptions.filter(sub => sub.active !== false && (sub.category || 'Subscriptions') === category).reduce((sum, sub) => sum + monthlySubAmt(sub), 0)) })),
     ].map(r => ({ ...r, actual: round2(r.actual) }));
   } else {
     rows = (state.budgets[section] || []).map(r => ({ category: r.category, expected: round2(r.expected || 0), actual: round2(act[section][r.category] || 0) }));
