@@ -85,8 +85,9 @@ function svgSegmentedPie(segments, size = 200) {
   const cx = size / 2, cy = size / 2;
   const list = (segments || []).filter(s => (s.value || 0) > 0);
   // Headroom so a hovered wedge can pop outward without clipping; at rest
-  // the pie is a full circle within the box.
-  const pop = Math.max(7, size * 0.05);               // hover extrude distance
+  // the pie is a full circle within the box. Kept small/subtle - just
+  // enough to read as "lifted", not a dramatic jump.
+  const pop = Math.max(3, size * 0.02);               // hover extrude distance
   const R = size / 2 - 3;                              // outer radius (fills the box)
   const r = R * 0.56;                                  // inner (hole) radius
   const bgRing = `<circle cx="${cx}" cy="${cy}" r="${((R + r) / 2).toFixed(1)}" fill="none" stroke="var(--text-faint)" stroke-opacity="0.24" stroke-width="${(R - r).toFixed(1)}"/>`;
@@ -103,7 +104,10 @@ function svgSegmentedPie(segments, size = 200) {
   const px = (rr, a) => (cx + rr * Math.cos(rad(a))).toFixed(2);
   const py = (rr, a) => (cy + rr * Math.sin(rad(a))).toFixed(2);
   const cr = Math.max(7, size * 0.055);               // corner stroke (radius ≈ cr/2)
-  const gapDeg = 3.4;                                 // daylight between wedges
+  // Kept small - just enough daylight for each wedge to read as its own
+  // rounded piece, not a wide seam that makes a dominant wedge's ring look
+  // broken/discontinuous.
+  const gapDeg = 0.9;                                 // daylight between wedges
   const Rp = R - cr / 2, rp = r + cr / 2;             // inset for the rounding stroke
   const insetO = (cr / 2) / Rp * 180 / Math.PI;       // angular inset, outer edge
   const insetI = (cr / 2) / rp * 180 / Math.PI;       // angular inset, inner edge
@@ -169,6 +173,107 @@ function pieChartHtml(segments, opts) {
   return `<div class="pie-chart-block">${svgSegmentedPie(list, opts.size || 200)}<div class="donut-legend">${legend}</div></div>`;
 }
 
+// ── Daily spend line chart data ─────────────────────────────────────────
+// Buckets every non-income transaction in the active budget period by day,
+// so the chart can show how spend actually landed day-to-day rather than
+// just the period total. Shared by both apps: the transaction shape
+// (date/type/amount) and state.settings.periodStart/periodEnd are
+// identical in both, even though each app's own budget-section MAP
+// (computeActuals) differs.
+function computeDailySpendPoints() {
+  const { periodStart, periodEnd } = (state && state.settings) || {};
+  if (!periodStart || !periodEnd) return [];
+  const byDay = {};
+  for (const tx of state.transactions) {
+    if (tx.type === 'income') continue;
+    if (tx.date < periodStart || tx.date > periodEnd) continue;
+    if (!byDay[tx.date]) byDay[tx.date] = { total: 0, items: [] };
+    byDay[tx.date].total += tx.amount;
+    byDay[tx.date].items.push({ type: tx.type, category: tx.category, amount: tx.amount });
+  }
+  const points = [];
+  const d = new Date(periodStart + 'T00:00:00'), end = new Date(periodEnd + 'T00:00:00');
+  while (d <= end) {
+    const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    const day = byDay[key];
+    points.push({ label: key, value: day ? day.total : 0, items: day ? day.items.sort((a, b) => b.amount - a.amount) : [] });
+    d.setDate(d.getDate() + 1);
+  }
+  return points;
+}
+
+// ── Daily spend hover tooltip: date/total + a clean per-transaction
+// breakdown (Type / Category / Amount) ───────────────────────────────────
+// Capped so a heavy day doesn't turn the tooltip into a wall of text.
+// `opts.typeLabel(txType)` / `opts.typeColor(txType)` and `opts.moreText(n)`
+// let each app supply its own translated strings and the SAME per-category
+// colors already used by that app's Cash Flow rows/rings, so the type tag
+// reads as the same category everywhere on the dashboard, not a second
+// unrelated color scheme.
+function formatSpendTooltipHtml(point, opts) {
+  opts = opts || {};
+  const dateLabel = typeof formatDateDisplay === 'function' ? formatDateDisplay(point.label) : point.label;
+  let html = `<div class="spend-tip-head"><span>${esc(dateLabel)}</span><span class="spend-tip-total">${esc(fmt(point.value || 0))}</span></div>`;
+  if (point.items && point.items.length) {
+    const CAP = 5;
+    const rows = point.items.slice(0, CAP).map(it => {
+      const c = opts.typeColor ? opts.typeColor(it.type) : null;
+      const typeStyle = c ? ` style="color:${c};background:${c}22"` : '';
+      return `<div class="spend-tip-row">
+      <span class="spend-tip-type"${typeStyle}>${esc(opts.typeLabel ? opts.typeLabel(it.type) : it.type)}</span>
+      <span class="spend-tip-cat">${esc(it.category)}</span>
+      <span class="spend-tip-amt">${esc(fmt(it.amount))}</span>
+    </div>`;
+    }).join('');
+    const moreN = point.items.length - CAP;
+    const more = moreN > 0 ? `<div class="spend-tip-more">${esc(opts.moreText ? opts.moreText(moreN) : ('+' + moreN))}</div>` : '';
+    html += `<div class="spend-tip-breakdown">${rows}${more}</div>`;
+  }
+  return html;
+}
+
+// ── Daily spend line chart (SVG) ─────────────────────────────────────────
+// Straight-segment line + filled area + per-day dots, brand-gradient
+// stroke/fill via the existing --grad-indigo/--grad-pink theme vars (so it
+// re-colors correctly across all 5 themes) - same visual language as the
+// "spark" chart mockup on the marketing homepage (home.html), just real
+// and data-driven instead of a decorative random preview. Dots are wired
+// through wireChartHover() like every other chart's marks; the line/area
+// draw-in itself is handled separately by animateSpendLineIn() below.
+function svgSpendLine(points, opts) {
+  opts = opts || {};
+  const w = opts.w || 900, h = opts.h || 140, pad = 10;
+  const max = Math.max.apply(null, points.map(p => p.value).concat(1));
+  const stepX = points.length > 1 ? (w - pad * 2) / (points.length - 1) : 0;
+  const coords = points.map((p, i) => [pad + i * stepX, pad + (1 - p.value / max) * (h - pad * 2)]);
+  const pathD = 'M' + coords.map(c => c[0].toFixed(1) + ',' + c[1].toFixed(1)).join(' L');
+  const last = coords[coords.length - 1], first = coords[0];
+  const areaD = pathD + ` L${last[0].toFixed(1)},${(h - pad).toFixed(1)} L${first[0].toFixed(1)},${(h - pad).toFixed(1)} Z`;
+  // Dots are absolutely-positioned HTML elements layered over the SVG,
+  // NOT <circle> marks inside it - the SVG stretches non-uniformly to fill
+  // the panel's full width (preserveAspectRatio="none", a fixed pixel
+  // height against a fluid width), which squashes any SVG-native circle
+  // into an oval. Positioning them in real CSS pixels/percent sidesteps
+  // that distortion entirely, so they stay perfectly round at any width.
+  const dots = coords.map((c, i) => `<span class="spend-line-dot" data-idx="${i}" data-label="${esc(points[i].label || '')}" data-val="${points[i].value || 0}"
+      style="left:${(c[0] / w * 100).toFixed(2)}%;top:${c[1].toFixed(1)}px" tabindex="0" role="img" aria-label="${esc(points[i].label || '')}: ${esc(fmt(points[i].value || 0))}"></span>`).join('');
+  return `<div class="spend-line-wrap" style="height:${h}px">
+    <svg class="spend-line-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <path class="spend-line-area" d="${areaD}" fill="url(#spendLineFill)"/>
+      <path class="spend-line-path" d="${pathD}" fill="none" stroke="url(#spendLineStroke)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" vector-effect="non-scaling-stroke"/>
+      <defs>
+        <linearGradient id="spendLineStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:var(--grad-indigo)"/><stop offset="100%" style="stop-color:var(--grad-pink)"/>
+        </linearGradient>
+        <linearGradient id="spendLineFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" style="stop-color:var(--grad-indigo);stop-opacity:.35"/><stop offset="100%" style="stop-color:var(--grad-indigo);stop-opacity:0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    ${dots}
+  </div>`;
+}
+
 // ── Icon-forward stat tile (markup helper, not SVG) ─────────────────────
 function iconStatTile(icon, label, value, sub, color) {
   // label/sub are pre-formatted translated strings (same convention as the
@@ -227,7 +332,11 @@ function wireChartHover(scope, markSelector, opts) {
       row.classList.add('is-active');
       if (opts.swapText !== false) {
         const amtEl = row.querySelector('.dleg-pct');
-        if (amtEl) { if (amtEl.dataset.origText === undefined) amtEl.dataset.origText = amtEl.textContent; amtEl.textContent = fmt(parseFloat(mark.dataset.val) || 0); }
+        // innerHTML (not textContent) so a legend row built from nested
+        // markup (e.g. the Cash Flow ring's two-tone "$act / $exp" spans)
+        // restores its original structure/colors on mouseleave instead of
+        // collapsing into a single flat-color text node after the first hover.
+        if (amtEl) { if (amtEl.dataset.origText === undefined) amtEl.dataset.origText = amtEl.innerHTML; amtEl.textContent = opts.swapFormat ? opts.swapFormat(mark.dataset) : fmt(parseFloat(mark.dataset.val) || 0); }
       }
     }
     tip.innerHTML = fmtTip(mark.dataset);
@@ -240,7 +349,7 @@ function wireChartHover(scope, markSelector, opts) {
       row.classList.remove('is-active');
       if (opts.swapText !== false) {
         const amtEl = row.querySelector('.dleg-pct');
-        if (amtEl && amtEl.dataset.origText !== undefined) amtEl.textContent = amtEl.dataset.origText;
+        if (amtEl && amtEl.dataset.origText !== undefined) amtEl.innerHTML = amtEl.dataset.origText;
       }
     });
     tip.style.opacity = '0';
@@ -296,6 +405,28 @@ function markDashAnimGen(container) {
   const gen = ++_dashAnimGenSeq;
   container._dashAnimGen = gen;
   return () => container._dashAnimGen === gen;
+}
+
+// Same idea, one level up: guards each renderDashboardLayoutN()'s entire
+// post-render requestAnimationFrame step (initDonuts/wireChartHover/
+// animateDashboardEntrance), not just animateDashboardEntrance's own
+// internal steps. Without this, a STALE render's outer rAF - scheduled
+// before a newer render call replaced the container's content, but not
+// yet fired - still runs in full once it does fire (the container node is
+// reused across renders via el.innerHTML=..., so a stale callback happily
+// operates on the newer render's real DOM). That includes calling
+// animateDashboardEntrance() a second, redundant time, which bumps
+// markDashAnimGen()'s generation counter AGAIN - invalidating the NEWER
+// render's own already-scheduled entrance animation before it gets a
+// chance to fire, leaving some elements permanently stuck at their
+// pre-animation opacity:0. Call this once at the top of each
+// renderDashboardLayoutN(), right after building `el`'s new content, and
+// bail out at the very top of the outer rAF callback if it's gone stale.
+let _renderGenSeq = 0;
+function markRenderGen(container) {
+  const gen = ++_renderGenSeq;
+  container._renderGen = gen;
+  return () => container._renderGen === gen;
 }
 
 // Staggered fade + rise for each card/row - the class itself is the
@@ -453,6 +584,42 @@ function animatePieIn(container, isCurrent) {
   }));
 }
 
+// Daily-spend line/area draw-in. Same cache-then-zero-then-restore
+// technique as animateBarsIn (so the "hidden" starting state is only ever
+// a transient inline override, never baked into the default CSS - with
+// animations off, the SVG already renders fully drawn with no JS
+// involved). Deliberately starts DASH_ANIM_DUR late so the line visibly
+// draws in only after the rest of the dashboard's entrance has settled,
+// instead of competing with the cards/bars/arcs for attention.
+function animateSpendLineIn(container, isCurrent) {
+  if (!container) return;
+  const path = container.querySelector('.spend-line-path');
+  if (!path) return;
+  const area = container.querySelector('.spend-line-area');
+  const dots = Array.from(container.querySelectorAll('.spend-line-dot'));
+  path.style.transition = 'none';
+  path.style.strokeDashoffset = '1';
+  if (area) { area.style.transition = 'none'; area.style.opacity = '0'; }
+  dots.forEach(d => { d.style.transition = 'none'; d.style.opacity = '0'; d.style.transform = 'scale(0)'; });
+  void container.offsetWidth;
+  setTimeout(() => {
+    if (!isCurrent()) return;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!isCurrent()) return;
+      path.style.transition = '';
+      path.style.strokeDashoffset = '0';
+      if (area) { area.style.transition = ''; area.style.opacity = '1'; }
+      dots.forEach((d, i) => {
+        d.style.transitionDelay = Math.min(i * 25, 500) + 'ms';
+        d.style.transition = '';
+        d.style.opacity = '1';
+        d.style.transform = 'scale(1)';
+      });
+      setTimeout(() => { if (isCurrent()) dots.forEach(d => { d.style.transitionDelay = ''; }); }, dots.length * 25 + DASH_ANIM_DUR + 200);
+    }));
+  }, DASH_ANIM_DUR + 150);
+}
+
 // Counts a single numeric text value up from 0 (or from its own negative
 // magnitude) to the real target, re-formatting through the SAME formatter
 // the caller already used for the final string - so the animation can
@@ -485,6 +652,7 @@ function animateDashboardEntrance(container, countUps) {
   animateBarsIn(container, isCurrent);
   animateArcsIn(container, isCurrent);
   animatePieIn(container, isCurrent);
+  animateSpendLineIn(container, isCurrent);
   (countUps || []).forEach(c => { if (c && c.el) animateCountUp(c.el, c.target, c.render || fmt, undefined, isCurrent); });
 }
 

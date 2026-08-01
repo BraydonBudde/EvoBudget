@@ -259,12 +259,14 @@ const TRANSLATIONS = {
     onboard_step1_html:'Go to <strong>Income, Expenses, Bills</strong> etc. and enter your expected amounts.',
     onboard_step2_html:'Use <strong>Transactions</strong> to log what you actually earn and spend.',
     onboard_step3_html:'Return here to see your full financial picture update in real time.',
+    onboard_sample_btn:'Load sample data',onboard_sample_hint:'See the planner in action with demo numbers.',sample_loaded_toast:'Sample data loaded',
     dash_stat_income:'Total Income',dash_stat_of_expected:'of {0} expected',
     dash_stat_exp_bills:'Expenses &amp; Bills',dash_stat_of_budgeted:'of {0} budgeted',
     dash_stat_debt:'Debt Payments',dash_stat_savings:'Total Savings',dash_stat_of_goal:'of {0} goal',
     dash_net_leftover_period:'Net Leftover this period',dash_includes_rollover:'Includes {0} rollover from last period',
     dash_lf_income:'income',dash_lf_exp_bills:'exp &amp; bills',dash_lf_debt:'debt',dash_lf_savings:'savings',dash_lf_rollover:'rollover',
-    dash_cash_flow:'Cash Flow - Expected vs Actual',dash_spend_vs_plan:'Spending vs Plan',dash_income_kept:'of income kept',dash_expected:'Expected',dash_actual:'Actual',
+    dash_cash_flow:'Cash Flow - Expected vs Actual',dash_income_kept:'of income kept',dash_expected:'Expected',dash_actual:'Actual',
+    dash_daily_spend:'Daily Spend',dash_daily_spend_caption:'total spend this period',spend_tip_more:'+{0} more',
     dash_savings_rate:'Savings Rate', dash_saved_sfx:'saved',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',dash_add_tx_link:'Add transactions →',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -518,12 +520,14 @@ const TRANSLATIONS = {
     onboard_step1_html:'Gehe zu <strong>Einnahmen, Ausgaben, Rechnungen</strong> usw. und trage deine erwarteten Beträge ein.',
     onboard_step2_html:'Nutze <strong>Transaktionen</strong>, um zu erfassen, was du tatsächlich einnimmst und ausgibst.',
     onboard_step3_html:'Komm hierher zurück, um dein vollständiges Finanzbild in Echtzeit zu sehen.',
+    onboard_sample_btn:'Beispieldaten laden',onboard_sample_hint:'Sieh den Planer mit Demo-Zahlen in Aktion.',sample_loaded_toast:'Beispieldaten geladen',
     dash_stat_income:'Gesamteinnahmen',dash_stat_of_expected:'von {0} erwartet',
     dash_stat_exp_bills:'Ausgaben &amp; Rechnungen',dash_stat_of_budgeted:'von {0} budgetiert',
     dash_stat_debt:'Schuldenzahlungen',dash_stat_savings:'Gesamtersparnisse',dash_stat_of_goal:'von {0} Ziel',
     dash_net_leftover_period:'Nettosaldo dieser Periode',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
     dash_lf_income:'Einnahmen',dash_lf_exp_bills:'Ausg. &amp; Rechn.',dash_lf_debt:'Schulden',dash_lf_savings:'Ersparnisse',dash_lf_rollover:'Übertrag',
-    dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_spend_vs_plan:'Ausgaben vs. Plan',dash_income_kept:'des Einkommens behalten',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
+    dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_income_kept:'des Einkommens behalten',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
+    dash_daily_spend:'Tägliche Ausgaben',dash_daily_spend_caption:'Ausgaben insgesamt in diesem Zeitraum',spend_tip_more:'+{0} weitere',
     dash_savings_rate:'Sparquote',dash_saved_sfx:'gespart',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',dash_add_tx_link:'Transaktionen hinzufügen →',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
@@ -777,12 +781,14 @@ const TRANSLATIONS = {
     onboard_step1_html:'Allez dans <strong>Revenus, Dépenses, Factures</strong>, etc. et saisissez vos montants prévus.',
     onboard_step2_html:'Utilisez <strong>Transactions</strong> pour enregistrer ce que vous gagnez et dépensez réellement.',
     onboard_step3_html:'Revenez ici pour voir votre situation financière complète se mettre à jour en temps réel.',
+    onboard_sample_btn:'Charger des données d’exemple',onboard_sample_hint:'Découvrez le planificateur avec des chiffres de démonstration.',sample_loaded_toast:'Données d’exemple chargées',
     dash_stat_income:'Revenu total',dash_stat_of_expected:'sur {0} prévu',
     dash_stat_exp_bills:'Dépenses &amp; Factures',dash_stat_of_budgeted:'sur {0} budgétisé',
     dash_stat_debt:'Paiements de dettes',dash_stat_savings:'Épargne totale',dash_stat_of_goal:'sur {0} objectif',
     dash_net_leftover_period:'Solde net de cette période',dash_includes_rollover:'Inclut {0} de report de la période précédente',
     dash_lf_income:'revenus',dash_lf_exp_bills:'dép. &amp; fact.',dash_lf_debt:'dettes',dash_lf_savings:'épargne',dash_lf_rollover:'report',
-    dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_spend_vs_plan:'Dépenses vs plan',dash_income_kept:'du revenu conservé',dash_expected:'Prévu',dash_actual:'Réel',
+    dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_income_kept:'du revenu conservé',dash_expected:'Prévu',dash_actual:'Réel',
+    dash_daily_spend:'Dépenses quotidiennes',dash_daily_spend_caption:'dépenses totales sur la période',spend_tip_more:'+{0} de plus',
     dash_savings_rate:"Taux d'épargne",dash_saved_sfx:'épargné',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',dash_add_tx_link:'Ajouter des transactions →',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
@@ -1036,12 +1042,14 @@ const TRANSLATIONS = {
     onboard_step1_html:'Ve a <strong>Ingresos, Gastos, Facturas</strong>, etc. e introduce tus montos previstos.',
     onboard_step2_html:'Usa <strong>Transacciones</strong> para registrar lo que realmente ganas y gastas.',
     onboard_step3_html:'Vuelve aquí para ver tu panorama financiero completo actualizarse en tiempo real.',
+    onboard_sample_btn:'Cargar datos de ejemplo',onboard_sample_hint:'Mira el planificador en acción con cifras de demostración.',sample_loaded_toast:'Datos de ejemplo cargados',
     dash_stat_income:'Ingresos totales',dash_stat_of_expected:'de {0} previsto',
     dash_stat_exp_bills:'Gastos &amp; Facturas',dash_stat_of_budgeted:'de {0} presupuestado',
     dash_stat_debt:'Pagos de deudas',dash_stat_savings:'Ahorros totales',dash_stat_of_goal:'de {0} objetivo',
     dash_net_leftover_period:'Saldo neto de este período',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
     dash_lf_income:'ingresos',dash_lf_exp_bills:'gastos &amp; fact.',dash_lf_debt:'deudas',dash_lf_savings:'ahorros',dash_lf_rollover:'arrastre',
-    dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_spend_vs_plan:'Gastos vs plan',dash_income_kept:'de ingresos conservados',dash_expected:'Previsto',dash_actual:'Real',
+    dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_income_kept:'de ingresos conservados',dash_expected:'Previsto',dash_actual:'Real',
+    dash_daily_spend:'Gasto diario',dash_daily_spend_caption:'gasto total en este período',spend_tip_more:'+{0} más',
     dash_savings_rate:'Tasa de ahorro',dash_saved_sfx:'ahorrado',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',dash_add_tx_link:'Añadir transacciones →',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
@@ -1300,7 +1308,8 @@ const TRANSLATIONS = {
     dash_stat_debt:'Pagamenti debiti',dash_stat_savings:'Risparmi totali',dash_stat_of_goal:'di {0} obiettivo',
     dash_net_leftover_period:'Saldo netto di questo periodo',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
     dash_lf_income:'entrate',dash_lf_exp_bills:'spese &amp; boll.',dash_lf_debt:'debiti',dash_lf_savings:'risparmi',dash_lf_rollover:'riporto',
-    dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_spend_vs_plan:'Spese vs piano',dash_income_kept:'di reddito trattenuto',dash_expected:'Previsto',dash_actual:'Effettivo',
+    dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_income_kept:'di reddito trattenuto',dash_expected:'Previsto',dash_actual:'Effettivo',
+    dash_daily_spend:'Spesa giornaliera',dash_daily_spend_caption:'spesa totale nel periodo',spend_tip_more:'+{0} altri',
     dash_savings_rate:'Tasso di risparmio',dash_saved_sfx:'risparmiato',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',dash_add_tx_link:'Aggiungi transazioni →',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
@@ -1559,7 +1568,8 @@ const TRANSLATIONS = {
     dash_stat_debt:'Spłaty długów',dash_stat_savings:'Łączne oszczędności',dash_stat_of_goal:'z {0} celu',
     dash_net_leftover_period:'Saldo netto tego okresu',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
     dash_lf_income:'przychody',dash_lf_exp_bills:'wyd. &amp; rach.',dash_lf_debt:'długi',dash_lf_savings:'oszczędności',dash_lf_rollover:'przeniesienie',
-    dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_spend_vs_plan:'Wydatki vs plan',dash_income_kept:'zachowanego dochodu',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
+    dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_income_kept:'zachowanego dochodu',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
+    dash_daily_spend:'Wydatki dzienne',dash_daily_spend_caption:'łączne wydatki w tym okresie',spend_tip_more:'+{0} więcej',
     dash_savings_rate:'Stopa oszczędności',dash_saved_sfx:'zaoszczędzono',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',dash_add_tx_link:'Dodaj transakcje →',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
@@ -2050,6 +2060,16 @@ function showAccessCodeModal(tool) {
 }
 
 // ── Aggregations ──────────────────────────────────────────────────────
+// Type label/color for the Daily Spend hover tooltip's per-transaction
+// breakdown - the SAME colors as the Cash Flow rows/rings elsewhere on
+// this dashboard, so a category reads as the same category everywhere.
+function spendTypeLabel(type) {
+  return { expense: t('tab_expenses'), bill: t('tab_bills'), debt: t('tab_debt'), savings: t('tab_savings') }[type] || type;
+}
+function spendTypeColor(type) {
+  return { expense: '#ec4899', bill: '#fb923c', debt: '#a855f7', savings: '#3b82f6' }[type] || '#6366f1';
+}
+
 function computeActuals() {
   const a = { income: {}, expenses: {}, bills: {}, debt: {}, savings: {} };
   const MAP = { income: 'income', expense: 'expenses', bill: 'bills', debt: 'debt', savings: 'savings' };
@@ -2426,6 +2446,44 @@ document.addEventListener('click',()=>document.querySelectorAll('.cc-tip-pop').f
 window.addEventListener('scroll',()=>document.querySelectorAll('.cc-tip-pop').forEach(el=>el.remove()),true);
 
 // ── Dashboard ─────────────────────────────────────────────────────────
+// Demo numbers for the onboarding banner's "Load sample data" button -
+// every date is built relative to the CURRENTLY SELECTED budget period
+// (state.settings.periodStart), clamped to periodEnd, so the sample data
+// always lands inside whatever period the user has open rather than a
+// hardcoded month that might fall outside it.
+function loadSampleData() {
+  const ps = state.settings.periodStart, pe = state.settings.periodEnd;
+  const day = n => { const d = new Date(ps + 'T00:00:00'); d.setDate(d.getDate() + n); const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); return iso > pe ? pe : iso; };
+  state.budgets = {
+    income: [{ id: uid(), category: 'Paycheck', expected: 3200 }, { id: uid(), category: 'Side Hustle', expected: 400 }],
+    expenses: [{ id: uid(), category: 'Food', expected: 450 }, { id: uid(), category: 'Transportation', expected: 150 }, { id: uid(), category: 'Social Life', expected: 120 }],
+    bills: [{ id: uid(), category: 'Internet', expected: 70, dueDate: day(24), paid: false }, { id: uid(), category: 'Mobile', expected: 55, dueDate: day(19), paid: false }, { id: uid(), category: 'Electricity', expected: 130, dueDate: day(21), paid: false }],
+    debt: [{ id: uid(), category: 'Student Loans', expected: 180, dueDate: day(15), paid: false }],
+    savings: [{ id: uid(), category: 'Travel Fund', expected: 200 }, { id: uid(), category: 'Car Fund', expected: 100 }]
+  };
+  state.transactions = [
+    { id: uid(), date: day(0), type: 'income', category: 'Paycheck', amount: 1600, description: 'Payday' },
+    { id: uid(), date: day(14), type: 'income', category: 'Paycheck', amount: 1600, description: 'Payday' },
+    { id: uid(), date: day(9), type: 'income', category: 'Side Hustle', amount: 220, description: 'Side project' },
+    { id: uid(), date: day(2), type: 'expense', category: 'Food', amount: 82.40, description: 'Groceries' },
+    { id: uid(), date: day(5), type: 'expense', category: 'Food', amount: 54.10, description: 'Groceries' },
+    { id: uid(), date: day(7), type: 'expense', category: 'Transportation', amount: 45, description: 'Gas' },
+    { id: uid(), date: day(8), type: 'expense', category: 'Social Life', amount: 38, description: 'Dinner out' },
+    { id: uid(), date: day(11), type: 'expense', category: 'Food', amount: 61.75, description: 'Groceries' },
+    { id: uid(), date: day(13), type: 'expense', category: 'Social Life', amount: 52, description: 'Concert' },
+    { id: uid(), date: day(4), type: 'savings', category: 'Travel Fund', amount: 120, description: '' },
+    { id: uid(), date: day(14), type: 'savings', category: 'Car Fund', amount: 100, description: '' },
+    { id: uid(), date: day(15), type: 'debt', category: 'Student Loans', amount: 180, description: 'Loan payment' },
+    { id: uid(), date: day(24), type: 'bill', category: 'Internet', amount: 70, description: '' }
+  ];
+  // Link the internet payment to its bill row so it shows as paid, not duplicated
+  const netRow = state.budgets.bills.find(b => b.category === 'Internet');
+  const netTx = state.transactions.find(tx => tx.type === 'bill' && tx.category === 'Internet');
+  if (netRow && netTx) { netRow.paid = true; netRow.paidTxId = netTx.id; }
+  saveState();
+  renderDashboard();
+  showToast(t('sample_loaded_toast'));
+}
 function dismissWelcomeCard() {
   state.settings.welcomeDismissed = true;
   saveState();
@@ -2477,6 +2535,9 @@ function renderDashboardLayout1() {
     { label:t('tab_savings'),  exp:expSavings,   act:sum.totalSavings,  color:'#3b82f6', isIncome:false }
   ];
 
+  const spendPoints = computeDailySpendPoints();
+  const spendLineTotal = spendPoints.reduce((s, p) => s + p.value, 0);
+
   const onboardHTML = (!hasAnyData() && !state.settings.welcomeDismissed) ? `
     <div class="onboard-banner">
       <button class="onboard-close-btn" id="dismissWelcomeBtn" type="button" aria-label="${t('dismiss_aria')}">✕</button>
@@ -2486,9 +2547,11 @@ function renderDashboardLayout1() {
         <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
         <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
       </div>
+      <div class="onboard-sample-row"><button class="btn btn-ghost btn-sm" id="loadSampleBtn" type="button">✨ ${t('onboard_sample_btn')}</button><span class="onboard-sample-hint">${t('onboard_sample_hint')}</span></div>
     </div>` : '';
 
   const el = document.getElementById('bview-dashboard');
+  const isCurrentRender = markRenderGen(el);
   el.innerHTML = `
     <div class="section-header">
       <h2 class="section-title">${t('tab_dashboard')}</h2>
@@ -2557,20 +2620,20 @@ function renderDashboardLayout1() {
           </div>
           <div class="flow-table">
             ${flowRows.map(row => {
-              const max = Math.max(row.exp, row.act, 1);
-              const ew  = (row.exp / max * 100).toFixed(1);
-              const aw  = (row.act / max * 100).toFixed(1);
+              const pct  = row.exp > 0 ? (row.act / row.exp * 100) : (row.act > 0 ? 100 : 0);
+              const aw   = Math.min(100, pct).toFixed(1);
               const over = !row.isIncome && row.act > row.exp && row.exp > 0;
               return `
                 <div class="flow-row">
-                  <span class="flow-label">${esc(row.label)}</span>
-                  <div class="flow-bars">
-                    <div class="flow-bar-wrap"><div class="flow-bar flow-bar--exp" style="width:${ew}%"></div></div>
-                    <div class="flow-bar-wrap"><div class="flow-bar" style="width:${aw}%;background:${over ? '#f43f5e' : row.color}"></div></div>
+                  <div class="flow-row-top">
+                    <span class="flow-label">${esc(row.label)}</span>
+                    <span class="flow-amounts">
+                      <span style="color:${over ? '#f43f5e' : row.color}">${fmt(row.act)}</span>
+                      <span class="flow-amt--exp"> / ${fmt(row.exp)}</span>
+                    </span>
                   </div>
-                  <div class="flow-amounts">
-                    <div class="flow-amt flow-amt--exp">${fmt(row.exp)}</div>
-                    <div class="flow-amt" style="color:${row.color};font-weight:700">${fmt(row.act)}</div>
+                  <div class="flow-bars">
+                    <div class="flow-bar-wrap"><div class="flow-bar" style="width:${aw}%;background:${over ? '#f43f5e' : row.color}"></div></div>
                   </div>
                 </div>`;
             }).join('')}
@@ -2613,13 +2676,27 @@ function renderDashboardLayout1() {
         </div>
       </div>
     </div>
+
+    <div class="panel spend-line-panel">
+      <div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_daily_spend')}</div>
+        ${spendLineTotal > 0
+          ? svgSpendLine(spendPoints, { w: 900, h: 140 }) + `<div class="spend-line-caption"><span class="spend-line-num">${fmt(spendLineTotal)}</span><span class="spend-line-label">${t('dash_daily_spend_caption')}</span></div>`
+          : `<div class="chart-empty">${t('dash_no_spending')}</div>`}
+      </div>
+    </div>
   `;  // end el.innerHTML
 
   // Period badge → go to settings
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
   el.querySelector('#dismissWelcomeBtn')?.addEventListener('click', dismissWelcomeCard);
+  el.querySelector('#loadSampleBtn')?.addEventListener('click', loadSampleData);
   requestAnimationFrame(()=>{
+    if (!isCurrentRender()) return;
     initDonuts(el);
+    wireChartHover(el, '.spend-line-dot', { format: d =>
+      formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
+        { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
     animateDashboardEntrance(el, [
       { el: el.querySelector('.scard--income .scard-value'), target: sum.totalIncome, render: fmt },
       { el: el.querySelector('.scard--expenses .scard-value'), target: sum.totalExpBills, render: fmt },
@@ -2700,6 +2777,9 @@ function renderDashboardLayout2() {
     { label: t('tab_savings'),  value: sum.totalSavings,  expected: expSavings,  color: '#3b82f6' }
   ];
 
+  const spendPoints = computeDailySpendPoints();
+  const spendLineTotal = spendPoints.reduce((s, p) => s + p.value, 0);
+
   const onboardHTML = (!hasAnyData() && !state.settings.welcomeDismissed) ? `
     <div class="onboard-banner">
       <button class="onboard-close-btn" id="dismissWelcomeBtn" type="button" aria-label="${t('dismiss_aria')}">✕</button>
@@ -2709,9 +2789,11 @@ function renderDashboardLayout2() {
         <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
         <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
       </div>
+      <div class="onboard-sample-row"><button class="btn btn-ghost btn-sm" id="loadSampleBtn" type="button">✨ ${t('onboard_sample_btn')}</button><span class="onboard-sample-hint">${t('onboard_sample_hint')}</span></div>
     </div>` : '';
 
   const el = document.getElementById('bview-dashboard');
+  const isCurrentRender = markRenderGen(el);
   el.innerHTML = `
     <div class="section-header">
       <h2 class="section-title">${t('tab_dashboard')}</h2>
@@ -2756,16 +2838,21 @@ function renderDashboardLayout2() {
     <div class="dashboard-grid">
       <div class="panel cash-flow-hero-panel" data-chart-scope>
         <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_spend_vs_plan')}</div>
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_cash_flow')}</div>
           <div class="radial-bars-block">
-            ${svgRadialBars(rings, 240)}
+            ${svgRadialBars(rings, 210)}
             <div class="donut-legend">${rings.map((r, idx) => {
               const over = r.expected > 0 && r.value > r.expected;
               return `
-              <div class="dleg-row" data-idx="${idx}">
+              <div class="dleg-row dleg-row--stacked" data-idx="${idx}">
                 <span class="dleg-swatch" style="background:${over ? '#f43f5e' : r.color}"></span>
+                <div class="dleg-stack">
                 <span class="dleg-label">${esc(r.label)}</span>
-                <span class="dleg-pct"${over ? ' style="color:#f43f5e;font-weight:800"' : ''}>${r.expected > 0 ? Math.round(r.value / r.expected * 100) : 0}%</span>
+                <span class="dleg-pct">
+                  <span style="color:${over ? '#f43f5e' : r.color}">${fmt(r.value)}</span>
+                  <span class="flow-amt--exp"> / ${fmt(r.expected)}</span>
+                </span>
+                </div>
               </div>`;}).join('')}</div>
           </div>
         </div>
@@ -2777,7 +2864,7 @@ function renderDashboardLayout2() {
             <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>
             ${incSegs.length === 0
               ? `<div class="chart-empty">${t('dash_no_income')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-              : pieChartHtml(incSegs, { limit: 6 })}
+              : pieChartHtml(incSegs, { limit: 5 })}
           </div>
         </div>
         <div class="panel chart-panel" data-chart-scope>
@@ -2785,23 +2872,37 @@ function renderDashboardLayout2() {
             <div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>
             ${spendSegs.length === 0
               ? `<div class="chart-empty">${t('dash_no_spending')}<br><button class="link-btn" data-btab="transactions">${t('dash_add_tx_link')}</button></div>`
-              : pieChartHtml(spendSegs, { limit: 6 })}
+              : pieChartHtml(spendSegs, { limit: 5 })}
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="panel spend-line-panel" data-chart-scope>
+      <div class="panel-inner-sm">
+        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_daily_spend')}</div>
+        ${spendLineTotal > 0
+          ? svgSpendLine(spendPoints, { w: 900, h: 140 }) + `<div class="spend-line-caption"><span class="spend-line-num">${fmt(spendLineTotal)}</span><span class="spend-line-label">${t('dash_daily_spend_caption')}</span></div>`
+          : `<div class="chart-empty">${t('dash_no_spending')}</div>`}
       </div>
     </div>
   `;
 
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
   el.querySelector('#dismissWelcomeBtn')?.addEventListener('click', dismissWelcomeCard);
+  el.querySelector('#loadSampleBtn')?.addEventListener('click', loadSampleData);
   requestAnimationFrame(() => {
+    if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>
+      wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: true, swapFormat: d => `${d.pct}%`, format: d =>
         `<strong>${esc(d.label)}</strong><br>` +
         `<span style="color:var(--text-faint)">${esc(t('dash_expected'))}: ${esc(fmt(parseFloat(d.expected) || 0))}</span><br>` +
         `<span style="color:${d.color || 'var(--text-primary)'};font-weight:800">${esc(t('dash_actual'))}: ${esc(fmt(parseFloat(d.val) || 0))}</span>` });
       wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d =>
         `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
+      wireChartHover(scope, '.spend-line-dot', { format: d =>
+        formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
+          { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
     });
     const istVals = el.querySelectorAll('.ist-row .ist-value');
     animateDashboardEntrance(el, [

@@ -274,6 +274,18 @@ function automateRow(checked){
 }
 
 // ── Aggregation ───────────────────────────────────────────────────────
+// Type label/color for the Daily Spend hover tooltip's per-transaction
+// breakdown - the SAME colors as the Cash Flow rows/rings elsewhere on
+// this dashboard, so a category reads as the same category everywhere.
+// Sinking funds share Savings' color/computeActuals section - they're a
+// form of savings, not a separate concept.
+function spendTypeLabel(type) {
+  return { expense: t('bud_section_expenses'), bill: t('bud_section_bills'), debt: t('dash_debt_payments'), savings: t('bud_section_savings'), subscription: t('dash_subscriptions'), sinking_fund: t('tab_sinking') }[type] || type;
+}
+function spendTypeColor(type) {
+  return { expense: '#ec4899', bill: '#fb923c', debt: '#a855f7', savings: '#3b82f6', subscription: '#10b981', sinking_fund: '#3b82f6' }[type] || '#6366f1';
+}
+
 function computeActuals() {
   const a={income:{},expenses:{},bills:{},savings:{},debt:{},subscription:{}};
   const MAP={income:'income',expense:'expenses',bill:'bills',savings:'savings',debt:'debt',subscription:'subscription',sinking_fund:'savings'};
@@ -694,7 +706,8 @@ const TRANSLATIONS = {
     dash_in_sfx:'in',dash_out_sfx:'out',
     dash_includes:'Includes',dash_rollover_sfx:'rollover',
     dash_cash_flow:'Cash Flow',
-    dash_spend_vs_plan:'Spending vs Plan',dash_income_kept:'of income kept',
+    dash_income_kept:'of income kept',
+    dash_daily_spend:'Daily Spend',dash_daily_spend_caption:'total spend this period',spend_tip_more:'+{0} more',
     dash_expected_legend:'Expected',dash_actual_legend:'Actual',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
@@ -730,7 +743,7 @@ const TRANSLATIONS = {
     alloc_based_on:'Based on',alloc_income_period:'income this period',
     alloc_untagged:'Untagged',alloc_untagged_desc:'of spending not yet tagged',
     alloc_def_need:'Need',alloc_def_want:'Want',alloc_def_save:'Save',
-    alloc_sett_title:'\uD83C\uDFAF Spending Allocation',
+    alloc_sett_title:'\uD83C\uDFAF Budget Allocation',
     alloc_nearing:'Nearing',
     alloc_behind:'Behind',
     alloc_required:'Allocation is required for spending transactions.',
@@ -784,7 +797,7 @@ const TRANSLATIONS = {
     help_dash_alloc_col_near:'Orange - within 5 percentage points of the target. A heads-up that you are close.',
     help_dash_alloc_col_norm:'Bucket colour - comfortably within your target for this period.',
     help_dash_alloc_setup_h:'Customising',
-    help_dash_alloc_setup_p:'Open Settings \u2192 Spending Allocation. Edit the bucket names, adjust the percentages, and toggle the panel on or off. Percentages must total 100% before changes take effect.',
+    help_dash_alloc_setup_p:'Open Settings \u2192 Budget Allocation. Edit the bucket names, adjust the percentages, and toggle the panel on or off. Percentages must total 100% before changes take effect.',
     // Penny (AI assistant)
     sett_penny_h:'Penny (AI Budget Assistant)',
     sett_penny_desc:'Ask Penny questions about your budget & spending habits',
@@ -1222,7 +1235,8 @@ const TRANSLATIONS = {
     dash_in_sfx:'eingenommen',dash_out_sfx:'ausgegeben',
     dash_includes:'Inkl.',dash_rollover_sfx:'Übertrag',
     dash_cash_flow:'Cashflow',
-    dash_spend_vs_plan:'Ausgaben vs. Plan',dash_income_kept:'des Einkommens behalten',
+    dash_income_kept:'des Einkommens behalten',
+    dash_daily_spend:'Tägliche Ausgaben',dash_daily_spend_caption:'Ausgaben insgesamt in diesem Zeitraum',spend_tip_more:'+{0} weitere',
     dash_expected_legend:'Geplant',dash_actual_legend:'Tatsächlich',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
@@ -1258,7 +1272,7 @@ const TRANSLATIONS = {
     alloc_based_on:'Basierend auf',alloc_income_period:'Einnahmen in dieser Periode',
     alloc_untagged:'Nicht markiert',alloc_untagged_desc:'der Ausgaben noch nicht markiert',
     alloc_def_need:'Bedarf',alloc_def_want:'Wunsch',alloc_def_save:'Sparen',
-    alloc_sett_title:'\uD83C\uDFAF Ausgabenaufteilung',
+    alloc_sett_title:'\uD83C\uDFAF Budgetaufteilung',
     alloc_nearing:'Nähert sich',
     alloc_behind:'Im Rückstand',
     alloc_required:'Zuordnung ist für Ausgabentransaktionen erforderlich.',
@@ -1368,7 +1382,7 @@ const TRANSLATIONS = {
     help_penny_safety_h:'Ist mein Schlüssel sicher?',
     help_penny_safety_p:'Dein Schlüssel wird verschlüsselt, bevor er im Speicher deines eigenen Browsers gespeichert wird, und wird nur direkt an die API von Google gesendet, wenn du Penny eine Frage stellst. Er geht niemals an einen Server von Evo Budget.',
     help_penny_cta:'Google AI Studio öffnen →',
-    help_dash_alloc_setup_p:'Öffne Einstellungen \u2192 Ausgabenaufteilung. Bearbeite Kategorienamen, passe Prozentsätze an und aktiviere oder deaktiviere das Panel. Prozentsätze müssen 100% ergeben.',
+    help_dash_alloc_setup_p:'Öffne Einstellungen \u2192 Budgetaufteilung. Bearbeite Kategorienamen, passe Prozentsätze an und aktiviere oder deaktiviere das Panel. Prozentsätze müssen 100% ergeben.',
     // Guide
     guide_group_start:'Erste Schritte', guide_group_track:'Deine Finanzen im Blick', guide_group_plan:'Größer planen',
     guide_group_smart:'Schlauer wirtschaften', guide_group_settings:'Ganz nach deinen Wünschen',
@@ -1750,7 +1764,8 @@ const TRANSLATIONS = {
     dash_in_sfx:'perçu',dash_out_sfx:'dépensé',
     dash_includes:'Dont',dash_rollover_sfx:'report',
     dash_cash_flow:'Flux de trésorerie',
-    dash_spend_vs_plan:'Dépenses vs plan',dash_income_kept:'du revenu conservé',
+    dash_income_kept:'du revenu conservé',
+    dash_daily_spend:'Dépenses quotidiennes',dash_daily_spend_caption:'dépenses totales sur la période',spend_tip_more:'+{0} de plus',
     dash_expected_legend:'Prévu',dash_actual_legend:'Réel',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
@@ -1786,7 +1801,7 @@ const TRANSLATIONS = {
     alloc_based_on:'Basé sur',alloc_income_period:'revenus de cette période',
     alloc_untagged:'Non étiquetée',alloc_untagged_desc:'de dépenses pas encore étiquetées',
     alloc_def_need:'Besoin',alloc_def_want:'Envie',alloc_def_save:'Épargne',
-    alloc_sett_title:'\uD83C\uDFAF Répartition des dépenses',
+    alloc_sett_title:'\uD83C\uDFAF Répartition budgétaire',
     alloc_nearing:'Proche',
     alloc_behind:'En retard',
     alloc_required:'La répartition est obligatoire pour les transactions de dépenses.',
@@ -1896,7 +1911,7 @@ const TRANSLATIONS = {
     help_penny_safety_h:'Ma clé est-elle en sécurité ?',
     help_penny_safety_p:'Votre clé est chiffrée avant d’être enregistrée dans le stockage de votre propre navigateur, et elle n’est envoyée directement à l’API de Google que lorsque vous posez une question à Penny. Elle ne va jamais à un serveur d’Evo Budget.',
     help_penny_cta:'Ouvrir Google AI Studio →',
-    help_dash_alloc_setup_p:'Ouvrez Paramètres \u2192 Répartition des dépenses. Modifiez les noms des segments, ajustez les pourcentages et activez ou désactivez le panneau. Les pourcentages doivent totaliser 100%.',
+    help_dash_alloc_setup_p:'Ouvrez Paramètres \u2192 Répartition budgétaire. Modifiez les noms des segments, ajustez les pourcentages et activez ou désactivez le panneau. Les pourcentages doivent totaliser 100%.',
     // Guide
     guide_group_start:'Pour commencer', guide_group_track:'Suivre votre argent', guide_group_plan:'Voir plus loin',
     guide_group_smart:'Travailler plus malin', guide_group_settings:"Personnaliser l'application",
@@ -2278,7 +2293,8 @@ const TRANSLATIONS = {
     dash_in_sfx:'recibido',dash_out_sfx:'gastado',
     dash_includes:'Incluye',dash_rollover_sfx:'arrastre',
     dash_cash_flow:'Flujo de caja',
-    dash_spend_vs_plan:'Gastos vs plan',dash_income_kept:'de ingresos conservados',
+    dash_income_kept:'de ingresos conservados',
+    dash_daily_spend:'Gasto diario',dash_daily_spend_caption:'gasto total en este período',spend_tip_more:'+{0} más',
     dash_expected_legend:'Previsto',dash_actual_legend:'Real',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
@@ -2314,7 +2330,7 @@ const TRANSLATIONS = {
     alloc_based_on:'Basado en',alloc_income_period:'ingresos de este período',
     alloc_untagged:'Sin etiquetar',alloc_untagged_desc:'del gasto aún sin etiquetar',
     alloc_def_need:'Necesidad',alloc_def_want:'Deseo',alloc_def_save:'Ahorro',
-    alloc_sett_title:'\uD83C\uDFAF Distribución del gasto',
+    alloc_sett_title:'\uD83C\uDFAF Distribución presupuestaria',
     alloc_nearing:'Cercano',
     alloc_behind:'Atrasado',
     alloc_required:'La distribución es obligatoria para las transacciones de gasto.',
@@ -2424,7 +2440,7 @@ const TRANSLATIONS = {
     help_penny_safety_h:'¿Mi clave está segura?',
     help_penny_safety_p:'Tu clave se cifra antes de guardarse en el almacenamiento de tu propio navegador, y solo se envía directamente a la API de Google cuando le haces una pregunta a Penny. Nunca se envía a un servidor de Evo Budget.',
     help_penny_cta:'Abrir Google AI Studio →',
-    help_dash_alloc_setup_p:'Abre Ajustes \u2192 Distribución del gasto. Edita los nombres de los segmentos, ajusta los porcentajes y activa o desactiva el panel. Los porcentajes deben sumar 100%.',
+    help_dash_alloc_setup_p:'Abre Ajustes \u2192 Distribución presupuestaria. Edita los nombres de los segmentos, ajusta los porcentajes y activa o desactiva el panel. Los porcentajes deben sumar 100%.',
     // Guide
     guide_group_start:'Primeros pasos', guide_group_track:'Controla tu dinero', guide_group_plan:'Planifica en grande',
     guide_group_smart:'Trabaja de forma más inteligente', guide_group_settings:'A tu manera',
@@ -2807,7 +2823,8 @@ const TRANSLATIONS = {
     dash_in_sfx:'ricevuto',dash_out_sfx:'speso',
     dash_includes:'Incluso',dash_rollover_sfx:'riporto',
     dash_cash_flow:'Flusso di cassa',
-    dash_spend_vs_plan:'Spese vs piano',dash_income_kept:'di reddito trattenuto',
+    dash_income_kept:'di reddito trattenuto',
+    dash_daily_spend:'Spesa giornaliera',dash_daily_spend_caption:'spesa totale nel periodo',spend_tip_more:'+{0} altri',
     dash_expected_legend:'Previsto',dash_actual_legend:'Effettivo',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
@@ -2843,7 +2860,7 @@ const TRANSLATIONS = {
     alloc_based_on:'Basato su',alloc_income_period:'entrate di questo periodo',
     alloc_untagged:'Non etichettato',alloc_untagged_desc:'di spese non ancora etichettate',
     alloc_def_need:'Bisogno',alloc_def_want:'Desiderio',alloc_def_save:'Risparmio',
-    alloc_sett_title:'\uD83C\uDFAF Distribuzione spese',
+    alloc_sett_title:'\uD83C\uDFAF Distribuzione budget',
     alloc_nearing:'Vicino',
     alloc_behind:'In ritardo',
     alloc_required:'La distribuzione è obbligatoria per le transazioni di spesa.',
@@ -2953,7 +2970,7 @@ const TRANSLATIONS = {
     help_penny_safety_h:'La mia chiave è al sicuro?',
     help_penny_safety_p:'La tua chiave viene crittografata prima di essere salvata nell’archivio del tuo browser, e viene inviata direttamente all’API di Google solo quando fai una domanda a Penny. Non viene mai inviata a un server di Evo Budget.',
     help_penny_cta:'Apri Google AI Studio →',
-    help_dash_alloc_setup_p:'Apri Impostazioni \u2192 Distribuzione spese. Modifica i nomi dei segmenti, regola le percentuali e attiva o disattiva il pannello. Le percentuali devono totalizzare il 100%.',
+    help_dash_alloc_setup_p:'Apri Impostazioni \u2192 Distribuzione budget. Modifica i nomi dei segmenti, regola le percentuali e attiva o disattiva il pannello. Le percentuali devono totalizzare il 100%.',
     // Guide
     guide_group_start:"Per iniziare", guide_group_track:"Tieni traccia dei tuoi soldi", guide_group_plan:"Pianifica in grande",
     guide_group_smart:"Lavora in modo più intelligente", guide_group_settings:"A modo tuo",
@@ -3335,7 +3352,8 @@ const TRANSLATIONS = {
     dash_in_sfx:'wpłynęło',dash_out_sfx:'wyszło',
     dash_includes:'W tym',dash_rollover_sfx:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki',
-    dash_spend_vs_plan:'Wydatki vs plan',dash_income_kept:'zachowanego dochodu',
+    dash_income_kept:'zachowanego dochodu',
+    dash_daily_spend:'Wydatki dzienne',dash_daily_spend_caption:'łączne wydatki w tym okresie',spend_tip_more:'+{0} więcej',
     dash_expected_legend:'Planowane',dash_actual_legend:'Rzeczywiste',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
@@ -3371,7 +3389,7 @@ const TRANSLATIONS = {
     alloc_based_on:'Na podstawie',alloc_income_period:'dochodów w tym okresie',
     alloc_untagged:'Nieoznaczone',alloc_untagged_desc:'wydatków jeszcze nieoznaczonych',
     alloc_def_need:'Potrzeba',alloc_def_want:'Chęć',alloc_def_save:'Oszczędność',
-    alloc_sett_title:'\uD83C\uDFAF Podział wydatków',
+    alloc_sett_title:'\uD83C\uDFAF Podział budżetu',
     alloc_nearing:'Blisko',
     alloc_behind:'Opóźnione',
     alloc_required:'Podział jest wymagany dla transakcji wydatkowych.',
@@ -3481,7 +3499,7 @@ const TRANSLATIONS = {
     help_penny_safety_h:'Czy mój klucz jest bezpieczny?',
     help_penny_safety_p:'Twój klucz jest szyfrowany przed zapisaniem w pamięci Twojej przeglądarki i jest wysyłany bezpośrednio do API Google tylko wtedy, gdy zadajesz Penny pytanie. Nigdy nie trafia do żadnego serwera Evo Budget.',
     help_penny_cta:'Otwórz Google AI Studio →',
-    help_dash_alloc_setup_p:'Otwórz Ustawienia \u2192 Podział wydatków. Edytuj nazwy segmentów, dostosuj procenty i włącz lub wyłącz panel. Procenty muszą sumować się do 100%.',
+    help_dash_alloc_setup_p:'Otwórz Ustawienia \u2192 Podział budżetu. Edytuj nazwy segmentów, dostosuj procenty i włącz lub wyłącz panel. Procenty muszą sumować się do 100%.',
     // Guide
     guide_group_start:'Pierwsze kroki', guide_group_track:'Kontroluj swoje pieniądze', guide_group_plan:'Planuj z rozmachem',
     guide_group_smart:'Pracuj mądrzej', guide_group_settings:'Dostosuj do siebie',
@@ -3912,6 +3930,8 @@ function renderDashboardLayout1() {
     {label:t('dash_debt_payments'),  exp:expDebt,act:sum.totalDebt||0,         color:'#a855f7',isInc:false},
     {label:t('dash_subscriptions'),  exp:subMo,  act:sum.totalSubscriptions||0,color:'#10b981',isInc:false},
   ];
+  const spendPoints=computeDailySpendPoints();
+  const spendLineTotal=spendPoints.reduce((s,p)=>s+p.value,0);
 
   // Welcome card - show when state is fresh
   const showWelcome = !state.settings.welcomeDismissed && state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
@@ -3928,6 +3948,7 @@ function renderDashboardLayout1() {
       <div class="onboard-sample-row"><button class="btn btn-ghost btn-sm" id="loadSampleBtn" type="button">✨ ${t('onboard_sample_btn')}</button><span class="onboard-sample-hint">${t('onboard_sample_hint')}</span></div>
     </div>` : '';
   const el=document.getElementById('bview-dashboard');
+  const isCurrentRender=markRenderGen(el);
   el.innerHTML=welcomeHtml+`
     <div class="section-header">
       <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
@@ -3952,13 +3973,14 @@ function renderDashboardLayout1() {
     <div class="dashboard-grid" style="margin-bottom:16px">
       <div class="panel cash-flow-panel"><div class="panel-inner-sm">
         <div class="panel-titlebar"><span class="panel-title-sm">${t('dash_cash_flow')}</span><div class="flow-legend"><span class="legend-item"><span class="legend-dot" style="background:rgba(30,27,46,.22)"></span>${t('dash_expected_legend')}</span><span class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>${t('dash_actual_legend')}</span></div></div>
-        <div class="flow-table">${flowRows.map(row=>{const max=Math.max(row.exp,row.act,1),ew=(row.exp/max*100).toFixed(1),aw=(row.act/max*100).toFixed(1),over=!row.isInc&&row.act>row.exp&&row.exp>0;return`<div class="flow-row"><span class="flow-label">${esc(row.label)}</span><div class="flow-bars"><div class="flow-bar-wrap"><div class="flow-bar flow-bar--exp" style="width:${ew}%"></div></div><div class="flow-bar-wrap"><div class="flow-bar" style="width:${aw}%;background:${over?'#f43f5e':row.color}"></div></div></div><div class="flow-amounts"><div class="flow-amt flow-amt--exp">${fmt(row.exp)}</div><div class="flow-amt" style="color:${row.color};font-weight:700">${fmt(row.act)}</div></div></div>`;}).join('')}</div>
+        <div class="flow-table">${flowRows.map(row=>{const pct=row.exp>0?(row.act/row.exp*100):(row.act>0?100:0),aw=Math.min(100,pct).toFixed(1),over=!row.isInc&&row.act>row.exp&&row.exp>0;return`<div class="flow-row"><div class="flow-row-top"><span class="flow-label">${esc(row.label)}</span><span class="flow-amounts"><span style="color:${over?'#f43f5e':row.color}">${fmt(row.act)}</span><span class="flow-amt--exp"> / ${fmt(row.exp)}</span></span></div><div class="flow-bars"><div class="flow-bar-wrap"><div class="flow-bar" style="width:${aw}%;background:${over?'#f43f5e':row.color}"></div></div></div></div>`;}).join('')}</div>
       </div></div>
       <div class="charts-col">
         <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgDonut(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})),110,16)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
         <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="donut-block">${svgDonut(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})).slice(0,50),110,16)}<div class="donut-legend">${spendSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(spTot>0?s.value/spTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
       </div>
     </div>
+    <div class="panel spend-line-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:10px">${t('dash_daily_spend')}</div>${spendLineTotal>0?svgSpendLine(spendPoints,{w:900,h:140})+`<div class="spend-line-caption"><span class="spend-line-num">${fmt(spendLineTotal)}</span><span class="spend-line-label">${t('dash_daily_spend_caption')}</span></div>`:`<div class="chart-empty">${t('dash_no_spending')}</div>`}</div></div>
     ${(()=>{
       if (!state.allocation?.enabled) return '';
       const {totals, untagged} = computeAllocation();
@@ -3996,7 +4018,11 @@ function renderDashboardLayout1() {
   el.querySelector('#loadSampleBtn')?.addEventListener('click',loadSampleData);
   el.querySelector('#dismissWelcomeBtn')?.addEventListener('click',dismissWelcomeCard);
   requestAnimationFrame(()=>{
+    if (!isCurrentRender()) return;
     initDonuts(el);
+    wireChartHover(el, '.spend-line-dot', { format: d =>
+      formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
+        { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
     const proVals = el.querySelectorAll('.pro-stats-row .pro-stat-value');
     animateDashboardEntrance(el, [
       { el: proVals[0], target: sum.totalIncome, render: fmt },
@@ -4039,6 +4065,8 @@ function renderDashboardLayout2() {
     {label:t('bud_section_savings'), value:sum.totalSavings, expected:expSav,color:'#3b82f6'},
     {label:t('dash_subscriptions'),  value:sum.totalSubscriptions||0, expected:subMo,color:'#10b981'}
   ];
+  const spendPoints=computeDailySpendPoints();
+  const spendLineTotal=spendPoints.reduce((s,p)=>s+p.value,0);
 
   const showWelcome = !state.settings.welcomeDismissed && state.transactions.length === 0 && state.debts.length === 0 && state.sinkingFunds.length === 0 && (state.subscriptions||[]).length === 0;
   const welcomeHtml = showWelcome ? `
@@ -4083,12 +4111,13 @@ function renderDashboardLayout2() {
         <div class="chart-hero-status" style="color:${accentColor}">${statusIcon} ${esc(t(statusKey))}</div>
       </div>`;
     }).join('');
-    return `<div class="panel dg-alloc" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:10px">${t('alloc_title')}</div>
+    return `<div class="panel alloc-panel" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:10px">${t('alloc_title')}</div>
       <div class="ist-row" style="grid-template-columns:repeat(${buckets.length},1fr)">${tiles}</div>
     </div></div>`;
   })();
 
   const el=document.getElementById('bview-dashboard');
+  const isCurrentRender=markRenderGen(el);
   el.innerHTML=welcomeHtml+`
     <div class="section-header">
       <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
@@ -4124,26 +4153,35 @@ function renderDashboardLayout2() {
     </div>
 
     <div class="dashboard-grid" style="margin-bottom:14px">
-      <div class="panel cash-flow-hero-panel dg-cf" data-chart-scope>
+      <div class="panel cash-flow-hero-panel" data-chart-scope>
         <div class="panel-inner-sm">
-          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_spend_vs_plan')}</div>
+          <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_cash_flow')}</div>
           <div class="radial-bars-block">
-            ${svgRadialBars(rings, 240)}
+            ${svgRadialBars(rings, 230)}
             <div class="donut-legend">${rings.map((r,idx) => {
               const over = r.expected>0 && r.value>r.expected;
               return `
-              <div class="dleg-row" data-idx="${idx}">
+              <div class="dleg-row dleg-row--stacked" data-idx="${idx}">
                 <span class="dleg-swatch" style="background:${over?'#f43f5e':r.color}"></span>
-                <span class="dleg-label">${esc(r.label)}</span>
-                <span class="dleg-pct"${over?' style="color:#f43f5e;font-weight:800"':''}>${r.expected>0?Math.round(r.value/r.expected*100):0}%</span>
+                <div class="dleg-stack">
+                  <span class="dleg-label">${esc(r.label)}</span>
+                  <span class="dleg-pct">
+                    <span style="color:${over?'#f43f5e':r.color}">${fmt(r.value)}</span>
+                    <span class="flow-amt--exp"> / ${fmt(r.expected)}</span>
+                  </span>
+                </div>
               </div>`;}).join('')}</div>
           </div>
         </div>
       </div>
-      <div class="panel chart-panel dg-inc" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:pieChartHtml(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})), {limit:6})}</div></div>
-      ${allocHtml}
-      <div class="panel chart-panel dg-spend" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:pieChartHtml(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})), {limit:6})}</div></div>
+      <div class="charts-col pulse-charts-col">
+        <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:pieChartHtml(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})), {limit:5})}</div></div>
+        <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:pieChartHtml(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})), {limit:5})}</div></div>
+      </div>
     </div>
+
+    <div class="panel spend-line-panel" data-chart-scope><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:10px">${t('dash_daily_spend')}</div>${spendLineTotal>0?svgSpendLine(spendPoints,{w:900,h:140})+`<div class="spend-line-caption"><span class="spend-line-num">${fmt(spendLineTotal)}</span><span class="spend-line-label">${t('dash_daily_spend_caption')}</span></div>`:`<div class="chart-empty">${t('dash_no_spending')}</div>`}</div></div>
+    ${allocHtml}
 
     <div class="pro-bottom-row" style="margin-top:14px">
       <div class="panel pro-card"><div class="panel-inner-sm">
@@ -4163,13 +4201,17 @@ function renderDashboardLayout2() {
   el.querySelector('#loadSampleBtn')?.addEventListener('click',loadSampleData);
   el.querySelector('#dismissWelcomeBtn')?.addEventListener('click',dismissWelcomeCard);
   requestAnimationFrame(()=>{
+    if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: false, format: d =>
+      wireChartHover(scope, '.rbar-seg', { legendScope: scope, swapText: true, swapFormat: d => `${d.pct}%`, format: d =>
         `<strong>${esc(d.label)}</strong><br>` +
         `<span style="color:var(--text-faint)">${esc(t('dash_expected_legend'))}: ${esc(fmt(parseFloat(d.expected) || 0))}</span><br>` +
         `<span style="color:${d.color || 'var(--text-primary)'};font-weight:800">${esc(t('dash_actual_legend'))}: ${esc(fmt(parseFloat(d.val) || 0))}</span>` });
       wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d =>
         `<strong>${esc(d.label)}</strong><br>${esc(fmt(parseFloat(d.val) || 0))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
+      wireChartHover(scope, '.spend-line-dot', { format: d =>
+        formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
+          { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
     });
     const istVals = el.querySelectorAll('.ist-row .ist-value');
     animateDashboardEntrance(el, [
@@ -4184,7 +4226,7 @@ function renderDashboardLayout2() {
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
 }
 
-// ── Spending Allocation ────────────────────────────────────────────────
+// ── Budget Allocation ─────────────────────────────────────────────────
 function computeAllocation() {
   const {periodStart, periodEnd} = state.settings;
   const buckets = state.allocation?.buckets || [];
