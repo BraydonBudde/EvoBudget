@@ -1,15 +1,15 @@
 'use strict';
 /* =====================================================================
-   penny.js - Penny, the Ultimate Budget Planner's AI assistant
+   penny.js - Evio, the Ultimate Budget Planner's AI assistant
 
    Bring-your-own-key: the user pastes their own free Gemini API key and
    every request goes straight from their browser to Google - there is
-   no Evo Budget backend to route through (this app doesn't have one).
+   no Evio Budget backend to route through (this app doesn't have one).
    The key is encrypted at rest with a non-extractable AES-GCM CryptoKey
    stored in IndexedDB (never localStorage, never in `state`, so it can
    never leave the device via sync.js's Google Drive sync either).
 
-   Penny can only ever READ budgeting data - every function Gemini is
+   Evio can only ever READ budgeting data - every function Gemini is
    allowed to call is a pure getter (see pennyExecuteTool's switch),
    nothing here can call saveState() or mutate `state`.
    ===================================================================== */
@@ -319,7 +319,7 @@ function pennyWireSettingsCard() {
 // ══════════════════════════════════════════════════════════════════════
 function pennyBuildSystemInstruction() {
   return { parts: [{ text:
-    "You are Penny, a friendly budgeting assistant built into the Ultimate Budget Planner app. " +
+    "You are Evio, a friendly budgeting assistant built into the Ultimate Budget Planner app. " +
     "You ONLY answer questions about the user's own budgeting data (income, expenses, bills, savings, debts, subscriptions, sinking funds, transactions, overall budget health) using the tools provided. " +
     "You must call one of the provided functions to fetch real data before stating any dollar amount, percentage, or count - never invent or estimate numbers yourself. " +
     "If asked about anything unrelated to the user's own budget in this app (general knowledge, other people's finances, coding help, current events, etc.), politely decline and redirect to a budgeting question. " +
@@ -578,10 +578,12 @@ let _pennyUnsupportedModels = new Set();
 
 // Tries each model in PENNY_MODEL_CHAIN (skipping ones already known to be
 // exhausted for today, or found this session to not support tool calling)
-// until one accepts the request. Only a 429 (quota) or an "unsupported
-// field" 400 (model-capability mismatch) triggers a fallback to the next
-// model - any other failure (bad key, network, safety block) propagates
-// immediately, since trying a different model won't fix those.
+// until one accepts the request. A 429 (quota), a 503 (Google-side
+// overload - "high demand", nothing to do with this app or this key), or
+// an "unsupported field" 400 (model-capability mismatch) all trigger a
+// fallback to the next model - any other failure (bad key, network,
+// safety block) propagates immediately, since trying a different model
+// won't fix those.
 async function pennyStreamWithFallback(requestBody, onEvent) {
   const models = pennyAvailableModels();
   let lastErr = null;
@@ -593,6 +595,14 @@ async function pennyStreamWithFallback(requestBody, onEvent) {
     } catch (e) {
       if (e.message === 'penny_http_error' && e.status === 429) {
         pennyMarkModelExhausted(modelId);
+        lastErr = e;
+        continue;
+      }
+      if (e.message === 'penny_http_error' && e.status === 503) {
+        // Transient Google-side overload, not a quota or capability issue -
+        // don't mark the model exhausted (it'll likely work again in a
+        // minute), just try the next model in the chain for THIS request.
+        console.warn(`[penny] ${modelId} returned 503 (Google-side overload) - trying the next model in the chain.`);
         lastErr = e;
         continue;
       }
@@ -624,6 +634,7 @@ function pennyClassifyHttpError(err) {
     const status = err.status;
     const gstatus = err.body?.error?.status;
     if (status === 429) return 'rate_limited';
+    if (status === 503 || gstatus === 'UNAVAILABLE') return 'overloaded';
     if (status === 401 || status === 403 || gstatus === 'PERMISSION_DENIED' || gstatus === 'UNAUTHENTICATED') return 'invalid_key';
     return 'unknown';
   }
@@ -907,7 +918,7 @@ function pennyRenderQuickActions() {
   wrap.innerHTML = prompts.map(k => `<button class="btn btn-ghost btn-sm penny-qp-btn" data-qp="${k}" type="button">${esc(t(k))}</button>`).join('');
   wrap.querySelectorAll('[data-qp]').forEach(b => b.addEventListener('click', () => pennySendMessage(t(b.dataset.qp))));
 }
-// Lightweight, dependency-free markdown -> HTML for Penny's OWN responses
+// Lightweight, dependency-free markdown -> HTML for Evio's OWN responses
 // only (never the user's own messages, which stay as plain escaped text -
 // see pennyAppendMessage below). Handles just the handful of constructs
 // the system prompt now asks Gemini to use: **bold**, '### heading'
@@ -977,9 +988,9 @@ function pennySetInputEnabled(on) {
 function pennyRenderChatError(kind, retryText) {
   const list = document.getElementById('pennyMessages');
   if (!list) return;
-  const msgKey = { invalid_key: 'penny_err_invalid_key', rate_limited: 'penny_err_rate_limited', network: 'penny_err_network', blocked: 'penny_err_blocked', no_key: 'penny_no_key_notice', unknown: 'penny_err_unknown' }[kind] || 'penny_err_unknown';
+  const msgKey = { invalid_key: 'penny_err_invalid_key', rate_limited: 'penny_err_rate_limited', overloaded: 'penny_err_overloaded', network: 'penny_err_network', blocked: 'penny_err_blocked', no_key: 'penny_no_key_notice', unknown: 'penny_err_unknown' }[kind] || 'penny_err_unknown';
   const showSettings = kind === 'invalid_key' || kind === 'no_key';
-  const showRetry = (kind === 'rate_limited' || kind === 'network' || kind === 'unknown') && !!retryText;
+  const showRetry = (kind === 'rate_limited' || kind === 'overloaded' || kind === 'network' || kind === 'unknown') && !!retryText;
   const row = document.createElement('div');
   row.className = 'penny-msg penny-msg--penny penny-msg--error';
   row.innerHTML = `<span class="penny-msg-avatar">${PENNY_ICON_SVG}</span>

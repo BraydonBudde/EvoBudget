@@ -1,12 +1,12 @@
 'use strict';
-/* Evo Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
+/* Evio Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
    Change set vs v1.0 "Baseline":
    - All native browser confirm()/alert() popups replaced with in-app
      glass dialogs (confirmDialog / alertDialog) - mobile-friendly.
    - UBP: duplicated init()/applyLayout() collapsed into one; recurring
      engine restored and init now runs exactly once. */
 /* =====================================================================
-   Evo Budget - script.js  v2
+   Evio Budget - script.js  v2
    Improvements: edit transactions, live progress bars, post-symbol
    currencies, mouse-drag tabs, gear settings nav, round help icons,
    clickable period badge, dark / light theme toggle.
@@ -138,7 +138,7 @@ const TRANSLATIONS = {
     appearance_desc:'Choose a colour theme.',
     dash_anim_title:'Dashboard Animations',dash_anim_desc:'Play a subtle entrance animation when the dashboard loads.',dash_anim_label:'Enable animations',
     video_tutorial:'▶ Video Tutorial',
-    help_sett_modal_title:'How Settings work',help_sett_intro:'Customise Evo Budget to match your situation.',
+    help_sett_modal_title:'How Settings work',help_sett_intro:'Customise Evio Budget to match your situation.',
     help_sett_currency_li:'Updates the symbol everywhere (some currencies like PLN place the symbol after the amount).',
     help_sett_period_li:'Set your date range. Click the date badge on Dashboard to jump here quickly.',
     help_sett_rollover_li:'Carry forward unspent money from the last period.',
@@ -286,13 +286,14 @@ const TRANSLATIONS = {
     reauth_title:'Sign in with Google to continue',
     reauth_sub:'Your data for this tool is synced with Google Drive. Sign in again to pick up where you left off.',
     reauth_submit:'Sign in with Google',reauth_local:'Use local data on this device instead',
-    sync_welcome:'Welcome to Evo Budget',sync_choose:'Choose how to save your data.',sync_recommended:'Recommended',
+    sync_welcome:'Welcome to Evio Budget',sync_choose:'Choose how to save your data.',sync_recommended:'Recommended',
     sync_continue_google:'Continue with Google',sync_desc_multi_device:'Planner data is stored across multiple devices',
     sync_use_no_account:'Use without an account',sync_desc_this_device:'Planner data is stored on this device only',
     sync_status_wait:'Complete the steps in the Google window that just opened. If nothing appeared, check your address bar for a blocked pop-up icon.',
     sync_footer_note:'This can be changed in settings later',
     code_title:'Enter your access code',code_sub:'Unlock the full {0} with the code from your purchase.',
     code_placeholder:'Access code',code_error:"That code isn't right. Double-check it and try again.",
+    code_orderid_placeholder:'Order ID',code_orderid_error:'Enter the order ID from your purchase.',
     code_submit:'Submit',code_try_free:'Try for free instead',code_get:'Get a code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Edit Transaction',save_changes:'Save changes',no_categories:'- no categories -',
@@ -321,7 +322,7 @@ const TRANSLATIONS = {
     cmp_feat10:'Subscription tracker with category breakdown',
     cmp_feat11:'Pro dashboard with hero stats &amp; upcoming panel',
     cmp_feat12:'One-click import from Simple Budget Planner',
-    cmp_feat13:'Penny - your AI budget assistant',
+    cmp_feat13:'Evio - your AI budget assistant',
     help_aria:'Help',close_aria:'Close',dismiss_aria:'Dismiss',ok:'OK',
   },
   de: {
@@ -399,7 +400,7 @@ const TRANSLATIONS = {
     appearance_desc:'Wähle ein Farbthema.',
     dash_anim_title:'Dashboard-Animationen',dash_anim_desc:'Beim Laden des Dashboards eine dezente Eingangsanimation abspielen.',dash_anim_label:'Animationen aktivieren',
     video_tutorial:'▶ Video-Tutorial',
-    help_sett_modal_title:'Einstellungen im Überblick',help_sett_intro:'Passe Evo Budget an deine Situation an.',
+    help_sett_modal_title:'Einstellungen im Überblick',help_sett_intro:'Passe Evio Budget an deine Situation an.',
     help_sett_currency_li:'Aktualisiert das Symbol überall (manche Währungen wie PLN setzen das Symbol nach dem Betrag).',
     help_sett_period_li:'Lege deinen Datumsbereich fest. Klicke auf das Datums-Badge im Dashboard, um schnell hierher zu gelangen.',
     help_sett_rollover_li:'Überträgt nicht ausgegebenes Geld aus der letzten Periode.',
@@ -547,13 +548,14 @@ const TRANSLATIONS = {
     reauth_title:'Melde dich mit Google an, um fortzufahren',
     reauth_sub:'Deine Daten für dieses Tool werden mit Google Drive synchronisiert. Melde dich erneut an, um dort weiterzumachen, wo du aufgehört hast.',
     reauth_submit:'Mit Google anmelden',reauth_local:'Stattdessen lokale Daten auf diesem Gerät verwenden',
-    sync_welcome:'Willkommen bei Evo Budget',sync_choose:'Wähle, wie deine Daten gespeichert werden.',sync_recommended:'Empfohlen',
+    sync_welcome:'Willkommen bei Evio Budget',sync_choose:'Wähle, wie deine Daten gespeichert werden.',sync_recommended:'Empfohlen',
     sync_continue_google:'Mit Google fortfahren',sync_desc_multi_device:'Planerdaten werden auf mehreren Geräten gespeichert',
     sync_use_no_account:'Ohne Konto verwenden',sync_desc_this_device:'Planerdaten werden nur auf diesem Gerät gespeichert',
     sync_status_wait:'Schließe die Schritte im gerade geöffneten Google-Fenster ab. Falls nichts erschienen ist, prüfe deine Adressleiste auf ein blockiertes Pop-up-Symbol.',
     sync_footer_note:'Dies kann später in den Einstellungen geändert werden',
     code_title:'Gib deinen Zugangscode ein',code_sub:'Schalte den vollen {0} mit dem Code aus deinem Kauf frei.',
     code_placeholder:'Zugangscode',code_error:'Dieser Code ist nicht richtig. Überprüfe ihn und versuche es erneut.',
+    code_orderid_placeholder:'Bestellnummer',code_orderid_error:'Gib die Bestellnummer deines Kaufs ein.',
     code_submit:'Absenden',code_try_free:'Stattdessen kostenlos testen',code_get:'Code holen',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Transaktion bearbeiten',save_changes:'Änderungen speichern',no_categories:'- keine Kategorien -',
@@ -582,7 +584,7 @@ const TRANSLATIONS = {
     cmp_feat10:'Abo-Tracker mit Kategorieaufschlüsselung',
     cmp_feat11:'Pro-Dashboard mit Kennzahlen &amp; Übersichtspanel',
     cmp_feat12:'Ein-Klick-Import aus Simple Budget Planner',
-    cmp_feat13:'Penny - dein KI-Budgetassistent',
+    cmp_feat13:'Evio - dein KI-Budgetassistent',
     help_aria:'Hilfe',close_aria:'Schließen',dismiss_aria:'Verwerfen',ok:'OK',
   },
   fr: {
@@ -660,7 +662,7 @@ const TRANSLATIONS = {
     appearance_desc:'Choisissez un thème de couleur.',
     dash_anim_title:'Animations du tableau de bord',dash_anim_desc:"Jouer une animation d'entrée subtile au chargement du tableau de bord.",dash_anim_label:'Activer les animations',
     video_tutorial:'▶ Tutoriel vidéo',
-    help_sett_modal_title:'Fonctionnement des paramètres',help_sett_intro:'Personnalisez Evo Budget selon votre situation.',
+    help_sett_modal_title:'Fonctionnement des paramètres',help_sett_intro:'Personnalisez Evio Budget selon votre situation.',
     help_sett_currency_li:"Met à jour le symbole partout (certaines devises comme le PLN placent le symbole après le montant).",
     help_sett_period_li:'Définissez votre plage de dates. Cliquez sur le badge de date du tableau de bord pour y accéder rapidement.',
     help_sett_rollover_li:"Reporte l'argent non dépensé de la dernière période.",
@@ -808,13 +810,14 @@ const TRANSLATIONS = {
     reauth_title:'Connectez-vous avec Google pour continuer',
     reauth_sub:'Vos données pour cet outil sont synchronisées avec Google Drive. Reconnectez-vous pour reprendre où vous en étiez.',
     reauth_submit:'Se connecter avec Google',reauth_local:'Utiliser les données locales de cet appareil à la place',
-    sync_welcome:'Bienvenue sur Evo Budget',sync_choose:'Choisissez comment enregistrer vos données.',sync_recommended:'Recommandé',
+    sync_welcome:'Bienvenue sur Evio Budget',sync_choose:'Choisissez comment enregistrer vos données.',sync_recommended:'Recommandé',
     sync_continue_google:'Continuer avec Google',sync_desc_multi_device:'Les données du planificateur sont stockées sur plusieurs appareils',
     sync_use_no_account:'Utiliser sans compte',sync_desc_this_device:'Les données du planificateur sont stockées uniquement sur cet appareil',
     sync_status_wait:"Terminez les étapes dans la fenêtre Google qui vient de s'ouvrir. Si rien n'est apparu, vérifiez votre barre d'adresse pour une icône de pop-up bloquée.",
     sync_footer_note:'Cela peut être modifié plus tard dans les paramètres',
     code_title:'Entrez votre code d’accès',code_sub:'Débloquez le {0} complet avec le code de votre achat.',
     code_placeholder:'Code d’accès',code_error:'Ce code est incorrect. Vérifiez-le et réessayez.',
+    code_orderid_placeholder:'Numéro de commande',code_orderid_error:'Saisissez le numéro de commande de votre achat.',
     code_submit:'Valider',code_try_free:'Essayer gratuitement à la place',code_get:'Obtenir un code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Modifier la transaction',save_changes:'Enregistrer les modifications',no_categories:'- aucune catégorie -',
@@ -843,7 +846,7 @@ const TRANSLATIONS = {
     cmp_feat10:'Suivi des abonnements avec répartition par catégorie',
     cmp_feat11:'Tableau de bord Pro avec statistiques clés &amp; panneau à venir',
     cmp_feat12:'Import en un clic depuis Simple Budget Planner',
-    cmp_feat13:'Penny - votre assistant budgétaire IA',
+    cmp_feat13:'Evio - votre assistant budgétaire IA',
     help_aria:'Aide',close_aria:'Fermer',dismiss_aria:'Ignorer',ok:'OK',
   },
   es: {
@@ -921,7 +924,7 @@ const TRANSLATIONS = {
     appearance_desc:'Elige un tema de color.',
     dash_anim_title:'Animaciones del panel',dash_anim_desc:'Reproduce una animación de entrada sutil al cargar el panel.',dash_anim_label:'Activar animaciones',
     video_tutorial:'▶ Tutorial en vídeo',
-    help_sett_modal_title:'Cómo funcionan los ajustes',help_sett_intro:'Personaliza Evo Budget según tu situación.',
+    help_sett_modal_title:'Cómo funcionan los ajustes',help_sett_intro:'Personaliza Evio Budget según tu situación.',
     help_sett_currency_li:'Actualiza el símbolo en todas partes (algunas monedas como PLN colocan el símbolo después del importe).',
     help_sett_period_li:'Establece tu rango de fechas. Haz clic en el distintivo de fecha del panel para acceder rápidamente aquí.',
     help_sett_rollover_li:'Traspasa el dinero no gastado del último período.',
@@ -1069,13 +1072,14 @@ const TRANSLATIONS = {
     reauth_title:'Inicia sesión con Google para continuar',
     reauth_sub:'Tus datos para esta herramienta están sincronizados con Google Drive. Vuelve a iniciar sesión para continuar donde lo dejaste.',
     reauth_submit:'Iniciar sesión con Google',reauth_local:'Usar datos locales de este dispositivo en su lugar',
-    sync_welcome:'Bienvenido a Evo Budget',sync_choose:'Elige cómo guardar tus datos.',sync_recommended:'Recomendado',
+    sync_welcome:'Bienvenido a Evio Budget',sync_choose:'Elige cómo guardar tus datos.',sync_recommended:'Recomendado',
     sync_continue_google:'Continuar con Google',sync_desc_multi_device:'Los datos del planificador se almacenan en varios dispositivos',
     sync_use_no_account:'Usar sin cuenta',sync_desc_this_device:'Los datos del planificador se almacenan solo en este dispositivo',
     sync_status_wait:'Completa los pasos en la ventana de Google que acaba de abrirse. Si no apareció nada, revisa tu barra de direcciones por un icono de ventana emergente bloqueada.',
     sync_footer_note:'Esto se puede cambiar más tarde en los ajustes',
     code_title:'Introduce tu código de acceso',code_sub:'Desbloquea el {0} completo con el código de tu compra.',
     code_placeholder:'Código de acceso',code_error:'Ese código no es correcto. Revísalo e inténtalo de nuevo.',
+    code_orderid_placeholder:'ID del pedido',code_orderid_error:'Introduce el ID del pedido de tu compra.',
     code_submit:'Enviar',code_try_free:'Probar gratis en su lugar',code_get:'Obtener un código',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Editar transacción',save_changes:'Guardar cambios',no_categories:'- sin categorías -',
@@ -1104,7 +1108,7 @@ const TRANSLATIONS = {
     cmp_feat10:'Seguimiento de suscripciones con desglose por categoría',
     cmp_feat11:'Panel Pro con estadísticas clave &amp; panel de próximos eventos',
     cmp_feat12:'Importación con un clic desde Simple Budget Planner',
-    cmp_feat13:'Penny - tu asistente de presupuesto con IA',
+    cmp_feat13:'Evio - tu asistente de presupuesto con IA',
     help_aria:'Ayuda',close_aria:'Cerrar',dismiss_aria:'Descartar',ok:'OK',
   },
   it: {
@@ -1182,7 +1186,7 @@ const TRANSLATIONS = {
     appearance_desc:'Scegli un tema di colore.',
     dash_anim_title:'Animazioni della dashboard',dash_anim_desc:'Riproduci una sottile animazione di ingresso al caricamento della dashboard.',dash_anim_label:'Attiva animazioni',
     video_tutorial:'▶ Video Tutorial',
-    help_sett_modal_title:'Come funzionano le impostazioni',help_sett_intro:'Personalizza Evo Budget in base alla tua situazione.',
+    help_sett_modal_title:'Come funzionano le impostazioni',help_sett_intro:'Personalizza Evio Budget in base alla tua situazione.',
     help_sett_currency_li:"Aggiorna il simbolo ovunque (alcune valute come il PLN inseriscono il simbolo dopo l'importo).",
     help_sett_period_li:'Imposta il tuo intervallo di date. Fai clic sul badge della data nel pannello per accedervi rapidamente.',
     help_sett_rollover_li:"Riporta il denaro non speso dall'ultimo periodo.",
@@ -1329,13 +1333,14 @@ const TRANSLATIONS = {
     reauth_title:'Accedi con Google per continuare',
     reauth_sub:'I tuoi dati per questo strumento sono sincronizzati con Google Drive. Accedi di nuovo per riprendere da dove avevi lasciato.',
     reauth_submit:'Accedi con Google',reauth_local:'Usa invece i dati locali su questo dispositivo',
-    sync_welcome:'Benvenuto su Evo Budget',sync_choose:'Scegli come salvare i tuoi dati.',sync_recommended:'Consigliato',
+    sync_welcome:'Benvenuto su Evio Budget',sync_choose:'Scegli come salvare i tuoi dati.',sync_recommended:'Consigliato',
     sync_continue_google:'Continua con Google',sync_desc_multi_device:'I dati del pianificatore sono memorizzati su più dispositivi',
     sync_use_no_account:'Usa senza account',sync_desc_this_device:'I dati del pianificatore sono memorizzati solo su questo dispositivo',
     sync_status_wait:'Completa i passaggi nella finestra Google appena apertasi. Se non è apparso nulla, controlla la barra degli indirizzi per un’icona di popup bloccato.',
     sync_footer_note:'Questo può essere modificato in seguito nelle impostazioni',
     code_title:'Inserisci il tuo codice di accesso',code_sub:'Sblocca il {0} completo con il codice del tuo acquisto.',
     code_placeholder:'Codice di accesso',code_error:'Il codice non è corretto. Controllalo e riprova.',
+    code_orderid_placeholder:'ID ordine',code_orderid_error:"Inserisci l'ID dell'ordine del tuo acquisto.",
     code_submit:'Invia',code_try_free:'Prova gratis invece',code_get:'Ottieni un codice',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Modifica transazione',save_changes:'Salva modifiche',no_categories:'- nessuna categoria -',
@@ -1364,7 +1369,7 @@ const TRANSLATIONS = {
     cmp_feat10:'Monitoraggio abbonamenti con ripartizione per categoria',
     cmp_feat11:'Dashboard Pro con statistiche principali &amp; pannello eventi in arrivo',
     cmp_feat12:'Importazione con un clic da Simple Budget Planner',
-    cmp_feat13:'Penny - il tuo assistente di budget IA',
+    cmp_feat13:'Evio - il tuo assistente di budget IA',
     help_aria:'Aiuto',close_aria:'Chiudi',dismiss_aria:'Ignora',ok:'OK',
   },
   pl: {
@@ -1442,7 +1447,7 @@ const TRANSLATIONS = {
     appearance_desc:'Wybierz motyw kolorystyczny.',
     dash_anim_title:'Animacje pulpitu',dash_anim_desc:'Odtwarzaj delikatną animację wejścia przy ładowaniu pulpitu.',dash_anim_label:'Włącz animacje',
     video_tutorial:'▶ Samouczek wideo',
-    help_sett_modal_title:'Jak działają ustawienia',help_sett_intro:'Dostosuj Evo Budget do swojej sytuacji.',
+    help_sett_modal_title:'Jak działają ustawienia',help_sett_intro:'Dostosuj Evio Budget do swojej sytuacji.',
     help_sett_currency_li:'Aktualizuje symbol wszędzie (niektóre waluty jak PLN umieszczają symbol po kwocie).',
     help_sett_period_li:'Ustaw zakres dat. Kliknij znacznik daty na panelu, aby szybko przejść tutaj.',
     help_sett_rollover_li:'Przenieś niewydane środki z ostatniego okresu.',
@@ -1589,13 +1594,14 @@ const TRANSLATIONS = {
     reauth_title:'Zaloguj się przez Google, aby kontynuować',
     reauth_sub:'Twoje dane dla tego narzędzia są synchronizowane z Google Drive. Zaloguj się ponownie, aby kontynuować tam, gdzie skończyłeś.',
     reauth_submit:'Zaloguj się przez Google',reauth_local:'Zamiast tego użyj danych lokalnych na tym urządzeniu',
-    sync_welcome:'Witaj w Evo Budget',sync_choose:'Wybierz, jak zapisywać swoje dane.',sync_recommended:'Zalecane',
+    sync_welcome:'Witaj w Evio Budget',sync_choose:'Wybierz, jak zapisywać swoje dane.',sync_recommended:'Zalecane',
     sync_continue_google:'Kontynuuj z Google',sync_desc_multi_device:'Dane planera są przechowywane na wielu urządzeniach',
     sync_use_no_account:'Użyj bez konta',sync_desc_this_device:'Dane planera są przechowywane tylko na tym urządzeniu',
     sync_status_wait:'Ukończ kroki w oknie Google, które właśnie się otworzyło. Jeśli nic się nie pojawiło, sprawdź pasek adresu pod kątem zablokowanej ikony wyskakującego okienka.',
     sync_footer_note:'Można to później zmienić w ustawieniach',
     code_title:'Wprowadź swój kod dostępu',code_sub:'Odblokuj pełny {0} za pomocą kodu z Twojego zakupu.',
     code_placeholder:'Kod dostępu',code_error:'Ten kod jest nieprawidłowy. Sprawdź go i spróbuj ponownie.',
+    code_orderid_placeholder:'Numer zamówienia',code_orderid_error:'Wpisz numer zamówienia z Twojego zakupu.',
     code_submit:'Wyślij',code_try_free:'Wypróbuj za darmo zamiast tego',code_get:'Zdobądź kod',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Edytuj transakcję',save_changes:'Zapisz zmiany',no_categories:'- brak kategorii -',
@@ -1624,7 +1630,7 @@ const TRANSLATIONS = {
     cmp_feat10:'Śledzenie subskrypcji z podziałem na kategorie',
     cmp_feat11:'Panel Pro z kluczowymi statystykami &amp; panelem nadchodzących wydarzeń',
     cmp_feat12:'Import jednym kliknięciem z Simple Budget Planner',
-    cmp_feat13:'Penny - Twój asystent budżetowy AI',
+    cmp_feat13:'Evio - Twój asystent budżetowy AI',
     help_aria:'Pomoc',close_aria:'Zamknij',dismiss_aria:'Odrzuć',ok:'OK',
   }
 };
@@ -2015,6 +2021,8 @@ function showAccessCodeModal(tool) {
       <p class="fk-code-sub">${tf('code_sub',esc(name))}</p>
       <input class="fk-code-input" id="fkCodeInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${t('code_placeholder')}" aria-label="${t('code_placeholder')}" />
       <p class="fk-code-error" id="fkCodeError" hidden>${t('code_error')}</p>
+      <input class="fk-code-input fk-code-input--orderid" id="fkOrderIdInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${t('code_orderid_placeholder')}" aria-label="${t('code_orderid_placeholder')}" />
+      <p class="fk-code-error" id="fkOrderIdError" hidden>${t('code_orderid_error')}</p>
       <button class="fk-code-submit" id="fkCodeSubmit" type="button">${t('code_submit')}</button>
       <div class="fk-code-foot">
         <button class="fk-code-link" id="fkCodeTry" type="button">${t('code_try_free')}</button>
@@ -2025,28 +2033,38 @@ function showAccessCodeModal(tool) {
 
   const input = ov.querySelector('#fkCodeInput');
   const errEl = ov.querySelector('#fkCodeError');
+  const orderIdInput = ov.querySelector('#fkOrderIdInput');
+  const orderIdErrEl = ov.querySelector('#fkOrderIdError');
   const card  = ov.querySelector('.fk-code-card');
   const opener = document.activeElement;
   const close = () => { ov.classList.add('is-leaving'); document.removeEventListener('keydown', onKey); setTimeout(() => { ov.remove(); opener?.focus?.(); }, 180); };
   const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else { modalTabTrap(ov, e); } };
   const submit = () => {
-    const cfg = LAUNCH_CODES[input.value.trim().toUpperCase()];
-    if (cfg) {
-      // The code names its own tool - honor that even if it differs from
-      // whichever "Open" button opened this modal, rather than rejecting
-      // a valid code just because it was typed in the "other" prompt.
-      setUnlocked(cfg.tool);
-      localStorage.setItem('evobudget_theme', cfg.theme); // theme is a single global preference, shared by both tools
-      if (cfg.tool === 'ubp') localStorage.setItem(UBP_PENDING_LAYOUT_KEY, String(cfg.layout));
-      else { state.settings.dashboardLayout = cfg.layout; saveState(); }
-      applyTheme(cfg.theme);
-      close();
-      showSyncChoiceModal(cfg.tool);
-    } else {
-      errEl.hidden = false;
+    const codeVal = input.value.trim().toUpperCase();
+    const orderIdVal = orderIdInput.value.trim();
+    const cfg = LAUNCH_CODES[codeVal];
+    // Both the code AND an order ID are required to proceed - the order ID
+    // itself is never format-checked (it's just captured for the site
+    // owner to cross-reference against real orders later and revoke access
+    // for entries that don't match one), but it can't be left blank.
+    errEl.hidden = !!cfg;
+    orderIdErrEl.hidden = !!orderIdVal;
+    if (!cfg || !orderIdVal) {
       card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-      input.select();
+      (!cfg ? input : orderIdInput).select();
+      return;
     }
+    // The code names its own tool - honor that even if it differs from
+    // whichever "Open" button opened this modal, rather than rejecting
+    // a valid code just because it was typed in the "other" prompt.
+    setUnlocked(cfg.tool);
+    trackEvent('launch_code_redeemed', { code: codeVal, tool: cfg.tool, orderId: orderIdVal });
+    localStorage.setItem('evobudget_theme', cfg.theme); // theme is a single global preference, shared by both tools
+    if (cfg.tool === 'ubp') localStorage.setItem(UBP_PENDING_LAYOUT_KEY, String(cfg.layout));
+    else { state.settings.dashboardLayout = cfg.layout; saveState(); }
+    applyTheme(cfg.theme);
+    close();
+    showSyncChoiceModal(cfg.tool);
   };
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', e => { if (e.target === ov) close(); });
@@ -2054,6 +2072,8 @@ function showAccessCodeModal(tool) {
   ov.querySelector('#fkCodeSubmit')?.addEventListener('click', submit);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
   input.addEventListener('input', () => { errEl.hidden = true; });
+  orderIdInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+  orderIdInput.addEventListener('input', () => { orderIdErrEl.hidden = true; });
   ov.querySelector('#fkCodeTry')?.addEventListener('click', () => { close(); enterTrial(tool); });
   ov.querySelector('#fkCodeBuy')?.addEventListener('click', () => goToPurchase(tool));
   requestAnimationFrame(() => { ov.classList.add('is-in'); input.focus(); });
@@ -2232,6 +2252,7 @@ function wireDashboardLayoutPicker(el) {
       const n = parseInt(btn.dataset.layoutVal, 10) || 1;
       state.settings.dashboardLayout = n;
       saveState();
+      trackEvent('dashboard_layout_changed', { layout: n });
       el.querySelectorAll('.layout-opt').forEach(b => b.classList.toggle('is-active', b === btn));
       renderDashboard();
     });
@@ -2259,6 +2280,7 @@ function navigateTo(view) {
 
 function switchBTab(tab) {
   currentBTab = tab;
+  trackEvent('tab_viewed', { tab });
   document.querySelectorAll('.btab').forEach(b => b.classList.toggle('is-active', b.dataset.btab === tab));
   document.querySelectorAll('.btab[role="tab"]').forEach(b => b.setAttribute('aria-selected', b.dataset.btab === tab ? 'true' : 'false'));
   document.querySelectorAll('.bview').forEach(v => v.classList.remove('is-active'));
@@ -2280,7 +2302,7 @@ function dispatchRender(tab) {
 // ── Hub ───────────────────────────────────────────────────────────────
 const TOOLS = [
   { id:'budget', icon:'💰', color:'indigo', status:'live', name:'Simple Budget Planner', desc:'Track income, expenses, bills, debt, and savings - all in one place. Perfect for monthly budget control.' },
-  { id:'ubp',    icon:'⚡', color:'orange', status:'live', name:'Ultimate Budget Planner', desc:'The pro upgrade. Debt payoff calculator, sinking funds tracker, smart calendar, subscription tracker, and Penny, your AI budget assistant - all in one.' }
+  { id:'ubp',    icon:'⚡', color:'orange', status:'live', name:'Ultimate Budget Planner', desc:'The pro upgrade. Debt payoff calculator, sinking funds tracker, smart calendar, subscription tracker, and Evio, your AI budget assistant - all in one.' }
 ];
 
 function renderHub() {
@@ -2481,6 +2503,7 @@ function loadSampleData() {
   const netTx = state.transactions.find(tx => tx.type === 'bill' && tx.category === 'Internet');
   if (netRow && netTx) { netRow.paid = true; netRow.paidTxId = netTx.id; }
   saveState();
+  trackEvent('feature_used', { feature: 'sample_data_loaded' });
   renderDashboard();
   showToast(t('sample_loaded_toast'));
 }
@@ -3480,6 +3503,7 @@ function handleCSV(e) {
 
 // ── Settings ──────────────────────────────────────────────────────────
 function exportCSV(){
+  trackEvent('feature_used', { feature: 'csv_exported' });
   const rows=[[t('tx_date'),t('tx_type'),t('tx_category'),t('tx_amount'),t('tx_desc_label')]];
   for(const tx of state.transactions)rows.push([tx.date,tx.type,tx.category,tx.amount,tx.description||'']);
   const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -3648,7 +3672,7 @@ function renderSettings() {
   `;
 
   el.querySelectorAll('.theme-opt').forEach(btn => {
-    btn.addEventListener('click', () => applyTheme(btn.dataset.themeVal));
+    btn.addEventListener('click', () => { applyTheme(btn.dataset.themeVal); trackEvent('theme_changed', { theme: btn.dataset.themeVal }); });
   });
   wireDashboardLayoutPicker(el);
 
@@ -3663,6 +3687,7 @@ function renderSettings() {
       try {
         if (target === 'google') { saveState(); await syncSwitchToGoogle('sbp'); showToast(t('toast_synced_google')); }
         else { await syncSwitchToLocal('sbp'); showToast(t('toast_synced_local')); }
+        trackEvent('sync_mode_chosen', { mode: target });
         state = loadState() || defaultState(); syncSymbol();
         renderSettings();
       } catch (e) {
@@ -3676,6 +3701,7 @@ function renderSettings() {
     state.settings.language = e.target.value;
     saveState();
     applyLanguage();
+    trackEvent('language_changed', { lang: e.target.value });
     dispatchRender(currentBTab);
   });
 
@@ -4303,17 +4329,17 @@ function init() {
 
 // ── Review carousel ────────────────────────────────────────────────────
 const REVIEWS = [
-  {name:'Megan T.',title:'Freelance Graphic Designer & Illustrator',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/44.jpg',text:'I tried every app out there and they all wanted $10 a month just to see my own spending. Evo Budget was the first tool that actually felt like mine. Paid off $3,200 in credit card debt in five months.'},
+  {name:'Megan T.',title:'Freelance Graphic Designer & Illustrator',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/44.jpg',text:'I tried every app out there and they all wanted $10 a month just to see my own spending. Evio Budget was the first tool that actually felt like mine. Paid off $3,200 in credit card debt in five months.'},
   {name:'Daniel K.',title:'Full-Stack Software Engineer at a Startup',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/32.jpg',text:'The sinking funds feature changed how I save. I set a target for a trip to Japan and the planner calculated exactly how much I needed each month. The automatic transactions did the rest.'},
-  {name:'James R.',title:'Senior Account Manager in Advertising',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/75.jpg',text:'My wife and I used spreadsheets for years but always fell off after a month. Evo Budget is just clean enough that we actually stick with it. We can see our bills, track subscriptions, and it all lives in the browser.'},
+  {name:'James R.',title:'Senior Account Manager in Advertising',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/75.jpg',text:'My wife and I used spreadsheets for years but always fell off after a month. Evio Budget is just clean enough that we actually stick with it. We can see our bills, track subscriptions, and it all lives in the browser.'},
   {name:'Priya S.',title:'Recent Business Graduate & Job Seeker',stars:4,tool:'SBP',img:'https://randomuser.me/api/portraits/women/65.jpg',text:'As a recent graduate I needed something dead simple. The Simple planner lets me see income vs. expenses in one screen. I caught a gym membership I forgot to cancel on day one.'},
   {name:'Carlos M.',title:'Independent Restaurant Owner & Operator',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/46.jpg',text:'I run a small restaurant and the subscription tracker alone saves me from forgetting about services I signed up for months ago. The calendar view is perfect for seeing what is due and when.'},
   {name:'Sarah L.',title:'Registered Nurse Working Night Shifts',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/17.jpg',text:'I work 12-hour shifts and have zero energy left for complicated finance apps. This one took me two minutes to set up and I have not missed a bill payment since. Exactly what I needed.'},
   {name:'Tom W.',title:'High School History Teacher & Coach',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/22.jpg',text:'The debt payoff calculator gave me a clear timeline for paying off my student loans. Seeing the numbers update in real time keeps me motivated. Down $8,000 in seven months.'},
-  {name:'Aisha N.',title:'Digital Marketing Manager at an Agency',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/90.jpg',text:'I love that nothing leaves my device. Every other app wanted my bank login and I was never comfortable with that. Evo Budget gave me real budgeting without the privacy trade-off.'},
+  {name:'Aisha N.',title:'Digital Marketing Manager at an Agency',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/90.jpg',text:'I love that nothing leaves my device. Every other app wanted my bank login and I was never comfortable with that. Evio Budget gave me real budgeting without the privacy trade-off.'},
   {name:'Ryan P.',title:'Licensed Electrician & Small Business Owner',stars:4,tool:'UBP',img:'https://randomuser.me/api/portraits/men/55.jpg',text:'I set up sinking funds for my tools, truck insurance, and license renewals. No more scrambling when a big expense hits. The automatic transactions make it completely hands-off.'},
   {name:'Emily C.',title:'Stay-at-Home Parent Managing Family Finances',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/33.jpg',text:'With three kids, every dollar matters. The Simple planner helped me find over $400 in monthly spending I did not even realize we had. We are finally putting real money into savings.'},
-  {name:'Marco D.',title:'PhD Candidate in Applied Mathematics',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/men/86.jpg',text:'I budgeted on paper for years. Evo Budget is basically the digital version of that but with better math. CSV export means I can still pull data into my own spreadsheets when I want to.'},
+  {name:'Marco D.',title:'PhD Candidate in Applied Mathematics',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/men/86.jpg',text:'I budgeted on paper for years. Evio Budget is basically the digital version of that but with better math. CSV export means I can still pull data into my own spreadsheets when I want to.'},
   {name:'Jenny H.',title:'Senior Product Designer at a Tech Company',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/women/26.jpg',text:'The allocation buckets were a game changer. I split everything into needs, wants, and savings and now every transaction goes into the right bucket automatically. So satisfying.'},
   {name:'David B.',title:'Regional Sales Representative in Pharma',stars:4,tool:'UBP',img:'https://randomuser.me/api/portraits/men/41.jpg',text:'I bought this for the debt payoff calculator and ended up using every single feature. The subscription tracker found three services I was double-paying for.'},
   {name:'Olivia F.',title:'Yoga Instructor & Wellness Studio Owner',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/49.jpg',text:'I run a small studio and my personal finances were always tangled up with business. The Simple planner helped me separate everything. Clear categories, simple progress bars, done.'},
@@ -4390,30 +4416,30 @@ function closeLegal() { const o = document.getElementById('legalOverlay'); if (o
 function openLegal(type) {
   const titles = { privacy: 'Privacy Policy', terms: 'Terms of Use', disclaimer: 'Disclaimer' };
   const bodies = {
-    privacy: `<p><strong>Last updated:</strong> July 2026</p>
-<p>Evo Budget is designed with your privacy as a core principle.</p>
-<p><strong>Data storage.</strong> By default, all financial data you enter into Evo Budget is stored exclusively in your browser's local storage on your device, and Evo Budget does not collect, transmit, or store any personal or financial information on external servers. You may optionally sign in with Google to sync your data across your own devices - when you choose to do this, your data is saved only in a file in your own Google Drive, which Evo Budget cannot access from anyone else's account. This is entirely opt-in and can be turned off at any time from Settings.</p>
-<p><strong>No account required.</strong> Evo Budget does not require you to create an account, provide an email address, or share any personally identifiable information to use the product. Signing in with Google is entirely optional and only needed if you want your data synced across devices.</p>
-<p><strong>No bank connections.</strong> Evo Budget never asks for or accesses your bank credentials, account numbers, or any third-party financial service logins.</p>
-<p><strong>No tracking.</strong> Evo Budget does not use analytics trackers, advertising pixels, or third-party cookies. Your usage is not monitored, profiled, or shared with any external parties.</p>
-<p><strong>Data control.</strong> Because your data lives entirely on your device (or, if you opt in, your own Google Drive), you have full control over it at all times. You can export your data via CSV or clear it through your browser settings. Clearing your browser data or switching devices will remove your Evo Budget data unless you have exported a backup or enabled Google sync.</p>
-<p><strong>Third-party services.</strong> Evo Budget loads fonts from Google Fonts, which is subject to Google's privacy policy. If you opt in to Google sync, Evo Budget also uses Google Sign-In and the Google Drive API to store your data in your own Drive, subject to Google's privacy policy. No other third-party services are used.</p>
+    privacy: `<p><strong>Last updated:</strong> August 2026</p>
+<p>Evio Budget is designed with your privacy as a core principle.</p>
+<p><strong>Data storage.</strong> By default, all financial data you enter into Evio Budget is stored exclusively in your browser's local storage on your device, and Evio Budget does not collect, transmit, or store any personal or financial information on external servers. You may optionally sign in with Google to sync your data across your own devices - when you choose to do this, your data is saved only in a file in your own Google Drive, which Evio Budget cannot access from anyone else's account. This is entirely opt-in and can be turned off at any time from Settings.</p>
+<p><strong>No account required.</strong> Evio Budget does not require you to create an account, provide an email address, or share any personally identifiable information to use the product. Signing in with Google is entirely optional and only needed if you want your data synced across devices.</p>
+<p><strong>No bank connections.</strong> Evio Budget never asks for or accesses your bank credentials, account numbers, or any third-party financial service logins.</p>
+<p><strong>Minimal, anonymous analytics.</strong> Evio Budget collects lightweight, anonymous usage analytics - which pages and tools are opened, your approximate timezone/region, and whether the app is actively in use - to help us understand how the product is used. This is never tied to your name, email, or any other personally identifying information, and it never includes advertising pixels or third-party cookies. Most importantly, it never includes your budgets, transactions, balances, or any other financial data, which stay stored only on your device or in your own Google Drive and are never sent to us or seen by anyone else.</p>
+<p><strong>Data control.</strong> Because your data lives entirely on your device (or, if you opt in, your own Google Drive), you have full control over it at all times. You can export your data via CSV or clear it through your browser settings. Clearing your browser data or switching devices will remove your Evio Budget data unless you have exported a backup or enabled Google sync.</p>
+<p><strong>Third-party services.</strong> Evio Budget loads fonts from Google Fonts, which is subject to Google's privacy policy. If you opt in to Google sync, Evio Budget also uses Google Sign-In and the Google Drive API to store your data in your own Drive, subject to Google's privacy policy. No other third-party services are used.</p>
 <p><strong>Changes.</strong> If this policy changes, the updated version will be posted on this page with a revised date.</p>`,
     terms: `<p><strong>Last updated:</strong> July 2026</p>
-<p>By using Evo Budget, you agree to the following terms.</p>
-<p><strong>License.</strong> Evo Budget grants you a personal, non-transferable license to use the software for personal financial planning. The free trial allows limited usage. Purchasing an access code unlocks unlimited usage for one user.</p>
-<p><strong>No financial advice.</strong> Evo Budget is a budgeting and organizational tool, not a financial advisor. The calculators, projections, and summaries provided are for informational purposes only and do not constitute financial, tax, investment, or legal advice. Always consult a qualified professional for financial decisions.</p>
-<p><strong>Data responsibility.</strong> You are solely responsible for your data. Evo Budget stores data in your browser's local storage and does not create backups on your behalf. Use the CSV export feature to keep backup copies of your financial information.</p>
-<p><strong>No warranty.</strong> Evo Budget is provided "as is" without warranty of any kind, express or implied. We do not guarantee that the software will be error-free, uninterrupted, or free of bugs.</p>
-<p><strong>Limitation of liability.</strong> Evo Budget and its creators shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the software, including but not limited to financial losses, data loss, or decisions made based on information provided by the software.</p>
+<p>By using Evio Budget, you agree to the following terms.</p>
+<p><strong>License.</strong> Evio Budget grants you a personal, non-transferable license to use the software for personal financial planning. The free trial allows limited usage. Purchasing an access code unlocks unlimited usage for one user.</p>
+<p><strong>No financial advice.</strong> Evio Budget is a budgeting and organizational tool, not a financial advisor. The calculators, projections, and summaries provided are for informational purposes only and do not constitute financial, tax, investment, or legal advice. Always consult a qualified professional for financial decisions.</p>
+<p><strong>Data responsibility.</strong> You are solely responsible for your data. Evio Budget stores data in your browser's local storage and does not create backups on your behalf. Use the CSV export feature to keep backup copies of your financial information.</p>
+<p><strong>No warranty.</strong> Evio Budget is provided "as is" without warranty of any kind, express or implied. We do not guarantee that the software will be error-free, uninterrupted, or free of bugs.</p>
+<p><strong>Limitation of liability.</strong> Evio Budget and its creators shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the software, including but not limited to financial losses, data loss, or decisions made based on information provided by the software.</p>
 <p><strong>Refunds.</strong> Due to the digital nature of the product and immediate access upon purchase, all sales are final. We encourage you to use the free trial to evaluate the product before purchasing.</p>
 <p><strong>Changes.</strong> We reserve the right to modify these terms at any time. Continued use after changes constitutes acceptance of the updated terms.</p>`,
     disclaimer: `<p><strong>Last updated:</strong> July 2026</p>
-<p><strong>Not financial advice.</strong> Evo Budget is a personal budgeting and expense tracking tool. It is not a substitute for professional financial planning, tax advice, or investment guidance. The debt payoff projections, savings calculations, and budget summaries are estimates based on the information you provide and should not be relied upon as precise financial forecasts.</p>
-<p><strong>Accuracy of calculations.</strong> While we strive for accuracy in all calculations, Evo Budget does not account for taxes, fees, interest rate changes, inflation, or other factors that may affect your actual financial outcomes. Always verify important financial calculations independently.</p>
-<p><strong>User responsibility.</strong> You are solely responsible for the financial decisions you make. Evo Budget is a planning aid, and any actions you take based on the information it provides are at your own discretion and risk.</p>
+<p><strong>Not financial advice.</strong> Evio Budget is a personal budgeting and expense tracking tool. It is not a substitute for professional financial planning, tax advice, or investment guidance. The debt payoff projections, savings calculations, and budget summaries are estimates based on the information you provide and should not be relied upon as precise financial forecasts.</p>
+<p><strong>Accuracy of calculations.</strong> While we strive for accuracy in all calculations, Evio Budget does not account for taxes, fees, interest rate changes, inflation, or other factors that may affect your actual financial outcomes. Always verify important financial calculations independently.</p>
+<p><strong>User responsibility.</strong> You are solely responsible for the financial decisions you make. Evio Budget is a planning aid, and any actions you take based on the information it provides are at your own discretion and risk.</p>
 <p><strong>Testimonials.</strong> User testimonials displayed on this site reflect individual experiences and are not guaranteed outcomes. Your results may vary based on your financial situation, discipline, and other personal factors.</p>
-<p><strong>Browser compatibility.</strong> Evo Budget relies on your browser's local storage. Clearing your browser cache or cookies may delete your saved data. We strongly recommend regularly exporting your data using the CSV export feature as a backup.</p>`
+<p><strong>Browser compatibility.</strong> Evio Budget relies on your browser's local storage. Clearing your browser cache or cookies may delete your saved data. We strongly recommend regularly exporting your data using the CSV export feature as a backup.</p>`
   };
   document.getElementById('legalTitle').textContent = titles[type] || '';
   document.getElementById('legalBody').innerHTML = bodies[type] || '';

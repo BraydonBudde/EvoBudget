@@ -1,0 +1,207 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Admin analytics dashboard - only the pieces NOT already covered by
+   style.css's generic .panel/.ist-row/.chart-panel/.donut-legend/.btab
+   classes (all reused as-is for visual consistency with the rest of the
+   app). Loaded after style.css, before charts.js.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Always-centered "Analytics" title ────────────────────────────────
+   .tool-topbar's shared `justify-content: space-between` only centers the
+   wordmark when both flanking icon groups happen to be the same width -
+   scoped to admin only (not the shared .tool-topbar rule the budgeting
+   tools also use) so it doesn't change their headers. Pulling the
+   wordmark out of the flex flow entirely means it stays dead-center no
+   matter how many icons end up on either side. */
+#viewAdmin .tool-topbar { position: relative; }
+#viewAdmin .tool-topbar .wordmark-sm {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin: 0;
+}
+
+/* ── Sign-in gate ─────────────────────────────────────────────────── */
+.admin-gate {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.admin-gate-card {
+  width: 100%; max-width: 380px; padding: 36px 32px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  text-align: center;
+}
+.admin-gate-card .wordmark { justify-content: center; }
+.admin-gate-sub { color: var(--text-secondary); font-size: 13.5px; line-height: 1.6; margin: 0; }
+.admin-gate-card .btn-lg { width: 100%; margin-top: 6px; }
+.admin-gate-error { color: var(--expense, #f43f5e); font-size: 12.5px; margin: 0; }
+
+/* ── Topbar account chip ──────────────────────────────────────────── */
+
+/* ── Section header (mirrors .section-header used elsewhere) ─────── */
+.admin-section-title { font-size: 20px; font-weight: 800; font-family: var(--font-display); margin: 0 0 4px; }
+.admin-section-sub { color: var(--text-faint); font-size: 12.5px; margin: 0 0 18px; }
+
+/* ── Live "online now" hero ───────────────────────────────────────── */
+.admin-live-hero { display: flex; align-items: center; gap: 16px; padding: 26px 24px; margin-bottom: 14px; }
+.admin-live-dot {
+  width: 14px; height: 14px; border-radius: 50%; background: #10b981; flex-shrink: 0;
+  box-shadow: 0 0 0 0 rgba(16,185,129,.6);
+  animation: admin-pulse 1.8s ease-out infinite;
+}
+.admin-live-dot--off { background: var(--text-faint); animation: none; }
+@keyframes admin-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(16,185,129,.55); }
+  70%  { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
+  100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+}
+.admin-live-num { font-size: 36px; font-weight: 800; font-family: var(--font-display); line-height: 1; }
+.admin-live-label { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; }
+
+/* ── Filter bar ────────────────────────────────────────────────────── */
+.admin-filter-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.admin-filter-bar select, .admin-filter-bar input[type="date"], .admin-filter-bar input[type="text"] {
+  background: var(--surface-strong); border: 1px solid var(--border-soft); color: var(--text-primary);
+  border-radius: var(--radius-sm); padding: 7px 10px; font-size: 12.5px; font-family: inherit;
+}
+.admin-filter-bar input[type="text"] { min-width: 220px; flex: 1 1 220px; }
+.admin-filter-clear { font-size: 12px; color: var(--text-faint); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 4px; }
+.admin-filter-clear:hover { color: var(--text-primary); }
+
+/* ── Redemptions search-bar checkbox toggle ("reused order IDs only") ──── */
+.admin-search-toggle {
+  display: flex; align-items: center; gap: 6px; padding: 7px 12px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border-soft);
+  background: var(--surface-strong); font-size: 12.5px; font-weight: 600; color: var(--text-faint);
+  cursor: pointer; user-select: none; white-space: nowrap; transition: color .15s, border-color .15s;
+}
+.admin-search-toggle input { accent-color: var(--expense, #f43f5e); cursor: pointer; }
+.admin-search-toggle.is-active { color: var(--text-primary); border-color: var(--expense, #f43f5e); }
+
+/* ── Redemptions table: flagged/missing order IDs ─────────────────────── */
+.admin-table-muted { color: var(--text-faint); }
+.admin-reuse-badge {
+  display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--expense, #f43f5e);
+  background: rgba(244,63,94,.14); border-radius: var(--radius-pill); padding: 1px 7px; margin-left: 4px; white-space: nowrap;
+}
+
+/* ── Simple data table (live feed, top pages, etc.) ───────────────── */
+.admin-table-wrap { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.admin-table th {
+  text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--text-faint); font-weight: 700; padding: 8px 10px; border-bottom: 1px solid var(--border-faint);
+  white-space: nowrap;
+}
+.admin-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-faint); white-space: nowrap; color: var(--text-secondary); }
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table td.admin-table-strong { color: var(--text-primary); font-weight: 600; }
+.admin-empty-row td { text-align: center; color: var(--text-faint); padding: 22px 10px; }
+
+/* ── Two-column responsive grid for chart panels ──────────────────── */
+.admin-grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; margin-bottom: 14px; }
+@media (max-width: 900px) { .admin-grid-2 { grid-template-columns: 1fr; } }
+
+/* ── Settings rows (mirrors the app's own settings-card convention) ── */
+.admin-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-faint); }
+.admin-setting-row:last-child { border-bottom: none; }
+.admin-setting-label { font-size: 13px; font-weight: 600; }
+.admin-setting-hint { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; }
+
+/* ── App Insights: per-tool section heading + cross-tool callout ────── */
+.admin-insights-callout {
+  display: flex; align-items: center; gap: 14px; padding: 16px 20px; margin-bottom: 18px;
+}
+.admin-insights-callout-num { font-size: 26px; font-weight: 800; font-family: var(--font-display); color: var(--grad-indigo); flex-shrink: 0; }
+.admin-insights-callout-text { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+.admin-tool-section { margin-bottom: 30px; }
+.admin-tool-section-title {
+  display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 800;
+  font-family: var(--font-display); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-faint);
+}
+.admin-tool-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: var(--radius-pill);
+}
+
+/* ── Activation funnel (Visited → Redeemed) ──────────────────────────── */
+.admin-funnel { display: flex; align-items: stretch; gap: 12px; }
+.admin-funnel-step {
+  flex: 1; text-align: center; padding: 18px 12px;
+  background: var(--surface-strong); border-radius: var(--radius-sm); border: 1px solid var(--border-faint);
+}
+.admin-funnel-step-value { font-size: 26px; font-weight: 800; font-family: var(--font-display); }
+.admin-funnel-step-label { font-size: 10.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .03em; margin-top: 4px; }
+.admin-funnel-arrow {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 56px;
+}
+.admin-funnel-arrow-glyph { color: var(--text-faint); font-size: 18px; }
+.admin-funnel-arrow-pct { font-size: 12px; font-weight: 800; color: var(--grad-indigo); white-space: nowrap; }
+
+/* ── Day-of-week / section-usage / feature-adoption bars ─────────────── */
+.admin-bar-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.admin-bar-row-label { width: 38px; flex-shrink: 0; font-size: 11.5px; color: var(--text-secondary); font-weight: 600; }
+.admin-bar-row-track { flex: 1; height: 8px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill); overflow: hidden; }
+.admin-bar-row-fill { height: 100%; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--grad-indigo), var(--grad-pink)); }
+.admin-bar-row-value { width: 30px; flex-shrink: 0; text-align: right; font-size: 11.5px; font-weight: 700; color: var(--text-primary); }
+/* Section usage / feature adoption labels are longer than "Mon"/"Tue", so
+   they get their own (wider, non-fixed) label width rather than reusing
+   the day-of-week bar's fixed 38px column. */
+.admin-bar-row-label--wide { width: auto; min-width: 108px; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── App Insights card grid: auto-flows regardless of card count, unlike
+   .admin-grid-2's fixed pairing ─────────────────────────────────────── */
+.admin-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-bottom: 14px; }
+
+/* ── Danger zone (Settings tab: delete events in a custom range) ─────── */
+.admin-danger-sub { color: var(--text-faint); font-size: 12.5px; line-height: 1.5; margin: 0 0 14px; }
+.admin-danger-count { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+.admin-danger-count strong { color: var(--text-primary); font-family: var(--font-display); }
+.admin-danger-confirm {
+  border: 1px solid rgba(244,63,94,.35); background: rgba(244,63,94,.07);
+  border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 4px;
+}
+.admin-danger-confirm p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin: 0 0 10px; }
+.admin-danger-confirm p strong { color: var(--expense, #f43f5e); }
+.admin-danger-confirm-input {
+  width: 100%; box-sizing: border-box; padding: 10px 12px; margin-bottom: 12px;
+  border-radius: var(--radius-sm); border: 1.5px solid var(--border-faint);
+  background: var(--surface-strong); color: var(--text-primary); font-family: inherit; font-size: 13.5px;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.admin-danger-confirm-input:focus { border-color: var(--expense, #f43f5e); box-shadow: 0 0 0 3px rgba(244,63,94,.14); }
+.admin-danger-confirm-actions { display: flex; gap: 10px; }
+.admin-danger-confirm-actions .btn { flex: 1; }
+.admin-danger-confirm-actions .btn:disabled, #dzDeleteBtn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; transform: none; }
+.admin-danger-result { font-size: 12.5px; color: var(--text-secondary); margin: 12px 0 0; }
+
+/* ── Sample-data banner (shown across every tab while active) ────────── */
+.admin-sample-banner {
+  display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 20px; font-size: 12.5px; font-weight: 600; color: #fbbf24;
+  background: rgba(251,191,36,.1); border-bottom: 1px solid rgba(251,191,36,.25);
+}
+.admin-sample-banner button {
+  border: 1px solid rgba(251,191,36,.4); background: rgba(251,191,36,.12); color: #fbbf24;
+  border-radius: var(--radius-pill); padding: 3px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: background .15s;
+}
+.admin-sample-banner button:hover { background: rgba(251,191,36,.22); }
+
+/* ── Summary tab: narrative insight cards ─────────────────────────────── */
+.admin-summary-section-title {
+  font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 26px 0 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.admin-summary-section-title:first-of-type { margin-top: 0; }
+.admin-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.admin-summary-card {
+  display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px;
+  background: var(--surface-strong); border: 1px solid var(--border-faint); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--grad-indigo);
+}
+.admin-summary-icon { font-size: 19px; flex-shrink: 0; line-height: 1.4; }
+.admin-summary-text { font-size: 13px; line-height: 1.65; color: var(--text-secondary); }
+.admin-summary-text strong { color: var(--text-primary); font-weight: 700; font-family: var(--font-display); }
+.admin-summary-card--positive { border-left-color: #10b981; }
+.admin-summary-card--warning { border-left-color: #f43f5e; }
+.admin-summary-card--neutral { border-left-color: var(--grad-indigo); }

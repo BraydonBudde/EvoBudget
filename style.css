@@ -1,11 +1,11 @@
-/* Evo Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
+/* Evio Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
    Change set vs v1.0 "Baseline":
    - All native browser confirm()/alert() popups replaced with in-app
      glass dialogs (confirmDialog / alertDialog) - mobile-friendly.
    - UBP: duplicated init()/applyLayout() collapsed into one; recurring
      engine restored and init now runs exactly once. */
 /* =====================================================================
-   Evo Budget - Design System
+   Evio Budget - Design System
    Built on the Polish Mastery design language: glassmorphism,
    animated gradient backdrop, Sora + Inter, indigo/purple/pink palette.
    ===================================================================== */
@@ -442,7 +442,7 @@ a.btn-back-round { text-decoration: none; }
   font-size: 15px; color: var(--text-secondary); max-width: 680px;
   margin: 0 auto; line-height: 1.75;
 }
-/* home.html (Evo Hub landing page) intentionally does NOT reuse this hub's
+/* home.html (Evio Hub landing page) intentionally does NOT reuse this hub's
    layout - it has its own bespoke component CSS inline in its own <head>,
    so it reads as a distinct page rather than an extension of this one.
    a.btn stays here since it's a genuinely shared fix (anchors styled as
@@ -691,7 +691,7 @@ a.btn { text-decoration: none; }
 }
 .flow-bar--exp { background: rgba(30,27,46,.18); }
 .flow-amounts { text-align: right; font-size: 12px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
-/* .flow-amt: kept for Penny's own flow-row chart markup (penny.js) - the
+/* .flow-amt: kept for Evio's own flow-row chart markup (penny.js) - the
    dashboard's own amounts no longer use it, but her chat-bubble charts
    still render <div class="flow-amt">. */
 .flow-amt { font-size: 11px; font-weight: 600; }
@@ -779,7 +779,8 @@ a.btn { text-decoration: none; }
   display: flex; align-items: center; justify-content: center; font-size: 18px;
 }
 .ist-body { min-width: 0; }
-.ist-label { font-size: 10.5px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--text-secondary); }
+.ist-label { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--text-secondary); }
+.ist-label .cc-info { width: 14px; height: 14px; font-size: 8.5px; margin-right: 0; text-transform: none; letter-spacing: normal; flex-shrink: 0; }
 .ist-value { font-size: 19px; font-weight: 800; font-family: var(--font-display); line-height: 1.3; }
 .ist-sub { font-size: 11px; color: var(--text-faint); }
 .chart-hero-panel { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 22px 20px; }
@@ -2908,6 +2909,10 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .fk-code-input::placeholder { letter-spacing: normal; font-weight: 500; color: var(--text-faint); }
 .fk-code-input:focus { border-color: var(--grad-purple); box-shadow: 0 0 0 3px rgba(147,51,234,.16); }
 .fk-code-error { font-size: 12px; color: var(--expense, #ef4444); margin: 10px 2px 0; line-height: 1.45; }
+/* Order ID stays centered like the access code above it, just without the
+   heavy letter-spacing/uppercase-style weight (it's often a longer,
+   mixed-case order number, not a short code). */
+.fk-code-input--orderid { letter-spacing: normal; font-weight: 500; font-size: 15px; margin-top: 10px; }
 
 .fk-code-submit {
   width: 100%; margin-top: 16px; border: none; cursor: pointer; border-radius: 14px;
@@ -3173,7 +3178,7 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .penny-msg--user .penny-msg-bubble { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink)); color: #fff; border-bottom-right-radius: 4px; }
 .penny-msg--penny .penny-msg-bubble { border-bottom-left-radius: 4px; }
 .penny-msg-text { white-space: pre-wrap; word-break: break-word; }
-/* Lightweight markdown Penny's own replies are formatted into
+/* Lightweight markdown Evio's own replies are formatted into
    (pennyFormatMarkdown in penny.js) - never used for the user's own
    messages, which stay as plain text. */
 .penny-msg-text p { margin: 0 0 8px; }
@@ -3549,7 +3554,7 @@ body.penny-drawer-open { overflow: hidden; }
   .scen-cta { width: 100%; justify-content: center; }
 }
 
-/* ── Why Evo Budget grid ─────────────────────────────────────────────── */
+/* ── Why Evio Budget grid ─────────────────────────────────────────────── */
 .why-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
 }

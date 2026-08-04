@@ -291,14 +291,18 @@ function svgSpendLine(points, opts) {
 }
 
 // ── Icon-forward stat tile (markup helper, not SVG) ─────────────────────
-function iconStatTile(icon, label, value, sub, color) {
+// `hint`, if given, is a pre-escaped plain-text explanation of the metric,
+// shown via the same .cc-info/.cc-tip-pop popover used for form-field help
+// elsewhere in the app - the caller must run initFieldTips() over the
+// container afterward for it to actually respond to hover/click.
+function iconStatTile(icon, label, value, sub, color, hint) {
   // label/sub are pre-formatted translated strings (same convention as the
   // stat cards in Layout 1) - not re-escaped here to avoid double-escaping
   // entities like "&amp;" that already live in the translation tables.
   return `<div class="icon-stat-tile">
     <div class="ist-icon" style="background:${color}22;color:${color}">${icon}</div>
     <div class="ist-body">
-      <div class="ist-label">${label}</div>
+      <div class="ist-label"><span class="cc-label-text">${label}</span>${hint ? `<button class="cc-info" type="button" data-tip="${hint}" aria-label="What is this?">i</button>` : ''}</div>
       <div class="ist-value" style="color:${color}">${value}</div>
       ${sub ? `<div class="ist-sub">${sub}</div>` : ''}
     </div>
