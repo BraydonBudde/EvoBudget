@@ -272,7 +272,7 @@ function _localData(tool) { const r = _localRaw(tool); try { return r ? JSON.par
 function _writeLocal(tool, data) { localStorage.setItem(SYNC_STATE_KEYS[tool], JSON.stringify(data)); }
 
 // One-time handoff of an already-obtained access token across a full page
-// navigation (index.html -> ultimate-budget.html), so a session established
+// navigation (budgetplanner.html -> ultimate-budget.html), so a session established
 // under a real click on one page can be reused on the next without ever
 // requesting anything there - which is what let a Google popup flash open
 // during normal use (an automatic save with no cached token falling back to

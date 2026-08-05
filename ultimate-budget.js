@@ -6685,7 +6685,7 @@ async function init(){
     document.getElementById('heroHeader')?.querySelectorAll('.cnav-btn[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
 
     // Back to hub
-    document.getElementById('backToHub')?.addEventListener('click',()=>{window.location.href='index.html';});
+    document.getElementById('backToHub')?.addEventListener('click',()=>{window.location.href='budgetplanner.html';});
 
     // Settings gear
     document.getElementById('settingsNavBtn')?.addEventListener('click',()=>switchTab('settings'));

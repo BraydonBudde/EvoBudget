@@ -1,6 +1,6 @@
 // ══════════════════════════════════════════════════════════════════════
 // Shared chart primitives for the alternate Dashboard Layouts (2-5).
-// Loaded by both index.html (SBP) and ultimate-budget.html (UBP), same
+// Loaded by both budgetplanner.html (SBP) and ultimate-budget.html (UBP), same
 // pattern as sync.js. Pure inline-SVG builders, no external libraries -
 // mirrors the existing svgDonut()/initDonuts() pattern defined in each
 // app's own script (esc/fmt/t are available by the time these run).

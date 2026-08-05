@@ -1,6 +1,6 @@
 // ══════════════════════════════════════════════════════════════════════
 // EzzoBudget Analytics — anonymous, aggregate site-usage tracking only.
-// Loaded by index.html, ultimate-budget.html, and home.html. Never sees
+// Loaded by budgetplanner.html, ultimate-budget.html, and home.html. Never sees
 // or sends any financial data (transactions, budgets, balances, category
 // amounts) - those stay exactly as private as they've always been,
 // client-side / the user's own Drive only. This file only ever reports:

@@ -913,7 +913,7 @@ function layoutGroups(events) {
 // naturally captures theme/sync-mode preferences AS EXPRESSED WITHIN that
 // tool, since those settings live on each tool's own page. The one
 // exception is launch_code_redeemed, which always fires from the shared
-// hub page (index.html) regardless of which tool the code was FOR - so
+// hub page (budgetplanner.html) regardless of which tool the code was FOR - so
 // that one is matched by detail.tool instead of by page.
 function toolInsights(tool) {
   const events = allEvents.filter(e => e.page === tool);
@@ -1837,7 +1837,7 @@ async function adminSignIn() {
     Object.assign(overviewFilters, currentMonthBounds()); // reset to the current month on every sign-in, per explicit request
     document.getElementById('adminGate').hidden = true;
     // .view{display:none} in style.css only lifts for .view.is-active (see
-    // index.html's view-hub/view-budget) - the hidden attribute alone
+    // budgetplanner.html's view-hub/view-budget) - the hidden attribute alone
     // isn't enough for an element carrying the .view/.tool-shell classes.
     const viewEl = document.getElementById('viewAdmin');
     viewEl.hidden = false;
