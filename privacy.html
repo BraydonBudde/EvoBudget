@@ -30,9 +30,16 @@
     <a class="wordmark" href="home.html">
       <div class="wordmark-icon">
         <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <rect x="1" y="7" width="3" height="8" fill="white" rx="1"/>
-          <rect x="6" y="4" width="3" height="11" fill="white" rx="1"/>
-          <rect x="11" y="1" width="3" height="14" fill="white" rx="1"/>
+          <defs>
+            <linearGradient id="wmGradLegal" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity=".72"/>
+            </linearGradient>
+          </defs>
+          <path d="M4,1 L5.5,1 A1.5,1.5 0 0 1 7,2.5 L7,5.5 A1.5,1.5 0 0 1 5.5,7 L2.5,7 A1.5,1.5 0 0 1 1,5.5 L1,4 A3,3 0 0 1 4,1 Z" fill="url(#wmGradLegal)"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="url(#wmGradLegal)" fill-opacity=".55"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="url(#wmGradLegal)" fill-opacity=".55"/>
+          <path d="M10.5,9 L13.5,9 A1.5,1.5 0 0 1 15,10.5 L15,12 A3,3 0 0 1 12,15 L10.5,15 A1.5,1.5 0 0 1 9,13.5 L9,10.5 A1.5,1.5 0 0 1 10.5,9 Z" fill="url(#wmGradLegal)"/>
         </svg>
       </div>
       <span>Ezzo Hub</span>
