@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════════════════════
-// EvioBudget Analytics — anonymous, aggregate site-usage tracking only.
+// EzzoBudget Analytics — anonymous, aggregate site-usage tracking only.
 // Loaded by index.html, ultimate-budget.html, and home.html. Never sees
 // or sends any financial data (transactions, budgets, balances, category
 // amounts) - those stay exactly as private as they've always been,

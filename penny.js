@@ -1,15 +1,15 @@
 'use strict';
 /* =====================================================================
-   penny.js - Evio, the Ultimate Budget Planner's AI assistant
+   penny.js - Ezzo, the Ultimate Budget Planner's AI assistant
 
    Bring-your-own-key: the user pastes their own free Gemini API key and
    every request goes straight from their browser to Google - there is
-   no Evio Budget backend to route through (this app doesn't have one).
+   no Ezzo Budget backend to route through (this app doesn't have one).
    The key is encrypted at rest with a non-extractable AES-GCM CryptoKey
    stored in IndexedDB (never localStorage, never in `state`, so it can
    never leave the device via sync.js's Google Drive sync either).
 
-   Evio can only ever READ budgeting data - every function Gemini is
+   Ezzo can only ever READ budgeting data - every function Gemini is
    allowed to call is a pure getter (see pennyExecuteTool's switch),
    nothing here can call saveState() or mutate `state`.
    ===================================================================== */
@@ -319,7 +319,7 @@ function pennyWireSettingsCard() {
 // ══════════════════════════════════════════════════════════════════════
 function pennyBuildSystemInstruction() {
   return { parts: [{ text:
-    "You are Evio, a friendly budgeting assistant built into the Ultimate Budget Planner app. " +
+    "You are Ezzo, a friendly budgeting assistant built into the Ultimate Budget Planner app. " +
     "You ONLY answer questions about the user's own budgeting data (income, expenses, bills, savings, debts, subscriptions, sinking funds, transactions, overall budget health) using the tools provided. " +
     "You must call one of the provided functions to fetch real data before stating any dollar amount, percentage, or count - never invent or estimate numbers yourself. " +
     "If asked about anything unrelated to the user's own budget in this app (general knowledge, other people's finances, coding help, current events, etc.), politely decline and redirect to a budgeting question. " +
@@ -918,7 +918,7 @@ function pennyRenderQuickActions() {
   wrap.innerHTML = prompts.map(k => `<button class="btn btn-ghost btn-sm penny-qp-btn" data-qp="${k}" type="button">${esc(t(k))}</button>`).join('');
   wrap.querySelectorAll('[data-qp]').forEach(b => b.addEventListener('click', () => pennySendMessage(t(b.dataset.qp))));
 }
-// Lightweight, dependency-free markdown -> HTML for Evio's OWN responses
+// Lightweight, dependency-free markdown -> HTML for Ezzo's OWN responses
 // only (never the user's own messages, which stay as plain escaped text -
 // see pennyAppendMessage below). Handles just the handful of constructs
 // the system prompt now asks Gemini to use: **bold**, '### heading'

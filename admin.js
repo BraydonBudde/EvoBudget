@@ -1238,7 +1238,7 @@ function wireDangerZone() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-//  Evio integration (penny.js loaded verbatim, unmodified - see admin.html)
+//  Ezzo integration (penny.js loaded verbatim, unmodified - see admin.html)
 // ══════════════════════════════════════════════════════════════════════
 // penny.js was written for the budgeting tools and expects a handful of
 // globals those tools normally supply (state, t()/tf(), showToast(),
@@ -1250,7 +1250,7 @@ function wireDangerZone() {
 // declarations, which - because this script tag loads AFTER penny.js's -
 // simply overwrite those three names in the shared global scope, the same
 // way any later <script> tag can redefine an earlier one's function. Every
-// OTHER Evio mechanic (encrypted key vault, Gemini streaming, model
+// OTHER Ezzo mechanic (encrypted key vault, Gemini streaming, model
 // fallback chain, chat drawer, markdown rendering, voice) is the exact
 // same unmodified code the budgeting tools use.
 
@@ -1260,13 +1260,13 @@ function loadAdminPennySettings() {
   try { return JSON.parse(localStorage.getItem(ADMIN_PENNY_SETTINGS_KEY) || '{}'); } catch (e) { return {}; }
 }
 // A deliberately tiny stand-in for the app's real `state` - just enough
-// for Evio's own (unmodified) settings-card wiring to read/write a
+// for Ezzo's own (unmodified) settings-card wiring to read/write a
 // pennyEnabled flag and a language default. Nothing else in admin.js
 // reads or writes this.
 let state = { settings: { pennyEnabled: !!loadAdminPennySettings().pennyEnabled, language: 'en' } };
 function saveState() { localStorage.setItem(ADMIN_PENNY_SETTINGS_KEY, JSON.stringify({ pennyEnabled: !!state.settings.pennyEnabled })); }
 
-// English-only strings for exactly the t()/tf() keys Evio's UI code
+// English-only strings for exactly the t()/tf() keys Ezzo's UI code
 // reads (this dashboard has one user and no language picker, same
 // reasoning as the date-picker port above). A few are reworded from the
 // budgeting tools' originals (e.g. "AI Analytics Assistant" instead of
@@ -1274,38 +1274,38 @@ function saveState() { localStorage.setItem(ADMIN_PENNY_SETTINGS_KEY, JSON.strin
 // are 100% the same unmodified penny.js code.
 const ADMIN_T_STRINGS = {
   cancel: 'Cancel', save: 'Save', ok: 'OK',
-  sett_penny_h: 'Evio (AI Analytics Assistant)',
-  sett_penny_desc: 'Ask Evio questions about your site’s analytics',
-  sett_penny_toggle: 'Enable Evio',
-  sett_penny_hint: 'Turns on the Evio assistant and its icon in the navigation bar.',
+  sett_penny_h: 'Ezzo (AI Analytics Assistant)',
+  sett_penny_desc: 'Ask Ezzo questions about your site’s analytics',
+  sett_penny_toggle: 'Enable Ezzo',
+  sett_penny_hint: 'Turns on the Ezzo assistant and its icon in the navigation bar.',
   sett_penny_key_label: 'Gemini API Key',
   sett_penny_key_placeholder: 'Paste your Gemini API key',
   sett_penny_howto: 'How to create my key',
   sett_penny_save_btn: 'Save key',
   sett_penny_key_saved: 'Gemini API key saved and encrypted',
   sett_penny_remove: 'Remove key',
-  sett_penny_available: 'Evio is now available in the navigation bar.',
-  sett_penny_usage_count: 'Evio has answered {0} questions this month',
+  sett_penny_available: 'Ezzo is now available in the navigation bar.',
+  sett_penny_usage_count: 'Ezzo has answered {0} questions this month',
   sett_penny_key_error_short: "That doesn't look like a valid key. Please check and try again.",
-  confirm_penny_remove_key: 'Remove your saved Gemini API key? Evio will be turned off until you add a new one.',
+  confirm_penny_remove_key: 'Remove your saved Gemini API key? Ezzo will be turned off until you add a new one.',
   toast_saved: 'Saved.',
   toast_penny_key_saved: 'Gemini key saved securely.',
-  penny_nav_pill_off: 'Enable Evio', penny_nav_pill_on: 'Ask Evio',
-  penny_nav_aria_off: 'Enable Evio', penny_nav_aria_on: 'Ask Evio',
-  penny_chat_title: 'Ask Evio',
+  penny_nav_pill_off: 'Enable Ezzo', penny_nav_pill_on: 'Ask Ezzo',
+  penny_nav_aria_off: 'Enable Ezzo', penny_nav_aria_on: 'Ask Ezzo',
+  penny_chat_title: 'Ask Ezzo',
   penny_input_placeholder: 'Ask about your analytics…',
   penny_send: 'Ask',
   penny_voice_on: 'Voice replies on', penny_voice_off: 'Voice replies off',
   penny_disclaimer: 'Your AI analytics assistant',
-  penny_no_key_notice: 'Add your Gemini API key in Settings to start chatting with Evio.',
+  penny_no_key_notice: 'Add your Gemini API key in Settings to start chatting with Ezzo.',
   penny_open_settings: 'Open Settings',
-  penny_close: 'Close Evio',
+  penny_close: 'Close Ezzo',
   penny_err_invalid_key: 'Your Gemini API key looks invalid or has been revoked. Update it in Settings.',
   penny_err_rate_limited: "You've hit Gemini's rate limit for now. This is a limit from Google on your key, not the counter above. Wait a bit and try again.",
   penny_err_overloaded: "Google's Gemini service is temporarily overloaded with requests right now. Please try again in a moment.",
-  penny_err_network: "Evio couldn't reach Google's servers. Check your connection and try again.",
-  penny_err_blocked: "Evio couldn't come up with a safe answer to that. Try rephrasing your question.",
-  penny_err_unknown: "Something went wrong on Evio's end. Please try again in a moment.",
+  penny_err_network: "Ezzo couldn't reach Google's servers. Check your connection and try again.",
+  penny_err_blocked: "Ezzo couldn't come up with a safe answer to that. Try rephrasing your question.",
+  penny_err_unknown: "Something went wrong on Ezzo's end. Please try again in a moment.",
   penny_err_retry: 'Retry'
 };
 function t(key) { return ADMIN_T_STRINGS[key] || key; }
@@ -1369,9 +1369,9 @@ function pennyShowApiKeyHelp() {
   ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'adminHelpTitle');
   ov.innerHTML = `<div class="modal">
     <button class="modal-close" id="adminHelpClose" type="button" aria-label="Close">×</button>
-    <h3 class="modal-title" id="adminHelpTitle">✨ Setting up Evio</h3>
+    <h3 class="modal-title" id="adminHelpTitle">✨ Setting up Ezzo</h3>
     <div class="modal-body">
-      <p>Evio is Evio Budget's AI assistant. Since this app has no server of its own, Evio talks directly from your browser to Google using your own free Gemini API key. Nothing ever passes through an Evio Budget server, because there isn't one.</p>
+      <p>Ezzo is Ezzo Budget's AI assistant. Since this app has no server of its own, Ezzo talks directly from your browser to Google using your own free Gemini API key. Nothing ever passes through an Ezzo Budget server, because there isn't one.</p>
       <h4 style="margin:14px 0 6px;font-size:14px">How to create your key</h4>
       <ol style="margin:0;padding-left:18px;line-height:2">
         <li>Go to Google AI Studio (aistudio.google.com/apikey) and sign in with a Google account.</li>
@@ -1382,7 +1382,7 @@ function pennyShowApiKeyHelp() {
       <h4 style="margin:14px 0 6px;font-size:14px">Is this free?</h4>
       <p>Gemini's API has a free tier with limits set by Google, which can change. Check your current limits any time at aistudio.google.com. The "questions asked" counter you see here is a personal counter kept on your own device - it isn't a live reading of your Google quota.</p>
       <h4 style="margin:14px 0 6px;font-size:14px">Is my key safe?</h4>
-      <p>Your key is encrypted before it's saved in this browser's own storage, and it's only ever sent directly to Google's API when you ask Evio a question. It never goes to any Evio Budget server.</p>
+      <p>Your key is encrypted before it's saved in this browser's own storage, and it's only ever sent directly to Google's API when you ask Ezzo a question. It never goes to any Ezzo Budget server.</p>
       <div style="margin-top:18px;text-align:center"><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="help-video-btn">Open Google AI Studio →</a></div>
     </div>
   </div>`;
@@ -1394,19 +1394,19 @@ function pennyShowApiKeyHelp() {
 }
 function showHelp(key) { if (key === 'penny_api_key') pennyShowApiKeyHelp(); }
 
-// ── What Evio has access to here: analytics, not budgets ───────────────
+// ── What Ezzo has access to here: analytics, not budgets ───────────────
 // These three function names (systemInstruction/tool declarations/tool
 // execution) are exactly what penny.js's own pennySendMessage() calls by
 // name every turn - redefining them here (after penny.js has already
 // declared its budget-flavored originals) is the entire mechanism that
-// gives Evio "access to the data in admin": everything else about how
+// gives Ezzo "access to the data in admin": everything else about how
 // she works (streaming, fallback, formatting, chat UI) is untouched.
 function pennyBuildSystemInstruction() {
   const sampleNote = _sampleDataActive
     ? " NOTE: the dashboard is currently showing SAMPLE/TEST data for trying things out, not real analytics - say so plainly if asked whether this reflects real performance."
     : '';
   return { parts: [{ text:
-    "You are Evio, the site owner's analytics assistant, built into the private EvioBudget admin dashboard. You have full access to every metric in this dashboard - Overview, Live, Traffic, Product, App Insights, and Redemptions - with no exceptions; if a number appears anywhere in the dashboard, one of your tools can fetch it. " +
+    "You are Ezzo, the site owner's analytics assistant, built into the private EzzoBudget admin dashboard. You have full access to every metric in this dashboard - Overview, Live, Traffic, Product, App Insights, and Redemptions - with no exceptions; if a number appears anywhere in the dashboard, one of your tools can fetch it. " +
     "You ONLY answer questions about the anonymous, aggregate usage analytics collected for this site (visitors, sessions, traffic, tool usage, feature adoption, theme/language/sync preferences, access-code redemptions) using the tools provided. " +
     "You must call one of the provided functions to fetch real data before stating any number, percentage, or count - never invent or estimate numbers yourself. If a specific tool doesn't obviously cover what was asked, use search_events (or search_redemptions for anything about codes/order IDs/redeemers) as a general-purpose fallback before saying data isn't available. " +
     "This data is entirely anonymous and aggregate: visitors are identified only by a random on-device ID, and there is no name, email, IP address, or any financial/budget data available to you, ever - if asked for something like that, say plainly it was never collected rather than guessing. " +
@@ -1467,7 +1467,7 @@ function pennyToolDeclarations() {
 }
 // Shared by every tool below that accepts days/from/to/tool - pure
 // function over a given event list, never touches the admin UI's own
-// `filters` state (Evio's queries shouldn't depend on, or change,
+// `filters` state (Ezzo's queries shouldn't depend on, or change,
 // whatever date range happens to be selected in the Traffic/Product tabs).
 function pennyFilterEventsByArgs(events, args) {
   let list = events;
@@ -1637,7 +1637,7 @@ function pennyRenderQuickActions() {
 
 // ══════════════════════════════════════════════════════════════════════
 //  Sample data (Settings tab) - realistic fake events for trying out the
-//  dashboard and Evio without waiting for real traffic. Purely in-memory:
+//  dashboard and Ezzo without waiting for real traffic. Purely in-memory:
 //  never written to the real Sheet, never persisted across a reload.
 // ══════════════════════════════════════════════════════════════════════
 let _sampleDataActive = false;
@@ -1698,7 +1698,7 @@ function generateSampleAdminEvents() {
     }
   }
   // A few redemptions intentionally sharing one order ID, so the
-  // Redemptions tab (and Evio) have something realistic to flag.
+  // Redemptions tab (and Ezzo) have something realistic to flag.
   const sharedOrderId = 'SAMPLE-9001';
   ['sample_reuse_a', 'sample_reuse_b', 'sample_reuse_c'].forEach((vid, i) => {
     push('launch_code_redeemed', now - i * DAY, 'home', '', vid, 'sample_reuse_s' + i, { code: rand(CODES_SBP), tool: 'sbp', orderId: sharedOrderId });
@@ -1735,7 +1735,7 @@ async function exitSampleData() {
 function sampleDataSectionHtml() {
   return `
     <div class="settings-card-title">🧪 Sample data</div>
-    <p class="admin-danger-sub">Load realistic fake analytics (visitors, sessions, redemptions, feature usage) to try out the dashboard - and Evio - without waiting for real traffic. Never written to your real sheet, and cleared when you exit it or sign out.</p>
+    <p class="admin-danger-sub">Load realistic fake analytics (visitors, sessions, redemptions, feature usage) to try out the dashboard - and Ezzo - without waiting for real traffic. Never written to your real sheet, and cleared when you exit it or sign out.</p>
     ${_sampleDataActive
       ? `<button class="btn btn-ghost" id="sampleDataExitBtn" type="button">Exit sample data</button>`
       : `<button class="btn btn-secondary" id="sampleDataLoadBtn" type="button">Load sample data</button>`}`;

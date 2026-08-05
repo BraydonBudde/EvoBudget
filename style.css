@@ -1,11 +1,11 @@
-/* Evio Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
+/* Ezzo Budget - v2.7 "Onboarding & Upgrade"  (2026-07-01)
    Change set vs v1.0 "Baseline":
    - All native browser confirm()/alert() popups replaced with in-app
      glass dialogs (confirmDialog / alertDialog) - mobile-friendly.
    - UBP: duplicated init()/applyLayout() collapsed into one; recurring
      engine restored and init now runs exactly once. */
 /* =====================================================================
-   Evio Budget - Design System
+   Ezzo Budget - Design System
    Built on the Polish Mastery design language: glassmorphism,
    animated gradient backdrop, Sora + Inter, indigo/purple/pink palette.
    ===================================================================== */
@@ -442,7 +442,7 @@ a.btn-back-round { text-decoration: none; }
   font-size: 15px; color: var(--text-secondary); max-width: 680px;
   margin: 0 auto; line-height: 1.75;
 }
-/* home.html (Evio Hub landing page) intentionally does NOT reuse this hub's
+/* home.html (Ezzo Hub landing page) intentionally does NOT reuse this hub's
    layout - it has its own bespoke component CSS inline in its own <head>,
    so it reads as a distinct page rather than an extension of this one.
    a.btn stays here since it's a genuinely shared fix (anchors styled as
@@ -691,7 +691,7 @@ a.btn { text-decoration: none; }
 }
 .flow-bar--exp { background: rgba(30,27,46,.18); }
 .flow-amounts { text-align: right; font-size: 12px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
-/* .flow-amt: kept for Evio's own flow-row chart markup (penny.js) - the
+/* .flow-amt: kept for Ezzo's own flow-row chart markup (penny.js) - the
    dashboard's own amounts no longer use it, but her chat-bubble charts
    still render <div class="flow-amt">. */
 .flow-amt { font-size: 11px; font-weight: 600; }
@@ -3178,7 +3178,7 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .penny-msg--user .penny-msg-bubble { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple) 55%, var(--grad-pink)); color: #fff; border-bottom-right-radius: 4px; }
 .penny-msg--penny .penny-msg-bubble { border-bottom-left-radius: 4px; }
 .penny-msg-text { white-space: pre-wrap; word-break: break-word; }
-/* Lightweight markdown Evio's own replies are formatted into
+/* Lightweight markdown Ezzo's own replies are formatted into
    (pennyFormatMarkdown in penny.js) - never used for the user's own
    messages, which stay as plain text. */
 .penny-msg-text p { margin: 0 0 8px; }
@@ -3554,7 +3554,7 @@ body.penny-drawer-open { overflow: hidden; }
   .scen-cta { width: 100%; justify-content: center; }
 }
 
-/* ── Why Evio Budget grid ─────────────────────────────────────────────── */
+/* ── Why Ezzo Budget grid ─────────────────────────────────────────────── */
 .why-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
 }

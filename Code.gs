@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════════════════════
-// EvioBudget Analytics — Google Apps Script Web App
+// EzzoBudget Analytics — Google Apps Script Web App
 // ══════════════════════════════════════════════════════════════════════
 // This file lives in the repo purely as a documented source of truth for
 // version control - it CANNOT be deployed from here. It must be manually
@@ -53,7 +53,7 @@ function _validEventType(type) {
 }
 
 function doGet(e) {
-  return ContentService.createTextOutput('EvioBudget analytics endpoint.');
+  return ContentService.createTextOutput('EzzoBudget analytics endpoint.');
 }
 
 function doPost(e) {
