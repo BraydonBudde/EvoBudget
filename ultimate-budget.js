@@ -121,6 +121,15 @@ const PRICES        = { sbp:'$9.99', ubp:'$24.99' };
 
 function isTrial(){ return localStorage.getItem(UBP_MODE_KEY) === 'trial'; }
 
+// Reaching this page with full access requires an active trial or a
+// redeemed launch code (evobudget_ubp_unlocked, set only by a validated
+// code in script.js). Both are set by budgetplanner.html's launcher before
+// it navigates here - a direct visit (bookmark, shared link, typed URL)
+// with neither set must not fall through to unrestricted full access.
+if (!isTrial() && localStorage.getItem('evobudget_ubp_unlocked') !== '1') {
+  window.location.replace('budgetplanner.html');
+}
+
 // Returns true when the action is blocked (caller should stop and show the upgrade prompt).
 function trialBlocks(kind){
   if(!isTrial()) return false;
