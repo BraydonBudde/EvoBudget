@@ -127,7 +127,7 @@ function isTrial(){ return localStorage.getItem(UBP_MODE_KEY) === 'trial'; }
 // it navigates here - a direct visit (bookmark, shared link, typed URL)
 // with neither set must not fall through to unrestricted full access.
 if (!isTrial() && localStorage.getItem('evobudget_ubp_unlocked') !== '1') {
-  window.location.replace('budgetplanner.html');
+  window.location.replace('budgetplanner');
 }
 
 // Returns true when the action is blocked (caller should stop and show the upgrade prompt).
@@ -6694,7 +6694,7 @@ async function init(){
     document.getElementById('heroHeader')?.querySelectorAll('.cnav-btn[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
 
     // Back to hub
-    document.getElementById('backToHub')?.addEventListener('click',()=>{window.location.href='budgetplanner.html';});
+    document.getElementById('backToHub')?.addEventListener('click',()=>{window.location.href='budgetplanner';});
 
     // Settings gear
     document.getElementById('settingsNavBtn')?.addEventListener('click',()=>switchTab('settings'));

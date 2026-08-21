@@ -1893,8 +1893,8 @@ function setUbpMode(m)   { localStorage.setItem(UBP_MODE_KEY, m); }
 function isUnlocked(tool){ return localStorage.getItem(UNLOCK_KEYS[tool]) === '1'; }
 function setUnlocked(tool){ localStorage.setItem(UNLOCK_KEYS[tool], '1'); }
 
-function enterFull(tool)  { if (tool === 'ubp') { setUbpMode('full'); syncStashTokenForHandoff('ubp'); window.location.href = 'ultimate-budget.html'; } else enterSbpFull(); }
-function enterTrial(tool) { if (tool === 'ubp') { setUbpMode('trial'); window.location.href = 'ultimate-budget.html'; } else enterSbpTrial(); }
+function enterFull(tool)  { if (tool === 'ubp') { setUbpMode('full'); syncStashTokenForHandoff('ubp'); window.location.href = 'ultimate-budget'; } else enterSbpFull(); }
+function enterTrial(tool) { if (tool === 'ubp') { setUbpMode('trial'); window.location.href = 'ultimate-budget'; } else enterSbpTrial(); }
 
 async function openFull(tool) {
   if (!isUnlocked(tool)) { showAccessCodeModal(tool); return; }
@@ -2754,7 +2754,7 @@ function renderDashboardLayout1() {
           <button class="btn btn-ghost btn-sm upgrade-compare" id="upgradeCompareBtn" type="button">${t('upgrade_compare')}</button>
         </div>
       </div>`);
-    document.getElementById('upgradeNowBtn')?.addEventListener('click', () => { window.location.href = 'ultimate-budget.html'; });
+    document.getElementById('upgradeNowBtn')?.addEventListener('click', () => { window.location.href = 'ultimate-budget'; });
     document.getElementById('upgradeCompareBtn')?.addEventListener('click', showUpgradeComparison);
     document.getElementById('upgradeCloseBtn')?.addEventListener('click', () => {
       state.settings.hideUpgrade = true;
@@ -4249,7 +4249,7 @@ function showUpgradeComparison() {
     document.getElementById('modalBody').innerHTML = '';
   });
   document.getElementById('compareUpgrade')?.addEventListener('click', () => {
-    window.location.href = 'ultimate-budget.html';
+    window.location.href = 'ultimate-budget';
   });
 }
 
