@@ -254,11 +254,25 @@ const TRANSLATIONS = {
     mod_add_category:'+ Add category',mod_add_new_category:'Add new category',mod_cat_name_label:'Name',
     mod_set_date:'Set date',mod_remove:'Remove',mod_mark_paid:'Mark as paid',mod_total:'Total',mod_paid_amount_label:'Amount paid',mod_paid_amount_hint:"How much you actually paid - this gets logged as a transaction so your spending history stays accurate, even if it's different from your budgeted amount.",mod_paid_save_btn:'Log payment',mod_paid_budgeted_hint:'Budgeted: {0}',mod_paid_amount_required:'Please enter a valid amount.',toast_mod_paid:'Payment logged',
     dash_period_title:'Click to change budget period',
-    onboard_welcome:"👋 Welcome! Here's how to get started:",
-    onboard_step1_html:'Go to <strong>Income, Expenses, Bills</strong> etc. and enter your expected amounts.',
-    onboard_step2_html:'Use <strong>Transactions</strong> to log what you actually earn and spend.',
-    onboard_step3_html:'Return here to see your full financial picture update in real time.',
-    onboard_sample_btn:'Load sample data',onboard_sample_hint:'See the planner in action with demo numbers.',sample_loaded_toast:'Sample data loaded',
+    sample_loaded_toast:'Sample data loaded',
+    onb_step_x_of_y:'Step {0} of {1}',
+    onb_setup_title:"Let's get you set up",
+    onb_setup_sub:"Set your currency and budget period - you can always change these later in Settings.",
+    onb_continue_btn:'Continue',
+    onb_skip_link:"Skip, I'll explore on my own",
+    onb_spot_budget_title:'Set an expected amount',
+    onb_spot_budget_body:"This is where you plan ahead. Type how much you expect to earn from your first income source below.",
+    onb_spot_tx_title:'Log your first transaction',
+    onb_spot_tx_body:"Transactions are what actually happened. Add one now to see your dashboard come to life.",
+    onb_next_btn:'Next',
+    onb_nice_toast:'Nice! Moving on...',
+    onb_tips_title:"You're all set!",
+    onb_tips_sub:'A few more things worth knowing:',
+    onb_tip1_h:'Guide button',onb_tip1_b:'Tap the ? icon on any tab for detailed help on that section.',
+    onb_tip2_h:'Fill in the rest',onb_tip2_b:"Don't forget Expenses, Bills, Debt & Savings - the same way you just did Income.",
+    onb_tip3_h:'Sync across devices',onb_tip3_b:'Turn on Google Sync in Settings to access your budget from any device.',
+    onb_tip4_h:'Export anytime',onb_tip4_b:'Download a CSV backup of your data whenever you like, from Settings.',
+    onb_finish_btn:'Start budgeting →',
     dash_stat_income:'Total Income',dash_stat_of_expected:'of {0} expected',
     dash_stat_exp_bills:'Expenses &amp; Bills',dash_stat_of_budgeted:'of {0} budgeted',
     dash_stat_debt:'Debt Payments',dash_stat_savings:'Total Savings',dash_stat_of_goal:'of {0} goal',
@@ -515,11 +529,7 @@ const TRANSLATIONS = {
     mod_add_category:'+ Kategorie hinzufügen',mod_add_new_category:'Neue Kategorie hinzufügen',mod_cat_name_label:'Name',
     mod_set_date:'Datum festlegen',mod_remove:'Entfernen',mod_mark_paid:'Als bezahlt markieren',mod_total:'Gesamt',mod_paid_amount_label:'Bezahlter Betrag',mod_paid_amount_hint:'Wie viel du tatsächlich bezahlt hast - wird als Transaktion erfasst, damit deine Ausgabenhistorie stimmt, auch wenn es vom budgetierten Betrag abweicht.',mod_paid_save_btn:'Zahlung erfassen',mod_paid_budgeted_hint:'Budgetiert: {0}',mod_paid_amount_required:'Bitte gib einen gültigen Betrag ein.',toast_mod_paid:'Zahlung erfasst',
     dash_period_title:'Klicken, um den Budgetzeitraum zu ändern',
-    onboard_welcome:'👋 Willkommen! So kommst du los:',
-    onboard_step1_html:'Gehe zu <strong>Einnahmen, Ausgaben, Rechnungen</strong> usw. und trage deine erwarteten Beträge ein.',
-    onboard_step2_html:'Nutze <strong>Transaktionen</strong>, um zu erfassen, was du tatsächlich einnimmst und ausgibst.',
-    onboard_step3_html:'Komm hierher zurück, um dein vollständiges Finanzbild in Echtzeit zu sehen.',
-    onboard_sample_btn:'Beispieldaten laden',onboard_sample_hint:'Sieh den Planer mit Demo-Zahlen in Aktion.',sample_loaded_toast:'Beispieldaten geladen',
+    sample_loaded_toast:'Beispieldaten geladen',
     dash_stat_income:'Gesamteinnahmen',dash_stat_of_expected:'von {0} erwartet',
     dash_stat_exp_bills:'Ausgaben &amp; Rechnungen',dash_stat_of_budgeted:'von {0} budgetiert',
     dash_stat_debt:'Schuldenzahlungen',dash_stat_savings:'Gesamtersparnisse',dash_stat_of_goal:'von {0} Ziel',
@@ -776,11 +786,7 @@ const TRANSLATIONS = {
     mod_add_category:'+ Ajouter une catégorie',mod_add_new_category:'Ajouter une nouvelle catégorie',mod_cat_name_label:'Nom',
     mod_set_date:'Définir la date',mod_remove:'Supprimer',mod_mark_paid:'Marquer comme payé',mod_total:'Total',mod_paid_amount_label:'Montant payé',mod_paid_amount_hint:"Le montant que vous avez réellement payé - il sera enregistré comme transaction afin que votre historique reste exact, même s'il diffère du montant budgété.",mod_paid_save_btn:'Enregistrer le paiement',mod_paid_budgeted_hint:'Budgété : {0}',mod_paid_amount_required:'Veuillez saisir un montant valide.',toast_mod_paid:'Paiement enregistré',
     dash_period_title:'Cliquez pour changer la période budgétaire',
-    onboard_welcome:'👋 Bienvenue ! Voici comment commencer :',
-    onboard_step1_html:'Allez dans <strong>Revenus, Dépenses, Factures</strong>, etc. et saisissez vos montants prévus.',
-    onboard_step2_html:'Utilisez <strong>Transactions</strong> pour enregistrer ce que vous gagnez et dépensez réellement.',
-    onboard_step3_html:'Revenez ici pour voir votre situation financière complète se mettre à jour en temps réel.',
-    onboard_sample_btn:'Charger des données d’exemple',onboard_sample_hint:'Découvrez le planificateur avec des chiffres de démonstration.',sample_loaded_toast:'Données d’exemple chargées',
+    sample_loaded_toast:'Données d’exemple chargées',
     dash_stat_income:'Revenu total',dash_stat_of_expected:'sur {0} prévu',
     dash_stat_exp_bills:'Dépenses &amp; Factures',dash_stat_of_budgeted:'sur {0} budgétisé',
     dash_stat_debt:'Paiements de dettes',dash_stat_savings:'Épargne totale',dash_stat_of_goal:'sur {0} objectif',
@@ -1037,11 +1043,7 @@ const TRANSLATIONS = {
     mod_add_category:'+ Añadir categoría',mod_add_new_category:'Añadir nueva categoría',mod_cat_name_label:'Nombre',
     mod_set_date:'Definir fecha',mod_remove:'Eliminar',mod_mark_paid:'Marcar como pagado',mod_total:'Total',mod_paid_amount_label:'Importe pagado',mod_paid_amount_hint:'Cuánto pagaste realmente - se registrará como transacción para que tu historial de gastos sea exacto, aunque sea distinto del importe presupuestado.',mod_paid_save_btn:'Registrar pago',mod_paid_budgeted_hint:'Presupuestado: {0}',mod_paid_amount_required:'Introduce un importe válido.',toast_mod_paid:'Pago registrado',
     dash_period_title:'Haz clic para cambiar el período de presupuesto',
-    onboard_welcome:'👋 ¡Bienvenido! Así es como empezar:',
-    onboard_step1_html:'Ve a <strong>Ingresos, Gastos, Facturas</strong>, etc. e introduce tus montos previstos.',
-    onboard_step2_html:'Usa <strong>Transacciones</strong> para registrar lo que realmente ganas y gastas.',
-    onboard_step3_html:'Vuelve aquí para ver tu panorama financiero completo actualizarse en tiempo real.',
-    onboard_sample_btn:'Cargar datos de ejemplo',onboard_sample_hint:'Mira el planificador en acción con cifras de demostración.',sample_loaded_toast:'Datos de ejemplo cargados',
+    sample_loaded_toast:'Datos de ejemplo cargados',
     dash_stat_income:'Ingresos totales',dash_stat_of_expected:'de {0} previsto',
     dash_stat_exp_bills:'Gastos &amp; Facturas',dash_stat_of_budgeted:'de {0} presupuestado',
     dash_stat_debt:'Pagos de deudas',dash_stat_savings:'Ahorros totales',dash_stat_of_goal:'de {0} objetivo',
@@ -1298,10 +1300,6 @@ const TRANSLATIONS = {
     mod_add_category:'+ Aggiungi categoria',mod_add_new_category:'Aggiungi nuova categoria',mod_cat_name_label:'Nome',
     mod_set_date:'Imposta data',mod_remove:'Rimuovi',mod_mark_paid:'Segna come pagato',mod_total:'Totale',mod_paid_amount_label:'Importo pagato',mod_paid_amount_hint:"Quanto hai effettivamente pagato - viene registrato come transazione così la tua cronologia di spesa resta accurata, anche se diverso dall'importo previsto.",mod_paid_save_btn:'Registra pagamento',mod_paid_budgeted_hint:'Preventivato: {0}',mod_paid_amount_required:'Inserisci un importo valido.',toast_mod_paid:'Pagamento registrato',
     dash_period_title:'Clicca per cambiare il periodo di budget',
-    onboard_welcome:'👋 Benvenuto! Ecco come iniziare:',
-    onboard_step1_html:'Vai su <strong>Entrate, Spese, Bollette</strong> ecc. e inserisci gli importi previsti.',
-    onboard_step2_html:'Usa <strong>Transazioni</strong> per registrare ciò che guadagni e spendi realmente.',
-    onboard_step3_html:'Torna qui per vedere il tuo quadro finanziario completo aggiornarsi in tempo reale.',
     dash_stat_income:'Entrate totali',dash_stat_of_expected:'di {0} previsto',
     dash_stat_exp_bills:'Spese &amp; Bollette',dash_stat_of_budgeted:'di {0} a budget',
     dash_stat_debt:'Pagamenti debiti',dash_stat_savings:'Risparmi totali',dash_stat_of_goal:'di {0} obiettivo',
@@ -1558,10 +1556,6 @@ const TRANSLATIONS = {
     mod_add_category:'+ Dodaj kategorię',mod_add_new_category:'Dodaj nową kategorię',mod_cat_name_label:'Nazwa',
     mod_set_date:'Ustaw datę',mod_remove:'Usuń',mod_mark_paid:'Oznacz jako opłacone',mod_total:'Suma',mod_paid_amount_label:'Zapłacona kwota',mod_paid_amount_hint:'Ile faktycznie zapłaciłeś - zostanie to zapisane jako transakcja, aby Twoja historia wydatków była dokładna, nawet jeśli różni się od zaplanowanej kwoty.',mod_paid_save_btn:'Zapisz płatność',mod_paid_budgeted_hint:'Zaplanowano: {0}',mod_paid_amount_required:'Podaj prawidłową kwotę.',toast_mod_paid:'Płatność zapisana',
     dash_period_title:'Kliknij, aby zmienić okres budżetowy',
-    onboard_welcome:'👋 Witaj! Oto jak zacząć:',
-    onboard_step1_html:'Przejdź do <strong>Przychody, Wydatki, Rachunki</strong> itd. i wprowadź spodziewane kwoty.',
-    onboard_step2_html:'Użyj <strong>Transakcji</strong>, aby zapisywać to, co faktycznie zarabiasz i wydajesz.',
-    onboard_step3_html:'Wróć tutaj, aby zobaczyć pełny obraz finansów aktualizowany w czasie rzeczywistym.',
     dash_stat_income:'Łączne przychody',dash_stat_of_expected:'z {0} spodziewanych',
     dash_stat_exp_bills:'Wydatki &amp; Rachunki',dash_stat_of_budgeted:'z {0} zaplanowanych',
     dash_stat_debt:'Spłaty długów',dash_stat_savings:'Łączne oszczędności',dash_stat_of_goal:'z {0} celu',
@@ -1658,7 +1652,7 @@ function applyLanguage() {
 function defaultState() {
   const { start, end } = getMonthBounds();
   return {
-    settings: { currency: 'USD', symbol: '$', periodStart: start, periodEnd: end, language: 'en', hideUpgrade: false, dashboardLayout: 1, dashboardAnimations: true },
+    settings: { currency: 'USD', symbol: '$', periodStart: start, periodEnd: end, language: 'en', hideUpgrade: false, dashboardLayout: 1, dashboardAnimations: true, onboardingDone: false },
     rollover: 0,
     budgets: {
       income: [
@@ -2268,6 +2262,7 @@ function navigateTo(view) {
     const sel = document.getElementById('currencySelect');
     if (sel) sel.value = `${state.settings.currency}|${state.settings.symbol}`;
     switchBTab(currentBTab || 'dashboard');
+    maybeStartOnboarding();
   }
   window.scrollTo(0, 0);
 }
@@ -2501,11 +2496,6 @@ function loadSampleData() {
   renderDashboard();
   showToast(t('sample_loaded_toast'));
 }
-function dismissWelcomeCard() {
-  state.settings.welcomeDismissed = true;
-  saveState();
-  renderDashboard();
-}
 function renderDashboard() {
   const layout = state.settings.dashboardLayout || 1;
   ({
@@ -2555,18 +2545,6 @@ function renderDashboardLayout1() {
   const spendPoints = computeDailySpendPoints();
   const spendLineTotal = spendPoints.reduce((s, p) => s + p.value, 0);
 
-  const onboardHTML = (!hasAnyData() && !state.settings.welcomeDismissed) ? `
-    <div class="onboard-banner">
-      <button class="onboard-close-btn" id="dismissWelcomeBtn" type="button" aria-label="${t('dismiss_aria')}">✕</button>
-      <div class="onboard-title">${t('onboard_welcome')}</div>
-      <div class="onboard-steps">
-        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
-      </div>
-      <div class="onboard-sample-row"><button class="btn btn-ghost btn-sm" id="loadSampleBtn" type="button">✨ ${t('onboard_sample_btn')}</button><span class="onboard-sample-hint">${t('onboard_sample_hint')}</span></div>
-    </div>` : '';
-
   const el = document.getElementById('bview-dashboard');
   const isCurrentRender = markRenderGen(el);
   el.innerHTML = `
@@ -2579,8 +2557,6 @@ function renderDashboardLayout1() {
       </button>
       <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
     </div>
-
-    ${onboardHTML}
 
     <div class="summary-cards">
       <div class="scard scard--income">
@@ -2706,8 +2682,6 @@ function renderDashboardLayout1() {
 
   // Period badge → go to settings
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
-  el.querySelector('#dismissWelcomeBtn')?.addEventListener('click', dismissWelcomeCard);
-  el.querySelector('#loadSampleBtn')?.addEventListener('click', loadSampleData);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -2797,18 +2771,6 @@ function renderDashboardLayout2() {
   const spendPoints = computeDailySpendPoints();
   const spendLineTotal = spendPoints.reduce((s, p) => s + p.value, 0);
 
-  const onboardHTML = (!hasAnyData() && !state.settings.welcomeDismissed) ? `
-    <div class="onboard-banner">
-      <button class="onboard-close-btn" id="dismissWelcomeBtn" type="button" aria-label="${t('dismiss_aria')}">✕</button>
-      <div class="onboard-title">${t('onboard_welcome')}</div>
-      <div class="onboard-steps">
-        <div class="onboard-step"><span class="onboard-num">1</span>${t('onboard_step1_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">2</span>${t('onboard_step2_html')}</div>
-        <div class="onboard-step"><span class="onboard-num">3</span>${t('onboard_step3_html')}</div>
-      </div>
-      <div class="onboard-sample-row"><button class="btn btn-ghost btn-sm" id="loadSampleBtn" type="button">✨ ${t('onboard_sample_btn')}</button><span class="onboard-sample-hint">${t('onboard_sample_hint')}</span></div>
-    </div>` : '';
-
   const el = document.getElementById('bview-dashboard');
   const isCurrentRender = markRenderGen(el);
   el.innerHTML = `
@@ -2819,7 +2781,6 @@ function renderDashboardLayout2() {
       </button>
       <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
     </div>
-    ${onboardHTML}
 
     <div class="ist-row">
       ${iconStatTile('💰', t('dash_stat_income'), fmt(sum.totalIncome), tf('dash_stat_of_expected', fmt(expIncome)), '#10b981')}
@@ -2906,8 +2867,6 @@ function renderDashboardLayout2() {
   `;
 
   el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
-  el.querySelector('#dismissWelcomeBtn')?.addEventListener('click', dismissWelcomeCard);
-  el.querySelector('#loadSampleBtn')?.addEventListener('click', loadSampleData);
   requestAnimationFrame(() => {
     if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
@@ -4397,6 +4356,241 @@ function renderCarousel() {
     let resizeTimer; window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>go(Math.min(page,totalPages()-1)),120);});
   }
   go(0);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ONBOARDING WALKTHROUGH
+//  Runs once, the first time a brand-new user reaches the budget view
+//  with no real data yet (state.settings.onboardingDone gates it for
+//  good). Step 1 collects currency/period with a dedicated setup UI
+//  that writes straight into state.settings (the real Settings tab is
+//  never touched/navigated to). Steps 2-3 spotlight the actual live
+//  dashboard UI and wait for the user to perform the real action. Step
+//  4 is a short "what else you can do" wrap-up.
+// ══════════════════════════════════════════════════════════════════════
+let onbActive = false;
+let onbPollTimer = null;
+let onbResizeHandler = null;
+const ONB_TOTAL_STEPS = 4;
+
+function maybeStartOnboarding() {
+  if (onbActive || hasAnyData() || state.settings.onboardingDone) return;
+  onbActive = true;
+  onbShowSetup();
+}
+
+function onbClearOverlay() {
+  document.getElementById('onbOverlay')?.remove();
+  document.getElementById('onbMask')?.remove();
+  document.getElementById('onbCoach')?.remove();
+  if (onbPollTimer) { clearInterval(onbPollTimer); onbPollTimer = null; }
+  if (onbResizeHandler) { window.removeEventListener('resize', onbResizeHandler); window.removeEventListener('scroll', onbResizeHandler, true); onbResizeHandler = null; }
+}
+
+function onbFinish() {
+  onbClearOverlay();
+  state.settings.onboardingDone = true;
+  saveState();
+  onbActive = false;
+  switchBTab('dashboard');
+}
+
+function onbSkipAll() {
+  onbClearOverlay();
+  loadSampleData();
+  state.settings.onboardingDone = true;
+  saveState();
+  onbActive = false;
+}
+
+function onbCloseOverlayEl(ov, then) {
+  ov.classList.add('is-leaving');
+  setTimeout(() => { ov.remove(); then?.(); }, 200);
+}
+
+// ── Step 1: setup (currency + budget period) ────────────────────────────
+function onbPeriodPresets() {
+  const now = new Date(), d = now.getDay();
+  const thisMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (d === 0 ? 6 : d - 1));
+  const q = Math.floor(now.getMonth() / 3);
+  return {
+    week:    [toLocalISO(thisMonday), toLocalISO(new Date(thisMonday.getFullYear(), thisMonday.getMonth(), thisMonday.getDate() + 6))],
+    month:   [toLocalISO(new Date(now.getFullYear(), now.getMonth(), 1)), toLocalISO(new Date(now.getFullYear(), now.getMonth() + 1, 0))],
+    quarter: [toLocalISO(new Date(now.getFullYear(), q * 3, 1)), toLocalISO(new Date(now.getFullYear(), q * 3 + 3, 0))],
+    year:    [toLocalISO(new Date(now.getFullYear(), 0, 1)), toLocalISO(new Date(now.getFullYear(), 11, 31))],
+  };
+}
+
+function onbShowSetup() {
+  const presets = onbPeriodPresets();
+  const currencies = [['USD','$'],['EUR','€'],['GBP','£'],['PLN','zł'],['JPY','¥'],['CAD','$'],
+    ['AUD','$'],['CHF','CHF'],['SEK','kr'],['NOK','kr'],['DKK','kr'],
+    ['INR','₹'],['BRL','R$'],['MXN','$'],['ZAR','R']];
+  const periodLabels = { week:'this_week', month:'this_month', quarter:'this_quarter', year:'this_year' };
+  let selectedPeriod = 'month';
+
+  const ov = document.createElement('div');
+  ov.className = 'onb-overlay';
+  ov.id = 'onbOverlay';
+  ov.setAttribute('role', 'dialog');
+  ov.setAttribute('aria-modal', 'true');
+  ov.setAttribute('aria-label', t('onb_setup_title'));
+  ov.innerHTML = `
+    <div class="onb-card" role="document">
+      <div class="onb-progress">${[0,1,2,3].map(i => `<span class="onb-progress-dot${i===0?' is-active':''}"></span>`).join('')}</div>
+      <div class="onb-step-label">${tf('onb_step_x_of_y', 1, ONB_TOTAL_STEPS)}</div>
+      <div class="onb-icon">👋</div>
+      <h2 class="onb-title">${t('onb_setup_title')}</h2>
+      <p class="onb-sub">${t('onb_setup_sub')}</p>
+      <div class="onb-section">
+        <label class="onb-field-label" for="onbCurrency">${t('select_currency')}</label>
+        <select class="select" id="onbCurrency">
+          ${currencies.map(([c,s]) => `<option value="${c}|${s}" ${state.settings.currency===c?'selected':''}>${c} (${s})</option>`).join('')}
+        </select>
+      </div>
+      <div class="onb-section">
+        <span class="onb-field-label">${t('budget_period')}</span>
+        <div class="onb-period-grid" id="onbPeriodGrid">
+          ${['week','month','quarter','year'].map(k => `<button class="onb-period-chip${k===selectedPeriod?' is-active':''}" data-period="${k}" type="button">${t(periodLabels[k])}</button>`).join('')}
+        </div>
+      </div>
+      <div class="onb-actions">
+        <button class="btn btn-primary" id="onbSetupContinue" type="button">${t('onb_continue_btn')}</button>
+        <button class="onb-skip-link" id="onbSkipBtn" type="button">${t('onb_skip_link')}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  ov.querySelectorAll('.onb-period-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedPeriod = btn.dataset.period;
+      ov.querySelectorAll('.onb-period-chip').forEach(b => b.classList.toggle('is-active', b === btn));
+    });
+  });
+  ov.querySelector('#onbSetupContinue').addEventListener('click', () => {
+    const [currency, symbol] = document.getElementById('onbCurrency').value.split('|');
+    const [start, end] = presets[selectedPeriod];
+    state.settings.currency = currency;
+    state.settings.symbol = symbol;
+    state.settings.periodStart = start;
+    state.settings.periodEnd = end;
+    syncSymbol();
+    saveState();
+    onbCloseOverlayEl(ov, () => onbStartSpotlight(0));
+  });
+  ov.querySelector('#onbSkipBtn').addEventListener('click', () => onbCloseOverlayEl(ov, onbSkipAll));
+  requestAnimationFrame(() => ov.classList.add('is-in'));
+}
+
+// ── Steps 2-3: spotlight the real UI, wait for the real action ─────────
+const ONB_SPOTLIGHT_STEPS = [
+  {
+    tab: 'income', selector: '.expected-input',
+    titleKey: 'onb_spot_budget_title', bodyKey: 'onb_spot_budget_body',
+    isDone: () => state.budgets.income.some(r => (r.expected || 0) > 0),
+  },
+  {
+    tab: 'transactions', selector: '#addTxBtn',
+    titleKey: 'onb_spot_tx_title', bodyKey: 'onb_spot_tx_body',
+    isDone: () => state.transactions.length > 0,
+  },
+];
+
+function onbStartSpotlight(idx) {
+  const cfg = ONB_SPOTLIGHT_STEPS[idx];
+  if (!cfg) { onbShowTips(); return; }
+  switchBTab(cfg.tab); // synchronous DOM replacement - the target is queryable immediately after
+  onbRenderSpotlight(cfg, idx);
+}
+
+function onbRenderSpotlight(cfg, idx) {
+  onbClearOverlay();
+  const target = document.querySelector(cfg.selector);
+  if (!target) { onbAdvanceSpotlight(idx); return; }
+
+  const mask = document.createElement('div');
+  mask.className = 'onb-mask';
+  mask.id = 'onbMask';
+  mask.innerHTML = `<div class="onb-mask-hole" id="onbHole"><div class="onb-mask-ring"></div></div>`;
+  document.body.appendChild(mask);
+
+  const coach = document.createElement('div');
+  coach.className = 'onb-coach';
+  coach.id = 'onbCoach';
+  coach.setAttribute('role', 'dialog');
+  coach.innerHTML = `
+    <div class="onb-coach-step">${tf('onb_step_x_of_y', idx + 2, ONB_TOTAL_STEPS)}</div>
+    <div class="onb-coach-title">${t(cfg.titleKey)}</div>
+    <div class="onb-coach-body">${t(cfg.bodyKey)}</div>
+    <div class="onb-coach-actions">
+      <button class="onb-skip-link" id="onbCoachSkip" type="button">${t('onb_skip_link')}</button>
+      <button class="btn btn-primary btn-sm" id="onbCoachNext" type="button">${t('onb_next_btn')}</button>
+    </div>`;
+  document.body.appendChild(coach);
+
+  const position = () => {
+    const hole = document.getElementById('onbHole');
+    const coachEl = document.getElementById('onbCoach');
+    if (!hole || !coachEl || !document.body.contains(target)) return;
+    const r = target.getBoundingClientRect(), pad = 8;
+    hole.style.top = `${r.top - pad}px`;
+    hole.style.left = `${r.left - pad}px`;
+    hole.style.width = `${r.width + pad * 2}px`;
+    hole.style.height = `${r.height + pad * 2}px`;
+
+    const cw = coachEl.offsetWidth || 300, ch = coachEl.offsetHeight || 140;
+    let top = r.bottom + pad + 12;
+    if (top + ch > window.innerHeight - 16) top = Math.max(16, r.top - pad - 12 - ch);
+    const left = Math.min(Math.max(16, r.left), window.innerWidth - cw - 16);
+    coachEl.style.top = `${top}px`;
+    coachEl.style.left = `${left}px`;
+  };
+  position();
+  onbResizeHandler = position;
+  window.addEventListener('resize', onbResizeHandler);
+  window.addEventListener('scroll', onbResizeHandler, true);
+  requestAnimationFrame(() => coach.classList.add('is-in'));
+
+  document.getElementById('onbCoachNext').addEventListener('click', () => onbAdvanceSpotlight(idx));
+  document.getElementById('onbCoachSkip').addEventListener('click', onbSkipAll);
+
+  onbPollTimer = setInterval(() => { if (cfg.isDone()) onbAdvanceSpotlight(idx, true); }, 600);
+}
+
+function onbAdvanceSpotlight(idx, completed) {
+  onbClearOverlay();
+  if (completed) showToast(t('onb_nice_toast'));
+  onbStartSpotlight(idx + 1);
+}
+
+// ── Step 4: wrap-up tips ─────────────────────────────────────────────────
+function onbShowTips() {
+  const ov = document.createElement('div');
+  ov.className = 'onb-overlay';
+  ov.id = 'onbOverlay';
+  ov.setAttribute('role', 'dialog');
+  ov.setAttribute('aria-modal', 'true');
+  ov.setAttribute('aria-label', t('onb_tips_title'));
+  ov.innerHTML = `
+    <div class="onb-card" role="document">
+      <div class="onb-progress">${[0,1,2,3].map(() => `<span class="onb-progress-dot is-done"></span>`).join('')}</div>
+      <div class="onb-step-label">${tf('onb_step_x_of_y', ONB_TOTAL_STEPS, ONB_TOTAL_STEPS)}</div>
+      <div class="onb-icon">🎉</div>
+      <h2 class="onb-title">${t('onb_tips_title')}</h2>
+      <p class="onb-sub">${t('onb_tips_sub')}</p>
+      <div class="onb-tips-list">
+        <div class="onb-tip"><span class="onb-tip-icon">📖</span><span><strong>${t('onb_tip1_h')}</strong> ${t('onb_tip1_b')}</span></div>
+        <div class="onb-tip"><span class="onb-tip-icon">🎨</span><span><strong>${t('onb_tip2_h')}</strong> ${t('onb_tip2_b')}</span></div>
+        <div class="onb-tip"><span class="onb-tip-icon">☁️</span><span><strong>${t('onb_tip3_h')}</strong> ${t('onb_tip3_b')}</span></div>
+        <div class="onb-tip"><span class="onb-tip-icon">📤</span><span><strong>${t('onb_tip4_h')}</strong> ${t('onb_tip4_b')}</span></div>
+      </div>
+      <div class="onb-actions">
+        <button class="btn btn-primary" id="onbFinishBtn" type="button">${t('onb_finish_btn')}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector('#onbFinishBtn').addEventListener('click', () => onbCloseOverlayEl(ov, onbFinish));
+  requestAnimationFrame(() => ov.classList.add('is-in'));
 }
 
 document.addEventListener('DOMContentLoaded', init);
