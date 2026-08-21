@@ -4296,7 +4296,7 @@ function init() {
     if (e.target === e.currentTarget) closeModal();
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeModal(); closeLegal(); return; }
+    if (e.key === 'Escape') { closeModal(); return; }
     const overlay = document.getElementById('tutorialOverlay');
     if (overlay && !overlay.hidden) modalTabTrap(overlay, e);
   });
@@ -4315,12 +4315,6 @@ function init() {
     }).observe(tutorialOverlayEl, { attributes: true });
   }
 
-  // Legal modals
-  document.getElementById('legalClose')?.addEventListener('click', closeLegal);
-  document.getElementById('legalOverlay')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeLegal(); });
-  document.getElementById('footerPrivacy')?.addEventListener('click', () => openLegal('privacy'));
-  document.getElementById('footerTerms')?.addEventListener('click', () => openLegal('terms'));
-  document.getElementById('footerDisclaimer')?.addEventListener('click', () => openLegal('disclaimer'));
 
   fkInitUIEnhancers();
   applyAppTitle();
@@ -4409,41 +4403,6 @@ function renderCarousel() {
     let resizeTimer; window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>go(Math.min(page,totalPages()-1)),120);});
   }
   go(0);
-}
-
-// ── Legal modals ───────────────────────────────────────────────────────
-function closeLegal() { const o = document.getElementById('legalOverlay'); if (o) o.hidden = true; }
-function openLegal(type) {
-  const titles = { privacy: 'Privacy Policy', terms: 'Terms of Use', disclaimer: 'Disclaimer' };
-  const bodies = {
-    privacy: `<p><strong>Last updated:</strong> August 2026</p>
-<p>Ezzo Budget is designed with your privacy as a core principle.</p>
-<p><strong>Data storage.</strong> By default, all financial data you enter into Ezzo Budget is stored exclusively in your browser's local storage on your device, and Ezzo Budget does not collect, transmit, or store any personal or financial information on external servers. You may optionally sign in with Google to sync your data across your own devices - when you choose to do this, your data is saved only in a file in your own Google Drive, which Ezzo Budget cannot access from anyone else's account. This is entirely opt-in and can be turned off at any time from Settings.</p>
-<p><strong>No account required.</strong> Ezzo Budget does not require you to create an account, provide an email address, or share any personally identifiable information to use the product. Signing in with Google is entirely optional and only needed if you want your data synced across devices.</p>
-<p><strong>No bank connections.</strong> Ezzo Budget never asks for or accesses your bank credentials, account numbers, or any third-party financial service logins.</p>
-<p><strong>Minimal, anonymous analytics.</strong> Ezzo Budget collects lightweight, anonymous usage analytics - which pages and tools are opened, your approximate timezone/region, and whether the app is actively in use - to help us understand how the product is used. This is never tied to your name, email, or any other personally identifying information, and it never includes advertising pixels or third-party cookies. Most importantly, it never includes your budgets, transactions, balances, or any other financial data, which stay stored only on your device or in your own Google Drive and are never sent to us or seen by anyone else.</p>
-<p><strong>Data control.</strong> Because your data lives entirely on your device (or, if you opt in, your own Google Drive), you have full control over it at all times. You can export your data via CSV or clear it through your browser settings. Clearing your browser data or switching devices will remove your Ezzo Budget data unless you have exported a backup or enabled Google sync.</p>
-<p><strong>Third-party services.</strong> Ezzo Budget loads fonts from Google Fonts, which is subject to Google's privacy policy. If you opt in to Google sync, Ezzo Budget also uses Google Sign-In and the Google Drive API to store your data in your own Drive, subject to Google's privacy policy. No other third-party services are used.</p>
-<p><strong>Changes.</strong> If this policy changes, the updated version will be posted on this page with a revised date.</p>`,
-    terms: `<p><strong>Last updated:</strong> July 2026</p>
-<p>By using Ezzo Budget, you agree to the following terms.</p>
-<p><strong>License.</strong> Ezzo Budget grants you a personal, non-transferable license to use the software for personal financial planning. The free trial allows limited usage. Purchasing an access code unlocks unlimited usage for one user.</p>
-<p><strong>No financial advice.</strong> Ezzo Budget is a budgeting and organizational tool, not a financial advisor. The calculators, projections, and summaries provided are for informational purposes only and do not constitute financial, tax, investment, or legal advice. Always consult a qualified professional for financial decisions.</p>
-<p><strong>Data responsibility.</strong> You are solely responsible for your data. Ezzo Budget stores data in your browser's local storage and does not create backups on your behalf. Use the CSV export feature to keep backup copies of your financial information.</p>
-<p><strong>No warranty.</strong> Ezzo Budget is provided "as is" without warranty of any kind, express or implied. We do not guarantee that the software will be error-free, uninterrupted, or free of bugs.</p>
-<p><strong>Limitation of liability.</strong> Ezzo Budget and its creators shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the software, including but not limited to financial losses, data loss, or decisions made based on information provided by the software.</p>
-<p><strong>Refunds.</strong> Due to the digital nature of the product and immediate access upon purchase, all sales are final. We encourage you to use the free trial to evaluate the product before purchasing.</p>
-<p><strong>Changes.</strong> We reserve the right to modify these terms at any time. Continued use after changes constitutes acceptance of the updated terms.</p>`,
-    disclaimer: `<p><strong>Last updated:</strong> July 2026</p>
-<p><strong>Not financial advice.</strong> Ezzo Budget is a personal budgeting and expense tracking tool. It is not a substitute for professional financial planning, tax advice, or investment guidance. The debt payoff projections, savings calculations, and budget summaries are estimates based on the information you provide and should not be relied upon as precise financial forecasts.</p>
-<p><strong>Accuracy of calculations.</strong> While we strive for accuracy in all calculations, Ezzo Budget does not account for taxes, fees, interest rate changes, inflation, or other factors that may affect your actual financial outcomes. Always verify important financial calculations independently.</p>
-<p><strong>User responsibility.</strong> You are solely responsible for the financial decisions you make. Ezzo Budget is a planning aid, and any actions you take based on the information it provides are at your own discretion and risk.</p>
-<p><strong>Testimonials.</strong> User testimonials displayed on this site reflect individual experiences and are not guaranteed outcomes. Your results may vary based on your financial situation, discipline, and other personal factors.</p>
-<p><strong>Browser compatibility.</strong> Ezzo Budget relies on your browser's local storage. Clearing your browser cache or cookies may delete your saved data. We strongly recommend regularly exporting your data using the CSV export feature as a backup.</p>`
-  };
-  document.getElementById('legalTitle').textContent = titles[type] || '';
-  document.getElementById('legalBody').innerHTML = bodies[type] || '';
-  document.getElementById('legalOverlay').hidden = false;
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -3427,12 +3427,6 @@ body.penny-drawer-open { overflow: hidden; }
 .lp-footer-link:hover { color: var(--grad-purple); text-decoration: underline; }
 .lp-footer-copy { font-size: 11px; color: var(--text-faint); margin: 0; }
 
-/* ── Legal modal ─────────────────────────────────────────────────────── */
-.modal--legal { max-width: 580px; max-height: 80vh; overflow-y: auto; }
-.modal--legal .modal-body p { margin: 0 0 12px; font-size: 13.5px; line-height: 1.65; color: var(--text-secondary); }
-.modal--legal .modal-body p strong { color: var(--text-primary); }
-.modal--legal .modal-body p:last-child { margin-bottom: 0; }
-
 /* ── Responsive (landing page) ───────────────────────────────────────── */
 @media (max-width: 900px) {
   .rc-card { flex: 0 0 calc((100% - 16px) / 2); }
