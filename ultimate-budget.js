@@ -520,7 +520,6 @@ const TRANSLATIONS = {
     quick_presets:'Quick presets:',select_currency:'Select your currency',select_language:'Select language',
     appearance_desc:'Choose a colour theme.',
     dash_anim_title:'Dashboard Animations',dash_anim_desc:'Play a subtle entrance animation when the dashboard loads.',dash_anim_label:'Enable animations',
-    video_tutorial:'▶ Video Tutorial',
     help_sett_intro:'All your preferences for the Ultimate Budget Planner. Changes are saved automatically as you make them.',
     help_sett_currency_p:'Changes the currency symbol everywhere in the app immediately on selection.',
     help_sett_appearance_p:'Choose from five colour themes - Light, Dark, Synthwave, Vintage, or Terminal. Your preference is remembered across sessions.',
@@ -1051,7 +1050,6 @@ const TRANSLATIONS = {
     quick_presets:'Schnellauswahl:',select_currency:'Währung auswählen',select_language:'Sprache auswählen',
     appearance_desc:'Wähle ein Farbthema.',
     dash_anim_title:'Dashboard-Animationen',dash_anim_desc:'Beim Laden des Dashboards eine dezente Eingangsanimation abspielen.',dash_anim_label:'Animationen aktivieren',
-    video_tutorial:'▶ Video-Tutorial',
     help_sett_intro:'Alle deine Einstellungen für den Ultimate Budget Planner. Änderungen werden automatisch gespeichert, sobald du sie vornimmst.',
     help_sett_currency_p:'Ändert das Währungssymbol sofort bei Auswahl überall in der App.',
     help_sett_appearance_p:'Wähle aus fünf Farbthemen - Hell, Dunkel, Synthwave, Vintage oder Terminal. Deine Einstellung wird sitzungsübergreifend gespeichert.',
@@ -1581,7 +1579,6 @@ const TRANSLATIONS = {
     quick_presets:'Raccourcis :',select_currency:'Sélectionnez votre devise',select_language:'Sélectionner la langue',
     appearance_desc:'Choisissez un thème de couleur.',
     dash_anim_title:'Animations du tableau de bord',dash_anim_desc:"Jouer une animation d'entrée subtile au chargement du tableau de bord.",dash_anim_label:'Activer les animations',
-    video_tutorial:'▶ Tutoriel vidéo',
     help_sett_intro:'Toutes vos préférences pour Ultimate Budget Planner. Les modifications sont enregistrées automatiquement à mesure que vous les effectuez.',
     help_sett_currency_p:"Change le symbole de devise partout dans l'application dès la sélection.",
     help_sett_appearance_p:'Choisissez parmi cinq thèmes de couleur - Clair, Sombre, Synthwave, Vintage ou Terminal. Votre préférence est mémorisée entre les sessions.',
@@ -2111,7 +2108,6 @@ const TRANSLATIONS = {
     quick_presets:'Accesos rápidos:',select_currency:'Selecciona tu moneda',select_language:'Seleccionar idioma',
     appearance_desc:'Elige un tema de color.',
     dash_anim_title:'Animaciones del panel',dash_anim_desc:'Reproduce una animación de entrada sutil al cargar el panel.',dash_anim_label:'Activar animaciones',
-    video_tutorial:'▶ Tutorial en vídeo',
     help_sett_intro:'Todas tus preferencias para Ultimate Budget Planner. Los cambios se guardan automáticamente a medida que los realizas.',
     help_sett_currency_p:'Cambia el símbolo de moneda en toda la aplicación inmediatamente al seleccionarlo.',
     help_sett_appearance_p:'Elige entre cinco temas de color - Claro, Oscuro, Synthwave, Vintage o Terminal. Tu preferencia se recuerda entre sesiones.',
@@ -2641,7 +2637,6 @@ const TRANSLATIONS = {
     quick_presets:'Selezione rapida:',select_currency:'Seleziona la tua valuta',select_language:'Seleziona lingua',
     appearance_desc:'Scegli un tema di colore.',
     dash_anim_title:'Animazioni della dashboard',dash_anim_desc:'Riproduci una sottile animazione di ingresso al caricamento della dashboard.',dash_anim_label:'Attiva animazioni',
-    video_tutorial:'▶ Video Tutorial',
     help_sett_intro:'Tutte le tue preferenze per Ultimate Budget Planner. Le modifiche vengono salvate automaticamente man mano che le apporti.',
     help_sett_currency_p:"Modifica il simbolo di valuta ovunque nell'app immediatamente alla selezione.",
     help_sett_appearance_p:'Scegli tra cinque temi di colore - Chiaro, Scuro, Synthwave, Vintage o Terminal. Le tue preferenze vengono ricordate tra le sessioni.',
@@ -3172,7 +3167,6 @@ const TRANSLATIONS = {
     quick_presets:'Szybki wybór:',select_currency:'Wybierz walutę',select_language:'Wybierz język',
     appearance_desc:'Wybierz motyw kolorystyczny.',
     dash_anim_title:'Animacje pulpitu',dash_anim_desc:'Odtwarzaj delikatną animację wejścia przy ładowaniu pulpitu.',dash_anim_label:'Włącz animacje',
-    video_tutorial:'▶ Samouczek wideo',
     help_sett_intro:'Wszystkie Twoje preferencje dla Ultimate Budget Planner. Zmiany są zapisywane automatycznie w trakcie ich wprowadzania.',
     help_sett_currency_p:'Zmienia symbol waluty wszędzie w aplikacji natychmiast po wybraniu.',
     help_sett_appearance_p:'Wybierz spośród pięciu motywów kolorystycznych - Jasny, Ciemny, Synthwave, Vintage lub Terminal. Twoje ustawienie jest zapamiętywane między sesjami.',
@@ -6087,7 +6081,7 @@ const HELP={
 <h4 style="margin:0 0 6px;font-size:14px">${t('help_dash_bottom_h')}</h4>
 <p>${t('help_dash_bottom_p')}</p>
 <p style="margin-top:10px"><em>${t('help_dash_tip')}</em></p>
-<div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+`
   },
 
   budget:{
@@ -6109,7 +6103,7 @@ const HELP={
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_bud_bills_h')}</h4>
 <p>${t('help_bud_bills_p')}</p>
 <p style="margin-top:10px"><em>${t('help_bud_tip')}</em></p>
-<div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+`
   },
 
   transactions:{
@@ -6133,7 +6127,7 @@ const HELP={
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_tx_csv_h')}</h4>
 <p>${t('help_tx_csv_p1')}</p>
 <p>${t('help_tx_csv_p2')}</p>
-<div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+`
   },
 
   debt:{
@@ -6162,7 +6156,7 @@ const HELP={
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_dpc_extra_h')}</h4>
 <p>${t('help_dpc_extra_p')}</p>
 <p style="margin-top:10px"><em>${t('help_dpc_tip')}</em></p>
-<div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+`
   },
 
   sinking:{
@@ -6182,7 +6176,7 @@ const HELP={
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_sf_contrib_h')}</h4>
 <p>${t('help_sf_contrib_p')}</p>
 <p style="margin-top:10px"><em>${t('help_sf_tip')}</em></p>
-<div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+`
   },
 
   calendar:{
@@ -6201,7 +6195,7 @@ const HELP={
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_cal_paid_h')}</h4>
 <p>${t('help_cal_paid_p')}</p>
 <p style="margin-top:10px"><em>${t('help_cal_tip')}</em></p>
-<div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+`
   },
 
   subscriptions:{
@@ -6224,7 +6218,7 @@ const HELP={
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_sub_chart_h')}</h4>
 <p>${t('help_sub_chart_p')}</p>
 <p style="margin-top:10px"><em>${t('help_sub_tip')}</em></p>
-<div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+`
   },
 
   settings:{
@@ -6245,7 +6239,7 @@ const HELP={
 <p>${t('help_sett_rollover_p')}</p>
 <h4 style="margin:14px 0 6px;font-size:14px">✨ ${t('sett_penny_h')}</h4>
 <p>${t('help_sett_penny_p')}</p>
-<div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+`
   },
 
   penny_api_key:{

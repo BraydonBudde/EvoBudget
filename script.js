@@ -137,7 +137,6 @@ const TRANSLATIONS = {
     quick_presets:'Quick presets:',select_currency:'Select your currency',select_language:'Select language',
     appearance_desc:'Choose a colour theme.',
     dash_anim_title:'Dashboard Animations',dash_anim_desc:'Play a subtle entrance animation when the dashboard loads.',dash_anim_label:'Enable animations',
-    video_tutorial:'▶ Video Tutorial',
     help_sett_modal_title:'How Settings work',help_sett_intro:'Customise Ezzo Budget to match your situation.',
     help_sett_currency_li:'Updates the symbol everywhere (some currencies like PLN place the symbol after the amount).',
     help_sett_period_li:'Set your date range. Click the date badge on Dashboard to jump here quickly.',
@@ -399,7 +398,6 @@ const TRANSLATIONS = {
     quick_presets:'Schnellauswahl:',select_currency:'Währung auswählen',select_language:'Sprache auswählen',
     appearance_desc:'Wähle ein Farbthema.',
     dash_anim_title:'Dashboard-Animationen',dash_anim_desc:'Beim Laden des Dashboards eine dezente Eingangsanimation abspielen.',dash_anim_label:'Animationen aktivieren',
-    video_tutorial:'▶ Video-Tutorial',
     help_sett_modal_title:'Einstellungen im Überblick',help_sett_intro:'Passe Ezzo Budget an deine Situation an.',
     help_sett_currency_li:'Aktualisiert das Symbol überall (manche Währungen wie PLN setzen das Symbol nach dem Betrag).',
     help_sett_period_li:'Lege deinen Datumsbereich fest. Klicke auf das Datums-Badge im Dashboard, um schnell hierher zu gelangen.',
@@ -661,7 +659,6 @@ const TRANSLATIONS = {
     quick_presets:'Raccourcis :',select_currency:'Sélectionnez votre devise',select_language:'Sélectionner la langue',
     appearance_desc:'Choisissez un thème de couleur.',
     dash_anim_title:'Animations du tableau de bord',dash_anim_desc:"Jouer une animation d'entrée subtile au chargement du tableau de bord.",dash_anim_label:'Activer les animations',
-    video_tutorial:'▶ Tutoriel vidéo',
     help_sett_modal_title:'Fonctionnement des paramètres',help_sett_intro:'Personnalisez Ezzo Budget selon votre situation.',
     help_sett_currency_li:"Met à jour le symbole partout (certaines devises comme le PLN placent le symbole après le montant).",
     help_sett_period_li:'Définissez votre plage de dates. Cliquez sur le badge de date du tableau de bord pour y accéder rapidement.',
@@ -923,7 +920,6 @@ const TRANSLATIONS = {
     quick_presets:'Accesos rápidos:',select_currency:'Selecciona tu moneda',select_language:'Seleccionar idioma',
     appearance_desc:'Elige un tema de color.',
     dash_anim_title:'Animaciones del panel',dash_anim_desc:'Reproduce una animación de entrada sutil al cargar el panel.',dash_anim_label:'Activar animaciones',
-    video_tutorial:'▶ Tutorial en vídeo',
     help_sett_modal_title:'Cómo funcionan los ajustes',help_sett_intro:'Personaliza Ezzo Budget según tu situación.',
     help_sett_currency_li:'Actualiza el símbolo en todas partes (algunas monedas como PLN colocan el símbolo después del importe).',
     help_sett_period_li:'Establece tu rango de fechas. Haz clic en el distintivo de fecha del panel para acceder rápidamente aquí.',
@@ -1185,7 +1181,6 @@ const TRANSLATIONS = {
     quick_presets:'Selezione rapida:',select_currency:'Seleziona la tua valuta',select_language:'Seleziona lingua',
     appearance_desc:'Scegli un tema di colore.',
     dash_anim_title:'Animazioni della dashboard',dash_anim_desc:'Riproduci una sottile animazione di ingresso al caricamento della dashboard.',dash_anim_label:'Attiva animazioni',
-    video_tutorial:'▶ Video Tutorial',
     help_sett_modal_title:'Come funzionano le impostazioni',help_sett_intro:'Personalizza Ezzo Budget in base alla tua situazione.',
     help_sett_currency_li:"Aggiorna il simbolo ovunque (alcune valute come il PLN inseriscono il simbolo dopo l'importo).",
     help_sett_period_li:'Imposta il tuo intervallo di date. Fai clic sul badge della data nel pannello per accedervi rapidamente.',
@@ -1446,7 +1441,6 @@ const TRANSLATIONS = {
     quick_presets:'Szybki wybór:',select_currency:'Wybierz walutę',select_language:'Wybierz język',
     appearance_desc:'Wybierz motyw kolorystyczny.',
     dash_anim_title:'Animacje pulpitu',dash_anim_desc:'Odtwarzaj delikatną animację wejścia przy ładowaniu pulpitu.',dash_anim_label:'Włącz animacje',
-    video_tutorial:'▶ Samouczek wideo',
     help_sett_modal_title:'Jak działają ustawienia',help_sett_intro:'Dostosuj Ezzo Budget do swojej sytuacji.',
     help_sett_currency_li:'Aktualizuje symbol wszędzie (niektóre waluty jak PLN umieszczają symbol po kwocie).',
     help_sett_period_li:'Ustaw zakres dat. Kliknij znacznik daty na panelu, aby szybko przejść tutaj.',
@@ -3825,7 +3819,7 @@ const HELP = {
   <li><strong>${t('help_dash_donut_h')}</strong> - ${t('help_dash_donut_li')}</li>
   <li><strong>${t('help_dash_datebadge_h')}</strong> - ${t('help_dash_datebadge_li')}</li>
 </ul>
-<p><em>${t('help_dash_tip')}</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+<p><em>${t('help_dash_tip')}</em></p>`
   },
   transactions: {
     title: () => `📋 ${t('help_tx_modal_title')}`,
@@ -3835,7 +3829,7 @@ const HELP = {
   <li><strong>${t('category')}</strong> - ${t('help_tx_category_li')}</li>
   <li><strong>${t('help_tx_edit_h')}</strong> - ${t('help_tx_edit_li')}</li>
 </ul>
-<p><strong>${t('help_tx_csv_h')}</strong><br><code>Date,Type,Category,Amount,Description</code><br><code>2024-01-15,expense,Food,25.50,Grocery run</code></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+<p><strong>${t('help_tx_csv_h')}</strong><br><code>Date,Type,Category,Amount,Description</code><br><code>2024-01-15,expense,Food,25.50,Grocery run</code></p>`
   },
   income: {
     title: () => `💰 ${t('help_inc_modal_title')}`,
@@ -3844,7 +3838,7 @@ const HELP = {
   <li><strong>${t('expected')}</strong> - ${t('help_inc_expected_li')}</li>
   <li><strong>${t('actual')}</strong> - ${t('help_inc_actual_li')}</li>
 </ul>
-<p><em>${t('help_inc_tip')}</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+<p><em>${t('help_inc_tip')}</em></p>`
   },
   expenses: {
     title: () => `🛒 ${t('help_exp_modal_title')}`,
@@ -3852,7 +3846,7 @@ const HELP = {
 <ul>
   <li><strong>${t('expected')}</strong> - ${t('help_exp_expected_li')}</li>
   <li><strong>${t('actual')}</strong> - ${t('help_exp_actual_li')}</li>
-</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+</ul>`
   },
   bills: {
     title: () => `🧾 ${t('help_bills_modal_title')}`,
@@ -3861,7 +3855,7 @@ const HELP = {
   <li><strong>${t('due_date')}</strong> - ${t('help_bills_duedate_li')}</li>
   <li><strong>${t('paid')}</strong> - ${t('help_bills_paid_li')}</li>
   <li><strong>${t('actual')}</strong> - ${t('help_bills_actual_li')}</li>
-</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+</ul>`
   },
   debt: {
     title: () => `💳 ${t('help_debt_modal_title')}`,
@@ -3870,7 +3864,7 @@ const HELP = {
   <li><strong>${t('expected')}</strong> - ${t('help_debt_expected_li')}</li>
   <li><strong>${t('due_date')}</strong> - ${t('help_debt_duedate_li')}</li>
   <li><strong>${t('paid')}</strong> - ${t('help_debt_paid_li')}</li>
-</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+</ul>`
   },
   savings: {
     title: () => `🏦 ${t('help_sav_modal_title')}`,
@@ -3879,7 +3873,7 @@ const HELP = {
   <li><strong>${t('expected')}</strong> - ${t('help_sav_expected_li')}</li>
   <li><strong>${t('actual')}</strong> - ${t('help_sav_actual_li')}</li>
 </ul>
-<p><em>${t('help_sav_tip')}</em></p><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+<p><em>${t('help_sav_tip')}</em></p>`
   },
   settings: {
     title: () => `⚙️ ${t('help_sett_modal_title')}`,
@@ -3890,7 +3884,7 @@ const HELP = {
   <li><strong>${t('rollover')}</strong> - ${t('help_sett_rollover_li')}</li>
   <li><strong>${t('appearance')}</strong> - ${t('help_sett_theme_li')}</li>
   <li><strong>${t('dashboard_layout')}</strong> - ${t('help_sett_layout_li')}</li>
-</ul><div style="margin-top:18px;text-align:center"><a href="https://www.youtube.com/results?search_query=personal+budget+planner+tutorial" target="_blank" rel="noopener noreferrer" class="help-video-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.33 6.34 6.34 6.34 0 0 0 12.67 0l-.01-11.7A8.27 8.27 0 0 0 21 5.11V2a4.84 4.84 0 0 1-1.41 4.69z"/></svg> ${t('video_tutorial')}</a></div>`
+</ul>`
   }
 };
 
