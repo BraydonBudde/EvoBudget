@@ -1714,7 +1714,13 @@ const SBP_MODE_KEY = 'evobudget_sbp_mode';                 // 'trial' | 'full'
 const TRIAL_LIMITS = { transactions: 3, income: 3, expenses: 3, bills: 3, debt: 3, savings: 3 };
 
 // ▼▼ EDIT THESE: drop in your real checkout links + prices ▼▼
-const PURCHASE_URLS = { sbp: '', ubp: '' };  // leave '' to show a placeholder toast
+// TEST MODE links (ezzohub.lemonsqueezy.com store is not yet activated) -
+// swap these for the live-mode checkout links once the store is approved
+// and the products are copied over via Lemon Squeezy's "Copy to Live Mode".
+const PURCHASE_URLS = {
+  sbp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/06896e34-a3a0-485d-a470-891e1bd45b6d',
+  ubp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/82d76580-b132-4c74-8d1c-2a383087510c',
+};
 const PRICES        = { sbp: '$19.99', ubp: '$49.99' };
 // ▲▲ ─────────────────────────────────────────────────────── ▲▲
 
