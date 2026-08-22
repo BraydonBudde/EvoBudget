@@ -553,7 +553,7 @@ function summaryRedemptionConversion() {
   const redeemers = uniqueBy(allEvents.filter(e => e.type === 'launch_code_redeemed'), e => e.visitorId).length;
   if (!visitors) return null;
   const pct = Math.round(redeemers / visitors * 100);
-  return summaryCardHtml('🔓', pct >= 15 ? 'positive' : 'neutral', `${b(pct + '%')} of all tool visitors (${redeemers} of ${visitors}) have redeemed an access code - the site-wide activation rate.`);
+  return summaryCardHtml('🔓', pct >= 15 ? 'positive' : 'neutral', `${b(pct + '%')} of all tool visitors (${redeemers} of ${visitors}) have redeemed a license key - the site-wide activation rate.`);
 }
 function summaryReusedOrderIds() {
   const rows = redemptionRows();
@@ -830,7 +830,7 @@ function renderProduct() {
     ${filterBarHtml()}
     <div class="admin-grid-2">
       <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Launch codes redeemed', 'Which specific access codes were redeemed in this range - see the Redemptions tab for the full list with order IDs.')}
+        ${panelTitle('Launch codes redeemed', 'Which specific license keys were redeemed in this range - see the Redemptions tab for the full list with order IDs.')}
         ${pieOrEmpty(codes, 'No codes redeemed in this range.')}
       </div></div>
       <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
@@ -986,7 +986,7 @@ function insightCardHtml(id, d, color) {
   switch (id) {
     case 'funnel':
       return `<div class="panel" style="grid-column:1/-1"><div class="panel-inner-sm">
-        ${panelTitle('Activation funnel', 'Of everyone who visited this tool, what share went on to redeem an access code for it.')}
+        ${panelTitle('Activation funnel', 'Of everyone who visited this tool, what share went on to redeem a license key for it.')}
         <div class="admin-funnel">
           <div class="admin-funnel-step"><div class="admin-funnel-step-value">${fmt(d.visitorCount)}</div><div class="admin-funnel-step-label">Visited</div></div>
           <div class="admin-funnel-arrow"><span class="admin-funnel-arrow-glyph">→</span><span class="admin-funnel-arrow-pct">${d.conversionPct}%</span></div>
@@ -1023,7 +1023,7 @@ function toolInsightsBlockHtml(tool, label, color) {
         { icon: '⏱️', label: 'Avg. session duration', value: formatDuration(d.avgDuration), sub: 'first to last activity', color, hint: 'Average time between first and last activity, across sessions on this tool’s page.' },
         { icon: '↩️', label: 'Bounce rate', value: d.bounceRate + '%', sub: 'no 2nd page, no ~25s+ stay', color, hint: 'Share of sessions that viewed only one page and didn’t stay long enough for a heartbeat (~25s+).' },
         { icon: '🔁', label: 'Returning visitors', value: d.returningPct + '%', sub: `of ${fmt(d.visitorCount)} total visitors`, color, hint: 'Share of this tool’s visitors who have visited in more than one session, ever.' },
-        { icon: '🔓', label: 'Code redemption rate', value: d.conversionPct + '%', sub: `${fmt(d.redeemedFromVisitors)} of ${fmt(d.visitorCount)} visitors`, color, hint: 'Share of this tool’s visitors who went on to redeem an access code for it.' }
+        { icon: '🔓', label: 'License key redemption rate', value: d.conversionPct + '%', sub: `${fmt(d.redeemedFromVisitors)} of ${fmt(d.visitorCount)} visitors`, color, hint: 'Share of this tool’s visitors who went on to redeem a license key for it.' }
       ])}
       <div class="admin-card-grid">${INSIGHT_CARD_DEFS.map(c => insightCardHtml(c.id, d, color)).join('')}</div>
     </div>`;
@@ -1058,7 +1058,7 @@ function renderInsights() {
   });
 }
 
-// ══════════════════════ Redemptions (access code + order ID) ══════════════
+// ══════════════════════ Redemptions (license key + order ID) ══════════════
 // All-time, like App Insights - this is a standing record for the site
 // owner to manually cross-reference against real orders and revoke access,
 // not a point-in-time traffic snapshot. The order ID itself is never
@@ -1124,7 +1124,7 @@ function wireRedemptionFilters() {
   document.getElementById('admRedemptionClear')?.addEventListener('click', () => { redemptionFilters.q = ''; redemptionFilters.tool = ''; redemptionFilters.onlyReused = false; renderRedemptions(); });
 }
 function redemptionsTableHtml(rows) {
-  const head = `<tr><th>When</th><th>Order ID</th><th>Code</th><th>Tool</th><th>Visitor</th><th>Region</th></tr>`;
+  const head = `<tr><th>When</th><th>Order ID</th><th>License Key</th><th>Tool</th><th>Visitor</th><th>Region</th></tr>`;
   if (!rows.length) return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody><tr class="admin-empty-row"><td colspan="6">No redemptions match.</td></tr></tbody></table></div>`;
   return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
     ${rows.map(r => `<tr>
@@ -1148,7 +1148,7 @@ function renderRedemptions() {
 
   el.innerHTML = `
     <div class="section-header"><h2 class="admin-section-title">Redemptions</h2></div>
-    <p class="admin-section-sub">Every access-code redemption with the order ID the visitor entered - all-time, not affected by date filters on other tabs. Use this to spot entries that don't match a real order and revoke access.</p>
+    <p class="admin-section-sub">Every license key redemption with the order ID the visitor entered - all-time, not affected by date filters on other tabs. Use this to spot entries that don't match a real order and revoke access.</p>
     ${kpiRow([
       { icon: '🔑', label: 'Total redemptions', value: fmt(allRows.length), sub: '', color: '#6366f1', hint: 'Every successful code + order ID submission. A visitor testing multiple codes counts more than once.' },
       { icon: '🧾', label: 'Unique order IDs', value: fmt(uniqueOrderIds), sub: '', color: '#14b8a6', hint: 'Distinct order IDs seen across all redemptions. Order IDs are never format-checked - this is a raw count of whatever was typed.' },
@@ -1407,7 +1407,7 @@ function pennyBuildSystemInstruction() {
     : '';
   return { parts: [{ text:
     "You are Ezzo, the site owner's analytics assistant, built into the private EzzoBudget admin dashboard. You have full access to every metric in this dashboard - Overview, Live, Traffic, Product, App Insights, and Redemptions - with no exceptions; if a number appears anywhere in the dashboard, one of your tools can fetch it. " +
-    "You ONLY answer questions about the anonymous, aggregate usage analytics collected for this site (visitors, sessions, traffic, tool usage, feature adoption, theme/language/sync preferences, access-code redemptions) using the tools provided. " +
+    "You ONLY answer questions about the anonymous, aggregate usage analytics collected for this site (visitors, sessions, traffic, tool usage, feature adoption, theme/language/sync preferences, license key redemptions) using the tools provided. " +
     "You must call one of the provided functions to fetch real data before stating any number, percentage, or count - never invent or estimate numbers yourself. If a specific tool doesn't obviously cover what was asked, use search_events (or search_redemptions for anything about codes/order IDs/redeemers) as a general-purpose fallback before saying data isn't available. " +
     "This data is entirely anonymous and aggregate: visitors are identified only by a random on-device ID, and there is no name, email, IP address, or any financial/budget data available to you, ever - if asked for something like that, say plainly it was never collected rather than guessing. " +
     "If asked about anything unrelated to this site's analytics (general knowledge, coding help, current events, etc.), politely decline and redirect to an analytics question. " +
@@ -1430,19 +1430,19 @@ function pennyToolDeclarations() {
           to: { type: 'string', description: 'YYYY-MM-DD, inclusive end date - overrides days.' },
           tool: { type: 'string', enum: ['sbp', 'ubp', 'home'], description: 'Restrict to one page/tool.' },
         } } },
-      { name: 'get_product_breakdown', description: "Returns site-wide product-choice stats (matching the dashboard's Product tab): which access codes were redeemed, theme popularity, language preference, and sync-mode chosen (Google Drive vs. local device) - combined across both tools, optionally filtered by date range or tool.",
+      { name: 'get_product_breakdown', description: "Returns site-wide product-choice stats (matching the dashboard's Product tab): which license keys were redeemed, theme popularity, language preference, and sync-mode chosen (Google Drive vs. local device) - combined across both tools, optionally filtered by date range or tool.",
         parameters: { type: 'object', properties: {
           from: { type: 'string', description: 'YYYY-MM-DD, inclusive start date.' },
           to: { type: 'string', description: 'YYYY-MM-DD, inclusive end date.' },
           tool: { type: 'string', enum: ['sbp', 'ubp', 'home'], description: 'Restrict to one page/tool.' },
         } } },
-      { name: 'get_tool_insights', description: "Returns detailed usage signals for ONE specific budgeting tool: visitor/session counts, bounce rate, returning-visitor %, access-code redemption conversion rate, which sections/tabs get opened, which features get used, dashboard layout preference, sync-mode & theme preference (within that tool), busiest day of week, and device types.",
+      { name: 'get_tool_insights', description: "Returns detailed usage signals for ONE specific budgeting tool: visitor/session counts, bounce rate, returning-visitor %, license key redemption conversion rate, which sections/tabs get opened, which features get used, dashboard layout preference, sync-mode & theme preference (within that tool), busiest day of week, and device types.",
         parameters: { type: 'object', properties: { tool: { type: 'string', enum: ['sbp', 'ubp'], description: "'sbp' = Simple Budget, 'ubp' = Ultimate Budget." } }, required: ['tool'] } },
       { name: 'get_cross_tool_overlap', description: "Returns what share of visitors who've used either budgeting tool have explored BOTH Simple Budget and Ultimate Budget - a signal of cross-tool interest.",
         parameters: { type: 'object', properties: {} } },
-      { name: 'get_redemptions_summary', description: "Returns access-code redemption AGGREGATE stats: total redemptions, unique order IDs, unique redeemers, which specific order IDs were entered by more than one different visitor (worth investigating for possible access revocation), and which codes were redeemed how often. Use search_redemptions instead for a specific order ID, code, or visitor.",
+      { name: 'get_redemptions_summary', description: "Returns license key redemption AGGREGATE stats: total redemptions, unique order IDs, unique redeemers, which specific order IDs were entered by more than one different visitor (worth investigating for possible access revocation), and which codes were redeemed how often. Use search_redemptions instead for a specific order ID, code, or visitor.",
         parameters: { type: 'object', properties: {} } },
-      { name: 'search_redemptions', description: "Looks up individual access-code redemption records (mirrors the dashboard's Redemptions tab search). Use this for anything about a SPECIFIC order ID, code, or visitor, or to list only reused/flagged order IDs.",
+      { name: 'search_redemptions', description: "Looks up individual license key redemption records (mirrors the dashboard's Redemptions tab search). Use this for anything about a SPECIFIC order ID, code, or visitor, or to list only reused/flagged order IDs.",
         parameters: { type: 'object', properties: {
           q: { type: 'string', description: 'Free-text match against order ID, code, or visitor ID.' },
           tool: { type: 'string', enum: ['sbp', 'ubp'] },

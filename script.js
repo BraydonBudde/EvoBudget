@@ -304,8 +304,8 @@ const TRANSLATIONS = {
     sync_use_no_account:'Use without an account',sync_desc_this_device:'Planner data is stored on this device only',
     sync_status_wait:'Complete the steps in the Google window that just opened. If nothing appeared, check your address bar for a blocked pop-up icon.',
     sync_footer_note:'This can be changed in settings later',
-    code_title:'Enter your access code',code_sub:'Unlock the full {0} with the code from your purchase.',
-    code_placeholder:'Access code',code_error:"That code isn't right. Double-check it and try again.",
+    code_title:'Enter your license key',code_sub:'Unlock the full {0} with the code from your purchase.',
+    code_placeholder:'License key',code_error:"That code isn't right. Double-check it and try again.",
     code_orderid_placeholder:'Order ID',code_orderid_error:'Enter the order ID from your purchase.',
     code_submit:'Submit',code_checking:'Checking...',code_try_free:'Try for free instead',code_get:'Get a code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -561,8 +561,8 @@ const TRANSLATIONS = {
     sync_use_no_account:'Ohne Konto verwenden',sync_desc_this_device:'Planerdaten werden nur auf diesem Gerät gespeichert',
     sync_status_wait:'Schließe die Schritte im gerade geöffneten Google-Fenster ab. Falls nichts erschienen ist, prüfe deine Adressleiste auf ein blockiertes Pop-up-Symbol.',
     sync_footer_note:'Dies kann später in den Einstellungen geändert werden',
-    code_title:'Gib deinen Zugangscode ein',code_sub:'Schalte den vollen {0} mit dem Code aus deinem Kauf frei.',
-    code_placeholder:'Zugangscode',code_error:'Dieser Code ist nicht richtig. Überprüfe ihn und versuche es erneut.',
+    code_title:'Gib deinen Lizenzschlüssel ein',code_sub:'Schalte den vollen {0} mit dem Code aus deinem Kauf frei.',
+    code_placeholder:'Lizenzschlüssel',code_error:'Dieser Code ist nicht richtig. Überprüfe ihn und versuche es erneut.',
     code_orderid_placeholder:'Bestellnummer',code_orderid_error:'Gib die Bestellnummer deines Kaufs ein.',
     code_submit:'Absenden',code_try_free:'Stattdessen kostenlos testen',code_get:'Code holen',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -818,8 +818,8 @@ const TRANSLATIONS = {
     sync_use_no_account:'Utiliser sans compte',sync_desc_this_device:'Les données du planificateur sont stockées uniquement sur cet appareil',
     sync_status_wait:"Terminez les étapes dans la fenêtre Google qui vient de s'ouvrir. Si rien n'est apparu, vérifiez votre barre d'adresse pour une icône de pop-up bloquée.",
     sync_footer_note:'Cela peut être modifié plus tard dans les paramètres',
-    code_title:'Entrez votre code d’accès',code_sub:'Débloquez le {0} complet avec le code de votre achat.',
-    code_placeholder:'Code d’accès',code_error:'Ce code est incorrect. Vérifiez-le et réessayez.',
+    code_title:'Entrez votre clé de licence',code_sub:'Débloquez le {0} complet avec le code de votre achat.',
+    code_placeholder:'Clé de licence',code_error:'Ce code est incorrect. Vérifiez-le et réessayez.',
     code_orderid_placeholder:'Numéro de commande',code_orderid_error:'Saisissez le numéro de commande de votre achat.',
     code_submit:'Valider',code_try_free:'Essayer gratuitement à la place',code_get:'Obtenir un code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -1075,8 +1075,8 @@ const TRANSLATIONS = {
     sync_use_no_account:'Usar sin cuenta',sync_desc_this_device:'Los datos del planificador se almacenan solo en este dispositivo',
     sync_status_wait:'Completa los pasos en la ventana de Google que acaba de abrirse. Si no apareció nada, revisa tu barra de direcciones por un icono de ventana emergente bloqueada.',
     sync_footer_note:'Esto se puede cambiar más tarde en los ajustes',
-    code_title:'Introduce tu código de acceso',code_sub:'Desbloquea el {0} completo con el código de tu compra.',
-    code_placeholder:'Código de acceso',code_error:'Ese código no es correcto. Revísalo e inténtalo de nuevo.',
+    code_title:'Introduce tu clave de licencia',code_sub:'Desbloquea el {0} completo con el código de tu compra.',
+    code_placeholder:'Clave de licencia',code_error:'Ese código no es correcto. Revísalo e inténtalo de nuevo.',
     code_orderid_placeholder:'ID del pedido',code_orderid_error:'Introduce el ID del pedido de tu compra.',
     code_submit:'Enviar',code_try_free:'Probar gratis en su lugar',code_get:'Obtener un código',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -1331,8 +1331,8 @@ const TRANSLATIONS = {
     sync_use_no_account:'Usa senza account',sync_desc_this_device:'I dati del pianificatore sono memorizzati solo su questo dispositivo',
     sync_status_wait:'Completa i passaggi nella finestra Google appena apertasi. Se non è apparso nulla, controlla la barra degli indirizzi per un’icona di popup bloccato.',
     sync_footer_note:'Questo può essere modificato in seguito nelle impostazioni',
-    code_title:'Inserisci il tuo codice di accesso',code_sub:'Sblocca il {0} completo con il codice del tuo acquisto.',
-    code_placeholder:'Codice di accesso',code_error:'Il codice non è corretto. Controllalo e riprova.',
+    code_title:'Inserisci la tua chiave di licenza',code_sub:'Sblocca il {0} completo con il codice del tuo acquisto.',
+    code_placeholder:'Chiave di licenza',code_error:'Il codice non è corretto. Controllalo e riprova.',
     code_orderid_placeholder:'ID ordine',code_orderid_error:"Inserisci l'ID dell'ordine del tuo acquisto.",
     code_submit:'Invia',code_try_free:'Prova gratis invece',code_get:'Ottieni un codice',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -1587,8 +1587,8 @@ const TRANSLATIONS = {
     sync_use_no_account:'Użyj bez konta',sync_desc_this_device:'Dane planera są przechowywane tylko na tym urządzeniu',
     sync_status_wait:'Ukończ kroki w oknie Google, które właśnie się otworzyło. Jeśli nic się nie pojawiło, sprawdź pasek adresu pod kątem zablokowanej ikony wyskakującego okienka.',
     sync_footer_note:'Można to później zmienić w ustawieniach',
-    code_title:'Wprowadź swój kod dostępu',code_sub:'Odblokuj pełny {0} za pomocą kodu z Twojego zakupu.',
-    code_placeholder:'Kod dostępu',code_error:'Ten kod jest nieprawidłowy. Sprawdź go i spróbuj ponownie.',
+    code_title:'Wprowadź swój klucz licencyjny',code_sub:'Odblokuj pełny {0} za pomocą kodu z Twojego zakupu.',
+    code_placeholder:'Klucz licencyjny',code_error:'Ten kod jest nieprawidłowy. Sprawdź go i spróbuj ponownie.',
     code_orderid_placeholder:'Numer zamówienia',code_orderid_error:'Wpisz numer zamówienia z Twojego zakupu.',
     code_submit:'Wyślij',code_try_free:'Wypróbuj za darmo zamiast tego',code_get:'Zdobądź kod',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -2035,7 +2035,7 @@ function showSyncChoiceModal(tool) {
   requestAnimationFrame(() => ov.classList.add('is-in'));
 }
 
-// ── Access-code prompt ─────────────────────────────────────────────────
+// ── License key prompt ─────────────────────────────────────────────────
 function showAccessCodeModal(tool) {
   document.getElementById('fkCodeOverlay')?.remove();
   const isU  = tool === 'ubp';
@@ -2398,7 +2398,7 @@ function renderHub() {
     </div>
   `).join('');
 
-  // Open → full version (access code required)
+  // Open → full version (license key required)
   document.querySelectorAll('.tool-open-btn[data-tool]').forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.dataset.tool === 'budget') openFull('sbp');
