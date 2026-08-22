@@ -307,7 +307,7 @@ const TRANSLATIONS = {
     code_title:'Enter your access code',code_sub:'Unlock the full {0} with the code from your purchase.',
     code_placeholder:'Access code',code_error:"That code isn't right. Double-check it and try again.",
     code_orderid_placeholder:'Order ID',code_orderid_error:'Enter the order ID from your purchase.',
-    code_submit:'Submit',code_try_free:'Try for free instead',code_get:'Get a code',
+    code_submit:'Submit',code_checking:'Checking...',code_try_free:'Try for free instead',code_get:'Get a code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Edit Transaction',save_changes:'Save changes',no_categories:'- no categories -',
     no_cat_setup:'- set up categories first -',
@@ -1871,6 +1871,48 @@ const LAUNCH_CODES = {
   '1URV9': { tool: 'ubp', layout: 2, theme: 'vintage-ledger' },
   '2URT0': { tool: 'ubp', layout: 2, theme: 'terminal' },
 };
+
+// ▼▼ EDIT: fill in once your Lemon Squeezy products exist - each product's
+// ID is in its Lemon Squeezy dashboard URL (Products → click product →
+// the number in the address bar). Leave blank and the name-based fallback
+// below still works as long as the product name contains "Simple"/"Ultimate". ▼▼
+const LEMON_SQUEEZY_PRODUCT_TOOL = {
+  // 'YOUR_SBP_PRODUCT_ID': 'sbp',
+  // 'YOUR_UBP_PRODUCT_ID': 'ubp',
+};
+// ▲▲ ──────────────────────────────────────────────────────────────────── ▲▲
+
+// Codes not found in LAUNCH_CODES (the fixed Etsy-sale codes above) fall
+// back to checking whether they're a real Lemon Squeezy license key. The
+// License API's validate endpoint is deliberately public-safe - it only
+// needs the license key itself, never a merchant secret - so this is a
+// plain client-side fetch, no backend required. Returns null (never
+// throws) on anything invalid/unrecognized/offline, so the caller can
+// treat it exactly like "wrong code" without special-casing network errors.
+async function validateLemonSqueezyKey(licenseKey) {
+  try {
+    const res = await fetch('https://api.lemonsqueezy.com/v1/licenses/validate', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ license_key: licenseKey }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.valid) return null;
+    const productId   = String(data.meta?.product_id ?? '');
+    const productName = String(data.meta?.product_name ?? '').toLowerCase();
+    // Fail safe rather than guess: an unrecognized product on an otherwise
+    // valid key is treated as "not one of ours" instead of unlocking the
+    // wrong tool for a paying customer.
+    const tool = LEMON_SQUEEZY_PRODUCT_TOOL[productId]
+      || (productName.includes('ultimate') ? 'ubp' : productName.includes('simple') ? 'sbp' : null);
+    if (!tool) return null;
+    return { tool, orderId: data.meta?.order_id ?? null };
+  } catch {
+    return null;
+  }
+}
+
 // One-time handoff for the dashboard layout a code was redeemed with -
 // UBP is a full page navigation away (ultimate-budget.html), so it can't
 // be applied to a live `state` object the way SBP's can; init() there
@@ -2027,21 +2069,8 @@ function showAccessCodeModal(tool) {
   const opener = document.activeElement;
   const close = () => { ov.classList.add('is-leaving'); document.removeEventListener('keydown', onKey); setTimeout(() => { ov.remove(); opener?.focus?.(); }, 180); };
   const onKey = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else { modalTabTrap(ov, e); } };
-  const submit = () => {
-    const codeVal = input.value.trim().toUpperCase();
-    const orderIdVal = orderIdInput.value.trim();
-    const cfg = LAUNCH_CODES[codeVal];
-    // Both the code AND an order ID are required to proceed - the order ID
-    // itself is never format-checked (it's just captured for the site
-    // owner to cross-reference against real orders later and revoke access
-    // for entries that don't match one), but it can't be left blank.
-    errEl.hidden = !!cfg;
-    orderIdErrEl.hidden = !!orderIdVal;
-    if (!cfg || !orderIdVal) {
-      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-      (!cfg ? input : orderIdInput).select();
-      return;
-    }
+  const submitBtn = ov.querySelector('#fkCodeSubmit');
+  const redeemLaunchCode = (cfg, codeVal, orderIdVal) => {
     // The code names its own tool - honor that even if it differs from
     // whichever "Open" button opened this modal, rather than rejecting
     // a valid code just because it was typed in the "other" prompt.
@@ -2054,10 +2083,53 @@ function showAccessCodeModal(tool) {
     close();
     showSyncChoiceModal(cfg.tool);
   };
+  const redeemLemonSqueezyKey = (lsResult, codeVal, orderIdVal) => {
+    // Unlike a launch code, a Lemon Squeezy key carries no layout/theme -
+    // leave those exactly as they already are rather than forcing a default.
+    setUnlocked(lsResult.tool);
+    trackEvent('launch_code_redeemed', { code: codeVal, tool: lsResult.tool, orderId: orderIdVal, source: 'lemonsqueezy' });
+    close();
+    showSyncChoiceModal(lsResult.tool);
+  };
+  const submit = async () => {
+    const codeVal = input.value.trim().toUpperCase();
+    const orderIdVal = orderIdInput.value.trim();
+    const cfg = LAUNCH_CODES[codeVal];
+    // An order ID is always required - for launch codes it's the site
+    // owner's only manual cross-reference; for Lemon Squeezy keys it's
+    // just kept for the buyer's own record since the key itself is
+    // already verified against Lemon Squeezy directly.
+    orderIdErrEl.hidden = !!orderIdVal;
+    if (!orderIdVal) {
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      orderIdInput.select();
+      return;
+    }
+    if (cfg) {
+      errEl.hidden = true;
+      redeemLaunchCode(cfg, codeVal, orderIdVal);
+      return;
+    }
+    // Not one of the fixed launch codes (those are reserved for Etsy sales)
+    // - try it as a real Lemon Squeezy license key before rejecting it.
+    errEl.hidden = true;
+    submitBtn.disabled = true;
+    const originalLabel = submitBtn.textContent;
+    submitBtn.textContent = t('code_checking');
+    const lsResult = await validateLemonSqueezyKey(codeVal);
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+
+    if (lsResult) { redeemLemonSqueezyKey(lsResult, codeVal, orderIdVal); return; }
+
+    errEl.hidden = false;
+    card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    input.select();
+  };
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', e => { if (e.target === ov) close(); });
   ov.querySelector('#fkCodeClose')?.addEventListener('click', close);
-  ov.querySelector('#fkCodeSubmit')?.addEventListener('click', submit);
+  submitBtn?.addEventListener('click', submit);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
   input.addEventListener('input', () => { errEl.hidden = true; });
   orderIdInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
