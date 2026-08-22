@@ -1007,7 +1007,7 @@ const TRANSLATIONS = {
     onb_spot_budget_title:'Set an expected amount',
     onb_spot_budget_body:"This is where you plan ahead. Type how much you expect to earn from your first income source below.",
     onb_spot_tx_title:'Log your first transaction',
-    onb_spot_tx_body:"Transactions are what actually happened. Add one now to see your dashboard come to life.",
+    onb_spot_tx_body:"Transactions are what actually happened. Fill in the date, category, and amount below, then hit Add to log your first one.",
     onb_next_btn:'Next',
     onb_nice_toast:'Nice! Moving on...',
     onb_tips_title:"You're all set!",
@@ -6842,7 +6842,7 @@ const ONB_SPOTLIGHT_STEPS = [
     isDone: () => state.budgets.income.some(r => (r.expected || 0) > 0),
   },
   {
-    tab: 'transactions', selector: '#addTxBtn',
+    tab: 'transactions', selector: '.tx-form-panel',
     titleKey: 'onb_spot_tx_title', bodyKey: 'onb_spot_tx_body',
     isDone: () => state.transactions.length > 0,
   },
