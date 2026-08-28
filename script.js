@@ -4367,6 +4367,10 @@ function init() {
       enterTrial(trialParam);
     }
   }
+  // Safety net: always reveal the app shell, whether or not a deep-link
+  // was present or matched - the hiding trick in <head> must never be
+  // able to leave the page permanently blank.
+  document.documentElement.classList.remove('trial-pending');
 }
 
 // ── Review carousel ────────────────────────────────────────────────────

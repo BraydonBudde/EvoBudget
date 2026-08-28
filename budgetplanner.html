@@ -16,6 +16,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script>
+    // Trial deep-link (?trial=sbp/ubp): hide the app shell until script.js
+    // has decided whether to jump straight into the trial, so the hub view
+    // (hardcoded active in the HTML below) never has a chance to paint
+    // first. Runs synchronously before <div id="app"> is even parsed.
+    // Cleared unconditionally at the end of init() as a safety net.
+    (function () {
+      var p = new URLSearchParams(location.search).get('trial');
+      if (p !== 'sbp' && p !== 'ubp') return;
+      if (localStorage.getItem('evobudget_' + p + '_unlocked') === '1') return;
+      document.documentElement.classList.add('trial-pending');
+      // Hard safety net: if script.js never reaches its own reveal call for
+      // any reason (a thrown error, a slow/broken network request), never
+      // leave the page permanently blank - force it visible after 3s.
+      setTimeout(function () { document.documentElement.classList.remove('trial-pending'); }, 3000);
+    })();
+  </script>
+  <style>html.trial-pending #app { visibility: hidden; }</style>
 </head>
 <body>
 
