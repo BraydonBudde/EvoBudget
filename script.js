@@ -4353,18 +4353,43 @@ function init() {
 
   // Direct trial deep-link (?trial=sbp or ?trial=ubp) - lets a shared URL
   // drop someone straight into the trial without clicking through the hub.
-  // The param is stripped from the address bar first, always, so a later
-  // refresh or "back to hub" + reload never re-triggers it. Never touches
-  // an already-unlocked tool - a paying customer's own bookmark/link must
-  // never be pulled back into trial mode.
-  const trialParam = new URLSearchParams(location.search).get('trial');
+  // Optional &theme= and &layout= let a specific marketing link open with
+  // a specific look, so the demo matches whatever the linked image shows.
+  // All params are stripped from the address bar first, always, so a
+  // later refresh or "back to hub" + reload never re-triggers any of
+  // this. Never touches an already-unlocked tool - a paying customer's
+  // own bookmark/link must never be pulled back into trial mode.
+  const DEEPLINK_THEMES = ['light', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
+  const dlParams = new URLSearchParams(location.search);
+  const trialParam = dlParams.get('trial');
   if (trialParam === 'sbp' || trialParam === 'ubp') {
+    const rawTheme = (dlParams.get('theme') || '').toLowerCase();
+    const themeParam = DEEPLINK_THEMES.includes(rawTheme) ? rawTheme : null;
+    const rawLayout = (dlParams.get('layout') || '').toLowerCase();
+    const layoutParam = (rawLayout === '2' || rawLayout === 'radial') ? 2 : (rawLayout === '1' || rawLayout === 'classic') ? 1 : null;
+
     const url = new URL(location.href);
-    url.searchParams.delete('trial');
+    ['trial', 'theme', 'layout'].forEach(k => url.searchParams.delete(k));
     history.replaceState(null, '', url);
+
     if (!isUnlocked(trialParam)) {
-      trackEvent('feature_used', { feature: 'trial_deep_link', tool: trialParam });
-      enterTrial(trialParam);
+      trackEvent('feature_used', { feature: 'trial_deep_link', tool: trialParam, theme: themeParam, layout: layoutParam });
+      if (trialParam === 'ubp') {
+        // UBP navigates away entirely, so any appearance override has to
+        // be staged in localStorage before that happens - nothing on this
+        // page runs after enterTrial('ubp') below.
+        if (themeParam) localStorage.setItem('evobudget_theme', themeParam);
+        if (layoutParam) localStorage.setItem(UBP_PENDING_LAYOUT_KEY, String(layoutParam));
+        enterTrial('ubp');
+      } else {
+        // SBP: apply overrides AFTER enterTrial, since a fresh visitor's
+        // `state` gets wholesale replaced by trialDefaultState() inside it -
+        // anything set beforehand would just get discarded.
+        enterTrial('sbp');
+        if (themeParam) applyTheme(themeParam);
+        if (layoutParam) { state.settings.dashboardLayout = layoutParam; saveState(); }
+        if (themeParam || layoutParam) renderDashboard();
+      }
     }
   }
   // Safety net: always reveal the app shell, whether or not a deep-link
