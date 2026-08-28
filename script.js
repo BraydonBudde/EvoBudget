@@ -4350,6 +4350,23 @@ function init() {
   fkInitUIEnhancers();
   applyAppTitle();
   bindAppTitle('Simple Budget');
+
+  // Direct trial deep-link (?trial=sbp or ?trial=ubp) - lets a shared URL
+  // drop someone straight into the trial without clicking through the hub.
+  // The param is stripped from the address bar first, always, so a later
+  // refresh or "back to hub" + reload never re-triggers it. Never touches
+  // an already-unlocked tool - a paying customer's own bookmark/link must
+  // never be pulled back into trial mode.
+  const trialParam = new URLSearchParams(location.search).get('trial');
+  if (trialParam === 'sbp' || trialParam === 'ubp') {
+    const url = new URL(location.href);
+    url.searchParams.delete('trial');
+    history.replaceState(null, '', url);
+    if (!isUnlocked(trialParam)) {
+      trackEvent('feature_used', { feature: 'trial_deep_link', tool: trialParam });
+      enterTrial(trialParam);
+    }
+  }
 }
 
 // ── Review carousel ────────────────────────────────────────────────────
