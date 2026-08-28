@@ -17,32 +17,47 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script>
-    // Apply the correct theme before first paint, so there's never a flash
-    // from the static "dark" default to whatever's actually saved (or
-    // requested via a &theme= deep-link param). Trial deep-link (?trial=
-    // sbp/ubp): also hides the app shell until script.js has decided
-    // whether to jump straight into the trial, so the hub view (hardcoded
-    // active in the HTML below) never has a chance to paint first either.
-    // Both run synchronously before <div id="app"> is even parsed.
+    // Runs synchronously before any content is parsed, so everything below
+    // paints exactly once, in the right theme and on the right view. Without
+    // this the page visibly steps through: static default -> saved/requested
+    // theme, and hub view -> tool view, which reads as a slow, broken load.
     (function () {
       var VALID_THEMES = ['light', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
       var params = new URLSearchParams(location.search);
       var trial = params.get('trial');
-      var isDeepLink = (trial === 'sbp' || trial === 'ubp') && localStorage.getItem('evobudget_' + trial + '_unlocked') !== '1';
+      var isDeepLink = (trial === 'sbp' || trial === 'ubp') &&
+                       localStorage.getItem('evobudget_' + trial + '_unlocked') !== '1';
 
-      var reqTheme = isDeepLink ? (params.get('theme') || '').toLowerCase() : null;
-      var theme = (reqTheme && VALID_THEMES.indexOf(reqTheme) !== -1) ? reqTheme : (localStorage.getItem('evobudget_theme') || 'dark');
+      // A demo link's &theme= wins; otherwise use whatever the visitor saved.
+      var reqTheme = isDeepLink ? (params.get('theme') || '').toLowerCase() : '';
+      var theme;
+      if (reqTheme && VALID_THEMES.indexOf(reqTheme) !== -1) {
+        theme = reqTheme;
+        // Persist immediately: script.js's initTheme() reads localStorage, so
+        // without this it would fall back to 'dark' and clobber the requested
+        // theme mid-load before the deep-link handler sets it back again.
+        try { localStorage.setItem('evobudget_theme', theme); } catch (e) {}
+      } else {
+        theme = localStorage.getItem('evobudget_theme') || 'dark';
+      }
       document.documentElement.setAttribute('data-theme', theme);
 
       if (!isDeepLink) return;
-      document.documentElement.classList.add('trial-pending');
-      // Hard safety net: if script.js never reaches its own reveal call for
-      // any reason (a thrown error, a slow/broken network request), never
-      // leave the page permanently blank - force it visible after 3s.
-      setTimeout(function () { document.documentElement.classList.remove('trial-pending'); }, 3000);
+      // SBP opens in-page, so pre-swap straight to the tool view - the hub is
+      // hardcoded is-active below and would otherwise paint first. UBP leaves
+      // for another page entirely, so just hold the shell back until it does.
+      document.documentElement.classList.add(trial === 'sbp' ? 'deeplink-sbp' : 'deeplink-away');
+      // Safety net: never let a failure upstream leave the page stuck.
+      setTimeout(function () {
+        document.documentElement.classList.remove('deeplink-sbp', 'deeplink-away');
+      }, 3000);
     })();
   </script>
-  <style>html.trial-pending #app { visibility: hidden; }</style>
+  <style>
+    html.deeplink-sbp #view-hub { display: none !important; }
+    html.deeplink-sbp #view-budget { display: flex !important; }
+    html.deeplink-away #app { visibility: hidden; }
+  </style>
 </head>
 <body>
 

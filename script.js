@@ -4392,10 +4392,10 @@ function init() {
       }
     }
   }
-  // Safety net: always reveal the app shell, whether or not a deep-link
-  // was present or matched - the hiding trick in <head> must never be
-  // able to leave the page permanently blank.
-  document.documentElement.classList.remove('trial-pending');
+  // The real is-active classes are set by now, so the <head> script's
+  // pre-paint overrides have done their job and must come off - leaving
+  // them on would pin the view regardless of later navigation.
+  document.documentElement.classList.remove('deeplink-sbp', 'deeplink-away');
 }
 
 // ── Review carousel ────────────────────────────────────────────────────

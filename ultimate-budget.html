@@ -8,6 +8,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
+  <script>
+    // Apply the saved theme before any content paints. init() also does this,
+    // but only once the whole script has loaded and run - long enough for the
+    // static "dark" default above to flash first for anyone on another theme
+    // (including someone arriving from a themed demo link).
+    (function () {
+      try {
+        document.documentElement.setAttribute('data-theme', localStorage.getItem('evobudget_theme') || 'dark');
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 
