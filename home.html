@@ -903,10 +903,9 @@
   <script src="analytics.js"></script>
   <script>
     // Standalone marketing page - no dependency on script.js/the app bundle.
-    (function () {
-      var t = localStorage.getItem('evobudget_theme') || 'dark';
-      document.documentElement.dataset.theme = t;
-    })();
+    // Deliberately does NOT read the saved planner theme: this page is site
+    // chrome and always uses the site theme (hardcoded on <html> above),
+    // independent of whatever theme a visitor picked inside SBP/UBP.
 
     // ── Marquee: build however many copies of the 6-item set are needed so
     // one "side" of the track is always at least as wide as the strip

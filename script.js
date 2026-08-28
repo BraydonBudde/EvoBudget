@@ -1929,6 +1929,17 @@ function setUbpMode(m)   { localStorage.setItem(UBP_MODE_KEY, m); }
 function isUnlocked(tool){ return localStorage.getItem(UNLOCK_KEYS[tool]) === '1'; }
 function setUnlocked(tool){ localStorage.setItem(UNLOCK_KEYS[tool], '1'); }
 
+// Which tool a ?trial= deep-link should open, or null when there isn't one
+// (or it names a tool this visitor already owns - a paying customer's own
+// link must never pull them back into trial mode). Single source of truth:
+// init() consults it early to know which view/theme to start in, and again
+// later to actually open the trial. Pass a params snapshot when the address
+// bar may already have been cleaned.
+function pendingDeepLinkTool(params) {
+  const tool = (params || new URLSearchParams(location.search)).get('trial');
+  return (tool === 'sbp' || tool === 'ubp') && !isUnlocked(tool) ? tool : null;
+}
+
 function enterFull(tool)  { if (tool === 'ubp') { setUbpMode('full'); syncStashTokenForHandoff('ubp'); window.location.href = 'ultimate-budget'; } else enterSbpFull(); }
 function enterTrial(tool) { if (tool === 'ubp') { setUbpMode('trial'); window.location.href = 'ultimate-budget'; } else enterSbpTrial(); }
 
@@ -2280,12 +2291,24 @@ function enableDragScroll(el) {
 }
 
 // ── Theme ─────────────────────────────────────────────────────────────
+// The tools menu (hub) is site chrome, not part of either planner, so it
+// always renders in the site's own theme no matter which theme a user has
+// picked inside SBP/UBP. Their choice is still saved and still applies the
+// moment they open a planner - it just doesn't leak out into the menu.
+const SITE_THEME = 'dark';
+function savedTheme() { return localStorage.getItem('evobudget_theme') || SITE_THEME; }
+function displayThemeFor(view) { return view === 'hub' ? SITE_THEME : savedTheme(); }
+// Re-applies whichever theme the CURRENT view should be showing, without
+// touching what's saved - call after any view change.
+function syncDisplayTheme() {
+  document.documentElement.dataset.theme = displayThemeFor(currentView);
+}
 function applyTheme(theme) {
-  document.documentElement.dataset.theme = theme;
   localStorage.setItem('evobudget_theme', theme);
+  syncDisplayTheme();
   document.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('is-active', b.dataset.themeVal === theme));
 }
-function initTheme() { applyTheme(localStorage.getItem('evobudget_theme') || 'dark'); }
+function initTheme() { applyTheme(savedTheme()); }
 
 // ── Dashboard Layout picker (Settings) ─────────────────────────────────
 const DASHBOARD_LAYOUT_ICONS = {
@@ -2336,6 +2359,7 @@ function navigateTo(view) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('is-active'));
   document.getElementById(`view-${view}`)?.classList.add('is-active');
   currentView = view;
+  syncDisplayTheme();
   if (view === 'budget') {
     const sel = document.getElementById('currencySelect');
     if (sel) sel.value = `${state.settings.currency}|${state.settings.symbol}`;
@@ -4290,6 +4314,12 @@ function init() {
   syncSymbol();
   saveState(); // ensures localStorage always mirrors state, so Google sync has real data to seed a Drive file with right away
 
+  // A ?trial= deep-link opens a planner rather than the tools menu, and the
+  // two use different themes - so settle which view we're heading for BEFORE
+  // initTheme(), or it would apply the menu's theme and visibly correct
+  // itself once the trial actually opens further down.
+  if (pendingDeepLinkTool()) currentView = 'budget';
+
   initTheme();  // apply saved theme before rendering
   renderHub();
 
@@ -4360,36 +4390,40 @@ function init() {
   // this. Never touches an already-unlocked tool - a paying customer's
   // own bookmark/link must never be pulled back into trial mode.
   const DEEPLINK_THEMES = ['light', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
-  const dlParams = new URLSearchParams(location.search);
-  const trialParam = dlParams.get('trial');
-  if (trialParam === 'sbp' || trialParam === 'ubp') {
+  const dlParams = new URLSearchParams(location.search);   // snapshot: survives the strip below
+  const trialParam = pendingDeepLinkTool(dlParams);
+
+  // Clear the params whenever they're present - including when they're
+  // ignored, e.g. for an already-unlocked customer - so a later refresh or
+  // "back to hub" can never replay the link.
+  if (dlParams.has('trial')) {
+    const url = new URL(location.href);
+    ['trial', 'theme', 'layout'].forEach(k => url.searchParams.delete(k));
+    history.replaceState(null, '', url);
+  }
+
+  if (trialParam) {
     const rawTheme = (dlParams.get('theme') || '').toLowerCase();
     const themeParam = DEEPLINK_THEMES.includes(rawTheme) ? rawTheme : null;
     const rawLayout = (dlParams.get('layout') || '').toLowerCase();
     const layoutParam = (rawLayout === '2' || rawLayout === 'radial') ? 2 : (rawLayout === '1' || rawLayout === 'classic') ? 1 : null;
 
-    const url = new URL(location.href);
-    ['trial', 'theme', 'layout'].forEach(k => url.searchParams.delete(k));
-    history.replaceState(null, '', url);
-
-    if (!isUnlocked(trialParam)) {
-      trackEvent('feature_used', { feature: 'trial_deep_link', tool: trialParam, theme: themeParam, layout: layoutParam });
-      if (trialParam === 'ubp') {
-        // UBP navigates away entirely, so any appearance override has to
-        // be staged in localStorage before that happens - nothing on this
-        // page runs after enterTrial('ubp') below.
-        if (themeParam) localStorage.setItem('evobudget_theme', themeParam);
-        if (layoutParam) localStorage.setItem(UBP_PENDING_LAYOUT_KEY, String(layoutParam));
-        enterTrial('ubp');
-      } else {
-        // SBP: apply overrides AFTER enterTrial, since a fresh visitor's
-        // `state` gets wholesale replaced by trialDefaultState() inside it -
-        // anything set beforehand would just get discarded.
-        enterTrial('sbp');
-        if (themeParam) applyTheme(themeParam);
-        if (layoutParam) { state.settings.dashboardLayout = layoutParam; saveState(); }
-        if (themeParam || layoutParam) renderDashboard();
-      }
+    trackEvent('feature_used', { feature: 'trial_deep_link', tool: trialParam, theme: themeParam, layout: layoutParam });
+    if (trialParam === 'ubp') {
+      // UBP navigates away entirely, so any appearance override has to
+      // be staged in localStorage before that happens - nothing on this
+      // page runs after enterTrial('ubp') below.
+      if (themeParam) localStorage.setItem('evobudget_theme', themeParam);
+      if (layoutParam) localStorage.setItem(UBP_PENDING_LAYOUT_KEY, String(layoutParam));
+      enterTrial('ubp');
+    } else {
+      // SBP: apply overrides AFTER enterTrial, since a fresh visitor's
+      // `state` gets wholesale replaced by trialDefaultState() inside it -
+      // anything set beforehand would just get discarded.
+      enterTrial('sbp');
+      if (themeParam) applyTheme(themeParam);
+      if (layoutParam) { state.settings.dashboardLayout = layoutParam; saveState(); }
+      if (themeParam || layoutParam) renderDashboard();
     }
   }
   // The real is-active classes are set by now, so the <head> script's

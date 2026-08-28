@@ -28,19 +28,22 @@
       var isDeepLink = (trial === 'sbp' || trial === 'ubp') &&
                        localStorage.getItem('evobudget_' + trial + '_unlocked') !== '1';
 
-      // A demo link's &theme= wins; otherwise use whatever the visitor saved.
+      // A demo link's &theme= is the planner theme that visitor should get.
+      // Persist it immediately: script.js's initTheme() reads localStorage, so
+      // without this it would fall back to the default and clobber the
+      // requested theme mid-load before the deep-link handler set it back.
       var reqTheme = isDeepLink ? (params.get('theme') || '').toLowerCase() : '';
-      var theme;
       if (reqTheme && VALID_THEMES.indexOf(reqTheme) !== -1) {
-        theme = reqTheme;
-        // Persist immediately: script.js's initTheme() reads localStorage, so
-        // without this it would fall back to 'dark' and clobber the requested
-        // theme mid-load before the deep-link handler sets it back again.
-        try { localStorage.setItem('evobudget_theme', theme); } catch (e) {}
-      } else {
-        theme = localStorage.getItem('evobudget_theme') || 'dark';
+        try { localStorage.setItem('evobudget_theme', reqTheme); } catch (e) {}
       }
-      document.documentElement.setAttribute('data-theme', theme);
+      // Only a deep-link opens a planner directly, so only it shows the
+      // planner's theme. Every other load lands on the tools menu, which is
+      // site chrome and always uses the site theme, whatever the visitor
+      // has chosen inside SBP/UBP.
+      document.documentElement.setAttribute(
+        'data-theme',
+        isDeepLink ? (localStorage.getItem('evobudget_theme') || 'dark') : 'dark'
+      );
 
       if (!isDeepLink) return;
       // SBP opens in-page, so pre-swap straight to the tool view - the hub is
