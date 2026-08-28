@@ -17,15 +17,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script>
-    // Trial deep-link (?trial=sbp/ubp): hide the app shell until script.js
-    // has decided whether to jump straight into the trial, so the hub view
-    // (hardcoded active in the HTML below) never has a chance to paint
-    // first. Runs synchronously before <div id="app"> is even parsed.
-    // Cleared unconditionally at the end of init() as a safety net.
+    // Apply the correct theme before first paint, so there's never a flash
+    // from the static "dark" default to whatever's actually saved (or
+    // requested via a &theme= deep-link param). Trial deep-link (?trial=
+    // sbp/ubp): also hides the app shell until script.js has decided
+    // whether to jump straight into the trial, so the hub view (hardcoded
+    // active in the HTML below) never has a chance to paint first either.
+    // Both run synchronously before <div id="app"> is even parsed.
     (function () {
-      var p = new URLSearchParams(location.search).get('trial');
-      if (p !== 'sbp' && p !== 'ubp') return;
-      if (localStorage.getItem('evobudget_' + p + '_unlocked') === '1') return;
+      var VALID_THEMES = ['light', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
+      var params = new URLSearchParams(location.search);
+      var trial = params.get('trial');
+      var isDeepLink = (trial === 'sbp' || trial === 'ubp') && localStorage.getItem('evobudget_' + trial + '_unlocked') !== '1';
+
+      var reqTheme = isDeepLink ? (params.get('theme') || '').toLowerCase() : null;
+      var theme = (reqTheme && VALID_THEMES.indexOf(reqTheme) !== -1) ? reqTheme : (localStorage.getItem('evobudget_theme') || 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+
+      if (!isDeepLink) return;
       document.documentElement.classList.add('trial-pending');
       // Hard safety net: if script.js never reaches its own reveal call for
       // any reason (a thrown error, a slow/broken network request), never

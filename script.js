@@ -4521,10 +4521,10 @@ function onbFinish() {
 
 function onbSkipAll() {
   onbClearOverlay();
-  loadSampleData();
   state.settings.onboardingDone = true;
   saveState();
   onbActive = false;
+  switchBTab('dashboard');
 }
 
 function onbCloseOverlayEl(ov, then) {

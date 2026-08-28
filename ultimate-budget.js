@@ -6755,10 +6755,10 @@ function onbFinish() {
 
 function onbSkipAll() {
   onbClearOverlay();
-  loadSampleData();
   state.settings.onboardingDone = true;
   saveState();
   onbActive = false;
+  switchTab('dashboard');
 }
 
 function onbCloseOverlayEl(ov, then) {
