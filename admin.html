@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260829" />
-  <link rel="stylesheet" href="admin.css?v=20260829" />
+  <link rel="stylesheet" href="style.css?v=20260830" />
+  <link rel="stylesheet" href="admin.css?v=20260830" />
 </head>
 <body>
 
@@ -92,37 +92,24 @@
 
       <nav class="budget-tabs" id="adminTabs" role="tablist" aria-label="Analytics sections">
         <button class="btab is-active" data-atab="overview" role="tab" type="button">📊 Overview</button>
-        <button class="btab" data-atab="live" role="tab" type="button">🟢 Live</button>
-        <button class="btab" data-atab="traffic" role="tab" type="button">🌐 Traffic</button>
-        <button class="btab" data-atab="product" role="tab" type="button">🧩 Product</button>
-        <button class="btab" data-atab="insights" role="tab" type="button">🔍 App Insights</button>
         <button class="btab" data-atab="redemptions" role="tab" type="button">🔑 Redemptions</button>
-        <button class="btab" data-atab="keys" role="tab" type="button">🎟️ Etsy Keys</button>
-        <button class="btab" data-atab="settings" role="tab" type="button">⚙️ Settings</button>
         <button class="btab" data-atab="summary" role="tab" type="button">📝 Summary</button>
+        <button class="btab" data-atab="settings" role="tab" type="button">⚙️ Settings</button>
       </nav>
     </div>
 
-    <div class="admin-sample-banner" id="adminSampleBanner" hidden>
-      🧪 Showing sample data for testing - not real analytics.
-      <button type="button" id="adminSampleBannerExit">Exit sample data</button>
-    </div>
 
     <div class="app-scroll">
       <div class="bview is-active" id="aview-overview" role="tabpanel"></div>
-      <div class="bview" id="aview-live" role="tabpanel"></div>
-      <div class="bview" id="aview-traffic" role="tabpanel"></div>
-      <div class="bview" id="aview-product" role="tabpanel"></div>
-      <div class="bview" id="aview-insights" role="tabpanel"></div>
       <div class="bview" id="aview-redemptions" role="tabpanel"></div>
-      <div class="bview" id="aview-keys" role="tabpanel"></div>
-      <div class="bview" id="aview-settings" role="tabpanel"></div>
       <div class="bview" id="aview-summary" role="tabpanel"></div>
+      <div class="bview" id="aview-settings" role="tabpanel"></div>
     </div>
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer onload="if(typeof adminPrewarmTokenClient==='function')adminPrewarmTokenClient();"></script>
-  <script src="charts.js?v=20260829"></script>
+  <script src="charts.js?v=20260830"></script>
+  <script src="globe.js?v=20260830"></script>
   <!-- penny.js loaded verbatim, unmodified - admin.js (below) defines the
        t()/state/saveState shims it expects, then overrides just its 3
        data-access functions (system instruction, tool declarations, tool
@@ -130,7 +117,7 @@
        budget questions. Every other Ezzo mechanic (key vault, streaming,
        model fallback, chat UI, voice) is the exact same code the budget
        tools use. See the "Ezzo integration" section in admin.js. -->
-  <script src="penny.js?v=20260829"></script>
-  <script src="admin.js?v=20260829"></script>
+  <script src="penny.js?v=20260830"></script>
+  <script src="admin.js?v=20260830"></script>
 </body>
 </html>

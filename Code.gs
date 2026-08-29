@@ -62,6 +62,7 @@ function doGet(e) {
   const p = (e && e.parameter) || {};
   if (p.action === 'claim')    return _jsonp(p.cb, _handleClaim(p));
   if (p.action === 'validate') return _jsonp(p.cb, _handleValidate(p));
+  if (p.action === 'sales')    return _jsonp(p.cb, _handleSales(p));
   return ContentService.createTextOutput('EzzoBudget analytics endpoint.');
 }
 
@@ -288,6 +289,88 @@ function _handleValidate(p) {
     } finally {
       lock.releaseLock();
     }
+  } catch (err) {
+    return { ok: false, error: 'server' };
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// LEMON SQUEEZY SALES (read-only proxy)
+// ══════════════════════════════════════════════════════════════════════
+// The dashboard is a static page on a public repo, so it can never hold a
+// Lemon Squeezy API key itself - anyone could read it and pull the store's
+// order history. The key lives in this script's Properties instead, where
+// only the deployment can reach it, and the dashboard just asks for the
+// aggregate it needs. Nothing here can create, refund or modify anything:
+// it only ever reads orders.
+//
+// SETUP (one time):
+//   Apps Script editor -> Project Settings (gear) -> Script Properties
+//   -> Add script property:  LEMONSQUEEZY_API_KEY = <your key>
+//   Create the key at Lemon Squeezy -> Settings -> API.
+// Without it this returns configured:false and the dashboard falls back to
+// counting redemptions, rather than showing a broken card.
+//
+// A short cache is deliberate: the dashboard polls, and Lemon Squeezy's
+// rate limits are far tighter than the poll interval.
+const LS_CACHE_SECONDS = 300;
+
+function _handleSales(p) {
+  try {
+    const key = PropertiesService.getScriptProperties().getProperty('LEMONSQUEEZY_API_KEY');
+    if (!key) return { ok: true, configured: false, revenue: 0, orders: 0 };
+
+    // from/to are ISO dates (YYYY-MM-DD) from the dashboard's date range.
+    const from = String(p.from || '').slice(0, 10);
+    const to   = String(p.to || '').slice(0, 10);
+    const cacheKey = 'ls_' + from + '_' + to;
+    const cache = CacheService.getScriptCache();
+    const hit = cache.get(cacheKey);
+    if (hit) { const c = JSON.parse(hit); c.cached = true; return c; }
+
+    const fromMs = from ? new Date(from + 'T00:00:00Z').getTime() : 0;
+    // Inclusive of the whole end day, matching how the dashboard's own date
+    // range reads to a human ("1st to 5th" includes all of the 5th).
+    const toMs = to ? new Date(to + 'T23:59:59Z').getTime() : Date.now();
+
+    let revenue = 0, orders = 0, refunded = 0;
+    let url = 'https://api.lemonsqueezy.com/v1/orders?page[size]=100&sort=-createdAt';
+    // Bounded rather than "while there are pages": a store with a long
+    // history would otherwise blow the script's execution time limit.
+    for (var page = 0; page < 10 && url; page++) {
+      const res = UrlFetchApp.fetch(url, {
+        method: 'get',
+        headers: { 'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer ' + key },
+        muteHttpExceptions: true
+      });
+      if (res.getResponseCode() !== 200) {
+        return { ok: false, error: 'lemonsqueezy_' + res.getResponseCode() };
+      }
+      const body = JSON.parse(res.getContentText());
+      const rows = body.data || [];
+      let oldestOnPage = Infinity;
+
+      for (var i = 0; i < rows.length; i++) {
+        const a = rows[i].attributes || {};
+        const created = new Date(a.created_at).getTime();
+        if (created < oldestOnPage) oldestOnPage = created;
+        if (created < fromMs || created > toMs) continue;
+        if (a.status === 'refunded') { refunded++; continue; }
+        // total is in cents, and already excludes tax handled by Lemon
+        // Squeezy as merchant of record.
+        revenue += Number(a.total || 0);
+        orders++;
+      }
+
+      // Sorted newest first, so once a page ends older than the window
+      // there's nothing left worth paging for.
+      if (oldestOnPage < fromMs) break;
+      url = (body.links && body.links.next) || '';
+    }
+
+    const out = { ok: true, configured: true, revenue: revenue / 100, orders: orders, refunded: refunded };
+    cache.put(cacheKey, JSON.stringify(out), LS_CACHE_SECONDS);
+    return out;
   } catch (err) {
     return { ok: false, error: 'server' };
   }

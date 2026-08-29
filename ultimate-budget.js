@@ -151,6 +151,9 @@ function trialBlocks(kind){
 
 function goToPurchase(product){
   const url = PURCHASE_URLS[product];
+  // Middle step of the dashboard's conversion funnel - see the matching
+  // comment in script.js.
+  trackEvent('purchase_initiated', { tool: product });
   if(url){ window.open(url,'_blank','noopener'); }
   else { showToast('Add your checkout link in PURCHASE_URLS.'+product); }
 }

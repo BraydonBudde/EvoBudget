@@ -1765,6 +1765,10 @@ function trialBlocks(kind) {
 
 function goToPurchase(product) {
   const url = PURCHASE_URLS[product];
+  // The middle step of the dashboard's conversion funnel. Checkout itself
+  // happens on Lemon Squeezy, so this is the last moment the site can see
+  // intent - everything after it has to come from Lemon Squeezy's own data.
+  trackEvent('purchase_initiated', { tool: product });
   if (url) { window.open(url, '_blank', 'noopener'); }
   else { showToast('Add your checkout link in PURCHASE_URLS.' + product); }
 }

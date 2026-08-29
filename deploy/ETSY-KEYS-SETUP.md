@@ -80,3 +80,32 @@ Two things worth knowing:
   real orders, but a determined person could invent an order number. Closing
   that fully needs the Etsy API, which is a separate piece of work if you ever
   want it.
+
+---
+
+## Live sales figures on the dashboard (optional)
+
+The Overview tab shows Total Sales and Orders. Etsy sales are inferred from
+redeemed keys automatically, with no setup. To also show real Lemon Squeezy
+revenue, give the Apps Script an API key:
+
+1. Lemon Squeezy → **Settings → API** → create a new key and copy it.
+2. In the Apps Script editor: **Project Settings** (the gear on the left) →
+   scroll to **Script Properties** → **Add script property**.
+3. Property name: `LEMONSQUEEZY_API_KEY`. Value: the key you just copied.
+4. Save, then redeploy (**Deploy → Manage deployments → pencil → New version**).
+
+The key lives only in the script's properties, never in the website's code.
+That matters because this repo is public: anything in the site's own files can
+be read by anyone, whereas the script's properties can only be reached by the
+deployment itself. The dashboard only ever asks it for totals, and the script
+only ever reads orders, so the key can't be used to change anything.
+
+Without the key nothing breaks: the dashboard just shows Etsy figures and says
+Lemon Squeezy isn't connected.
+
+**A caveat worth knowing when reading those numbers.** Lemon Squeezy revenue is
+exact. Etsy revenue is not: it's counted from redeemed keys at list price, so
+it misses anyone who bought but hasn't redeemed yet, and it can lag the actual
+sale by days. The funnel's last step has the same limitation, since checkout
+completes on Lemon Squeezy's site and this one never sees it directly.

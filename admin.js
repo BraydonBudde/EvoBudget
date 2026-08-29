@@ -656,18 +656,93 @@ function summarySyncPreference() {
   const pct = google ? Math.round(google.value / total * 100) : 0;
   return summaryCardHtml('☁️', 'neutral', `${b(pct + '%')} of visitors who chose a sync mode picked Google Drive over local-only storage (${google ? google.value : 0} of ${total}).`);
 }
+// ── Extra audience cards ──────────────────────────────────────────────
+// These read signals the Overview deliberately doesn't show, so Summary
+// stays worth opening rather than repeating the dashboard in words.
+
+// When traffic actually arrives, which is what you'd schedule a launch or a
+// promo around.
+function summaryPeakTime() {
+  const views = allEvents.filter(e => e.type === 'page_view');
+  if (views.length < 20) return null;
+  const byHour = new Array(24).fill(0);
+  const byDow = new Array(7).fill(0);
+  views.forEach(e => { const d = new Date(eventTime(e)); byHour[d.getHours()]++; byDow[d.getDay()]++; });
+  const peakHour = byHour.indexOf(Math.max(...byHour));
+  const peakDow = byDow.indexOf(Math.max(...byDow));
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const hourShare = Math.round(byHour[peakHour] / views.length * 100);
+  return summaryCardHtml('🕒', 'neutral',
+    `Traffic peaks around ${b(String(peakHour).padStart(2, '0') + ':00')} (${hourShare}% of all views land in that hour) and ${b(DAYS[peakDow])} is the busiest day. Times are your browser's local clock, so treat them as a rough guide rather than your audience's own timezone.`);
+}
+
+// Which languages people actually browse in - the case for translating, or
+// for not bothering.
+function summaryLanguageMix() {
+  const langs = groupCount(allEvents.filter(e => e.lang), e => String(e.lang).split('-')[0].toLowerCase());
+  if (!langs.length) return null;
+  const total = langs.reduce((s, l) => s + l.value, 0);
+  const sorted = langs.sort((a, b2) => b2.value - a.value);
+  const top = sorted[0];
+  const topPct = Math.round(top.value / total * 100);
+  const others = sorted.slice(1, 4).filter(l => l.value / total >= 0.03);
+  if (topPct >= 90 || !others.length) {
+    return summaryCardHtml('🌍', 'neutral', `Almost everyone browses in ${b(top.label.toUpperCase())} (${topPct}%). The other five translations are carrying very little traffic right now, so effort is better spent elsewhere than on more languages.`);
+  }
+  return summaryCardHtml('🌍', 'positive', `${b(top.label.toUpperCase())} leads at ${topPct}%, but ${b(others.map(o => o.label.toUpperCase()).join(', '))} together make up a real share of visitors - worth checking those translations read well, since the audience is genuinely multilingual.`);
+}
+
+// What people land on first, which is the page actually doing the selling.
+function summaryTopLanding() {
+  const sessions = buildSessions(allEvents).filter(s => s.landingPage);
+  if (sessions.length < 10) return null;
+  const groups = groupCount(sessions, s => pageLabel(s.landingPage)).sort((a, b2) => b2.value - a.value);
+  if (!groups.length) return null;
+  const top = groups[0];
+  const pct = Math.round(top.value / sessions.length * 100);
+  const bounceByLanding = sessions.filter(s => pageLabel(s.landingPage) === top.label);
+  const bounced = bounceByLanding.filter(s => !s.engaged).length;
+  const bouncePct = bounceByLanding.length ? Math.round(bounced / bounceByLanding.length * 100) : 0;
+  const tone = bouncePct >= 70 ? 'warning' : 'neutral';
+  return summaryCardHtml('🚪', tone,
+    `${b(pct + '%')} of visits start on ${b(top.label)}, and ${b(bouncePct + '%')} of those leave without going further. ${bouncePct >= 70 ? 'That is the single highest-leverage page to improve - most people never see anything else.' : 'That is a healthy entry point.'}`);
+}
+
+// Browser mix, mostly to know what's worth testing in.
+function summaryBrowserMix() {
+  const browsers = groupCount(allEvents.filter(e => e.ua), e => uaBrowser(e.ua)).sort((a, b2) => b2.value - a.value);
+  if (browsers.length < 2) return null;
+  const total = browsers.reduce((s, x) => s + x.value, 0);
+  const top = browsers[0];
+  const rest = browsers.slice(1, 3).map(x => `${x.label} ${Math.round(x.value / total * 100)}%`).join(', ');
+  return summaryCardHtml('🧭', 'neutral',
+    `${b(top.label)} accounts for ${b(Math.round(top.value / total * 100) + '%')} of visits${rest ? `, followed by ${rest}` : ''}. Worth checking anything you change still behaves in the top two.`);
+}
+
+// Whether the checkout click actually turns into anything, without the
+// funnel chart's framing.
+function summaryCheckoutDropOff() {
+  const initiated = uniqueBy(allEvents.filter(e => e.type === 'purchase_initiated'), e => e.sessionId).length;
+  if (initiated < 5) return null;
+  const redemptions = allEvents.filter(e => e.type === 'launch_code_redeemed').length;
+  const rate = initiated ? Math.round(redemptions / initiated * 100) : 0;
+  const tone = rate >= 40 ? 'positive' : rate >= 15 ? 'neutral' : 'warning';
+  return summaryCardHtml('🛒', tone,
+    `${b(fmt(initiated))} sessions have clicked through to checkout, and ${b(fmt(redemptions))} keys have been redeemed since - roughly ${b(rate + '%')}. Redemption lags the sale and misses anyone who bought without redeeming, so read this as a floor rather than the true conversion rate.`);
+}
+
 function renderSummary() {
   const el = document.getElementById('aview-summary');
   const sections = [
-    ['👥 Audience', [summaryCrossToolOverlap(), summaryMonthOverMonth(), summaryReturningRate(), summaryTopRegion(), summaryDeviceBounceCrossRef()]],
-    ['🧩 Product performance', [summaryToolHeadToHead(), summaryTopFeature(), summaryLayoutPreference()]],
-    ['🔑 Redemptions & risk', [summaryRedemptionConversion(), summaryReusedOrderIds(), summaryReferrerConversionCrossRef()]],
-    ['🎨 Preferences', [summaryThemePopularity(), summarySyncPreference()]],
+    ['👥 Who is visiting', [summaryCrossToolOverlap(), summaryMonthOverMonth(), summaryReturningRate(), summaryTopRegion(), summaryLanguageMix()]],
+    ['🕒 When and how they arrive', [summaryPeakTime(), summaryTopLanding(), summaryReferrerConversionCrossRef(), summaryBrowserMix(), summaryDeviceBounceCrossRef()]],
+    ['🧩 What they use', [summaryToolHeadToHead(), summaryTopFeature(), summaryLayoutPreference(), summaryThemePopularity(), summarySyncPreference()]],
+    ['💳 Buying and risk', [summaryCheckoutDropOff(), summaryRedemptionConversion(), summaryReusedOrderIds()]],
   ];
   const sectionsHtml = sections.map(([title, cards]) => summarySectionHtml(title, cards)).filter(Boolean).join('');
   el.innerHTML = `
     <div class="section-header"><h2 class="admin-section-title">Summary</h2></div>
-    <p class="admin-section-sub">Plain-language highlights pulled from every tab, all-time - including a few call-outs that cross-reference two signals at once to surface things no single tab shows on its own.</p>
+    <p class="admin-section-sub">Plain-language read of your audience, all-time rather than the Overview's date range. Deliberately covers things the charts don't - when people show up, what they land on, what they browse in - so there's something here to act on.</p>
     ${sectionsHtml || `<div class="chart-empty">Not enough data yet to summarize - check back once there's some traffic.</div>`}`;
 }
 
@@ -679,20 +754,145 @@ function overviewFilteredEvents() {
     return true;
   });
 }
+const _isoDay = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function todayBounds() { const d = new Date(); return { from: _isoDay(d), to: _isoDay(d) }; }
+function lastMonthBounds() {
+  const d = new Date();
+  const start = new Date(d.getFullYear(), d.getMonth() - 1, 1);
+  const end = new Date(d.getFullYear(), d.getMonth(), 0);
+  return { from: _isoDay(start), to: _isoDay(end) };
+}
+function activeQuickRange() {
+  const t = todayBounds(), cm = currentMonthBounds(), lm = lastMonthBounds();
+  const f = overviewFilters.from, to = overviewFilters.to;
+  if (f === t.from && to === t.to) return 'today';
+  if (f === cm.from && to === cm.to) return 'month';
+  if (f === lm.from && to === lm.to) return 'lastmonth';
+  return '';
+}
 function overviewFilterBarHtml() {
-  const cm = currentMonthBounds();
-  const isCurrentMonth = overviewFilters.from === cm.from && overviewFilters.to === cm.to;
-  return `<div class="admin-filter-bar">
+  const active = activeQuickRange();
+  const chip = (id, key, label) => `<button class="admin-range-chip${active === key ? ' is-active' : ''}" id="${id}" type="button">${label}</button>`;
+  return `<div class="admin-filter-bar admin-range-bar">
     ${styledDateField('ovFilterFrom', 'ovFilterFromWrap', overviewFilters.from)}
     ${styledDateField('ovFilterTo', 'ovFilterToWrap', overviewFilters.to)}
-    ${!isCurrentMonth ? `<button class="admin-filter-clear" id="ovFilterThisMonth" type="button">Reset to this month</button>` : ''}
+    <div class="admin-range-chips">
+      ${chip('ovRangeToday', 'today', 'Today')}
+      ${chip('ovRangeMonth', 'month', 'This month')}
+      ${chip('ovRangeLastMonth', 'lastmonth', 'Last month')}
+    </div>
   </div>`;
 }
 function wireOverviewFilterBar() {
   bindDateField('ovFilterFrom', 'ovFilterFromWrap', v => { overviewFilters.from = v; renderOverview(); });
   bindDateField('ovFilterTo', 'ovFilterToWrap', v => { overviewFilters.to = v; renderOverview(); });
-  document.getElementById('ovFilterThisMonth')?.addEventListener('click', () => { Object.assign(overviewFilters, currentMonthBounds()); renderOverview(); });
+  const setRange = bounds => { Object.assign(overviewFilters, bounds); renderOverview(); };
+  document.getElementById('ovRangeToday')?.addEventListener('click', () => setRange(todayBounds()));
+  document.getElementById('ovRangeMonth')?.addEventListener('click', () => setRange(currentMonthBounds()));
+  document.getElementById('ovRangeLastMonth')?.addEventListener('click', () => setRange(lastMonthBounds()));
 }
+// ── Sales ─────────────────────────────────────────────────────────────
+// Two channels, two sources. Lemon Squeezy knows its own revenue exactly,
+// so it's asked directly (via the Apps Script, which holds the API key
+// server-side). Etsy has no such feed, so those sales are inferred from
+// redeemed Etsy keys at list price - an undercount if a buyer never
+// redeems, and it lags the actual sale. Kept clearly separated rather than
+// merged into one number, so a soft figure never masquerades as a hard one.
+const ADMIN_PRICES = { sbp: 19.99, ubp: 49.99 };
+let lsSales = { loaded: false, configured: false, revenue: 0, orders: 0, error: '' };
+
+function fetchLemonSqueezySales() {
+  const endpoint = (typeof ANALYTICS_ENDPOINT === 'string') ? ANALYTICS_ENDPOINT : '';
+  if (!endpoint) { lsSales = { loaded: true, configured: false, revenue: 0, orders: 0, error: '' }; return Promise.resolve(); }
+  return new Promise(resolve => {
+    const cb = `ezzoSalesCb${Date.now()}`;
+    const script = document.createElement('script');
+    let done = false;
+    const finish = () => {
+      if (done) return; done = true;
+      clearTimeout(timer);
+      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+      script.parentNode?.removeChild(script);
+      resolve();
+    };
+    const timer = setTimeout(() => { lsSales = { loaded: true, configured: false, revenue: 0, orders: 0, error: 'timeout' }; finish(); }, 15000);
+    window[cb] = res => {
+      lsSales = (res && res.ok)
+        ? { loaded: true, configured: !!res.configured, revenue: Number(res.revenue || 0), orders: Number(res.orders || 0), error: '' }
+        : { loaded: true, configured: false, revenue: 0, orders: 0, error: (res && res.error) || 'failed' };
+      finish();
+    };
+    const qs = new URLSearchParams({ action: 'sales', from: overviewFilters.from || '', to: overviewFilters.to || '', cb, _: String(Date.now()) });
+    script.src = `${endpoint}?${qs}`;
+    script.onerror = () => { lsSales = { loaded: true, configured: false, revenue: 0, orders: 0, error: 'network' }; finish(); };
+    document.head.appendChild(script);
+  });
+}
+
+// Etsy revenue for a range, from redemptions of keys issued by /claim.
+function etsySalesInRange(events) {
+  const etsyKeys = new Set(allKeys.map(k => String(k.key).trim().toUpperCase()));
+  let revenue = 0, orders = 0;
+  const perTool = { sbp: 0, ubp: 0 };
+  events.filter(e => e.type === 'launch_code_redeemed').forEach(e => {
+    const code = String((e.detail && e.detail.code) || '').trim().toUpperCase();
+    if (!etsyKeys.has(code)) return;   // legacy or Lemon Squeezy code, not an Etsy sale
+    const tool = (e.detail && e.detail.tool) === 'ubp' ? 'ubp' : 'sbp';
+    revenue += ADMIN_PRICES[tool];
+    perTool[tool] += ADMIN_PRICES[tool];
+    orders++;
+  });
+  return { revenue, orders, perTool };
+}
+
+// ── Horizontal bar list ───────────────────────────────────────────────
+function hBarListHtml(groups, opts) {
+  const o = opts || {};
+  const rows = (groups || []).slice().sort((a, b) => b.value - a.value).slice(0, o.limit || 8);
+  if (!rows.length) return `<div class="chart-empty">${esc(o.empty || 'No data yet.')}</div>`;
+  const max = Math.max(...rows.map(r => r.value)) || 1;
+  const total = rows.reduce((s, r) => s + r.value, 0);
+  return `<div class="admin-hbars">${rows.map(r => {
+    const pct = Math.round(r.value / max * 100);
+    const share = total ? Math.round(r.value / total * 100) : 0;
+    return `<div class="admin-hbar-row">
+      <span class="admin-hbar-label" title="${esc(r.label)}">${esc(r.label)}</span>
+      <span class="admin-hbar-track"><i style="width:${pct}%"></i></span>
+      <span class="admin-hbar-val">${fmt(r.value)}<small>${share}%</small></span>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── Conversion funnel ─────────────────────────────────────────────────
+function funnelHtml(steps) {
+  const top = steps[0].value || 0;
+  return `<div class="admin-funnel">${steps.map((s, i) => {
+    const pctOfTop = top ? (s.value / top * 100) : 0;
+    const prev = i > 0 ? steps[i - 1].value : null;
+    const stepPct = (prev && prev > 0) ? Math.round(s.value / prev * 100) : null;
+    // A later step can legitimately exceed an earlier one: Lemon Squeezy
+    // knows about orders this site never saw a buy-click for (a direct
+    // checkout link, or a purchase from another device). Say so rather than
+    // printing a nonsensical "250% of previous step".
+    const overflows = stepPct !== null && stepPct > 100;
+    return `<div class="admin-funnel-step">
+      <div class="admin-funnel-head">
+        <span class="admin-funnel-label">${esc(s.label)}</span>
+        <span class="admin-funnel-value">${fmt(s.value)}</span>
+      </div>
+      <div class="admin-funnel-track"><i style="width:${Math.max(pctOfTop, s.value > 0 ? 2 : 0)}%;background:${s.color}"></i></div>
+      <div class="admin-funnel-meta">
+        ${stepPct === null
+          ? `<span class="admin-funnel-conv">start of funnel</span>`
+          : overflows
+            ? `<span class="admin-funnel-conv">more than the step above</span>`
+            : `<span class="admin-funnel-conv">${stepPct}% of previous step</span>`}
+        ${s.note ? `<span class="admin-funnel-note">${esc(s.note)}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
 function formatOverviewRangeLabel() {
   const cm = currentMonthBounds();
   if (overviewFilters.from === cm.from && overviewFilters.to === cm.to) return 'This month, all tools.';
@@ -705,217 +905,180 @@ function renderOverview() {
   const el = document.getElementById('aview-overview');
   const now = Date.now();
   const rangeEvents = overviewFilteredEvents();
-  const todayViews = allEvents.filter(e => e.type === 'page_view' && dayKey(eventTime(e)) === dayKey(now)).length;
-  const rangeVisitors = uniqueBy(rangeEvents, e => e.visitorId).length;
-  const allTimeVisitors = uniqueBy(allEvents, e => e.visitorId).length;
-  const shareOfAllTime = allTimeVisitors ? Math.round(rangeVisitors / allTimeVisitors * 100) : 0;
-  const onlineNow = uniqueBy(allEvents.filter(isOnlineNow), e => e.visitorId).length;
+
+  // "Online now" is deliberately live rather than range-filtered - it answers
+  // "who is here right now", which a historical range can't.
+  const liveEvents = allEvents.filter(isOnlineNow);
+  const onlineNow = uniqueBy(liveEvents, e => e.visitorId).length;
 
   const sessions = buildSessions(rangeEvents);
   const sessionCount = sessions.length;
   const withDuration = sessions.filter(s => s.duration > 0);
   const avgDuration = withDuration.length ? withDuration.reduce((s, x) => s + x.duration, 0) / withDuration.length : 0;
-  const avgPagesPerSession = sessionCount ? (sessions.reduce((s, x) => s + x.pageViewCount, 0) / sessionCount).toFixed(1) : '0';
   const engagedCount = sessions.filter(s => s.engaged).length;
   const bounceRate = sessionCount ? Math.round((1 - engagedCount / sessionCount) * 100) : 0;
-  const nr = newReturningSplit(rangeEvents);
-  const newPct = nr.total ? Math.round(nr.newCount / nr.total * 100) : 0;
+  const uniqueVisitors = uniqueBy(rangeEvents, e => e.visitorId).length;
 
+  const etsy = etsySalesInRange(rangeEvents);
+  const lsRevenue = lsSales.configured ? lsSales.revenue : 0;
+  const lsOrders = lsSales.configured ? lsSales.orders : 0;
+  const totalRevenue = lsRevenue + etsy.revenue;
+  const totalOrders = lsOrders + etsy.orders;
+  const salesSub = lsSales.configured
+    ? '$' + lsRevenue.toFixed(2) + ' Lemon Squeezy + $' + etsy.revenue.toFixed(2) + ' Etsy'
+    : (lsSales.loaded ? 'Etsy only - connect Lemon Squeezy for live revenue' : 'loading Lemon Squeezy...');
+
+  // Funnel. The final step can only be observed through redemptions, since
+  // checkout itself completes on Lemon Squeezy's own site.
+  const initiated = uniqueBy(rangeEvents.filter(e => e.type === 'purchase_initiated'), e => e.sessionId).length;
+  const funnelSteps = [
+    { label: 'Sessions', value: sessionCount, color: '#6366f1' },
+    { label: 'Clicked buy', value: initiated, color: '#a855f7', note: 'sessions reaching checkout' },
+    { label: 'Completed purchase', value: totalOrders, color: '#10b981', note: lsSales.configured ? 'Lemon Squeezy orders + redeemed Etsy keys' : 'redeemed Etsy keys only' }
+  ];
+
+  // Today reads by hour; any longer range reads by day.
+  const isToday = activeQuickRange() === 'today';
   const toMs = overviewFilters.to ? new Date(overviewFilters.to + 'T23:59:59').getTime() : now;
   const fromMs = overviewFilters.from ? new Date(overviewFilters.from + 'T00:00:00').getTime() : (toMs - 29 * 86400000);
   const rangeDays = Math.max(1, Math.min(366, Math.round((toMs - fromMs) / 86400000) + 1));
-  const series = dailyUniqueVisitorSeries(rangeEvents, rangeDays, toMs);
+  const series = isToday ? hourlyUniqueVisitorSeries(rangeEvents) : dailyUniqueVisitorSeries(rangeEvents, rangeDays, toMs);
   const seriesTotal = series.reduce((s, p) => s + p.value, 0);
-  const tzGroups = groupCount(rangeEvents, e => e.timezone);
-  const nrGroups = [{ label: 'New', value: nr.newCount }, { label: 'Returning', value: nr.returningCount }];
-  const engagedGroups = [{ label: 'Engaged', value: engagedCount }, { label: 'Bounced', value: sessionCount - engagedCount }];
+
+  const locationGroups = groupCount(rangeEvents, e => e.timezone).filter(g => g.label);
+  const deviceGroups = groupCount(rangeEvents, e => uaDevice(e.ua));
+  const referrerGroups = groupCount(
+    rangeEvents.filter(e => e.type === 'page_view').map(e => ({ ...e, _ref: e.referrer ? (() => { try { return new URL(e.referrer).hostname; } catch (err) { return 'Other'; } })() : 'Direct' })),
+    e => e._ref
+  );
+
+  const perToolSales = [
+    { label: toolLabel('sbp'), value: Math.round(etsy.perTool.sbp) },
+    { label: toolLabel('ubp'), value: Math.round(etsy.perTool.ubp) }
+  ].filter(x => x.value > 0);
 
   el.innerHTML = `
     <div class="section-header"><h2 class="admin-section-title">Overview</h2></div>
     <p class="admin-section-sub">${esc(formatOverviewRangeLabel())}</p>
     ${overviewFilterBarHtml()}
-    ${kpiRow([
-      { icon: '👥', label: 'Visitors', value: fmt(rangeVisitors), sub: `${shareOfAllTime}% of all-time visitors`, color: '#6366f1', hint: 'Unique anonymous visitors (by device, not identity) with at least one page view in the selected range.' },
-      { icon: '🟢', label: 'Online now', value: fmt(onlineNow), sub: 'active in the last ~1 min', color: '#10b981', hint: "Visitors with any recorded activity in the last ~1 minute - a rough 'who's here right now' signal, always live regardless of the range above." },
-      { icon: '📦', label: 'Sessions', value: fmt(sessionCount), sub: `${avgPagesPerSession} pages / session`, color: '#3b82f6', hint: 'A session is one continuous visit. A new one starts whenever a visitor arrives after being away for a while.' },
-      { icon: '✨', label: 'New visitors', value: newPct + '%', sub: `${100 - newPct}% returning`, color: '#a855f7', hint: 'Share of visitors in this range who have never had more than one session before, ever.' }
-    ])}
-    ${kpiRow([
-      { icon: '⏱️', label: 'Avg. session duration', value: formatDuration(avgDuration), sub: 'time between first and last activity', color: '#fb923c', hint: 'Average time between the first and last recorded activity within a session.' },
-      { icon: '↩️', label: 'Bounce rate', value: bounceRate + '%', sub: 'left without a 2nd page or ~25s+ stay', color: '#f43f5e', hint: 'Share of sessions that viewed only one page and didn’t stay long enough for a heartbeat (~25 seconds).' },
-      { icon: '📄', label: 'Pages / session', value: avgPagesPerSession, sub: `${fmt(sessions.reduce((s, x) => s + x.pageViewCount, 0))} page views total`, color: '#14b8a6', hint: 'Average number of page views per session, across all sessions in this range.' },
-      { icon: '👁️', label: 'Page views today', value: fmt(todayViews), sub: '', color: '#ec4899', hint: 'Page views recorded so far today, resetting at midnight in your browser’s local time - always literally today, regardless of the range above.' }
-    ])}
-    <div class="admin-grid-2">
-      <div class="panel chart-panel spend-line-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Unique visitors per day', 'Distinct visitors per calendar day, across the selected range.')}
-        ${seriesTotal > 0 ? svgSpendLine(series, { w: 900, h: 140 }) + `<div class="spend-line-caption"><span class="spend-line-num">${fmt(seriesTotal)}</span><span class="spend-line-label">total visits over this period</span></div>` : `<div class="chart-empty">No visits in this range.</div>`}
+
+    <div class="admin-live-row">
+      <div class="panel admin-globe-panel"><div class="panel-inner-sm">
+        ${panelTitle('Online now', 'Visitors active in the last couple of minutes, placed by their browser-reported timezone. No IP lookup and no third-party geo service, so points are approximate by design. Drag to spin.')}
+        <div class="admin-globe-wrap">
+          <canvas id="adminGlobe" class="admin-globe" aria-label="Globe showing where visitors are online now"></canvas>
+          <div class="admin-globe-count"><span id="adminGlobeNum">${fmt(onlineNow)}</span><small>online now</small></div>
+        </div>
+        <div class="admin-globe-legend" id="adminGlobeLegend"></div>
       </div></div>
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Top regions (by timezone)', 'Visitors grouped by their browser-reported timezone - the only geography signal collected here (no IP lookups, no third-party service).')}
-        ${pieOrEmpty(tzGroups, 'No data yet.')}
+      <div class="admin-kpi-stack">
+        ${kpiRow([
+          { icon: '💰', label: 'Total sales', value: '$' + totalRevenue.toFixed(2), sub: salesSub, color: '#10b981', hint: 'Lemon Squeezy revenue is read live from their API. Etsy has no such feed, so Etsy sales are inferred from redeemed Etsy keys at list price, which undercounts anyone who bought but never redeemed.' },
+          { icon: '🧾', label: 'Orders', value: fmt(totalOrders), sub: lsSales.configured ? fmt(lsOrders) + ' Lemon Squeezy + ' + fmt(etsy.orders) + ' Etsy' : fmt(etsy.orders) + ' redeemed Etsy keys', color: '#6366f1', hint: 'Paid orders in this range. Etsy orders are counted from redeemed keys, so they can lag the actual sale by days.' }
+        ])}
+        ${kpiRow([
+          { icon: '📦', label: 'Sessions', value: fmt(sessionCount), sub: fmt(uniqueVisitors) + ' unique visitors', color: '#3b82f6', hint: 'A session is one continuous visit. A new one starts whenever a visitor returns after being away for a while.' },
+          { icon: '⏱️', label: 'Avg. session duration', value: formatDuration(avgDuration), sub: 'first to last activity', color: '#fb923c', hint: 'Average time between the first and last recorded activity within a session.' }
+        ])}
+        ${kpiRow([
+          { icon: '↩️', label: 'Bounce rate', value: bounceRate + '%', sub: 'left without a 2nd page or ~25s stay', color: '#f43f5e', hint: 'Share of sessions that viewed one page and did not stay long enough for a heartbeat (~25 seconds).' },
+          { icon: '🛒', label: 'Reached checkout', value: fmt(initiated), sub: sessionCount ? Math.round(initiated / sessionCount * 100) + '% of sessions' : '', color: '#a855f7', hint: 'Sessions where someone clicked a buy button. Recorded on this site, so it is exact, unlike what happens afterwards on Lemon Squeezy.' }
+        ])}
+      </div>
+    </div>
+
+    <div class="admin-grid-2">
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Conversion funnel', 'How many sessions reach each stage. The final step is only visible through redemptions, since checkout completes on Lemon Squeezy.')}
+        ${funnelHtml(funnelSteps)}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Sales by product', 'Etsy sales split by planner, from redeemed keys. Lemon Squeezy revenue is not split per product here.')}
+        ${perToolSales.length ? hBarListHtml(perToolSales, { empty: 'No sales in this range.' }) : '<div class="chart-empty">No product sales in this range.</div>'}
       </div></div>
     </div>
+
+    <div class="panel chart-panel spend-line-panel" data-chart-scope><div class="panel-inner-sm">
+      ${panelTitle(isToday ? 'Unique visitors per hour' : 'Unique visitors per day', isToday ? 'Distinct visitors per hour so far today.' : 'Distinct visitors per calendar day across the selected range.')}
+      ${seriesTotal > 0 ? svgSpendLine(series, { w: 900, h: 140 }) + '<div class="spend-line-caption"><span class="spend-line-num">' + fmt(seriesTotal) + '</span><span class="spend-line-label">total visits over this period</span></div>' : '<div class="chart-empty">No visits in this range.</div>'}
+    </div></div>
+
     <div class="admin-grid-2">
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('New vs. returning visitors', 'New = never had more than one session before. Returning = has visited in a prior, separate session.')}
-        ${sessionCount ? pieOrEmpty(nrGroups, 'No data yet.') : `<div class="chart-empty">No visits in this range.</div>`}
-      </div></div>
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Engaged vs. bounced sessions', 'Engaged = viewed 2+ pages, or stayed long enough for a heartbeat (~25s+). Everything else counts as bounced.')}
-        ${sessionCount ? pieOrEmpty(engagedGroups, 'No data yet.') : `<div class="chart-empty">No sessions in this range.</div>`}
-      </div></div>
-    </div>`;
-  wireOverviewFilterBar();
-  initFieldTips(el);
-  requestAnimationFrame(() => {
-    el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.spend-line-dot', { format: d => `<strong>${esc(d.label)}</strong><br>${esc(fmt(d.val))} visitor${d.val == 1 ? '' : 's'}` });
-      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d => `<strong>${esc(d.label)}</strong><br>${esc(fmt(d.val))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
-    });
-  });
-}
-
-function renderLive() {
-  const el = document.getElementById('aview-live');
-  const online = allEvents.filter(isOnlineNow);
-  const onlineVisitors = uniqueBy(online, e => e.visitorId);
-  const recent = allEvents.slice().sort((a, b) => eventTime(b) - eventTime(a)).slice(0, 30);
-
-  el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">Live</h2></div>
-    <p class="admin-section-sub">Auto-refreshes every ${Math.round(ADMIN_POLL_MS / 1000)}s.</p>
-    <div class="panel admin-live-hero">
-      <div class="admin-live-dot${onlineVisitors.length ? '' : ' admin-live-dot--off'}"></div>
-      <div><div class="admin-live-num">${fmt(onlineVisitors.length)}</div><div class="admin-live-label">online now</div></div>
-    </div>
-    <div class="panel"><div class="panel-inner-sm">
-      ${panelTitle('Recent activity', 'The most recent events across the whole site, newest first - every event type shows up here as it happens.')}
-      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>When</th><th>Event</th><th>Tool</th><th>Region</th></tr></thead><tbody>
-        ${recent.length ? recent.map(e => `<tr><td>${esc(relTime(eventTime(e)))}</td><td class="admin-table-strong">${esc(e.type)}</td><td>${esc(toolLabel(e.tool))}</td><td>${esc(e.timezone || '—')}</td></tr>`).join('') : `<tr class="admin-empty-row"><td colspan="4">No events yet.</td></tr>`}
-      </tbody></table></div>
-    </div></div>`;
-  initFieldTips(el);
-}
-
-function renderTraffic() {
-  const el = document.getElementById('aview-traffic');
-  const events = filteredEvents();
-  const views = events.filter(e => e.type === 'page_view');
-  const days = filters.from || filters.to ? 90 : 30;
-  const series = dailyUniqueVisitorSeries(events, days);
-  const seriesTotal = series.reduce((s, p) => s + p.value, 0);
-  const referrers = groupCount(views.map(e => ({ ...e, _ref: e.referrer ? (() => { try { return new URL(e.referrer).hostname; } catch (err) { return 'Other'; } })() : 'Direct' })), e => e._ref);
-  const tzGroups = groupCount(events, e => e.timezone);
-  const deviceGroups = groupCount(events, e => uaDevice(e.ua));
-  const pages = groupCount(views, e => toolLabel(e.tool)).sort((a, b) => b.value - a.value);
-  const sessions = buildSessions(events);
-  const landingPages = groupCount(sessions.filter(s => s.landingPage), s => pageLabel(s.landingPage)).sort((a, b) => b.value - a.value);
-  const exitPages = groupCount(sessions.filter(s => s.exitPage), s => pageLabel(s.exitPage)).sort((a, b) => b.value - a.value);
-
-  const pageTableRows = (groups, emptyText) => groups.length
-    ? groups.map(p => `<tr><td class="admin-table-strong">${esc(p.label)}</td><td>${fmt(p.value)}</td></tr>`).join('')
-    : `<tr class="admin-empty-row"><td colspan="2">${esc(emptyText)}</td></tr>`;
-
-  el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">Traffic</h2></div>
-    ${filterBarHtml()}
-    <div class="admin-grid-2">
-      <div class="panel chart-panel spend-line-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Unique visitors per day', 'Distinct visitors per calendar day. Shows the last 90 days once a date filter is set, otherwise the last 30.')}
-        ${seriesTotal > 0 ? svgSpendLine(series, { w: 900, h: 140 }) + `<div class="spend-line-caption"><span class="spend-line-num">${fmt(seriesTotal)}</span><span class="spend-line-label">total visits over this period</span></div>` : `<div class="chart-empty">No visits in this range.</div>`}
-      </div></div>
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Referrers', 'Which site sent each visitor here, grouped by domain. "Direct" means no referrer was recorded (typed URL, bookmark, or a privacy-blocked referrer).')}
-        ${pieOrEmpty(referrers, 'No data yet.')}
-      </div></div>
-    </div>
-    <div class="admin-grid-2">
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Regions (by timezone)', 'Visitors grouped by their browser-reported timezone - the only geography signal collected here.')}
-        ${pieOrEmpty(tzGroups, 'No data yet.')}
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Sessions by location', 'Grouped by the browser-reported timezone, the only geography signal collected.')}
+        ${hBarListHtml(locationGroups, { empty: 'No data yet.', limit: 8 })}
       </div></div>
       <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
         ${panelTitle('Device type')}
         ${pieOrEmpty(deviceGroups, 'No data yet.')}
       </div></div>
     </div>
-    <div class="admin-grid-2">
-      <div class="panel"><div class="panel-inner-sm">
-        ${panelTitle('Landing pages (where sessions start)', 'The first page viewed in each session - shows what visitors see first.')}
-        <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Page</th><th>Sessions</th></tr></thead><tbody>
-          ${pageTableRows(landingPages, 'No sessions in this range.')}
-        </tbody></table></div>
-      </div></div>
-      <div class="panel"><div class="panel-inner-sm">
-        ${panelTitle('Exit pages (where sessions end)', 'The last page viewed before a session went idle - shows where visitors tend to drop off.')}
-        <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Page</th><th>Sessions</th></tr></thead><tbody>
-          ${pageTableRows(exitPages, 'No sessions in this range.')}
-        </tbody></table></div>
-      </div></div>
-    </div>
-    <div class="panel"><div class="panel-inner-sm">
-      ${panelTitle('Views by page', 'Total page-view events per page/tool in this range (not unique visitors - a repeat visit counts again).')}
-      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody>
-        ${pageTableRows(pages, 'No data yet.')}
-      </tbody></table></div>
+
+    <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
+      ${panelTitle('Referrers', 'Which site sent each visitor here, grouped by domain. "Direct" means no referrer was recorded: a typed URL, a bookmark, or a privacy-blocked referrer.')}
+      ${pieOrEmpty(referrerGroups, 'No data yet.')}
     </div></div>`;
-  wireFilterBar(renderTraffic);
+
+  wireOverviewFilterBar();
   initFieldTips(el);
+  mountLiveGlobe(liveEvents);
   requestAnimationFrame(() => {
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.spend-line-dot', { format: d => `<strong>${esc(d.label)}</strong><br>${esc(fmt(d.val))} visitor${d.val == 1 ? '' : 's'}` });
-      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d => `<strong>${esc(d.label)}</strong><br>${esc(fmt(d.val))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
+      wireChartHover(scope, '.spend-line-dot', { format: d => '<strong>' + esc(d.label) + '</strong><br>' + esc(fmt(d.val)) + ' visitor' + (d.val == 1 ? '' : 's') });
+      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d => '<strong>' + esc(d.label) + '</strong><br>' + esc(fmt(d.val)) + ' · ' + parseFloat(d.pct || 0).toFixed(0) + '%' });
     });
   });
 }
 
-function renderProduct() {
-  const el = document.getElementById('aview-product');
-  const events = filteredEvents();
-  const codes = groupCount(events.filter(e => e.type === 'launch_code_redeemed'), e => (e.detail && e.detail.code) || 'Unknown');
-  const themes = groupCount(events.filter(e => e.type === 'theme_changed'), e => (e.detail && e.detail.theme) || 'Unknown');
-  const langs = groupCount(events.filter(e => e.type === 'language_changed'), e => (e.detail && e.detail.lang) || 'Unknown');
-  const syncModes = groupCount(events.filter(e => e.type === 'sync_mode_chosen'), e => (e.detail && e.detail.mode) === 'google' ? 'Google Drive' : 'Local device');
+// ── Live globe ────────────────────────────────────────────────────────
+const GLOBE_LIVE_WINDOW_MS = 120000;
+let _globeInstance = null;
+let _globeTimezones = [];
 
-  el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">Product</h2></div>
-    ${filterBarHtml()}
-    <div class="admin-grid-2">
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Launch codes redeemed', 'Which specific license keys were redeemed in this range - see the Redemptions tab for the full list with order IDs.')}
-        ${pieOrEmpty(codes, 'No codes redeemed in this range.')}
-      </div></div>
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Theme popularity')}
-        ${pieOrEmpty(themes, 'No theme changes in this range.')}
-      </div></div>
-    </div>
-    <div class="admin-grid-2">
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Language')}
-        ${pieOrEmpty(langs, 'No language changes in this range.')}
-      </div></div>
-      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Sync mode chosen', 'Whether visitors chose to sync via Google Drive or keep their data local to the device, when prompted.')}
-        ${pieOrEmpty(syncModes, 'No sync-mode choices in this range.')}
-      </div></div>
-    </div>`;
-  wireFilterBar(renderProduct);
-  initFieldTips(el);
-  requestAnimationFrame(() => {
-    el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d => `<strong>${esc(d.label)}</strong><br>${esc(fmt(d.val))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
-    });
-  });
+function mountLiveGlobe(liveEvents) {
+  const canvas = document.getElementById('adminGlobe');
+  if (!canvas || typeof createLiveGlobe !== 'function') return;
+  if (_globeInstance) { _globeInstance.destroy(); _globeInstance = null; }
+  updateGlobeData(liveEvents);
+  _globeInstance = createLiveGlobe(canvas, () => globePointsFromTimezones(_globeTimezones));
 }
 
-// ══════════════════════ App Insights (per-tool product signals) ══════════
-// Deliberately all-time (not affected by the date filters used elsewhere) -
-// this tab is about durable product-improvement signals, not a
-// point-in-time traffic snapshot. Everything here is derived from usage/
-// preference events already collected - no financial data is or ever will
-// be part of this.
+function updateGlobeData(liveEvents) {
+  const now = Date.now();
+  const recent = liveEvents || allEvents.filter(e => now - eventTime(e) <= GLOBE_LIVE_WINDOW_MS);
+  // One entry per visitor, so a chatty tab doesn't outweigh a quiet one.
+  const byVisitor = new Map();
+  recent.forEach(e => { if (e.timezone) byVisitor.set(e.visitorId, e.timezone); });
+  _globeTimezones = Array.from(byVisitor.values());
+
+  const legend = document.getElementById('adminGlobeLegend');
+  if (legend) {
+    const pts = globePointsFromTimezones(_globeTimezones).sort((a, b) => b.count - a.count).slice(0, 4);
+    legend.innerHTML = pts.length
+      ? pts.map(p => '<span class="admin-globe-chip"><i></i>' + esc(p.label.split('/').pop().replace(/_/g, ' ')) + (p.count > 1 ? ' ×' + p.count : '') + '</span>').join('')
+      : '<span class="admin-globe-empty">Nobody online right now.</span>';
+  }
+  const num = document.getElementById('adminGlobeNum');
+  if (num) num.textContent = fmt(new Set(recent.map(e => e.visitorId)).size);
+}
+
+// Hour-by-hour equivalent of dailyUniqueVisitorSeries, for the Today range.
+function hourlyUniqueVisitorSeries(events) {
+  const now = new Date();
+  const out = [];
+  for (let h = 0; h <= now.getHours(); h++) {
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h).getTime();
+    const end = start + 3600000;
+    const seen = new Set();
+    events.forEach(e => { const t = eventTime(e); if (t >= start && t < end) seen.add(e.visitorId); });
+    out.push({ label: String(h).padStart(2, '0') + ':00', value: seen.size });
+  }
+  return out;
+}
+
+// ── Helpers still needed after the Live/Traffic/Product/Insights tabs were
+// removed: Redemptions builds its rows here, and Summary reads per-tool
+// engagement from toolInsights.
 const DOW_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 function dayOfWeekCounts(events) {
   const counts = [0, 0, 0, 0, 0, 0, 0];
@@ -923,35 +1086,6 @@ function dayOfWeekCounts(events) {
   const max = Math.max(1, ...counts);
   return DOW_LABELS.map((label, i) => ({ label, value: counts[i], pct: Math.round(counts[i] / max * 100) }));
 }
-function barRowsHtml(rows, opts) {
-  if (!rows.some(r => r.value > 0)) return `<div class="chart-empty">No data yet.</div>`;
-  const labelClass = opts && opts.wide ? 'admin-bar-row-label admin-bar-row-label--wide' : 'admin-bar-row-label';
-  return rows.map(r => `<div class="admin-bar-row"><span class="${labelClass}">${esc(r.label)}</span><div class="admin-bar-row-track"><div class="admin-bar-row-fill" style="width:${r.pct}%"></div></div><span class="admin-bar-row-value">${fmt(r.value)}</span></div>`).join('');
-}
-// Converts {label,value} groups (no built-in ordering assumption) into bar
-// rows scaled against the largest group, for use with barRowsHtml.
-function toBarRows(groups) {
-  const max = Math.max(1, ...groups.map(g => g.value));
-  return groups.map(g => ({ label: g.label, value: g.value, pct: Math.round(g.value / max * 100) }));
-}
-
-// Human labels for the app-specific event `detail` fields captured by
-// tab_viewed / feature_used / dashboard_layout_changed (script.js and
-// ultimate-budget.js). Deliberately just display labels, not a validation
-// allow-list - an unrecognized key still renders (falls back to itself)
-// rather than silently disappearing if a future feature name is added.
-const TAB_LABELS = {
-  dashboard: 'Dashboard', transactions: 'Transactions', income: 'Income', expenses: 'Expenses',
-  bills: 'Bills', debt: 'Debt Payoff', savings: 'Savings', budget: 'Budget',
-  subscriptions: 'Subscriptions', sinking: 'Sinking Funds', calendar: 'Calendar'
-};
-const FEATURE_LABELS = {
-  sample_data_loaded: 'Loaded sample data', csv_exported: 'Exported CSV',
-  debt_added: 'Added a debt', sinking_fund_created: 'Created a sinking fund',
-  subscription_added: 'Added a subscription', automation_enabled: 'Enabled automation',
-  allocation_enabled: 'Enabled allocation'
-};
-const LAYOUT_LABELS = { '1': 'Classic', '2': 'Radial Pulse' };
 function tabUsageGroups(events) {
   return groupCount(events.filter(e => e.type === 'tab_viewed'), e => TAB_LABELS[e.detail && e.detail.tab] || (e.detail && e.detail.tab) || 'Unknown');
 }
@@ -962,12 +1096,6 @@ function layoutGroups(events) {
   return groupCount(events.filter(e => e.type === 'dashboard_layout_changed'), e => LAYOUT_LABELS[String(e.detail && e.detail.layout)] || 'Unknown');
 }
 
-// Everything scoped to events that happened ON that tool's own page - this
-// naturally captures theme/sync-mode preferences AS EXPRESSED WITHIN that
-// tool, since those settings live on each tool's own page. The one
-// exception is launch_code_redeemed, which always fires from the shared
-// hub page (budgetplanner.html) regardless of which tool the code was FOR - so
-// that one is matched by detail.tool instead of by page.
 function toolInsights(tool) {
   const events = allEvents.filter(e => e.page === tool);
   const sessions = buildSessions(events);
@@ -1013,110 +1141,6 @@ const INSIGHT_CARD_DEFS = [
   { id: 'dow', title: 'Busiest day of week' },
   { id: 'device', title: 'Device type' }
 ];
-function getInsightsView() {
-  const v = localStorage.getItem(INSIGHTS_VIEW_KEY);
-  return v === 'sbp' || v === 'ubp' ? v : 'both';
-}
-function setInsightsView(v) { localStorage.setItem(INSIGHTS_VIEW_KEY, v); }
-
-function insightsViewSelectorHtml() {
-  const current = getInsightsView();
-  const opts = [['both', 'Both'], ['sbp', 'Simple Budget'], ['ubp', 'Ultimate Budget']];
-  return `
-    ${panelTitle("Which budget planner's insights?")}
-    <div class="admin-setting-hint" style="margin:-8px 0 12px">Choose which tool's App Insights section is on screen.</div>
-    <div class="theme-setting-row"><div class="theme-pill" role="group">
-      ${opts.map(([val, label]) => `<button class="theme-opt${val === current ? ' is-active' : ''}" data-insights-view="${val}" type="button">${esc(label)}</button>`).join('')}
-    </div></div>`;
-}
-function wireInsightsViewSelector() {
-  document.querySelectorAll('[data-insights-view]').forEach(btn => {
-    btn.addEventListener('click', () => { setInsightsView(btn.dataset.insightsView); renderInsights(); });
-  });
-}
-
-function insightCardHtml(id, d, color) {
-  switch (id) {
-    case 'funnel':
-      return `<div class="panel" style="grid-column:1/-1"><div class="panel-inner-sm">
-        ${panelTitle('Activation funnel', 'Of everyone who visited this tool, what share went on to redeem a license key for it.')}
-        <div class="admin-funnel">
-          <div class="admin-funnel-step"><div class="admin-funnel-step-value">${fmt(d.visitorCount)}</div><div class="admin-funnel-step-label">Visited</div></div>
-          <div class="admin-funnel-arrow"><span class="admin-funnel-arrow-glyph">→</span><span class="admin-funnel-arrow-pct">${d.conversionPct}%</span></div>
-          <div class="admin-funnel-step"><div class="admin-funnel-step-value">${fmt(d.redeemedFromVisitors)}</div><div class="admin-funnel-step-label">Redeemed a code</div></div>
-        </div>
-      </div></div>`;
-    case 'tabUsage':
-      return `<div class="panel"><div class="panel-inner-sm">${panelTitle('Section usage', 'Which tabs/sections within this tool get opened, and how often - shows what people actually use once inside.')}${barRowsHtml(toBarRows(d.tabGroups), { wide: true })}</div></div>`;
-    case 'featureAdoption':
-      return `<div class="panel"><div class="panel-inner-sm">${panelTitle('Feature adoption', 'How many times each specific feature (sample data, CSV export, adding a debt/fund/subscription, enabling automation, etc.) has been used.')}${barRowsHtml(toBarRows(d.featureGroups), { wide: true })}</div></div>`;
-    case 'layoutPref':
-      return `<div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">${panelTitle('Dashboard layout', 'Which dashboard layout (Classic vs. Radial Pulse) visitors have switched to.')}${pieOrEmpty(d.layoutGroups, 'No layout changes yet.')}</div></div>`;
-    case 'syncMode':
-      return `<div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">${panelTitle('Sync mode chosen')}${pieOrEmpty(d.syncGroups, 'No sync choices yet.')}</div></div>`;
-    case 'theme':
-      return `<div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">${panelTitle('Theme preference')}${pieOrEmpty(d.themeGroups, 'No theme changes yet.')}</div></div>`;
-    case 'dow':
-      return `<div class="panel"><div class="panel-inner-sm">${panelTitle('Busiest day of the week', 'Total events on this tool’s page, grouped by day of week (your local time).')}${barRowsHtml(d.dow)}</div></div>`;
-    case 'device':
-      return `<div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">${panelTitle('Device type')}${pieOrEmpty(d.deviceGroups, 'No data yet.')}</div></div>`;
-    default: return '';
-  }
-}
-
-function toolInsightsBlockHtml(tool, label, color) {
-  const d = toolInsights(tool);
-  return `
-    <div class="admin-tool-section">
-      <div class="admin-tool-section-title">
-        <span class="admin-tool-badge" style="background:${color}22;color:${color}">${esc(label)}</span>
-        <span style="font-size:13px;font-weight:600;color:var(--text-faint)">${fmt(d.visitorCount)} visitors · ${fmt(d.sessionCount)} sessions</span>
-      </div>
-      ${kpiRow([
-        { icon: '⏱️', label: 'Avg. session duration', value: formatDuration(d.avgDuration), sub: 'first to last activity', color, hint: 'Average time between first and last activity, across sessions on this tool’s page.' },
-        { icon: '↩️', label: 'Bounce rate', value: d.bounceRate + '%', sub: 'no 2nd page, no ~25s+ stay', color, hint: 'Share of sessions that viewed only one page and didn’t stay long enough for a heartbeat (~25s+).' },
-        { icon: '🔁', label: 'Returning visitors', value: d.returningPct + '%', sub: `of ${fmt(d.visitorCount)} total visitors`, color, hint: 'Share of this tool’s visitors who have visited in more than one session, ever.' },
-        { icon: '🔓', label: 'License key redemption rate', value: d.conversionPct + '%', sub: `${fmt(d.redeemedFromVisitors)} of ${fmt(d.visitorCount)} visitors`, color, hint: 'Share of this tool’s visitors who went on to redeem a license key for it.' }
-      ])}
-      <div class="admin-card-grid">${INSIGHT_CARD_DEFS.map(c => insightCardHtml(c.id, d, color)).join('')}</div>
-    </div>`;
-}
-
-function renderInsights() {
-  const el = document.getElementById('aview-insights');
-  const sbpVisitors = new Set(allEvents.filter(e => e.page === 'sbp').map(e => e.visitorId));
-  const ubpVisitors = new Set(allEvents.filter(e => e.page === 'ubp').map(e => e.visitorId));
-  let bothCount = 0;
-  sbpVisitors.forEach(v => { if (ubpVisitors.has(v)) bothCount++; });
-  const totalToolVisitors = new Set([...sbpVisitors, ...ubpVisitors]).size;
-  const bothPct = totalToolVisitors ? Math.round(bothCount / totalToolVisitors * 100) : 0;
-  const view = getInsightsView();
-
-  el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">App Insights</h2></div>
-    <p class="admin-section-sub">Product-usage signals, split by tool - all-time data, not affected by the date filters on other tabs.</p>
-    <div class="panel admin-insights-callout">
-      <div class="admin-insights-callout-num">${bothPct}%</div>
-      <div class="admin-insights-callout-text">of visitors who've used either tool have explored <strong>both</strong> Simple Budget and Ultimate Budget (${fmt(bothCount)} of ${fmt(totalToolVisitors)} tool visitors) - a read on how much cross-tool comparison / upsell interest exists.</div>
-    </div>
-    <div class="panel" style="margin-bottom:18px"><div class="panel-inner-sm">${insightsViewSelectorHtml()}</div></div>
-    ${view !== 'ubp' ? toolInsightsBlockHtml('sbp', 'Simple Budget', '#6366f1') : ''}
-    ${view !== 'sbp' ? toolInsightsBlockHtml('ubp', 'Ultimate Budget', '#a855f7') : ''}`;
-  wireInsightsViewSelector();
-  initFieldTips(el);
-  requestAnimationFrame(() => {
-    el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d => `<strong>${esc(d.label)}</strong><br>${esc(fmt(d.val))} · ${parseFloat(d.pct || 0).toFixed(0)}%` });
-    });
-  });
-}
-
-// ══════════════════════ Redemptions (license key + order ID) ══════════════
-// All-time, like App Insights - this is a standing record for the site
-// owner to manually cross-reference against real orders and revoke access,
-// not a point-in-time traffic snapshot. The order ID itself is never
-// validated client-side (script.js only requires it be non-empty) - the
-// whole point of this tab is to let a human eyeball it.
 function redemptionEvents() { return allEvents.filter(e => e.type === 'launch_code_redeemed'); }
 function redemptionRows() {
   const events = redemptionEvents();
@@ -1225,21 +1249,53 @@ function renderRedemptions() {
     ])}
     ${redemptionSearchBarHtml()}
     <div class="panel"><div class="panel-inner-sm">
+      ${panelTitle('Redemption activity', 'Each time a key was successfully entered into the app. One key can appear several times if it was used on more than one device.')}
       ${redemptionsTableHtml(rows)}
+    </div></div>
+    <div class="panel"><div class="panel-inner-sm">
+      ${panelTitle('Issued Etsy keys', 'Every key claimed at /claim, with the order it belongs to. Revoking blocks future redemptions of a key; anyone who already unlocked with it keeps access, since that unlock lives on their own device.')}
+      ${keysTableHtml(filteredKeys())}
     </div></div>`;
   wireRedemptionFilters();
+  wireKeyRevokeButtons(el);
   initFieldTips(el);
 }
 
-// ══════════════════════ Keys tab (Etsy license keys) ══════════════════════
-const keyFilters = { q: '', status: '' };
+// Revoke/restore lives on the Redemptions tab now, next to the activity it
+// relates to, so acting on a suspicious redemption doesn't mean hunting for
+// the key on a separate screen.
+function wireKeyRevokeButtons(scope) {
+  scope.querySelectorAll('.admin-key-toggle').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const rowNum = Number(btn.dataset.row);
+      const next = btn.dataset.next;
+      if (next === 'revoked' && !await confirmDialog({
+        message: 'Revoke this key? It will stop working for any new device. Anyone who already unlocked with it keeps access.',
+        confirmText: 'Revoke'
+      })) return;
+      btn.disabled = true;
+      try {
+        await adminSetKeyStatus(rowNum, next);
+        const rec = allKeys.find(k => k.row === rowNum);
+        if (rec) rec.status = next;
+        renderRedemptions();
+        showToast(next === 'revoked' ? 'Key revoked' : 'Key restored');
+      } catch (e) {
+        btn.disabled = false;
+        showToast("Couldn't update the key. Check your connection and try again.");
+      }
+    });
+  });
+}
 
+// ══════════════════════ Etsy license keys ══════════════════════
+// Shares the Redemptions tab's search and tool filter rather than carrying
+// its own set - one search box over both tables is far easier to reason
+// about than two that can disagree.
 function filteredKeys() {
-  const q = keyFilters.q.trim().toLowerCase();
+  const q = redemptionFilters.q.trim().toLowerCase();
   return allKeys.filter(k => {
-    if (keyFilters.status === 'revoked' && k.status !== 'revoked') return false;
-    if (keyFilters.status === 'active' && k.status === 'revoked') return false;
-    if (keyFilters.status === 'maxed' && k.devices.length < ETSY_DEVICE_LIMIT) return false;
+    if (redemptionFilters.tool && k.tool !== redemptionFilters.tool) return false;
     if (!q) return true;
     return [k.key, k.orderId, k.email, k.tool, k.theme].some(v => String(v).toLowerCase().includes(q));
   });
@@ -1275,72 +1331,6 @@ function keysTableHtml(rows) {
       </tr>`;
     }).join('')}
   </tbody></table></div>`;
-}
-
-function renderKeys() {
-  const el = document.getElementById('aview-keys');
-  if (!el) return;
-  const rows = filteredKeys();
-  const revoked = allKeys.filter(k => k.status === 'revoked').length;
-  const maxed = allKeys.filter(k => k.devices.length >= ETSY_DEVICE_LIMIT && k.status !== 'revoked').length;
-  const unused = allKeys.filter(k => !k.redeemCount).length;
-
-  el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">Etsy keys</h2></div>
-    <p class="admin-section-sub">Every key claimed at /claim, one per Etsy order. Revoking blocks future redemptions of a key; anyone who already unlocked with it keeps their access, since that unlock is stored on their own device.</p>
-    ${kpiRow([
-      { icon: '🔑', label: 'Keys issued', value: fmt(allKeys.length), sub: '', color: '#6366f1', hint: 'Total keys claimed. One per Etsy order - re-claiming the same order returns the same key rather than a new one.' },
-      { icon: '📱', label: 'At device limit', value: fmt(maxed), sub: `used all ${ETSY_DEVICE_LIMIT} slots`, color: '#f59e0b', hint: `Keys whose ${ETSY_DEVICE_LIMIT} device slots are all used. Normal for a heavy user, but worth a look if it happened quickly.` },
-      { icon: '🚫', label: 'Revoked', value: fmt(revoked), sub: '', color: '#f43f5e', hint: 'Keys you have disabled. They can no longer be redeemed on a new device.' },
-      { icon: '💤', label: 'Never redeemed', value: fmt(unused), sub: 'claimed but unused', color: '#64748b', hint: 'Claimed but never entered into the app. Usually just a buyer who has not got round to it yet.' }
-    ])}
-    <div class="admin-filter-bar">
-      <input type="text" id="admKeySearch" placeholder="Search key, order ID, or email..." value="${esc(keyFilters.q)}" aria-label="Search keys">
-      <select id="admKeyStatus" aria-label="Key status">
-        <option value=""${keyFilters.status === '' ? ' selected' : ''}>All keys</option>
-        <option value="active"${keyFilters.status === 'active' ? ' selected' : ''}>Active only</option>
-        <option value="revoked"${keyFilters.status === 'revoked' ? ' selected' : ''}>Revoked only</option>
-        <option value="maxed"${keyFilters.status === 'maxed' ? ' selected' : ''}>At device limit</option>
-      </select>
-      ${(keyFilters.q || keyFilters.status) ? `<button class="admin-filter-clear" id="admKeyClear" type="button">Clear filters</button>` : ''}
-    </div>
-    <div class="panel"><div class="panel-inner-sm">
-      ${keysTableHtml(rows)}
-    </div></div>`;
-
-  const search = document.getElementById('admKeySearch');
-  search?.addEventListener('input', e => {
-    const pos = e.target.selectionStart;
-    keyFilters.q = e.target.value;
-    renderKeys();
-    const el2 = document.getElementById('admKeySearch');
-    if (el2) { el2.focus(); el2.setSelectionRange(pos, pos); }
-  });
-  document.getElementById('admKeyStatus')?.addEventListener('change', e => { keyFilters.status = e.target.value; renderKeys(); });
-  document.getElementById('admKeyClear')?.addEventListener('click', () => { keyFilters.q = ''; keyFilters.status = ''; renderKeys(); });
-
-  el.querySelectorAll('.admin-key-toggle').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const rowNum = Number(btn.dataset.row);
-      const next = btn.dataset.next;
-      if (next === 'revoked' && !await confirmDialog({
-        message: 'Revoke this key? It will stop working for any new device. Anyone who already unlocked with it keeps access.',
-        confirmText: 'Revoke'
-      })) return;
-      btn.disabled = true;
-      try {
-        await adminSetKeyStatus(rowNum, next);
-        const rec = allKeys.find(k => k.row === rowNum);
-        if (rec) rec.status = next;
-        renderKeys();
-        showToast(next === 'revoked' ? 'Key revoked' : 'Key restored');
-      } catch (e) {
-        btn.disabled = false;
-        showToast("Couldn't update the key. Check your connection and try again.");
-      }
-    });
-  });
-  initFieldTips(el);
 }
 
 // ══════════════════════ Danger zone UI (Settings tab) ══════════════════════
@@ -1943,10 +1933,7 @@ function renderSettings() {
         <div class="settings-card-title">ℹ️ About this dashboard</div>
         <div class="admin-setting-row"><div><div class="admin-setting-label">Signed in as</div><div class="admin-setting-hint">${esc(_adminEmail || 'unknown')}</div></div></div>
         <div class="admin-setting-row"><div><div class="admin-setting-label">Events loaded</div><div class="admin-setting-hint">${fmt(allEvents.length)} rows${_sampleDataActive ? ' (sample data)' : ''}, last refreshed ${_lastFetched ? esc(relTime(_lastFetched)) : 'never'}</div></div></div>
-        <div class="admin-setting-row"><div><div class="admin-setting-label">Auto-refresh</div><div class="admin-setting-hint">Every ${Math.round(ADMIN_POLL_MS / 1000)}s while the Live tab is open</div></div></div>
-      </div></div>
-      <div class="panel"><div class="panel-inner">
-        ${sampleDataSectionHtml()}
+        <div class="admin-setting-row"><div><div class="admin-setting-label">Auto-refresh</div><div class="admin-setting-hint">Every ${Math.round(ADMIN_POLL_MS / 1000)}s while the dashboard is open</div></div></div>
       </div></div>
       <div class="panel"><div class="panel-inner">
         ${dangerZoneHtml()}
@@ -1958,7 +1945,7 @@ function renderSettings() {
   el.querySelectorAll('.theme-opt').forEach(btn => btn.addEventListener('click', () => { document.documentElement.dataset.theme = btn.dataset.themeVal; el.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('is-active', b === btn)); }));
   el.querySelector('#adminSignOutBtn2')?.addEventListener('click', adminSignOut);
   pennyWireSettingsCard();
-  wireSampleDataSection();
+
   wireDangerZone();
 }
 
@@ -1978,7 +1965,7 @@ function wireFilterBar(rerender) {
   document.getElementById('admFilterClear')?.addEventListener('click', () => { filters.from = ''; filters.to = ''; filters.tool = ''; rerender(); });
 }
 
-const ADMIN_RENDERERS = { overview: renderOverview, live: renderLive, traffic: renderTraffic, product: renderProduct, insights: renderInsights, redemptions: renderRedemptions, keys: renderKeys, settings: renderSettings, summary: renderSummary };
+const ADMIN_RENDERERS = { overview: renderOverview, redemptions: renderRedemptions, settings: renderSettings, summary: renderSummary };
 function switchATab(tab) {
   currentATab = tab;
   document.querySelectorAll('#adminTabs .btab').forEach(b => b.classList.toggle('is-active', b.dataset.atab === tab));

@@ -125,20 +125,6 @@
   padding: 3px 9px; border-radius: var(--radius-pill);
 }
 
-/* ── Activation funnel (Visited → Redeemed) ──────────────────────────── */
-.admin-funnel { display: flex; align-items: stretch; gap: 12px; }
-.admin-funnel-step {
-  flex: 1; text-align: center; padding: 18px 12px;
-  background: var(--surface-strong); border-radius: var(--radius-sm); border: 1px solid var(--border-faint);
-}
-.admin-funnel-step-value { font-size: 26px; font-weight: 800; font-family: var(--font-display); }
-.admin-funnel-step-label { font-size: 10.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .03em; margin-top: 4px; }
-.admin-funnel-arrow {
-  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 56px;
-}
-.admin-funnel-arrow-glyph { color: var(--text-faint); font-size: 18px; }
-.admin-funnel-arrow-pct { font-size: 12px; font-weight: 800; color: var(--grad-indigo); white-space: nowrap; }
-
 /* ── Day-of-week / section-usage / feature-adoption bars ─────────────── */
 .admin-bar-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
 .admin-bar-row-label { width: 38px; flex-shrink: 0; font-size: 11.5px; color: var(--text-secondary); font-weight: 600; }
@@ -207,3 +193,76 @@
 .admin-summary-card--positive { border-left-color: #10b981; }
 .admin-summary-card--warning { border-left-color: #f43f5e; }
 .admin-summary-card--neutral { border-left-color: var(--grad-indigo); }
+
+/* ── Overview: date range quick-select chips ─────────────────────────── */
+.admin-range-bar { flex-wrap: wrap; }
+.admin-range-chips { display: flex; gap: 6px; margin-left: auto; }
+.admin-range-chip {
+  border: 1px solid var(--border-faint); background: var(--surface-strong);
+  color: var(--text-secondary); border-radius: var(--radius-pill);
+  padding: 6px 13px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.admin-range-chip:hover { border-color: var(--grad-purple); color: var(--text-primary); }
+.admin-range-chip.is-active {
+  border-color: transparent; color: #fff;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+
+/* ── Overview: live globe + KPI stack ────────────────────────────────── */
+.admin-live-row { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 14px; margin-bottom: 14px; }
+.admin-kpi-stack { display: flex; flex-direction: column; gap: 10px; justify-content: space-between; }
+.admin-globe-panel .panel-inner-sm { display: flex; flex-direction: column; height: 100%; }
+.admin-globe-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 220px; }
+.admin-globe { width: 100%; max-width: 250px; aspect-ratio: 1; cursor: grab; touch-action: none; }
+.admin-globe:active { cursor: grabbing; }
+.admin-globe-count { display: flex; align-items: baseline; gap: 6px; pointer-events: none; }
+.admin-globe-count span { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: #10b981; }
+.admin-globe-count small { font-size: 11.5px; color: var(--text-faint); }
+.admin-globe-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; justify-content: center; min-height: 22px; }
+.admin-globe-chip {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600;
+  color: var(--text-secondary); background: rgba(16,185,129,.1);
+  border-radius: var(--radius-pill); padding: 3px 9px;
+}
+.admin-globe-chip i { width: 6px; height: 6px; border-radius: 50%; background: #10b981; display: inline-block; }
+.admin-globe-empty { font-size: 12px; color: var(--text-faint); }
+
+/* ── Overview: conversion funnel ─────────────────────────────────────── */
+.admin-funnel { display: flex; flex-direction: column; gap: 16px; padding: 4px 0; }
+.admin-funnel-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+.admin-funnel-label { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.admin-funnel-value { font-family: var(--font-display); font-size: 17px; font-weight: 800; color: var(--text-primary); }
+.admin-funnel-track { height: 10px; border-radius: var(--radius-pill); background: rgba(148,163,255,.12); overflow: hidden; }
+.admin-funnel-track > i { display: block; height: 100%; border-radius: var(--radius-pill); transition: width .5s var(--ease); }
+.admin-funnel-meta { display: flex; justify-content: space-between; gap: 10px; margin-top: 5px; }
+.admin-funnel-conv { font-size: 11.5px; font-weight: 600; color: var(--text-secondary); }
+.admin-funnel-note { font-size: 11.5px; color: var(--text-faint); text-align: right; }
+
+/* ── Horizontal bar list ─────────────────────────────────────────────── */
+.admin-hbars { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
+.admin-hbar-row { display: grid; grid-template-columns: minmax(72px, 34%) 1fr auto; align-items: center; gap: 10px; }
+.admin-hbar-label {
+  font-size: 12.5px; color: var(--text-secondary); font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.admin-hbar-track { height: 8px; border-radius: var(--radius-pill); background: rgba(148,163,255,.12); overflow: hidden; }
+.admin-hbar-track > i {
+  display: block; height: 100%; border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--grad-indigo), var(--grad-purple));
+  transition: width .5s var(--ease);
+}
+.admin-hbar-val { font-size: 12.5px; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+.admin-hbar-val small { font-size: 11px; font-weight: 600; color: var(--text-faint); margin-left: 5px; }
+
+@media (max-width: 860px) {
+  .admin-live-row { grid-template-columns: 1fr; }
+  .admin-range-chips { margin-left: 0; }
+}
+
+/* The KPI stack beside the globe holds two tiles per row, so override the
+   shared 4-column .ist-row grid or they'd occupy half the column and leave
+   the rest empty. */
+.admin-kpi-stack .ist-row { grid-template-columns: repeat(2, 1fr); margin-bottom: 0; height: 100%; }
+.admin-kpi-stack .ist-tile { height: 100%; }
+@media (max-width: 620px) { .admin-kpi-stack .ist-row { grid-template-columns: 1fr; } }
