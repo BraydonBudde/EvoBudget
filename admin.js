@@ -254,12 +254,19 @@ const ADMIN_KEYS_SHEET = 'Keys';
 const ADMIN_KEYS_RANGE = `${ADMIN_KEYS_SHEET}!A2:K10000`;
 let allKeys = [];
 
+// Set when the Keys sheet doesn't exist at all, which means the Apps Script
+// hasn't been redeployed yet (it creates the sheet on first claim). Worth
+// telling apart from "set up fine, nobody has bought yet" - otherwise an
+// empty tab looks identical in both cases.
+let _keysSheetMissing = false;
+
 async function adminFetchKeys(token) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_KEYS_RANGE)}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
   // A missing Keys sheet isn't an error - it just means no one has claimed a
   // key yet, so the tab should read "none yet" rather than break the sign-in.
-  if (!res.ok) return [];
+  if (!res.ok) { _keysSheetMissing = true; return []; }
+  _keysSheetMissing = false;
   const j = await res.json();
   return (j.values || []).map((r, i) => {
     let devices = [];
@@ -1227,8 +1234,11 @@ const ETSY_DEVICE_LIMIT = 5;
 function keysTableHtml(rows) {
   const head = `<tr><th>Key</th><th>Style</th><th>Order ID</th><th>Email</th><th>Devices</th><th>Redeemed</th><th>Status</th><th></th></tr>`;
   if (!rows.length) {
+    const msg = _keysSheetMissing
+      ? "No Keys sheet found yet. It's created automatically the first time someone claims a key - if you've already tried claiming one, check that the Apps Script was redeployed (Deploy → Manage deployments → Edit → New version), since saving it alone doesn't publish the change."
+      : (allKeys.length ? 'No keys match your filters.' : 'No keys claimed yet. They appear here as buyers claim them at /claim.');
     return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
-      <tr class="admin-empty-row"><td colspan="8">No keys claimed yet. They appear here as buyers claim them at /claim.</td></tr>
+      <tr class="admin-empty-row"><td colspan="8">${msg}</td></tr>
     </tbody></table></div>`;
   }
   return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>

@@ -98,9 +98,9 @@
         <button class="btn btn-ghost btn-sm" id="claimCopyBtn" type="button">Copy key</button>
 
         <ol class="claim-steps">
-          <li>Open Ezzo Budget using the button below.</li>
-          <li>Click <strong>Open</strong> on the planner you bought.</li>
-          <li>Paste your key, add your Etsy order number, and submit.</li>
+          <li>Copy your key using the button above.</li>
+          <li>Click <strong>Open Ezzo Budget</strong> below. The key prompt opens automatically.</li>
+          <li>Paste your key and submit. That's it.</li>
         </ol>
 
         <div style="margin-top:22px">
@@ -202,9 +202,9 @@
           document.getElementById('claimResultTitle').textContent = 'Your key';
           document.getElementById('claimResultSub').textContent = 'This order already has a key, so here it is again.';
         }
-        if (res.tool === 'ubp') {
-          document.getElementById('claimOpenBtn').textContent = 'Open Ezzo Budget';
-        }
+        // Land them with the key prompt already open and focused, so the key
+        // they just copied can go straight in without hunting for where.
+        document.getElementById('claimOpenBtn').href = '/budgetplanner?redeem=' + encodeURIComponent(res.tool || 'sbp');
         document.getElementById('claimFormView').hidden = true;
         document.getElementById('claimResultView').hidden = false;
 

@@ -279,7 +279,10 @@ function _handleValidate(p) {
         sh.getRange(rowNum, 10).setValue(Number(rows[i][9] || 0) + 1);
         sh.getRange(rowNum, 11).setValue(new Date());
 
-        return { ok: true, tool: String(rows[i][1]), theme: String(rows[i][2]), layout: String(rows[i][3]) };
+        // The order id goes back with the result so the app can attach it to
+        // its redemption event. That's what lets the dashboard keep showing
+        // an order per redemption now that buyers no longer type one in.
+        return { ok: true, tool: String(rows[i][1]), theme: String(rows[i][2]), layout: String(rows[i][3]), orderId: String(rows[i][4] || '') };
       }
       return { ok: false, error: 'not_found' };
     } finally {
