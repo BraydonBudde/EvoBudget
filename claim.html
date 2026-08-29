@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Buyers-only page: reached from an Etsy purchase, never from search. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Claim your license key | Ezzo Budget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .claim-wrap { max-width: 520px; margin: 0 auto; padding: 40px 24px 80px; }
+    .claim-wrap .wordmark { margin-bottom: 32px; text-decoration: none; }
+    .claim-card { background: var(--surface-solid); border-radius: 22px; padding: 32px 28px; box-shadow: 0 30px 70px rgba(20,8,50,.35); }
+    .claim-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; margin: 0 0 8px; }
+    .claim-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 26px; }
+    .claim-field { margin-bottom: 18px; }
+    .claim-label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 7px; }
+    .claim-hint { font-size: 12px; color: var(--text-faint); margin-top: 6px; line-height: 1.5; }
+    .claim-error { background: rgba(244,63,94,.1); border: 1px solid rgba(244,63,94,.35); color: #fb7185; border-radius: 12px; padding: 12px 14px; font-size: 13px; line-height: 1.5; margin-bottom: 18px; }
+    .claim-result { text-align: center; }
+    .claim-key {
+      font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 16px; font-weight: 600;
+      letter-spacing: .04em; word-break: break-all; line-height: 1.6;
+      background: rgba(99,102,241,.1); border: 1px dashed rgba(99,102,241,.4);
+      border-radius: 14px; padding: 16px 14px; margin: 6px 0 8px; color: var(--text-primary);
+    }
+    .claim-steps { text-align: left; font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; margin: 22px 0 0; padding-left: 20px; }
+    .claim-steps li { margin-bottom: 6px; }
+    .claim-badge { display: inline-block; font-size: 12px; font-weight: 700; color: var(--grad-indigo); background: rgba(99,102,241,.12); border-radius: 999px; padding: 5px 12px; margin-bottom: 14px; }
+    .claim-foot { text-align: center; margin-top: 26px; font-size: 12.5px; color: var(--text-faint); line-height: 1.6; }
+    .claim-foot a { color: var(--text-secondary); }
+    #claimSubmit { width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
+
+  <div class="claim-wrap">
+    <a class="wordmark" href="/">
+      <div class="wordmark-icon">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="wmGradClaim" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity=".72"/>
+            </linearGradient>
+          </defs>
+          <path d="M4,1 L5.5,1 A1.5,1.5 0 0 1 7,2.5 L7,5.5 A1.5,1.5 0 0 1 5.5,7 L2.5,7 A1.5,1.5 0 0 1 1,5.5 L1,4 A3,3 0 0 1 4,1 Z" fill="url(#wmGradClaim)"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="url(#wmGradClaim)" fill-opacity=".55"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="url(#wmGradClaim)" fill-opacity=".55"/>
+          <path d="M10.5,9 L13.5,9 A1.5,1.5 0 0 1 15,10.5 L15,12 A3,3 0 0 1 12,15 L10.5,15 A1.5,1.5 0 0 1 9,13.5 L9,10.5 A1.5,1.5 0 0 1 10.5,9 Z" fill="url(#wmGradClaim)"/>
+        </svg>
+      </div>
+      <span>Ezzo Hub</span>
+    </a>
+
+    <div class="claim-card">
+      <!-- Form -->
+      <div id="claimFormView">
+        <h1 class="claim-title">Claim your license key</h1>
+        <p class="claim-sub">Thanks for your purchase! Enter your Etsy order details below and we'll generate your key.</p>
+
+        <div class="claim-error" id="claimError" hidden></div>
+
+        <div class="claim-field">
+          <label class="claim-label" for="claimOrder">Etsy order number</label>
+          <input class="input" type="text" id="claimOrder" inputmode="numeric" autocomplete="off" placeholder="e.g. 3847261950" />
+          <p class="claim-hint">Find this in your Etsy confirmation email, or under Purchases in your Etsy account.</p>
+        </div>
+
+        <div class="claim-field">
+          <label class="claim-label" for="claimEmail">Email on the order</label>
+          <input class="input" type="email" id="claimEmail" autocomplete="email" placeholder="you@example.com" />
+          <p class="claim-hint">Must match the email used for the Etsy purchase.</p>
+        </div>
+
+        <button class="btn btn-primary" id="claimSubmit" type="button">Generate my key</button>
+
+        <p class="claim-foot">
+          One key per order. Lost yours? Enter the same details again and you'll get the same key back.
+        </p>
+      </div>
+
+      <!-- Success -->
+      <div id="claimResultView" class="claim-result" hidden>
+        <div class="claim-badge" id="claimStyleLabel"></div>
+        <h1 class="claim-title" id="claimResultTitle">Here's your key</h1>
+        <p class="claim-sub" id="claimResultSub">Save this somewhere safe. You'll need it to unlock the app.</p>
+
+        <div class="claim-key" id="claimKeyText"></div>
+        <button class="btn btn-ghost btn-sm" id="claimCopyBtn" type="button">Copy key</button>
+
+        <ol class="claim-steps">
+          <li>Open Ezzo Budget using the button below.</li>
+          <li>Click <strong>Open</strong> on the planner you bought.</li>
+          <li>Paste your key, add your Etsy order number, and submit.</li>
+        </ol>
+
+        <div style="margin-top:22px">
+          <a class="btn btn-primary" id="claimOpenBtn" href="/budgetplanner">Open Ezzo Budget</a>
+        </div>
+
+        <p class="claim-foot">
+          Your key works on up to 5 devices. Keep it to yourself: sharing it publicly will use up those slots and the key can be disabled.
+        </p>
+      </div>
+    </div>
+
+    <p class="claim-foot">
+      Trouble claiming? Message me through Etsy with your order number and I'll sort it out.
+    </p>
+  </div>
+
+  <script src="analytics.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    // ANALYTICS_ENDPOINT comes from analytics.js - same Apps Script Web App
+    // serves the claim/validate actions, so there's only ever one URL to
+    // keep in sync.
+    var ENDPOINT = (typeof ANALYTICS_ENDPOINT === 'string') ? ANALYTICS_ENDPOINT : '';
+    var token = new URLSearchParams(location.search).get('k') || '';
+
+    var errEl = document.getElementById('claimError');
+    var btn = document.getElementById('claimSubmit');
+    var orderEl = document.getElementById('claimOrder');
+    var emailEl = document.getElementById('claimEmail');
+
+    var MESSAGES = {
+      bad_link: "This claim link isn't valid. Please use the exact link from your Etsy order, or message me through Etsy and I'll send a fresh one.",
+      bad_order: 'That doesn\'t look like an Etsy order number. It should be numbers only, around 10 digits.',
+      bad_email: 'Please enter a valid email address.',
+      order_taken: 'A key has already been claimed for this order using a different email. If that wasn\'t you, message me through Etsy.',
+      busy: 'Too many requests right now. Please wait a moment and try again.',
+      server: 'Something went wrong generating your key. Please try again in a moment.',
+      network: "Couldn't reach the server. Check your connection and try again.",
+      no_endpoint: 'Key claiming isn\'t configured yet. Please message me through Etsy and I\'ll send your key manually.'
+    };
+
+    function showError(code) {
+      errEl.textContent = MESSAGES[code] || MESSAGES.server;
+      errEl.hidden = false;
+    }
+    function clearError() { errEl.hidden = true; }
+
+    // JSONP: Apps Script can't send CORS headers, so a normal fetch could
+    // never read the reply. A <script> tag isn't subject to CORS at all.
+    var jsonpSeq = 0;
+    function jsonp(params, onDone) {
+      var cb = 'ezzoClaimCb' + (++jsonpSeq) + '_' + Math.floor(Math.random() * 1e6);
+      var done = false;
+      var script = document.createElement('script');
+      var timer = setTimeout(function () { finish({ ok: false, error: 'network' }); }, 20000);
+
+      function finish(res) {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+        if (script.parentNode) script.parentNode.removeChild(script);
+        onDone(res);
+      }
+      window[cb] = function (res) { finish(res || { ok: false, error: 'server' }); };
+
+      var qs = Object.keys(params).map(function (k) {
+        return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+      }).join('&');
+      script.src = ENDPOINT + '?' + qs + '&cb=' + cb + '&_=' + Date.now();
+      script.onerror = function () { finish({ ok: false, error: 'network' }); };
+      document.head.appendChild(script);
+    }
+
+    function submit() {
+      clearError();
+      if (!ENDPOINT) { showError('no_endpoint'); return; }
+      if (!token) { showError('bad_link'); return; }
+
+      var order = (orderEl.value || '').trim().replace(/\s+/g, '');
+      var email = (emailEl.value || '').trim();
+      if (!/^[0-9]{6,20}$/.test(order)) { showError('bad_order'); orderEl.focus(); return; }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showError('bad_email'); emailEl.focus(); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+
+      jsonp({ action: 'claim', k: token, order: order, email: email }, function (res) {
+        btn.disabled = false;
+        btn.textContent = 'Generate my key';
+        if (!res || !res.ok) { showError(res && res.error ? res.error : 'server'); return; }
+
+        document.getElementById('claimKeyText').textContent = res.key;
+        var label = document.getElementById('claimStyleLabel');
+        if (res.label) { label.textContent = res.label; } else { label.hidden = true; }
+        if (res.reissued) {
+          document.getElementById('claimResultTitle').textContent = 'Your key';
+          document.getElementById('claimResultSub').textContent = 'This order already has a key, so here it is again.';
+        }
+        if (res.tool === 'ubp') {
+          document.getElementById('claimOpenBtn').textContent = 'Open Ezzo Budget';
+        }
+        document.getElementById('claimFormView').hidden = true;
+        document.getElementById('claimResultView').hidden = false;
+
+        if (typeof trackEvent === 'function') {
+          trackEvent('feature_used', { feature: 'etsy_key_claimed', tool: res.tool, reissued: !!res.reissued });
+        }
+      });
+    }
+
+    btn.addEventListener('click', submit);
+    [orderEl, emailEl].forEach(function (el) {
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+      el.addEventListener('input', clearError);
+    });
+
+    document.getElementById('claimCopyBtn').addEventListener('click', function () {
+      var text = document.getElementById('claimKeyText').textContent;
+      var btnEl = this;
+      function flash() { btnEl.textContent = 'Copied'; setTimeout(function () { btnEl.textContent = 'Copy key'; }, 1600); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(flash, flash);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta); flash();
+      }
+    });
+
+    if (!token) showError('bad_link');
+  })();
+  </script>
+</body>
+</html>

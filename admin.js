@@ -246,6 +246,49 @@ async function adminFetchEvents(token) {
   })).filter(e => e.type); // drop any accidental blank rows
 }
 
+// ══════════════════════ Etsy keys ══════════════════════
+// Separate sheet from Events: Events is an append-only activity log, Keys is
+// a small mutable record of what's been issued. Written by the Apps Script
+// when a buyer claims at /claim, and by revoke/restore below.
+const ADMIN_KEYS_SHEET = 'Keys';
+const ADMIN_KEYS_RANGE = `${ADMIN_KEYS_SHEET}!A2:K10000`;
+let allKeys = [];
+
+async function adminFetchKeys(token) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_KEYS_RANGE)}`;
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  // A missing Keys sheet isn't an error - it just means no one has claimed a
+  // key yet, so the tab should read "none yet" rather than break the sign-in.
+  if (!res.ok) return [];
+  const j = await res.json();
+  return (j.values || []).map((r, i) => {
+    let devices = [];
+    try { devices = JSON.parse(r[8] || '[]'); } catch (e) { devices = []; }
+    if (!Array.isArray(devices)) devices = [];
+    return {
+      row: i + 2,
+      key: r[0] || '', tool: r[1] || '', theme: r[2] || '', layout: r[3] || '',
+      orderId: r[4] || '', email: r[5] || '', issuedAt: r[6] || '',
+      status: (r[7] || 'active').toLowerCase(), devices,
+      redeemCount: Number(r[9] || 0), lastRedeemedAt: r[10] || ''
+    };
+  }).filter(k => k.key);
+}
+
+// Status lives in column H. Revoking blocks any FUTURE redemption of the key;
+// it can't reach into a browser that already unlocked, since that unlock is a
+// local flag (see the note in claim.html about what this does and doesn't do).
+async function adminSetKeyStatus(rowNum, status) {
+  const range = `${ADMIN_KEYS_SHEET}!H${rowNum}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${_adminAccessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: [[status]] })
+  });
+  if (!res.ok) throw new Error('sheets_write_failed');
+}
+
 // ══════════════════════ Danger zone: delete events in a range ══════════════
 // Clears cell CONTENTS (values.batchClear) rather than deleting rows
 // (spreadsheets.batchUpdate deleteDimension) - a cleared row is already
@@ -1163,6 +1206,115 @@ function renderRedemptions() {
   initFieldTips(el);
 }
 
+// ══════════════════════ Keys tab (Etsy license keys) ══════════════════════
+const keyFilters = { q: '', status: '' };
+
+function filteredKeys() {
+  const q = keyFilters.q.trim().toLowerCase();
+  return allKeys.filter(k => {
+    if (keyFilters.status === 'revoked' && k.status !== 'revoked') return false;
+    if (keyFilters.status === 'active' && k.status === 'revoked') return false;
+    if (keyFilters.status === 'maxed' && k.devices.length < ETSY_DEVICE_LIMIT) return false;
+    if (!q) return true;
+    return [k.key, k.orderId, k.email, k.tool, k.theme].some(v => String(v).toLowerCase().includes(q));
+  });
+}
+
+// Mirrors KEY_DEVICE_LIMIT in Code.gs. Only used for display/filtering here -
+// the limit is actually enforced server-side, where it can't be edited.
+const ETSY_DEVICE_LIMIT = 5;
+
+function keysTableHtml(rows) {
+  const head = `<tr><th>Key</th><th>Style</th><th>Order ID</th><th>Email</th><th>Devices</th><th>Redeemed</th><th>Status</th><th></th></tr>`;
+  if (!rows.length) {
+    return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
+      <tr class="admin-empty-row"><td colspan="8">No keys claimed yet. They appear here as buyers claim them at /claim.</td></tr>
+    </tbody></table></div>`;
+  }
+  return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
+    ${rows.map(k => {
+      const maxed = k.devices.length >= ETSY_DEVICE_LIMIT;
+      const revoked = k.status === 'revoked';
+      return `<tr${revoked ? ' class="admin-row-muted"' : ''}>
+        <td class="admin-table-strong" style="font-family:var(--font-mono,monospace);font-size:11.5px">${esc(k.key)}</td>
+        <td>${esc(toolLabel(k.tool))}<span class="admin-table-muted"> · ${esc(k.theme || '—')}</span></td>
+        <td>${k.orderId ? esc(k.orderId) : '<span class="admin-table-muted">—</span>'}</td>
+        <td class="admin-table-muted">${esc(k.email || '—')}</td>
+        <td>${k.devices.length}/${ETSY_DEVICE_LIMIT}${maxed ? ' <span class="admin-reuse-badge" title="Every device slot on this key has been used">⚠ full</span>' : ''}</td>
+        <td>${k.redeemCount ? esc(String(k.redeemCount)) : '<span class="admin-table-muted">0</span>'}</td>
+        <td>${revoked ? '<span class="admin-reuse-badge">revoked</span>' : 'active'}</td>
+        <td><button class="btn btn-ghost btn-sm admin-key-toggle" data-row="${k.row}" data-next="${revoked ? 'active' : 'revoked'}" type="button">${revoked ? 'Restore' : 'Revoke'}</button></td>
+      </tr>`;
+    }).join('')}
+  </tbody></table></div>`;
+}
+
+function renderKeys() {
+  const el = document.getElementById('aview-keys');
+  if (!el) return;
+  const rows = filteredKeys();
+  const revoked = allKeys.filter(k => k.status === 'revoked').length;
+  const maxed = allKeys.filter(k => k.devices.length >= ETSY_DEVICE_LIMIT && k.status !== 'revoked').length;
+  const unused = allKeys.filter(k => !k.redeemCount).length;
+
+  el.innerHTML = `
+    <div class="section-header"><h2 class="admin-section-title">Etsy keys</h2></div>
+    <p class="admin-section-sub">Every key claimed at /claim, one per Etsy order. Revoking blocks future redemptions of a key; anyone who already unlocked with it keeps their access, since that unlock is stored on their own device.</p>
+    ${kpiRow([
+      { icon: '🔑', label: 'Keys issued', value: fmt(allKeys.length), sub: '', color: '#6366f1', hint: 'Total keys claimed. One per Etsy order - re-claiming the same order returns the same key rather than a new one.' },
+      { icon: '📱', label: 'At device limit', value: fmt(maxed), sub: `used all ${ETSY_DEVICE_LIMIT} slots`, color: '#f59e0b', hint: `Keys whose ${ETSY_DEVICE_LIMIT} device slots are all used. Normal for a heavy user, but worth a look if it happened quickly.` },
+      { icon: '🚫', label: 'Revoked', value: fmt(revoked), sub: '', color: '#f43f5e', hint: 'Keys you have disabled. They can no longer be redeemed on a new device.' },
+      { icon: '💤', label: 'Never redeemed', value: fmt(unused), sub: 'claimed but unused', color: '#64748b', hint: 'Claimed but never entered into the app. Usually just a buyer who has not got round to it yet.' }
+    ])}
+    <div class="admin-filter-bar">
+      <input type="text" id="admKeySearch" placeholder="Search key, order ID, or email..." value="${esc(keyFilters.q)}" aria-label="Search keys">
+      <select id="admKeyStatus" aria-label="Key status">
+        <option value=""${keyFilters.status === '' ? ' selected' : ''}>All keys</option>
+        <option value="active"${keyFilters.status === 'active' ? ' selected' : ''}>Active only</option>
+        <option value="revoked"${keyFilters.status === 'revoked' ? ' selected' : ''}>Revoked only</option>
+        <option value="maxed"${keyFilters.status === 'maxed' ? ' selected' : ''}>At device limit</option>
+      </select>
+      ${(keyFilters.q || keyFilters.status) ? `<button class="admin-filter-clear" id="admKeyClear" type="button">Clear filters</button>` : ''}
+    </div>
+    <div class="panel"><div class="panel-inner-sm">
+      ${keysTableHtml(rows)}
+    </div></div>`;
+
+  const search = document.getElementById('admKeySearch');
+  search?.addEventListener('input', e => {
+    const pos = e.target.selectionStart;
+    keyFilters.q = e.target.value;
+    renderKeys();
+    const el2 = document.getElementById('admKeySearch');
+    if (el2) { el2.focus(); el2.setSelectionRange(pos, pos); }
+  });
+  document.getElementById('admKeyStatus')?.addEventListener('change', e => { keyFilters.status = e.target.value; renderKeys(); });
+  document.getElementById('admKeyClear')?.addEventListener('click', () => { keyFilters.q = ''; keyFilters.status = ''; renderKeys(); });
+
+  el.querySelectorAll('.admin-key-toggle').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const rowNum = Number(btn.dataset.row);
+      const next = btn.dataset.next;
+      if (next === 'revoked' && !await confirmDialog({
+        message: 'Revoke this key? It will stop working for any new device. Anyone who already unlocked with it keeps access.',
+        confirmText: 'Revoke'
+      })) return;
+      btn.disabled = true;
+      try {
+        await adminSetKeyStatus(rowNum, next);
+        const rec = allKeys.find(k => k.row === rowNum);
+        if (rec) rec.status = next;
+        renderKeys();
+        showToast(next === 'revoked' ? 'Key revoked' : 'Key restored');
+      } catch (e) {
+        btn.disabled = false;
+        showToast("Couldn't update the key. Check your connection and try again.");
+      }
+    });
+  });
+  initFieldTips(el);
+}
+
 // ══════════════════════ Danger zone UI (Settings tab) ══════════════════════
 function dangerZoneMatchCount() { return eventsInRange(dangerZoneState.from, dangerZoneState.to).length; }
 function dangerZoneHtml() {
@@ -1798,7 +1950,7 @@ function wireFilterBar(rerender) {
   document.getElementById('admFilterClear')?.addEventListener('click', () => { filters.from = ''; filters.to = ''; filters.tool = ''; rerender(); });
 }
 
-const ADMIN_RENDERERS = { overview: renderOverview, live: renderLive, traffic: renderTraffic, product: renderProduct, insights: renderInsights, redemptions: renderRedemptions, settings: renderSettings, summary: renderSummary };
+const ADMIN_RENDERERS = { overview: renderOverview, live: renderLive, traffic: renderTraffic, product: renderProduct, insights: renderInsights, redemptions: renderRedemptions, keys: renderKeys, settings: renderSettings, summary: renderSummary };
 function switchATab(tab) {
   currentATab = tab;
   document.querySelectorAll('#adminTabs .btab').forEach(b => b.classList.toggle('is-active', b.dataset.atab === tab));
@@ -1811,7 +1963,14 @@ function startLivePolling() {
   stopLivePolling();
   liveTimer = setInterval(async () => {
     if (_sampleDataActive) return; // don't let a background poll silently swap sample data back to real
-    try { allEvents = await adminFetchEvents(_adminAccessToken); _lastFetched = Date.now(); (ADMIN_RENDERERS[currentATab] || renderOverview)(); }
+    try {
+      allEvents = await adminFetchEvents(_adminAccessToken);
+      // Keys change far more rarely than events, so only refetch them while
+      // actually looking at that tab - no point spending a request per poll.
+      if (currentATab === 'keys') allKeys = await adminFetchKeys(_adminAccessToken);
+      _lastFetched = Date.now();
+      (ADMIN_RENDERERS[currentATab] || renderOverview)();
+    }
     catch (e) { /* keep showing last-known data; next tick may recover */ }
   }, ADMIN_POLL_MS);
 }
@@ -1833,6 +1992,7 @@ async function adminSignIn() {
     if (email.toLowerCase() !== ADMIN_ALLOWED_EMAIL.toLowerCase()) { _adminAccessToken = null; throw new Error('not_allowed'); }
     _adminEmail = email;
     allEvents = await adminFetchEvents(token);
+    allKeys = await adminFetchKeys(token);
     _lastFetched = Date.now();
     Object.assign(overviewFilters, currentMonthBounds()); // reset to the current month on every sign-in, per explicit request
     document.getElementById('adminGate').hidden = true;
@@ -1861,6 +2021,7 @@ function adminSignOut() {
   _adminAccessToken = null;
   _adminEmail = '';
   allEvents = [];
+  allKeys = [];
   _sampleDataActive = false;
   updateSampleBanner();
   const viewEl = document.getElementById('viewAdmin');

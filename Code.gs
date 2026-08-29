@@ -52,7 +52,16 @@ function _validEventType(type) {
   return typeof type === 'string' && /^[a-z][a-z0-9_]{1,39}$/.test(type);
 }
 
+// GET is used for the Etsy key system (claim + validate). Those need to READ
+// a response cross-origin, which a POST here can't do: Apps Script can't set
+// Access-Control-Allow-Origin, so a normal fetch could never read the reply.
+// JSONP sidesteps that entirely - the browser loads this as a <script>, and
+// script tags aren't subject to CORS. Analytics keeps using doPost and is
+// completely untouched by any of this.
 function doGet(e) {
+  const p = (e && e.parameter) || {};
+  if (p.action === 'claim')    return _jsonp(p.cb, _handleClaim(p));
+  if (p.action === 'validate') return _jsonp(p.cb, _handleValidate(p));
   return ContentService.createTextOutput('EzzoBudget analytics endpoint.');
 }
 
@@ -114,4 +123,169 @@ function _underRateLimit() {
   if (current >= RATE_LIMIT_PER_MIN) return false;
   cache.put(key, String(current + 1), 90);
   return true;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ETSY KEY SYSTEM
+// ══════════════════════════════════════════════════════════════════════
+// Etsy has no way to hand a buyer a unique key, so buyers are sent to
+// /claim on the site with a per-listing link. They enter their Etsy order
+// number + the email on the order, and get one unique key back. The same
+// order always returns the SAME key, so a buyer can recover theirs and
+// can't farm extras.
+//
+// The style (tool/theme/layout) comes from an opaque token in the claim
+// link rather than plain URL text, so someone holding an SBP link can't
+// simply edit it into a UBP one - they'd need the UBP listing's own link,
+// which only UBP buyers are given.
+//
+// These sheets are created automatically on first use. Styles must then
+// be filled in (see the setup notes provided alongside this file).
+const STYLES_SHEET = 'Styles';
+const KEYS_SHEET = 'Keys';
+// How many distinct browsers one key may unlock. Counted by the visitor id
+// analytics already stores per browser. Generous enough for one person's
+// real devices, tight enough that a publicly posted key dies quickly.
+const KEY_DEVICE_LIMIT = 5;
+// Claims are far rarer than analytics beacons, so they get their own much
+// tighter bucket - this is what slows anyone trying to guess order numbers.
+const CLAIM_LIMIT_PER_MIN = 20;
+
+function _jsonp(cb, obj) {
+  // Only ever emit a callback name we control the shape of - an unfiltered
+  // one would let a crafted URL execute arbitrary script on whoever opened
+  // it. Anything unexpected falls back to a fixed name.
+  const safe = (typeof cb === 'string' && /^[A-Za-z0-9_]{1,64}$/.test(cb)) ? cb : 'ezzoCb';
+  return ContentService
+    .createTextOutput(safe + '(' + JSON.stringify(obj) + ');')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+function _normEmail(v) { return String(v || '').trim().toLowerCase().slice(0, 120); }
+function _normOrder(v) { return String(v || '').trim().replace(/\s+/g, '').slice(0, 32); }
+function _looksLikeEmail(v) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v); }
+// Etsy receipt numbers are numeric. Kept loose on length so a format change
+// on their side doesn't lock out real buyers.
+function _looksLikeOrder(v) { return /^[0-9]{6,20}$/.test(v); }
+
+function _sheet(name, headers) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(name);
+  if (!sh) { sh = ss.insertSheet(name); sh.appendRow(headers); }
+  return sh;
+}
+function _stylesSheet() { return _sheet(STYLES_SHEET, ['Token', 'Tool', 'Theme', 'Layout', 'Label', 'Active']); }
+function _keysSheet()   { return _sheet(KEYS_SHEET, ['Key', 'Tool', 'Theme', 'Layout', 'OrderId', 'Email', 'IssuedAt', 'Status', 'Devices', 'RedeemCount', 'LastRedeemedAt']); }
+
+// ETSY-5FDE-43A8-8477-4228A671F027: a v4 UUID with its first block replaced,
+// so keys are visually consistent with the Lemon Squeezy ones buyers of the
+// same product might also hold, while still being obviously Etsy in origin.
+function _generateKey() {
+  const parts = Utilities.getUuid().toUpperCase().split('-');
+  parts[0] = 'ETSY';
+  return parts.join('-');
+}
+
+function _claimRateOk() {
+  const cache = CacheService.getScriptCache();
+  const k = 'cl_' + Math.floor(Date.now() / 60000);
+  const n = Number(cache.get(k) || '0');
+  if (n >= CLAIM_LIMIT_PER_MIN) return false;
+  cache.put(k, String(n + 1), 90);
+  return true;
+}
+
+function _handleClaim(p) {
+  try {
+    if (!_claimRateOk()) return { ok: false, error: 'busy' };
+
+    const token = String(p.k || '').trim().slice(0, 64);
+    const order = _normOrder(p.order);
+    const email = _normEmail(p.email);
+    if (!token) return { ok: false, error: 'bad_link' };
+    if (!_looksLikeOrder(order)) return { ok: false, error: 'bad_order' };
+    if (!_looksLikeEmail(email)) return { ok: false, error: 'bad_email' };
+
+    // Serialised: two buyers claiming at the same moment must not be able to
+    // both pass the "already claimed?" check and append duplicate rows.
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(10000)) return { ok: false, error: 'busy' };
+    try {
+      const styles = _stylesSheet().getDataRange().getValues();
+      let style = null;
+      for (let i = 1; i < styles.length; i++) {
+        if (String(styles[i][0]).trim() === token) {
+          if (String(styles[i][5]).trim().toLowerCase() === 'no') return { ok: false, error: 'bad_link' };
+          style = { tool: String(styles[i][1]).trim(), theme: String(styles[i][2]).trim(), layout: String(styles[i][3]).trim(), label: String(styles[i][4]).trim() };
+          break;
+        }
+      }
+      if (!style) return { ok: false, error: 'bad_link' };
+
+      const sh = _keysSheet();
+      const rows = sh.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        if (_normOrder(rows[i][4]) === order) {
+          // Same buyer coming back for a key they lost: hand back the very
+          // same one. A different email on a known order is someone who
+          // shouldn't have it, so it gets nothing.
+          if (_normEmail(rows[i][5]) !== email) return { ok: false, error: 'order_taken' };
+          return { ok: true, key: String(rows[i][0]), tool: String(rows[i][1]), theme: String(rows[i][2]), layout: String(rows[i][3]), label: style.label, reissued: true };
+        }
+      }
+
+      const key = _generateKey();
+      sh.appendRow([key, style.tool, style.theme, style.layout, order, email, new Date(), 'active', '[]', 0, '']);
+      return { ok: true, key: key, tool: style.tool, theme: style.theme, layout: style.layout, label: style.label, reissued: false };
+    } finally {
+      lock.releaseLock();
+    }
+  } catch (err) {
+    return { ok: false, error: 'server' };
+  }
+}
+
+function _handleValidate(p) {
+  try {
+    if (!_underRateLimit()) return { ok: false, error: 'busy' };
+    const key = String(p.key || '').trim().toUpperCase().slice(0, 64);
+    const vid = String(p.vid || '').trim().slice(0, 64);
+    if (!key) return { ok: false, error: 'not_found' };
+
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(10000)) return { ok: false, error: 'busy' };
+    try {
+      const sh = _keysSheet();
+      const rows = sh.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        if (String(rows[i][0]).trim().toUpperCase() !== key) continue;
+        if (String(rows[i][7]).trim().toLowerCase() === 'revoked') return { ok: false, error: 'revoked' };
+
+        let devices = [];
+        try { devices = JSON.parse(rows[i][8] || '[]'); } catch (e) { devices = []; }
+        if (!Array.isArray(devices)) devices = [];
+
+        const known = vid && devices.indexOf(vid) !== -1;
+        // An unlock the buyer already has must never start failing, so a
+        // device that's used this key before is always let through, even
+        // once the limit is reached.
+        if (!known) {
+          if (devices.length >= KEY_DEVICE_LIMIT) return { ok: false, error: 'device_limit' };
+          if (vid) devices.push(vid);
+        }
+
+        const rowNum = i + 1;
+        sh.getRange(rowNum, 9).setValue(JSON.stringify(devices));
+        sh.getRange(rowNum, 10).setValue(Number(rows[i][9] || 0) + 1);
+        sh.getRange(rowNum, 11).setValue(new Date());
+
+        return { ok: true, tool: String(rows[i][1]), theme: String(rows[i][2]), layout: String(rows[i][3]) };
+      }
+      return { ok: false, error: 'not_found' };
+    } finally {
+      lock.releaseLock();
+    }
+  } catch (err) {
+    return { ok: false, error: 'server' };
+  }
 }

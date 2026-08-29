@@ -306,6 +306,9 @@ const TRANSLATIONS = {
     sync_footer_note:'This can be changed in settings later',
     code_title:'Enter your license key',code_sub:'Unlock the full {0} with the code from your purchase.',
     code_placeholder:'License key',code_error:"That code isn't right. Double-check it and try again.",
+    code_error_revoked:'This key has been disabled. If you believe this is a mistake, please get in touch with your order number.',
+    code_error_devices:'This key has already been used on the maximum number of devices. Get in touch if you need it moved to a new one.',
+    code_error_busy:"Couldn't check this key right now. Please check your connection and try again in a moment.",
     code_orderid_placeholder:'Order ID',code_orderid_error:'Enter the order ID from your purchase.',
     code_submit:'Submit',code_checking:'Checking...',code_try_free:'Try for free instead',code_get:'Get a code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -563,6 +566,9 @@ const TRANSLATIONS = {
     sync_footer_note:'Dies kann später in den Einstellungen geändert werden',
     code_title:'Gib deinen Lizenzschlüssel ein',code_sub:'Schalte den vollen {0} mit dem Code aus deinem Kauf frei.',
     code_placeholder:'Lizenzschlüssel',code_error:'Dieser Code ist nicht richtig. Überprüfe ihn und versuche es erneut.',
+    code_error_revoked:'Dieser Schlüssel wurde deaktiviert. Falls das ein Fehler ist, melde dich bitte mit deiner Bestellnummer.',
+    code_error_devices:'Dieser Schlüssel wurde bereits auf der maximalen Anzahl an Geräten verwendet. Melde dich, wenn du ihn auf ein neues Gerät übertragen möchtest.',
+    code_error_busy:'Der Schlüssel konnte gerade nicht geprüft werden. Prüfe deine Verbindung und versuche es gleich noch einmal.',
     code_orderid_placeholder:'Bestellnummer',code_orderid_error:'Gib die Bestellnummer deines Kaufs ein.',
     code_submit:'Absenden',code_try_free:'Stattdessen kostenlos testen',code_get:'Code holen',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -820,6 +826,9 @@ const TRANSLATIONS = {
     sync_footer_note:'Cela peut être modifié plus tard dans les paramètres',
     code_title:'Entrez votre clé de licence',code_sub:'Débloquez le {0} complet avec le code de votre achat.',
     code_placeholder:'Clé de licence',code_error:'Ce code est incorrect. Vérifiez-le et réessayez.',
+    code_error_revoked:'Cette clé a été désactivée. Si vous pensez qu\'il s\'agit d\'une erreur, contactez-nous avec votre numéro de commande.',
+    code_error_devices:'Cette clé a déjà été utilisée sur le nombre maximum d\'appareils. Contactez-nous si vous devez la transférer.',
+    code_error_busy:'Impossible de vérifier cette clé pour le moment. Vérifiez votre connexion et réessayez dans un instant.',
     code_orderid_placeholder:'Numéro de commande',code_orderid_error:'Saisissez le numéro de commande de votre achat.',
     code_submit:'Valider',code_try_free:'Essayer gratuitement à la place',code_get:'Obtenir un code',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -1077,6 +1086,9 @@ const TRANSLATIONS = {
     sync_footer_note:'Esto se puede cambiar más tarde en los ajustes',
     code_title:'Introduce tu clave de licencia',code_sub:'Desbloquea el {0} completo con el código de tu compra.',
     code_placeholder:'Clave de licencia',code_error:'Ese código no es correcto. Revísalo e inténtalo de nuevo.',
+    code_error_revoked:'Esta clave ha sido desactivada. Si crees que es un error, ponte en contacto indicando tu número de pedido.',
+    code_error_devices:'Esta clave ya se ha usado en el número máximo de dispositivos. Ponte en contacto si necesitas moverla a uno nuevo.',
+    code_error_busy:'No se pudo comprobar la clave en este momento. Revisa tu conexión e inténtalo de nuevo en un momento.',
     code_orderid_placeholder:'ID del pedido',code_orderid_error:'Introduce el ID del pedido de tu compra.',
     code_submit:'Enviar',code_try_free:'Probar gratis en su lugar',code_get:'Obtener un código',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -1333,6 +1345,9 @@ const TRANSLATIONS = {
     sync_footer_note:'Questo può essere modificato in seguito nelle impostazioni',
     code_title:'Inserisci la tua chiave di licenza',code_sub:'Sblocca il {0} completo con il codice del tuo acquisto.',
     code_placeholder:'Chiave di licenza',code_error:'Il codice non è corretto. Controllalo e riprova.',
+    code_error_revoked:'Questa chiave è stata disattivata. Se pensi sia un errore, contattaci indicando il numero d\'ordine.',
+    code_error_devices:'Questa chiave è già stata usata sul numero massimo di dispositivi. Contattaci se devi spostarla su uno nuovo.',
+    code_error_busy:'Non è stato possibile verificare la chiave in questo momento. Controlla la connessione e riprova tra poco.',
     code_orderid_placeholder:'ID ordine',code_orderid_error:"Inserisci l'ID dell'ordine del tuo acquisto.",
     code_submit:'Invia',code_try_free:'Prova gratis invece',code_get:'Ottieni un codice',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -1589,6 +1604,9 @@ const TRANSLATIONS = {
     sync_footer_note:'Można to później zmienić w ustawieniach',
     code_title:'Wprowadź swój klucz licencyjny',code_sub:'Odblokuj pełny {0} za pomocą kodu z Twojego zakupu.',
     code_placeholder:'Klucz licencyjny',code_error:'Ten kod jest nieprawidłowy. Sprawdź go i spróbuj ponownie.',
+    code_error_revoked:'Ten klucz został dezaktywowany. Jeśli uważasz, że to pomyłka, skontaktuj się, podając numer zamówienia.',
+    code_error_devices:'Ten klucz został już użyty na maksymalnej liczbie urządzeń. Skontaktuj się, jeśli musisz przenieść go na nowe.',
+    code_error_busy:'Nie udało się teraz sprawdzić klucza. Sprawdź połączenie i spróbuj ponownie za chwilę.',
     code_orderid_placeholder:'Numer zamówienia',code_orderid_error:'Wpisz numer zamówienia z Twojego zakupu.',
     code_submit:'Wyślij',code_try_free:'Wypróbuj za darmo zamiast tego',code_get:'Zdobądź kod',
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
@@ -1919,6 +1937,59 @@ async function validateLemonSqueezyKey(licenseKey) {
   }
 }
 
+// ── Etsy keys (ETSY-xxxx-xxxx-xxxx-xxxxxxxxxxxx) ──────────────────────
+// Etsy can't issue a unique key per buyer, so buyers claim one at /claim
+// and it's recorded in the owner's Sheet. Unlike LAUNCH_CODES (a fixed
+// list baked into this file), these are generated per order and so can
+// only be checked against that Sheet - which is also what makes them
+// revocable and device-limited, neither of which a hardcoded list can do.
+//
+// Checked over JSONP for the same reason claim.html uses it: Apps Script
+// can't send CORS headers, so a fetch could never read the reply.
+// Returns null (never throws) on anything invalid, so the caller treats
+// it exactly like a wrong code.
+const ETSY_KEY_RE = /^ETSY(-[0-9A-F]{4}){3}-[0-9A-F]{12}$/i;
+let _etsyJsonpSeq = 0;
+
+function looksLikeEtsyKey(code) { return ETSY_KEY_RE.test(String(code || '').trim()); }
+
+function validateEtsyKey(key) {
+  return new Promise(resolve => {
+    const endpoint = (typeof ANALYTICS_ENDPOINT === 'string') ? ANALYTICS_ENDPOINT : '';
+    if (!endpoint) { resolve(null); return; }
+
+    const cb = `ezzoKeyCb${++_etsyJsonpSeq}_${Math.floor(Math.random() * 1e6)}`;
+    const script = document.createElement('script');
+    let done = false;
+    const finish = (result) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      try { delete window[cb]; } catch { window[cb] = undefined; }
+      script.parentNode?.removeChild(script);
+      resolve(result);
+    };
+    const timer = setTimeout(() => finish(null), 15000);
+
+    window[cb] = (res) => {
+      if (!res || !res.ok || !res.tool) { finish(res && res.error ? { error: res.error } : null); return; }
+      const layout = (String(res.layout) === '2' || String(res.layout).toLowerCase() === 'radial') ? 2
+                   : (String(res.layout) === '1' || String(res.layout).toLowerCase() === 'classic') ? 1 : null;
+      const theme = VALID_THEMES.includes(String(res.theme || '').toLowerCase()) ? String(res.theme).toLowerCase() : null;
+      finish({ tool: res.tool === 'ubp' ? 'ubp' : 'sbp', theme, layout });
+    };
+
+    // The visitor id is what the device cap counts, so a buyer's own
+    // browsers are recognised on repeat redemptions instead of burning a
+    // new slot each time.
+    const vid = (typeof _analyticsVisitorId === 'function') ? _analyticsVisitorId() : '';
+    const qs = new URLSearchParams({ action: 'validate', key, vid, cb, _: String(Date.now()) });
+    script.src = `${endpoint}?${qs}`;
+    script.onerror = () => finish(null);
+    document.head.appendChild(script);
+  });
+}
+
 // One-time handoff for the dashboard layout a code was redeemed with -
 // UBP is a full page navigation away (ultimate-budget.html), so it can't
 // be applied to a live `state` object the way SBP's can; init() there
@@ -2127,21 +2198,48 @@ function showAccessCodeModal(tool) {
       redeemLaunchCode(cfg, codeVal, orderIdVal);
       return;
     }
-    // Not one of the fixed launch codes (those are reserved for Etsy sales)
-    // - try it as a real Lemon Squeezy license key before rejecting it.
+    // Not one of the fixed launch codes - check it against the two systems
+    // that issue real per-buyer keys, Etsy claims first (its format is
+    // unmistakable, so there's no point asking Lemon Squeezy about it).
     errEl.hidden = true;
     submitBtn.disabled = true;
     const originalLabel = submitBtn.textContent;
     submitBtn.textContent = t('code_checking');
+
+    const fail = (msgKey) => {
+      errEl.textContent = t(msgKey || 'code_error');
+      errEl.hidden = false;
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      input.select();
+    };
+
+    if (looksLikeEtsyKey(codeVal)) {
+      const etsy = await validateEtsyKey(codeVal);
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+
+      if (etsy && etsy.tool) {
+        // Etsy keys carry the appearance the buyer chose on the listing,
+        // so redeem them the same way a launch code does.
+        redeemLaunchCode({ tool: etsy.tool, theme: etsy.theme || savedTheme(), layout: etsy.layout || 1 }, codeVal, orderIdVal);
+        return;
+      }
+      // A key that's genuine but blocked deserves a real explanation, not
+      // the generic "wrong code" - otherwise a paying customer has no idea
+      // whether to retype it or contact you.
+      if (etsy && etsy.error === 'revoked')      { fail('code_error_revoked'); return; }
+      if (etsy && etsy.error === 'device_limit') { fail('code_error_devices'); return; }
+      if (etsy && etsy.error === 'busy')         { fail('code_error_busy'); return; }
+      fail();
+      return;
+    }
+
     const lsResult = await validateLemonSqueezyKey(codeVal);
     submitBtn.disabled = false;
     submitBtn.textContent = originalLabel;
 
     if (lsResult) { redeemLemonSqueezyKey(lsResult, codeVal, orderIdVal); return; }
-
-    errEl.hidden = false;
-    card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-    input.select();
+    fail();
   };
   document.addEventListener('keydown', onKey);
   ov.addEventListener('click', e => { if (e.target === ov) close(); });
@@ -2296,6 +2394,11 @@ function enableDragScroll(el) {
 // picked inside SBP/UBP. Their choice is still saved and still applies the
 // moment they open a planner - it just doesn't leak out into the menu.
 const SITE_THEME = 'dark';
+// Every theme the stylesheet actually defines. Anything arriving from
+// outside the app (a demo link's ?theme=, a value typed into the Styles
+// sheet) is checked against this first - an unrecognised name would leave
+// the page with no theme variables at all rather than just looking wrong.
+const VALID_THEMES = ['light', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
 function savedTheme() { return localStorage.getItem('evobudget_theme') || SITE_THEME; }
 function displayThemeFor(view) { return view === 'hub' ? SITE_THEME : savedTheme(); }
 // Re-applies whichever theme the CURRENT view should be showing, without
@@ -4389,7 +4492,6 @@ function init() {
   // later refresh or "back to hub" + reload never re-triggers any of
   // this. Never touches an already-unlocked tool - a paying customer's
   // own bookmark/link must never be pulled back into trial mode.
-  const DEEPLINK_THEMES = ['light', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
   const dlParams = new URLSearchParams(location.search);   // snapshot: survives the strip below
   const trialParam = pendingDeepLinkTool(dlParams);
 
@@ -4404,7 +4506,7 @@ function init() {
 
   if (trialParam) {
     const rawTheme = (dlParams.get('theme') || '').toLowerCase();
-    const themeParam = DEEPLINK_THEMES.includes(rawTheme) ? rawTheme : null;
+    const themeParam = VALID_THEMES.includes(rawTheme) ? rawTheme : null;
     const rawLayout = (dlParams.get('layout') || '').toLowerCase();
     const layoutParam = (rawLayout === '2' || rawLayout === 'radial') ? 2 : (rawLayout === '1' || rawLayout === 'classic') ? 1 : null;
 
