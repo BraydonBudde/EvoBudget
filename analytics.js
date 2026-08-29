@@ -46,11 +46,25 @@ function _analyticsSessionId() {
     return id;
   } catch (e) { return 'unknown'; }
 }
+// Set once the visitor actually opens a planner, so in-app activity can be
+// told apart from browsing the site. Without it everything on
+// budgetplanner.html looks identical, since the hub and the planner are two
+// views of one page - and the dashboard's store metrics would count someone
+// budgeting for an hour as an hour of website browsing.
+let _analyticsPageOverride = null;
+function analyticsSetPage(page) { _analyticsPageOverride = page || null; }
+
 function _analyticsPage() {
+  if (_analyticsPageOverride) return _analyticsPageOverride;
   const p = location.pathname.toLowerCase();
   if (p.includes('ultimate-budget')) return 'ubp';
-  if (p.includes('home')) return 'home';
-  return 'sbp';
+  if (p.includes('claim')) return 'claim';
+  if (p.includes('privacy') || p.includes('terms') || p.includes('disclaimer')) return 'legal';
+  if (p.includes('budgetplanner')) return 'budgetplanner';
+  // "/" serves home.html, so anything left unmatched is the marketing site.
+  // This used to fall through to 'sbp', which quietly filed every homepage
+  // visit as planner usage.
+  return 'home';
 }
 function _analyticsTool() {
   const p = _analyticsPage();

@@ -2447,6 +2447,11 @@ function navigateTo(view) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('is-active'));
   document.getElementById(`view-${view}`)?.classList.add('is-active');
   currentView = view;
+  // The hub and the planner share one page, so tell analytics which of the
+  // two the visitor is actually in - otherwise store metrics (sessions,
+  // duration, bounce) would count time spent budgeting as time spent
+  // browsing the site.
+  if (typeof analyticsSetPage === 'function') analyticsSetPage(view === 'budget' ? 'sbp' : 'budgetplanner');
   syncDisplayTheme();
   if (view === 'budget') {
     const sel = document.getElementById('currencySelect');

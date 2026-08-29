@@ -752,8 +752,27 @@ function renderSummary() {
     ${sectionsHtml || `<div class="chart-empty">Not enough data yet to summarize - check back once there's some traffic.</div>`}`;
 }
 
+// ── Website vs. in-app ────────────────────────────────────────────────
+// Overview is a store dashboard: it should answer "how is the site doing at
+// turning visitors into buyers", not "how much do existing customers use the
+// planners". Someone budgeting for an hour would otherwise show up as an
+// hour-long website session with a great bounce rate, flattering every
+// number without meaning anything commercially.
+const WEBSITE_PAGES = new Set(['home', 'budgetplanner', 'claim', 'legal', '']);
+const IN_APP_EVENTS = new Set(['tab_viewed', 'feature_used', 'theme_changed', 'language_changed', 'dashboard_layout_changed', 'sync_mode_chosen']);
+// Buying signals count wherever they happen - the upgrade prompt lives
+// inside the planners, and those are exactly the conversions worth seeing.
+const ALWAYS_COUNT_EVENTS = new Set(['purchase_initiated', 'launch_code_redeemed']);
+
+function isWebsiteEvent(e) {
+  if (ALWAYS_COUNT_EVENTS.has(e.type)) return true;
+  if (IN_APP_EVENTS.has(e.type)) return false;
+  return WEBSITE_PAGES.has(e.page || '');
+}
+
 function overviewFilteredEvents() {
   return allEvents.filter(e => {
+    if (!isWebsiteEvent(e)) return false;
     const t = eventTime(e);
     if (overviewFilters.from && t < new Date(overviewFilters.from + 'T00:00:00').getTime()) return false;
     if (overviewFilters.to && t > new Date(overviewFilters.to + 'T23:59:59').getTime()) return false;
@@ -930,7 +949,7 @@ function renderOverview() {
 
   // "Online now" is deliberately live rather than range-filtered - it answers
   // "who is here right now", which a historical range can't.
-  const liveEvents = allEvents.filter(isOnlineNow);
+  const liveEvents = allEvents.filter(e => isOnlineNow(e) && isWebsiteEvent(e));
   const onlineNow = uniqueBy(liveEvents, e => e.visitorId).length;
 
   const sessions = buildSessions(rangeEvents);
@@ -981,7 +1000,7 @@ function renderOverview() {
 
   el.innerHTML = `
     <div class="section-header"><h2 class="admin-section-title">Overview</h2></div>
-    <p class="admin-section-sub">${esc(formatOverviewRangeLabel())}</p>
+    <p class="admin-section-sub">${esc(formatOverviewRangeLabel())} Website traffic only - activity inside the planners is excluded.</p>
     ${overviewFilterBarHtml()}
 
     <div class="admin-live-row">
