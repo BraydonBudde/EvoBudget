@@ -254,19 +254,22 @@ const ADMIN_KEYS_SHEET = 'Keys';
 const ADMIN_KEYS_RANGE = `${ADMIN_KEYS_SHEET}!A2:K10000`;
 let allKeys = [];
 
-// Set when the Keys sheet doesn't exist at all, which means the Apps Script
-// hasn't been redeployed yet (it creates the sheet on first claim). Worth
-// telling apart from "set up fine, nobody has bought yet" - otherwise an
-// empty tab looks identical in both cases.
-let _keysSheetMissing = false;
+// Why the Keys fetch came back empty, if it did. A silently empty tab is
+// indistinguishable from "nobody has bought yet", which makes a real
+// misconfiguration (wrong sheet, wrong spreadsheet, missing permission)
+// impossible to tell apart from normal quiet - so keep Google's own reason.
+let _keysFetchError = '';
 
 async function adminFetchKeys(token) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_KEYS_RANGE)}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-  // A missing Keys sheet isn't an error - it just means no one has claimed a
-  // key yet, so the tab should read "none yet" rather than break the sign-in.
-  if (!res.ok) { _keysSheetMissing = true; return []; }
-  _keysSheetMissing = false;
+  if (!res.ok) {
+    let detail = '';
+    try { const j = await res.json(); detail = (j.error && j.error.message) || ''; } catch (e) { /* body wasn't JSON */ }
+    _keysFetchError = `${res.status}${detail ? ': ' + detail : ''}`;
+    return [];
+  }
+  _keysFetchError = '';
   const j = await res.json();
   return (j.values || []).map((r, i) => {
     let devices = [];
@@ -1117,18 +1120,33 @@ function renderInsights() {
 function redemptionEvents() { return allEvents.filter(e => e.type === 'launch_code_redeemed'); }
 function redemptionRows() {
   const events = redemptionEvents();
+  // Buyers no longer type an order ID, so for an Etsy key the order lives in
+  // the Keys sheet against that key. Resolving it here rather than trusting
+  // whatever the event happened to carry means it also fills in for keys
+  // redeemed before that lookup existed, instead of only for new ones.
+  const orderByKey = new Map();
+  allKeys.forEach(k => {
+    if (k.key && k.orderId) orderByKey.set(String(k.key).trim().toUpperCase(), String(k.orderId));
+  });
+  const resolveOrderId = e => {
+    const fromEvent = (e.detail && e.detail.orderId) || '';
+    if (fromEvent) return fromEvent;
+    const code = String((e.detail && e.detail.code) || '').trim().toUpperCase();
+    return orderByKey.get(code) || '';
+  };
+
   // Flags order IDs reused across more than one visitor - a strong signal
   // someone is sharing/reusing a single real order ID with an invalid code,
   // even though no format validation could ever catch that on its own.
   const byOrderId = new Map();
   events.forEach(e => {
-    const oid = (e.detail && e.detail.orderId) || '';
+    const oid = resolveOrderId(e);
     if (!oid) return;
     if (!byOrderId.has(oid)) byOrderId.set(oid, new Set());
     byOrderId.get(oid).add(e.visitorId);
   });
   return events.map(e => {
-    const orderId = (e.detail && e.detail.orderId) || '';
+    const orderId = resolveOrderId(e);
     const reuseCount = orderId ? byOrderId.get(orderId).size : 0;
     return {
       when: eventTime(e), code: (e.detail && e.detail.code) || '', tool: (e.detail && e.detail.tool) || '',
@@ -1234,8 +1252,8 @@ const ETSY_DEVICE_LIMIT = 5;
 function keysTableHtml(rows) {
   const head = `<tr><th>Key</th><th>Style</th><th>Order ID</th><th>Email</th><th>Devices</th><th>Redeemed</th><th>Status</th><th></th></tr>`;
   if (!rows.length) {
-    const msg = _keysSheetMissing
-      ? "No Keys sheet found yet. It's created automatically the first time someone claims a key - if you've already tried claiming one, check that the Apps Script was redeployed (Deploy → Manage deployments → Edit → New version), since saving it alone doesn't publish the change."
+    const msg = _keysFetchError
+      ? `Couldn't read the Keys sheet - Google said: ${esc(_keysFetchError)}. If that mentions a missing range, the sheet doesn't exist yet: it's created automatically the first time someone claims a key. Otherwise check the tab is named exactly "Keys" in the spreadsheet this dashboard reads.`
       : (allKeys.length ? 'No keys match your filters.' : 'No keys claimed yet. They appear here as buyers claim them at /claim.');
     return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
       <tr class="admin-empty-row"><td colspan="8">${msg}</td></tr>
@@ -1975,9 +1993,10 @@ function startLivePolling() {
     if (_sampleDataActive) return; // don't let a background poll silently swap sample data back to real
     try {
       allEvents = await adminFetchEvents(_adminAccessToken);
-      // Keys change far more rarely than events, so only refetch them while
-      // actually looking at that tab - no point spending a request per poll.
-      if (currentATab === 'keys') allKeys = await adminFetchKeys(_adminAccessToken);
+      // Keys change far more rarely than events, so only refetch them on the
+      // two tabs that read them - Keys itself, and Redemptions, which resolves
+      // each key's order ID from them.
+      if (currentATab === 'keys' || currentATab === 'redemptions') allKeys = await adminFetchKeys(_adminAccessToken);
       _lastFetched = Date.now();
       (ADMIN_RENDERERS[currentATab] || renderOverview)();
     }
