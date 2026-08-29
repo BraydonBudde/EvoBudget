@@ -28,6 +28,12 @@ const ADMIN_SPREADSHEET_ID = '1J8q4Q6RjYrZLidROFJDtdu3hKdqWSsgXgI_Fdne9wK0';
 const ADMIN_ALLOWED_EMAIL = 'braydonbudde@gmail.com';  // your own Google account address, lowercase
 const ADMIN_SHEET_NAME = 'Events';
 const ADMIN_SHEET_RANGE = `${ADMIN_SHEET_NAME}!A2:L100000`;
+// Same deployed Apps Script the site's analytics posts to - used here only to
+// read Lemon Squeezy sales totals. Deliberately duplicated rather than loading
+// analytics.js on this page, which would record the owner's own dashboard
+// visits as visitor traffic and skew every number on it. Keep in sync with
+// ANALYTICS_ENDPOINT in analytics.js.
+const ADMIN_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzill8JQ1BwGzjBMmVm8ucbco-lF1ouvZr6KmDe_CyfloJCzy69Xi-ZSheARQtR0InO/exec';
 // "Online now" = any event within this window - must comfortably beat
 // analytics.js's own heartbeat interval (25s) so a quiet-but-open tab
 // doesn't flicker offline between heartbeats.
@@ -799,10 +805,25 @@ function wireOverviewFilterBar() {
 // redeems, and it lags the actual sale. Kept clearly separated rather than
 // merged into one number, so a soft figure never masquerades as a hard one.
 const ADMIN_PRICES = { sbp: 19.99, ubp: 49.99 };
-let lsSales = { loaded: false, configured: false, revenue: 0, orders: 0, error: '' };
+let lsSales = { loaded: false, configured: false, revenue: 0, orders: 0, error: '', rangeKey: null };
+let _lsFetchInFlight = false;
+
+// Lemon Squeezy figures are per date range, so they have to be refetched when
+// the range changes - but only once per range, and never while a fetch for it
+// is already in flight, or the re-render this triggers would loop.
+function ensureSalesForRange() {
+  const key = (overviewFilters.from || '') + '|' + (overviewFilters.to || '');
+  if (lsSales.rangeKey === key || _lsFetchInFlight) return;
+  _lsFetchInFlight = true;
+  fetchLemonSqueezySales().then(() => {
+    lsSales.rangeKey = key;
+    _lsFetchInFlight = false;
+    if (currentATab === 'overview') renderOverview();
+  });
+}
 
 function fetchLemonSqueezySales() {
-  const endpoint = (typeof ANALYTICS_ENDPOINT === 'string') ? ANALYTICS_ENDPOINT : '';
+  const endpoint = ADMIN_APPS_SCRIPT_URL;
   if (!endpoint) { lsSales = { loaded: true, configured: false, revenue: 0, orders: 0, error: '' }; return Promise.resolve(); }
   return new Promise(resolve => {
     const cb = `ezzoSalesCb${Date.now()}`;
@@ -904,6 +925,7 @@ function formatOverviewRangeLabel() {
 function renderOverview() {
   const el = document.getElementById('aview-overview');
   const now = Date.now();
+  ensureSalesForRange();
   const rangeEvents = overviewFilteredEvents();
 
   // "Online now" is deliberately live rather than range-filtered - it answers
@@ -1035,12 +1057,20 @@ const GLOBE_LIVE_WINDOW_MS = 120000;
 let _globeInstance = null;
 let _globeTimezones = [];
 
+let _globeRotation = 20;
 function mountLiveGlobe(liveEvents) {
   const canvas = document.getElementById('adminGlobe');
   if (!canvas || typeof createLiveGlobe !== 'function') return;
-  if (_globeInstance) { _globeInstance.destroy(); _globeInstance = null; }
+  // The panel's innerHTML is rebuilt on every poll, so the old canvas is
+  // already detached - keep its angle so the globe carries on from where it
+  // was instead of jumping back to the start every refresh.
+  if (_globeInstance) {
+    _globeRotation = _globeInstance.getRotation();
+    _globeInstance.destroy();
+    _globeInstance = null;
+  }
   updateGlobeData(liveEvents);
-  _globeInstance = createLiveGlobe(canvas, () => globePointsFromTimezones(_globeTimezones));
+  _globeInstance = createLiveGlobe(canvas, () => globePointsFromTimezones(_globeTimezones), _globeRotation);
 }
 
 function updateGlobeData(liveEvents) {

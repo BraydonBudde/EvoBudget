@@ -81,9 +81,12 @@ function _globeProject(lat, lon, rot, R, cx, cy) {
 }
 
 // points: [{ lat, lon, label }]
-function createLiveGlobe(canvas, getPoints) {
+function createLiveGlobe(canvas, getPoints, startRotation) {
   const ctx = canvas.getContext('2d');
-  let rot = 20;            // current longitude rotation
+  // Carried across re-renders by the caller: the dashboard rebuilds its whole
+  // panel on every poll, and without this the globe would visibly snap back
+  // to its starting angle every time.
+  let rot = typeof startRotation === 'number' ? startRotation : 20;
   let dragging = false, lastX = 0, spin = 0.12;   // idle drift speed
   let raf = null;
 
@@ -183,7 +186,10 @@ function createLiveGlobe(canvas, getPoints) {
   resize();
   tick();
 
-  return { destroy() { if (raf) cancelAnimationFrame(raf); } };
+  return {
+    getRotation() { return rot; },
+    destroy() { if (raf) cancelAnimationFrame(raf); }
+  };
 }
 
 // Groups live visitors into one point per timezone, so five people in Warsaw
