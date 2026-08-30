@@ -892,13 +892,39 @@ function hBarListHtml(groups, opts) {
   if (!rows.length) return `<div class="chart-empty">${esc(o.empty || 'No data yet.')}</div>`;
   const max = Math.max(...rows.map(r => r.value)) || 1;
   const total = rows.reduce((s, r) => s + r.value, 0);
+  // Share is meaningless for money split across two products - "$120 (60%)"
+  // invites reading the percentage as a margin or a discount. Opt in only
+  // where a proportion of a whole is actually the point, like locations.
+  const showShare = o.showShare !== false;
+  const prefix = o.prefix || '';
   return `<div class="admin-hbars">${rows.map(r => {
     const pct = Math.round(r.value / max * 100);
     const share = total ? Math.round(r.value / total * 100) : 0;
     return `<div class="admin-hbar-row">
       <span class="admin-hbar-label" title="${esc(r.label)}">${esc(r.label)}</span>
       <span class="admin-hbar-track"><i style="width:${pct}%"></i></span>
-      <span class="admin-hbar-val">${fmt(r.value)}<small>${share}%</small></span>
+      <span class="admin-hbar-val">${esc(prefix)}${fmt(r.value)}${showShare ? `<small>${share}%</small>` : ''}</span>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── Vertical bar chart ────────────────────────────────────────────────
+// For small categorical sets (device type) where a donut makes the reader
+// compare arc angles to answer "which is bigger, and by how much".
+function vBarChartHtml(groups, opts) {
+  const o = opts || {};
+  const rows = (groups || []).slice().sort((a, b) => b.value - a.value).slice(0, o.limit || 6);
+  if (!rows.length) return `<div class="chart-empty">${esc(o.empty || 'No data yet.')}</div>`;
+  const max = Math.max(...rows.map(r => r.value)) || 1;
+  const total = rows.reduce((s, r) => s + r.value, 0);
+  return `<div class="admin-vbars">${rows.map(r => {
+    const h = Math.max(4, Math.round(r.value / max * 100));
+    const share = total ? Math.round(r.value / total * 100) : 0;
+    return `<div class="admin-vbar-col">
+      <span class="admin-vbar-val">${fmt(r.value)}</span>
+      <span class="admin-vbar-track"><i style="height:${h}%"></i></span>
+      <span class="admin-vbar-label" title="${esc(r.label)}">${esc(r.label)}</span>
+      <span class="admin-vbar-share">${share}%</span>
     </div>`;
   }).join('')}</div>`;
 }
@@ -906,7 +932,17 @@ function hBarListHtml(groups, opts) {
 // ── Conversion funnel ─────────────────────────────────────────────────
 function funnelHtml(steps) {
   const top = steps[0].value || 0;
-  return `<div class="admin-funnel">${steps.map((s, i) => {
+  const last = steps[steps.length - 1].value || 0;
+  // The headline number: what share of visits end in a sale. Shown to one
+  // decimal because a store at this size will sit under 1% for a while, and
+  // rounding that to "0%" would hide real movement.
+  const overall = top ? (last / top * 100) : 0;
+  const overallTxt = overall > 0 && overall < 1 ? overall.toFixed(2) : overall.toFixed(1);
+  const header = `<div class="admin-funnel-rate">
+    <div class="admin-funnel-rate-num">${overallTxt}%</div>
+    <div class="admin-funnel-rate-label">overall conversion<small>${fmt(last)} of ${fmt(top)} sessions ended in a purchase</small></div>
+  </div>`;
+  return header + `<div class="admin-funnel">${steps.map((s, i) => {
     const pctOfTop = top ? (s.value / top * 100) : 0;
     const prev = i > 0 ? steps[i - 1].value : null;
     const stepPct = (prev && prev > 0) ? Math.round(s.value / prev * 100) : null;
@@ -1037,7 +1073,7 @@ function renderOverview() {
       </div></div>
       <div class="panel chart-panel"><div class="panel-inner-sm">
         ${panelTitle('Sales by product', 'Etsy sales split by planner, from redeemed keys. Lemon Squeezy revenue is not split per product here.')}
-        ${perToolSales.length ? hBarListHtml(perToolSales, { empty: 'No sales in this range.' }) : '<div class="chart-empty">No product sales in this range.</div>'}
+        ${perToolSales.length ? hBarListHtml(perToolSales, { empty: 'No sales in this range.', showShare: false, prefix: '$' }) : '<div class="chart-empty">No product sales in this range.</div>'}
       </div></div>
     </div>
 
@@ -1048,18 +1084,18 @@ function renderOverview() {
 
     <div class="admin-grid-2">
       <div class="panel chart-panel"><div class="panel-inner-sm">
-        ${panelTitle('Sessions by location', 'Grouped by the browser-reported timezone, the only geography signal collected.')}
-        ${hBarListHtml(locationGroups, { empty: 'No data yet.', limit: 8 })}
+        ${panelTitle('Device type')}
+        ${vBarChartHtml(deviceGroups, { empty: 'No data yet.' })}
       </div></div>
       <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Device type')}
-        ${pieOrEmpty(deviceGroups, 'No data yet.')}
+        ${panelTitle('Referrers', 'Which site sent each visitor here, grouped by domain. "Direct" means no referrer was recorded: a typed URL, a bookmark, or a privacy-blocked referrer.')}
+        ${pieOrEmpty(referrerGroups, 'No data yet.')}
       </div></div>
     </div>
 
-    <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-      ${panelTitle('Referrers', 'Which site sent each visitor here, grouped by domain. "Direct" means no referrer was recorded: a typed URL, a bookmark, or a privacy-blocked referrer.')}
-      ${pieOrEmpty(referrerGroups, 'No data yet.')}
+    <div class="panel chart-panel"><div class="panel-inner-sm">
+      ${panelTitle('Sessions by location', 'Grouped by the browser-reported timezone, the only geography signal collected.')}
+      ${hBarListHtml(locationGroups, { empty: 'No data yet.', limit: 10 })}
     </div></div>`;
 
   wireOverviewFilterBar();

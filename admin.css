@@ -266,3 +266,34 @@
 .admin-kpi-stack .ist-row { grid-template-columns: repeat(2, 1fr); margin-bottom: 0; height: 100%; }
 .admin-kpi-stack .ist-tile { height: 100%; }
 @media (max-width: 620px) { .admin-kpi-stack .ist-row { grid-template-columns: 1fr; } }
+
+/* ── Funnel: headline conversion rate ────────────────────────────────── */
+.admin-funnel-rate {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; margin-bottom: 18px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(16,185,129,.12), rgba(99,102,241,.08));
+  border: 1px solid rgba(16,185,129,.22);
+}
+.admin-funnel-rate-num {
+  font-family: var(--font-display); font-size: 30px; font-weight: 800;
+  line-height: 1; color: #10b981; flex-shrink: 0;
+}
+.admin-funnel-rate-label { font-size: 12.5px; font-weight: 700; color: var(--text-primary); }
+.admin-funnel-rate-label small { display: block; font-size: 11.5px; font-weight: 500; color: var(--text-faint); margin-top: 3px; }
+
+/* ── Vertical bar chart (device type) ────────────────────────────────── */
+.admin-vbars { display: flex; align-items: flex-end; justify-content: space-around; gap: 14px; padding: 8px 4px 0; min-height: 190px; }
+.admin-vbar-col { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 96px; height: 100%; }
+.admin-vbar-val { font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--text-primary); }
+.admin-vbar-track { flex: 1; width: 100%; max-width: 54px; min-height: 90px; display: flex; align-items: flex-end; background: rgba(148,163,255,.1); border-radius: var(--radius-sm); overflow: hidden; }
+.admin-vbar-track > i {
+  display: block; width: 100%; border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--grad-purple), var(--grad-indigo));
+  transition: height .5s var(--ease);
+}
+.admin-vbar-label {
+  font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.admin-vbar-share { font-size: 11px; color: var(--text-faint); }
