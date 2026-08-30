@@ -858,8 +858,8 @@ function fetchLemonSqueezySales() {
     const timer = setTimeout(() => { lsSales = { loaded: true, configured: false, revenue: 0, orders: 0, error: 'timeout' }; finish(); }, 15000);
     window[cb] = res => {
       lsSales = (res && res.ok)
-        ? { loaded: true, configured: !!res.configured, revenue: Number(res.revenue || 0), orders: Number(res.orders || 0), error: '' }
-        : { loaded: true, configured: false, revenue: 0, orders: 0, error: (res && res.error) || 'failed' };
+        ? { loaded: true, configured: !!res.configured, revenue: Number(res.revenue || 0), orders: Number(res.orders || 0), testMode: !!res.testMode, error: '' }
+        : { loaded: true, configured: false, revenue: 0, orders: 0, testMode: false, error: (res && res.error) || 'failed' };
       finish();
     };
     const qs = new URLSearchParams({ action: 'sales', from: overviewFilters.from || '', to: overviewFilters.to || '', cb, _: String(Date.now()) });
@@ -966,7 +966,9 @@ function renderOverview() {
   const totalRevenue = lsRevenue + etsy.revenue;
   const totalOrders = lsOrders + etsy.orders;
   const salesSub = lsSales.configured
-    ? '$' + lsRevenue.toFixed(2) + ' Lemon Squeezy + $' + etsy.revenue.toFixed(2) + ' Etsy'
+    ? (lsSales.testMode
+        ? '⚠ TEST orders - not real money'
+        : '$' + lsRevenue.toFixed(2) + ' Lemon Squeezy + $' + etsy.revenue.toFixed(2) + ' Etsy')
     : (lsSales.loaded ? 'Etsy only - connect Lemon Squeezy for live revenue' : 'loading Lemon Squeezy...');
 
   // Funnel. The final step can only be observed through redemptions, since
