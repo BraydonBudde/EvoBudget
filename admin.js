@@ -851,7 +851,10 @@ function fetchLemonSqueezySales() {
     const finish = () => {
       if (done) return; done = true;
       clearTimeout(timer);
-      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+      // Left as a no-op rather than deleted: a redirected or slow JSONP
+      // response can still arrive after we have given up, and calling a
+      // deleted global throws an uncaught error into the console.
+      window[cb] = function () {};
       script.parentNode?.removeChild(script);
       resolve();
     };
@@ -913,16 +916,26 @@ function hBarListHtml(groups, opts) {
 // compare arc angles to answer "which is bigger, and by how much".
 function vBarChartHtml(groups, opts) {
   const o = opts || {};
-  const rows = (groups || []).slice().sort((a, b) => b.value - a.value).slice(0, o.limit || 6);
-  if (!rows.length) return `<div class="chart-empty">${esc(o.empty || 'No data yet.')}</div>`;
+  let rows = (groups || []).slice();
+  // Always show the full set when one is given, so a category reading zero is
+  // visible as a real zero rather than silently absent - "no tablet traffic"
+  // is itself a finding.
+  if (o.categories) {
+    const byLabel = new Map(rows.map(r => [r.label, r.value]));
+    rows = o.categories.map(label => ({ label, value: byLabel.get(label) || 0 }));
+  } else {
+    rows = rows.sort((a, b) => b.value - a.value).slice(0, o.limit || 6);
+  }
   const max = Math.max(...rows.map(r => r.value)) || 1;
   const total = rows.reduce((s, r) => s + r.value, 0);
   return `<div class="admin-vbars">${rows.map(r => {
-    const h = Math.max(4, Math.round(r.value / max * 100));
+    const h = r.value > 0 ? Math.max(12, Math.round(r.value / max * 100)) : 0;
     const share = total ? Math.round(r.value / total * 100) : 0;
     return `<div class="admin-vbar-col">
-      <span class="admin-vbar-val">${fmt(r.value)}</span>
-      <span class="admin-vbar-track"><i style="height:${h}%"></i></span>
+      <span class="admin-vbar-track">
+        <i style="height:${h}%"><b>${fmt(r.value)}</b></i>
+        ${r.value === 0 ? `<em class="admin-vbar-zero">0</em>` : ''}
+      </span>
       <span class="admin-vbar-label" title="${esc(r.label)}">${esc(r.label)}</span>
       <span class="admin-vbar-share">${share}%</span>
     </div>`;
@@ -1085,7 +1098,7 @@ function renderOverview() {
     <div class="admin-grid-2">
       <div class="panel chart-panel"><div class="panel-inner-sm">
         ${panelTitle('Device type')}
-        ${vBarChartHtml(deviceGroups, { empty: 'No data yet.' })}
+        ${vBarChartHtml(deviceGroups, { categories: ['Desktop', 'Tablet', 'Mobile'] })}
       </div></div>
       <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
         ${panelTitle('Referrers', 'Which site sent each visitor here, grouped by domain. "Direct" means no referrer was recorded: a typed URL, a bookmark, or a privacy-blocked referrer.')}
@@ -1265,19 +1278,10 @@ function redemptionRows() {
     };
   }).sort((a, b) => b.when - a.when);
 }
-function filteredRedemptionRows() {
-  const q = redemptionFilters.q.trim().toLowerCase();
-  return redemptionRows().filter(r => {
-    if (redemptionFilters.tool && r.tool !== redemptionFilters.tool) return false;
-    if (redemptionFilters.onlyReused && !r.reused) return false;
-    if (q && !(r.orderId.toLowerCase().includes(q) || r.code.toLowerCase().includes(q) || r.visitorId.toLowerCase().includes(q))) return false;
-    return true;
-  });
-}
 function redemptionSearchBarHtml() {
   const hasFilters = redemptionFilters.q || redemptionFilters.tool || redemptionFilters.onlyReused;
   return `<div class="admin-filter-bar">
-    <input type="text" id="admRedemptionSearch" placeholder="Search order ID, code, or visitor..." value="${esc(redemptionFilters.q)}" aria-label="Search redemptions">
+    <input type="text" id="admRedemptionSearch" placeholder="Search order ID, license key, or email..." value="${esc(redemptionFilters.q)}" aria-label="Search redemptions">
     <select id="admRedemptionTool" aria-label="Tool">
       <option value="">All tools</option>
       <option value="sbp"${redemptionFilters.tool === 'sbp' ? ' selected' : ''}>Simple Budget</option>
@@ -1302,122 +1306,253 @@ function wireRedemptionFilters() {
   document.getElementById('admRedemptionOnlyReused')?.addEventListener('change', e => { redemptionFilters.onlyReused = e.target.checked; renderRedemptions(); });
   document.getElementById('admRedemptionClear')?.addEventListener('click', () => { redemptionFilters.q = ''; redemptionFilters.tool = ''; redemptionFilters.onlyReused = false; renderRedemptions(); });
 }
-function redemptionsTableHtml(rows) {
-  const head = `<tr><th>When</th><th>Order ID</th><th>License Key</th><th>Tool</th><th>Visitor</th><th>Region</th></tr>`;
-  if (!rows.length) return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody><tr class="admin-empty-row"><td colspan="6">No redemptions match.</td></tr></tbody></table></div>`;
-  return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
-    ${rows.map(r => `<tr>
-      <td>${esc(relTime(r.when))}</td>
-      <td class="admin-table-strong">${r.orderId ? esc(r.orderId) : '<span class="admin-table-muted">—</span>'}${r.reused ? ` <span class="admin-reuse-badge" title="This order ID was entered by ${r.reuseCount} different visitors">⚠ ×${r.reuseCount}</span>` : ''}</td>
-      <td>${esc(r.code)}</td>
-      <td>${esc(toolLabel(r.tool))}</td>
-      <td>${esc(r.visitorId.slice(0, 8))}</td>
-      <td>${esc(r.timezone || '—')}</td>
-    </tr>`).join('')}
+// Mirrors KEY_DEVICE_LIMIT in Code.gs. Only used for display/filtering here -
+// the limit is actually enforced server-side, where it cannot be edited.
+const ETSY_DEVICE_LIMIT = 5;
+
+// ══════════════════════ Redemption Activity ══════════════════════
+// One row per licence key, not per redemption event. These used to be two
+// tables ("Redemption activity" and "Issued Etsy keys") showing largely the
+// same facts, so revoking meant finding the same key again on the other one.
+// A key is what you actually act on, so a key is the row: the redemption
+// events behind it collapse into its counts.
+//
+// Covers both channels. Etsy keys come from the Keys sheet, so they show up
+// from the moment they're claimed, redeemed or not. Lemon Squeezy keys and
+// the original fixed launch codes never touch that sheet, so they're folded
+// in from the redemption events instead.
+
+// The original fixed codes, so they can be told apart from Lemon Squeezy
+// keys - they are neither revocable at source nor tied to one order.
+const LAUNCH_CODE_SET = new Set(['0SCL1', '0SCD2', '0SCS3', '0SCV4', '0SCT5', '0SRL6', '0SRD7', '0SRS8', '0SRV9', '1SRT0',
+  '1UCL1', '1UCD2', '1UCS3', '1UCV4', '1UCT5', '1URL6', '1URD7', '1URS8', '1URV9', '2URT0']);
+const SOURCE_LABEL = { etsy: 'Etsy', lemonsqueezy: 'Lemon Squeezy', launch: 'Launch code' };
+
+function keySource(key) {
+  const k = String(key || '').trim().toUpperCase();
+  if (k.startsWith('ETSY-')) return 'etsy';
+  if (LAUNCH_CODE_SET.has(k)) return 'launch';
+  return 'lemonsqueezy';
+}
+
+function redemptionActivityRows() {
+  const byKey = new Map();
+
+  // Start from the Keys sheet so claimed-but-never-redeemed keys still show.
+  allKeys.forEach(k => {
+    const key = String(k.key || '').trim();
+    if (!key) return;
+    byKey.set(key.toUpperCase(), {
+      key, tool: k.tool || '', theme: k.theme || '', orderId: String(k.orderId || ''), email: k.email || '',
+      devices: k.devices.length, redeemed: Number(k.redeemCount || 0),
+      status: k.status === 'revoked' ? 'revoked' : 'active',
+      sheetRow: k.row, source: keySource(key), lastSeen: 0, visitors: new Set(), fromEventsOnly: false
+    });
+  });
+
+  // Fold in what the redemption events know, creating rows for keys that have
+  // no sheet record at all (Lemon Squeezy and launch codes).
+  redemptionEvents().forEach(e => {
+    const raw = String((e.detail && e.detail.code) || '').trim();
+    if (!raw) return;
+    let row = byKey.get(raw.toUpperCase());
+    if (!row) {
+      row = {
+        key: raw, tool: (e.detail && e.detail.tool) || '', theme: '', orderId: '', email: '',
+        devices: 0, redeemed: 0, status: 'active', sheetRow: null,
+        source: keySource(raw), lastSeen: 0, visitors: new Set(), fromEventsOnly: true
+      };
+      byKey.set(raw.toUpperCase(), row);
+    }
+    if (!row.orderId && e.detail && e.detail.orderId) row.orderId = String(e.detail.orderId);
+    if (!row.tool && e.detail && e.detail.tool) row.tool = e.detail.tool;
+    row.visitors.add(e.visitorId);
+    row.lastSeen = Math.max(row.lastSeen, eventTime(e));
+    if (row.fromEventsOnly) row.redeemed++;
+  });
+
+  // An order ID reached from more than one visitor is the strongest abuse
+  // signal here, so it survives the merge onto the key row.
+  const visitorsByOrder = new Map();
+  byKey.forEach(r => {
+    if (!r.orderId) return;
+    if (!visitorsByOrder.has(r.orderId)) visitorsByOrder.set(r.orderId, new Set());
+    const bucket = visitorsByOrder.get(r.orderId);
+    r.visitors.forEach(v => bucket.add(v));
+  });
+
+  return Array.from(byKey.values()).map(r => {
+    const reuseCount = r.orderId ? visitorsByOrder.get(r.orderId).size : 0;
+    r.devices = r.fromEventsOnly ? r.visitors.size : r.devices;
+    r.reused = reuseCount > 1;
+    r.reuseCount = reuseCount;
+    return r;
+  }).sort((a, b) => b.lastSeen - a.lastSeen);
+}
+
+function filteredActivityRows() {
+  const q = redemptionFilters.q.trim().toLowerCase();
+  return redemptionActivityRows().filter(r => {
+    if (redemptionFilters.tool && r.tool !== redemptionFilters.tool) return false;
+    if (redemptionFilters.onlyReused && !r.reused) return false;
+    if (!q) return true;
+    return [r.key, r.orderId, r.email, r.tool].some(v => String(v).toLowerCase().includes(q));
+  });
+}
+
+function activityTableHtml(rows) {
+  const head = `<tr><th class="admin-col-expand"></th><th>Order ID</th><th>Tool</th><th>License Key</th><th class="admin-col-action"></th></tr>`;
+  if (!rows.length) {
+    const msg = _keysFetchError
+      ? `Couldn't read the Keys sheet - Google said: ${esc(_keysFetchError)}. If that mentions a missing range, the sheet doesn't exist yet: it's created automatically the first time someone claims a key. Otherwise check the tab is named exactly "Keys" in the spreadsheet this dashboard reads.`
+      : (redemptionActivityRows().length ? 'No keys match your filters.' : 'No keys issued or redeemed yet.');
+    return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
+      <tr class="admin-empty-row"><td colspan="5">${msg}</td></tr>
+    </tbody></table></div>`;
+  }
+  return `<div class="admin-table-wrap"><table class="admin-table admin-activity-table"><thead>${head}</thead><tbody>
+    ${rows.map((r, i) => {
+      const revoked = r.status === 'revoked';
+      const id = `k${i}`;
+      // Launch codes are one shared list baked into the app, so revoking one
+      // would lock out every buyer who was ever sent it. Offering the button
+      // would only invite doing real damage by accident.
+      const canRevoke = r.source !== 'launch';
+      return `<tr class="admin-activity-row${revoked ? ' admin-row-muted' : ''}">
+        <td class="admin-col-expand"><button class="admin-expand-btn" type="button" data-expand="${id}" aria-expanded="false" aria-label="Show details for ${esc(r.key)}">▸</button></td>
+        <td class="admin-table-strong">${r.orderId ? esc(r.orderId) : '<span class="admin-table-muted">—</span>'}${r.reused ? ` <span class="admin-reuse-badge" title="This order ID was used by ${r.reuseCount} different visitors">⚠ ×${r.reuseCount}</span>` : ''}</td>
+        <td>${esc(toolLabel(r.tool))}</td>
+        <td class="admin-key-cell">${esc(r.key)} <span class="admin-src-badge">${esc(SOURCE_LABEL[r.source])}</span></td>
+        <td class="admin-col-action">${canRevoke
+          ? `<button class="btn btn-ghost btn-sm admin-key-toggle" type="button" data-key="${esc(r.key)}" data-source="${r.source}" data-tool="${esc(r.tool)}" data-order="${esc(r.orderId)}" data-row="${r.sheetRow || ''}" data-next="${revoked ? 'active' : 'revoked'}">${revoked ? 'Restore' : 'Revoke'}</button>`
+          : `<span class="admin-table-muted" title="Launch codes are shared by every buyer who received one, so revoking would lock all of them out">shared code</span>`}</td>
+      </tr>
+      <tr class="admin-activity-detail" data-detail="${id}" hidden><td colspan="5">
+        <div class="admin-detail-grid">
+          <div><span>Email</span><strong>${r.email ? esc(r.email) : '—'}</strong></div>
+          <div><span>Devices</span><strong>${r.source === 'etsy' ? `${r.devices}/${ETSY_DEVICE_LIMIT}${r.devices >= ETSY_DEVICE_LIMIT ? ' <em class="admin-reuse-badge">full</em>' : ''}` : fmt(r.devices)}</strong></div>
+          <div><span>Redeemed</span><strong>${fmt(r.redeemed)} time${r.redeemed === 1 ? '' : 's'}</strong></div>
+          <div><span>Status</span><strong>${revoked ? 'Revoked' : 'Active'}</strong></div>
+          <div><span>Source</span><strong>${esc(SOURCE_LABEL[r.source])}${r.theme ? esc(' · ' + r.theme) : ''}</strong></div>
+          <div><span>Last redeemed</span><strong>${r.lastSeen ? esc(relTime(r.lastSeen)) : 'never'}</strong></div>
+        </div>
+      </td></tr>`;
+    }).join('')}
   </tbody></table></div>`;
 }
+
 function renderRedemptions() {
   const el = document.getElementById('aview-redemptions');
-  const allRows = redemptionRows();
-  const rows = filteredRedemptionRows();
-  const withOrderId = allRows.filter(r => r.orderId);
-  const uniqueOrderIds = uniqueBy(withOrderId, r => r.orderId).length;
-  const uniqueRedeemers = uniqueBy(allRows, r => r.visitorId).length;
-  const reusedOrderIds = uniqueBy(allRows.filter(r => r.reused), r => r.orderId).length;
+  const all = redemptionActivityRows();
+  const rows = filteredActivityRows();
+  const uniqueOrderIds = uniqueBy(all.filter(r => r.orderId), r => r.orderId).length;
+  const reusedOrderIds = uniqueBy(all.filter(r => r.reused), r => r.orderId).length;
+  const revokedCount = all.filter(r => r.status === 'revoked').length;
 
   el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">Redemptions</h2></div>
-    <p class="admin-section-sub">Every license key redemption with the order ID the visitor entered - all-time, not affected by date filters on other tabs. Use this to spot entries that don't match a real order and revoke access.</p>
+    <div class="section-header"><h2 class="admin-section-title">Redemption Activity</h2></div>
+    <p class="admin-section-sub">Every license key from both Etsy and Lemon Squeezy, all-time, one row per key. Expand a row for the buyer's email, device use and history. Revoking blocks future redemptions; anyone who already unlocked keeps access, since that unlock lives on their own device.</p>
     ${kpiRow([
-      { icon: '🔑', label: 'Total redemptions', value: fmt(allRows.length), sub: '', color: '#6366f1', hint: 'Every successful code + order ID submission. A visitor testing multiple codes counts more than once.' },
-      { icon: '🧾', label: 'Unique order IDs', value: fmt(uniqueOrderIds), sub: '', color: '#14b8a6', hint: 'Distinct order IDs seen across all redemptions. Order IDs are never format-checked - this is a raw count of whatever was typed.' },
-      { icon: '👤', label: 'Unique redeemers', value: fmt(uniqueRedeemers), sub: 'distinct visitors who redeemed', color: '#3b82f6', hint: 'Distinct visitors (by anonymous device ID) who successfully redeemed at least one code.' },
-      { icon: '⚠️', label: 'Reused order IDs', value: fmt(reusedOrderIds), sub: 'same order ID, different visitors', color: '#f43f5e', hint: 'Order IDs entered by more than one different visitor - the strongest signal here that something is worth investigating, since a real order ID should only ever be used once.' }
+      { icon: '🔑', label: 'License keys', value: fmt(all.length), sub: 'issued or redeemed', color: '#6366f1', hint: 'Every key that has been claimed or redeemed, across Etsy, Lemon Squeezy and the original launch codes.' },
+      { icon: '🧾', label: 'Unique order IDs', value: fmt(uniqueOrderIds), sub: '', color: '#14b8a6', hint: 'Distinct order IDs across all keys. Etsy orders come from the claim at /claim; Lemon Squeezy orders from the checkout itself.' },
+      { icon: '⚠️', label: 'Reused order IDs', value: fmt(reusedOrderIds), sub: 'same order, different visitors', color: '#f43f5e', hint: 'An order ID seen from more than one visitor - the strongest signal worth investigating here, since a real order should only ever be used by one person.' },
+      { icon: '🚫', label: 'Revoked', value: fmt(revokedCount), sub: '', color: '#64748b', hint: 'Keys you have disabled. They can no longer be redeemed on a new device.' }
     ])}
     ${redemptionSearchBarHtml()}
     <div class="panel"><div class="panel-inner-sm">
-      ${panelTitle('Redemption activity', 'Each time a key was successfully entered into the app. One key can appear several times if it was used on more than one device.')}
-      ${redemptionsTableHtml(rows)}
-    </div></div>
-    <div class="panel"><div class="panel-inner-sm">
-      ${panelTitle('Issued Etsy keys', 'Every key claimed at /claim, with the order it belongs to. Revoking blocks future redemptions of a key; anyone who already unlocked with it keeps access, since that unlock lives on their own device.')}
-      ${keysTableHtml(filteredKeys())}
+      ${activityTableHtml(rows)}
     </div></div>`;
   wireRedemptionFilters();
-  wireKeyRevokeButtons(el);
+  wireActivityRows(el);
   initFieldTips(el);
 }
 
-// Revoke/restore lives on the Redemptions tab now, next to the activity it
-// relates to, so acting on a suspicious redemption doesn't mean hunting for
-// the key on a separate screen.
-function wireKeyRevokeButtons(scope) {
+function wireActivityRows(scope) {
+  scope.querySelectorAll('.admin-expand-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const detail = scope.querySelector(`.admin-activity-detail[data-detail="${btn.dataset.expand}"]`);
+      if (!detail) return;
+      const opening = detail.hidden;
+      detail.hidden = !opening;
+      btn.textContent = opening ? '▾' : '▸';
+      btn.setAttribute('aria-expanded', String(opening));
+      btn.classList.toggle('is-open', opening);
+    });
+  });
+
   scope.querySelectorAll('.admin-key-toggle').forEach(btn => {
     btn.addEventListener('click', async () => {
-      const rowNum = Number(btn.dataset.row);
-      const next = btn.dataset.next;
+      const { key, source, tool, order, next } = btn.dataset;
+      const rowNum = Number(btn.dataset.row) || 0;
       if (next === 'revoked' && !await confirmDialog({
-        message: 'Revoke this key? It will stop working for any new device. Anyone who already unlocked with it keeps access.',
+        message: source === 'lemonsqueezy'
+          ? 'Revoke this key? It gets disabled in Lemon Squeezy itself, so it stops working for any new device. Anyone who already unlocked with it keeps access.'
+          : 'Revoke this key? It will stop working for any new device. Anyone who already unlocked with it keeps access.',
         confirmText: 'Revoke'
       })) return;
+
+      const original = btn.textContent;
       btn.disabled = true;
+      btn.textContent = '…';
       try {
-        await adminSetKeyStatus(rowNum, next);
-        const rec = allKeys.find(k => k.row === rowNum);
-        if (rec) rec.status = next;
+        if (source === 'lemonsqueezy') {
+          const res = await lemonSqueezySetKeyDisabled(key, next === 'revoked', tool, order);
+          if (!res || !res.ok) throw new Error((res && res.error) || 'failed');
+          // The Apps Script mirrors the new status back into the Keys sheet,
+          // so re-reading it is what makes the change stick across a reload.
+          allKeys = await adminFetchKeys(_adminAccessToken).catch(() => allKeys);
+        } else {
+          if (!rowNum) throw new Error('no_row');
+          await adminSetKeyStatus(rowNum, next);
+          const rec = allKeys.find(k => k.row === rowNum);
+          if (rec) rec.status = next;
+        }
         renderRedemptions();
         showToast(next === 'revoked' ? 'Key revoked' : 'Key restored');
-      } catch (e) {
+      } catch (err) {
         btn.disabled = false;
-        showToast("Couldn't update the key. Check your connection and try again.");
+        btn.textContent = original;
+        showToast(
+          err.message === 'not_configured' ? 'Add LEMONSQUEEZY_API_KEY in Apps Script Script Properties to revoke their keys.'
+          : err.message === 'not_found' ? "Lemon Squeezy doesn't recognise that key."
+          : err.message === 'timeout' ? 'Lemon Squeezy took too long to answer. Try again.'
+          : "Couldn't update the key. Check your connection and try again."
+        );
       }
     });
   });
 }
 
-// ══════════════════════ Etsy license keys ══════════════════════
-// Shares the Redemptions tab's search and tool filter rather than carrying
-// its own set - one search box over both tables is far easier to reason
-// about than two that can disagree.
-function filteredKeys() {
-  const q = redemptionFilters.q.trim().toLowerCase();
-  return allKeys.filter(k => {
-    if (redemptionFilters.tool && k.tool !== redemptionFilters.tool) return false;
-    if (!q) return true;
-    return [k.key, k.orderId, k.email, k.tool, k.theme].some(v => String(v).toLowerCase().includes(q));
+// Lemon Squeezy keys are disabled in Lemon Squeezy itself, not flagged
+// locally: they validate their own keys against their own API, so a flag in
+// our sheet would stop nothing. Goes through the Apps Script because the API
+// key that authorises it must never sit in this public file.
+function lemonSqueezySetKeyDisabled(key, disable, tool, orderId) {
+  return new Promise(resolve => {
+    const cb = `ezzoRevokeCb${Math.random().toString(36).slice(2)}`;
+    const script = document.createElement('script');
+    let settled = false;
+    const finish = res => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      // Left as a no-op rather than deleted: a redirected or slow JSONP
+      // response can still arrive after we have given up, and calling a
+      // deleted global throws an uncaught error into the console.
+      window[cb] = function () {};
+      script.remove();
+      resolve(res);
+    };
+    const timer = setTimeout(() => finish({ ok: false, error: 'timeout' }), 25000);
+    window[cb] = res => finish(res || { ok: false, error: 'failed' });
+    const qs = new URLSearchParams({
+      action: 'lsrevoke', key, disable: String(!!disable),
+      tool: tool || '', orderId: orderId || '', cb, _: String(Date.now())
+    });
+    script.src = `${ADMIN_APPS_SCRIPT_URL}?${qs}`;
+    script.onerror = () => finish({ ok: false, error: 'network' });
+    document.head.appendChild(script);
   });
-}
-
-// Mirrors KEY_DEVICE_LIMIT in Code.gs. Only used for display/filtering here -
-// the limit is actually enforced server-side, where it can't be edited.
-const ETSY_DEVICE_LIMIT = 5;
-
-function keysTableHtml(rows) {
-  const head = `<tr><th>Key</th><th>Style</th><th>Order ID</th><th>Email</th><th>Devices</th><th>Redeemed</th><th>Status</th><th></th></tr>`;
-  if (!rows.length) {
-    const msg = _keysFetchError
-      ? `Couldn't read the Keys sheet - Google said: ${esc(_keysFetchError)}. If that mentions a missing range, the sheet doesn't exist yet: it's created automatically the first time someone claims a key. Otherwise check the tab is named exactly "Keys" in the spreadsheet this dashboard reads.`
-      : (allKeys.length ? 'No keys match your filters.' : 'No keys claimed yet. They appear here as buyers claim them at /claim.');
-    return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
-      <tr class="admin-empty-row"><td colspan="8">${msg}</td></tr>
-    </tbody></table></div>`;
-  }
-  return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
-    ${rows.map(k => {
-      const maxed = k.devices.length >= ETSY_DEVICE_LIMIT;
-      const revoked = k.status === 'revoked';
-      return `<tr${revoked ? ' class="admin-row-muted"' : ''}>
-        <td class="admin-table-strong" style="font-family:var(--font-mono,monospace);font-size:11.5px">${esc(k.key)}</td>
-        <td>${esc(toolLabel(k.tool))}<span class="admin-table-muted"> · ${esc(k.theme || '—')}</span></td>
-        <td>${k.orderId ? esc(k.orderId) : '<span class="admin-table-muted">—</span>'}</td>
-        <td class="admin-table-muted">${esc(k.email || '—')}</td>
-        <td>${k.devices.length}/${ETSY_DEVICE_LIMIT}${maxed ? ' <span class="admin-reuse-badge" title="Every device slot on this key has been used">⚠ full</span>' : ''}</td>
-        <td>${k.redeemCount ? esc(String(k.redeemCount)) : '<span class="admin-table-muted">0</span>'}</td>
-        <td>${revoked ? '<span class="admin-reuse-badge">revoked</span>' : 'active'}</td>
-        <td><button class="btn btn-ghost btn-sm admin-key-toggle" data-row="${k.row}" data-next="${revoked ? 'active' : 'revoked'}" type="button">${revoked ? 'Restore' : 'Revoke'}</button></td>
-      </tr>`;
-    }).join('')}
-  </tbody></table></div>`;
 }
 
 // ══════════════════════ Danger zone UI (Settings tab) ══════════════════════

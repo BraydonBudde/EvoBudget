@@ -63,6 +63,7 @@ function doGet(e) {
   if (p.action === 'claim')    return _jsonp(p.cb, _handleClaim(p));
   if (p.action === 'validate') return _jsonp(p.cb, _handleValidate(p));
   if (p.action === 'sales')    return _jsonp(p.cb, _handleSales(p));
+  if (p.action === 'lsrevoke') return _jsonp(p.cb, _handleLsRevoke(p));
   return ContentService.createTextOutput('EzzoBudget analytics endpoint.');
 }
 
@@ -378,5 +379,85 @@ function _handleSales(p) {
     return out;
   } catch (err) {
     return { ok: false, error: 'server' };
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// REVOKING A LEMON SQUEEZY KEY
+// ══════════════════════════════════════════════════════════════════════
+// Etsy keys are revoked by flipping Status in the Keys sheet, because that
+// sheet is what validates them. Lemon Squeezy keys are validated by Lemon
+// Squeezy, so a local flag wouldn't stop anything - the key has to be
+// disabled at source, which is what this does. Their own validate endpoint
+// then rejects it, and the app refuses it without any extra check.
+//
+// Needs LEMONSQUEEZY_API_KEY (same one the sales card uses). Without it,
+// this reports back plainly instead of pretending to have worked.
+function _handleLsRevoke(p) {
+  try {
+    const apiKey = PropertiesService.getScriptProperties().getProperty('LEMONSQUEEZY_API_KEY');
+    if (!apiKey) return { ok: false, error: 'not_configured' };
+
+    const key = String(p.key || '').trim();
+    const disable = String(p.disable) !== 'false';
+    if (!key) return { ok: false, error: 'bad_key' };
+
+    const headers = {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ' + apiKey
+    };
+
+    // The PATCH needs the numeric id, not the key string, so find it first.
+    // Bounded paging for the same reason as the sales call: a long history
+    // must not be able to run the script past its execution limit.
+    let id = '';
+    let url = 'https://api.lemonsqueezy.com/v1/license-keys?page[size]=100';
+    for (var page = 0; page < 10 && url && !id; page++) {
+      const res = UrlFetchApp.fetch(url, { method: 'get', headers: headers, muteHttpExceptions: true });
+      if (res.getResponseCode() !== 200) return { ok: false, error: 'lookup_' + res.getResponseCode() };
+      const body = JSON.parse(res.getContentText());
+      (body.data || []).forEach(function (row) {
+        if (!id && String((row.attributes || {}).key || '').trim() === key) id = String(row.id);
+      });
+      url = (body.links && body.links.next) || '';
+    }
+    if (!id) return { ok: false, error: 'not_found' };
+
+    const patch = UrlFetchApp.fetch('https://api.lemonsqueezy.com/v1/license-keys/' + id, {
+      method: 'patch',
+      headers: headers,
+      payload: JSON.stringify({ data: { type: 'license-keys', id: id, attributes: { disabled: disable } } }),
+      muteHttpExceptions: true
+    });
+    if (patch.getResponseCode() !== 200) return { ok: false, error: 'patch_' + patch.getResponseCode() };
+
+    // Mirror the new state into the Keys sheet so the dashboard can show it
+    // without querying Lemon Squeezy on every render.
+    _upsertKeyStatus(key, disable ? 'revoked' : 'active', p.tool, p.orderId);
+    return { ok: true, disabled: disable };
+  } catch (err) {
+    return { ok: false, error: 'server' };
+  }
+}
+
+// Updates the row for a key, creating one if this is the first time we've
+// needed to record anything about it (true for Lemon Squeezy keys, which
+// are never claimed through /claim).
+function _upsertKeyStatus(key, status, tool, orderId) {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) return;
+  try {
+    const sh = _keysSheet();
+    const rows = sh.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][0]).trim().toUpperCase() === key.toUpperCase()) {
+        sh.getRange(i + 1, 8).setValue(status);
+        return;
+      }
+    }
+    sh.appendRow([key, tool || '', '', '', orderId || '', '', new Date(), status, '[]', 0, '']);
+  } finally {
+    lock.releaseLock();
   }
 }
