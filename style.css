@@ -1293,12 +1293,13 @@ input[type="number"].expected-input {
   .summary-cards { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 700px) {
-  /* Fade the tab bar's edges so a horizontally-scrollable row of tabs
-     visibly hints that more tabs exist off-screen, instead of just
-     cutting a label off mid-word with no other indication. */
+  /* Fade the tab bar's trailing edge so a horizontally-scrollable row of tabs
+     visibly hints that more tabs exist off-screen. Only the trailing edge
+     fades: a fade at the start dims the first tab even at scroll position 0,
+     where nothing is cut off, so it reads as a fault rather than a hint. */
   .budget-tabs {
-    mask-image: linear-gradient(to right, transparent 0, black 20px, black calc(100% - 20px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0, black 20px, black calc(100% - 20px), transparent 100%);
+    mask-image: linear-gradient(to right, black 0, black calc(100% - 20px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 20px), transparent 100%);
   }
   .app { padding: 20px 16px 60px; }
   .tool-grid { grid-template-columns: 1fr; max-width: 100%; }
@@ -2705,6 +2706,53 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .fk-dp-today:hover, .fk-dp-clear:hover { color: var(--text-primary); border-color: var(--grad-purple); }
 @media (max-width: 480px) {
   .fk-datepop { position: fixed !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%); width: calc(100% - 40px); max-width: 340px; animation: none; }
+}
+
+/* ── Budget-period popover (from the dashboard period badge) ──────────── */
+/* Sits one layer below .fk-datepop (3500), because the date fields inside
+   it open that calendar on top of this panel. */
+.fk-periodpop {
+  position: absolute; z-index: 3400; width: 320px; padding: 14px;
+  background: var(--surface-solid); border: 1px solid var(--border-faint);
+  border-radius: var(--radius-md); box-shadow: 0 24px 60px rgba(0,0,0,.22);
+  font-family: inherit; animation: fk-dp-in .14s var(--ease, ease);
+}
+.fk-pp-title {
+  font-family: var(--font-display); font-weight: 600; font-size: 13px;
+  color: var(--text-primary); margin-bottom: 10px;
+}
+.fk-pp-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.fk-pp-chip {
+  flex: 1 1 auto; border: 1px solid var(--border-faint); background: var(--surface-strong);
+  color: var(--text-secondary); border-radius: var(--radius-pill);
+  padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: inherit; white-space: nowrap;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.fk-pp-chip:hover { border-color: var(--grad-indigo); color: var(--text-primary); }
+.fk-pp-chip.is-active {
+  border-color: transparent; color: #fff;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+.fk-pp-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fk-pp-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.fk-pp-field .field-label { margin: 0; }
+.fk-pp-more {
+  display: block; width: 100%; margin-top: 12px; padding-top: 10px;
+  border: none; border-top: 1px solid var(--border-faint); background: none;
+  color: var(--text-faint); font-size: 11.5px; font-weight: 600; font-family: inherit;
+  text-align: center; cursor: pointer; transition: color .15s;
+}
+.fk-pp-more:hover { color: var(--grad-indigo); }
+/* Below this width the popover centres as a sheet - the same treatment,
+   at the same breakpoint, as the .fk-datepop it opens. They have to match:
+   a fixed popover holding an absolutely-positioned calendar would place
+   that calendar a scroll-offset away from the field it belongs to. */
+@media (max-width: 480px) {
+  .fk-periodpop {
+    position: fixed !important; left: 50% !important; top: 50% !important;
+    transform: translate(-50%, -50%); width: calc(100% - 40px); max-width: 340px; animation: none;
+  }
 }
 
 /* ── Automation: "Automate this" rows + linked-template badge ──────────── */

@@ -670,7 +670,7 @@ const TRANSLATIONS = {
     tx_category_hint:'Which category within that type this belongs to.',
     tx_amount_hint:'How much this transaction was for.',
     tx_desc_hint:'An optional note to help you remember what this was, like "Grocery run".',
-    tx_add_btn:'Add',tx_error_required:'Please fill all required fields.',
+    tx_add_btn:'Add',tx_error_required:'Please fill all required fields.',tx_error_no_cats:'No categories exist for this type yet. Add one in your budget first.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
     tx_clear_all:'Clear all',tx_empty:'No transactions yet.',tx_select_all_page:'Select all on this page',tx_n_selected:'{0} selected',tx_delete_selected:'Delete selected',tx_clear_selection:'Clear selection',tx_select_all_matching:'Select all {0} matching',tx_tag_as:'Tag as:',tx_tagged_toast:'{0} transactions tagged',confirm_delete_selected_tx:'Delete {0} selected transactions? This cannot be undone.',
     tx_type_income:'Income',tx_type_expense:'Expense',tx_type_bill:'Bill',tx_type_savings:'Savings',
@@ -1212,7 +1212,7 @@ const TRANSLATIONS = {
     tx_category_hint:'Zu welcher Kategorie innerhalb dieses Typs dies geh\u00f6rt.',
     tx_amount_hint:'Wie viel diese Transaktion betrug.',
     tx_desc_hint:'Eine optionale Notiz, damit du dich erinnerst, worum es ging, z.B. "Einkaufen".',
-    tx_add_btn:'Hinzufügen',tx_error_required:'Bitte alle Pflichtfelder ausfüllen.',
+    tx_add_btn:'Hinzufügen',tx_error_required:'Bitte alle Pflichtfelder ausfüllen.',tx_error_no_cats:'Für diesen Typ gibt es noch keine Kategorien. Lege zuerst eine in deinem Budget an.',
     tx_transaction_one:'Transaktion',tx_transaction_many:'Transaktionen',
     tx_clear_all:'Alle löschen',tx_empty:'Noch keine Transaktionen.',tx_select_all_page:'Alle auf dieser Seite auswählen',tx_n_selected:'{0} ausgewählt',tx_delete_selected:'Auswahl löschen',tx_clear_selection:'Auswahl aufheben',tx_select_all_matching:'Alle {0} übereinstimmenden auswählen',tx_tag_as:'Taggen als:',tx_tagged_toast:'{0} Transaktionen getaggt',confirm_delete_selected_tx:'{0} ausgewählte Transaktionen löschen? Dies kann nicht rückgängig gemacht werden.',
     tx_type_income:'Einnahmen',tx_type_expense:'Ausgaben',tx_type_bill:'Rechnung',tx_type_savings:'Ersparnisse',
@@ -1736,7 +1736,7 @@ const TRANSLATIONS = {
     tx_category_hint:'La cat\u00e9gorie \u00e0 laquelle cela appartient au sein de ce type.',
     tx_amount_hint:'Le montant de cette transaction.',
     tx_desc_hint:"Une note facultative pour vous rappeler de quoi il s'agissait, comme \u00ab Courses \u00bb.",
-    tx_add_btn:'Ajouter',tx_error_required:'Veuillez remplir tous les champs obligatoires.',
+    tx_add_btn:'Ajouter',tx_error_required:'Veuillez remplir tous les champs obligatoires.',tx_error_no_cats:'Aucune catégorie n’existe encore pour ce type. Créez-en une dans votre budget.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
     tx_clear_all:'Tout effacer',tx_empty:'Aucune transaction encore.',tx_select_all_page:'Tout sélectionner sur cette page',tx_n_selected:'{0} sélectionnée(s)',tx_delete_selected:'Supprimer la sélection',tx_clear_selection:'Effacer la sélection',tx_select_all_matching:'Sélectionner les {0} correspondantes',tx_tag_as:'Taguer :',tx_tagged_toast:'{0} transactions taguées',confirm_delete_selected_tx:'Supprimer {0} transactions sélectionnées ? Cette action est irréversible.',
     tx_type_income:'Revenu',tx_type_expense:'Dépense',tx_type_bill:'Facture',tx_type_savings:'Épargne',
@@ -2260,7 +2260,7 @@ const TRANSLATIONS = {
     tx_amount_hint:'Cuánto fue esta transacción.',
     tx_desc_hint:'Una nota opcional para ayudarte a recordar de qué se trataba, como "Compra en supermercado".',
     tx_desc_label:'Descripción',tx_desc_ph:'p.ej. Compra en supermercado\u2026',
-    tx_add_btn:'Añadir',tx_error_required:'Por favor, completa todos los campos obligatorios.',
+    tx_add_btn:'Añadir',tx_error_required:'Por favor, completa todos los campos obligatorios.',tx_error_no_cats:'Aún no hay categorías de este tipo. Crea una en tu presupuesto primero.',
     tx_transaction_one:'transacción',tx_transaction_many:'transacciones',
     tx_clear_all:'Borrar todo',tx_empty:'Aún no hay transacciones.',tx_select_all_page:'Seleccionar todo en esta página',tx_n_selected:'{0} seleccionadas',tx_delete_selected:'Eliminar seleccionadas',tx_clear_selection:'Borrar selección',tx_select_all_matching:'Seleccionar las {0} coincidentes',tx_tag_as:'Etiquetar:',tx_tagged_toast:'{0} transacciones etiquetadas',confirm_delete_selected_tx:'¿Eliminar {0} transacciones seleccionadas? Esta acción no se puede deshacer.',
     tx_type_income:'Ingreso',tx_type_expense:'Gasto',tx_type_bill:'Factura',tx_type_savings:'Ahorro',
@@ -2785,7 +2785,7 @@ const TRANSLATIONS = {
     tx_amount_hint:'Quanto è stata questa transazione.',
     tx_desc_hint:'Una nota facoltativa per aiutarti a ricordare di cosa si trattava, come "Spesa al supermercato".',
     tx_desc_label:'Descrizione',tx_desc_ph:'es. Spesa al supermercato\u2026',
-    tx_add_btn:'Aggiungi',tx_error_required:'Compila tutti i campi obbligatori.',
+    tx_add_btn:'Aggiungi',tx_error_required:'Compila tutti i campi obbligatori.',tx_error_no_cats:'Non esistono ancora categorie di questo tipo. Creane una nel tuo budget.',
     tx_transaction_one:'transazione',tx_transaction_many:'transazioni',
     tx_clear_all:'Cancella tutto',tx_empty:'Nessuna transazione ancora.',tx_select_all_page:'Seleziona tutto in questa pagina',tx_n_selected:'{0} selezionate',tx_delete_selected:'Elimina selezionate',tx_clear_selection:'Deseleziona',tx_select_all_matching:'Seleziona tutte le {0} corrispondenti',tx_tag_as:'Tagga:',tx_tagged_toast:'{0} transazioni taggate',confirm_delete_selected_tx:'Eliminare {0} transazioni selezionate? Questa azione non può essere annullata.',
     tx_type_income:'Entrata',tx_type_expense:'Spesa',tx_type_bill:'Bolletta',tx_type_savings:'Risparmio',
@@ -3309,7 +3309,7 @@ const TRANSLATIONS = {
     tx_amount_hint:'Ile wynosiła ta transakcja.',
     tx_desc_hint:'Opcjonalna notatka, aby zapamiętać, czego dotyczyła, np. "Zakupy spożywcze".',
     tx_desc_label:'Opis',tx_desc_ph:'np. Zakupy spożywcze\u2026',
-    tx_add_btn:'Dodaj',tx_error_required:'Proszę wypełnić wszystkie wymagane pola.',
+    tx_add_btn:'Dodaj',tx_error_required:'Proszę wypełnić wszystkie wymagane pola.',tx_error_no_cats:'Nie ma jeszcze kategorii tego typu. Najpierw dodaj ją w swoim budżecie.',
     tx_transaction_one:'transakcja',tx_transaction_many:'transakcji',
     tx_clear_all:'Wyczyść wszystko',tx_empty:'Brak transakcji.',tx_select_all_page:'Zaznacz wszystkie na tej stronie',tx_n_selected:'Zaznaczono: {0}',tx_delete_selected:'Usuń zaznaczone',tx_clear_selection:'Wyczyść zaznaczenie',tx_select_all_matching:'Zaznacz wszystkie pasujące ({0})',tx_tag_as:'Oznacz jako:',tx_tagged_toast:'Oznaczono transakcji: {0}',confirm_delete_selected_tx:'Usunąć {0} zaznaczonych transakcji? Tej operacji nie można cofnąć.',
     tx_type_income:'Przychód',tx_type_expense:'Wydatek',tx_type_bill:'Rachunek',tx_type_savings:'Oszczędności',
@@ -3825,6 +3825,9 @@ let txPage=0;
 let txSelected=new Set();
 const TX_PAGE_SIZE=25;
 
+function dispatchRender(tab) {
+  ({dashboard:renderDashboard,budget:renderBudget,transactions:renderTransactions,debt:renderDebt,sinking:renderSinking,calendar:renderCalendar,subscriptions:renderSubscriptions,settings:renderSettings}[tab]||renderDashboard)();
+}
 function switchTab(tab) {
   currentTab=tab;
   trackEvent('tab_viewed', { tab });
@@ -3836,7 +3839,7 @@ function switchTab(tab) {
   document.querySelectorAll('.bview').forEach(v=>v.classList.remove('is-active'));
   document.getElementById(`bview-${tab}`)?.classList.add('is-active');
   if(tab==='transactions'){const g=processRecurring();if(g>0)setTimeout(()=>showToast(tf('recurring_generated',g)),300);}
-  ({dashboard:renderDashboard,budget:renderBudget,transactions:renderTransactions,debt:renderDebt,sinking:renderSinking,calendar:renderCalendar,subscriptions:renderSubscriptions,settings:renderSettings}[tab]||renderDashboard)();
+  dispatchRender(tab);
   document.querySelector('.app-scroll')?.scrollTo({top:0});   // new tab starts at the top of the content region
 }
 
@@ -4003,7 +4006,7 @@ function renderDashboardLayout1() {
         ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
       </div></div>
     </div>`;
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click',e=>openPeriodPicker(e.currentTarget));
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -4170,7 +4173,7 @@ function renderDashboardLayout2() {
         ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
       </div></div>
     </div>`;
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click',()=>switchTab('settings'));
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click',e=>openPeriodPicker(e.currentTarget));
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
@@ -4735,7 +4738,8 @@ function openEditTx(txId){
     <div class="field"><label class="field-label">${t('tx_category')}</label><select class="select" id="editCategory"></select></div>
     <div class="field"><label class="field-label">${t('tx_amount')} (${SYM})</label><input class="input" type="number" id="editAmount" min="0" step="0.01" value="${tx.amount}"></div>
     <div class="field"><label class="field-label">${t('tx_desc_label')}</label><input class="input" type="text" id="editDesc" value="${esc(tx.description||'')}" maxlength="120"></div>
-    ${state.allocation?.enabled&&tx.type!=='income'&&tx.type!=='savings'&&tx.type!=='sinking_fund'?`<div class="field" id="editAllocWrap"><label class="field-label">${t('alloc_label')} <span class="required-star" aria-hidden="true">*</span></label><select class="select" id="editAlloc"><option value="">${t('alloc_optional')}</option>${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}" ${tx.allocation===b.id?'selected':''}>${esc(getAllocBucketDisplayName(b))}</option>`).join('')}</select></div>`:''}
+    <div id="editAllocSlot"></div>
+    <div class="tx-error" id="editError" hidden></div>
     <div class="edit-tx-actions">
       <button class="btn btn-primary" id="saveEditBtn">${t('tx_save_changes')}</button>
       <button class="btn btn-ghost btn-sm" id="cancelEditBtn">${t('cancel')}</button>
@@ -4743,12 +4747,29 @@ function openEditTx(txId){
     </div>`;
   document.getElementById('tutorialOverlay').hidden=false;
   bindDateField('editDate','editDateWrap');
-  const fillCats=()=>{const type=document.getElementById('editType')?.value,sel=document.getElementById('editCategory'),cats=getCats(type);if(sel)sel.innerHTML=cats.map(c=>`<option value="${esc(c)}" ${c===tx.category?'selected':''}>${esc(c)}</option>`).join('')||'<option value="">- no categories -</option>';};
+  const allocApplies=type=>state.allocation?.enabled&&type!=='income'&&type!=='savings'&&type!=='sinking_fund';
+  const syncAllocField=()=>{
+    const type=document.getElementById('editType')?.value;
+    const slot=document.getElementById('editAllocSlot');
+    if(!slot)return;
+    if(!allocApplies(type)){slot.innerHTML='';return;}
+    // Keep whatever the user already picked when they flip between two
+    // spending types, rather than resetting the tag on every change.
+    const current=document.getElementById('editAlloc')?.value ?? (tx.allocation||'');
+    slot.innerHTML=`<div class="field" id="editAllocWrap"><label class="field-label">${t('alloc_label')} <span class="required-star" aria-hidden="true">*</span></label><select class="select" id="editAlloc"><option value="">${t('alloc_optional')}</option>${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}" ${current===b.id?'selected':''}>${esc(getAllocBucketDisplayName(b))}</option>`).join('')}</select></div>`;
+  };
+  const fillCats=()=>{const type=document.getElementById('editType')?.value,sel=document.getElementById('editCategory'),cats=getCats(type);if(sel)sel.innerHTML=cats.map(c=>`<option value="${esc(c)}" ${c===tx.category?'selected':''}>${esc(c)}</option>`).join('')||'<option value="">- no categories -</option>';syncAllocField();};
   fillCats();document.getElementById('editType')?.addEventListener('change',fillCats);
   document.getElementById('editAlloc')?.addEventListener('change', () => {
     document.getElementById('editAlloc')?.classList.remove('select--error');
     document.getElementById('editAllocWrap')?.querySelector('.field-error-msg')?.remove();
   });
+  const showEditError=msg=>{const el=document.getElementById('editError');if(el){el.textContent=msg;el.hidden=false;}};
+  // Any edit clears a stale message, so the error always describes the
+  // attempt the user is looking at rather than the previous one.
+  ['input','change'].forEach(ev=>document.getElementById('modalBody')?.addEventListener(ev,()=>{
+    const el=document.getElementById('editError');if(el)el.hidden=true;
+  }));
   document.getElementById('saveEditBtn')?.addEventListener('click',()=>{
     const date=document.getElementById('editDate')?.value,
           type=document.getElementById('editType')?.value,
@@ -4756,8 +4777,13 @@ function openEditTx(txId){
           amount=parseFloat(document.getElementById('editAmount')?.value),
           desc=document.getElementById('editDesc')?.value?.trim()||'',
           alloc=document.getElementById('editAlloc')?.value||null;
-    if(!date||!type||!cat||isNaN(amount)||amount<=0) return;
-    const allocRequired=state.allocation?.enabled&&type!=='income'&&type!=='savings'&&type!=='sinking_fund';
+    // An empty category almost always means the type was just switched to
+    // one with nothing set up yet (no debts, no funds, no subscriptions), so
+    // the select had nothing to offer. This used to return silently, which
+    // read as a dead Save button.
+    if(!cat){showEditError(getCats(type).length?t('tx_error_required'):t('tx_error_no_cats'));return;}
+    if(!date||!type||isNaN(amount)||amount<=0){showEditError(t('tx_error_required'));return;}
+    const allocRequired=allocApplies(type);
     if(allocRequired&&!alloc){
       const sel=document.getElementById('editAlloc');
       const wrap=document.getElementById('editAllocWrap');
@@ -4772,7 +4798,9 @@ function openEditTx(txId){
     const idx=state.transactions.findIndex(t=>t.id===txId);
     if(idx!==-1){
       applySinkingFundDelta(state.transactions[idx], -1); // reverse old
-      const updated={id:txId,date,type,category:cat,amount,description:desc,allocation:alloc||null};
+      // Spread the existing record rather than rebuilding it, so anything the
+      // form doesn't show survives an edit.
+      const updated={...state.transactions[idx],id:txId,date,type,category:cat,amount,description:desc,allocation:allocRequired?(alloc||null):null};
       state.transactions[idx]=updated;
       applySinkingFundDelta(updated, +1); // apply new
     }
@@ -6508,6 +6536,141 @@ function openColorPicker(anchor, current, onPick){
   ci.addEventListener('input',ev=>onPick(ev.target.value));
   ci.addEventListener('change',()=>close());
   setTimeout(()=>{document.addEventListener('mousedown',outside,true);document.addEventListener('keydown',onKey,true);window.addEventListener('resize',close);},0);
+}
+
+// ── Budget-period popover (opened from the dashboard period badge) ────
+// Changing the period used to mean a round trip to Settings and back. The
+// same three ranges people actually reach for, plus the two date fields,
+// now open in place from the badge that already shows the current period.
+// Settings keeps the full preset list (quarter, year, last 30 days) and
+// stays the single source of truth: both write state.settings.period*
+// through applyBudgetPeriod, so neither can drift from the other.
+function periodQuickRanges() {
+  const now = new Date(), m = getMonthBounds();
+  return {
+    today:      [toLocalISO(now), toLocalISO(now)],
+    month:      [m.start, m.end],
+    last_month: [toLocalISO(new Date(now.getFullYear(), now.getMonth() - 1, 1)),
+                 toLocalISO(new Date(now.getFullYear(), now.getMonth(), 0))]
+  };
+}
+function activePeriodRange() {
+  const r = periodQuickRanges(), s = state.settings.periodStart, e = state.settings.periodEnd;
+  return Object.keys(r).find(k => r[k][0] === s && r[k][1] === e) || '';
+}
+// The one write path for the period, so the badge popover, the Settings
+// presets and the Settings date fields cannot disagree about what happens.
+function applyBudgetPeriod(start, end, opts) {
+  state.settings.periodStart = start;
+  state.settings.periodEnd = end;
+  saveState();
+  dispatchRender(currentTab);
+  if (!(opts && opts.silent)) showToast(t('toast_period_updated'));
+}
+
+function openPeriodPicker(anchor) {
+  const existing = document.getElementById('fkPeriodPop');
+  if (existing) { existing._close(); return; }          // re-clicking the badge closes it
+
+  const pop = document.createElement('div');
+  pop.className = 'fk-periodpop';
+  pop.id = 'fkPeriodPop';
+
+  const CHIPS = [['today', 'dp_today'], ['month', 'this_month'], ['last_month', 'last_month']];
+  function draw() {
+    const active = activePeriodRange();
+    pop.innerHTML = `
+      <div class="fk-pp-title">${t('budget_period')}</div>
+      <div class="fk-pp-chips">
+        ${CHIPS.map(([k, label]) => `<button type="button" class="fk-pp-chip${active === k ? ' is-active' : ''}" data-range="${k}">${t(label)}</button>`).join('')}
+      </div>
+      <div class="fk-pp-fields">
+        <div class="fk-pp-field">
+          <label class="field-label">${t('start_date')}</label>
+          <div class="date-field-styled" id="ppStartWrap">
+            <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span class="date-field-val">${formatDateDisplay(state.settings.periodStart)}</span>
+            <input type="date" id="ppStart" value="${state.settings.periodStart}">
+          </div>
+        </div>
+        <div class="fk-pp-field">
+          <label class="field-label">${t('end_date')}</label>
+          <div class="date-field-styled" id="ppEndWrap">
+            <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span class="date-field-val">${formatDateDisplay(state.settings.periodEnd)}</span>
+            <input type="date" id="ppEnd" value="${state.settings.periodEnd}">
+          </div>
+        </div>
+      </div>
+      <button type="button" class="fk-pp-more" id="ppMore">${t('tab_settings')} →</button>`;
+
+    pop.querySelectorAll('[data-range]').forEach(b => b.addEventListener('click', () => {
+      const [s, e] = periodQuickRanges()[b.dataset.range];
+      applyBudgetPeriod(s, e);
+      draw();
+    }));
+
+    // Reuses the app's own calendar popup, so the dates here behave exactly
+    // as they do in Settings rather than falling back to the native picker.
+    const bindPP = (wrapId, inputId, isStart) => {
+      const wrap = pop.querySelector('#' + wrapId), input = pop.querySelector('#' + inputId);
+      wrap.addEventListener('click', () => openDatePicker(input, wrap));
+      input.addEventListener('change', () => {
+        const v = input.value;
+        if (!v) { input.value = isStart ? state.settings.periodStart : state.settings.periodEnd; return; }
+        const start = isStart ? v : state.settings.periodStart;
+        const end   = isStart ? state.settings.periodEnd : v;
+        if (start && end && start > end) { showToast(t('toast_period_error')); draw(); return; }
+        applyBudgetPeriod(start, end);
+        draw();
+      });
+    };
+    bindPP('ppStartWrap', 'ppStart', true);
+    bindPP('ppEndWrap', 'ppEnd', false);
+
+    pop.querySelector('#ppMore').addEventListener('click', () => { close(); switchTab('settings'); });
+  }
+
+  function close() {
+    pop.remove();
+    document.removeEventListener('mousedown', outside, true);
+    document.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('resize', close);
+  }
+  // The calendar popup lives on <body>, outside this popover, so a click
+  // inside it must not be read as a click away from the period picker.
+  function outside(e) {
+    if (pop.contains(e.target)) return;
+    if (e.target.closest && e.target.closest('#fkDatePop')) return;
+    // Ignore the badge itself: mousedown here would close the popover a
+    // moment before the badge's own click handler ran, so re-clicking it
+    // would silently reopen instead of toggling shut.
+    if (anchor && anchor.contains(e.target)) return;
+    close();
+  }
+  function onKey(e) {
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('fkDatePop')) return;    // let the calendar close first
+    e.preventDefault(); close();
+  }
+  pop._close = close;
+
+  document.body.appendChild(pop);
+  draw();
+  if (!window.matchMedia('(max-width:480px)').matches) {
+    const r = anchor.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+    const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    let top = r.bottom + 8 + window.scrollY, left = r.left + window.scrollX;
+    if (left - window.scrollX + pw > vw - 8) left = window.scrollX + vw - pw - 8;
+    if (r.bottom + 8 + ph > vh && r.top - 8 - ph > 0) top = r.top + window.scrollY - ph - 8;
+    pop.style.top = Math.max(8 + window.scrollY, top) + 'px';
+    pop.style.left = Math.max(8, left) + 'px';
+  }
+  setTimeout(() => {
+    document.addEventListener('mousedown', outside, true);
+    document.addEventListener('keydown', onKey, true);
+    window.addEventListener('resize', close);
+  }, 0);
 }
 
 // ── Custom themed date picker (replaces native calendar popup) ────────

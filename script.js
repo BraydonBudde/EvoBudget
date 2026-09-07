@@ -313,7 +313,7 @@ const TRANSLATIONS = {
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Edit Transaction',save_changes:'Save changes',no_categories:'- no categories -',
     no_cat_setup:'- set up categories first -',
-    tx_error_required:'Please fill in date, type, category, and a valid amount greater than 0.',
+    tx_error_required:'Please fill in date, type, category, and a valid amount greater than 0.',tx_error_no_cats:'No categories exist for this type yet. Add one in your budget first.',
     csv_error_msg:'No valid rows found.\n\nExpected format:\nDate, Type, Category, Amount, Description\n2024-01-15, expense, Food, 25.50, Grocery run',
     sync_card_title:'☁️ Data &amp; Sync',sync_card_desc:'Choose how your data is stored and kept up to date across devices.',
     sync_mode_local_title:'This device only',sync_mode_local_desc:'Data is saved on this device only',
@@ -572,7 +572,7 @@ const TRANSLATIONS = {
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Transaktion bearbeiten',save_changes:'Änderungen speichern',no_categories:'- keine Kategorien -',
     no_cat_setup:'- zuerst Kategorien einrichten -',
-    tx_error_required:'Bitte Datum, Typ, Kategorie und einen gültigen Betrag größer als 0 eingeben.',
+    tx_error_required:'Bitte Datum, Typ, Kategorie und einen gültigen Betrag größer als 0 eingeben.',tx_error_no_cats:'Für diesen Typ gibt es noch keine Kategorien. Lege zuerst eine in deinem Budget an.',
     csv_error_msg:'Keine gültigen Zeilen gefunden.\n\nErwartetes Format:\nDatum, Typ, Kategorie, Betrag, Beschreibung\n2024-01-15, expense, Lebensmittel, 25.50, Einkauf',
     sync_card_title:'☁️ Daten &amp; Synchronisierung',sync_card_desc:'Wähle, wie deine Daten gespeichert und geräteübergreifend aktuell gehalten werden.',
     sync_mode_local_title:'Nur dieses Gerät',sync_mode_local_desc:'Daten werden nur auf diesem Gerät gespeichert',
@@ -831,7 +831,7 @@ const TRANSLATIONS = {
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Modifier la transaction',save_changes:'Enregistrer les modifications',no_categories:'- aucune catégorie -',
     no_cat_setup:'- configurez d’abord des catégories -',
-    tx_error_required:'Veuillez renseigner la date, le type, la catégorie et un montant valide supérieur à 0.',
+    tx_error_required:'Veuillez renseigner la date, le type, la catégorie et un montant valide supérieur à 0.',tx_error_no_cats:'Aucune catégorie n’existe encore pour ce type. Créez-en une dans votre budget.',
     csv_error_msg:"Aucune ligne valide trouvée.\n\nFormat attendu :\nDate, Type, Catégorie, Montant, Description\n2024-01-15, expense, Alimentation, 25.50, Courses",
     sync_card_title:'☁️ Données &amp; Synchronisation',sync_card_desc:'Choisissez comment vos données sont stockées et tenues à jour entre les appareils.',
     sync_mode_local_title:'Cet appareil uniquement',sync_mode_local_desc:'Les données sont enregistrées uniquement sur cet appareil',
@@ -1090,7 +1090,7 @@ const TRANSLATIONS = {
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Editar transacción',save_changes:'Guardar cambios',no_categories:'- sin categorías -',
     no_cat_setup:'- configura categorías primero -',
-    tx_error_required:'Por favor completa fecha, tipo, categoría y un monto válido mayor que 0.',
+    tx_error_required:'Por favor completa fecha, tipo, categoría y un monto válido mayor que 0.',tx_error_no_cats:'Aún no hay categorías de este tipo. Crea una en tu presupuesto primero.',
     csv_error_msg:'No se encontraron filas válidas.\n\nFormato esperado:\nFecha, Tipo, Categoría, Monto, Descripción\n2024-01-15, expense, Comida, 25.50, Compra semanal',
     sync_card_title:'☁️ Datos &amp; Sincronización',sync_card_desc:'Elige cómo se almacenan tus datos y se mantienen actualizados entre dispositivos.',
     sync_mode_local_title:'Solo este dispositivo',sync_mode_local_desc:'Los datos se guardan solo en este dispositivo',
@@ -1348,7 +1348,7 @@ const TRANSLATIONS = {
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Modifica transazione',save_changes:'Salva modifiche',no_categories:'- nessuna categoria -',
     no_cat_setup:'- imposta prima le categorie -',
-    tx_error_required:'Compila data, tipo, categoria e un importo valido maggiore di 0.',
+    tx_error_required:'Compila data, tipo, categoria e un importo valido maggiore di 0.',tx_error_no_cats:'Non esistono ancora categorie di questo tipo. Creane una nel tuo budget.',
     csv_error_msg:'Nessuna riga valida trovata.\n\nFormato previsto:\nData, Tipo, Categoria, Importo, Descrizione\n2024-01-15, expense, Alimentari, 25.50, Spesa settimanale',
     sync_card_title:'☁️ Dati &amp; Sincronizzazione',sync_card_desc:'Scegli come vengono memorizzati e tenuti aggiornati i tuoi dati tra i dispositivi.',
     sync_mode_local_title:'Solo questo dispositivo',sync_mode_local_desc:'I dati sono salvati solo su questo dispositivo',
@@ -1606,7 +1606,7 @@ const TRANSLATIONS = {
     app_name_sbp:'Simple Budget Planner',app_name_ubp:'Ultimate Budget Planner',
     edit_tx_title:'✏️ Edytuj transakcję',save_changes:'Zapisz zmiany',no_categories:'- brak kategorii -',
     no_cat_setup:'- najpierw skonfiguruj kategorie -',
-    tx_error_required:'Podaj datę, typ, kategorię i prawidłową kwotę większą niż 0.',
+    tx_error_required:'Podaj datę, typ, kategorię i prawidłową kwotę większą niż 0.',tx_error_no_cats:'Nie ma jeszcze kategorii tego typu. Najpierw dodaj ją w swoim budżecie.',
     csv_error_msg:'Nie znaleziono prawidłowych wierszy.\n\nOczekiwany format:\nData, Typ, Kategoria, Kwota, Opis\n2024-01-15, expense, Jedzenie, 25.50, Zakupy spożywcze',
     sync_card_title:'☁️ Dane &amp; Synchronizacja',sync_card_desc:'Wybierz, jak Twoje dane są przechowywane i aktualizowane na różnych urządzeniach.',
     sync_mode_local_title:'Tylko to urządzenie',sync_mode_local_desc:'Dane są zapisywane tylko na tym urządzeniu',
@@ -2876,7 +2876,7 @@ function renderDashboardLayout1() {
   `;  // end el.innerHTML
 
   // Period badge → go to settings
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click', e => openPeriodPicker(e.currentTarget));
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -3061,7 +3061,7 @@ function renderDashboardLayout2() {
     </div>
   `;
 
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click', () => switchBTab('settings'));
+  el.querySelector('#periodBadgeBtn')?.addEventListener('click', e => openPeriodPicker(e.currentTarget));
   requestAnimationFrame(() => {
     if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
@@ -3567,6 +3567,7 @@ function openEditTx(txId) {
       <input class="input" type="number" id="editAmount" min="0" step="0.01" value="${tx.amount}"></div>
     <div class="field"><label class="field-label">${t('tx_desc_label')}</label>
       <input class="input" type="text" id="editDesc" value="${esc(tx.description || '')}" maxlength="120"></div>
+    <div class="tx-error" id="editError" hidden></div>
     <div class="edit-tx-actions">
       <button class="btn btn-primary" id="saveEditBtn" type="button">${t('save_changes')}</button>
       <button class="btn btn-ghost btn-sm" id="cancelEditBtn" type="button">${t('cancel')}</button>
@@ -3597,15 +3598,34 @@ function openEditTx(txId) {
     document.getElementById('editDateDisp').textContent = formatDateDisplay(e.target.value);
   });
 
+  const showEditError = msg => {
+    const el = document.getElementById('editError');
+    if (el) { el.textContent = msg; el.hidden = false; }
+  };
+  // Any edit clears a stale message, so the error always describes the
+  // attempt the user is looking at rather than the previous one.
+  document.getElementById('modalBody')?.addEventListener('input', () => {
+    const el = document.getElementById('editError'); if (el) el.hidden = true;
+  });
+  document.getElementById('modalBody')?.addEventListener('change', () => {
+    const el = document.getElementById('editError'); if (el) el.hidden = true;
+  });
+
   document.getElementById('saveEditBtn')?.addEventListener('click', () => {
     const date   = document.getElementById('editDate')?.value;
     const type   = document.getElementById('editType')?.value;
     const cat    = document.getElementById('editCategory')?.value;
     const amount = parseFloat(document.getElementById('editAmount')?.value);
     const desc   = document.getElementById('editDesc')?.value?.trim() || '';
-    if (!date || !type || !cat || isNaN(amount) || amount <= 0) return;
+    // An empty category almost always means the type was just switched to
+    // one with no budget rows yet, so the select had nothing to offer. This
+    // used to return silently, which read as a dead Save button.
+    if (!cat) { showEditError(getCats(type).length ? t('tx_error_required') : t('tx_error_no_cats')); return; }
+    if (!date || !type || isNaN(amount) || amount <= 0) { showEditError(t('tx_error_required')); return; }
     const idx = state.transactions.findIndex(t => t.id === txId);
-    if (idx !== -1) state.transactions[idx] = { id: txId, date, type, category: cat, amount, description: desc };
+    // Spread the existing record rather than rebuilding it, so anything the
+    // form doesn't show (a recurring-template link, for one) survives an edit.
+    if (idx !== -1) state.transactions[idx] = { ...state.transactions[idx], id: txId, date, type, category: cat, amount, description: desc };
     saveState(); closeModal(); renderTxList();
     showToast(t('toast_tx_updated'));
   });
@@ -4266,6 +4286,141 @@ function openRenameDialog(current, defaultTitle, onSave){
   ov.querySelector('[data-act="ok"]').addEventListener('click',submit);
   ov.querySelector('[data-act="cancel"]').addEventListener('click',close);
   ov.addEventListener('click',e=>{if(e.target===ov)close();});
+}
+
+// ── Budget-period popover (opened from the dashboard period badge) ────
+// Changing the period used to mean a round trip to Settings and back. The
+// same three ranges people actually reach for, plus the two date fields,
+// now open in place from the badge that already shows the current period.
+// Settings keeps the full preset list (quarter, year, last 30 days) and
+// stays the single source of truth: both write state.settings.period*
+// through applyBudgetPeriod, so neither can drift from the other.
+function periodQuickRanges() {
+  const now = new Date(), m = getMonthBounds();
+  return {
+    today:      [toLocalISO(now), toLocalISO(now)],
+    month:      [m.start, m.end],
+    last_month: [toLocalISO(new Date(now.getFullYear(), now.getMonth() - 1, 1)),
+                 toLocalISO(new Date(now.getFullYear(), now.getMonth(), 0))]
+  };
+}
+function activePeriodRange() {
+  const r = periodQuickRanges(), s = state.settings.periodStart, e = state.settings.periodEnd;
+  return Object.keys(r).find(k => r[k][0] === s && r[k][1] === e) || '';
+}
+// The one write path for the period, so the badge popover, the Settings
+// presets and the Settings date fields cannot disagree about what happens.
+function applyBudgetPeriod(start, end, opts) {
+  state.settings.periodStart = start;
+  state.settings.periodEnd = end;
+  saveState();
+  dispatchRender(currentBTab);
+  if (!(opts && opts.silent)) showToast(t('toast_period_updated'));
+}
+
+function openPeriodPicker(anchor) {
+  const existing = document.getElementById('fkPeriodPop');
+  if (existing) { existing._close(); return; }          // re-clicking the badge closes it
+
+  const pop = document.createElement('div');
+  pop.className = 'fk-periodpop';
+  pop.id = 'fkPeriodPop';
+
+  const CHIPS = [['today', 'dp_today'], ['month', 'this_month'], ['last_month', 'last_month']];
+  function draw() {
+    const active = activePeriodRange();
+    pop.innerHTML = `
+      <div class="fk-pp-title">${t('budget_period')}</div>
+      <div class="fk-pp-chips">
+        ${CHIPS.map(([k, label]) => `<button type="button" class="fk-pp-chip${active === k ? ' is-active' : ''}" data-range="${k}">${t(label)}</button>`).join('')}
+      </div>
+      <div class="fk-pp-fields">
+        <div class="fk-pp-field">
+          <label class="field-label">${t('start_date')}</label>
+          <div class="date-field-styled" id="ppStartWrap">
+            <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span class="date-field-val">${formatDateDisplay(state.settings.periodStart)}</span>
+            <input type="date" id="ppStart" value="${state.settings.periodStart}">
+          </div>
+        </div>
+        <div class="fk-pp-field">
+          <label class="field-label">${t('end_date')}</label>
+          <div class="date-field-styled" id="ppEndWrap">
+            <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span class="date-field-val">${formatDateDisplay(state.settings.periodEnd)}</span>
+            <input type="date" id="ppEnd" value="${state.settings.periodEnd}">
+          </div>
+        </div>
+      </div>
+      <button type="button" class="fk-pp-more" id="ppMore">${t('tab_settings')} →</button>`;
+
+    pop.querySelectorAll('[data-range]').forEach(b => b.addEventListener('click', () => {
+      const [s, e] = periodQuickRanges()[b.dataset.range];
+      applyBudgetPeriod(s, e);
+      draw();
+    }));
+
+    // Reuses the app's own calendar popup, so the dates here behave exactly
+    // as they do in Settings rather than falling back to the native picker.
+    const bindPP = (wrapId, inputId, isStart) => {
+      const wrap = pop.querySelector('#' + wrapId), input = pop.querySelector('#' + inputId);
+      wrap.addEventListener('click', () => openDatePicker(input, wrap));
+      input.addEventListener('change', () => {
+        const v = input.value;
+        if (!v) { input.value = isStart ? state.settings.periodStart : state.settings.periodEnd; return; }
+        const start = isStart ? v : state.settings.periodStart;
+        const end   = isStart ? state.settings.periodEnd : v;
+        if (start && end && start > end) { showToast(t('toast_period_error')); draw(); return; }
+        applyBudgetPeriod(start, end);
+        draw();
+      });
+    };
+    bindPP('ppStartWrap', 'ppStart', true);
+    bindPP('ppEndWrap', 'ppEnd', false);
+
+    pop.querySelector('#ppMore').addEventListener('click', () => { close(); switchBTab('settings'); });
+  }
+
+  function close() {
+    pop.remove();
+    document.removeEventListener('mousedown', outside, true);
+    document.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('resize', close);
+  }
+  // The calendar popup lives on <body>, outside this popover, so a click
+  // inside it must not be read as a click away from the period picker.
+  function outside(e) {
+    if (pop.contains(e.target)) return;
+    if (e.target.closest && e.target.closest('#fkDatePop')) return;
+    // Ignore the badge itself: mousedown here would close the popover a
+    // moment before the badge's own click handler ran, so re-clicking it
+    // would silently reopen instead of toggling shut.
+    if (anchor && anchor.contains(e.target)) return;
+    close();
+  }
+  function onKey(e) {
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('fkDatePop')) return;    // let the calendar close first
+    e.preventDefault(); close();
+  }
+  pop._close = close;
+
+  document.body.appendChild(pop);
+  draw();
+  if (!window.matchMedia('(max-width:480px)').matches) {
+    const r = anchor.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+    const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    let top = r.bottom + 8 + window.scrollY, left = r.left + window.scrollX;
+    if (left - window.scrollX + pw > vw - 8) left = window.scrollX + vw - pw - 8;
+    if (r.bottom + 8 + ph > vh && r.top - 8 - ph > 0) top = r.top + window.scrollY - ph - 8;
+    pop.style.top = Math.max(8 + window.scrollY, top) + 'px';
+    pop.style.left = Math.max(8, left) + 'px';
+  }
+  setTimeout(() => {
+    document.addEventListener('mousedown', outside, true);
+    document.addEventListener('keydown', onKey, true);
+    window.addEventListener('resize', close);
+  }, 0);
 }
 
 // ── Custom themed date picker (replaces native calendar popup) ────────
