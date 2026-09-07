@@ -500,258 +500,6 @@ function pieOrEmpty(groups, empty) {
   return pieChartHtml(segmentize(groups), { limit: 6 });
 }
 
-// ══════════════════════════════════════════════════════════════════════
-//  Summary - plain-language, all-time digest (like App Insights' own
-//  cross-tool callout, expanded into a whole tab). Every card states a
-//  number pulled straight from an existing aggregation helper - nothing
-//  here is invented. A few cards deliberately CROSS-REFERENCE two signals
-//  that live on different tabs (device x bounce, referrer x redemption
-//  conversion) to surface things no single tab shows by itself. All-time
-//  like App Insights/Redemptions, not tied to Overview's date range - a
-//  durable digest, not a point-in-time snapshot.
-// ══════════════════════════════════════════════════════════════════════
-function b(v) { return `<strong>${v}</strong>`; }
-function summaryCardHtml(icon, tone, html) {
-  return `<div class="admin-summary-card admin-summary-card--${tone}"><div class="admin-summary-icon">${icon}</div><div class="admin-summary-text">${html}</div></div>`;
-}
-function summarySectionHtml(title, cards) {
-  const filled = cards.filter(Boolean);
-  if (!filled.length) return '';
-  return `<div class="admin-summary-section-title">${esc(title)}</div><div class="admin-summary-grid">${filled.join('')}</div>`;
-}
-function summaryCrossToolOverlap() {
-  const sbpVisitors = new Set(allEvents.filter(e => e.page === 'sbp').map(e => e.visitorId));
-  const ubpVisitors = new Set(allEvents.filter(e => e.page === 'ubp').map(e => e.visitorId));
-  let bothCount = 0;
-  sbpVisitors.forEach(v => { if (ubpVisitors.has(v)) bothCount++; });
-  const totalToolVisitors = new Set([...sbpVisitors, ...ubpVisitors]).size;
-  if (!totalToolVisitors) return null;
-  const pct = Math.round(bothCount / totalToolVisitors * 100);
-  return summaryCardHtml('🔀', pct >= 30 ? 'positive' : 'neutral',
-    `${b(pct + '%')} of visitors who've used either tool have explored <strong>both</strong> Simple Budget and Ultimate Budget (${bothCount} of ${totalToolVisitors} tool visitors) - a read on how much cross-tool comparison / upsell interest exists.`);
-}
-function summaryMonthOverMonth() {
-  const now = new Date();
-  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
-  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime();
-  const thisCount = uniqueBy(allEvents.filter(e => eventTime(e) >= thisMonthStart), e => e.visitorId).length;
-  const lastCount = uniqueBy(allEvents.filter(e => eventTime(e) >= lastMonthStart && eventTime(e) < thisMonthStart), e => e.visitorId).length;
-  if (!lastCount) {
-    if (!thisCount) return null;
-    return summaryCardHtml('📈', 'neutral', `${b(thisCount)} visitor${thisCount === 1 ? '' : 's'} so far this month - not enough history yet for a month-over-month comparison.`);
-  }
-  const pct = Math.round((thisCount - lastCount) / lastCount * 100);
-  const up = pct >= 0;
-  return summaryCardHtml(up ? '📈' : '📉', up ? 'positive' : 'warning',
-    `Visitors are ${b((up ? '+' : '') + pct + '%')} this month vs. last month (${thisCount} vs. ${lastCount}) - ${up ? 'a positive trend worth understanding and repeating.' : 'worth digging into what changed.'}`);
-}
-function summaryReturningRate() {
-  const nr = newReturningSplit(allEvents);
-  if (!nr.total) return null;
-  const pct = Math.round(nr.returningCount / nr.total * 100);
-  const tier = pct >= 40 ? 'strong' : pct >= 15 ? 'building' : 'early-stage';
-  return summaryCardHtml('🔁', pct >= 25 ? 'positive' : 'neutral',
-    `${b(pct + '%')} of all-time visitors (${nr.returningCount} of ${nr.total}) have come back for more than one session - a sign of ${tier} retention.`);
-}
-function summaryTopRegion() {
-  const groups = groupCount(allEvents, e => e.timezone).filter(g => g.label && g.label !== 'Unknown');
-  if (!groups.length) return null;
-  const top = groups[0];
-  const total = groups.reduce((s, g) => s + g.value, 0);
-  const pct = Math.round(top.value / total * 100);
-  return summaryCardHtml('🌍', 'neutral',
-    `Most activity comes from <strong>${esc(top.label)}</strong> (${b(pct + '%')} of all events) - worth keeping in mind for timezone-aware announcements or support hours.`);
-}
-function summaryDeviceBounceCrossRef() {
-  const firstUaBySession = new Map();
-  allEvents.forEach(e => { if (!firstUaBySession.has(e.sessionId)) firstUaBySession.set(e.sessionId, e.ua); });
-  const sessions = buildSessions(allEvents).map(s => ({ ...s, device: uaDevice(firstUaBySession.get(s.sessionId) || '') }));
-  const mobile = sessions.filter(s => s.device === 'Mobile' || s.device === 'Tablet');
-  const desktop = sessions.filter(s => s.device === 'Desktop');
-  if (mobile.length < 3 || desktop.length < 3) return null; // avoid noisy small-sample claims
-  const mobileBounce = Math.round((1 - mobile.filter(s => s.engaged).length / mobile.length) * 100);
-  const desktopBounce = Math.round((1 - desktop.filter(s => s.engaged).length / desktop.length) * 100);
-  if (Math.abs(mobileBounce - desktopBounce) < 5) {
-    return summaryCardHtml('📱', 'neutral', `Mobile (${b(mobileBounce + '%')}) and desktop (${b(desktopBounce + '%')}) bounce rates are about the same - device type isn't a major factor in engagement here.`);
-  }
-  const worse = mobileBounce > desktopBounce ? 'Mobile' : 'Desktop';
-  const better = worse === 'Mobile' ? 'desktop' : 'mobile';
-  return summaryCardHtml('📱', 'warning', `${b(worse)} visitors bounce noticeably more than ${better} visitors (${b(mobileBounce + '%')} vs. ${b(desktopBounce + '%')}) - worth a closer look at the ${worse.toLowerCase()} experience.`);
-}
-function summaryToolHeadToHead() {
-  const sbp = toolInsights('sbp'), ubp = toolInsights('ubp');
-  if (!sbp.visitorCount && !ubp.visitorCount) return null;
-  const leaderVisitors = sbp.visitorCount >= ubp.visitorCount ? 'Simple Budget' : 'Ultimate Budget';
-  const leaderConversion = sbp.conversionPct >= ubp.conversionPct ? 'Simple Budget' : 'Ultimate Budget';
-  const text = leaderVisitors === leaderConversion
-    ? `<strong>${leaderVisitors}</strong> leads on both visitors (${sbp.visitorCount} vs. ${ubp.visitorCount}) and code-redemption conversion (${sbp.conversionPct}% vs. ${ubp.conversionPct}%) - it's the clear stronger performer right now.`
-    : `<strong>${leaderVisitors}</strong> draws more visitors (${sbp.visitorCount} vs. ${ubp.visitorCount}), but <strong>${leaderConversion}</strong> converts visitors into redemptions better (${sbp.conversionPct}% vs. ${ubp.conversionPct}%) - worth understanding why the more-visited tool converts worse.`;
-  return summaryCardHtml('⚖️', 'neutral', text);
-}
-function summaryTopFeature() {
-  const sbp = toolInsights('sbp'), ubp = toolInsights('ubp');
-  const merged = new Map();
-  [...sbp.featureGroups, ...ubp.featureGroups].forEach(g => merged.set(g.label, (merged.get(g.label) || 0) + g.value));
-  const sorted = Array.from(merged.entries()).sort((a, z) => z[1] - a[1]);
-  if (!sorted.length) return null;
-  const [label, count] = sorted[0];
-  return summaryCardHtml('💡', 'neutral', `<strong>${esc(label)}</strong> is the most-used feature across both tools (${b(count)} use${count === 1 ? '' : 's'}) - a good indicator of what people value most once they're in.`);
-}
-function summaryLayoutPreference() {
-  const sbp = toolInsights('sbp'), ubp = toolInsights('ubp');
-  const merged = new Map();
-  [...sbp.layoutGroups, ...ubp.layoutGroups].forEach(g => merged.set(g.label, (merged.get(g.label) || 0) + g.value));
-  const total = Array.from(merged.values()).reduce((s, v) => s + v, 0);
-  if (!total) return null;
-  const [label, count] = Array.from(merged.entries()).sort((a, z) => z[1] - a[1])[0];
-  const pct = Math.round(count / total * 100);
-  return summaryCardHtml('🎛️', 'neutral', `Of visitors who've changed their dashboard layout, ${b(pct + '%')} prefer <strong>${esc(label)}</strong> (${count} of ${total}).`);
-}
-function summaryRedemptionConversion() {
-  const visitors = uniqueBy(allEvents.filter(e => e.page === 'sbp' || e.page === 'ubp'), e => e.visitorId).length;
-  const redeemers = uniqueBy(allEvents.filter(e => e.type === 'launch_code_redeemed'), e => e.visitorId).length;
-  if (!visitors) return null;
-  const pct = Math.round(redeemers / visitors * 100);
-  return summaryCardHtml('🔓', pct >= 15 ? 'positive' : 'neutral', `${b(pct + '%')} of all tool visitors (${redeemers} of ${visitors}) have redeemed a license key - the site-wide activation rate.`);
-}
-function summaryReusedOrderIds() {
-  const rows = redemptionRows();
-  if (!rows.length) return null;
-  const reused = uniqueBy(rows.filter(r => r.reused), r => r.orderId).length;
-  if (!reused) return summaryCardHtml('✅', 'positive', `No reused order IDs flagged across ${b(rows.length)} redemption${rows.length === 1 ? '' : 's'} - nothing currently stands out to investigate in Redemptions.`);
-  return summaryCardHtml('⚠️', 'warning', `${b(reused)} order ID${reused === 1 ? ' has' : 's have'} been entered by more than one different visitor - worth a look in the Redemptions tab before assuming they're all legitimate.`);
-}
-function summaryReferrerConversionCrossRef() {
-  const toolEvents = allEvents.filter(e => e.page === 'sbp' || e.page === 'ubp');
-  const referrerByVisitor = new Map();
-  toolEvents.forEach(e => { if (!referrerByVisitor.has(e.visitorId)) referrerByVisitor.set(e.visitorId, e.referrer ? (() => { try { return new URL(e.referrer).hostname; } catch (err) { return 'Direct'; } })() : 'Direct'); });
-  const redeemerIds = new Set(allEvents.filter(e => e.type === 'launch_code_redeemed').map(e => e.visitorId));
-  const overallTotal = referrerByVisitor.size;
-  if (!overallTotal) return null;
-  let overallRedeemed = 0;
-  referrerByVisitor.forEach((ref, vid) => { if (redeemerIds.has(vid)) overallRedeemed++; });
-  const overallPct = Math.round(overallRedeemed / overallTotal * 100);
-  const byReferrer = new Map();
-  referrerByVisitor.forEach((ref, vid) => {
-    if (!byReferrer.has(ref)) byReferrer.set(ref, { total: 0, redeemed: 0 });
-    const rec = byReferrer.get(ref);
-    rec.total++;
-    if (redeemerIds.has(vid)) rec.redeemed++;
-  });
-  const candidates = Array.from(byReferrer.entries())
-    .filter(([ref, rec]) => ref !== 'Direct' && rec.total >= 3)
-    .map(([ref, rec]) => ({ ref, pct: Math.round(rec.redeemed / rec.total * 100), total: rec.total }))
-    .sort((a, z) => z.pct - a.pct);
-  if (!candidates.length || candidates[0].pct <= overallPct) return null;
-  const top = candidates[0];
-  return summaryCardHtml('🔗', 'positive', `Visitors from <strong>${esc(top.ref)}</strong> convert to a code redemption at ${b(top.pct + '%')}, higher than the ${overallPct}% site-wide average (based on ${top.total} visitors) - that channel looks worth leaning into.`);
-}
-function summaryThemePopularity() {
-  const groups = groupCount(allEvents.filter(e => e.type === 'theme_changed'), e => (e.detail && e.detail.theme) || 'Unknown');
-  if (!groups.length) return null;
-  const total = groups.reduce((s, g) => s + g.value, 0);
-  const top = groups[0];
-  const pct = Math.round(top.value / total * 100);
-  return summaryCardHtml('🎨', 'neutral', `<strong>${esc(top.label)}</strong> is the most popular theme (${b(pct + '%')} of theme changes) among visitors who customized it.`);
-}
-function summarySyncPreference() {
-  const groups = groupCount(allEvents.filter(e => e.type === 'sync_mode_chosen'), e => (e.detail && e.detail.mode) === 'google' ? 'Google Drive' : 'Local device');
-  if (!groups.length) return null;
-  const total = groups.reduce((s, g) => s + g.value, 0);
-  const google = groups.find(g => g.label === 'Google Drive');
-  const pct = google ? Math.round(google.value / total * 100) : 0;
-  return summaryCardHtml('☁️', 'neutral', `${b(pct + '%')} of visitors who chose a sync mode picked Google Drive over local-only storage (${google ? google.value : 0} of ${total}).`);
-}
-// ── Extra audience cards ──────────────────────────────────────────────
-// These read signals the Overview deliberately doesn't show, so Summary
-// stays worth opening rather than repeating the dashboard in words.
-
-// When traffic actually arrives, which is what you'd schedule a launch or a
-// promo around.
-function summaryPeakTime() {
-  const views = allEvents.filter(e => e.type === 'page_view');
-  if (views.length < 20) return null;
-  const byHour = new Array(24).fill(0);
-  const byDow = new Array(7).fill(0);
-  views.forEach(e => { const d = new Date(eventTime(e)); byHour[d.getHours()]++; byDow[d.getDay()]++; });
-  const peakHour = byHour.indexOf(Math.max(...byHour));
-  const peakDow = byDow.indexOf(Math.max(...byDow));
-  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const hourShare = Math.round(byHour[peakHour] / views.length * 100);
-  return summaryCardHtml('🕒', 'neutral',
-    `Traffic peaks around ${b(String(peakHour).padStart(2, '0') + ':00')} (${hourShare}% of all views land in that hour) and ${b(DAYS[peakDow])} is the busiest day. Times are your browser's local clock, so treat them as a rough guide rather than your audience's own timezone.`);
-}
-
-// Which languages people actually browse in - the case for translating, or
-// for not bothering.
-function summaryLanguageMix() {
-  const langs = groupCount(allEvents.filter(e => e.lang), e => String(e.lang).split('-')[0].toLowerCase());
-  if (!langs.length) return null;
-  const total = langs.reduce((s, l) => s + l.value, 0);
-  const sorted = langs.sort((a, b2) => b2.value - a.value);
-  const top = sorted[0];
-  const topPct = Math.round(top.value / total * 100);
-  const others = sorted.slice(1, 4).filter(l => l.value / total >= 0.03);
-  if (topPct >= 90 || !others.length) {
-    return summaryCardHtml('🌍', 'neutral', `Almost everyone browses in ${b(top.label.toUpperCase())} (${topPct}%). The other five translations are carrying very little traffic right now, so effort is better spent elsewhere than on more languages.`);
-  }
-  return summaryCardHtml('🌍', 'positive', `${b(top.label.toUpperCase())} leads at ${topPct}%, but ${b(others.map(o => o.label.toUpperCase()).join(', '))} together make up a real share of visitors - worth checking those translations read well, since the audience is genuinely multilingual.`);
-}
-
-// What people land on first, which is the page actually doing the selling.
-function summaryTopLanding() {
-  const sessions = buildSessions(allEvents).filter(s => s.landingPage);
-  if (sessions.length < 10) return null;
-  const groups = groupCount(sessions, s => pageLabel(s.landingPage)).sort((a, b2) => b2.value - a.value);
-  if (!groups.length) return null;
-  const top = groups[0];
-  const pct = Math.round(top.value / sessions.length * 100);
-  const bounceByLanding = sessions.filter(s => pageLabel(s.landingPage) === top.label);
-  const bounced = bounceByLanding.filter(s => !s.engaged).length;
-  const bouncePct = bounceByLanding.length ? Math.round(bounced / bounceByLanding.length * 100) : 0;
-  const tone = bouncePct >= 70 ? 'warning' : 'neutral';
-  return summaryCardHtml('🚪', tone,
-    `${b(pct + '%')} of visits start on ${b(top.label)}, and ${b(bouncePct + '%')} of those leave without going further. ${bouncePct >= 70 ? 'That is the single highest-leverage page to improve - most people never see anything else.' : 'That is a healthy entry point.'}`);
-}
-
-// Browser mix, mostly to know what's worth testing in.
-function summaryBrowserMix() {
-  const browsers = groupCount(allEvents.filter(e => e.ua), e => uaBrowser(e.ua)).sort((a, b2) => b2.value - a.value);
-  if (browsers.length < 2) return null;
-  const total = browsers.reduce((s, x) => s + x.value, 0);
-  const top = browsers[0];
-  const rest = browsers.slice(1, 3).map(x => `${x.label} ${Math.round(x.value / total * 100)}%`).join(', ');
-  return summaryCardHtml('🧭', 'neutral',
-    `${b(top.label)} accounts for ${b(Math.round(top.value / total * 100) + '%')} of visits${rest ? `, followed by ${rest}` : ''}. Worth checking anything you change still behaves in the top two.`);
-}
-
-// Whether the checkout click actually turns into anything, without the
-// funnel chart's framing.
-function summaryCheckoutDropOff() {
-  const initiated = uniqueBy(allEvents.filter(e => e.type === 'purchase_initiated'), e => e.sessionId).length;
-  if (initiated < 5) return null;
-  const redemptions = allEvents.filter(e => e.type === 'launch_code_redeemed').length;
-  const rate = initiated ? Math.round(redemptions / initiated * 100) : 0;
-  const tone = rate >= 40 ? 'positive' : rate >= 15 ? 'neutral' : 'warning';
-  return summaryCardHtml('🛒', tone,
-    `${b(fmt(initiated))} sessions have clicked through to checkout, and ${b(fmt(redemptions))} keys have been redeemed since - roughly ${b(rate + '%')}. Redemption lags the sale and misses anyone who bought without redeeming, so read this as a floor rather than the true conversion rate.`);
-}
-
-function renderSummary() {
-  const el = document.getElementById('aview-summary');
-  const sections = [
-    ['👥 Who is visiting', [summaryCrossToolOverlap(), summaryMonthOverMonth(), summaryReturningRate(), summaryTopRegion(), summaryLanguageMix()]],
-    ['🕒 When and how they arrive', [summaryPeakTime(), summaryTopLanding(), summaryReferrerConversionCrossRef(), summaryBrowserMix(), summaryDeviceBounceCrossRef()]],
-    ['🧩 What they use', [summaryToolHeadToHead(), summaryTopFeature(), summaryLayoutPreference(), summaryThemePopularity(), summarySyncPreference()]],
-    ['💳 Buying and risk', [summaryCheckoutDropOff(), summaryRedemptionConversion(), summaryReusedOrderIds()]],
-  ];
-  const sectionsHtml = sections.map(([title, cards]) => summarySectionHtml(title, cards)).filter(Boolean).join('');
-  el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">Summary</h2></div>
-    <p class="admin-section-sub">Plain-language read of your audience, all-time rather than the Overview's date range. Deliberately covers things the charts don't - when people show up, what they land on, what they browse in - so there's something here to act on.</p>
-    ${sectionsHtml || `<div class="chart-empty">Not enough data yet to summarize - check back once there's some traffic.</div>`}`;
-}
-
 // ── Website vs. in-app ────────────────────────────────────────────────
 // Overview is a store dashboard: it should answer "how is the site doing at
 // turning visitors into buyers", not "how much do existing customers use the
@@ -2187,7 +1935,7 @@ function wireFilterBar(rerender) {
   document.getElementById('admFilterClear')?.addEventListener('click', () => { filters.from = ''; filters.to = ''; filters.tool = ''; rerender(); });
 }
 
-const ADMIN_RENDERERS = { overview: renderOverview, redemptions: renderRedemptions, settings: renderSettings, summary: renderSummary };
+const ADMIN_RENDERERS = { overview: renderOverview, redemptions: renderRedemptions, blogs: renderBlogs, settings: renderSettings };
 function switchATab(tab) {
   currentATab = tab;
   document.querySelectorAll('#adminTabs .btab').forEach(b => b.classList.toggle('is-active', b.dataset.atab === tab));
@@ -2281,3 +2029,483 @@ document.addEventListener('visibilitychange', () => {
   if (document.getElementById('viewAdmin').hidden) return;
   if (document.visibilityState === 'visible') startLivePolling(); else stopLivePolling();
 });
+
+// ══════════════════════ Blogs ══════════════════════
+// Posts live in a Blogs sheet and are read by the public blog page, so
+// publishing here puts a post on the site without a deploy. The ten seeded
+// posts ship inside blog-posts.js instead; editing one of those here writes
+// a sheet row with the same slug, which the blog page prefers over the
+// shipped copy. That is what makes them editable without touching the repo.
+const ADMIN_BLOG_SHEET = 'Blogs';
+const ADMIN_BLOG_RANGE = `${ADMIN_BLOG_SHEET}!A2:N2000`;
+const BLOG_IMAGE_PX = 500;         // square, matching the seeded covers
+const BLOG_IMAGE_MAX_CHARS = 45000; // a Sheets cell holds 50k; leave headroom
+
+let allBlogPosts = [];
+let _blogFetchError = '';
+let blogEditing = null;            // the post open in the editor, or null
+
+const BLOG_ADMIN_CATEGORIES = [
+  { id: 'basics',   label: 'Budgeting Basics' },
+  { id: 'debt',     label: 'Debt Payoff' },
+  { id: 'saving',   label: 'Saving & Challenges' },
+  { id: 'reallife', label: 'Real-Life Budgets' }
+];
+const BLOG_ADMIN_TOOLS = [
+  { id: 'budget',  label: 'Ezzo Budget' },
+  { id: 'tasks',   label: 'Task Planner' },
+  { id: 'habits',  label: 'Habit Tracker' },
+  { id: 'wedding', label: 'Wedding Planner' },
+  { id: 'meals',   label: 'Meal Planner' },
+  { id: 'fitness', label: 'Fitness Planner' }
+];
+
+// Columns A-N: slug, title, excerpt, category, tool, tags, date, readMinutes,
+// image, imageAlt, body, related, status, updated.
+async function adminFetchBlogPosts(token) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_BLOG_RANGE)}`;
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  if (!res.ok) {
+    let detail = '';
+    try { const j = await res.json(); detail = (j.error && j.error.message) || ''; } catch (e) { /* not JSON */ }
+    _blogFetchError = `${res.status}${detail ? ': ' + detail : ''}`;
+    return [];
+  }
+  _blogFetchError = '';
+  const j = await res.json();
+  return (j.values || []).map((r, i) => ({
+    row: i + 2,
+    slug: r[0] || '', title: r[1] || '', excerpt: r[2] || '',
+    category: r[3] || 'basics', tool: r[4] || 'budget',
+    tags: String(r[5] || '').split(',').map(s => s.trim()).filter(Boolean),
+    date: r[6] || '', readMinutes: Number(r[7] || 0) || 0,
+    image: r[8] || '', imageAlt: r[9] || '', body: r[10] || '',
+    related: String(r[11] || '').split(',').map(s => s.trim()).filter(Boolean),
+    status: (r[12] || 'published').toLowerCase(), updated: r[13] || ''
+  })).filter(p => p.slug);
+}
+
+function blogRowValues(p) {
+  return [[p.slug, p.title, p.excerpt, p.category, p.tool, (p.tags || []).join(', '),
+    p.date, p.readMinutes || '', p.image, p.imageAlt, p.body,
+    (p.related || []).join(', '), p.status, new Date().toISOString().slice(0, 10)]];
+}
+
+// The Blogs tab is created on demand. Apps Script makes it the first time
+// the public blog asks for posts, but the admin writes through the Sheets
+// API instead, which fails outright on a range in a sheet that does not
+// exist yet. Without this, the very first save on a fresh spreadsheet errors.
+let _blogSheetChecked = false;
+async function adminEnsureBlogSheet() {
+  if (_blogSheetChecked) return;
+  const auth = { Authorization: `Bearer ${_adminAccessToken}` };
+  const res = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}?fields=sheets.properties.title`,
+    { headers: auth });
+  if (!res.ok) return;                    // let the write itself report the real problem
+  const j = await res.json();
+  const exists = (j.sheets || []).some(sh => sh.properties && sh.properties.title === ADMIN_BLOG_SHEET);
+  if (!exists) {
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}:batchUpdate`, {
+      method: 'POST',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, auth),
+      body: JSON.stringify({ requests: [{ addSheet: { properties: { title: ADMIN_BLOG_SHEET } } }] })
+    });
+    const header = [['Slug', 'Title', 'Excerpt', 'Category', 'Tool', 'Tags', 'Date', 'ReadMinutes',
+                     'Image', 'ImageAlt', 'Body', 'Related', 'Status', 'Updated']];
+    await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_BLOG_SHEET + '!A1:N1')}?valueInputOption=RAW`,
+      { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, auth),
+        body: JSON.stringify({ values: header }) });
+  }
+  _blogSheetChecked = true;
+}
+
+async function adminSaveBlogPost(p) {
+  await adminEnsureBlogSheet();
+  const existing = allBlogPosts.find(x => x.slug === p.slug && x.row);
+  const base = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values`;
+  const body = JSON.stringify({ values: blogRowValues(p) });
+  const headers = { Authorization: `Bearer ${_adminAccessToken}`, 'Content-Type': 'application/json' };
+  let res;
+  if (existing) {
+    const range = `${ADMIN_BLOG_SHEET}!A${existing.row}:N${existing.row}`;
+    res = await fetch(`${base}/${encodeURIComponent(range)}?valueInputOption=RAW`, { method: 'PUT', headers, body });
+  } else {
+    const range = `${ADMIN_BLOG_RANGE}`;
+    res = await fetch(`${base}/${encodeURIComponent(range)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
+      { method: 'POST', headers, body });
+  }
+  if (!res.ok) {
+    let detail = '';
+    try { const j = await res.json(); detail = (j.error && j.error.message) || ''; } catch (e) { /* not JSON */ }
+    throw new Error(detail || 'sheets_write_failed');
+  }
+}
+
+// Deleting clears the row rather than removing it, for the same reason the
+// danger zone does: a cleared row is already gone on every future read, and
+// it avoids having to re-index every row below it.
+async function adminDeleteBlogPost(p) {
+  if (!p.row) return;
+  const range = `${ADMIN_BLOG_SHEET}!A${p.row}:N${p.row}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(range)}:clear`;
+  const res = await fetch(url, { method: 'POST', headers: { Authorization: `Bearer ${_adminAccessToken}` } });
+  if (!res.ok) throw new Error('sheets_delete_failed');
+}
+
+function blogSlugify(s) {
+  return String(s || '').toLowerCase().trim()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 70);
+}
+
+function blogWordCount(html) {
+  return String(html || '').replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+}
+
+// The seeded posts, so the admin lists everything on the site rather than
+// only what has been written here.
+function blogSeededPosts() {
+  return (typeof BLOG_POSTS !== 'undefined' ? BLOG_POSTS : []).map(p => Object.assign({}, p, { row: 0, seeded: true, status: 'published' }));
+}
+function blogAllForDisplay() {
+  const bySlug = new Map();
+  blogSeededPosts().forEach(p => bySlug.set(p.slug, p));
+  allBlogPosts.forEach(p => bySlug.set(p.slug, Object.assign({}, p, { seeded: bySlug.has(p.slug) })));
+  return Array.from(bySlug.values()).sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+}
+
+// ── List view ──────────────────────────────────────────────────────────
+function renderBlogs() {
+  const el = document.getElementById('aview-blogs');
+  if (blogEditing) return renderBlogEditor(el);
+
+  const posts = blogAllForDisplay();
+  const published = posts.filter(p => p.status !== 'draft').length;
+  const drafts = posts.length - published;
+
+  el.innerHTML = `
+    <div class="section-header">
+      <h2 class="admin-section-title">Blogs</h2>
+      <button class="btn btn-primary btn-sm" id="blogNewBtn" type="button">+ New post</button>
+    </div>
+    <p class="admin-section-sub">Everything on <a href="/blog" target="_blank" rel="noopener">ezzohub.com/blog</a>. Saving a post publishes it straight away, no deploy needed. The ten posts that shipped with the site are editable here too: saving one writes your version over it.</p>
+    ${kpiRow([
+      { icon: '📝', label: 'Published', value: fmt(published), sub: 'live on the site', color: '#10b981', hint: 'Posts readers can currently see at /blog.' },
+      { icon: '📄', label: 'Drafts', value: fmt(drafts), sub: '', color: '#64748b', hint: 'Saved but hidden from the site. Set a post to Published when it is ready.' },
+      { icon: '🏷️', label: 'Topics', value: fmt(new Set(posts.map(p => p.category)).size), sub: 'in use', color: '#6366f1', hint: 'How many of the topic filters currently have at least one post.' },
+      { icon: '📚', label: 'Words', value: fmt(posts.reduce((s, p) => s + blogWordCount(p.body), 0)), sub: 'across all posts', color: '#a855f7', hint: 'Total published word count. Useful only as a rough sense of how much is on the site.' }
+    ])}
+    <div class="panel"><div class="panel-inner-sm">
+      ${blogTableHtml(posts)}
+    </div></div>`;
+
+  document.getElementById('blogNewBtn')?.addEventListener('click', () => {
+    blogEditing = {
+      slug: '', title: '', excerpt: '', category: 'basics', tool: 'budget', tags: [],
+      date: new Date().toISOString().slice(0, 10), readMinutes: 0,
+      image: '', imageAlt: '', body: '', related: [], status: 'draft', isNew: true
+    };
+    renderBlogs();
+  });
+  wireBlogTable(el);
+  initFieldTips(el);
+}
+
+function blogTableHtml(posts) {
+  const head = `<tr><th></th><th>Title</th><th>Topic</th><th>Date</th><th>Status</th><th></th></tr>`;
+  if (!posts.length) {
+    const msg = _blogFetchError
+      ? `Couldn't read the Blogs sheet - Google said: ${esc(_blogFetchError)}. If that mentions a missing range, the sheet doesn't exist yet: it is created the first time you save a post.`
+      : 'No posts yet.';
+    return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
+      <tr class="admin-empty-row"><td colspan="6">${msg}</td></tr></tbody></table></div>`;
+  }
+  return `<div class="admin-table-wrap"><table class="admin-table"><thead>${head}</thead><tbody>
+    ${posts.map(p => `<tr class="${p.status === 'draft' ? 'admin-row-muted' : ''}">
+      <td style="width:1%"><img src="${esc(p.image || '')}" alt="" class="admin-blog-thumb" onerror="this.style.visibility='hidden'"></td>
+      <td class="admin-table-strong" style="white-space:normal;max-width:340px">${esc(p.title)}
+        <span class="admin-blog-slug">/blog?p=${esc(p.slug)}</span></td>
+      <td>${esc((BLOG_ADMIN_CATEGORIES.find(c => c.id === p.category) || {}).label || p.category)}</td>
+      <td>${esc(p.date || '')}</td>
+      <td>${p.status === 'draft' ? '<span class="admin-blog-draft">draft</span>' : 'published'}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <button class="btn btn-ghost btn-sm admin-blog-edit" data-slug="${esc(p.slug)}" type="button">Edit</button>
+        ${p.row ? `<button class="btn btn-ghost btn-sm admin-blog-del" data-slug="${esc(p.slug)}" type="button">Delete</button>` : ''}
+      </td>
+    </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function wireBlogTable(scope) {
+  scope.querySelectorAll('.admin-blog-edit').forEach(b => b.addEventListener('click', () => {
+    const p = blogAllForDisplay().find(x => x.slug === b.dataset.slug);
+    if (!p) return;
+    blogEditing = Object.assign({}, p, { tags: [...(p.tags || [])], related: [...(p.related || [])] });
+    renderBlogs();
+  }));
+  scope.querySelectorAll('.admin-blog-del').forEach(b => b.addEventListener('click', async () => {
+    const p = allBlogPosts.find(x => x.slug === b.dataset.slug);
+    if (!p) return;
+    const seeded = blogSeededPosts().some(s => s.slug === p.slug);
+    if (!await confirmDialog({
+      message: seeded
+        ? 'Delete your version of this post? The original that shipped with the site will come back in its place.'
+        : 'Delete this post? It will disappear from the site. This cannot be undone.',
+      confirmText: 'Delete'
+    })) return;
+    b.disabled = true;
+    try {
+      await adminDeleteBlogPost(p);
+      allBlogPosts = await adminFetchBlogPosts(_adminAccessToken).catch(() => allBlogPosts.filter(x => x.slug !== p.slug));
+      renderBlogs();
+      showToast('Post deleted');
+    } catch (e) {
+      b.disabled = false;
+      showToast("Couldn't delete the post. Check your connection and try again.");
+    }
+  }));
+}
+
+// ── Editor ─────────────────────────────────────────────────────────────
+function renderBlogEditor(el) {
+  const p = blogEditing;
+  const others = blogAllForDisplay().filter(x => x.slug && x.slug !== p.slug);
+
+  el.innerHTML = `
+    <div class="section-header">
+      <h2 class="admin-section-title">${p.isNew ? 'New post' : 'Edit post'}</h2>
+      <button class="btn btn-ghost btn-sm" id="blogBackBtn" type="button">&larr; All posts</button>
+    </div>
+
+    <div class="admin-blog-editor">
+      <div class="panel"><div class="panel-inner">
+        <div class="settings-card-title">✍️ The post</div>
+
+        <div class="field"><label class="field-label">Title</label>
+          <input class="input" id="blogTitle" type="text" maxlength="120" value="${esc(p.title)}" placeholder="What is this post called?"></div>
+
+        <div class="field"><label class="field-label">URL slug</label>
+          <input class="input" id="blogSlug" type="text" maxlength="70" value="${esc(p.slug)}" placeholder="auto-generated-from-the-title">
+          <span class="admin-blog-hint">Readers will see <code>ezzohub.com/blog?p=<span id="blogSlugPreview">${esc(p.slug || 'your-post')}</span></code>. Changing this on a published post breaks any existing links to it.</span></div>
+
+        <div class="field"><label class="field-label">Excerpt</label>
+          <textarea class="input" id="blogExcerpt" rows="2" maxlength="175" placeholder="One or two sentences. Shown on the blog index and used as the Google search description.">${esc(p.excerpt)}</textarea>
+          <span class="admin-blog-hint"><span id="blogExcerptCount">${p.excerpt.length}</span>/175 characters. Aim for 120 to 160 so Google shows all of it.</span></div>
+
+        <div class="field"><label class="field-label">Body</label>
+          <textarea class="input admin-blog-body" id="blogBody" rows="20" placeholder="&lt;p&gt;Write in HTML. Use &lt;h2&gt; for section headings, &lt;p&gt; for paragraphs, &lt;ul&gt;/&lt;ol&gt; for lists.&lt;/p&gt;">${esc(p.body)}</textarea>
+          <span class="admin-blog-hint">HTML. <code>&lt;h2&gt;</code> headings, <code>&lt;p&gt;</code> paragraphs, <code>&lt;ul&gt;</code> lists, <code>&lt;div class="bp-callout"&gt;</code> for a highlighted note. Link another post with <code>&lt;a href="/blog?p=slug"&gt;</code>. <span id="blogWordCount">${blogWordCount(p.body)}</span> words.</span></div>
+      </div></div>
+
+      <div class="admin-blog-side">
+        <div class="panel"><div class="panel-inner">
+          <div class="settings-card-title">🖼️ Cover image</div>
+          <div class="admin-blog-drop" id="blogDrop">
+            <img id="blogImgPreview" src="${esc(p.image || '')}" alt="" ${p.image ? '' : 'hidden'}>
+            <div id="blogDropHint" ${p.image ? 'hidden' : ''}>
+              <strong>Drop an image here</strong>
+              <span>or click to choose one</span>
+            </div>
+          </div>
+          <input type="file" id="blogImgInput" accept="image/*" hidden>
+          <p class="admin-blog-hint">Any image works. It is cropped to a ${BLOG_IMAGE_PX}px square and compressed in your browser before saving, so it matches the posts that shipped with the site.</p>
+          <div class="field"><label class="field-label">Image description</label>
+            <input class="input" id="blogImgAlt" type="text" maxlength="140" value="${esc(p.imageAlt)}" placeholder="What the image shows">
+            <span class="admin-blog-hint">Read aloud by screen readers and shown if the image fails to load.</span></div>
+          ${p.image ? `<button class="btn btn-ghost btn-sm" id="blogImgClear" type="button">Remove image</button>` : ''}
+        </div></div>
+
+        <div class="panel"><div class="panel-inner">
+          <div class="settings-card-title">🗂️ Filing</div>
+          <div class="field"><label class="field-label">Tool</label>
+            <select class="select" id="blogTool">
+              ${BLOG_ADMIN_TOOLS.map(t => `<option value="${t.id}"${p.tool === t.id ? ' selected' : ''}>${esc(t.label)}</option>`).join('')}
+            </select></div>
+          <div class="field"><label class="field-label">Topic</label>
+            <select class="select" id="blogCategory">
+              ${BLOG_ADMIN_CATEGORIES.map(c => `<option value="${c.id}"${p.category === c.id ? ' selected' : ''}>${esc(c.label)}</option>`).join('')}
+            </select></div>
+          <div class="field"><label class="field-label">Publish date</label>
+            ${styledDateField('blogDate', 'blogDateWrap', p.date)}</div>
+          <div class="field"><label class="field-label">Tags</label>
+            <input class="input" id="blogTags" type="text" value="${esc((p.tags || []).join(', '))}" placeholder="budgeting, saving money">
+            <span class="admin-blog-hint">Comma separated. Used for search on the blog, and as keywords.</span></div>
+          <div class="field"><label class="field-label">Status</label>
+            <select class="select" id="blogStatus">
+              <option value="published"${p.status !== 'draft' ? ' selected' : ''}>Published (live on the site)</option>
+              <option value="draft"${p.status === 'draft' ? ' selected' : ''}>Draft (hidden)</option>
+            </select></div>
+        </div></div>
+
+        <div class="panel"><div class="panel-inner">
+          <div class="settings-card-title">🔗 Keep reading</div>
+          <p class="admin-blog-hint" style="margin-top:0">Shown at the bottom of the post. Pick up to three.</p>
+          <div class="admin-blog-related">
+            ${others.map(o => `<label class="admin-blog-rel-item">
+              <input type="checkbox" class="blog-rel-cb" value="${esc(o.slug)}"${(p.related || []).includes(o.slug) ? ' checked' : ''}>
+              <span>${esc(o.title)}</span>
+            </label>`).join('') || '<span class="admin-blog-hint">No other posts to link to yet.</span>'}
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="tx-error" id="blogError" hidden></div>
+    <div class="admin-blog-actions">
+      <button class="btn btn-primary" id="blogSaveBtn" type="button">${p.status === 'draft' ? 'Save draft' : 'Save and publish'}</button>
+      <button class="btn btn-ghost btn-sm" id="blogCancelBtn" type="button">Cancel</button>
+      <a class="btn btn-ghost btn-sm" id="blogPreviewLink" href="/blog?p=${esc(p.slug)}" target="_blank" rel="noopener"${p.isNew ? ' hidden' : ''}>View on site &nearr;</a>
+    </div>`;
+
+  wireBlogEditor();
+}
+
+function wireBlogEditor() {
+  const g = id => document.getElementById(id);
+
+  // Slug follows the title until the slug has been typed in by hand, so the
+  // common case needs no thought and the deliberate case still wins.
+  let slugTouched = !blogEditing.isNew || !!blogEditing.slug;
+  g('blogTitle')?.addEventListener('input', e => {
+    if (slugTouched) return;
+    const s = blogSlugify(e.target.value);
+    g('blogSlug').value = s;
+    g('blogSlugPreview').textContent = s || 'your-post';
+  });
+  g('blogSlug')?.addEventListener('input', e => {
+    slugTouched = true;
+    e.target.value = blogSlugify(e.target.value);
+    g('blogSlugPreview').textContent = e.target.value || 'your-post';
+  });
+  g('blogExcerpt')?.addEventListener('input', e => { g('blogExcerptCount').textContent = e.target.value.length; });
+  g('blogBody')?.addEventListener('input', e => { g('blogWordCount').textContent = blogWordCount(e.target.value); });
+  bindDateField('blogDate', 'blogDateWrap');
+
+  // Only three related posts fit the row at the bottom of an article, so the
+  // limit is enforced here rather than silently truncated at render time.
+  const cbs = () => Array.from(document.querySelectorAll('.blog-rel-cb'));
+  cbs().forEach(cb => cb.addEventListener('change', () => {
+    const checked = cbs().filter(c => c.checked);
+    if (checked.length > 3) { cb.checked = false; showToast('Three related posts is the maximum.'); }
+  }));
+
+  // Image
+  const drop = g('blogDrop'), input = g('blogImgInput');
+  drop?.addEventListener('click', () => input.click());
+  drop?.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('is-over'); });
+  drop?.addEventListener('dragleave', () => drop.classList.remove('is-over'));
+  drop?.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('is-over');
+    if (e.dataTransfer.files[0]) handleBlogImage(e.dataTransfer.files[0]);
+  });
+  input?.addEventListener('change', e => { if (e.target.files[0]) handleBlogImage(e.target.files[0]); });
+  g('blogImgClear')?.addEventListener('click', () => {
+    blogEditing = collectBlogForm();
+    blogEditing.image = '';
+    renderBlogs();
+  });
+
+  g('blogBackBtn')?.addEventListener('click', () => { blogEditing = null; renderBlogs(); });
+  g('blogCancelBtn')?.addEventListener('click', () => { blogEditing = null; renderBlogs(); });
+  g('blogSaveBtn')?.addEventListener('click', saveBlogFromForm);
+}
+
+function collectBlogForm() {
+  const g = id => document.getElementById(id);
+  return Object.assign({}, blogEditing, {
+    title: g('blogTitle').value.trim(),
+    slug: blogSlugify(g('blogSlug').value || g('blogTitle').value),
+    excerpt: g('blogExcerpt').value.trim(),
+    body: g('blogBody').value,
+    imageAlt: g('blogImgAlt').value.trim(),
+    tool: g('blogTool').value,
+    category: g('blogCategory').value,
+    date: g('blogDate').value,
+    tags: g('blogTags').value.split(',').map(s => s.trim()).filter(Boolean),
+    status: g('blogStatus').value,
+    related: Array.from(document.querySelectorAll('.blog-rel-cb')).filter(c => c.checked).map(c => c.value)
+  });
+}
+
+// Resized and re-encoded in the browser, for two reasons: a Sheets cell tops
+// out at 50k characters, and a 4MB phone photo has no business being the
+// cover of a blog card.
+function handleBlogImage(file) {
+  if (!/^image\//.test(file.type)) { showBlogError('That file is not an image.'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = BLOG_IMAGE_PX;
+      const ctx = canvas.getContext('2d');
+      // Centre-crop to a square rather than squashing the picture.
+      const side = Math.min(img.width, img.height);
+      ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, BLOG_IMAGE_PX, BLOG_IMAGE_PX);
+
+      let quality = 0.88, data = canvas.toDataURL('image/jpeg', quality);
+      while (data.length > BLOG_IMAGE_MAX_CHARS && quality > 0.35) {
+        quality -= 0.08;
+        data = canvas.toDataURL('image/jpeg', quality);
+      }
+      if (data.length > BLOG_IMAGE_MAX_CHARS) {
+        showBlogError("That image won't compress small enough to store. Try a simpler or smaller picture.");
+        return;
+      }
+      blogEditing = collectBlogForm();
+      blogEditing.image = data;
+      renderBlogs();
+    };
+    img.onerror = () => showBlogError("That image couldn't be read.");
+    img.src = reader.result;
+  };
+  reader.onerror = () => showBlogError("That file couldn't be read.");
+  reader.readAsDataURL(file);
+}
+
+function showBlogError(msg) {
+  const el = document.getElementById('blogError');
+  if (el) { el.textContent = msg; el.hidden = false; }
+}
+
+async function saveBlogFromForm() {
+  const p = collectBlogForm();
+  const btn = document.getElementById('blogSaveBtn');
+
+  if (!p.title) return showBlogError('Give the post a title.');
+  if (!p.slug) return showBlogError('The post needs a URL slug.');
+  if (!p.excerpt) return showBlogError('Write an excerpt. It is what people see on the blog index and in Google.');
+  if (!p.body.trim()) return showBlogError('The post has no body yet.');
+  if (!p.date) return showBlogError('Pick a publish date.');
+  // A duplicate slug would silently overwrite a different post's URL.
+  const clash = blogAllForDisplay().find(x => x.slug === p.slug && x.slug !== blogEditing.slug);
+  if (clash && blogEditing.isNew) return showBlogError(`Another post already uses /blog?p=${p.slug}. Change the slug.`);
+
+  document.getElementById('blogError').hidden = true;
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = 'Saving...';
+  try {
+    if (!p.readMinutes) p.readMinutes = Math.max(1, Math.round(blogWordCount(p.body) / 225));
+    // A renamed slug leaves the old row behind, so clear it explicitly.
+    if (!blogEditing.isNew && blogEditing.slug && blogEditing.slug !== p.slug) {
+      const old = allBlogPosts.find(x => x.slug === blogEditing.slug);
+      if (old) await adminDeleteBlogPost(old).catch(() => {});
+    }
+    await adminSaveBlogPost(p);
+    allBlogPosts = await adminFetchBlogPosts(_adminAccessToken).catch(() => allBlogPosts);
+    blogEditing = null;
+    renderBlogs();
+    showToast(p.status === 'draft' ? 'Draft saved' : 'Published to the site');
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = original;
+    showBlogError(e.message === 'sheets_write_failed'
+      ? "Couldn't save to the sheet. Check your connection and try again."
+      : `Couldn't save: ${e.message}`);
+  }
+}

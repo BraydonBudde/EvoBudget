@@ -207,25 +207,6 @@
 }
 .admin-sample-banner button:hover { background: rgba(251,191,36,.22); }
 
-/* ── Summary tab: narrative insight cards ─────────────────────────────── */
-.admin-summary-section-title {
-  font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 26px 0 14px;
-  display: flex; align-items: center; gap: 8px;
-}
-.admin-summary-section-title:first-of-type { margin-top: 0; }
-.admin-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
-.admin-summary-card {
-  display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px;
-  background: var(--surface-strong); border: 1px solid var(--border-faint); border-radius: var(--radius-sm);
-  border-left: 3px solid var(--grad-indigo);
-}
-.admin-summary-icon { font-size: 19px; flex-shrink: 0; line-height: 1.4; }
-.admin-summary-text { font-size: 13px; line-height: 1.65; color: var(--text-secondary); }
-.admin-summary-text strong { color: var(--text-primary); font-weight: 700; font-family: var(--font-display); }
-.admin-summary-card--positive { border-left-color: #10b981; }
-.admin-summary-card--warning { border-left-color: #f43f5e; }
-.admin-summary-card--neutral { border-left-color: var(--grad-indigo); }
-
 /* ── Overview: date range quick-select chips ─────────────────────────── */
 .admin-range-bar { flex-wrap: wrap; }
 .admin-range-chips { display: flex; gap: 6px; margin-left: auto; }
@@ -344,3 +325,58 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
 }
 .admin-vbar-share { font-size: 11px; color: var(--text-faint); }
+
+/* ── Blogs tab ─────────────────────────────────────────────────────── */
+.admin-blog-thumb {
+  width: 44px; height: 44px; border-radius: 8px; object-fit: cover; display: block;
+  background: #1b1836;
+}
+.admin-blog-slug {
+  display: block; margin-top: 3px; font-family: var(--font-mono, monospace);
+  font-size: 10.5px; font-weight: 400; color: var(--text-faint);
+}
+.admin-blog-draft {
+  display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 8px;
+  border-radius: var(--radius-pill); background: rgba(148,163,184,.18); color: var(--text-faint);
+}
+
+/* Editor: the writing surface gets the room, everything that files the post
+   sits beside it. Below 980px it stacks, body first. */
+.admin-blog-editor { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr); gap: 16px; align-items: start; }
+.admin-blog-side { display: flex; flex-direction: column; gap: 16px; }
+@media (max-width: 980px) { .admin-blog-editor { grid-template-columns: 1fr; } }
+
+.admin-blog-body {
+  font-family: var(--font-mono, ui-monospace, monospace); font-size: 13px; line-height: 1.65;
+  resize: vertical; min-height: 320px; white-space: pre-wrap;
+}
+.admin-blog-hint { display: block; margin-top: 6px; font-size: 11.5px; line-height: 1.55; color: var(--text-faint); }
+.admin-blog-hint code {
+  font-family: var(--font-mono, monospace); font-size: 11px;
+  background: var(--surface-strong); border-radius: 4px; padding: 1px 5px;
+}
+
+/* Drop target is square because the output is square: what you see here is
+   the crop that gets saved, not a preview of something else. */
+.admin-blog-drop {
+  position: relative; width: 100%; aspect-ratio: 1; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  border: 2px dashed var(--border-faint); border-radius: var(--radius-md);
+  background: var(--surface-strong); cursor: pointer; overflow: hidden;
+  transition: border-color .15s, background .15s;
+}
+.admin-blog-drop:hover, .admin-blog-drop.is-over { border-color: var(--grad-indigo); background: rgba(99,102,241,.07); }
+.admin-blog-drop img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.admin-blog-drop > div { display: flex; flex-direction: column; gap: 4px; padding: 20px; pointer-events: none; }
+.admin-blog-drop strong { font-size: 13.5px; color: var(--text-secondary); }
+.admin-blog-drop span { font-size: 11.5px; color: var(--text-faint); }
+
+.admin-blog-related { display: flex; flex-direction: column; gap: 2px; max-height: 250px; overflow-y: auto; }
+.admin-blog-rel-item {
+  display: flex; align-items: flex-start; gap: 9px; padding: 7px 8px; border-radius: 8px;
+  font-size: 12.5px; line-height: 1.45; color: var(--text-secondary); cursor: pointer;
+}
+.admin-blog-rel-item:hover { background: var(--surface-strong); color: var(--text-primary); }
+.admin-blog-rel-item input { margin-top: 2px; flex-shrink: 0; accent-color: var(--grad-indigo); }
+
+.admin-blog-actions { display: flex; align-items: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }

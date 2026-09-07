@@ -1,0 +1,197 @@
+/* ══════════════════════════════════════════════════════════════════
+   EZZO HUB BLOG
+   Site-dark only, like the rest of the marketing pages. Deliberately
+   disconnected from the budget apps' theme setting: this is the website,
+   not the tool. Shares the brand primitives from style.css (variables,
+   fonts, .backdrop/.blob, .btn, .grad-text) and nothing else.
+   ══════════════════════════════════════════════════════════════════ */
+
+.bl-wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px 90px; }
+
+/* ── Nav (matches home.html's .eh-nav) ───────────────────────────── */
+.bl-nav {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  max-width: 1120px; margin: 0 auto; padding: 16px 24px;
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+.bl-nav-links { display: flex; align-items: center; gap: 28px; }
+.bl-nav-links a {
+  font-size: 13.5px; font-weight: 600; color: var(--text-secondary);
+  text-decoration: none; transition: color .15s;
+}
+.bl-nav-links a:hover, .bl-nav-links a[aria-current="page"] { color: var(--text-primary); }
+@media (max-width: 700px) { .bl-nav-links { display: none; } }
+
+/* ── Index hero ──────────────────────────────────────────────────── */
+.bl-hero { text-align: center; padding: 54px 0 34px; }
+.bl-hero h1 {
+  font-family: var(--font-display); font-size: clamp(2.1rem, 5vw, 3.1rem);
+  font-weight: 800; line-height: 1.1; margin: 0 0 14px; color: var(--text-primary);
+}
+.bl-hero p {
+  max-width: 620px; margin: 0 auto; font-size: 15.5px; line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* ── Filter bar ──────────────────────────────────────────────────── */
+.bl-filters { display: flex; flex-direction: column; gap: 12px; margin: 30px 0 26px; }
+.bl-filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.bl-filter-label {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--text-faint); margin-right: 6px; min-width: 54px;
+}
+.bl-chip {
+  border: 1px solid var(--border-faint); background: var(--surface-strong);
+  color: var(--text-secondary); border-radius: var(--radius-pill);
+  padding: 7px 15px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: border-color .15s, color .15s, background .15s;
+}
+.bl-chip:hover { border-color: var(--grad-indigo); color: var(--text-primary); }
+.bl-chip.is-active {
+  border-color: transparent; color: #fff;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+.bl-search {
+  flex: 1 1 220px; min-width: 180px; max-width: 340px;
+  border: 1px solid var(--border-faint); background: var(--surface-strong);
+  color: var(--text-primary); border-radius: var(--radius-pill);
+  padding: 9px 16px; font-size: 13px; font-family: inherit;
+}
+.bl-search::placeholder { color: var(--text-faint); }
+.bl-search:focus { outline: none; border-color: var(--grad-indigo); }
+
+/* ── Featured card ───────────────────────────────────────────────── */
+.bl-featured {
+  display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: center;
+  padding: 24px; margin-bottom: 34px;
+  border: 1px solid var(--border-faint); border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(99,102,241,.10), rgba(168,85,247,.05));
+  text-decoration: none;
+}
+.bl-featured:hover { border-color: rgba(99,102,241,.45); }
+.bl-featured img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-md); display: block; }
+.bl-featured h2 {
+  font-family: var(--font-display); font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  font-weight: 800; line-height: 1.22; margin: 10px 0 12px; color: var(--text-primary);
+}
+.bl-featured p { font-size: 14.5px; line-height: 1.7; color: var(--text-secondary); margin: 0 0 16px; }
+@media (max-width: 720px) { .bl-featured { grid-template-columns: 1fr; } }
+
+/* ── Card grid ───────────────────────────────────────────────────── */
+.bl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(262px, 1fr)); gap: 22px; }
+.bl-card {
+  display: flex; flex-direction: column; overflow: hidden; text-decoration: none;
+  border: 1px solid var(--border-faint); border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  transition: transform .18s var(--ease, ease), border-color .18s, box-shadow .18s;
+}
+.bl-card:hover {
+  transform: translateY(-3px); border-color: rgba(99,102,241,.45);
+  box-shadow: 0 18px 40px rgba(0,0,0,.28);
+}
+/* Square, matching the source art. A wider crop would slice the top and
+   bottom off every cover, which is where their labels live. */
+.bl-card-img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; display: block; background: #1b1836; }
+.bl-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
+.bl-card h3 {
+  font-family: var(--font-display); font-size: 16.5px; font-weight: 700; line-height: 1.34;
+  margin: 9px 0 8px; color: var(--text-primary);
+}
+.bl-card p { font-size: 13px; line-height: 1.62; color: var(--text-secondary); margin: 0 0 14px; flex: 1; }
+
+/* ── Meta line (category pill + read time) ───────────────────────── */
+.bl-meta { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; font-size: 11px; color: var(--text-faint); }
+.bl-cat-pill {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .03em;
+  padding: 3px 9px; border-radius: var(--radius-pill);
+  background: rgba(99,102,241,.16); color: #a5b4fc; white-space: nowrap;
+}
+.bl-cat-pill[data-cat="debt"]     { background: rgba(244,63,94,.16);  color: #fda4af; }
+.bl-cat-pill[data-cat="saving"]   { background: rgba(16,185,129,.16); color: #6ee7b7; }
+.bl-cat-pill[data-cat="reallife"] { background: rgba(251,146,60,.16); color: #fdba74; }
+.bl-dot::before { content: "·"; margin-right: 9px; }
+
+.bl-empty { text-align: center; padding: 60px 20px; color: var(--text-faint); }
+.bl-empty strong { display: block; color: var(--text-secondary); font-size: 16px; margin-bottom: 6px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   ARTICLE VIEW
+   ══════════════════════════════════════════════════════════════════ */
+.bl-article { max-width: 720px; margin: 0 auto; }
+.bl-back {
+  display: inline-flex; align-items: center; gap: 7px; margin: 34px 0 22px;
+  font-size: 13px; font-weight: 600; color: var(--text-faint); text-decoration: none;
+}
+.bl-back:hover { color: var(--grad-indigo); }
+.bl-article h1 {
+  font-family: var(--font-display); font-size: clamp(1.85rem, 4.4vw, 2.65rem);
+  font-weight: 800; line-height: 1.16; margin: 14px 0 16px; color: var(--text-primary);
+}
+.bl-article-lede { font-size: 16.5px; line-height: 1.7; color: var(--text-secondary); margin: 0 0 24px; }
+.bl-hero-img {
+  width: 100%; max-width: 340px; height: auto; aspect-ratio: 1; object-fit: cover;
+  border-radius: var(--radius-lg); display: block; margin: 0 auto 34px;
+}
+
+/* Body copy. Generous measure and leading: these run 800 to 1000 words and
+   have to survive being read on a phone at night. */
+.bl-body { font-size: 16.5px; line-height: 1.78; color: var(--text-secondary); }
+.bl-body p { margin: 0 0 20px; }
+.bl-body h2 {
+  font-family: var(--font-display); font-size: 1.42rem; font-weight: 700; line-height: 1.3;
+  color: var(--text-primary); margin: 40px 0 14px;
+}
+.bl-body strong { color: var(--text-primary); font-weight: 600; }
+.bl-body em { color: var(--text-primary); font-style: italic; }
+.bl-body ul, .bl-body ol { margin: 0 0 20px; padding-left: 22px; }
+.bl-body li { margin-bottom: 11px; }
+.bl-body li::marker { color: var(--grad-indigo); font-weight: 700; }
+.bl-body a { color: #a5b4fc; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.bl-body a:hover { color: #c7d2fe; }
+.bl-body img { max-width: 100%; height: auto; border-radius: var(--radius-md); display: block; margin: 26px auto; }
+.bl-body blockquote {
+  margin: 26px 0; padding: 4px 0 4px 20px; border-left: 3px solid var(--grad-indigo);
+  font-style: italic; color: var(--text-primary);
+}
+.bl-body table { width: 100%; border-collapse: collapse; margin: 0 0 22px; font-size: 14.5px; }
+.bl-body th, .bl-body td { padding: 9px 12px; border-bottom: 1px solid var(--border-faint); text-align: left; }
+.bl-body th { color: var(--text-primary); font-weight: 700; }
+
+/* Pull-out note. Authors write <div class="bp-callout"> in the post body. */
+.bl-body .bp-callout {
+  margin: 28px 0; padding: 18px 20px;
+  border: 1px solid rgba(99,102,241,.32); border-radius: var(--radius-md);
+  background: rgba(99,102,241,.08); font-size: 15px; line-height: 1.7;
+}
+.bl-body .bp-callout strong { color: #c7d2fe; }
+
+/* ── Tags, product CTA, related ──────────────────────────────────── */
+.bl-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 36px 0 0; }
+.bl-tag {
+  font-size: 11.5px; font-weight: 600; color: var(--text-faint);
+  border: 1px solid var(--border-faint); border-radius: var(--radius-pill); padding: 4px 11px;
+}
+.bl-cta {
+  margin: 44px 0 0; padding: 28px; text-align: center;
+  border: 1px solid rgba(99,102,241,.30); border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(99,102,241,.13), rgba(168,85,247,.07));
+}
+.bl-cta h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; margin: 0 0 9px; color: var(--text-primary); }
+.bl-cta p { font-size: 14.5px; line-height: 1.65; color: var(--text-secondary); margin: 0 0 18px; }
+.bl-cta-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+.bl-related { margin: 52px 0 0; }
+.bl-related h2 {
+  font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;
+  color: var(--text-primary); margin: 0 0 18px;
+}
+.bl-related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+.bl-footer {
+  margin-top: 80px; padding: 34px 24px; border-top: 1px solid var(--border-faint);
+  text-align: center; font-size: 12.5px; color: var(--text-faint);
+}
+.bl-footer a { color: var(--text-faint); text-decoration: none; margin: 0 9px; }
+.bl-footer a:hover { color: var(--text-secondary); }

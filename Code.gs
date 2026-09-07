@@ -64,6 +64,7 @@ function doGet(e) {
   if (p.action === 'validate') return _jsonp(p.cb, _handleValidate(p));
   if (p.action === 'sales')    return _jsonp(p.cb, _handleSales(p));
   if (p.action === 'lsrevoke') return _jsonp(p.cb, _handleLsRevoke(p));
+  if (p.action === 'posts')    return _jsonp(p.cb, _handleBlogPosts(p));
   return ContentService.createTextOutput('EzzoBudget analytics endpoint.');
 }
 
@@ -145,6 +146,8 @@ function _underRateLimit() {
 // be filled in (see the setup notes provided alongside this file).
 const STYLES_SHEET = 'Styles';
 const KEYS_SHEET = 'Keys';
+const BLOGS_SHEET = 'Blogs';
+const BLOG_CACHE_SECONDS = 300;
 // How many distinct browsers one key may unlock. Counted by the visitor id
 // analytics already stores per browser. Generous enough for one person's
 // real devices, tight enough that a publicly posted key dies quickly.
@@ -178,6 +181,7 @@ function _sheet(name, headers) {
 }
 function _stylesSheet() { return _sheet(STYLES_SHEET, ['Token', 'Tool', 'Theme', 'Layout', 'Label', 'Active']); }
 function _keysSheet()   { return _sheet(KEYS_SHEET, ['Key', 'Tool', 'Theme', 'Layout', 'OrderId', 'Email', 'IssuedAt', 'Status', 'Devices', 'RedeemCount', 'LastRedeemedAt']); }
+function _blogsSheet()  { return _sheet(BLOGS_SHEET, ['Slug', 'Title', 'Excerpt', 'Category', 'Tool', 'Tags', 'Date', 'ReadMinutes', 'Image', 'ImageAlt', 'Body', 'Related', 'Status', 'Updated']); }
 
 // ETSY-5FDE-43A8-8477-4228A671F027: a v4 UUID with its first block replaced,
 // so keys are visually consistent with the Lemon Squeezy ones buyers of the
@@ -460,4 +464,67 @@ function _upsertKeyStatus(key, status, tool, orderId) {
   } finally {
     lock.releaseLock();
   }
+}
+
+// ══════════════════════ Blog posts (public read) ══════════════════════
+// The blog page fetches this to pick up anything published from the admin.
+// Read-only and unauthenticated on purpose: these are public articles, and
+// the admin writes them through the Sheets API with its own OAuth token, so
+// nothing here needs write access.
+//
+// Cached, because every visitor to /blog hits this. Five minutes is short
+// enough that publishing feels immediate and long enough that a burst of
+// traffic doesn't turn into a burst of Sheets reads.
+function _handleBlogPosts(p) {
+  try {
+    const cache = CacheService.getScriptCache();
+    const hit = cache.get('blogposts');
+    if (hit) return JSON.parse(hit);
+
+    const sh = _blogsSheet();
+    const rows = sh.getDataRange().getValues();
+    const posts = [];
+    for (var i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      const slug = String(r[0] || '').trim();
+      if (!slug) continue;                                   // cleared row
+      const status = String(r[12] || 'published').toLowerCase();
+      // Drafts are still returned, flagged, so the blog page can drop a
+      // seeded post that has been unpublished rather than silently keeping
+      // the version that shipped in the repo.
+      posts.push({
+        slug: slug,
+        title: String(r[1] || ''),
+        excerpt: String(r[2] || ''),
+        category: String(r[3] || 'basics'),
+        tool: String(r[4] || 'budget'),
+        tags: String(r[5] || '').split(',').map(function (x) { return x.trim(); }).filter(String),
+        date: _blogDate(r[6]),
+        readMinutes: Number(r[7] || 0) || 0,
+        image: String(r[8] || ''),
+        imageAlt: String(r[9] || ''),
+        body: String(r[10] || ''),
+        related: String(r[11] || '').split(',').map(function (x) { return x.trim(); }).filter(String),
+        status: status,
+        updated: _blogDate(r[13])
+      });
+    }
+    const out = { ok: true, posts: posts };
+    // A big cache write can fail on the 100KB per-entry limit; the endpoint
+    // still works uncached, so that must not take the response down with it.
+    try { cache.put('blogposts', JSON.stringify(out), BLOG_CACHE_SECONDS); } catch (e) { /* too large to cache */ }
+    return out;
+  } catch (err) {
+    return { ok: false, error: 'server', posts: [] };
+  }
+}
+
+// Sheets hands back a Date object if the cell was ever formatted as one, and
+// a plain string otherwise. The blog expects YYYY-MM-DD either way.
+function _blogDate(v) {
+  if (!v) return '';
+  if (Object.prototype.toString.call(v) === '[object Date]') {
+    return Utilities.formatDate(v, 'UTC', 'yyyy-MM-dd');
+  }
+  return String(v).trim().slice(0, 10);
 }
