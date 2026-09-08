@@ -3944,9 +3944,9 @@ function renderDashboardLayout1() {
   el.innerHTML=`
     <div class="section-header">
       <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
-      <button class="period-badge period-badge--btn" id="periodBadgeBtn" title="Change period">${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}</button>
       ${helpBtn('dashboard')}
     </div>
+    ${periodBarHtml()}
     <div class="pro-stats-row">
       <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_income')}</div><div class="pro-stat-value" style="color:#10b981">${fmt(sum.totalIncome)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}</div></div>
       <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_outgoing')}</div><div class="pro-stat-value" style="color:#f43f5e">${fmt(sum.totalOut)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}</div></div>
@@ -4006,7 +4006,7 @@ function renderDashboardLayout1() {
         ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
       </div></div>
     </div>`;
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click',e=>openPeriodPicker(e.currentTarget));
+  wirePeriodBar(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -4097,9 +4097,9 @@ function renderDashboardLayout2() {
   el.innerHTML=`
     <div class="section-header">
       <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
-      <button class="period-badge period-badge--btn" id="periodBadgeBtn" title="Change period">${formatDateDisplay(state.settings.periodStart)} - ${formatDateDisplay(state.settings.periodEnd)}</button>
       ${helpBtn('dashboard')}
     </div>
+    ${periodBarHtml()}
 
     <div class="ist-row">
       ${iconStatTile('💰', t('dash_total_income'), fmt(sum.totalIncome), `${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}`, '#10b981')}
@@ -4173,7 +4173,7 @@ function renderDashboardLayout2() {
         ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
       </div></div>
     </div>`;
-  el.querySelector('#periodBadgeBtn')?.addEventListener('click',e=>openPeriodPicker(e.currentTarget));
+  wirePeriodBar(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
@@ -6538,13 +6538,13 @@ function openColorPicker(anchor, current, onPick){
   setTimeout(()=>{document.addEventListener('mousedown',outside,true);document.addEventListener('keydown',onKey,true);window.addEventListener('resize',close);},0);
 }
 
-// ── Budget-period popover (opened from the dashboard period badge) ────
-// Changing the period used to mean a round trip to Settings and back. The
-// same three ranges people actually reach for, plus the two date fields,
-// now open in place from the badge that already shows the current period.
+// ── Budget-period bar (sits under the dashboard heading) ─────────────
+// Mirrors the admin dashboard's range bar: the two dates on the left, the
+// quick ranges pushed to the right, and the app's own calendar popup on the
+// date fields. Changing the period used to mean a round trip to Settings.
 // Settings keeps the full preset list (quarter, year, last 30 days) and
-// stays the single source of truth: both write state.settings.period*
-// through applyBudgetPeriod, so neither can drift from the other.
+// stays the single source of truth: both write through applyBudgetPeriod,
+// so neither can drift from the other.
 function periodQuickRanges() {
   const now = new Date(), m = getMonthBounds();
   return {
@@ -6558,8 +6558,8 @@ function activePeriodRange() {
   const r = periodQuickRanges(), s = state.settings.periodStart, e = state.settings.periodEnd;
   return Object.keys(r).find(k => r[k][0] === s && r[k][1] === e) || '';
 }
-// The one write path for the period, so the badge popover, the Settings
-// presets and the Settings date fields cannot disagree about what happens.
+// The one write path for the period, so the bar, the Settings presets and
+// the Settings date fields cannot disagree about what happens.
 function applyBudgetPeriod(start, end, opts) {
   state.settings.periodStart = start;
   state.settings.periodEnd = end;
@@ -6568,109 +6568,57 @@ function applyBudgetPeriod(start, end, opts) {
   if (!(opts && opts.silent)) showToast(t('toast_period_updated'));
 }
 
-function openPeriodPicker(anchor) {
-  const existing = document.getElementById('fkPeriodPop');
-  if (existing) { existing._close(); return; }          // re-clicking the badge closes it
+const PERIOD_CHIPS = [['today', 'dp_today'], ['month', 'this_month'], ['last_month', 'last_month']];
 
-  const pop = document.createElement('div');
-  pop.className = 'fk-periodpop';
-  pop.id = 'fkPeriodPop';
+function periodBarHtml() {
+  const active = activePeriodRange();
+  const field = (id, wrapId, value) => `<div class="date-field-styled" id="${wrapId}">
+      <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span class="date-field-val" id="${id}Disp">${formatDateDisplay(value)}</span>
+      <input type="date" id="${id}" value="${value}">
+    </div>`;
+  return `<div class="period-bar">
+    <span class="period-bar-label">${t('budget_period')}</span>
+    ${field('pbStart', 'pbStartWrap', state.settings.periodStart)}
+    <span class="period-bar-sep" aria-hidden="true">&ndash;</span>
+    ${field('pbEnd', 'pbEndWrap', state.settings.periodEnd)}
+    <div class="period-bar-chips">
+      ${PERIOD_CHIPS.map(([k, label]) =>
+        `<button class="period-chip${active === k ? ' is-active' : ''}" data-range="${k}" type="button">${t(label)}</button>`).join('')}
+    </div>
+  </div>`;
+}
 
-  const CHIPS = [['today', 'dp_today'], ['month', 'this_month'], ['last_month', 'last_month']];
-  function draw() {
-    const active = activePeriodRange();
-    pop.innerHTML = `
-      <div class="fk-pp-title">${t('budget_period')}</div>
-      <div class="fk-pp-chips">
-        ${CHIPS.map(([k, label]) => `<button type="button" class="fk-pp-chip${active === k ? ' is-active' : ''}" data-range="${k}">${t(label)}</button>`).join('')}
-      </div>
-      <div class="fk-pp-fields">
-        <div class="fk-pp-field">
-          <label class="field-label">${t('start_date')}</label>
-          <div class="date-field-styled" id="ppStartWrap">
-            <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            <span class="date-field-val">${formatDateDisplay(state.settings.periodStart)}</span>
-            <input type="date" id="ppStart" value="${state.settings.periodStart}">
-          </div>
-        </div>
-        <div class="fk-pp-field">
-          <label class="field-label">${t('end_date')}</label>
-          <div class="date-field-styled" id="ppEndWrap">
-            <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            <span class="date-field-val">${formatDateDisplay(state.settings.periodEnd)}</span>
-            <input type="date" id="ppEnd" value="${state.settings.periodEnd}">
-          </div>
-        </div>
-      </div>
-      <button type="button" class="fk-pp-more" id="ppMore">${t('tab_settings')} →</button>`;
+function wirePeriodBar(scope) {
+  const root = scope || document;
+  root.querySelectorAll('[data-range]').forEach(b => b.addEventListener('click', () => {
+    const [s, e] = periodQuickRanges()[b.dataset.range];
+    applyBudgetPeriod(s, e);
+  }));
 
-    pop.querySelectorAll('[data-range]').forEach(b => b.addEventListener('click', () => {
-      const [s, e] = periodQuickRanges()[b.dataset.range];
-      applyBudgetPeriod(s, e);
-      draw();
-    }));
-
-    // Reuses the app's own calendar popup, so the dates here behave exactly
-    // as they do in Settings rather than falling back to the native picker.
-    const bindPP = (wrapId, inputId, isStart) => {
-      const wrap = pop.querySelector('#' + wrapId), input = pop.querySelector('#' + inputId);
-      wrap.addEventListener('click', () => openDatePicker(input, wrap));
-      input.addEventListener('change', () => {
-        const v = input.value;
-        if (!v) { input.value = isStart ? state.settings.periodStart : state.settings.periodEnd; return; }
-        const start = isStart ? v : state.settings.periodStart;
-        const end   = isStart ? state.settings.periodEnd : v;
-        if (start && end && start > end) { showToast(t('toast_period_error')); draw(); return; }
-        applyBudgetPeriod(start, end);
-        draw();
-      });
-    };
-    bindPP('ppStartWrap', 'ppStart', true);
-    bindPP('ppEndWrap', 'ppEnd', false);
-
-    pop.querySelector('#ppMore').addEventListener('click', () => { close(); switchTab('settings'); });
-  }
-
-  function close() {
-    pop.remove();
-    document.removeEventListener('mousedown', outside, true);
-    document.removeEventListener('keydown', onKey, true);
-    window.removeEventListener('resize', close);
-  }
-  // The calendar popup lives on <body>, outside this popover, so a click
-  // inside it must not be read as a click away from the period picker.
-  function outside(e) {
-    if (pop.contains(e.target)) return;
-    if (e.target.closest && e.target.closest('#fkDatePop')) return;
-    // Ignore the badge itself: mousedown here would close the popover a
-    // moment before the badge's own click handler ran, so re-clicking it
-    // would silently reopen instead of toggling shut.
-    if (anchor && anchor.contains(e.target)) return;
-    close();
-  }
-  function onKey(e) {
-    if (e.key !== 'Escape') return;
-    if (document.getElementById('fkDatePop')) return;    // let the calendar close first
-    e.preventDefault(); close();
-  }
-  pop._close = close;
-
-  document.body.appendChild(pop);
-  draw();
-  if (!window.matchMedia('(max-width:480px)').matches) {
-    const r = anchor.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
-    const vw = document.documentElement.clientWidth, vh = window.innerHeight;
-    let top = r.bottom + 8 + window.scrollY, left = r.left + window.scrollX;
-    if (left - window.scrollX + pw > vw - 8) left = window.scrollX + vw - pw - 8;
-    if (r.bottom + 8 + ph > vh && r.top - 8 - ph > 0) top = r.top + window.scrollY - ph - 8;
-    pop.style.top = Math.max(8 + window.scrollY, top) + 'px';
-    pop.style.left = Math.max(8, left) + 'px';
-  }
-  setTimeout(() => {
-    document.addEventListener('mousedown', outside, true);
-    document.addEventListener('keydown', onKey, true);
-    window.addEventListener('resize', close);
-  }, 0);
+  // Reuses the app's own calendar popup, so these behave exactly as the
+  // date fields in Settings do rather than falling back to the native one.
+  const bind = (wrapId, inputId, isStart) => {
+    const wrap = root.querySelector('#' + wrapId), input = root.querySelector('#' + inputId);
+    if (!wrap || !input) return;
+    wrap.addEventListener('click', () => openDatePicker(input, wrap));
+    input.addEventListener('change', () => {
+      const v = input.value;
+      if (!v) { input.value = isStart ? state.settings.periodStart : state.settings.periodEnd; return; }
+      const start = isStart ? v : state.settings.periodStart;
+      const end   = isStart ? state.settings.periodEnd : v;
+      if (start && end && start > end) {
+        showToast(t('toast_period_error'));
+        input.value = isStart ? state.settings.periodStart : state.settings.periodEnd;
+        const disp = root.querySelector('#' + inputId + 'Disp');
+        if (disp) disp.textContent = formatDateDisplay(input.value);
+        return;
+      }
+      applyBudgetPeriod(start, end);
+    });
+  };
+  bind('pbStartWrap', 'pbStart', true);
+  bind('pbEndWrap', 'pbEnd', false);
 }
 
 // ── Custom themed date picker (replaces native calendar popup) ────────

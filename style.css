@@ -417,11 +417,7 @@ a.btn-back-round { text-decoration: none; }
   color: var(--text-secondary); transition: color .15s; font-family: inherit;
 }
 .btn-help-sm:hover { color: var(--grad-indigo); }
-.period-badge {
-  font-size: 12px; font-weight: 600; color: var(--text-secondary);
-  background: var(--surface-strong); border: 1px solid var(--border-faint);
-  padding: 5px 12px; border-radius: var(--radius-pill);
-}
+
 
 /* ═══════════════════════════════════════════════════════════════
    HUB
@@ -1333,14 +1329,6 @@ input[type="number"].expected-input {
 }
 .help-icon-btn:hover { color: var(--grad-indigo); border-color: var(--grad-indigo); }
 
-/* ═══════════════════════════════════════════════════════════════
-   PERIOD BADGE - clickable variant
-═══════════════════════════════════════════════════════════════ */
-.period-badge--btn {
-  cursor: pointer; background: var(--surface-strong);
-  border: 1px solid var(--border-faint); transition: border-color .15s, color .15s;
-}
-.period-badge--btn:hover { border-color: var(--grad-indigo); color: var(--grad-indigo); }
 
 /* ═══════════════════════════════════════════════════════════════
    THEME PILL TOGGLE
@@ -2708,51 +2696,39 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   .fk-datepop { position: fixed !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%); width: calc(100% - 40px); max-width: 340px; animation: none; }
 }
 
-/* ── Budget-period popover (from the dashboard period badge) ──────────── */
-/* Sits one layer below .fk-datepop (3500), because the date fields inside
-   it open that calendar on top of this panel. */
-.fk-periodpop {
-  position: absolute; z-index: 3400; width: 320px; padding: 14px;
-  background: var(--surface-solid); border: 1px solid var(--border-faint);
-  border-radius: var(--radius-md); box-shadow: 0 24px 60px rgba(0,0,0,.22);
-  font-family: inherit; animation: fk-dp-in .14s var(--ease, ease);
+/* ── Budget-period bar (dashboard) ─────────────────────────────────────
+   Mirrors the admin dashboard's range bar: dates on the left, quick ranges
+   pushed to the right. Inline rather than a popover, so it never covers a
+   stat card and never has to be positioned against the viewport. */
+.period-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: -4px 0 18px;
 }
-.fk-pp-title {
-  font-family: var(--font-display); font-weight: 600; font-size: 13px;
-  color: var(--text-primary); margin-bottom: 10px;
+.period-bar-label {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--text-faint);
 }
-.fk-pp-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-.fk-pp-chip {
-  flex: 1 1 auto; border: 1px solid var(--border-faint); background: var(--surface-strong);
+.period-bar-sep { color: var(--text-faint); font-size: 13px; }
+.period-bar .date-field-styled { min-width: 132px; }
+.period-bar-chips { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+.period-chip {
+  border: 1px solid var(--border-faint); background: var(--surface-strong);
   color: var(--text-secondary); border-radius: var(--radius-pill);
-  padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+  padding: 6px 13px; font-size: 12.5px; font-weight: 600; cursor: pointer;
   font-family: inherit; white-space: nowrap;
   transition: border-color .15s, color .15s, background .15s;
 }
-.fk-pp-chip:hover { border-color: var(--grad-indigo); color: var(--text-primary); }
-.fk-pp-chip.is-active {
+.period-chip:hover { border-color: var(--grad-indigo); color: var(--text-primary); }
+.period-chip.is-active {
   border-color: transparent; color: #fff;
   background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
 }
-.fk-pp-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.fk-pp-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
-.fk-pp-field .field-label { margin: 0; }
-.fk-pp-more {
-  display: block; width: 100%; margin-top: 12px; padding-top: 10px;
-  border: none; border-top: 1px solid var(--border-faint); background: none;
-  color: var(--text-faint); font-size: 11.5px; font-weight: 600; font-family: inherit;
-  text-align: center; cursor: pointer; transition: color .15s;
-}
-.fk-pp-more:hover { color: var(--grad-indigo); }
-/* Below this width the popover centres as a sheet - the same treatment,
-   at the same breakpoint, as the .fk-datepop it opens. They have to match:
-   a fixed popover holding an absolutely-positioned calendar would place
-   that calendar a scroll-offset away from the field it belongs to. */
-@media (max-width: 480px) {
-  .fk-periodpop {
-    position: fixed !important; left: 50% !important; top: 50% !important;
-    transform: translate(-50%, -50%); width: calc(100% - 40px); max-width: 340px; animation: none;
-  }
+/* On a phone the chips get their own line rather than being squeezed
+   alongside two date fields. */
+@media (max-width: 620px) {
+  .period-bar-label { width: 100%; }
+  .period-bar-chips { margin-left: 0; width: 100%; }
+  .period-chip { flex: 1 1 auto; text-align: center; }
 }
 
 /* ── Automation: "Automate this" rows + linked-template badge ──────────── */
