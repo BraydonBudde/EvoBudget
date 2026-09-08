@@ -719,7 +719,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Total Outgoing',dash_budgeted_sfx:'budgeted',
     dash_savings_rate:'Savings Rate',dash_saved_sfx:'saved',
     dash_subscriptions:'Subscriptions',dash_per_year:'/year',
-    dash_net_leftover:'Net Leftover this period',
+    dash_net_leftover:'Net Leftover this period',nl_breakdown:'Breakdown',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',
     dash_in_sfx:'in',dash_out_sfx:'out',
     dash_includes:'Includes',dash_rollover_sfx:'rollover',
     dash_cash_flow:'Cash Flow',
@@ -1261,7 +1261,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Gesamtausgaben',dash_budgeted_sfx:'budgetiert',
     dash_savings_rate:'Sparquote',dash_saved_sfx:'gespart',
     dash_subscriptions:'Abonnements',dash_per_year:'/Jahr',
-    dash_net_leftover:'Nettosaldo dieser Periode',
+    dash_net_leftover:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',
     dash_in_sfx:'eingenommen',dash_out_sfx:'ausgegeben',
     dash_includes:'Inkl.',dash_rollover_sfx:'Übertrag',
     dash_cash_flow:'Cashflow',
@@ -1785,7 +1785,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Dépenses totales',dash_budgeted_sfx:'budgété',
     dash_savings_rate:"Taux d'épargne",dash_saved_sfx:'épargné',
     dash_subscriptions:'Abonnements',dash_per_year:'/an',
-    dash_net_leftover:'Solde net de la période',
+    dash_net_leftover:'Solde net de la période',nl_breakdown:'Détail',nl_income_kept:'Revenu conservé',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',
     dash_in_sfx:'perçu',dash_out_sfx:'dépensé',
     dash_includes:'Dont',dash_rollover_sfx:'report',
     dash_cash_flow:'Flux de trésorerie',
@@ -2309,7 +2309,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Gastos totales',dash_budgeted_sfx:'presupuestado',
     dash_savings_rate:'Tasa de ahorro',dash_saved_sfx:'ahorrado',
     dash_subscriptions:'Suscripciones',dash_per_year:'/año',
-    dash_net_leftover:'Saldo neto del período',
+    dash_net_leftover:'Saldo neto del período',nl_breakdown:'Desglose',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',
     dash_in_sfx:'recibido',dash_out_sfx:'gastado',
     dash_includes:'Incluye',dash_rollover_sfx:'arrastre',
     dash_cash_flow:'Flujo de caja',
@@ -2834,7 +2834,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Uscite totali',dash_budgeted_sfx:'a budget',
     dash_savings_rate:'Tasso di risparmio',dash_saved_sfx:'risparmiato',
     dash_subscriptions:'Abbonamenti',dash_per_year:'/anno',
-    dash_net_leftover:'Saldo netto del periodo',
+    dash_net_leftover:'Saldo netto del periodo',nl_breakdown:'Dettaglio',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',
     dash_in_sfx:'ricevuto',dash_out_sfx:'speso',
     dash_includes:'Incluso',dash_rollover_sfx:'riporto',
     dash_cash_flow:'Flusso di cassa',
@@ -3358,7 +3358,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Łączne wydatki',dash_budgeted_sfx:'budżetowanych',
     dash_savings_rate:'Stopa oszczędności',dash_saved_sfx:'zaoszczędzono',
     dash_subscriptions:'Subskrypcje',dash_per_year:'/rok',
-    dash_net_leftover:'Saldo netto okresu',
+    dash_net_leftover:'Saldo netto okresu',nl_breakdown:'Zestawienie',nl_income_kept:'Zatrzymany dochód',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',
     dash_in_sfx:'wpłynęło',dash_out_sfx:'wyszło',
     dash_includes:'W tym',dash_rollover_sfx:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki',
@@ -3947,20 +3947,11 @@ function renderDashboardLayout1() {
       ${helpBtn('dashboard')}
     </div>
     ${periodBarHtml()}
-    <div class="pro-stats-row">
-      <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_income')}</div><div class="pro-stat-value" style="color:#10b981">${fmt(sum.totalIncome)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}</div></div>
-      <div class="pro-stat"><div class="pro-stat-label">${t('dash_total_outgoing')}</div><div class="pro-stat-value" style="color:#f43f5e">${fmt(sum.totalOut)}</div><div class="pro-stat-sub">${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}</div></div>
-      <div class="pro-stat"><div class="pro-stat-label">${t('dash_savings_rate')}</div><div class="pro-stat-value" style="color:#6366f1">${sum.savingsRate}%</div><div class="pro-stat-sub">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</div></div>
-      <div class="pro-stat"><div class="pro-stat-label">${t('dash_subscriptions')}</div><div class="pro-stat-value" style="color:#a855f7">${fmt(subMo)}${t('sf_per_month')}</div><div class="pro-stat-sub">${fmt(subMo*12)}${t('dash_per_year')}</div></div>
-    </div>
-    <div class="panel leftover-panel">
-      <div class="leftover-inner">
-        <div><div class="leftover-label">${t('dash_net_leftover')}</div><div class="leftover-value" style="color:${leftColor}">${sum.leftover<0?'\u2212':''}${fmt(Math.abs(sum.leftover))}</div>${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}</div>
-        <div class="leftover-formula">
-          <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">\u2212</span><span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">\u2212</span><span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>${state.rollover?`<span class="lf-sep">+</span><span class="lf-chip lf-rollover">${fmt(state.rollover)} ${t('dash_rollover_sfx')}</span>`:''}
-        </div>
-      </div>
-    </div>
+    ${nlHeroHtml(sum.leftover, [
+      ['+', t('dash_in_sfx'), sum.totalIncome, 'var(--income)'],
+      ['\u2212', t('dash_out_sfx'), sum.totalOut, 'var(--expense)'],
+      ['\u2212', t('dash_saved_sfx'), sum.totalSavings, 'var(--savings)']
+    ], { income: sum.totalIncome, subsMonthly: subMo, rolloverLabel: t('dash_rollover_sfx') })}
     </div>
     <div class="dashboard-grid" style="margin-bottom:16px">
       <div class="panel cash-flow-panel"><div class="panel-inner-sm">
@@ -4013,12 +4004,7 @@ function renderDashboardLayout1() {
     wireChartHover(el, '.spend-line-dot', { format: d =>
       formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
         { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
-    const proVals = el.querySelectorAll('.pro-stats-row .pro-stat-value');
     animateDashboardEntrance(el, [
-      { el: proVals[0], target: sum.totalIncome, render: fmt },
-      { el: proVals[1], target: sum.totalOut, render: fmt },
-      { el: proVals[2], target: sum.savingsRate, render: v => Math.round(v) + '%' },
-      { el: proVals[3], target: subMo, render: v => fmt(v) + t('sf_per_month') },
       { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), render: v => (sum.leftover < 0 ? '−' : '') + fmt(v) }
     ]);
   });
@@ -4101,32 +4087,11 @@ function renderDashboardLayout2() {
     </div>
     ${periodBarHtml()}
 
-    <div class="ist-row">
-      ${iconStatTile('💰', t('dash_total_income'), fmt(sum.totalIncome), `${t('dash_of')} ${fmt(expInc)} ${t('dash_expected_sfx')}`, '#10b981')}
-      ${iconStatTile('🧾', t('dash_total_outgoing'), fmt(sum.totalOut), `${t('dash_of')} ${fmt(expOut)} ${t('dash_budgeted_sfx')}`, '#f43f5e')}
-      ${iconStatTile('📈', t('dash_savings_rate'), sum.savingsRate+'%', `${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}`, '#6366f1')}
-      ${iconStatTile('🔁', t('dash_subscriptions'), fmt(subMo)+t('sf_per_month'), `${fmt(subMo*12)}${t('dash_per_year')}`, '#a855f7')}
-    </div>
-
-    <div class="panel leftover-hero-panel" data-chart-scope>
-      <div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:10px">${t('dash_net_leftover')}</div>
-        <div class="leftover-hero-inner">
-          <div class="leftover-hero-left">
-            <div class="leftover-gauge-wrap">${svgSemiGauge(gaugePct, 170, leftColor)}<div class="leftover-gauge-caption">${t('dash_income_kept')}</div></div>
-            <div class="leftover-hero-text">
-              <div class="leftover-value" style="color:${leftColor};font-size:26px">${sum.leftover<0?'−':''}${fmt(Math.abs(sum.leftover))}</div>
-              ${state.rollover?`<div class="leftover-rollover">${t('dash_includes')} ${fmt(state.rollover)} ${t('dash_rollover_sfx')}</div>`:''}
-            </div>
-          </div>
-          <div class="leftover-formula leftover-hero-formula">
-            <span class="lf-chip lf-income">${fmt(sum.totalIncome)} ${t('dash_in_sfx')}</span><span class="lf-sep">−</span>
-            <span class="lf-chip lf-expense">${fmt(sum.totalOut)} ${t('dash_out_sfx')}</span><span class="lf-sep">−</span>
-            <span class="lf-chip lf-savings">${fmt(sum.totalSavings)} ${t('dash_saved_sfx')}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    ${nlHeroHtml(sum.leftover, [
+      ['+', t('dash_in_sfx'), sum.totalIncome, 'var(--income)'],
+      ['\u2212', t('dash_out_sfx'), sum.totalOut, 'var(--expense)'],
+      ['\u2212', t('dash_saved_sfx'), sum.totalSavings, 'var(--savings)']
+    ], { income: sum.totalIncome, subsMonthly: subMo, rolloverLabel: t('dash_rollover_sfx') })}
 
     <div class="dashboard-grid" style="margin-bottom:14px">
       <div class="panel cash-flow-hero-panel" data-chart-scope>
@@ -4187,12 +4152,7 @@ function renderDashboardLayout2() {
         formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
           { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
     });
-    const istVals = el.querySelectorAll('.ist-row .ist-value');
     animateDashboardEntrance(el, [
-      { el: istVals[0], target: sum.totalIncome, render: fmt },
-      { el: istVals[1], target: sum.totalOut, render: fmt },
-      { el: istVals[2], target: sum.savingsRate, render: v => Math.round(v) + '%' },
-      { el: istVals[3], target: subMo, render: v => fmt(v) + t('sf_per_month') },
       { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), render: v => (sum.leftover < 0 ? '−' : '') + fmt(v) }
     ]);
   });
@@ -6536,6 +6496,74 @@ function openColorPicker(anchor, current, onPick){
   ci.addEventListener('input',ev=>onPick(ev.target.value));
   ci.addEventListener('change',()=>close());
   setTimeout(()=>{document.addEventListener('mousedown',outside,true);document.addEventListener('keydown',onKey,true);window.addEventListener('resize',close);},0);
+}
+
+// ── Net-leftover hero ────────────────────────────────────────────────
+// The dashboard's headline figure, sitting above everything else. It
+// replaces the four stat cards outright: every number they carried is in
+// the breakdown on the right, so keeping both would state the same totals
+// twice on one screen.
+//
+// The breakdown lists the same components the old inline strip did, in the
+// same colours, so the arithmetic still reconciles to the figure on the left.
+function nlDaysInPeriod() {
+  const s = new Date(state.settings.periodStart + 'T00:00:00');
+  const e = new Date(state.settings.periodEnd + 'T00:00:00');
+  if (isNaN(s) || isNaN(e)) return { total: 0, dayOf: 0, left: 0, pct: 0 };
+  const DAY = 86400000;
+  const total = Math.max(1, Math.round((e - s) / DAY) + 1);
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  // Clamped, so a period entirely in the past or future still reads sanely
+  // rather than reporting a negative day or more days than the period has.
+  const dayOf = Math.min(total, Math.max(1, Math.round((now - s) / DAY) + 1));
+  return { total, dayOf, left: Math.max(0, total - dayOf), pct: Math.round(dayOf / total * 100) };
+}
+
+function nlRow(op, label, amount, colour) {
+  return `<div class="nl-row"><i class="nl-op">${op}</i><span>${label}</span><b style="color:${colour}">${fmt(amount)}</b></div>`;
+}
+
+// rows: [op, label, amount, colour][] - each app supplies the components its
+// own leftover formula uses, so the sum shown always matches the sum used.
+function nlHeroHtml(leftover, rows, opts) {
+  const o = opts || {};
+  const neg = leftover < 0;
+  const p = nlDaysInPeriod();
+  const kept = o.income > 0 ? Math.round(leftover / o.income * 100) : 0;
+  const perDay = p.left > 0 ? leftover / p.left : leftover;
+
+  const sub = !o.income
+    ? t('nl_empty')
+    : neg
+      ? tf('nl_over_by', fmt(Math.abs(leftover)), p.left)
+      : tf('nl_per_day', fmt(perDay), p.left);
+
+  const pills = [
+    `<div class="nl-pill"><span>${t('nl_income_kept')}</span><strong>${kept}%</strong></div>`,
+    o.subsMonthly
+      ? `<div class="nl-pill"><span>${t('dash_subscriptions')}</span><strong>${fmt(o.subsMonthly * 12)}${t('dash_per_year')}</strong></div>`
+      : ''
+  ].join('');
+
+  // SBP and UBP hold this string under different keys, so the caller
+  // supplies it. Falling back to a key one app lacks renders the key name.
+  if (state.rollover) rows = rows.concat([['+', o.rolloverLabel || t('dash_lf_rollover'), state.rollover, 'var(--bill)']]);
+
+  return `<div class="panel nl-hero${neg ? ' is-negative' : ''}">
+    <div class="nl-left">
+      <div class="nl-label">${t('dash_net_leftover_period') || t('dash_net_leftover')}</div>
+      <div class="nl-value leftover-value">${neg ? '−' : ''}${fmt(Math.abs(leftover))}</div>
+      <div class="nl-sub">${sub}</div>
+      <div class="nl-meta">${pills}</div>
+      <div class="nl-track"><i style="width:${p.pct}%"></i></div>
+      <div class="nl-track-cap">${tf('nl_day_of', p.dayOf, p.total)}</div>
+    </div>
+    <div class="nl-right">
+      <div class="nl-right-title">${t('nl_breakdown')}</div>
+      ${rows.map(r => nlRow(r[0], r[1], r[2], r[3])).join('')}
+      <div class="nl-row is-total"><i class="nl-op">=</i><span>${t('nl_total')}</span><b>${neg ? '−' : ''}${fmt(Math.abs(leftover))}</b></div>
+    </div>
+  </div>`;
 }
 
 // ── Budget-period bar (sits under the dashboard heading) ─────────────
