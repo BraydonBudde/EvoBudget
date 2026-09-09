@@ -4244,7 +4244,7 @@ function nlHeroHtml(leftover, rows, opts) {
   const o = opts || {};
   const neg = leftover < 0;
   const p = nlDaysInPeriod();
-  const kept = o.income > 0 ? Math.round(leftover / o.income * 100) : 0;
+  const kept = o.income > 0 ? Math.round((leftover - (state.rollover || 0)) / o.income * 100) : 0;
   const perDay = p.left > 0 ? leftover / p.left : leftover;
 
   const sub = !o.income
@@ -4266,7 +4266,7 @@ function nlHeroHtml(leftover, rows, opts) {
 
   return `<div class="panel nl-hero${neg ? ' is-negative' : ''}">
     <div class="nl-left">
-      <div class="nl-label">${t('dash_net_leftover_period') || t('dash_net_leftover')}</div>
+      <div class="nl-label">${t('dash_net_leftover_period')}</div>
       <div class="nl-value leftover-value">${neg ? '−' : ''}${fmt(Math.abs(leftover))}</div>
       <div class="nl-sub">${sub}</div>
       <div class="nl-meta">${pills}</div>
