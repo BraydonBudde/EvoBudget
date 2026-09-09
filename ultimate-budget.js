@@ -719,7 +719,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Total Outgoing',dash_budgeted_sfx:'budgeted',
     dash_savings_rate:'Savings Rate',dash_saved_sfx:'saved',
     dash_subscriptions:'Subscriptions',dash_per_year:'/year',
-    dash_net_leftover:'Net Leftover this period',nl_breakdown:'Breakdown',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',
+    dash_net_leftover:'Net Leftover this period',nl_breakdown:'Breakdown',nl_spent_today:'Spent today',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',
     dash_in_sfx:'in',dash_out_sfx:'out',
     dash_includes:'Includes',dash_rollover_sfx:'rollover',
     dash_cash_flow:'Cash Flow',
@@ -1261,7 +1261,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Gesamtausgaben',dash_budgeted_sfx:'budgetiert',
     dash_savings_rate:'Sparquote',dash_saved_sfx:'gespart',
     dash_subscriptions:'Abonnements',dash_per_year:'/Jahr',
-    dash_net_leftover:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',
+    dash_net_leftover:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_spent_today:'Heute ausgegeben',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',
     dash_in_sfx:'eingenommen',dash_out_sfx:'ausgegeben',
     dash_includes:'Inkl.',dash_rollover_sfx:'Übertrag',
     dash_cash_flow:'Cashflow',
@@ -1785,7 +1785,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Dépenses totales',dash_budgeted_sfx:'budgété',
     dash_savings_rate:"Taux d'épargne",dash_saved_sfx:'épargné',
     dash_subscriptions:'Abonnements',dash_per_year:'/an',
-    dash_net_leftover:'Solde net de la période',nl_breakdown:'Détail',nl_income_kept:'Revenu conservé',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',
+    dash_net_leftover:'Solde net de la période',nl_breakdown:'Détail',nl_spent_today:'Dépensé aujourd’hui',nl_income_kept:'Revenu conservé',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',
     dash_in_sfx:'perçu',dash_out_sfx:'dépensé',
     dash_includes:'Dont',dash_rollover_sfx:'report',
     dash_cash_flow:'Flux de trésorerie',
@@ -2309,7 +2309,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Gastos totales',dash_budgeted_sfx:'presupuestado',
     dash_savings_rate:'Tasa de ahorro',dash_saved_sfx:'ahorrado',
     dash_subscriptions:'Suscripciones',dash_per_year:'/año',
-    dash_net_leftover:'Saldo neto del período',nl_breakdown:'Desglose',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',
+    dash_net_leftover:'Saldo neto del período',nl_breakdown:'Desglose',nl_spent_today:'Gastado hoy',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',
     dash_in_sfx:'recibido',dash_out_sfx:'gastado',
     dash_includes:'Incluye',dash_rollover_sfx:'arrastre',
     dash_cash_flow:'Flujo de caja',
@@ -2834,7 +2834,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Uscite totali',dash_budgeted_sfx:'a budget',
     dash_savings_rate:'Tasso di risparmio',dash_saved_sfx:'risparmiato',
     dash_subscriptions:'Abbonamenti',dash_per_year:'/anno',
-    dash_net_leftover:'Saldo netto del periodo',nl_breakdown:'Dettaglio',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',
+    dash_net_leftover:'Saldo netto del periodo',nl_breakdown:'Dettaglio',nl_spent_today:'Speso oggi',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',
     dash_in_sfx:'ricevuto',dash_out_sfx:'speso',
     dash_includes:'Incluso',dash_rollover_sfx:'riporto',
     dash_cash_flow:'Flusso di cassa',
@@ -3358,7 +3358,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Łączne wydatki',dash_budgeted_sfx:'budżetowanych',
     dash_savings_rate:'Stopa oszczędności',dash_saved_sfx:'zaoszczędzono',
     dash_subscriptions:'Subskrypcje',dash_per_year:'/rok',
-    dash_net_leftover:'Saldo netto okresu',nl_breakdown:'Zestawienie',nl_income_kept:'Zatrzymany dochód',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',
+    dash_net_leftover:'Saldo netto okresu',nl_breakdown:'Zestawienie',nl_spent_today:'Wydano dziś',nl_income_kept:'Zatrzymany dochód',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',
     dash_in_sfx:'wpłynęło',dash_out_sfx:'wyszło',
     dash_includes:'W tym',dash_rollover_sfx:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki',
@@ -6519,6 +6519,17 @@ function nlDaysInPeriod() {
   return { total, dayOf, left: Math.max(0, total - dayOf), pct: Math.round(dayOf / total * 100) };
 }
 
+// Spending dated today. Uses the same types the breakdown's outgoing side
+// counts, so the two agree: savings is money moved aside rather than spent,
+// and is excluded here too. The list is per app because each one defines its
+// outgoings differently - only UBP treats subscriptions as a separate type.
+const NL_SPEND_TYPES = ['expense', 'bill', 'debt', 'subscription'];
+function nlSpentToday() {
+  const today = toLocalISO(new Date());
+  return (state.transactions || []).reduce(
+    (s, tx) => (tx.date === today && NL_SPEND_TYPES.indexOf(tx.type) !== -1) ? s + (Number(tx.amount) || 0) : s, 0);
+}
+
 function nlRow(op, label, amount, colour) {
   return `<div class="nl-row"><i class="nl-op">${op}</i><span>${label}</span><b style="color:${colour}">${fmt(amount)}</b></div>`;
 }
@@ -6539,6 +6550,7 @@ function nlHeroHtml(leftover, rows, opts) {
       : tf('nl_per_day', fmt(perDay), p.left);
 
   const pills = [
+    `<div class="nl-pill"><span>${t('nl_spent_today')}</span><strong>${fmt(nlSpentToday())}</strong></div>`,
     `<div class="nl-pill"><span>${t('nl_income_kept')}</span><strong>${kept}%</strong></div>`,
     o.subsMonthly
       ? `<div class="nl-pill"><span>${t('dash_subscriptions')}</span><strong>${fmt(o.subsMonthly * 12)}${t('dash_per_year')}</strong></div>`
