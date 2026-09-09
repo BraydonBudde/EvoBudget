@@ -2704,16 +2704,24 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .nl-hero {
   position: relative; overflow: hidden;
   border-radius: var(--radius-lg);
-  background:
-    radial-gradient(120% 140% at 0% 0%, rgba(16,185,129,.13), transparent 58%),
-    linear-gradient(135deg, rgba(99,102,241,.10), rgba(168,85,247,.05));
+  /* background-image only: .panel supplies background-color from
+     var(--surface), and overriding the shorthand would drop the themed
+     surface underneath. The tint is built from --grad-indigo-rgb, which
+     every theme redefines, so it reads correctly on light and vintage as
+     well as on the dark themes. */
+  background-image:
+    radial-gradient(120% 140% at 0% 0%, rgba(var(--grad-indigo-rgb), .10), transparent 60%),
+    linear-gradient(135deg, rgba(var(--grad-indigo-rgb), .07), transparent 70%);
   margin-bottom: 14px;
   display: grid; grid-template-columns: 1.1fr 1fr;
 }
+/* Overspent keeps a fixed rose, because "over budget" should read the same
+   in every appearance rather than taking on the theme's accent hue. Low
+   alpha so it sits over a light surface as a soft wash, not a red block. */
 .nl-hero.is-negative {
-  background:
-    radial-gradient(120% 140% at 0% 0%, rgba(244,63,94,.15), transparent 58%),
-    linear-gradient(135deg, rgba(244,63,94,.08), rgba(168,85,247,.05));
+  background-image:
+    radial-gradient(120% 140% at 0% 0%, rgba(244,63,94,.13), transparent 60%),
+    linear-gradient(135deg, rgba(244,63,94,.07), transparent 70%);
 }
 .nl-left { padding: 26px 28px 22px; display: flex; flex-direction: column; justify-content: center; }
 .nl-label {
@@ -2735,19 +2743,21 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .nl-pill {
   display: flex; flex-direction: column; gap: 2px; padding: 8px 13px;
   border: 1px solid var(--border-faint); border-radius: var(--radius-sm);
-  background: rgba(255,255,255,.03);
+  background: rgba(var(--grad-indigo-rgb), .05);
 }
 .nl-pill span { font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
 .nl-pill strong { font-size: 13.5px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
 /* Period progress as a bar rather than a second "days" figure: the
    sub-line already states how many are left. */
-.nl-track { margin-top: 18px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.07); overflow: hidden; }
+.nl-track { margin-top: 18px; height: 4px; border-radius: 2px; background: rgba(var(--grad-indigo-rgb), .16); overflow: hidden; }
 .nl-track i { display: block; height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--grad-indigo), var(--grad-purple)); }
 .nl-track-cap { font-size: 10.5px; color: var(--text-faint); margin-top: 6px; }
 
 .nl-right {
   padding: 22px 26px; border-left: 1px solid var(--border-faint);
-  background: rgba(0,0,0,.14); display: flex; flex-direction: column; justify-content: center;
+  /* A black wash turned into a grey slab on the light themes. Tinting with
+     the theme accent separates the column on every appearance. */
+  background: rgba(var(--grad-indigo-rgb), .055); display: flex; flex-direction: column; justify-content: center;
 }
 .nl-right-title {
   font-size: 10px; font-weight: 700; text-transform: uppercase;
