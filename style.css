@@ -2713,7 +2713,11 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
     radial-gradient(120% 140% at 0% 0%, rgba(var(--grad-indigo-rgb), .10), transparent 60%),
     linear-gradient(135deg, rgba(var(--grad-indigo-rgb), .07), transparent 70%);
   margin-bottom: 14px;
-  display: grid; grid-template-columns: 1.1fr 1fr;
+  display: grid;
+  /* Matches .dashboard-grid's right track: 3fr 2fr with a 14px gap puts its
+     left edge at 60% + 5.6px, so the breakdown lines up with the chart
+     panels underneath instead of sitting on its own split. */
+  grid-template-columns: 1fr calc(40% - 5.6px);
 }
 /* Overspent keeps a fixed rose, because "over budget" should read the same
    in every appearance rather than taking on the theme's accent hue. Low
@@ -2783,7 +2787,9 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 }
 .nl-row.is-total b { color: var(--income); font-size: 16px; }
 .nl-hero.is-negative .nl-row.is-total b { color: var(--expense); }
-@media (max-width: 860px) {
+/* 900px, matching .dashboard-grid, so the hero and the panels below it
+   collapse to one column at the same moment. */
+@media (max-width: 900px) {
   .nl-hero { grid-template-columns: 1fr; }
   .nl-right { border-left: none; border-top: 1px solid var(--border-faint); }
 }
