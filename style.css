@@ -2758,10 +2758,10 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .nl-track-cap { font-size: 10.5px; color: var(--text-faint); margin-top: 6px; }
 
 .nl-right {
-  padding: 22px 26px; border-left: 1px solid var(--border-faint);
-  /* A black wash turned into a grey slab on the light themes. Tinting with
-     the theme accent separates the column on every appearance. */
-  background: rgba(var(--grad-indigo-rgb), .055); display: flex; flex-direction: column; justify-content: center;
+  /* No wash and no divider: the hero's gradient carries straight through, so
+     the figure and the breakdown read as one section rather than two panels
+     pushed together. The only rule left inside is the one above the total. */
+  padding: 22px 26px; display: flex; flex-direction: column; justify-content: center;
 }
 .nl-right-title {
   font-size: 10px; font-weight: 700; text-transform: uppercase;
@@ -2791,7 +2791,7 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
    collapse to one column at the same moment. */
 @media (max-width: 900px) {
   .nl-hero { grid-template-columns: 1fr; }
-  .nl-right { border-left: none; border-top: 1px solid var(--border-faint); }
+  .nl-right { padding-top: 4px; }
 }
 
 /* ── Budget-period bar (dashboard) ─────────────────────────────────────
