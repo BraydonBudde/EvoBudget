@@ -773,7 +773,7 @@ const TRANSLATIONS = {
     toast_alloc_enabled:'Allocation enabled \u2713',toast_alloc_disabled:'Allocation disabled',
     toast_lang_updated:'Language updated \u2713',toast_export:'Exported \u2713',
     toast_saved:'Saved \u2713',toast_reset:'All data cleared',toast_alloc_bucket_added:'Bucket added \u2713',
-    confirm_remove_cat:'Remove this category?',confirm_delete_all_tx:'Delete ALL transactions? This cannot be undone.',
+    confirm_remove_cat:'Remove this category?',bud_edit_title:'\u270f\ufe0f Edit Category',bud_name_required:'Give the category a name.',bud_name_taken:'Another category in this section already uses that name.',bud_expected_invalid:'Enter an expected amount of 0 or more.',confirm_delete_all_tx:'Delete ALL transactions? This cannot be undone.',
     confirm_remove_cat_with_tx:'{0} existing transaction(s) use this category. They will keep it as a label, but it will no longer be tracked in your budget. Delete anyway?',
     confirm_delete_tx:'Delete this transaction?',confirm_remove_debt:'Remove this debt?',
     confirm_delete_fund:'Delete this fund?',confirm_remove_sub:'Remove this subscription?',
@@ -1315,7 +1315,7 @@ const TRANSLATIONS = {
     toast_alloc_enabled:'Aufteilung aktiviert \u2713',toast_alloc_disabled:'Aufteilung deaktiviert',
     toast_lang_updated:'Sprache aktualisiert \u2713',toast_export:'Exportiert \u2713',
     toast_saved:'Gespeichert \u2713',toast_reset:'Alle Daten gel\u00f6scht',toast_alloc_bucket_added:'Kategorie hinzugef\u00fcgt \u2713',
-    confirm_remove_cat:'Diese Kategorie entfernen?',confirm_delete_all_tx:'ALLE Transaktionen l\u00f6schen? Das kann nicht r\u00fcckg\u00e4ngig gemacht werden.',
+    confirm_remove_cat:'Diese Kategorie entfernen?',bud_edit_title:'\u270f\ufe0f Kategorie bearbeiten',bud_name_required:'Gib der Kategorie einen Namen.',bud_name_taken:'Eine andere Kategorie in diesem Bereich verwendet diesen Namen bereits.',bud_expected_invalid:'Gib einen erwarteten Betrag von 0 oder mehr ein.',confirm_delete_all_tx:'ALLE Transaktionen l\u00f6schen? Das kann nicht r\u00fcckg\u00e4ngig gemacht werden.',
     confirm_remove_cat_with_tx:'{0} bestehende Transaktion(en) verwenden diese Kategorie. Sie behalten sie als Bezeichnung, wird aber nicht mehr in deinem Budget erfasst. Trotzdem l\u00f6schen?',
     confirm_delete_tx:'Diese Transaktion l\u00f6schen?',confirm_remove_debt:'Diese Schuld entfernen?',
     confirm_delete_fund:'Diesen Fonds l\u00f6schen?',confirm_remove_sub:'Dieses Abonnement entfernen?',
@@ -1839,7 +1839,7 @@ const TRANSLATIONS = {
     toast_alloc_enabled:'R\u00e9partition activ\u00e9e \u2713',toast_alloc_disabled:'R\u00e9partition d\u00e9sactiv\u00e9e',
     toast_lang_updated:'Langue mise \u00e0 jour \u2713',toast_export:'Export\u00e9 \u2713',
     toast_saved:'Enregistr\u00e9 \u2713',toast_reset:'Toutes les donn\u00e9es effac\u00e9es',toast_alloc_bucket_added:'Segment ajout\u00e9 \u2713',
-    confirm_remove_cat:'Supprimer cette cat\u00e9gorie ?',confirm_delete_all_tx:'Supprimer TOUTES les transactions ? Cela est irr\u00e9versible.',
+    confirm_remove_cat:'Supprimer cette cat\u00e9gorie ?',bud_edit_title:'\u270f\ufe0f Modifier la cat\u00e9gorie',bud_name_required:'Donnez un nom \u00e0 la cat\u00e9gorie.',bud_name_taken:'Une autre cat\u00e9gorie de cette section porte d\u00e9j\u00e0 ce nom.',bud_expected_invalid:'Saisissez un montant pr\u00e9vu de 0 ou plus.',confirm_delete_all_tx:'Supprimer TOUTES les transactions ? Cela est irr\u00e9versible.',
     confirm_remove_cat_with_tx:'{0} transaction(s) existante(s) utilisent cette cat\u00e9gorie. Elles la conserveront comme \u00e9tiquette, mais elle ne sera plus suivie dans votre budget. Supprimer quand m\u00eame ?',
     confirm_delete_tx:'Supprimer cette transaction ?',confirm_remove_debt:'Supprimer cette dette ?',
     confirm_delete_fund:'Supprimer ce fonds ?',confirm_remove_sub:'Supprimer cet abonnement ?',
@@ -2363,7 +2363,7 @@ const TRANSLATIONS = {
     toast_alloc_enabled:'Distribuci\u00f3n activada \u2713',toast_alloc_disabled:'Distribuci\u00f3n desactivada',
     toast_lang_updated:'Idioma actualizado \u2713',toast_export:'Exportado \u2713',
     toast_saved:'Guardado \u2713',toast_reset:'Todos los datos borrados',toast_alloc_bucket_added:'Segmento a\u00f1adido \u2713',
-    confirm_remove_cat:'\u00bfEliminar esta categor\u00eda?',confirm_delete_all_tx:'\u00bfEliminar TODAS las transacciones? Esto no se puede deshacer.',
+    confirm_remove_cat:'\u00bfEliminar esta categor\u00eda?',bud_edit_title:'\u270f\ufe0f Editar categor\u00eda',bud_name_required:'Ponle un nombre a la categor\u00eda.',bud_name_taken:'Otra categor\u00eda de esta secci\u00f3n ya usa ese nombre.',bud_expected_invalid:'Introduce un importe previsto de 0 o m\u00e1s.',confirm_delete_all_tx:'\u00bfEliminar TODAS las transacciones? Esto no se puede deshacer.',
     confirm_remove_cat_with_tx:'{0} transacci\u00f3n(es) existente(s) usan esta categor\u00eda. La conservar\u00e1n como etiqueta, pero ya no se har\u00e1 seguimiento en tu presupuesto. \u00bfEliminar de todos modos?',
     confirm_delete_tx:'\u00bfEliminar esta transacci\u00f3n?',confirm_remove_debt:'\u00bfEliminar esta deuda?',
     confirm_delete_fund:'\u00bfEliminar este fondo?',confirm_remove_sub:'\u00bfEliminar esta suscripci\u00f3n?',
@@ -2888,7 +2888,7 @@ const TRANSLATIONS = {
     toast_alloc_enabled:'Distribuzione attivata \u2713',toast_alloc_disabled:'Distribuzione disattivata',
     toast_lang_updated:'Lingua aggiornata \u2713',toast_export:'Esportato \u2713',
     toast_saved:'Salvato \u2713',toast_reset:'Tutti i dati cancellati',toast_alloc_bucket_added:'Segmento aggiunto \u2713',
-    confirm_remove_cat:'Rimuovere questa categoria?',confirm_delete_all_tx:'Eliminare TUTTE le transazioni? Questa azione \u00e8 irreversibile.',
+    confirm_remove_cat:'Rimuovere questa categoria?',bud_edit_title:'\u270f\ufe0f Modifica categoria',bud_name_required:'Assegna un nome alla categoria.',bud_name_taken:'Un\u2019altra categoria di questa sezione usa gi\u00e0 questo nome.',bud_expected_invalid:'Inserisci un importo previsto pari o superiore a 0.',confirm_delete_all_tx:'Eliminare TUTTE le transazioni? Questa azione \u00e8 irreversibile.',
     confirm_remove_cat_with_tx:'{0} transazione/i esistente/i usa/usano questa categoria. La manterranno come etichetta, ma non sar\u00e0 pi\u00f9 monitorata nel tuo budget. Eliminare comunque?',
     confirm_delete_tx:'Eliminare questa transazione?',confirm_remove_debt:'Rimuovere questo debito?',
     confirm_delete_fund:'Eliminare questo fondo?',confirm_remove_sub:'Rimuovere questo abbonamento?',
@@ -3412,7 +3412,7 @@ const TRANSLATIONS = {
     toast_alloc_enabled:'Podzia\u0142 w\u0142\u0105czony \u2713',toast_alloc_disabled:'Podzia\u0142 wy\u0142\u0105czony',
     toast_lang_updated:'J\u0119zyk zaktualizowany \u2713',toast_export:'Wyeksportowano \u2713',
     toast_saved:'Zapisano \u2713',toast_reset:'Wszystkie dane usuni\u0119te',toast_alloc_bucket_added:'Segment dodany \u2713',
-    confirm_remove_cat:'Usun\u0105\u0107 t\u0119 kategori\u0119?',confirm_delete_all_tx:'Usun\u0105\u0107 WSZYSTKIE transakcje? Tej operacji nie mo\u017cna cofn\u0105\u0107.',
+    confirm_remove_cat:'Usun\u0105\u0107 t\u0119 kategori\u0119?',bud_edit_title:'\u270f\ufe0f Edytuj kategori\u0119',bud_name_required:'Nadaj kategorii nazw\u0119.',bud_name_taken:'Inna kategoria w tej sekcji ju\u017c u\u017cywa tej nazwy.',bud_expected_invalid:'Podaj oczekiwan\u0105 kwot\u0119 0 lub wi\u0119cej.',confirm_delete_all_tx:'Usun\u0105\u0107 WSZYSTKIE transakcje? Tej operacji nie mo\u017cna cofn\u0105\u0107.',
     confirm_remove_cat_with_tx:'{0} istniej\u0105ca(-ych) transakcja(-i) u\u017cywa tej kategorii. Zachowaj\u0105 j\u0105 jako etykiet\u0119, ale nie b\u0119dzie ju\u017c \u015bledzona w Twoim bud\u017cecie. Usun\u0105\u0107 mimo to?',
     confirm_delete_tx:'Usun\u0105\u0107 t\u0119 transakcj\u0119?',confirm_remove_debt:'Usun\u0105\u0107 ten d\u0142ug?',
     confirm_delete_fund:'Usun\u0105\u0107 ten fundusz?',confirm_remove_sub:'Usun\u0105\u0107 t\u0119 subskrypcj\u0119?',
@@ -4231,6 +4231,83 @@ function renderBudget() {
   initFieldTips(el);
 }
 
+// ── Edit a budget category ─────────────────────────────────────────────
+// The row exposed the expected amount and due date as inline inputs, but
+// the category name had no editor at all: renaming meant deleting the row
+// and rebuilding it, which detached every transaction filed under it. Same
+// modal shape as the transaction editor.
+const BUD_TX_TYPE = { income: 'income', expenses: 'expense', bills: 'bill', savings: 'savings' };
+
+function openEditBudgetRow(type, id) {
+  const meta = getModMeta()[type];
+  const rows = state.budgets[type] || [];
+  const row = rows.find(r => r.id === id);
+  if (!row || !meta) return;
+  const oldName = row.category;
+
+  document.getElementById('modalTitle').textContent = t('bud_edit_title');
+  document.getElementById('modalBody').innerHTML = `
+    <div class="field"><label class="field-label">${t('bud_th_category')}</label>
+      <input class="input" type="text" id="ebCat" maxlength="60" value="${esc(row.category)}"></div>
+    <div class="field"><label class="field-label">${t('bud_th_expected')} (${SYM})</label>
+      <input class="input" type="number" id="ebExp" min="0" step="0.01" value="${row.expected || ''}" placeholder="0.00"></div>
+    ${meta.hasDates ? `<div class="field"><label class="field-label">${t('bud_th_due_date')}</label>
+      ${styledDateField('ebDate', 'ebDateWrap', row.dueDate || '')}</div>` : ''}
+    <div class="tx-error" id="ebError" hidden></div>
+    <div class="edit-tx-actions">
+      <button class="btn btn-primary" id="ebSave" type="button">${t('tx_save_changes')}</button>
+      <button class="btn btn-ghost btn-sm" id="ebCancel" type="button">${t('cancel')}</button>
+      <button class="btn btn-danger btn-sm" id="ebDelete" type="button">${t('delete')}</button>
+    </div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+  if (meta.hasDates) bindDateField('ebDate', 'ebDateWrap');
+
+  const showErr = msg => { const e = document.getElementById('ebError'); if (e) { e.textContent = msg; e.hidden = false; } };
+  document.getElementById('modalBody').addEventListener('input', () => {
+    const e = document.getElementById('ebError'); if (e) e.hidden = true;
+  });
+
+  document.getElementById('ebSave')?.addEventListener('click', () => {
+    const name = document.getElementById('ebCat').value.trim();
+    const expRaw = document.getElementById('ebExp').value;
+    const exp = expRaw === '' ? 0 : parseFloat(expRaw);
+    if (!name) return showErr(t('bud_name_required'));
+    // Two rows sharing a name in one section would pool their actuals,
+    // since a transaction is matched to a row by name.
+    if (rows.some(r => r.id !== id && r.category.toLowerCase() === name.toLowerCase())) return showErr(t('bud_name_taken'));
+    if (isNaN(exp) || exp < 0) return showErr(t('bud_expected_invalid'));
+
+    // Transactions store the category as a name rather than an id, so a
+    // rename has to carry them with it. Without this the row's actual drops
+    // to zero and the spending is stranded under a category that no longer
+    // exists anywhere.
+    if (name !== oldName) {
+      const txType = BUD_TX_TYPE[type];
+      state.transactions.forEach(tx => { if (tx.type === txType && tx.category === oldName) tx.category = name; });
+      // Recurring templates file by category name too, so they would start
+      // generating transactions under the old name.
+      (state.recurringTemplates || []).forEach(r => { if (r.type === txType && r.category === oldName) r.category = name; });
+    }
+    row.category = name;
+    row.expected = exp;
+    if (meta.hasDates) row.dueDate = document.getElementById('ebDate').value || '';
+    saveState(); closeModal(); renderBudget();
+    showToast(t('toast_saved'));
+  });
+
+  document.getElementById('ebCancel')?.addEventListener('click', closeModal);
+
+  // Same warning the row's own delete button gives, so deleting from here
+  // cannot quietly do more than deleting from there.
+  document.getElementById('ebDelete')?.addEventListener('click', async () => {
+    const txCount = state.transactions.filter(tx => tx.type === BUD_TX_TYPE[type] && tx.category === oldName).length;
+    const message = txCount > 0 ? tf('confirm_remove_cat_with_tx', txCount) : t('confirm_remove_cat');
+    if (!await confirmDialog({ message, confirmText: t('delete') })) return;
+    state.budgets[type] = rows.filter(r => r.id !== id);
+    saveState(); closeModal(); renderBudget();
+  });
+}
+
 function buildModuleHTML(type,meta,act) {
   const rows=state.budgets[type]||[],typeAct=act[type]||{};
   const totExp=rows.reduce((t,r)=>t+(r.expected||0),0),totAct=rows.reduce((t,r)=>t+(typeAct[r.category]||0),0);
@@ -4251,7 +4328,7 @@ function buildModuleHTML(type,meta,act) {
         <td><span class="actual-val${ovr?' is-over':meta.isInc&&p>=100?' is-good':''}">${fmt(a)}</span></td>
         <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':ovr?' prog-bar--over':' prog-bar--normal'}" id="pb-${row.id}" style="width:${Math.min(p,100)}%"></div></div><span class="prog-label${ovr?' is-over':''}" id="pl-${row.id}">${p}%</span></td>
         ${meta.hasDates?`<td class="paid-cell"><label class="check-label"><input type="checkbox" class="mod-paid" ${row.paid?'checked':''} data-id="${row.id}" data-type="${type}"><span class="checkmark"></span></label></td>`:''}
-        <td><button class="del-btn mod-del" data-id="${row.id}" data-type="${type}" type="button" aria-label="${t('delete')}">×</button></td></tr>`;
+        <td><div class="tx-actions"><button class="edit-btn mod-edit" data-id="${row.id}" data-type="${type}" type="button" title="${t('edit')}" aria-label="${t('edit')}">✏️</button><button class="del-btn mod-del" data-id="${row.id}" data-type="${type}" type="button" aria-label="${t('delete')}">×</button></div></td></tr>`;
     }).join('')}</tbody>
     <tfoot><tr class="total-row"><td><strong>${t('bud_total')}</strong></td><td><strong id="te-${type}">${fmt(totExp)}</strong></td>
       ${meta.hasDates?'<td></td>':''}
@@ -4367,6 +4444,9 @@ function bindModuleEvents(type,meta,container,act) {
     });});
   }
   const TX_TYPE_FOR_MODULE={income:'income',expenses:'expense',bills:'bill',debt:'debt',savings:'savings'};
+  container.querySelectorAll(`.mod-edit[data-type="${type}"]`).forEach(btn=>{
+    btn.addEventListener('click',()=>openEditBudgetRow(type,btn.dataset.id));
+  });
   container.querySelectorAll(`.mod-del[data-type="${type}"]`).forEach(btn=>{
     btn.addEventListener('click',async()=>{
       const row=(state.budgets[type]||[]).find(r=>r.id===btn.dataset.id);
