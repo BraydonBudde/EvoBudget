@@ -2763,13 +2763,14 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
      pushed together. The only rule left inside is the one above the total. */
   padding: 22px 26px; display: flex; flex-direction: column; justify-content: center;
 }
-/* Show/hide sits at the far right of the figures row, level with the first
-   label. Deliberately quiet: it should not read as a second action. */
+/* Show/hide sits just after the "Still to pay" label, inside it. The label
+   is uppercase and letter-spaced, so both are reset here. Deliberately quiet:
+   it should not read as a second action. */
 .nl-due-toggle {
-  margin-left: auto; align-self: flex-start; padding-top: 1px;
-  border: 0; background: none; padding: 0; cursor: pointer;
-  font: inherit; font-size: 11px; font-weight: 700; color: var(--text-faint);
-  text-decoration: underline; text-underline-offset: 2px;
+  margin-left: 8px; border: 0; background: none; padding: 0; cursor: pointer;
+  font-family: inherit; font-size: 10px; font-weight: 700; line-height: 1;
+  text-transform: none; letter-spacing: normal; color: var(--text-faint);
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
 }
 .nl-due-toggle:hover { color: var(--text-secondary); }
 
