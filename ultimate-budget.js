@@ -6852,15 +6852,15 @@ function nlYoursPanelHtml(leftover) {
   return `
     <div class="nl-figs">
       <div class="nl-fig">
+        <span>${t('nl_free_to_spend')}</span>
+        <strong style="color:${free < 0 ? 'var(--expense)' : 'var(--income)'}">${free < 0 ? '\u2212' : ''}${fmt(Math.abs(free))}</strong>
+        <em>${rate}</em>
+      </div>
+      <div class="nl-fig">
         <span>${t('nl_still_to_pay')}${c.items.length ? `<button class="nl-due-toggle" type="button" id="nlDueToggle"
         aria-expanded="${open}">${open ? t('nl_hide') : t('nl_show')}</button>` : ''}</span>
         <strong style="color:var(--expense)">${fmt(c.total)}</strong>
         <em>${c.total > 0 ? (endLabel ? tf('nl_due_before', endLabel) : '') : t('nl_nothing_due')}</em>
-      </div>
-      <div class="nl-fig">
-        <span>${t('nl_free_to_spend')}</span>
-        <strong style="color:${free < 0 ? 'var(--expense)' : 'var(--income)'}">${free < 0 ? '\u2212' : ''}${fmt(Math.abs(free))}</strong>
-        <em>${rate}</em>
       </div>
     </div>
     ${c.items.length && open ? `<div class="nl-due" id="nlDueList">
