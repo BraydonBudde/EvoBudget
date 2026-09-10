@@ -468,10 +468,19 @@ function getUpcomingEvents(days, act) {
   };
   for(const b of state.budgets.bills||[])
     if(b.dueDate) push(parseInt(b.dueDate.split('-')[2]),b.category,'bill',rowRemaining(b)||(b.expected||0),'#fb923c',b.paid,b.id,rowPaidAmount(b),b.expected||0);
+  // Debts and subscriptions store no payment links, so what has gone in is
+  // whatever the period's transactions say. Both owe the remainder, not the
+  // full amount, exactly as a part-paid bill does.
   for(const d of state.debts)
-    if(d.dueDay) push(d.dueDay,d.name,'debt',d.minimumPayment||0,'#a855f7',(debtAct[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0,d.id,0,d.minimumPayment||0);
+    if(d.dueDay){
+      const exp=d.minimumPayment||0, done=subOrDebtPaid(debtAct,d.name);
+      push(d.dueDay,d.name,'debt',Math.max(0,payRound2(exp-done)),'#a855f7',exp>0&&done>=exp,d.id,done,exp);
+    }
   for(const s of state.subscriptions.filter(s=>s.active!==false))
-    if(s.nextBillingDate) push(parseInt(s.nextBillingDate.split('-')[2]),s.name,'subscription',monthlySubAmt(s),'#10b981',(subAct[s.name]||0)>0,s.id,0,monthlySubAmt(s));
+    if(s.nextBillingDate){
+      const exp=monthlySubAmt(s)||0, done=subOrDebtPaid(subAct,s.name);
+      push(parseInt(s.nextBillingDate.split('-')[2]),s.name,'subscription',Math.max(0,payRound2(exp-done)),'#10b981',exp>0?done>=exp:done>0,s.id,done,exp);
+    }
   // Scheduled automatic transactions (manual + sinking-fund contributions)
   if(state.settings?.automationEnabled!==false){
     const startISO=toLocalISO(now), endISO=toLocalISO(end);
@@ -4403,6 +4412,10 @@ function setRowPayments(row, ids) {
 // its payments are the ones it links to. Debts and subscriptions keep none -
 // theirs is worked out from the transactions - so their payments are simply
 // the matching transactions inside the current period.
+// Debt and subscription payments are read back out of the period's
+// transactions, matched on the entity's name.
+function subOrDebtPaid(actuals, name) { return payRound2(Number(actuals[name]) || 0); }
+
 function payTarget(kind, id) {
   if (kind === 'bill') {
     const row = (state.budgets.bills || []).find(b => b.id === id);
@@ -5530,9 +5543,17 @@ function renderCalendar(){
   }}
   // Debts and subscriptions keep no paid flag of their own, so they get a Pay
   // button rather than a tick box that could never be unticked.
-  const debtAct=computeActuals().debt||{}, subAct=computeActuals().subscription||{};
-  for(const d of state.debts)if(d.dueDay&&d.dueDay>=1&&d.dueDay<=daysInMo)addEv(d.dueDay,{type:'debt',id:d.id,label:d.name,amount:d.minimumPayment||0,color:'#a855f7',settled:(debtAct[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0});
-  for(const s of state.subscriptions.filter(s=>s.active!==false))if(s.nextBillingDate){const d=parseInt(s.nextBillingDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'subscription',id:s.id,label:s.name,amount:monthlySubAmt(s),color:'#10b981',settled:(subAct[s.name]||0)>0});}
+  const calAct=computeActuals(), debtAct=calAct.debt||{}, subAct=calAct.subscription||{};
+  for(const d of state.debts)if(d.dueDay&&d.dueDay>=1&&d.dueDay<=daysInMo){
+    const exp=d.minimumPayment||0, done=subOrDebtPaid(debtAct,d.name);
+    addEv(d.dueDay,{type:'debt',id:d.id,label:d.name,color:'#a855f7',expected:exp,
+      amount:Math.max(0,payRound2(exp-done))||exp,part:done>0&&done<exp?done:0,settled:exp>0&&done>=exp});
+  }
+  for(const s of state.subscriptions.filter(s=>s.active!==false))if(s.nextBillingDate){const d=parseInt(s.nextBillingDate.split('-')[2]);if(d>=1&&d<=daysInMo){
+    const exp=monthlySubAmt(s)||0, done=subOrDebtPaid(subAct,s.name);
+    addEv(d,{type:'subscription',id:s.id,label:s.name,color:'#10b981',expected:exp,
+      amount:Math.max(0,payRound2(exp-done))||exp,part:done>0&&done<exp?done:0,settled:exp>0?done>=exp:done>0});
+  }}
   const monthStr=`${y}-${String(m+1).padStart(2,'0')}`;
   // A transaction created by ticking a bill "paid" is the same money as the
   // bill event above (which already shows the ✓ Paid state + real amount) -
@@ -5571,7 +5592,9 @@ function renderCalendar(){
         : `<label class="cal-mark-paid check-label"><input type="checkbox" data-mark-paid-id="${ev.id}"><span class="checkmark checkmark--sm"></span><span>${t('cal_mark_paid')}</span></label>`;
     }
     if(ev.type==='debt'||ev.type==='subscription'){
-      return `${ev.settled?`<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`:''}<button class="pay-btn" type="button" data-cal-pay="${ev.type}" data-cal-id="${ev.id}">${t('pay_btn')}</button>`;
+      const status=ev.settled?`<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`
+        :ev.part>0?`<span class="cal-ev-status is-part">${tf('nl_partial_of',fmt(ev.part),fmt(ev.expected))}</span>`:'';
+      return `${status}<button class="pay-btn" type="button" data-cal-pay="${ev.type}" data-cal-id="${ev.id}">${t('pay_btn')}</button>`;
     }
     return '';
   };
