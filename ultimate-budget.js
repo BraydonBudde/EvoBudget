@@ -4365,6 +4365,13 @@ function promptMarkBillPaid(billId, onDone) {
   const amtEl = document.getElementById('billPaidAmt');
   amtEl?.addEventListener('input', () => { amtEl.classList.remove('fk-invalid'); const e = document.getElementById('billPaidErr'); if (e) e.hidden = true; });
   document.getElementById('billPaidSaveBtn')?.addEventListener('click', () => {
+    // Marking a bill paid writes a transaction, so it has to respect the same
+    // trial cap as every other way of adding one.
+    if (trialBlocks('transaction')) {
+      document.getElementById('tutorialOverlay').hidden = true;
+      showUpgradeModal({ reason: 'transaction' });
+      return;
+    }
     const amt = parseFloat(amtEl?.value);
     if (!(amt > 0)) {
       amtEl?.classList.add('fk-invalid');

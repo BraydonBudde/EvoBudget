@@ -3120,6 +3120,13 @@ function promptMarkModulePaid(type, rowId, onDone) {
   const amtEl = document.getElementById('modPaidAmt');
   amtEl?.addEventListener('input', () => { amtEl.classList.remove('fk-invalid'); const e = document.getElementById('modPaidErr'); if (e) e.hidden = true; });
   document.getElementById('modPaidSaveBtn')?.addEventListener('click', () => {
+    // Marking a row paid writes a transaction, so it has to respect the same
+    // trial cap as every other way of adding one.
+    if (trialBlocks('transaction')) {
+      document.getElementById('tutorialOverlay').hidden = true;
+      showUpgradeModal({ reason: 'transaction' });
+      return;
+    }
     const amt = parseFloat(amtEl?.value);
     if (!(amt > 0)) {
       amtEl?.classList.add('fk-invalid');
