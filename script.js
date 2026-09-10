@@ -40,6 +40,16 @@ function formatDateDisplay(dateStr) {
   return new Date(y, m - 1, d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+// Day and month only. Everything in the hero's list falls inside the
+// current period, so the year carries no information.
+function formatDateShort(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d)
+    .toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+    .replace(/\bSept\b/, 'Sep');
+}
+
 // Currencies where the symbol goes AFTER the amount  (e.g. "100 zł")
 const POST_SYM = new Set(['PLN','SEK','NOK','DKK','HUF','CZK','RON','HRK']);
 
@@ -276,7 +286,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Total Income',dash_stat_of_expected:'of {0} expected',
     dash_stat_exp_bills:'Expenses &amp; Bills',dash_stat_of_budgeted:'of {0} budgeted',
     dash_stat_debt:'Debt Payments',dash_stat_savings:'Total Savings',dash_stat_of_goal:'of {0} goal',
-    dash_net_leftover_period:'Net Leftover this period',nl_breakdown:'Breakdown',nl_spent_today:'Spent today',nl_upcoming_title:'Before this period ends',nl_show:'Show',nl_hide:'Hide',nl_more_due:'{0} more due before {1}',nl_partial_of:'{0} of {1} paid',pay_btn:'Pay',paid_partial:'Partial',pay_partial_hint:'{0} will still be outstanding. {1} stays open.',pay_already_hint:'{0} already paid of {1} budgeted.',pay_save_partial:'Log part payment',pay_logged_title:'Payments logged',pay_remove_aria:'Remove this payment',toast_payment_removed:'Payment removed',nl_still_to_pay:'Still to pay',nl_free_to_spend:'Free to spend',nl_due_before:'before {0}',nl_nothing_due:'Nothing else due this period',nl_free_rate:'{0} a day for {1} days',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',dash_includes_rollover:'Includes {0} rollover from last period',
+    dash_net_leftover_period:'Net Leftover this period',nl_breakdown:'Breakdown',nl_spent_today:'Spent today',nl_upcoming_title:'Upcoming payments',nl_all_due:'{0} due before {1}',nl_show:'Show',nl_hide:'Hide',nl_more_due:'{0} more due before {1}',nl_partial_of:'{0} of {1} paid',pay_btn:'Pay',paid_partial:'Partial',pay_partial_hint:'{0} will still be outstanding. {1} stays open.',pay_already_hint:'{0} already paid of {1} budgeted.',pay_save_partial:'Log part payment',pay_logged_title:'Payments logged',pay_remove_aria:'Remove this payment',toast_payment_removed:'Payment removed',nl_still_to_pay:'Still to pay',nl_free_to_spend:'Free to spend',nl_due_before:'before {0}',nl_nothing_due:'Nothing else due this period',nl_free_rate:'{0} a day for {1} days',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',dash_includes_rollover:'Includes {0} rollover from last period',
     dash_lf_income:'income',dash_lf_exp_bills:'exp &amp; bills',dash_lf_debt:'debt',dash_lf_savings:'savings',dash_lf_rollover:'rollover',
     dash_cash_flow:'Cash Flow - Expected vs Actual',dash_income_kept:'of income kept',dash_expected:'Expected',dash_actual:'Actual',
     dash_daily_spend:'Daily Spend',dash_daily_spend_caption:'total spend this period',spend_tip_more:'+{0} more',dash_other_category:'Other',
@@ -535,7 +545,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Gesamteinnahmen',dash_stat_of_expected:'von {0} erwartet',
     dash_stat_exp_bills:'Ausgaben &amp; Rechnungen',dash_stat_of_budgeted:'von {0} budgetiert',
     dash_stat_debt:'Schuldenzahlungen',dash_stat_savings:'Gesamtersparnisse',dash_stat_of_goal:'von {0} Ziel',
-    dash_net_leftover_period:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_spent_today:'Heute ausgegeben',nl_upcoming_title:'Vor Ende dieser Periode',nl_show:'Anzeigen',nl_hide:'Ausblenden',nl_more_due:'{0} weitere fällig vor dem {1}',nl_partial_of:'{0} von {1} bezahlt',pay_btn:'Zahlen',paid_partial:'Teilweise',pay_partial_hint:'{0} bleiben offen. {1} bleibt weiter fällig.',pay_already_hint:'{0} von {1} budgetiert bereits bezahlt.',pay_save_partial:'Teilzahlung erfassen',pay_logged_title:'Erfasste Zahlungen',pay_remove_aria:'Diese Zahlung entfernen',toast_payment_removed:'Zahlung entfernt',nl_still_to_pay:'Noch zu zahlen',nl_free_to_spend:'Frei verf\u00fcgbar',nl_due_before:'vor dem {0}',nl_nothing_due:'Nichts weiter f\u00e4llig in dieser Periode',nl_free_rate:'{0} pro Tag f\u00fcr {1} Tage',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
+    dash_net_leftover_period:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_spent_today:'Heute ausgegeben',nl_upcoming_title:'Anstehende Zahlungen',nl_all_due:'{0} fällig vor dem {1}',nl_show:'Anzeigen',nl_hide:'Ausblenden',nl_more_due:'{0} weitere fällig vor dem {1}',nl_partial_of:'{0} von {1} bezahlt',pay_btn:'Zahlen',paid_partial:'Teilweise',pay_partial_hint:'{0} bleiben offen. {1} bleibt weiter fällig.',pay_already_hint:'{0} von {1} budgetiert bereits bezahlt.',pay_save_partial:'Teilzahlung erfassen',pay_logged_title:'Erfasste Zahlungen',pay_remove_aria:'Diese Zahlung entfernen',toast_payment_removed:'Zahlung entfernt',nl_still_to_pay:'Noch zu zahlen',nl_free_to_spend:'Frei verf\u00fcgbar',nl_due_before:'vor dem {0}',nl_nothing_due:'Nichts weiter f\u00e4llig in dieser Periode',nl_free_rate:'{0} pro Tag f\u00fcr {1} Tage',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
     dash_lf_income:'Einnahmen',dash_lf_exp_bills:'Ausg. &amp; Rechn.',dash_lf_debt:'Schulden',dash_lf_savings:'Ersparnisse',dash_lf_rollover:'Übertrag',
     dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_income_kept:'des Einkommens behalten',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
     dash_daily_spend:'Tägliche Ausgaben',dash_daily_spend_caption:'Ausgaben insgesamt in diesem Zeitraum',spend_tip_more:'+{0} weitere',dash_other_category:'Sonstiges',
@@ -794,7 +804,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Revenu total',dash_stat_of_expected:'sur {0} prévu',
     dash_stat_exp_bills:'Dépenses &amp; Factures',dash_stat_of_budgeted:'sur {0} budgétisé',
     dash_stat_debt:'Paiements de dettes',dash_stat_savings:'Épargne totale',dash_stat_of_goal:'sur {0} objectif',
-    dash_net_leftover_period:'Solde net de cette période',nl_breakdown:'Détail',nl_spent_today:'Dépensé aujourd’hui',nl_upcoming_title:'Avant la fin de cette période',nl_show:'Afficher',nl_hide:'Masquer',nl_more_due:'{0} autres à payer avant le {1}',nl_partial_of:'{0} sur {1} payé',pay_btn:'Payer',paid_partial:'Partiel',pay_partial_hint:'Il restera {0} à payer. {1} reste ouvert.',pay_already_hint:'{0} déjà payé sur {1} budgété.',pay_save_partial:'Enregistrer un paiement partiel',pay_logged_title:'Paiements enregistrés',pay_remove_aria:'Supprimer ce paiement',toast_payment_removed:'Paiement supprimé',nl_still_to_pay:'Encore \u00e0 payer',nl_free_to_spend:'Libre \u00e0 d\u00e9penser',nl_due_before:'avant le {0}',nl_nothing_due:'Plus rien \u00e0 payer cette p\u00e9riode',nl_free_rate:'{0} par jour pendant {1} jours',nl_income_kept:'Revenu conserv\u00e9',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',dash_includes_rollover:'Inclut {0} de report de la période précédente',
+    dash_net_leftover_period:'Solde net de cette période',nl_breakdown:'Détail',nl_spent_today:'Dépensé aujourd’hui',nl_upcoming_title:'Paiements à venir',nl_all_due:'{0} à payer avant le {1}',nl_show:'Afficher',nl_hide:'Masquer',nl_more_due:'{0} autres à payer avant le {1}',nl_partial_of:'{0} sur {1} payé',pay_btn:'Payer',paid_partial:'Partiel',pay_partial_hint:'Il restera {0} à payer. {1} reste ouvert.',pay_already_hint:'{0} déjà payé sur {1} budgété.',pay_save_partial:'Enregistrer un paiement partiel',pay_logged_title:'Paiements enregistrés',pay_remove_aria:'Supprimer ce paiement',toast_payment_removed:'Paiement supprimé',nl_still_to_pay:'Encore \u00e0 payer',nl_free_to_spend:'Libre \u00e0 d\u00e9penser',nl_due_before:'avant le {0}',nl_nothing_due:'Plus rien \u00e0 payer cette p\u00e9riode',nl_free_rate:'{0} par jour pendant {1} jours',nl_income_kept:'Revenu conserv\u00e9',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',dash_includes_rollover:'Inclut {0} de report de la période précédente',
     dash_lf_income:'revenus',dash_lf_exp_bills:'dép. &amp; fact.',dash_lf_debt:'dettes',dash_lf_savings:'épargne',dash_lf_rollover:'report',
     dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_income_kept:'du revenu conservé',dash_expected:'Prévu',dash_actual:'Réel',
     dash_daily_spend:'Dépenses quotidiennes',dash_daily_spend_caption:'dépenses totales sur la période',spend_tip_more:'+{0} de plus',dash_other_category:'Autre',
@@ -1053,7 +1063,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Ingresos totales',dash_stat_of_expected:'de {0} previsto',
     dash_stat_exp_bills:'Gastos &amp; Facturas',dash_stat_of_budgeted:'de {0} presupuestado',
     dash_stat_debt:'Pagos de deudas',dash_stat_savings:'Ahorros totales',dash_stat_of_goal:'de {0} objetivo',
-    dash_net_leftover_period:'Saldo neto de este período',nl_breakdown:'Desglose',nl_spent_today:'Gastado hoy',nl_upcoming_title:'Antes de que termine este período',nl_show:'Mostrar',nl_hide:'Ocultar',nl_more_due:'{0} más antes del {1}',nl_partial_of:'{0} de {1} pagado',pay_btn:'Pagar',paid_partial:'Parcial',pay_partial_hint:'Quedarán {0} pendientes. {1} sigue abierto.',pay_already_hint:'{0} ya pagado de {1} presupuestado.',pay_save_partial:'Registrar pago parcial',pay_logged_title:'Pagos registrados',pay_remove_aria:'Eliminar este pago',toast_payment_removed:'Pago eliminado',nl_still_to_pay:'Pendiente de pago',nl_free_to_spend:'Libre para gastar',nl_due_before:'antes del {0}',nl_nothing_due:'Nada m\u00e1s por pagar este per\u00edodo',nl_free_rate:'{0} al d\u00eda durante {1} d\u00edas',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
+    dash_net_leftover_period:'Saldo neto de este período',nl_breakdown:'Desglose',nl_spent_today:'Gastado hoy',nl_upcoming_title:'Próximos pagos',nl_all_due:'{0} antes del {1}',nl_show:'Mostrar',nl_hide:'Ocultar',nl_more_due:'{0} más antes del {1}',nl_partial_of:'{0} de {1} pagado',pay_btn:'Pagar',paid_partial:'Parcial',pay_partial_hint:'Quedarán {0} pendientes. {1} sigue abierto.',pay_already_hint:'{0} ya pagado de {1} presupuestado.',pay_save_partial:'Registrar pago parcial',pay_logged_title:'Pagos registrados',pay_remove_aria:'Eliminar este pago',toast_payment_removed:'Pago eliminado',nl_still_to_pay:'Pendiente de pago',nl_free_to_spend:'Libre para gastar',nl_due_before:'antes del {0}',nl_nothing_due:'Nada m\u00e1s por pagar este per\u00edodo',nl_free_rate:'{0} al d\u00eda durante {1} d\u00edas',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
     dash_lf_income:'ingresos',dash_lf_exp_bills:'gastos &amp; fact.',dash_lf_debt:'deudas',dash_lf_savings:'ahorros',dash_lf_rollover:'arrastre',
     dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_income_kept:'de ingresos conservados',dash_expected:'Previsto',dash_actual:'Real',
     dash_daily_spend:'Gasto diario',dash_daily_spend_caption:'gasto total en este período',spend_tip_more:'+{0} más',dash_other_category:'Otro',
@@ -1311,7 +1321,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Entrate totali',dash_stat_of_expected:'di {0} previsto',
     dash_stat_exp_bills:'Spese &amp; Bollette',dash_stat_of_budgeted:'di {0} a budget',
     dash_stat_debt:'Pagamenti debiti',dash_stat_savings:'Risparmi totali',dash_stat_of_goal:'di {0} obiettivo',
-    dash_net_leftover_period:'Saldo netto di questo periodo',nl_breakdown:'Dettaglio',nl_spent_today:'Speso oggi',nl_upcoming_title:'Prima della fine di questo periodo',nl_show:'Mostra',nl_hide:'Nascondi',nl_more_due:'Altri {0} entro il {1}',nl_partial_of:'{0} di {1} pagato',pay_btn:'Paga',paid_partial:'Parziale',pay_partial_hint:'Resteranno {0} da pagare. {1} resta aperto.',pay_already_hint:'{0} già pagato su {1} preventivato.',pay_save_partial:'Registra pagamento parziale',pay_logged_title:'Pagamenti registrati',pay_remove_aria:'Rimuovi questo pagamento',toast_payment_removed:'Pagamento rimosso',nl_still_to_pay:'Ancora da pagare',nl_free_to_spend:'Libero di spendere',nl_due_before:'entro il {0}',nl_nothing_due:'Nulla da pagare in questo periodo',nl_free_rate:'{0} al giorno per {1} giorni',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
+    dash_net_leftover_period:'Saldo netto di questo periodo',nl_breakdown:'Dettaglio',nl_spent_today:'Speso oggi',nl_upcoming_title:'Prossimi pagamenti',nl_all_due:'{0} entro il {1}',nl_show:'Mostra',nl_hide:'Nascondi',nl_more_due:'Altri {0} entro il {1}',nl_partial_of:'{0} di {1} pagato',pay_btn:'Paga',paid_partial:'Parziale',pay_partial_hint:'Resteranno {0} da pagare. {1} resta aperto.',pay_already_hint:'{0} già pagato su {1} preventivato.',pay_save_partial:'Registra pagamento parziale',pay_logged_title:'Pagamenti registrati',pay_remove_aria:'Rimuovi questo pagamento',toast_payment_removed:'Pagamento rimosso',nl_still_to_pay:'Ancora da pagare',nl_free_to_spend:'Libero di spendere',nl_due_before:'entro il {0}',nl_nothing_due:'Nulla da pagare in questo periodo',nl_free_rate:'{0} al giorno per {1} giorni',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
     dash_lf_income:'entrate',dash_lf_exp_bills:'spese &amp; boll.',dash_lf_debt:'debiti',dash_lf_savings:'risparmi',dash_lf_rollover:'riporto',
     dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_income_kept:'di reddito trattenuto',dash_expected:'Previsto',dash_actual:'Effettivo',
     dash_daily_spend:'Spesa giornaliera',dash_daily_spend_caption:'spesa totale nel periodo',spend_tip_more:'+{0} altri',dash_other_category:'Altro',
@@ -1569,7 +1579,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Łączne przychody',dash_stat_of_expected:'z {0} spodziewanych',
     dash_stat_exp_bills:'Wydatki &amp; Rachunki',dash_stat_of_budgeted:'z {0} zaplanowanych',
     dash_stat_debt:'Spłaty długów',dash_stat_savings:'Łączne oszczędności',dash_stat_of_goal:'z {0} celu',
-    dash_net_leftover_period:'Saldo netto tego okresu',nl_breakdown:'Zestawienie',nl_spent_today:'Wydano dziś',nl_upcoming_title:'Przed końcem tego okresu',nl_show:'Pokaż',nl_hide:'Ukryj',nl_more_due:'Jeszcze {0} przed {1}',nl_partial_of:'Zapłacono {0} z {1}',pay_btn:'Zapłać',paid_partial:'Częściowo',pay_partial_hint:'Pozostanie {0} do zapłaty. {1} pozostaje otwarte.',pay_already_hint:'Zapłacono już {0} z {1} zaplanowanych.',pay_save_partial:'Zapisz część płatności',pay_logged_title:'Zapisane płatności',pay_remove_aria:'Usuń tę płatność',toast_payment_removed:'Płatność usunięta',nl_still_to_pay:'Do zap\u0142aty',nl_free_to_spend:'Wolne \u015brodki',nl_due_before:'przed {0}',nl_nothing_due:'Nic wi\u0119cej do zap\u0142aty w tym okresie',nl_free_rate:'{0} dziennie przez {1} dni',nl_income_kept:'Zatrzymany doch\u00f3d',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
+    dash_net_leftover_period:'Saldo netto tego okresu',nl_breakdown:'Zestawienie',nl_spent_today:'Wydano dziś',nl_upcoming_title:'Nadchodzące płatności',nl_all_due:'{0} przed {1}',nl_show:'Pokaż',nl_hide:'Ukryj',nl_more_due:'Jeszcze {0} przed {1}',nl_partial_of:'Zapłacono {0} z {1}',pay_btn:'Zapłać',paid_partial:'Częściowo',pay_partial_hint:'Pozostanie {0} do zapłaty. {1} pozostaje otwarte.',pay_already_hint:'Zapłacono już {0} z {1} zaplanowanych.',pay_save_partial:'Zapisz część płatności',pay_logged_title:'Zapisane płatności',pay_remove_aria:'Usuń tę płatność',toast_payment_removed:'Płatność usunięta',nl_still_to_pay:'Do zap\u0142aty',nl_free_to_spend:'Wolne \u015brodki',nl_due_before:'przed {0}',nl_nothing_due:'Nic wi\u0119cej do zap\u0142aty w tym okresie',nl_free_rate:'{0} dziennie przez {1} dni',nl_income_kept:'Zatrzymany doch\u00f3d',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
     dash_lf_income:'przychody',dash_lf_exp_bills:'wyd. &amp; rach.',dash_lf_debt:'długi',dash_lf_savings:'oszczędności',dash_lf_rollover:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_income_kept:'zachowanego dochodu',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
     dash_daily_spend:'Wydatki dzienne',dash_daily_spend_caption:'łączne wydatki w tym okresie',spend_tip_more:'+{0} więcej',dash_other_category:'Inne',
@@ -3526,13 +3536,16 @@ function renderTxList(){
   const el=document.getElementById('txListWrap');
   if(!el)return;
   let filtered=[...state.transactions];
+  const txSeq=new Map(state.transactions.map((tx,i)=>[tx.id,i]));
   if(txFilter.search){const q=txFilter.search.toLowerCase();filtered=filtered.filter(tx=>(tx.category||'').toLowerCase().includes(q)||(tx.description||'').toLowerCase().includes(q));}
   if(txFilter.type)filtered=filtered.filter(tx=>tx.type===txFilter.type);
   switch(txFilter.sort){
     case'date_asc':filtered.sort((a,b)=>a.date.localeCompare(b.date));break;
     case'amount_desc':filtered.sort((a,b)=>b.amount-a.amount);break;
     case'amount_asc':filtered.sort((a,b)=>a.amount-b.amount);break;
-    default:filtered.sort((a,b)=>b.date.localeCompare(a.date));
+    // Newest first, and newest within a date too, so a transaction just
+    // added sits at the top of its day rather than under the day's others.
+    default:filtered.sort((a,b)=>b.date.localeCompare(a.date)||(txSeq.get(b.id)??0)-(txSeq.get(a.id)??0));
   }
   const total=state.transactions.length,count=filtered.length;
   const totalPages=Math.max(1,Math.ceil(count/TX_PAGE_SIZE));
@@ -4478,14 +4491,11 @@ function nlYoursPanelHtml(leftover) {
   const p = nlDaysInPeriod();
   const free = leftover - c.total;
   const endLabel = state.settings.periodEnd ? formatDateDisplay(state.settings.periodEnd) : '';
+  const endShort = state.settings.periodEnd ? formatDateShort(state.settings.periodEnd) : '';
   const rate = (p.left > 0 && free > 0) ? tf('nl_free_rate', fmt(free / p.left), p.left) : '';
-  const open = state.settings.nlDueOpen !== false;
+  // Expanding reveals the rest of the list, it does not hide the list.
+  const open = state.settings.nlDueOpen === true;
   return `
-    <div class="nl-right-head">
-      <span class="nl-right-title">${t('nl_upcoming_title')}</span>
-      ${c.items.length ? `<button class="nl-due-toggle" type="button" id="nlDueToggle"
-        aria-expanded="${open}">${open ? t('nl_hide') : t('nl_show')}</button>` : ''}
-    </div>
     <div class="nl-figs">
       <div class="nl-fig">
         <span>${t('nl_still_to_pay')}</span>
@@ -4498,9 +4508,17 @@ function nlYoursPanelHtml(leftover) {
         <em>${rate}</em>
       </div>
     </div>
-    ${c.items.length && open ? `<div class="nl-due" id="nlDueList">${nlDueRowHtml(c.items[0])}${
-      c.items.length > 1 ? `<p class="nl-due-more">${tf('nl_more_due', c.items.length - 1, endLabel)}</p>` : ''
-    }</div>` : ''}`;
+    ${c.items.length ? `<div class="nl-due" id="nlDueList">
+      <div class="nl-due-title">${t('nl_upcoming_title')}</div>
+      ${(open ? c.items : c.items.slice(0, 1)).map(nlDueRowHtml).join('')}
+      ${c.items.length > 1 ? `<div class="nl-due-foot">
+        <span class="nl-due-more">${open
+          ? tf('nl_all_due', c.items.length, endShort)
+          : tf('nl_more_due', c.items.length - 1, endShort)}</span>
+        <button class="nl-due-toggle" type="button" id="nlDueToggle"
+                aria-expanded="${open}">${open ? t('nl_hide') : t('nl_show')}</button>
+      </div>` : ''}
+    </div>` : ''}`;
 }
 
 // Only the next payment is listed. One button, nothing beside it to catch a
@@ -4509,7 +4527,7 @@ function nlDueRowHtml(i) {
   return `<div class="nl-due-row nl-due-row--pay">
     <span>${esc(i.label)}${i.paidSoFar > 0
       ? `<em class="nl-part">${tf('nl_partial_of', fmt(i.paidSoFar), fmt(i.expected))}</em>` : ''}</span>
-    <time>${esc(formatDateDisplay(i.date))}</time><b>${fmt(i.amount)}</b>
+    <time>${esc(formatDateShort(i.date))}</time><b>${fmt(i.amount)}</b>
     <button class="pay-btn" type="button" data-pay-type="${esc(i.type)}" data-pay-id="${esc(i.id)}">${t('pay_btn')}</button>
   </div>`;
 }
@@ -4518,7 +4536,7 @@ function nlDueRowHtml(i) {
 // other write on this screen does, so paying keeps the figures in step.
 function wireNlHero(scope) {
   scope.querySelector('#nlDueToggle')?.addEventListener('click', () => {
-    state.settings.nlDueOpen = state.settings.nlDueOpen === false;
+    state.settings.nlDueOpen = state.settings.nlDueOpen !== true;
     saveState();
     renderDashboard();
   });
