@@ -276,7 +276,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Total Income',dash_stat_of_expected:'of {0} expected',
     dash_stat_exp_bills:'Expenses &amp; Bills',dash_stat_of_budgeted:'of {0} budgeted',
     dash_stat_debt:'Debt Payments',dash_stat_savings:'Total Savings',dash_stat_of_goal:'of {0} goal',
-    dash_net_leftover_period:'Net Leftover this period',nl_breakdown:'Breakdown',nl_spent_today:'Spent today',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',dash_includes_rollover:'Includes {0} rollover from last period',
+    dash_net_leftover_period:'Net Leftover this period',nl_breakdown:'Breakdown',nl_spent_today:'Spent today',nl_yours_title:'What\u2019s actually yours',nl_still_to_pay:'Still to pay',nl_free_to_spend:'Free to spend',nl_due_before:'before {0}',nl_nothing_due:'Nothing else due this period',nl_free_rate:'{0} a day for {1} days',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',dash_includes_rollover:'Includes {0} rollover from last period',
     dash_lf_income:'income',dash_lf_exp_bills:'exp &amp; bills',dash_lf_debt:'debt',dash_lf_savings:'savings',dash_lf_rollover:'rollover',
     dash_cash_flow:'Cash Flow - Expected vs Actual',dash_income_kept:'of income kept',dash_expected:'Expected',dash_actual:'Actual',
     dash_daily_spend:'Daily Spend',dash_daily_spend_caption:'total spend this period',spend_tip_more:'+{0} more',dash_other_category:'Other',
@@ -535,7 +535,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Gesamteinnahmen',dash_stat_of_expected:'von {0} erwartet',
     dash_stat_exp_bills:'Ausgaben &amp; Rechnungen',dash_stat_of_budgeted:'von {0} budgetiert',
     dash_stat_debt:'Schuldenzahlungen',dash_stat_savings:'Gesamtersparnisse',dash_stat_of_goal:'von {0} Ziel',
-    dash_net_leftover_period:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_spent_today:'Heute ausgegeben',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
+    dash_net_leftover_period:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_spent_today:'Heute ausgegeben',nl_yours_title:'Was wirklich dir geh\u00f6rt',nl_still_to_pay:'Noch zu zahlen',nl_free_to_spend:'Frei verf\u00fcgbar',nl_due_before:'vor dem {0}',nl_nothing_due:'Nichts weiter f\u00e4llig in dieser Periode',nl_free_rate:'{0} pro Tag f\u00fcr {1} Tage',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',dash_includes_rollover:'Enthält {0} Übertrag aus der letzten Periode',
     dash_lf_income:'Einnahmen',dash_lf_exp_bills:'Ausg. &amp; Rechn.',dash_lf_debt:'Schulden',dash_lf_savings:'Ersparnisse',dash_lf_rollover:'Übertrag',
     dash_cash_flow:'Cashflow - Erwartet vs. Tatsächlich',dash_income_kept:'des Einkommens behalten',dash_expected:'Erwartet',dash_actual:'Tatsächlich',
     dash_daily_spend:'Tägliche Ausgaben',dash_daily_spend_caption:'Ausgaben insgesamt in diesem Zeitraum',spend_tip_more:'+{0} weitere',dash_other_category:'Sonstiges',
@@ -794,7 +794,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Revenu total',dash_stat_of_expected:'sur {0} prévu',
     dash_stat_exp_bills:'Dépenses &amp; Factures',dash_stat_of_budgeted:'sur {0} budgétisé',
     dash_stat_debt:'Paiements de dettes',dash_stat_savings:'Épargne totale',dash_stat_of_goal:'sur {0} objectif',
-    dash_net_leftover_period:'Solde net de cette période',nl_breakdown:'Détail',nl_spent_today:'Dépensé aujourd’hui',nl_income_kept:'Revenu conservé',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',dash_includes_rollover:'Inclut {0} de report de la période précédente',
+    dash_net_leftover_period:'Solde net de cette période',nl_breakdown:'Détail',nl_spent_today:'Dépensé aujourd’hui',nl_yours_title:'Ce qui vous reste vraiment',nl_still_to_pay:'Encore \u00e0 payer',nl_free_to_spend:'Libre \u00e0 d\u00e9penser',nl_due_before:'avant le {0}',nl_nothing_due:'Plus rien \u00e0 payer cette p\u00e9riode',nl_free_rate:'{0} par jour pendant {1} jours',nl_income_kept:'Revenu conserv\u00e9',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',dash_includes_rollover:'Inclut {0} de report de la période précédente',
     dash_lf_income:'revenus',dash_lf_exp_bills:'dép. &amp; fact.',dash_lf_debt:'dettes',dash_lf_savings:'épargne',dash_lf_rollover:'report',
     dash_cash_flow:'Flux de trésorerie - Prévu vs Réel',dash_income_kept:'du revenu conservé',dash_expected:'Prévu',dash_actual:'Réel',
     dash_daily_spend:'Dépenses quotidiennes',dash_daily_spend_caption:'dépenses totales sur la période',spend_tip_more:'+{0} de plus',dash_other_category:'Autre',
@@ -1053,7 +1053,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Ingresos totales',dash_stat_of_expected:'de {0} previsto',
     dash_stat_exp_bills:'Gastos &amp; Facturas',dash_stat_of_budgeted:'de {0} presupuestado',
     dash_stat_debt:'Pagos de deudas',dash_stat_savings:'Ahorros totales',dash_stat_of_goal:'de {0} objetivo',
-    dash_net_leftover_period:'Saldo neto de este período',nl_breakdown:'Desglose',nl_spent_today:'Gastado hoy',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
+    dash_net_leftover_period:'Saldo neto de este período',nl_breakdown:'Desglose',nl_spent_today:'Gastado hoy',nl_yours_title:'Lo que es realmente tuyo',nl_still_to_pay:'Pendiente de pago',nl_free_to_spend:'Libre para gastar',nl_due_before:'antes del {0}',nl_nothing_due:'Nada m\u00e1s por pagar este per\u00edodo',nl_free_rate:'{0} al d\u00eda durante {1} d\u00edas',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',dash_includes_rollover:'Incluye {0} de arrastre del período anterior',
     dash_lf_income:'ingresos',dash_lf_exp_bills:'gastos &amp; fact.',dash_lf_debt:'deudas',dash_lf_savings:'ahorros',dash_lf_rollover:'arrastre',
     dash_cash_flow:'Flujo de caja - Previsto vs Real',dash_income_kept:'de ingresos conservados',dash_expected:'Previsto',dash_actual:'Real',
     dash_daily_spend:'Gasto diario',dash_daily_spend_caption:'gasto total en este período',spend_tip_more:'+{0} más',dash_other_category:'Otro',
@@ -1311,7 +1311,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Entrate totali',dash_stat_of_expected:'di {0} previsto',
     dash_stat_exp_bills:'Spese &amp; Bollette',dash_stat_of_budgeted:'di {0} a budget',
     dash_stat_debt:'Pagamenti debiti',dash_stat_savings:'Risparmi totali',dash_stat_of_goal:'di {0} obiettivo',
-    dash_net_leftover_period:'Saldo netto di questo periodo',nl_breakdown:'Dettaglio',nl_spent_today:'Speso oggi',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
+    dash_net_leftover_period:'Saldo netto di questo periodo',nl_breakdown:'Dettaglio',nl_spent_today:'Speso oggi',nl_yours_title:'Ci\u00f2 che \u00e8 davvero tuo',nl_still_to_pay:'Ancora da pagare',nl_free_to_spend:'Libero di spendere',nl_due_before:'entro il {0}',nl_nothing_due:'Nulla da pagare in questo periodo',nl_free_rate:'{0} al giorno per {1} giorni',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',dash_includes_rollover:'Include {0} di riporto dal periodo precedente',
     dash_lf_income:'entrate',dash_lf_exp_bills:'spese &amp; boll.',dash_lf_debt:'debiti',dash_lf_savings:'risparmi',dash_lf_rollover:'riporto',
     dash_cash_flow:'Flusso di cassa - Previsto vs Effettivo',dash_income_kept:'di reddito trattenuto',dash_expected:'Previsto',dash_actual:'Effettivo',
     dash_daily_spend:'Spesa giornaliera',dash_daily_spend_caption:'spesa totale nel periodo',spend_tip_more:'+{0} altri',dash_other_category:'Altro',
@@ -1569,7 +1569,7 @@ const TRANSLATIONS = {
     dash_stat_income:'Łączne przychody',dash_stat_of_expected:'z {0} spodziewanych',
     dash_stat_exp_bills:'Wydatki &amp; Rachunki',dash_stat_of_budgeted:'z {0} zaplanowanych',
     dash_stat_debt:'Spłaty długów',dash_stat_savings:'Łączne oszczędności',dash_stat_of_goal:'z {0} celu',
-    dash_net_leftover_period:'Saldo netto tego okresu',nl_breakdown:'Zestawienie',nl_spent_today:'Wydano dziś',nl_income_kept:'Zatrzymany dochód',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
+    dash_net_leftover_period:'Saldo netto tego okresu',nl_breakdown:'Zestawienie',nl_spent_today:'Wydano dziś',nl_yours_title:'Co naprawd\u0119 jest twoje',nl_still_to_pay:'Do zap\u0142aty',nl_free_to_spend:'Wolne \u015brodki',nl_due_before:'przed {0}',nl_nothing_due:'Nic wi\u0119cej do zap\u0142aty w tym okresie',nl_free_rate:'{0} dziennie przez {1} dni',nl_income_kept:'Zatrzymany doch\u00f3d',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',dash_includes_rollover:'Zawiera {0} przeniesienia z poprzedniego okresu',
     dash_lf_income:'przychody',dash_lf_exp_bills:'wyd. &amp; rach.',dash_lf_debt:'długi',dash_lf_savings:'oszczędności',dash_lf_rollover:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki - Spodziewane vs Rzeczywiste',dash_income_kept:'zachowanego dochodu',dash_expected:'Spodziewane',dash_actual:'Rzeczywiste',
     dash_daily_spend:'Wydatki dzienne',dash_daily_spend_caption:'łączne wydatki w tym okresie',spend_tip_more:'+{0} więcej',dash_other_category:'Inne',
@@ -2749,12 +2749,7 @@ function renderDashboardLayout1() {
     </div>
     ${periodBarHtml()}
 
-    ${nlHeroHtml(sum.leftover, [
-      ['+', t('dash_lf_income'), sum.totalIncome, 'var(--income)'],
-      ['\u2212', t('dash_lf_exp_bills'), sum.totalExpBills, 'var(--expense)'],
-      ['\u2212', t('dash_lf_debt'), sum.totalDebt, 'var(--debt)'],
-      ['\u2212', t('dash_lf_savings'), sum.totalSavings, 'var(--savings)']
-    ], { income: sum.totalIncome })}
+    ${nlHeroHtml(sum.leftover, { income: sum.totalIncome })}
 
     <div class="dashboard-grid">
       <div class="panel cash-flow-panel">
@@ -2931,12 +2926,7 @@ function renderDashboardLayout2() {
     </div>
     ${periodBarHtml()}
 
-    ${nlHeroHtml(sum.leftover, [
-      ['+', t('dash_lf_income'), sum.totalIncome, 'var(--income)'],
-      ['\u2212', t('dash_lf_exp_bills'), sum.totalExpBills, 'var(--expense)'],
-      ['\u2212', t('dash_lf_debt'), sum.totalDebt, 'var(--debt)'],
-      ['\u2212', t('dash_lf_savings'), sum.totalSavings, 'var(--savings)']
-    ], { income: sum.totalIncome })}
+    ${nlHeroHtml(sum.leftover, { income: sum.totalIncome })}
 
     <div class="dashboard-grid">
       <div class="panel cash-flow-hero-panel" data-chart-scope>
@@ -4335,24 +4325,76 @@ function nlSpentToday() {
     (s, tx) => (tx.date === today && NL_SPEND_TYPES.indexOf(tx.type) !== -1) ? s + (Number(tx.amount) || 0) : s, 0);
 }
 
-function nlRow(op, label, amount, colour) {
-  return `<div class="nl-row"><i class="nl-op">${op}</i><span>${label}</span><b style="color:${colour}">${fmt(amount)}</b></div>`;
-}
-
 // rows: [op, label, amount, colour][] - each app supplies the components its
 // own leftover formula uses, so the sum shown always matches the sum used.
-function nlHeroHtml(leftover, rows, opts) {
+// Money already spoken for: unpaid bill and debt rows whose due date still
+// falls inside this period. Their expected amount is used, because by
+// definition nothing has been paid against them yet.
+function nlCommitted() {
+  const today = toLocalISO(new Date());
+  const end = state.settings.periodEnd || '';
+  const items = [];
+  ['bills', 'debt'].forEach(type => {
+    (state.budgets[type] || []).forEach(r => {
+      if (r.paid || !r.dueDate) return;
+      if (r.dueDate < today) return;
+      if (end && r.dueDate > end) return;
+      const amt = Number(r.expected) || 0;
+      if (amt > 0) items.push({ label: r.category, date: r.dueDate, amount: amt });
+    });
+  });
+  items.sort((a, b) => a.date.localeCompare(b.date));
+  return { total: items.reduce((s, i) => s + i.amount, 0), items: items };
+}
+
+// The right-hand panel. Splits the headline figure into what is already
+// committed and what is genuinely free, because a leftover of 3,000 with
+// rent still to go is not 3,000 you can spend.
+function nlYoursPanelHtml(leftover) {
+  const c = nlCommitted();
+  const p = nlDaysInPeriod();
+  const free = leftover - c.total;
+  // The bar is scaled to the leftover, so "committed fills the whole bar" is
+  // exactly the case where more is due than remains.
+  const base = leftover > 0 ? leftover : 0;
+  const cPct = base > 0 ? Math.min(100, c.total / base * 100) : (c.total > 0 ? 100 : 0);
+  const endLabel = state.settings.periodEnd ? formatDateDisplay(state.settings.periodEnd) : '';
+  const rate = (p.left > 0 && free > 0) ? tf('nl_free_rate', fmt(free / p.left), p.left) : '';
+  return `
+    <div class="nl-right-title">${t('nl_yours_title')}</div>
+    <div class="nl-split"><i class="nl-split-committed" style="width:${cPct}%"></i></div>
+    <div class="nl-figs">
+      <div class="nl-fig">
+        <span>${t('nl_still_to_pay')}</span>
+        <strong style="color:var(--expense)">${fmt(c.total)}</strong>
+        <em>${c.total > 0 ? (endLabel ? tf('nl_due_before', endLabel) : '') : t('nl_nothing_due')}</em>
+      </div>
+      <div class="nl-fig">
+        <span>${t('nl_free_to_spend')}</span>
+        <strong style="color:${free < 0 ? 'var(--expense)' : 'var(--income)'}">${free < 0 ? '\u2212' : ''}${fmt(Math.abs(free))}</strong>
+        <em>${rate}</em>
+      </div>
+    </div>
+    ${c.items.length ? `<div class="nl-due">${c.items.slice(0, 4).map(i =>
+      `<div class="nl-due-row"><span>${esc(i.label)}</span><time>${esc(formatDateDisplay(i.date))}</time><b>${fmt(i.amount)}</b></div>`
+    ).join('')}</div>` : ''}`;
+}
+
+function nlHeroHtml(leftover, opts) {
   const o = opts || {};
   const neg = leftover < 0;
   const p = nlDaysInPeriod();
   const kept = o.income > 0 ? Math.round((leftover - (state.rollover || 0)) / o.income * 100) : 0;
-  const perDay = p.left > 0 ? leftover / p.left : leftover;
 
+  // No per-day line here any more: the panel states the free-to-spend rate,
+  // which is the honest one. Repeating a rate based on the full leftover
+  // beside it would contradict it. The sub-line is kept for the two cases
+  // the panel cannot speak to.
   const sub = !o.income
     ? t('nl_empty')
     : neg
       ? tf('nl_over_by', fmt(Math.abs(leftover)), p.left)
-      : tf('nl_per_day', fmt(perDay), p.left);
+      : '';
 
   const pills = [
     `<div class="nl-pill"><span>${t('nl_spent_today')}</span><strong>${fmt(nlSpentToday())}</strong></div>`,
@@ -4362,24 +4404,16 @@ function nlHeroHtml(leftover, rows, opts) {
       : ''
   ].join('');
 
-  // SBP and UBP hold this string under different keys, so the caller
-  // supplies it. Falling back to a key one app lacks renders the key name.
-  if (state.rollover) rows = rows.concat([['+', o.rolloverLabel || t('dash_lf_rollover'), state.rollover, 'var(--bill)']]);
-
   return `<div class="panel nl-hero${neg ? ' is-negative' : ''}">
     <div class="nl-left">
       <div class="nl-label">${t('dash_net_leftover_period')}</div>
-      <div class="nl-value leftover-value">${neg ? '−' : ''}${fmt(Math.abs(leftover))}</div>
-      <div class="nl-sub">${sub}</div>
+      <div class="nl-value leftover-value">${neg ? '\u2212' : ''}${fmt(Math.abs(leftover))}</div>
+      ${sub ? `<div class="nl-sub">${sub}</div>` : ''}
       <div class="nl-meta">${pills}</div>
       <div class="nl-track"><i style="width:${p.pct}%"></i></div>
       <div class="nl-track-cap">${tf('nl_day_of', p.dayOf, p.total)}</div>
     </div>
-    <div class="nl-right">
-      <div class="nl-right-title">${t('nl_breakdown')}</div>
-      ${rows.map(r => nlRow(r[0], r[1], r[2], r[3])).join('')}
-      <div class="nl-row is-total"><i class="nl-op">=</i><span>${t('nl_total')}</span><b>${neg ? '−' : ''}${fmt(Math.abs(leftover))}</b></div>
-    </div>
+    <div class="nl-right">${nlYoursPanelHtml(leftover)}</div>
   </div>`;
 }
 
