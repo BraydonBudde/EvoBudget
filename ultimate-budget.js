@@ -12,7 +12,11 @@
 // ── Utilities ─────────────────────────────────────────────────────────
 const uid   = () => Math.random().toString(36).slice(2, 11);
 const esc   = s  => { const d = document.createElement('div'); d.appendChild(document.createTextNode(String(s ?? ''))); return d.innerHTML; };
-const today = () => new Date().toISOString().slice(0, 10);
+// The user's date, not UTC. toISOString() reports the UTC day, so east of
+// UTC late in the evening it dated things yesterday, and west of UTC it
+// dated them tomorrow. Everything else here compares against the local
+// day via toLocalISO, so this has to agree with it.
+const today = () => toLocalISO(new Date());
 
 function toLocalISO(date) {
   return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;

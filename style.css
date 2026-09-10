@@ -2779,11 +2779,14 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   background: rgba(var(--grad-indigo-rgb), .07);
 }
 
-.nl-figs { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+.nl-figs {
+  display: flex; flex-direction: column; flex-wrap: nowrap;
+  gap: 14px; align-items: flex-start;
+}
 .nl-fig { min-width: 0; }
 .nl-fig span {
   display: flex; align-items: center; gap: 8px; min-height: 17px;
-  font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+  font-size: 9.5px; font-weight: 700; letter-spacing: .06em; white-space: nowrap;
   text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px;
 }
 .nl-fig strong {
@@ -2865,6 +2868,9 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 @media (max-width: 900px) {
   .nl-hero { grid-template-columns: 1fr; }
   .nl-right { padding-top: 4px; }
+  /* The panel is full width here, so the two figures fit beside each other. */
+  .nl-figs { flex-direction: row; gap: 20px; }
+  .nl-fig { flex: 1 1 0; }
 }
 
 /* ── Budget-period bar (dashboard) ─────────────────────────────────────
