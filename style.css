@@ -2767,12 +2767,11 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
    is uppercase and letter-spaced, so both are reset here. A quiet pill: it
    should read as a control without competing with the figure beneath it. */
 .nl-due-toggle {
-  margin-left: 8px; padding: 1px 8px; cursor: pointer;
+  flex: none; padding: 0 8px; cursor: pointer;
   border: 1px solid var(--border-faint); border-radius: var(--radius-pill);
   background: transparent; color: var(--text-faint);
-  font-family: inherit; font-size: 9.5px; font-weight: 700; line-height: 1.6;
+  font-family: inherit; font-size: 9.5px; font-weight: 700; line-height: 1.5;
   text-transform: none; letter-spacing: normal; text-decoration: none;
-  vertical-align: 1px;
   transition: color .15s var(--ease), border-color .15s var(--ease), background .15s var(--ease);
 }
 .nl-due-toggle:hover {
@@ -2783,7 +2782,8 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .nl-figs { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
 .nl-fig { min-width: 0; }
 .nl-fig span {
-  display: block; font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+  display: flex; align-items: center; gap: 8px; min-height: 17px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
   text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px;
 }
 .nl-fig strong {
