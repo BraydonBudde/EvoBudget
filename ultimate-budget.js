@@ -448,18 +448,21 @@ function getUpcomingEvents(days, act) {
   const events=[], now=new Date();
   const end=new Date(now.getFullYear(),now.getMonth(),now.getDate()+days);
   const debtAct=act?.debt||{}, subAct=act?.subscription||{};
-  const push=(day,label,type,amount,color,paid)=>{
+  // srcId is what a Pay button needs to reopen the right thing. Scheduled
+  // automations have no source to pay, so they carry none.
+  const push=(day,label,type,amount,color,paid,srcId,paidSoFar,expected)=>{
     for(let mo=0;mo<=2;mo++){
       const d=new Date(now.getFullYear(),now.getMonth()+mo,day);
-      if(d>=now&&d<=end) events.push({date:toLocalISO(d),label,type,amount,color,paid:!!paid});
+      if(d>=now&&d<=end) events.push({date:toLocalISO(d),label,type,amount,color,paid:!!paid,srcId,
+                                      paidSoFar:paidSoFar||0,expected:expected||0});
     }
   };
   for(const b of state.budgets.bills||[])
-    if(b.dueDate) push(parseInt(b.dueDate.split('-')[2]),b.category,'bill',b.expected||0,'#fb923c',b.paid);
+    if(b.dueDate) push(parseInt(b.dueDate.split('-')[2]),b.category,'bill',rowRemaining(b)||(b.expected||0),'#fb923c',b.paid,b.id,rowPaidAmount(b),b.expected||0);
   for(const d of state.debts)
-    if(d.dueDay) push(d.dueDay,d.name,'debt',d.minimumPayment||0,'#a855f7',(debtAct[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0);
+    if(d.dueDay) push(d.dueDay,d.name,'debt',d.minimumPayment||0,'#a855f7',(debtAct[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0,d.id,0,d.minimumPayment||0);
   for(const s of state.subscriptions.filter(s=>s.active!==false))
-    if(s.nextBillingDate) push(parseInt(s.nextBillingDate.split('-')[2]),s.name,'subscription',monthlySubAmt(s),'#10b981',(subAct[s.name]||0)>0);
+    if(s.nextBillingDate) push(parseInt(s.nextBillingDate.split('-')[2]),s.name,'subscription',monthlySubAmt(s),'#10b981',(subAct[s.name]||0)>0,s.id,0,monthlySubAmt(s));
   // Scheduled automatic transactions (manual + sinking-fund contributions)
   if(state.settings?.automationEnabled!==false){
     const startISO=toLocalISO(now), endISO=toLocalISO(end);
@@ -719,7 +722,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Total Outgoing',dash_budgeted_sfx:'budgeted',
     dash_savings_rate:'Savings Rate',dash_saved_sfx:'saved',
     dash_subscriptions:'Subscriptions',dash_per_year:'/year',
-    dash_net_leftover:'Net Leftover this period',nl_breakdown:'Breakdown',nl_spent_today:'Spent today',nl_yours_title:'What\u2019s actually yours',nl_still_to_pay:'Still to pay',nl_free_to_spend:'Free to spend',nl_due_before:'before {0}',nl_nothing_due:'Nothing else due this period',nl_free_rate:'{0} a day for {1} days',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',
+    dash_net_leftover:'Net Leftover this period',nl_breakdown:'Breakdown',nl_spent_today:'Spent today',nl_upcoming_title:'Before this period ends',nl_show:'Show',nl_hide:'Hide',nl_more_due:'{0} more due before {1}',nl_partial_of:'{0} of {1} paid',mod_mark_paid:'Mark as paid',pay_btn:'Pay',paid_partial:'Partial',pay_partial_hint:'{0} will still be outstanding. {1} stays open.',pay_already_hint:'{0} already paid of {1} budgeted.',pay_save_partial:'Log part payment',pay_logged_title:'Payments logged',pay_remove_aria:'Remove this payment',toast_payment_removed:'Payment removed',nl_still_to_pay:'Still to pay',nl_free_to_spend:'Free to spend',nl_due_before:'before {0}',nl_nothing_due:'Nothing else due this period',nl_free_rate:'{0} a day for {1} days',nl_income_kept:'Income kept',nl_day_of:'Day {0} of {1} in this period',nl_per_day:'That is {0} a day for the {1} days left in this period.',nl_over_by:'You are {0} over for this period, with {1} days still to go.',nl_empty:'Add your income and expected amounts to see what is left.',nl_total:'Net leftover',
     dash_in_sfx:'in',dash_out_sfx:'out',
     dash_includes:'Includes',dash_rollover_sfx:'rollover',
     dash_cash_flow:'Cash Flow',
@@ -1261,7 +1264,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Gesamtausgaben',dash_budgeted_sfx:'budgetiert',
     dash_savings_rate:'Sparquote',dash_saved_sfx:'gespart',
     dash_subscriptions:'Abonnements',dash_per_year:'/Jahr',
-    dash_net_leftover:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_spent_today:'Heute ausgegeben',nl_yours_title:'Was wirklich dir geh\u00f6rt',nl_still_to_pay:'Noch zu zahlen',nl_free_to_spend:'Frei verf\u00fcgbar',nl_due_before:'vor dem {0}',nl_nothing_due:'Nichts weiter f\u00e4llig in dieser Periode',nl_free_rate:'{0} pro Tag f\u00fcr {1} Tage',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',
+    dash_net_leftover:'Nettosaldo dieser Periode',nl_breakdown:'Aufschlüsselung',nl_spent_today:'Heute ausgegeben',nl_upcoming_title:'Vor Ende dieser Periode',nl_show:'Anzeigen',nl_hide:'Ausblenden',nl_more_due:'{0} weitere fällig vor dem {1}',nl_partial_of:'{0} von {1} bezahlt',mod_mark_paid:'Als bezahlt markieren',pay_btn:'Zahlen',paid_partial:'Teilweise',pay_partial_hint:'{0} bleiben offen. {1} bleibt weiter fällig.',pay_already_hint:'{0} von {1} budgetiert bereits bezahlt.',pay_save_partial:'Teilzahlung erfassen',pay_logged_title:'Erfasste Zahlungen',pay_remove_aria:'Diese Zahlung entfernen',toast_payment_removed:'Zahlung entfernt',nl_still_to_pay:'Noch zu zahlen',nl_free_to_spend:'Frei verf\u00fcgbar',nl_due_before:'vor dem {0}',nl_nothing_due:'Nichts weiter f\u00e4llig in dieser Periode',nl_free_rate:'{0} pro Tag f\u00fcr {1} Tage',nl_income_kept:'Einkommen behalten',nl_day_of:'Tag {0} von {1} in dieser Periode',nl_per_day:'Das sind {0} pro Tag für die verbleibenden {1} Tage.',nl_over_by:'Du liegst {0} über dem Budget, mit noch {1} Tagen.',nl_empty:'Trage Einnahmen und erwartete Beträge ein, um zu sehen, was übrig bleibt.',nl_total:'Verbleibend',
     dash_in_sfx:'eingenommen',dash_out_sfx:'ausgegeben',
     dash_includes:'Inkl.',dash_rollover_sfx:'Übertrag',
     dash_cash_flow:'Cashflow',
@@ -1785,7 +1788,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Dépenses totales',dash_budgeted_sfx:'budgété',
     dash_savings_rate:"Taux d'épargne",dash_saved_sfx:'épargné',
     dash_subscriptions:'Abonnements',dash_per_year:'/an',
-    dash_net_leftover:'Solde net de la période',nl_breakdown:'Détail',nl_spent_today:'Dépensé aujourd’hui',nl_yours_title:'Ce qui vous reste vraiment',nl_still_to_pay:'Encore \u00e0 payer',nl_free_to_spend:'Libre \u00e0 d\u00e9penser',nl_due_before:'avant le {0}',nl_nothing_due:'Plus rien \u00e0 payer cette p\u00e9riode',nl_free_rate:'{0} par jour pendant {1} jours',nl_income_kept:'Revenu conserv\u00e9',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',
+    dash_net_leftover:'Solde net de la période',nl_breakdown:'Détail',nl_spent_today:'Dépensé aujourd’hui',nl_upcoming_title:'Avant la fin de cette période',nl_show:'Afficher',nl_hide:'Masquer',nl_more_due:'{0} autres à payer avant le {1}',nl_partial_of:'{0} sur {1} payé',mod_mark_paid:'Marquer comme payé',pay_btn:'Payer',paid_partial:'Partiel',pay_partial_hint:'Il restera {0} à payer. {1} reste ouvert.',pay_already_hint:'{0} déjà payé sur {1} budgété.',pay_save_partial:'Enregistrer un paiement partiel',pay_logged_title:'Paiements enregistrés',pay_remove_aria:'Supprimer ce paiement',toast_payment_removed:'Paiement supprimé',nl_still_to_pay:'Encore \u00e0 payer',nl_free_to_spend:'Libre \u00e0 d\u00e9penser',nl_due_before:'avant le {0}',nl_nothing_due:'Plus rien \u00e0 payer cette p\u00e9riode',nl_free_rate:'{0} par jour pendant {1} jours',nl_income_kept:'Revenu conserv\u00e9',nl_day_of:'Jour {0} sur {1} de cette période',nl_per_day:'Soit {0} par jour pour les {1} jours restants.',nl_over_by:'Vous dépassez de {0} pour cette période, avec encore {1} jours.',nl_empty:'Saisissez vos revenus et vos montants prévus pour voir ce qu’il reste.',nl_total:'Solde net',
     dash_in_sfx:'perçu',dash_out_sfx:'dépensé',
     dash_includes:'Dont',dash_rollover_sfx:'report',
     dash_cash_flow:'Flux de trésorerie',
@@ -2309,7 +2312,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Gastos totales',dash_budgeted_sfx:'presupuestado',
     dash_savings_rate:'Tasa de ahorro',dash_saved_sfx:'ahorrado',
     dash_subscriptions:'Suscripciones',dash_per_year:'/año',
-    dash_net_leftover:'Saldo neto del período',nl_breakdown:'Desglose',nl_spent_today:'Gastado hoy',nl_yours_title:'Lo que es realmente tuyo',nl_still_to_pay:'Pendiente de pago',nl_free_to_spend:'Libre para gastar',nl_due_before:'antes del {0}',nl_nothing_due:'Nada m\u00e1s por pagar este per\u00edodo',nl_free_rate:'{0} al d\u00eda durante {1} d\u00edas',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',
+    dash_net_leftover:'Saldo neto del período',nl_breakdown:'Desglose',nl_spent_today:'Gastado hoy',nl_upcoming_title:'Antes de que termine este período',nl_show:'Mostrar',nl_hide:'Ocultar',nl_more_due:'{0} más antes del {1}',nl_partial_of:'{0} de {1} pagado',mod_mark_paid:'Marcar como pagado',pay_btn:'Pagar',paid_partial:'Parcial',pay_partial_hint:'Quedarán {0} pendientes. {1} sigue abierto.',pay_already_hint:'{0} ya pagado de {1} presupuestado.',pay_save_partial:'Registrar pago parcial',pay_logged_title:'Pagos registrados',pay_remove_aria:'Eliminar este pago',toast_payment_removed:'Pago eliminado',nl_still_to_pay:'Pendiente de pago',nl_free_to_spend:'Libre para gastar',nl_due_before:'antes del {0}',nl_nothing_due:'Nada m\u00e1s por pagar este per\u00edodo',nl_free_rate:'{0} al d\u00eda durante {1} d\u00edas',nl_income_kept:'Ingresos conservados',nl_day_of:'Día {0} de {1} en este período',nl_per_day:'Son {0} al día durante los {1} días restantes.',nl_over_by:'Te has pasado {0} en este período, y quedan {1} días.',nl_empty:'Añade tus ingresos y los importes previstos para ver qué queda.',nl_total:'Saldo neto',
     dash_in_sfx:'recibido',dash_out_sfx:'gastado',
     dash_includes:'Incluye',dash_rollover_sfx:'arrastre',
     dash_cash_flow:'Flujo de caja',
@@ -2834,7 +2837,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Uscite totali',dash_budgeted_sfx:'a budget',
     dash_savings_rate:'Tasso di risparmio',dash_saved_sfx:'risparmiato',
     dash_subscriptions:'Abbonamenti',dash_per_year:'/anno',
-    dash_net_leftover:'Saldo netto del periodo',nl_breakdown:'Dettaglio',nl_spent_today:'Speso oggi',nl_yours_title:'Ci\u00f2 che \u00e8 davvero tuo',nl_still_to_pay:'Ancora da pagare',nl_free_to_spend:'Libero di spendere',nl_due_before:'entro il {0}',nl_nothing_due:'Nulla da pagare in questo periodo',nl_free_rate:'{0} al giorno per {1} giorni',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',
+    dash_net_leftover:'Saldo netto del periodo',nl_breakdown:'Dettaglio',nl_spent_today:'Speso oggi',nl_upcoming_title:'Prima della fine di questo periodo',nl_show:'Mostra',nl_hide:'Nascondi',nl_more_due:'Altri {0} entro il {1}',nl_partial_of:'{0} di {1} pagato',mod_mark_paid:'Segna come pagato',pay_btn:'Paga',paid_partial:'Parziale',pay_partial_hint:'Resteranno {0} da pagare. {1} resta aperto.',pay_already_hint:'{0} già pagato su {1} preventivato.',pay_save_partial:'Registra pagamento parziale',pay_logged_title:'Pagamenti registrati',pay_remove_aria:'Rimuovi questo pagamento',toast_payment_removed:'Pagamento rimosso',nl_still_to_pay:'Ancora da pagare',nl_free_to_spend:'Libero di spendere',nl_due_before:'entro il {0}',nl_nothing_due:'Nulla da pagare in questo periodo',nl_free_rate:'{0} al giorno per {1} giorni',nl_income_kept:'Reddito trattenuto',nl_day_of:'Giorno {0} di {1} in questo periodo',nl_per_day:'Sono {0} al giorno per i {1} giorni rimanenti.',nl_over_by:'Hai superato di {0} in questo periodo, con ancora {1} giorni.',nl_empty:'Inserisci le entrate e gli importi previsti per vedere cosa resta.',nl_total:'Saldo netto',
     dash_in_sfx:'ricevuto',dash_out_sfx:'speso',
     dash_includes:'Incluso',dash_rollover_sfx:'riporto',
     dash_cash_flow:'Flusso di cassa',
@@ -3358,7 +3361,7 @@ const TRANSLATIONS = {
     dash_total_outgoing:'Łączne wydatki',dash_budgeted_sfx:'budżetowanych',
     dash_savings_rate:'Stopa oszczędności',dash_saved_sfx:'zaoszczędzono',
     dash_subscriptions:'Subskrypcje',dash_per_year:'/rok',
-    dash_net_leftover:'Saldo netto okresu',nl_breakdown:'Zestawienie',nl_spent_today:'Wydano dziś',nl_yours_title:'Co naprawd\u0119 jest twoje',nl_still_to_pay:'Do zap\u0142aty',nl_free_to_spend:'Wolne \u015brodki',nl_due_before:'przed {0}',nl_nothing_due:'Nic wi\u0119cej do zap\u0142aty w tym okresie',nl_free_rate:'{0} dziennie przez {1} dni',nl_income_kept:'Zatrzymany doch\u00f3d',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',
+    dash_net_leftover:'Saldo netto okresu',nl_breakdown:'Zestawienie',nl_spent_today:'Wydano dziś',nl_upcoming_title:'Przed końcem tego okresu',nl_show:'Pokaż',nl_hide:'Ukryj',nl_more_due:'Jeszcze {0} przed {1}',nl_partial_of:'Zapłacono {0} z {1}',mod_mark_paid:'Oznacz jako opłacone',pay_btn:'Zapłać',paid_partial:'Częściowo',pay_partial_hint:'Pozostanie {0} do zapłaty. {1} pozostaje otwarte.',pay_already_hint:'Zapłacono już {0} z {1} zaplanowanych.',pay_save_partial:'Zapisz część płatności',pay_logged_title:'Zapisane płatności',pay_remove_aria:'Usuń tę płatność',toast_payment_removed:'Płatność usunięta',nl_still_to_pay:'Do zap\u0142aty',nl_free_to_spend:'Wolne \u015brodki',nl_due_before:'przed {0}',nl_nothing_due:'Nic wi\u0119cej do zap\u0142aty w tym okresie',nl_free_rate:'{0} dziennie przez {1} dni',nl_income_kept:'Zatrzymany doch\u00f3d',nl_day_of:'Dzień {0} z {1} w tym okresie',nl_per_day:'To {0} dziennie przez pozostałe {1} dni.',nl_over_by:'Przekroczono o {0} w tym okresie, zostało {1} dni.',nl_empty:'Dodaj przychody i oczekiwane kwoty, aby zobaczyć, co zostaje.',nl_total:'Saldo netto',
     dash_in_sfx:'wpłynęło',dash_out_sfx:'wyszło',
     dash_includes:'W tym',dash_rollover_sfx:'przeniesienie',
     dash_cash_flow:'Przepływ gotówki',
@@ -3994,6 +3997,7 @@ function renderDashboardLayout1() {
       </div></div>
     </div>`;
   wirePeriodBar(el);
+  wireNlHero(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -4131,6 +4135,7 @@ function renderDashboardLayout2() {
       </div></div>
     </div>`;
   wirePeriodBar(el);
+  wireNlHero(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
@@ -4319,7 +4324,9 @@ function buildModuleHTML(type,meta,act) {
         ${meta.hasDates?`<td><div class="date-cell-styled" id="dw-${row.id}" data-input-id="di-${row.id}"><span class="date-cell-val" id="dc-${row.id}">${row.dueDate?formatDateDisplay(row.dueDate):noDate}</span><input type="date" id="di-${row.id}" class="mod-date" value="${row.dueDate||''}" data-id="${row.id}" data-type="${type}"></div></td>`:''}
         <td><span class="actual-val${ovr?' is-over':meta.isInc&&p>=100?' is-good':''}">${fmt(a)}</span></td>
         <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':ovr?' prog-bar--over':' prog-bar--normal'}" id="pb-${row.id}" style="width:${Math.min(p,100)}%"></div></div><span class="prog-label${ovr?' is-over':''}" id="pl-${row.id}">${p}%</span></td>
-        ${meta.hasDates?`<td class="paid-cell"><label class="check-label"><input type="checkbox" class="mod-paid" ${row.paid?'checked':''} data-id="${row.id}" data-type="${type}"><span class="checkmark"></span></label></td>`:''}
+        ${meta.hasDates?`<td class="paid-cell">${rowPayState(row)==='partial'
+          ?`<button class="paid-part" type="button" data-part-id="${row.id}" title="${esc(tf('nl_partial_of',fmt(rowPaidAmount(row)),fmt(row.expected||0)))}">${t('paid_partial')}</button>`
+          :`<label class="check-label"><input type="checkbox" class="mod-paid" ${row.paid?'checked':''} data-id="${row.id}" data-type="${type}"><span class="checkmark"></span></label>`}</td>`:''}
         <td><div class="tx-actions"><button class="edit-btn mod-edit" data-id="${row.id}" data-type="${type}" type="button" title="${t('edit')}" aria-label="${t('edit')}">✏️</button><button class="del-btn mod-del" data-id="${row.id}" data-type="${type}" type="button" aria-label="${t('delete')}">×</button></div></td></tr>`;
     }).join('')}</tbody>
     <tfoot><tr class="total-row"><td><strong>${t('bud_total')}</strong></td><td><strong id="te-${type}">${fmt(totExp)}</strong></td>
@@ -4345,25 +4352,159 @@ function buildModuleHTML(type,meta,act) {
 // Marking a bill paid logs the actual amount as a real transaction rather than
 // just flipping a status flag - the flag alone would leave "paid" disconnected
 // from what was actually spent (bills are rarely the exact same amount twice).
-function promptMarkBillPaid(billId, onDone) {
-  const row = (state.budgets.bills || []).find(b => b.id === billId);
-  if (!row) return;
-  document.getElementById('modalTitle').textContent = `${t('bill_paid_modal_title')} - ${esc(row.category)}`;
+function payRound2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
+
+// A bill row's payments. Historically one transaction in paidTxId; now a
+// list, so a bill can be settled in instalments and each part stays its own
+// transaction. Old saves are read through the same accessor, never migrated
+// in place, so nothing has to run at load time.
+function rowPayTxIds(row) {
+  if (Array.isArray(row.payTxIds)) return row.payTxIds;
+  return row.paidTxId ? [row.paidTxId] : [];
+}
+function rowPayments(row) {
+  const ids = rowPayTxIds(row);
+  if (!ids.length) return [];
+  const byId = new Map(state.transactions.map(tx => [tx.id, tx]));
+  return ids.map(id => byId.get(id)).filter(Boolean).sort((a, b) => a.date.localeCompare(b.date));
+}
+function rowPaidAmount(row) {
+  return payRound2(rowPayments(row).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0));
+}
+function rowRemaining(row) {
+  return Math.max(0, payRound2((Number(row.expected) || 0) - rowPaidAmount(row)));
+}
+function rowPayState(row) {
+  if (row.paid) return 'paid';
+  return rowPaidAmount(row) > 0 ? 'partial' : 'unpaid';
+}
+// Half a cent of slack, so 3 payments of 33.33 against 100.00 still closes.
+function billSettles(row, extra) {
+  const exp = Number(row.expected) || 0;
+  if (exp <= 0) return true;
+  return payRound2(rowPaidAmount(row) + extra) >= exp - 0.005;
+}
+function setRowPayments(row, ids) {
+  row.payTxIds = ids;
+  delete row.paidTxId;
+  row.paid = ids.length > 0 && billSettles(row, 0);
+}
+
+// What the pay modal is working on. A bill row keeps its own paid state, so
+// its payments are the ones it links to. Debts and subscriptions keep none -
+// theirs is worked out from the transactions - so their payments are simply
+// the matching transactions inside the current period.
+function payTarget(kind, id) {
+  if (kind === 'bill') {
+    const row = (state.budgets.bills || []).find(b => b.id === id);
+    return row && { kind, id, row, label: row.category, category: row.category,
+                    txType: 'bill', expected: Number(row.expected) || 0 };
+  }
+  if (kind === 'debt') {
+    const d = (state.debts || []).find(x => x.id === id);
+    return d && { kind, id, label: d.name, category: d.name,
+                  txType: 'debt', expected: Number(d.minimumPayment) || 0 };
+  }
+  if (kind === 'subscription') {
+    const sub = (state.subscriptions || []).find(x => x.id === id);
+    return sub && { kind, id, label: sub.name, category: sub.name,
+                    txType: 'subscription', expected: monthlySubAmt(sub) || 0 };
+  }
+  return null;
+}
+function targetPayments(tg) {
+  if (tg.row) return rowPayments(tg.row);
+  const a = state.settings.periodStart || '', b = state.settings.periodEnd || '';
+  return state.transactions
+    .filter(tx => tx.type === tg.txType && tx.category === tg.category
+                  && (!a || tx.date >= a) && (!b || tx.date <= b))
+    .sort((x, y) => x.date.localeCompare(y.date));
+}
+function targetPaid(tg) {
+  return payRound2(targetPayments(tg).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0));
+}
+function targetRemaining(tg) { return Math.max(0, payRound2(tg.expected - targetPaid(tg))); }
+function targetSettles(tg, extra) {
+  if (tg.expected <= 0) return true;
+  return payRound2(targetPaid(tg) + extra) >= tg.expected - 0.005;
+}
+// Drops one payment. The transaction goes, and a bill row falls back to
+// partial or unpaid on its own.
+function removeTargetPayment(tg, txId, onDone) {
+  const tx = state.transactions.find(t => t.id === txId);
+  if (tx) applySinkingFundDelta(tx, -1);
+  state.transactions = state.transactions.filter(t => t.id !== txId);
+  if (tg.row) setRowPayments(tg.row, rowPayTxIds(tg.row).filter(id => id !== txId));
+  else syncBillPaidLinks();
+  saveState();
+  onDone();
+  showToast(t('toast_payment_removed'));
+}
+
+// Bills reach this through the Budget tab checkbox; bills, debts and
+// subscriptions all reach it from the calendar and the dashboard hero.
+function promptMarkBillPaid(billId, onDone) { promptPay('bill', billId, onDone); }
+function promptPay(kind, id, onDone) {
+  const tg = payTarget(kind, id);
+  if (!tg) return;
+  const paidSoFar = targetPaid(tg);
+  const prefill = targetRemaining(tg) || tg.expected;
+  document.getElementById('modalTitle').textContent = `${t('bill_paid_save_btn')} - ${esc(tg.label)}`;
   document.getElementById('modalBody').innerHTML = `
     <div class="field"><label class="field-label field-label--tip">${tipLabel(t('bill_paid_amount_label'), 'bill_paid_amount_hint', true)}</label>
-      <input class="input" type="number" id="billPaidAmt" min="0" step="0.01" placeholder="0.00" autocomplete="off">
-      ${row.expected ? `<p class="field-hint">${tf('bill_paid_budgeted_hint', fmt(row.expected))}</p>` : ''}
+      <input class="input" type="number" id="billPaidAmt" min="0" step="0.01" placeholder="0.00" autocomplete="off"
+             value="${prefill > 0 ? prefill.toFixed(2) : ''}">
+      <p class="field-hint" id="billPaidHint">${
+        paidSoFar > 0 ? tf('pay_already_hint', fmt(paidSoFar), fmt(tg.expected))
+        : tg.expected ? tf('bill_paid_budgeted_hint', fmt(tg.expected)) : ''}</p>
     </div>
+    <div class="field"><label class="field-label">${t('date')}</label>
+      <input class="input" type="date" id="billPaidDate" value="${today()}">
+    </div>
+    ${paidSoFar > 0 ? `<div class="pay-log">
+      <div class="pay-log-title">${t('pay_logged_title')}</div>
+      ${targetPayments(tg).map(tx => `<div class="pay-log-row">
+        <span>${esc(formatDateDisplay(tx.date))}</span><b>${fmt(tx.amount)}</b>
+        <button class="pay-log-del" type="button" data-pay-del="${tx.id}"
+                title="${esc(t('pay_remove_aria'))}" aria-label="${esc(t('pay_remove_aria'))}">\u00d7</button>
+      </div>`).join('')}
+    </div>` : ''}
     <div class="tx-error" id="billPaidErr" hidden></div>
     <div class="edit-tx-actions">
-      <button class="btn btn-primary" id="billPaidSaveBtn">${t('bill_paid_save_btn')}</button>
+      <button class="btn btn-primary" id="billPaidSaveBtn">${t('mod_mark_paid')}</button>
       <button class="btn btn-ghost btn-sm" id="billPaidCancelBtn">${t('cancel')}</button>
     </div>`;
   document.getElementById('tutorialOverlay').hidden = false;
   initFieldTips(document.getElementById('modalBody'));
   setTimeout(() => document.getElementById('billPaidAmt')?.focus(), 50);
   const amtEl = document.getElementById('billPaidAmt');
-  amtEl?.addEventListener('input', () => { amtEl.classList.remove('fk-invalid'); const e = document.getElementById('billPaidErr'); if (e) e.hidden = true; });
+  const hintEl = document.getElementById('billPaidHint');
+  const saveEl = document.getElementById('billPaidSaveBtn');
+  const baseHint = hintEl ? hintEl.innerHTML : '';
+  // The button has to say what it is about to do. Anything short of the
+  // remainder leaves the row open, so it stops claiming to mark it paid.
+  const syncPayHint = () => {
+    const amt = parseFloat(amtEl?.value);
+    const short = tg.expected > 0 && amt > 0 && !targetSettles(tg, amt);
+    if (saveEl) saveEl.textContent = short ? t('pay_save_partial') : t('mod_mark_paid');
+    if (!hintEl) return;
+    hintEl.classList.toggle('field-hint--warn', short);
+    hintEl.innerHTML = short
+      ? tf('pay_partial_hint', fmt(payRound2(tg.expected - paidSoFar - amt)), esc(tg.label))
+      : baseHint;
+  };
+  syncPayHint();
+  amtEl?.addEventListener('input', () => {
+    amtEl.classList.remove('fk-invalid');
+    const e = document.getElementById('billPaidErr'); if (e) e.hidden = true;
+    syncPayHint();
+  });
+  document.getElementById('modalBody').querySelectorAll('[data-pay-del]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('tutorialOverlay').hidden = true;
+      removeTargetPayment(tg, btn.dataset.payDel, onDone);
+    });
+  });
   document.getElementById('billPaidSaveBtn')?.addEventListener('click', () => {
     // Marking a bill paid writes a transaction, so it has to respect the same
     // trial cap as every other way of adding one.
@@ -4378,9 +4519,10 @@ function promptMarkBillPaid(billId, onDone) {
       const e = document.getElementById('billPaidErr'); if (e) { e.textContent = t('tx_error_required'); e.hidden = false; }
       return;
     }
-    const tx = { id: uid(), date: today(), type: 'bill', category: row.category, amount: amt, description: '' };
+    const date = document.getElementById('billPaidDate')?.value || today();
+    const tx = { id: uid(), date, type: tg.txType, category: tg.category, amount: amt, description: '' };
     state.transactions.push(tx);
-    row.paid = true; row.paidTxId = tx.id;
+    if (tg.row) setRowPayments(tg.row, rowPayTxIds(tg.row).concat(tx.id));
     saveState();
     document.getElementById('tutorialOverlay').hidden = true;
     onDone();
@@ -4388,11 +4530,14 @@ function promptMarkBillPaid(billId, onDone) {
   });
   document.getElementById('billPaidCancelBtn')?.addEventListener('click', () => { document.getElementById('tutorialOverlay').hidden = true; });
 }
+// Unticking a bill undoes the whole thing: every transaction it created goes
+// with it, including the parts of a payment made in instalments.
 function unmarkBillPaid(billId, onDone) {
   const row = (state.budgets.bills || []).find(b => b.id === billId);
   if (!row) return;
-  if (row.paidTxId) state.transactions = state.transactions.filter(tx => tx.id !== row.paidTxId);
-  row.paid = false; row.paidTxId = null;
+  const ids = new Set(rowPayTxIds(row));
+  if (ids.size) state.transactions = state.transactions.filter(tx => !ids.has(tx.id));
+  setRowPayments(row, []);
   saveState();
   onDone();
 }
@@ -4403,7 +4548,12 @@ function syncBillPaidLinks() {
   const liveIds = new Set(state.transactions.map(tx => tx.id));
   let changed = false;
   (state.budgets.bills || []).forEach(b => {
-    if (b.paid && b.paidTxId && !liveIds.has(b.paidTxId)) { b.paid = false; b.paidTxId = null; changed = true; }
+    const ids = rowPayTxIds(b);
+    if (!ids.length) return;
+    const live = ids.filter(id => liveIds.has(id));
+    if (live.length === ids.length && Array.isArray(b.payTxIds)) return;
+    setRowPayments(b, live);
+    changed = true;
   });
   return changed;
 }
@@ -4436,6 +4586,11 @@ function bindModuleEvents(type,meta,container,act) {
       document.getElementById(wrap.dataset.inputId)?.addEventListener('keydown',e=>{
         if(e.key==='Enter'||e.key===' '||e.key==='ArrowDown'){e.preventDefault();openDatePicker(document.getElementById(wrap.dataset.inputId),wrap);}
       });
+    });
+    // The partial pill reopens the same modal, so the rest can be logged or
+    // what is already in can be taken back out.
+    container.querySelectorAll('.paid-part[data-part-id]').forEach(btn=>{
+      btn.addEventListener('click',()=>promptMarkBillPaid(btn.dataset.partId,()=>renderBudget()));
     });
     container.querySelectorAll(`.mod-paid[data-type="${type}"]`).forEach(cb=>{cb.addEventListener('change',()=>{
       if(cb.checked){cb.checked=false;promptMarkBillPaid(cb.dataset.id,()=>renderBudget());}
@@ -5357,16 +5512,20 @@ function renderCalendar(){
   const evs={};
   const addEv=(day,ev)=>{(evs[day]=evs[day]||[]).push(ev);};
   for(const b of state.budgets.bills||[])if(b.dueDate){const d=parseInt(b.dueDate.split('-')[2]);if(d>=1&&d<=daysInMo){
-    const paidTx=b.paid&&b.paidTxId?state.transactions.find(tx=>tx.id===b.paidTxId):null;
-    addEv(d,{type:'bill',id:b.id,label:b.category,amount:paidTx?paidTx.amount:(b.expected||0),color:'#fb923c',paid:b.paid});
+    const st=rowPayState(b);
+    addEv(d,{type:'bill',id:b.id,label:b.category,color:'#fb923c',paid:b.paid,part:st==='partial'?rowPaidAmount(b):0,
+             amount:st==='paid'?rowPaidAmount(b):(rowRemaining(b)||(b.expected||0))});
   }}
-  for(const d of state.debts)if(d.dueDay&&d.dueDay>=1&&d.dueDay<=daysInMo)addEv(d.dueDay,{type:'debt',label:d.name,amount:d.minimumPayment||0,color:'#a855f7'});
-  for(const s of state.subscriptions.filter(s=>s.active!==false))if(s.nextBillingDate){const d=parseInt(s.nextBillingDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'subscription',label:s.name,amount:monthlySubAmt(s),color:'#10b981'});}
+  // Debts and subscriptions keep no paid flag of their own, so they get a Pay
+  // button rather than a tick box that could never be unticked.
+  const debtAct=computeActuals().debt||{}, subAct=computeActuals().subscription||{};
+  for(const d of state.debts)if(d.dueDay&&d.dueDay>=1&&d.dueDay<=daysInMo)addEv(d.dueDay,{type:'debt',id:d.id,label:d.name,amount:d.minimumPayment||0,color:'#a855f7',settled:(debtAct[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0});
+  for(const s of state.subscriptions.filter(s=>s.active!==false))if(s.nextBillingDate){const d=parseInt(s.nextBillingDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'subscription',id:s.id,label:s.name,amount:monthlySubAmt(s),color:'#10b981',settled:(subAct[s.name]||0)>0});}
   const monthStr=`${y}-${String(m+1).padStart(2,'0')}`;
   // A transaction created by ticking a bill "paid" is the same money as the
   // bill event above (which already shows the ✓ Paid state + real amount) -
   // listing both made 1 Rent look like 2 charges on the same day.
-  const linkedPaidTxIds=new Set((state.budgets.bills||[]).filter(b=>b.paidTxId).map(b=>b.paidTxId));
+  const linkedPaidTxIds=new Set((state.budgets.bills||[]).flatMap(b=>rowPayTxIds(b)));
   for(const tx of state.transactions)if(tx.date.startsWith(monthStr)&&!linkedPaidTxIds.has(tx.id)){const d=parseInt(tx.date.split('-')[2]);addEv(d,{type:'transaction',label:tx.category,amount:tx.amount,color:'#6366f1'});}
   // Sinking fund goal/target dates (milestones)
   for(const f of state.sinkingFunds||[])if(f.targetDate&&f.targetDate.startsWith(monthStr)){const d=parseInt(f.targetDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'goal',label:f.name,amount:f.targetAmount||0,color:'#ec4899'});}
@@ -5388,6 +5547,23 @@ function renderCalendar(){
   // Translated event type labels
   const typeLabel={'bill':t('cal_leg_bill'),'debt':t('cal_leg_debt'),'subscription':t('cal_leg_sub'),'transaction':t('cal_leg_tx'),'sinking':t('cal_leg_sinking'),'goal':t('cal_leg_goal'),'auto':t('cal_leg_auto')};
 
+  // What a calendar row offers. A bill can be ticked and unticked because it
+  // stores its own state; everything else can only be paid, and is undone by
+  // removing the transaction from the same modal.
+  const calEvActionHtml=ev=>{
+    if(ev.type==='bill'){
+      if(ev.paid) return `<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`;
+      const part=ev.part>0?`<span class="cal-ev-status is-part">${tf('nl_partial_of',fmt(ev.part),fmt(ev.part+ev.amount))}</span>`:'';
+      return part
+        ? `${part}<button class="pay-btn" type="button" data-cal-pay="bill" data-cal-id="${ev.id}">${t('pay_btn')}</button>`
+        : `<label class="cal-mark-paid check-label"><input type="checkbox" data-mark-paid-id="${ev.id}"><span class="checkmark checkmark--sm"></span><span>${t('cal_mark_paid')}</span></label>`;
+    }
+    if(ev.type==='debt'||ev.type==='subscription'){
+      return `${ev.settled?`<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`:''}<button class="pay-btn" type="button" data-cal-pay="${ev.type}" data-cal-id="${ev.id}">${t('pay_btn')}</button>`;
+    }
+    return '';
+  };
+
   // Build selected day panel
   let selPanel='';
   if(calSelectedDay!==null){
@@ -5397,9 +5573,7 @@ function renderCalendar(){
     const evHtml=dayEvs.length===0
       ?`<div class="cal-no-events">${t('cal_no_events_day')}</div>`
       :dayEvs.map(ev=>{
-        const statusHtml=ev.paid===undefined?''
-          :ev.paid?`<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`
-          :`<label class="cal-mark-paid check-label"><input type="checkbox" data-mark-paid-id="${ev.id}"><span class="checkmark checkmark--sm"></span><span>${t('cal_mark_paid')}</span></label>`;
+        const statusHtml=calEvActionHtml(ev);
         return `<div class="cal-ev-item"><span class="cal-dot" style="background:${ev.color}"></span><span class="cal-ev-label">${esc(ev.label)}</span><span class="cal-ev-type">${esc(typeLabel[ev.type]||ev.type)}</span><span class="cal-ev-amt">${fmt(ev.amount)}</span>${statusHtml}</div>`;
       }).join('');
     selPanel=`<div class="cal-selected-events" id="calDayEvents"><div class="cal-selected-title">📌 ${esc(dayName)} - ${evCount}<button class="link-btn" id="calClearSel" style="margin-left:12px;font-size:11px">${t('cal_clear')}</button></div>${evHtml}</div>`;
@@ -5412,9 +5586,7 @@ function renderCalendar(){
     Object.entries(evs).sort(([a],[b])=>+a-+b).forEach(([day,dayEvs])=>{
       monthList+=`<div class="cal-ev-day"><div class="cal-ev-date">${day} ${new Date(y,m,+day).toLocaleDateString(loc,{month:'short'})}</div>`;
       dayEvs.forEach(ev=>{
-        const statusHtml=ev.paid===undefined?''
-          :ev.paid?`<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`
-          :`<label class="cal-mark-paid check-label"><input type="checkbox" data-mark-paid-id="${ev.id}"><span class="checkmark checkmark--sm"></span><span>${t('cal_mark_paid')}</span></label>`;
+        const statusHtml=calEvActionHtml(ev);
         monthList+=`<div class="cal-ev-item"><span class="cal-dot" style="background:${ev.color}"></span><span class="cal-ev-label">${esc(ev.label)}</span><span class="cal-ev-type">${esc(typeLabel[ev.type]||ev.type)}</span><span class="cal-ev-amt">${fmt(ev.amount)}</span>${statusHtml}</div>`;
       });
       monthList+='</div>';
@@ -5451,6 +5623,10 @@ function renderCalendar(){
   el.querySelectorAll('[data-mark-paid-id]').forEach(cb=>cb.addEventListener('change',()=>{
     cb.checked=false;
     promptMarkBillPaid(cb.dataset.markPaidId,()=>renderCalendar());
+  }));
+  // Debts, subscriptions and part-paid bills: one button, same modal.
+  el.querySelectorAll('[data-cal-pay]').forEach(b=>b.addEventListener('click',()=>{
+    promptPay(b.dataset.calPay,b.dataset.calId,()=>renderCalendar());
   }));
   document.getElementById('calPrev')?.addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}calSelectedDay=null;renderCalendar();});
   document.getElementById('calEmptyAdd')?.addEventListener('click',()=>switchTab('transactions'));
@@ -6622,7 +6798,8 @@ function nlCommitted() {
   try { events = getUpcomingEvents(Math.max(0, p.left), computeActuals()) || []; } catch (e) { events = []; }
   const items = events
     .filter(ev => !ev.paid && (Number(ev.amount) || 0) > 0 && (!end || ev.date <= end))
-    .map(ev => ({ label: ev.label, date: ev.date, amount: Number(ev.amount) || 0 }));
+    .map(ev => ({ label: ev.label, date: ev.date, amount: Number(ev.amount) || 0,
+                  type: ev.type, id: ev.srcId, paidSoFar: ev.paidSoFar || 0, expected: ev.expected || 0 }));
   return { total: items.reduce((s, i) => s + i.amount, 0), items: items };
 }
 
@@ -6633,15 +6810,18 @@ function nlYoursPanelHtml(leftover) {
   const c = nlCommitted();
   const p = nlDaysInPeriod();
   const free = leftover - c.total;
-  // The bar is scaled to the leftover, so "committed fills the whole bar" is
-  // exactly the case where more is due than remains.
-  const base = leftover > 0 ? leftover : 0;
-  const cPct = base > 0 ? Math.min(100, c.total / base * 100) : (c.total > 0 ? 100 : 0);
   const endLabel = state.settings.periodEnd ? formatDateDisplay(state.settings.periodEnd) : '';
   const rate = (p.left > 0 && free > 0) ? tf('nl_free_rate', fmt(free / p.left), p.left) : '';
+  const open = state.settings.nlDueOpen !== false;
+  // Scheduled automations cannot be paid, so the listed row is the next one
+  // that can be. The figures above still total everything committed.
+  const next = c.items.find(i => i.id && PAYABLE_KINDS.has(i.type)) || c.items[0];
   return `
-    <div class="nl-right-title">${t('nl_yours_title')}</div>
-    <div class="nl-split"><i class="nl-split-committed" style="width:${cPct}%"></i></div>
+    <div class="nl-right-head">
+      <span class="nl-right-title">${t('nl_upcoming_title')}</span>
+      ${c.items.length ? `<button class="nl-due-toggle" type="button" id="nlDueToggle"
+        aria-expanded="${open}">${open ? t('nl_hide') : t('nl_show')}</button>` : ''}
+    </div>
     <div class="nl-figs">
       <div class="nl-fig">
         <span>${t('nl_still_to_pay')}</span>
@@ -6654,9 +6834,37 @@ function nlYoursPanelHtml(leftover) {
         <em>${rate}</em>
       </div>
     </div>
-    ${c.items.length ? `<div class="nl-due">${c.items.slice(0, 4).map(i =>
-      `<div class="nl-due-row"><span>${esc(i.label)}</span><time>${esc(formatDateDisplay(i.date))}</time><b>${fmt(i.amount)}</b></div>`
-    ).join('')}</div>` : ''}`;
+    ${c.items.length && open ? `<div class="nl-due" id="nlDueList">${nlDueRowHtml(next)}${
+      c.items.length > 1 ? `<p class="nl-due-more">${tf('nl_more_due', c.items.length - 1, endLabel)}</p>` : ''
+    }</div>` : ''}`;
+}
+
+const PAYABLE_KINDS = new Set(['bill', 'debt', 'subscription']);
+
+// Only the next payment is listed. One button, nothing beside it to catch a
+// stray tap, and the two figures above still total everything due.
+function nlDueRowHtml(i) {
+  const payable = i.id && PAYABLE_KINDS.has(i.type);
+  return `<div class="nl-due-row${payable ? ' nl-due-row--pay' : ''}">
+    <span>${esc(i.label)}${i.paidSoFar > 0
+      ? `<em class="nl-part">${tf('nl_partial_of', fmt(i.paidSoFar), fmt(i.expected))}</em>` : ''}</span>
+    <time>${esc(formatDateDisplay(i.date))}</time><b>${fmt(i.amount)}</b>
+    ${payable ? `<button class="pay-btn" type="button" data-pay-type="${esc(i.type)}" data-pay-id="${esc(i.id)}">${t('pay_btn')}</button>` : ''}
+  </div>`;
+}
+
+// The hero's own controls. Re-rendering the whole dashboard is what every
+// other write on this screen does, so paying keeps the figures in step.
+function wireNlHero(scope) {
+  scope.querySelector('#nlDueToggle')?.addEventListener('click', () => {
+    state.settings.nlDueOpen = state.settings.nlDueOpen === false;
+    saveState();
+    renderDashboard();
+  });
+  scope.querySelectorAll('.pay-btn[data-pay-id]').forEach(btn => {
+    btn.addEventListener('click', () =>
+      promptPay(btn.dataset.payType, btn.dataset.payId, () => renderDashboard()));
+  });
 }
 
 function nlHeroHtml(leftover, opts) {
