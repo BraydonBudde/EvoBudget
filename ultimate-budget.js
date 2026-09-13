@@ -3970,8 +3970,10 @@ function renderDashboardLayout1() {
     <div class="section-header">
       <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
       ${periodBarHtml()}
+      ${dashLogControlsHtml()}
       ${helpBtn('dashboard')}
     </div>
+    ${dashFabHtml()}
     ${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
     </div>
     <div class="dashboard-grid" style="margin-bottom:16px">
@@ -4020,6 +4022,7 @@ function renderDashboardLayout1() {
     </div>`;
   wirePeriodBar(el);
   wireNlHero(el);
+  wireDashLog(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -4106,8 +4109,10 @@ function renderDashboardLayout2() {
     <div class="section-header">
       <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
       ${periodBarHtml()}
+      ${dashLogControlsHtml()}
       ${helpBtn('dashboard')}
     </div>
+    ${dashFabHtml()}
 
     ${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
 
@@ -4158,6 +4163,7 @@ function renderDashboardLayout2() {
     </div>`;
   wirePeriodBar(el);
   wireNlHero(el);
+  wireDashLog(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
@@ -4880,38 +4886,45 @@ function syncFundLinkedTemplate(fund) {
   const lt = findLinkedTemplate('sinking_fund', fund.id);
   if (lt) lt.amount = Math.round((calcFund(fund).requiredMonthly || 0) * 100) / 100;
 }
-function addTransaction(){
-  if(trialBlocks('transaction')){ showUpgradeModal({reason:'transaction'}); return; }
-  const date=document.getElementById('txDate')?.value,
-        type=document.getElementById('txType')?.value,
-        cat=document.getElementById('txCategory')?.value,
-        amount=parseFloat(document.getElementById('txAmount')?.value),
-        desc=document.getElementById('txDesc')?.value?.trim()||'',
-        errEl=document.getElementById('txError');
-  let alloc=document.getElementById('txAlloc')?.value||'';
+// Reads its fields by id prefix so the Transactions form and the dashboard's
+// quick-add modal can share it, allocation and sinking-fund rules included.
+// Without a prefix it is the inline form, which is also how the click
+// listener calls it: the event it passes has no .prefix, so it falls through.
+function addTransaction(opts){
+  const o=(opts&&typeof opts.prefix==='string')?opts:{};
+  const p=o.prefix||'tx';
+  const gid=sfx=>document.getElementById(p+sfx);
+  if(trialBlocks('transaction')){ showUpgradeModal({reason:'transaction'}); return false; }
+  const date=gid('Date')?.value,
+        type=gid('Type')?.value,
+        cat=gid('Category')?.value,
+        amount=parseFloat(gid('Amount')?.value),
+        desc=gid('Desc')?.value?.trim()||'',
+        errEl=gid('Error');
+  let alloc=gid('Alloc')?.value||'';
   if(!date||!type||!cat||isNaN(amount)||amount<=0){
     // Highlight the actual offending fields, same treatment the allocation
     // check below gives - a bare banner left users hunting for the problem.
-    const amtEl=document.getElementById('txAmount'),catEl=document.getElementById('txCategory'),dateWrap=document.getElementById('txDateWrap');
+    const amtEl=gid('Amount'),catEl=gid('Category'),dateWrap=gid('DateWrap');
     if(amtEl)amtEl.classList.toggle('fk-invalid',isNaN(amount)||amount<=0);
     if(catEl)catEl.classList.toggle('fk-invalid',!cat);
     if(dateWrap)dateWrap.classList.toggle('fk-invalid',!date);
     if(errEl){errEl.textContent=t('tx_error_required');errEl.hidden=false;}
-    return;
+    return false;
   }
-  ['txAmount','txCategory','txDateWrap'].forEach(id=>document.getElementById(id)?.classList.remove('fk-invalid'));
+  ['Amount','Category','DateWrap'].forEach(sfx=>gid(sfx)?.classList.remove('fk-invalid'));
   if(errEl) errEl.hidden=true;
   const allocRequired=state.allocation?.enabled&&type!=='income'&&type!=='savings'&&type!=='sinking_fund';
   if(allocRequired&&!alloc){
-    const sel=document.getElementById('txAlloc');
-    const wrap=document.getElementById('txAllocWrap');
+    const sel=gid('Alloc');
+    const wrap=gid('AllocWrap');
     if(sel) sel.classList.add('select--error');
     if(wrap&&!wrap.querySelector('.field-error-msg')){
       const msg=document.createElement('span');
       msg.className='field-error-msg'; msg.textContent=t('alloc_required');
       wrap.appendChild(msg);
     }
-    return;
+    return false;
   }
   // sinking_fund: auto-assign to save allocation bucket (runs silently, shows in list)
   if(type==='sinking_fund'&&state.allocation?.enabled){
@@ -4936,13 +4949,85 @@ function addTransaction(){
     }
   }
   saveState();
-  document.getElementById('txAmount').value='';
-  document.getElementById('txDesc').value='';
-  const allocSel=document.getElementById('txAlloc');
+  if(o.after){ o.after(); return true; }
+  gid('Amount').value='';
+  gid('Desc').value='';
+  const allocSel=gid('Alloc');
   if(allocSel){allocSel.value='';allocSel.classList.remove('select--error');}
-  document.getElementById('txAllocWrap')?.querySelector('.field-error-msg')?.remove();
+  gid('AllocWrap')?.querySelector('.field-error-msg')?.remove();
   renderTxList();
   showToast(t('toast_tx_added'));
+  return true;
+}
+
+// ── Quick add, from the dashboard ──────────────────────────────────────
+// Its own id prefix, because the Transactions tab's form stays in the DOM
+// once that tab has been opened and would otherwise win getElementById.
+function openQuickAddTx(){
+  const allocEnabled=!!state.allocation?.enabled;
+  document.getElementById('modalTitle').textContent=t('tx_add_title');
+  document.getElementById('modalBody').innerHTML=`
+    <div class="field"><label class="field-label">${t('tx_date')}</label>${styledDateField('qaDate','qaDateWrap',today())}</div>
+    <div class="field"><label class="field-label">${t('tx_type')}</label><select class="select" id="qaType">
+      <option value="expense" selected>${t('tx_type_expense')}</option>
+      <option value="bill">${t('tx_type_bill')}</option>
+      <option value="subscription">${t('tx_type_subscription')}</option>
+      <option value="savings">${t('tx_type_savings')}</option>
+      <option value="sinking_fund">${t('tx_type_sinking_fund')}</option>
+      <option value="debt">${t('tx_type_debt')}</option>
+      <option value="income">${t('tx_type_income')}</option>
+    </select></div>
+    <div class="field"><label class="field-label">${t('tx_category')}</label><select class="select" id="qaCategory"></select></div>
+    ${allocEnabled?`<div class="field" id="qaAllocWrap"><label class="field-label">${t('alloc_label')}</label>
+      <select class="select" id="qaAlloc"><option value="">${t('alloc_optional')}</option>${
+        (state.allocation.buckets||[]).map(b=>`<option value="${b.id}">${esc(getAllocBucketDisplayName(b))}</option>`).join('')
+      }</select></div>`:''}
+    <div class="field"><label class="field-label">${t('tx_amount')} (${SYM})</label>
+      <input class="input" type="number" id="qaAmount" min="0" step="0.01" placeholder="0.00"></div>
+    <div class="field"><label class="field-label">${t('tx_desc_label')}</label>
+      <input class="input" type="text" id="qaDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
+    <div class="tx-error" id="qaError" hidden></div>
+    <div class="edit-tx-actions">
+      <button class="btn btn-primary" id="qaSaveBtn" type="button">${t('tx_add_btn')}</button>
+      <button class="btn btn-ghost btn-sm" id="qaCancelBtn" type="button">${t('cancel')}</button>
+    </div>`;
+  document.getElementById('tutorialOverlay').hidden=false;
+
+  const fillQaCats=()=>{
+    const sel=document.getElementById('qaCategory');
+    const cats=getCats(document.getElementById('qaType')?.value);
+    if(sel) sel.innerHTML=cats.length?cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join(''):'<option value="">- set up categories first -</option>';
+  };
+  fillQaCats();
+  document.getElementById('qaType')?.addEventListener('change',fillQaCats);
+  bindDateField('qaDate','qaDateWrap');
+  document.getElementById('modalBody')?.addEventListener('input',()=>{
+    const el=document.getElementById('qaError'); if(el) el.hidden=true;
+  });
+  setTimeout(()=>document.getElementById('qaAmount')?.focus(),50);
+
+  document.getElementById('qaSaveBtn')?.addEventListener('click',()=>{
+    addTransaction({prefix:'qa',after:()=>{
+      closeModal();
+      renderDashboard();
+      showToast(t('toast_tx_added'));
+    }});
+  });
+  document.getElementById('qaCancelBtn')?.addEventListener('click',closeModal);
+}
+
+// The heading button on wide screens, the floating one on narrow. Both open
+// the same modal; CSS decides which is visible.
+function dashLogControlsHtml(){
+  return `<button class="btn btn-primary btn-sm dash-log-btn" id="dashLogBtn" type="button">\u002B ${t('tx_add_btn')}</button>`;
+}
+function dashFabHtml(){
+  return `<button class="dash-fab" id="dashFab" type="button"
+    title="${esc(t('tx_add_title'))}" aria-label="${esc(t('tx_add_title'))}">\u002B</button>`;
+}
+function wireDashLog(scope){
+  scope.querySelector('#dashLogBtn')?.addEventListener('click',openQuickAddTx);
+  scope.querySelector('#dashFab')?.addEventListener('click',openQuickAddTx);
 }
 function openEditTx(txId){
   const tx=state.transactions.find(t=>t.id===txId);if(!tx)return;

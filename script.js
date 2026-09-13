@@ -2760,8 +2760,10 @@ function renderDashboardLayout1() {
     <div class="section-header">
       <h2 class="section-title">${t('tab_dashboard')}</h2>
       ${periodBarHtml()}
+      ${dashLogControlsHtml()}
       <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
     </div>
+    ${dashFabHtml()}
 
     ${nlHeroHtml(sum.leftover, { income: sum.totalIncome })}
 
@@ -2847,6 +2849,7 @@ function renderDashboardLayout1() {
   // Period badge → go to settings
   wirePeriodBar(el);
   wireNlHero(el);
+  wireDashLog(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -2938,8 +2941,10 @@ function renderDashboardLayout2() {
     <div class="section-header">
       <h2 class="section-title">${t('tab_dashboard')}</h2>
       ${periodBarHtml()}
+      ${dashLogControlsHtml()}
       <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
     </div>
+    ${dashFabHtml()}
 
     ${nlHeroHtml(sum.leftover, { income: sum.totalIncome })}
 
@@ -2998,6 +3003,7 @@ function renderDashboardLayout2() {
 
   wirePeriodBar(el);
   wireNlHero(el);
+  wireDashLog(el);
   requestAnimationFrame(() => {
     if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
@@ -3658,25 +3664,116 @@ function populateTxCats() {
     : `<option value="">${t('no_cat_setup')}</option>`;
 }
 
-function addTransaction() {
-  if (trialBlocks('transaction')) { showUpgradeModal({ reason: 'transaction' }); return; }
-  const date   = document.getElementById('txDate')?.value;
-  const type   = document.getElementById('txType')?.value;
-  const cat    = document.getElementById('txCategory')?.value;
-  const amount = parseFloat(document.getElementById('txAmount')?.value);
-  const desc   = document.getElementById('txDesc')?.value?.trim() || '';
-  const errEl  = document.getElementById('txError');
+// Reads its fields by id prefix so the Transactions form and the dashboard's
+// quick-add modal can share it. Without a prefix it is the inline form, which
+// is also how the click listener calls it - the event argument it gets passed
+// has no .prefix, so it falls through to the defaults.
+function addTransaction(opts) {
+  const o = (opts && typeof opts.prefix === 'string') ? opts : {};
+  const p = o.prefix || 'tx';
+  const id = suffix => document.getElementById(p + suffix);
+
+  if (trialBlocks('transaction')) { showUpgradeModal({ reason: 'transaction' }); return false; }
+  const date   = id('Date')?.value;
+  const type   = id('Type')?.value;
+  const cat    = id('Category')?.value;
+  const amount = parseFloat(id('Amount')?.value);
+  const desc   = id('Desc')?.value?.trim() || '';
+  const errEl  = id('Error');
   if (!date || !type || !cat || isNaN(amount) || amount <= 0) {
-    if (errEl) { errEl.textContent = t('tx_error_required'); errEl.hidden = false; }
-    return;
+    if (errEl) {
+      errEl.textContent = cat || getCats(type).length ? t('tx_error_required') : t('tx_error_no_cats');
+      errEl.hidden = false;
+    }
+    return false;
   }
   if (errEl) errEl.hidden = true;
   state.transactions.push({ id: uid(), date, type, category: cat, amount, description: desc });
   saveState();
-  document.getElementById('txAmount').value = '';
-  document.getElementById('txDesc').value   = '';
+  if (o.after) { o.after(); return true; }
+  id('Amount').value = '';
+  id('Desc').value   = '';
   renderTxList();
   showToast(t('toast_tx_added'));
+  return true;
+}
+
+// ── Quick add, from the dashboard ──────────────────────────────────────
+// Its own id prefix, because the Transactions tab's form stays in the DOM
+// once that tab has been opened and would otherwise win getElementById.
+function openQuickAddTx() {
+  document.getElementById('modalTitle').textContent = t('tx_add_title');
+  document.getElementById('modalBody').innerHTML = `
+    <div class="field">
+      <label class="field-label">${t('tx_date')}</label>
+      <div class="date-field-styled" id="qaDateWrap">
+        <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="date-field-val" id="qaDateDisp">${formatDateDisplay(today())}</span>
+        <input type="date" id="qaDate" value="${today()}">
+      </div>
+    </div>
+    <div class="field"><label class="field-label">${t('tx_type')}</label>
+      <select class="select" id="qaType">
+        <option value="expense" selected>${t('tx_type_expense')}</option>
+        <option value="bill">${t('tx_type_bill')}</option>
+        <option value="savings">${t('tx_type_savings')}</option>
+        <option value="debt">${t('tx_type_debt')}</option>
+        <option value="income">${t('tx_type_income')}</option>
+      </select></div>
+    <div class="field"><label class="field-label">${t('tx_category')}</label>
+      <select class="select" id="qaCategory"></select></div>
+    <div class="field"><label class="field-label">${t('tx_amount')} (${SYM})</label>
+      <input class="input" type="number" id="qaAmount" min="0" step="0.01" placeholder="0.00"></div>
+    <div class="field"><label class="field-label">${t('tx_desc_label')}</label>
+      <input class="input" type="text" id="qaDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
+    <div class="tx-error" id="qaError" hidden></div>
+    <div class="edit-tx-actions">
+      <button class="btn btn-primary" id="qaSaveBtn" type="button">${t('tx_add_btn')}</button>
+      <button class="btn btn-ghost btn-sm" id="qaCancelBtn" type="button">${t('cancel')}</button>
+    </div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+
+  const fillQaCats = () => {
+    const sel = document.getElementById('qaCategory');
+    const cats = getCats(document.getElementById('qaType')?.value);
+    if (sel) sel.innerHTML = cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('')
+      || `<option value="">${t('no_categories')}</option>`;
+  };
+  fillQaCats();
+  document.getElementById('qaType')?.addEventListener('change', fillQaCats);
+  document.getElementById('qaDateWrap')?.addEventListener('click', () => {
+    openDatePicker(document.getElementById('qaDate'), document.getElementById('qaDateWrap'));
+  });
+  document.getElementById('qaDate')?.addEventListener('change', e => {
+    document.getElementById('qaDateDisp').textContent = formatDateDisplay(e.target.value);
+  });
+  document.getElementById('modalBody')?.addEventListener('input', () => {
+    const el = document.getElementById('qaError'); if (el) el.hidden = true;
+  });
+  setTimeout(() => document.getElementById('qaAmount')?.focus(), 50);
+
+  document.getElementById('qaSaveBtn')?.addEventListener('click', () => {
+    addTransaction({ prefix: 'qa', after: () => {
+      closeModal();
+      renderDashboard();
+      showToast(t('toast_tx_added'));
+    } });
+  });
+  document.getElementById('qaCancelBtn')?.addEventListener('click', closeModal);
+}
+
+// The heading button on wide screens, the floating one on narrow. Both open
+// the same modal; CSS decides which is visible.
+function dashLogControlsHtml() {
+  return `<button class="btn btn-primary btn-sm dash-log-btn" id="dashLogBtn" type="button">+ ${t('tx_add_btn')}</button>`;
+}
+function dashFabHtml() {
+  return `<button class="dash-fab" id="dashFab" type="button"
+    title="${esc(t('tx_add_title'))}" aria-label="${esc(t('tx_add_title'))}">+</button>`;
+}
+function wireDashLog(scope) {
+  scope.querySelector('#dashLogBtn')?.addEventListener('click', openQuickAddTx);
+  scope.querySelector('#dashFab')?.addEventListener('click', openQuickAddTx);
 }
 
 // ── Edit transaction modal ─────────────────────────────────────────────

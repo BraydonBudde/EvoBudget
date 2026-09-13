@@ -2873,6 +2873,38 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   .nl-fig { flex: 1 1 0; }
 }
 
+/* ── Log a transaction from the dashboard ──────────────────────────────
+   Two controls, one job. Wide screens have room on the heading line, so the
+   button goes there. Narrow ones do not: that line already carries two date
+   fields, two presets and the help icon, so a fifth control would wrap it
+   into a third row before the hero even starts. There the floating one takes
+   over. Only ever one of the two is visible. */
+.dash-log-btn { white-space: nowrap; }
+.dash-fab {
+  position: fixed; right: 18px; bottom: 18px; z-index: 60; display: none;
+  width: 54px; height: 54px; border: 0; border-radius: 50%; cursor: pointer;
+  align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1;
+  color: var(--text-on-grad);
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+  box-shadow: var(--shadow-pop);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+  /* Clear of the home-indicator strip on phones that have one. */
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+.dash-fab:active { transform: scale(.94); }
+.dash-fab:hover { box-shadow: 0 16px 40px -8px rgba(76, 29, 149, .45); }
+
+@media (max-width: 700px) {
+  .dash-log-btn { display: none; }
+  .dash-fab { display: flex; }
+}
+/* The floating button would otherwise sit on top of the last panel once the
+   page is scrolled to the bottom. */
+@media (max-width: 700px) {
+  .bview.is-active { padding-bottom: 84px; }
+}
+
 /* ── Budget-period bar (dashboard) ─────────────────────────────────────
    Mirrors the admin dashboard's range bar: dates on the left, quick ranges
    pushed to the right. Inline rather than a popover, so it never covers a
