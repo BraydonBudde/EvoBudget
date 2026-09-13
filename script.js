@@ -2757,7 +2757,7 @@ function renderDashboardLayout1() {
   const el = document.getElementById('bview-dashboard');
   const isCurrentRender = markRenderGen(el);
   el.innerHTML = `
-    <div class="section-header">
+    <div class="section-header section-header--period">
       <h2 class="section-title">${t('tab_dashboard')}</h2>
       ${periodBarHtml()}
       ${dashLogControlsHtml()}
@@ -2938,7 +2938,7 @@ function renderDashboardLayout2() {
   const el = document.getElementById('bview-dashboard');
   const isCurrentRender = markRenderGen(el);
   el.innerHTML = `
-    <div class="section-header">
+    <div class="section-header section-header--period">
       <h2 class="section-title">${t('tab_dashboard')}</h2>
       ${periodBarHtml()}
       ${dashLogControlsHtml()}
@@ -4717,9 +4717,11 @@ function periodBarHtml() {
       <input type="date" id="${id}" value="${value}">
     </div>`;
   return `<div class="period-bar">
-    ${field('pbStart', 'pbStartWrap', state.settings.periodStart)}
-    <span class="period-bar-sep" aria-hidden="true">&ndash;</span>
-    ${field('pbEnd', 'pbEndWrap', state.settings.periodEnd)}
+    <div class="period-bar-dates">
+      ${field('pbStart', 'pbStartWrap', state.settings.periodStart)}
+      <span class="period-bar-sep" aria-hidden="true">&ndash;</span>
+      ${field('pbEnd', 'pbEndWrap', state.settings.periodEnd)}
+    </div>
     <div class="period-bar-chips">
       ${PERIOD_CHIPS.map(([k, label]) =>
         `<button class="period-chip${active === k ? ' is-active' : ''}" data-range="${k}" type="button">${t(label)}</button>`).join('')}

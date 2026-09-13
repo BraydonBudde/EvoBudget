@@ -2909,15 +2909,34 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
    Mirrors the admin dashboard's range bar: dates on the left, quick ranges
    pushed to the right. Inline rather than a popover, so it never covers a
    stat card and never has to be positioned against the viewport. */
-/* Sits on the heading's line. .section-title carries flex:1, which pushes
-   this and the help button over to the right. */
+/* Sits on the heading's line, taking all the room between the title and the
+   Add button and sharing it evenly between its two groups: the dates and the
+   presets. space-evenly rather than space-between so the gap to the title and
+   the gap to the Add button match the gap in the middle. */
+.section-header--period .section-title { flex: none; }
 .period-bar {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  margin: 0;
+  display: flex; align-items: center; flex-wrap: wrap;
+  flex: 1; gap: 10px; margin: 0;
 }
+/* Each group takes half of what is going and centres itself inside it, so
+   the two sit centred in their own share rather than drifting to one end. */
+.period-bar-dates, .period-bar-chips { flex: 1; justify-content: center; }
+.period-bar-dates { display: flex; align-items: center; gap: 10px; }
 .period-bar-sep { color: var(--text-faint); font-size: 13px; }
 .period-bar .date-field-styled { min-width: 132px; }
 .period-bar-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Below this the heading can no longer hold the title, both groups and the
+   Add button on one line. Rather than let it wrap raggedly, the bar takes a
+   line of its own, where there is no title or button to sit between and
+   spreading it out would just look like drift. */
+@media (max-width: 900px) {
+  /* Title and buttons keep the first line, the bar drops below them whole,
+     rather than the three of them wrapping into three ragged rows. */
+  .section-header--period .section-title { flex: 1; }
+  .period-bar { order: 3; flex: 1 1 100%; justify-content: flex-start; }
+  .period-bar-dates, .period-bar-chips { flex: none; }
+}
 .period-chip {
   border: 1px solid var(--border-faint); background: var(--surface-strong);
   color: var(--text-secondary); border-radius: var(--radius-pill);
