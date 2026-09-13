@@ -3969,9 +3969,9 @@ function renderDashboardLayout1() {
   el.innerHTML=`
     <div class="section-header">
       <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
+      ${periodBarHtml()}
       ${helpBtn('dashboard')}
     </div>
-    ${periodBarHtml()}
     ${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
     </div>
     <div class="dashboard-grid" style="margin-bottom:16px">
@@ -4105,9 +4105,9 @@ function renderDashboardLayout2() {
   el.innerHTML=`
     <div class="section-header">
       <h2 class="section-title">✨ ${t('tab_dashboard')}</h2>
+      ${periodBarHtml()}
       ${helpBtn('dashboard')}
     </div>
-    ${periodBarHtml()}
 
     ${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
 
@@ -6949,7 +6949,6 @@ function nlHeroHtml(leftover, opts) {
 function periodQuickRanges() {
   const now = new Date(), m = getMonthBounds();
   return {
-    today:      [toLocalISO(now), toLocalISO(now)],
     month:      [m.start, m.end],
     last_month: [toLocalISO(new Date(now.getFullYear(), now.getMonth() - 1, 1)),
                  toLocalISO(new Date(now.getFullYear(), now.getMonth(), 0))]
@@ -6969,7 +6968,7 @@ function applyBudgetPeriod(start, end, opts) {
   if (!(opts && opts.silent)) showToast(t('toast_period_updated'));
 }
 
-const PERIOD_CHIPS = [['today', 'dp_today'], ['month', 'this_month'], ['last_month', 'last_month']];
+const PERIOD_CHIPS = [['month', 'this_month'], ['last_month', 'last_month']];
 
 function periodBarHtml() {
   const active = activePeriodRange();
@@ -6979,7 +6978,6 @@ function periodBarHtml() {
       <input type="date" id="${id}" value="${value}">
     </div>`;
   return `<div class="period-bar">
-    <span class="period-bar-label">${t('budget_period')}</span>
     ${field('pbStart', 'pbStartWrap', state.settings.periodStart)}
     <span class="period-bar-sep" aria-hidden="true">&ndash;</span>
     ${field('pbEnd', 'pbEndWrap', state.settings.periodEnd)}
