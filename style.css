@@ -2873,6 +2873,12 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   .nl-fig { flex: 1 1 0; }
 }
 
+/* The "tell me when this launches" form on the home page: only the failure
+   line needs styling, the rest rides on .btn. */
+.tool-notify-err {
+  display: block; margin-top: 6px; font-size: 12px; color: var(--expense);
+}
+
 /* ── Log a transaction from the dashboard ──────────────────────────────
    Two controls, one job. Wide screens have room on the heading line, so the
    button goes there. Narrow ones do not: that line already carries two date

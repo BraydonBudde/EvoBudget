@@ -62,6 +62,8 @@ function doGet(e) {
   const p = (e && e.parameter) || {};
   if (p.action === 'claim')    return _jsonp(p.cb, _handleClaim(p));
   if (p.action === 'validate') return _jsonp(p.cb, _handleValidate(p));
+  if (p.action === 'code')     return _jsonp(p.cb, _handleCode(p));
+  if (p.action === 'notify')   return _jsonp(p.cb, _handleNotify(p));
   if (p.action === 'sales')    return _jsonp(p.cb, _handleSales(p));
   if (p.action === 'lsrevoke') return _jsonp(p.cb, _handleLsRevoke(p));
   if (p.action === 'posts')    return _jsonp(p.cb, _handleBlogPosts(p));
@@ -96,6 +98,7 @@ function doPost(e) {
       JSON.stringify(payload.detail || {}).slice(0, 512),    // K
       String(payload.clientTs || '')                         // L
     ]);
+    if (Math.random() < PRUNE_CHANCE) _pruneEvents();
     return _ok();
   } catch (err) {
     // Never surface errors to a fire-and-forget beacon - nothing reads
@@ -151,10 +154,36 @@ const BLOG_CACHE_SECONDS = 300;
 // How many distinct browsers one key may unlock. Counted by the visitor id
 // analytics already stores per browser. Generous enough for one person's
 // real devices, tight enough that a publicly posted key dies quickly.
-const KEY_DEVICE_LIMIT = 5;
+const KEY_DEVICE_LIMIT = 3;
 // Claims are far rarer than analytics beacons, so they get their own much
 // tighter bucket - this is what slows anyone trying to guess order numbers.
 const CLAIM_LIMIT_PER_MIN = 20;
+// Launch codes used to be a hardcoded list inside script.js, which meant
+// anyone could read all 20 out of the public bundle and unlock either
+// planner for nothing. They live here now, so they can be rotated and
+// switched off without a redeploy, and are never sent to the browser.
+const CODES_SHEET = 'Codes';
+// The "notify me" form used to write to localStorage and stop there, so
+// nobody was ever actually told when a tool launched. These are the
+// addresses it collects.
+const NOTIFY_SHEET = 'Notify';
+const NOTIFY_LIMIT_PER_MIN = 20;
+// Redemptions must not be starved by analytics traffic, so validation gets
+// its own bucket rather than sharing the global one. A buyer being told
+// "busy" because the site is having a good day is the worst possible bug.
+const VALIDATE_LIMIT_PER_MIN = 60;
+
+// ── Events housekeeping ───────────────────────────────────────────────
+// The Events sheet shares a spreadsheet with Keys, and a spreadsheet dies
+// at 10M cells. Left alone, analytics would eventually take the licence
+// system down with it. Trimmed by age first, then by row count, oldest
+// first, in a single deleteRows call.
+const EVENTS_MAX_ROWS = 40000;
+const EVENTS_MAX_AGE_DAYS = 120;
+// Checking every request would waste quota, so housekeeping runs on a
+// small fraction of them and at most once an hour.
+const PRUNE_CHANCE = 0.02;
+const PRUNE_MIN_INTERVAL_MS = 3600000;
 
 function _jsonp(cb, obj) {
   // Only ever emit a callback name we control the shape of - an unfiltered
@@ -182,6 +211,59 @@ function _sheet(name, headers) {
 function _stylesSheet() { return _sheet(STYLES_SHEET, ['Token', 'Tool', 'Theme', 'Layout', 'Label', 'Active']); }
 function _keysSheet()   { return _sheet(KEYS_SHEET, ['Key', 'Tool', 'Theme', 'Layout', 'OrderId', 'Email', 'IssuedAt', 'Status', 'Devices', 'RedeemCount', 'LastRedeemedAt']); }
 function _blogsSheet()  { return _sheet(BLOGS_SHEET, ['Slug', 'Title', 'Excerpt', 'Category', 'Tool', 'Tags', 'Date', 'ReadMinutes', 'Image', 'ImageAlt', 'Body', 'Related', 'Status', 'Updated']); }
+function _notifySheet() { return _sheet(NOTIFY_SHEET, ['Timestamp', 'Email', 'Tool', 'Source', 'VisitorId']); }
+
+// Seeded on first creation with the codes that used to live in script.js,
+// so nothing an existing buyer holds stops working. Rotate them here: edit
+// the Code column, or set Active to "no" to retire one.
+function _codesSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(CODES_SHEET);
+  if (sh) return sh;
+  sh = ss.insertSheet(CODES_SHEET);
+  sh.appendRow(['Code', 'Tool', 'Theme', 'Layout', 'Active']);
+  const themes = ['light', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
+  const seed = [
+    ['0SCL1','sbp',1],['0SCD2','sbp',1],['0SCS3','sbp',1],['0SCV4','sbp',1],['0SCT5','sbp',1],
+    ['0SRL6','sbp',2],['0SRD7','sbp',2],['0SRS8','sbp',2],['0SRV9','sbp',2],['1SRT0','sbp',2],
+    ['1UCL1','ubp',1],['1UCD2','ubp',1],['1UCS3','ubp',1],['1UCV4','ubp',1],['1UCT5','ubp',1],
+    ['1URL6','ubp',2],['1URD7','ubp',2],['1URS8','ubp',2],['1URV9','ubp',2],['2URT0','ubp',2]
+  ];
+  sh.getRange(2, 1, seed.length, 5).setValues(
+    seed.map(function (r, i) { return [r[0], r[1], themes[i % 5], r[2], 'yes']; }));
+  return sh;
+}
+
+// Keeps the Events sheet from growing until it takes the spreadsheet, and
+// the licence system with it, down. Oldest rows go first.
+function _pruneEvents() {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const last = Number(props.getProperty('lastPrune') || '0');
+    if (Date.now() - last < PRUNE_MIN_INTERVAL_MS) return;
+    props.setProperty('lastPrune', String(Date.now()));
+
+    const sh = _getSheet();
+    const lastRow = sh.getLastRow();
+    if (lastRow <= 2) return;
+
+    let dropTo = 0;   // number of data rows to remove from the top
+
+    // Age first: anything past the window is gone regardless of count.
+    const cutoff = Date.now() - EVENTS_MAX_AGE_DAYS * 86400000;
+    const stamps = sh.getRange(2, 1, Math.min(lastRow - 1, EVENTS_MAX_ROWS), 1).getValues();
+    for (var i = 0; i < stamps.length; i++) {
+      const t = stamps[i][0] instanceof Date ? stamps[i][0].getTime() : Date.parse(stamps[i][0]);
+      if (!t || t >= cutoff) break;
+      dropTo = i + 1;
+    }
+    // Then the row cap, whichever bites harder.
+    const dataRows = lastRow - 1;
+    if (dataRows - dropTo > EVENTS_MAX_ROWS) dropTo = dataRows - EVENTS_MAX_ROWS;
+
+    if (dropTo > 0) sh.deleteRows(2, dropTo);
+  } catch (err) { /* housekeeping must never break a request */ }
+}
 
 // ETSY-5FDE-43A8-8477-4228A671F027: a v4 UUID with its first block replaced,
 // so keys are visually consistent with the Lemon Squeezy ones buyers of the
@@ -190,6 +272,64 @@ function _generateKey() {
   const parts = Utilities.getUuid().toUpperCase().split('-');
   parts[0] = 'ETSY';
   return parts.join('-');
+}
+
+// One named bucket per purpose, so analytics can never spend a buyer's
+// allowance. Returns true when the request is under its own cap.
+function _bucketOk(name, limit) {
+  const cache = CacheService.getScriptCache();
+  const k = name + '_' + Math.floor(Date.now() / 60000);
+  const n = Number(cache.get(k) || '0');
+  if (n >= limit) return false;
+  cache.put(k, String(n + 1), 90);
+  return true;
+}
+
+// A launch code now proves itself against the sheet rather than against a
+// list the browser already has. Shares the validate bucket: both are
+// "someone is redeeming something".
+function _handleCode(p) {
+  try {
+    if (!_bucketOk('vl', VALIDATE_LIMIT_PER_MIN)) return { ok: false, error: 'busy' };
+    const code = String(p.code || '').trim().toUpperCase().slice(0, 32);
+    if (!code) return { ok: false, error: 'not_found' };
+    const rows = _codesSheet().getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][0]).trim().toUpperCase() !== code) continue;
+      if (String(rows[i][4]).trim().toLowerCase() === 'no') return { ok: false, error: 'not_found' };
+      return {
+        ok: true,
+        tool: String(rows[i][1]).trim().toLowerCase() === 'ubp' ? 'ubp' : 'sbp',
+        theme: String(rows[i][2]).trim(),
+        layout: String(rows[i][3]).trim()
+      };
+    }
+    return { ok: false, error: 'not_found' };
+  } catch (err) { return { ok: false, error: 'server' }; }
+}
+
+// "Tell me when this launches". One row per address per tool; asking twice
+// updates the timestamp rather than duplicating.
+function _handleNotify(p) {
+  try {
+    if (!_bucketOk('nt', NOTIFY_LIMIT_PER_MIN)) return { ok: false, error: 'busy' };
+    const email = _normEmail(p.email);
+    if (!_looksLikeEmail(email)) return { ok: false, error: 'bad_email' };
+    const tool = String(p.tool || '').trim().slice(0, 40);
+    const source = String(p.source || 'notify').trim().slice(0, 40);
+    const vid = String(p.vid || '').trim().slice(0, 64);
+
+    const sh = _notifySheet();
+    const rows = sh.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (_normEmail(rows[i][1]) === email && String(rows[i][2]).trim() === tool) {
+        sh.getRange(i + 1, 1).setValue(new Date());
+        return { ok: true, already: true };
+      }
+    }
+    sh.appendRow([new Date(), email, tool, source, vid]);
+    return { ok: true, already: false };
+  } catch (err) { return { ok: false, error: 'server' }; }
 }
 
 function _claimRateOk() {
@@ -253,7 +393,7 @@ function _handleClaim(p) {
 
 function _handleValidate(p) {
   try {
-    if (!_underRateLimit()) return { ok: false, error: 'busy' };
+    if (!_bucketOk('vl', VALIDATE_LIMIT_PER_MIN)) return { ok: false, error: 'busy' };
     const key = String(p.key || '').trim().toUpperCase().slice(0, 64);
     const vid = String(p.vid || '').trim().slice(0, 64);
     if (!key) return { ok: false, error: 'not_found' };

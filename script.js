@@ -135,7 +135,7 @@ const TRANSLATIONS = {
     reset_desc:'Permanently deletes all your data. This cannot be undone.',
     reset_btn:'Reset everything',
     // Common
-    add:'Add', cancel:'Cancel',rename_title_prompt:'Rename your budget planner', save:'Save', delete:'Delete',dp_today:'Today',dp_clear:'Clear', edit:'Edit',field_info_aria:'About {0}',
+    add:'Add', save_failed:'Could not save: this browser is out of storage space.',cancel:'Cancel',rename_title_prompt:'Rename your budget planner', save:'Save', delete:'Delete',dp_today:'Today',dp_clear:'Clear', edit:'Edit',field_info_aria:'About {0}',
     mod_name_hint:'The label you’ll see for this category everywhere in the app.',mod_due_date_hint:'When this is due each month - used for the calendar and paid tracking.',
     mod_th_expected_hint:'The amount you plan to budget for this category each month.',mod_th_actual_hint:'Calculated automatically from your logged transactions in this category.',mod_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
     tx_date_hint:'The date this transaction happened.',tx_type_hint:'What kind of transaction this is - controls which category list you can pick from.',tx_category_hint:'Which budget category this transaction counts toward.',tx_amount_hint:'How much money this transaction was for.',tx_desc_hint:'An optional note to help you remember what this was for.',
@@ -414,7 +414,7 @@ const TRANSLATIONS = {
     rollover_amount:'Übertragsbetrag',
     reset_desc:'Löscht alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.',
     reset_btn:'Alles zurücksetzen',
-    add:'Hinzufügen',cancel:'Abbrechen',rename_title_prompt:'Budgetplaner umbenennen',save:'Speichern',delete:'Löschen',dp_today:'Heute',dp_clear:'Löschen',edit:'Bearbeiten',field_info_aria:'Über {0}',
+    add:'Hinzufügen',save_failed:'Speichern fehlgeschlagen: Der Browserspeicher ist voll.',cancel:'Abbrechen',rename_title_prompt:'Budgetplaner umbenennen',save:'Speichern',delete:'Löschen',dp_today:'Heute',dp_clear:'Löschen',edit:'Bearbeiten',field_info_aria:'Über {0}',
     mod_name_hint:'Die Bezeichnung, die du überall in der App für diese Kategorie siehst.',mod_due_date_hint:'Wann dies jeden Monat fällig ist - wird für den Kalender und die Bezahlt-Markierung verwendet.',
     mod_th_expected_hint:'Der Betrag, den du monatlich für diese Kategorie einplanst.',mod_th_actual_hint:'Wird automatisch aus deinen erfassten Transaktionen in dieser Kategorie berechnet.',mod_th_progress_hint:'Wie viel Prozent des geplanten Betrags bisher verbraucht wurde.',
     tx_date_hint:'Das Datum, an dem diese Transaktion stattfand.',tx_type_hint:'Um welche Art von Transaktion es sich handelt - bestimmt, aus welcher Kategorieliste du wählen kannst.',tx_category_hint:'Welcher Budgetkategorie diese Transaktion zugerechnet wird.',tx_amount_hint:'Wie viel Geld diese Transaktion betraf.',tx_desc_hint:'Eine optionale Notiz, damit du dich erinnerst, wofür das war.',
@@ -673,7 +673,7 @@ const TRANSLATIONS = {
     rollover_amount:'Montant du report',
     reset_desc:'Supprime définitivement toutes vos données. Irréversible.',
     reset_btn:'Tout réinitialiser',
-    add:'Ajouter',cancel:'Annuler',rename_title_prompt:'Renommer votre planificateur de budget',save:'Enregistrer',delete:'Supprimer',dp_today:"Aujourd'hui",dp_clear:'Effacer',edit:'Modifier',field_info_aria:'À propos de {0}',
+    add:'Ajouter',save_failed:'Enregistrement impossible : le stockage du navigateur est plein.',cancel:'Annuler',rename_title_prompt:'Renommer votre planificateur de budget',save:'Enregistrer',delete:'Supprimer',dp_today:"Aujourd'hui",dp_clear:'Effacer',edit:'Modifier',field_info_aria:'À propos de {0}',
     mod_name_hint:'Le nom que vous verrez pour cette catégorie partout dans l’application.',mod_due_date_hint:'Quand cela est dû chaque mois - utilisé pour le calendrier et le suivi des paiements.',
     mod_th_expected_hint:'Le montant que vous prévoyez de budgétiser pour cette catégorie chaque mois.',mod_th_actual_hint:'Calculé automatiquement à partir de vos transactions enregistrées dans cette catégorie.',mod_th_progress_hint:'Le pourcentage du montant prévu déjà utilisé.',
     tx_date_hint:'La date à laquelle cette transaction a eu lieu.',tx_type_hint:'Le type de transaction - détermine la liste de catégories disponible.',tx_category_hint:'La catégorie budgétaire à laquelle cette transaction est associée.',tx_amount_hint:'Le montant de cette transaction.',tx_desc_hint:'Une note facultative pour vous rappeler à quoi cela correspondait.',
@@ -932,7 +932,7 @@ const TRANSLATIONS = {
     rollover_amount:'Importe de saldo anterior',
     reset_desc:'Elimina permanentemente todos tus datos. No se puede deshacer.',
     reset_btn:'Restablecer todo',
-    add:'Añadir',cancel:'Cancelar',rename_title_prompt:'Renombrar tu planificador de presupuesto',save:'Guardar',delete:'Eliminar',dp_today:'Hoy',dp_clear:'Borrar',edit:'Editar',field_info_aria:'Acerca de {0}',
+    add:'Añadir',save_failed:'No se pudo guardar: el almacenamiento del navegador está lleno.',cancel:'Cancelar',rename_title_prompt:'Renombrar tu planificador de presupuesto',save:'Guardar',delete:'Eliminar',dp_today:'Hoy',dp_clear:'Borrar',edit:'Editar',field_info_aria:'Acerca de {0}',
     mod_name_hint:'El nombre que verás para esta categoría en toda la aplicación.',mod_due_date_hint:'Cuándo vence esto cada mes - se usa para el calendario y el seguimiento de pagos.',
     mod_th_expected_hint:'La cantidad que planeas presupuestar para esta categoría cada mes.',mod_th_actual_hint:'Se calcula automáticamente a partir de tus transacciones registradas en esta categoría.',mod_th_progress_hint:'Qué porcentaje del monto previsto se ha usado hasta ahora.',
     tx_date_hint:'La fecha en que ocurrió esta transacción.',tx_type_hint:'Qué tipo de transacción es - determina de qué lista de categorías puedes elegir.',tx_category_hint:'A qué categoría del presupuesto pertenece esta transacción.',tx_amount_hint:'Cuánto dinero fue esta transacción.',tx_desc_hint:'Una nota opcional para ayudarte a recordar para qué fue esto.',
@@ -1191,7 +1191,7 @@ const TRANSLATIONS = {
     rollover_amount:'Importo riporto',
     reset_desc:'Elimina definitivamente tutti i dati. Non reversibile.',
     reset_btn:'Reimposta tutto',
-    add:'Aggiungi',cancel:'Annulla',rename_title_prompt:'Rinomina il tuo pianificatore di budget',save:'Salva',delete:'Elimina',dp_today:'Oggi',dp_clear:'Cancella',edit:'Modifica',field_info_aria:'Informazioni su {0}',
+    add:'Aggiungi',save_failed:'Impossibile salvare: la memoria del browser è piena.',cancel:'Annulla',rename_title_prompt:'Rinomina il tuo pianificatore di budget',save:'Salva',delete:'Elimina',dp_today:'Oggi',dp_clear:'Cancella',edit:'Modifica',field_info_aria:'Informazioni su {0}',
     mod_name_hint:'Il nome che vedrai per questa categoria in tutta l’app.',mod_due_date_hint:'Quando scade ogni mese - usato per il calendario e il monitoraggio dei pagamenti.',
     mod_th_expected_hint:'L’importo che prevedi di destinare a questa categoria ogni mese.',mod_th_actual_hint:'Calcolato automaticamente dalle transazioni registrate in questa categoria.',mod_th_progress_hint:'Quale percentuale dell’importo previsto è stata utilizzata finora.',
     tx_date_hint:'La data in cui è avvenuta questa transazione.',tx_type_hint:'Il tipo di transazione - determina da quale elenco di categorie puoi scegliere.',tx_category_hint:'A quale categoria di budget appartiene questa transazione.',tx_amount_hint:'Quanto denaro riguardava questa transazione.',tx_desc_hint:'Una nota facoltativa per aiutarti a ricordare a cosa si riferiva.',
@@ -1449,7 +1449,7 @@ const TRANSLATIONS = {
     rollover_amount:'Kwota przeniesienia',
     reset_desc:'Trwale usuwa wszystkie dane. Nie można cofnąć.',
     reset_btn:'Zresetuj wszystko',
-    add:'Dodaj',cancel:'Anuluj',rename_title_prompt:'Zmień nazwę planera budżetu',save:'Zapisz',delete:'Usuń',dp_today:'Dziś',dp_clear:'Wyczyść',edit:'Edytuj',field_info_aria:'O {0}',
+    add:'Dodaj',save_failed:'Nie udało się zapisać: pamięć przeglądarki jest pełna.',cancel:'Anuluj',rename_title_prompt:'Zmień nazwę planera budżetu',save:'Zapisz',delete:'Usuń',dp_today:'Dziś',dp_clear:'Wyczyść',edit:'Edytuj',field_info_aria:'O {0}',
     mod_name_hint:'Nazwa, którą zobaczysz dla tej kategorii w całej aplikacji.',mod_due_date_hint:'Kiedy termin płatności przypada każdego miesiąca - używane do kalendarza i śledzenia płatności.',
     mod_th_expected_hint:'Kwota, którą planujesz przeznaczyć na tę kategorię każdego miesiąca.',mod_th_actual_hint:'Obliczane automatycznie na podstawie zarejestrowanych transakcji w tej kategorii.',mod_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
     tx_date_hint:'Data, kiedy miała miejsce ta transakcja.',tx_type_hint:'Jaki to rodzaj transakcji - określa, z jakiej listy kategorii możesz wybierać.',tx_category_hint:'Do której kategorii budżetu należy ta transakcja.',tx_amount_hint:'Ile pieniędzy dotyczyło tej transakcji.',tx_desc_hint:'Opcjonalna notatka, która pomoże ci zapamiętać, czego to dotyczyło.',
@@ -1729,7 +1729,25 @@ function defaultState() {
 
 let state;
 function loadState()  { try { const r = localStorage.getItem(STATE_KEY); const s = r ? JSON.parse(r) : null; return (s && s.settings && s.budgets) ? s : null; } catch { return null; } }
-function saveState()  { localStorage.setItem(STATE_KEY, JSON.stringify(state)); SYM = state.settings.symbol; syncPushDebounced('sbp'); }
+// A full localStorage used to throw straight through the caller, losing
+// the write with no message and often leaving the render half-done.
+let _saveWarned = false;
+function saveState() {
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify(state));
+    _saveWarned = false;
+  } catch (e) {
+    if (!_saveWarned) {
+      _saveWarned = true;
+      try { showToast(t('save_failed')); } catch (e2) {}
+      trackEvent('save_failed', { name: e && e.name });
+    }
+    return false;
+  }
+  SYM = state.settings.symbol;
+  syncPushDebounced('sbp');
+  return true;
+}
 function syncSymbol() { SYM = state.settings.symbol; }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -1752,7 +1770,11 @@ const PRICES        = { sbp: '$19.99', ubp: '$49.99' };
 
 function getSbpMode() { const m = localStorage.getItem(SBP_MODE_KEY); return m === 'trial' || m === 'full' ? m : null; }
 function setSbpMode(m) { localStorage.setItem(SBP_MODE_KEY, m); }
-function isTrial()     { return getSbpMode() === 'trial'; }
+// Entitlement decides this, not the mode flag. They used to be separate:
+// features gated on the mode ("trial"/"full") while the paywall gated on
+// the unlock flag, so setting the mode to "full" lifted every cap without
+// ever claiming to have paid. Anything not demonstrably unlocked is a trial.
+function isTrial()     { return !isUnlocked('sbp'); }
 
 // Trimmed seed for a brand-new trial user: exactly the free allowance per section.
 function trialDefaultState() {
@@ -1770,11 +1792,34 @@ function enterSbpTrial() {
   navigateTo('budget');
 }
 
+
+// ── Trial usage, counted over the life of the trial ───────────────────
+// Kept out of `state` deliberately: wiping the planner's data must not
+// also wipe the record of what the free tier has already been spent on.
+const TRIAL_USED_KEY = 'evobudget_trial_used';
+function trialUsed() {
+  try { return JSON.parse(localStorage.getItem(TRIAL_USED_KEY) || '{}') || {}; } catch (e) { return {}; }
+}
+function trialUse(kind, n) {
+  if (!isTrial()) return;
+  try {
+    const u = trialUsed();
+    u[kind] = (Number(u[kind]) || 0) + (n || 1);
+    localStorage.setItem(TRIAL_USED_KEY, JSON.stringify(u));
+  } catch (e) {}
+}
+// The larger of "what exists now" and "what has been created" decides, so
+// an existing trial is never suddenly cut off by this arriving, and a fresh
+// one cannot be topped back up by deleting rows.
+function trialCount(kind, live) {
+  return Math.max(Number(live) || 0, Number(trialUsed()[kind]) || 0);
+}
+
 // Returns true when the action is blocked (caller should stop and show the upgrade prompt).
 function trialBlocks(kind) {
   if (!isTrial()) return false;
-  if (kind === 'transaction') return state.transactions.length >= TRIAL_LIMITS.transactions;
-  return (state.budgets[kind]?.length || 0) >= (TRIAL_LIMITS[kind] || Infinity);
+  if (kind === 'transaction') return trialCount('transaction', state.transactions.length) >= TRIAL_LIMITS.transactions;
+  return trialCount(kind, state.budgets[kind]?.length || 0) >= (TRIAL_LIMITS[kind] || Infinity);
 }
 
 function goToPurchase(product) {
@@ -1885,28 +1930,42 @@ const UNLOCK_KEYS   = { sbp: 'evobudget_sbp_unlocked', ubp: 'evobudget_ubp_unloc
 //      Layout: C = Classic dashboard   R = Radial Pulse dashboard
 //      Theme:  L = Light   D = Dark   S = Synthwave   V = Vintage Ledger   T = Terminal
 //    Matched case-insensitively (input is upper-cased before lookup).
-const LAUNCH_CODES = {
-  '0SCL1': { tool: 'sbp', layout: 1, theme: 'light' },
-  '0SCD2': { tool: 'sbp', layout: 1, theme: 'dark' },
-  '0SCS3': { tool: 'sbp', layout: 1, theme: 'synthwave' },
-  '0SCV4': { tool: 'sbp', layout: 1, theme: 'vintage-ledger' },
-  '0SCT5': { tool: 'sbp', layout: 1, theme: 'terminal' },
-  '0SRL6': { tool: 'sbp', layout: 2, theme: 'light' },
-  '0SRD7': { tool: 'sbp', layout: 2, theme: 'dark' },
-  '0SRS8': { tool: 'sbp', layout: 2, theme: 'synthwave' },
-  '0SRV9': { tool: 'sbp', layout: 2, theme: 'vintage-ledger' },
-  '1SRT0': { tool: 'sbp', layout: 2, theme: 'terminal' },
-  '1UCL1': { tool: 'ubp', layout: 1, theme: 'light' },
-  '1UCD2': { tool: 'ubp', layout: 1, theme: 'dark' },
-  '1UCS3': { tool: 'ubp', layout: 1, theme: 'synthwave' },
-  '1UCV4': { tool: 'ubp', layout: 1, theme: 'vintage-ledger' },
-  '1UCT5': { tool: 'ubp', layout: 1, theme: 'terminal' },
-  '1URL6': { tool: 'ubp', layout: 2, theme: 'light' },
-  '1URD7': { tool: 'ubp', layout: 2, theme: 'dark' },
-  '1URS8': { tool: 'ubp', layout: 2, theme: 'synthwave' },
-  '1URV9': { tool: 'ubp', layout: 2, theme: 'vintage-ledger' },
-  '2URT0': { tool: 'ubp', layout: 2, theme: 'terminal' },
-};
+// Launch codes are NOT held here any more. All 20 used to sit in this file,
+// which every visitor can download, so anyone who opened it could unlock
+// either planner for nothing. They live in the Codes sheet now and are
+// checked over JSONP, exactly like Etsy keys - which also means you can
+// rotate or retire one without shipping a new build.
+const _launchCodeJsonpSeq = { n: 0 };
+function validateLaunchCode(code) {
+  return new Promise(resolve => {
+    const endpoint = (typeof ANALYTICS_ENDPOINT === 'string') ? ANALYTICS_ENDPOINT : '';
+    if (!endpoint) { resolve(null); return; }
+    const cb = `ezzoCodeCb${++_launchCodeJsonpSeq.n}_${Math.floor(Math.random() * 1e6)}`;
+    const script = document.createElement('script');
+    let done = false;
+    const finish = (result) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      // Replaced rather than deleted: a reply that arrives after the
+      // timeout would otherwise throw in the console.
+      window[cb] = function () {};
+      script.parentNode?.removeChild(script);
+      resolve(result);
+    };
+    const timer = setTimeout(() => finish(null), 15000);
+    window[cb] = (res) => {
+      if (!res || !res.ok || !res.tool) { finish(res && res.error === 'busy' ? { error: 'busy' } : null); return; }
+      const layout = (String(res.layout) === '2' || String(res.layout).toLowerCase() === 'radial') ? 2 : 1;
+      const theme = VALID_THEMES.includes(String(res.theme || '').toLowerCase()) ? String(res.theme).toLowerCase() : null;
+      finish({ tool: res.tool === 'ubp' ? 'ubp' : 'sbp', theme, layout });
+    };
+    const qs = new URLSearchParams({ action: 'code', code, cb, _: String(Date.now()) });
+    script.src = `${endpoint}?${qs}`;
+    script.onerror = () => finish(null);
+    document.head.appendChild(script);
+  });
+}
 
 // ▼▼ EDIT: fill in once your Lemon Squeezy products exist - each product's
 // ID is in its Lemon Squeezy dashboard URL (Products → click product →
@@ -1916,9 +1975,18 @@ const LEMON_SQUEEZY_PRODUCT_TOOL = {
   // 'YOUR_SBP_PRODUCT_ID': 'sbp',
   // 'YOUR_UBP_PRODUCT_ID': 'ubp',
 };
+// ▼▼ REQUIRED before Lemon Squeezy selling starts. Your store id is the
+// number in the Lemon Squeezy dashboard URL (Settings -> Stores). ▼▼
+// The validate endpoint answers for EVERY store on Lemon Squeezy, not just
+// yours, and the reply carries no proof of which product it came from
+// beyond what you check. Without this, a licence someone bought from an
+// unrelated seller for anything called "Ultimate ..." opened this planner.
+// Left blank, Lemon Squeezy keys are refused outright rather than trusted.
+const LEMON_SQUEEZY_STORE_ID = '';
+// ▲▲ ──────────────────────────────────────────────────────────────────── ▲▲
 // ▲▲ ──────────────────────────────────────────────────────────────────── ▲▲
 
-// Codes not found in LAUNCH_CODES (the fixed Etsy-sale codes above) fall
+// Codes the Codes sheet does not recognise fall
 // back to checking whether they're a real Lemon Squeezy license key. The
 // License API's validate endpoint is deliberately public-safe - it only
 // needs the license key itself, never a merchant secret - so this is a
@@ -1935,6 +2003,13 @@ async function validateLemonSqueezyKey(licenseKey) {
     if (!res.ok) return null;
     const data = await res.json();
     if (!data.valid) return null;
+    // Fail closed. An unconfigured store id means we cannot tell this key
+    // apart from any other seller's, so nothing is trusted until it is set.
+    if (!LEMON_SQUEEZY_STORE_ID) {
+      console.warn('[Ezzo] LEMON_SQUEEZY_STORE_ID is not set, so Lemon Squeezy keys are being refused.');
+      return null;
+    }
+    if (String(data.meta?.store_id ?? '') !== String(LEMON_SQUEEZY_STORE_ID)) return null;
     const productId   = String(data.meta?.product_id ?? '');
     const productName = String(data.meta?.product_name ?? '').toLowerCase();
     // Fail safe rather than guess: an unrecognized product on an otherwise
@@ -1951,8 +2026,8 @@ async function validateLemonSqueezyKey(licenseKey) {
 
 // ── Etsy keys (ETSY-xxxx-xxxx-xxxx-xxxxxxxxxxxx) ──────────────────────
 // Etsy can't issue a unique key per buyer, so buyers claim one at /claim
-// and it's recorded in the owner's Sheet. Unlike LAUNCH_CODES (a fixed
-// list baked into this file), these are generated per order and so can
+// and it's recorded in the owner's Sheet. Unlike a launch code (one fixed
+// code per listing), these are generated per order and so can
 // only be checked against that Sheet - which is also what makes them
 // revocable and device-limited, neither of which a hardcoded list can do.
 //
@@ -2011,6 +2086,64 @@ const UBP_PENDING_LAYOUT_KEY = 'evobudget_ubp_pending_layout';
 function setUbpMode(m)   { localStorage.setItem(UBP_MODE_KEY, m); }
 function isUnlocked(tool){ return localStorage.getItem(UNLOCK_KEYS[tool]) === '1'; }
 function setUnlocked(tool){ localStorage.setItem(UNLOCK_KEYS[tool], '1'); }
+
+// ── Keeping an unlock honest ──────────────────────────────────────────
+// Redemption used to be the only time a key was ever checked, so revoking
+// one in the Keys sheet did nothing to anybody already using it - refunds
+// and chargebacks included. The key that unlocked this browser is recorded
+// at redemption and re-checked in the background once a day.
+const UNLOCK_KEY_STORE = { sbp: 'evobudget_sbp_key', ubp: 'evobudget_ubp_key' };
+const UNLOCK_CHECK_STORE = { sbp: 'evobudget_sbp_checked', ubp: 'evobudget_ubp_checked' };
+const UNLOCK_RECHECK_MS = 86400000;
+
+function rememberUnlockKey(tool, key) {
+  try {
+    if (key) localStorage.setItem(UNLOCK_KEY_STORE[tool], key);
+    localStorage.setItem(UNLOCK_CHECK_STORE[tool], String(Date.now()));
+  } catch (e) {}
+}
+function clearUnlock(tool) {
+  try {
+    localStorage.removeItem(UNLOCK_KEYS[tool]);
+    localStorage.removeItem(UNLOCK_KEY_STORE[tool]);
+    localStorage.removeItem(UNLOCK_CHECK_STORE[tool]);
+  } catch (e) {}
+}
+
+// Deliberately fails open: an offline buyer, a blocked script or a slow
+// Apps Script must never lock someone out of software they paid for. Only
+// a definite "this key is revoked or gone" from the server withdraws access.
+async function revalidateUnlock(tool) {
+  try {
+    if (!isUnlocked(tool)) return;
+    const key = localStorage.getItem(UNLOCK_KEY_STORE[tool]) || '';
+    if (!key) { rememberUnlockKey(tool, ''); return; }   // pre-existing unlock, nothing to check against
+    const last = Number(localStorage.getItem(UNLOCK_CHECK_STORE[tool]) || '0');
+    if (Date.now() - last < UNLOCK_RECHECK_MS) return;
+
+    let verdict = null;
+    if (looksLikeEtsyKey(key)) {
+      const r = await validateEtsyKey(key);
+      if (r && r.tool) verdict = 'ok';
+      else if (r && (r.error === 'revoked' || r.error === 'not_found')) verdict = 'gone';
+      // device_limit / busy / null: inconclusive, leave it alone.
+    } else if (/^[0-9A-Z]{4,12}$/.test(key)) {
+      const r = await validateLaunchCode(key);
+      if (r && r.tool) verdict = 'ok';
+      else if (r === null) verdict = null;              // network or retired, treat as inconclusive
+    } else {
+      const r = await validateLemonSqueezyKey(key);
+      if (r && r.tool) verdict = 'ok';
+    }
+
+    if (verdict === 'gone') {
+      clearUnlock(tool);
+      trackEvent('unlock_revoked', { tool });
+      return;
+    }
+    if (verdict === 'ok') rememberUnlockKey(tool, key);
+  } catch (e) { /* never let this break the app */ }
+}
 
 // Which tool a ?trial= deep-link should open, or null when there isn't one
 // (or it names a tool this visitor already owns - a paying customer's own
@@ -2171,6 +2304,7 @@ function showAccessCodeModal(tool) {
     // whichever "Open" button opened this modal, rather than rejecting
     // a valid code just because it was typed in the "other" prompt.
     setUnlocked(cfg.tool);
+    rememberUnlockKey(cfg.tool, codeVal);
     trackEvent('launch_code_redeemed', { code: codeVal, tool: cfg.tool, orderId: orderIdVal });
     localStorage.setItem('evobudget_theme', cfg.theme); // theme is a single global preference, shared by both tools
     if (cfg.tool === 'ubp') localStorage.setItem(UBP_PENDING_LAYOUT_KEY, String(cfg.layout));
@@ -2183,25 +2317,17 @@ function showAccessCodeModal(tool) {
     // Unlike a launch code, a Lemon Squeezy key carries no layout/theme -
     // leave those exactly as they already are rather than forcing a default.
     setUnlocked(lsResult.tool);
+    rememberUnlockKey(lsResult.tool, codeVal);
     trackEvent('launch_code_redeemed', { code: codeVal, tool: lsResult.tool, orderId: orderIdVal, source: 'lemonsqueezy' });
     close();
     showSyncChoiceModal(lsResult.tool);
   };
   const submit = async () => {
     const codeVal = input.value.trim().toUpperCase();
-    const cfg = LAUNCH_CODES[codeVal];
-    // The key is the only thing a buyer types now. Etsy and Lemon Squeezy
-    // keys each already know their own order, and hand it back on
-    // validation, so the dashboard still shows an order per redemption
-    // without asking the buyer to copy one across.
-    if (cfg) {
-      errEl.hidden = true;
-      redeemLaunchCode(cfg, codeVal, '');
-      return;
-    }
-    // Not one of the fixed launch codes - check it against the two systems
-    // that issue real per-buyer keys, Etsy claims first (its format is
-    // unmistakable, so there's no point asking Lemon Squeezy about it).
+    // The key is the only thing a buyer types. Etsy and Lemon Squeezy keys
+    // each already know their own order and hand it back on validation, so
+    // the dashboard still shows an order per redemption without asking the
+    // buyer to copy one across.
     errEl.hidden = true;
     submitBtn.disabled = true;
     const originalLabel = submitBtn.textContent;
@@ -2213,6 +2339,21 @@ function showAccessCodeModal(tool) {
       card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
       input.select();
     };
+
+    // A short code is a launch code: ask the sheet, since the list is no
+    // longer in this file for anyone to read.
+    if (!looksLikeEtsyKey(codeVal) && /^[0-9A-Z]{4,12}$/.test(codeVal)) {
+      const lc = await validateLaunchCode(codeVal);
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+      if (lc && lc.tool) {
+        redeemLaunchCode({ tool: lc.tool, theme: lc.theme || savedTheme(), layout: lc.layout || 1 }, codeVal, '');
+        return;
+      }
+      if (lc && lc.error === 'busy') { fail('code_error_busy'); return; }
+      fail();
+      return;
+    }
 
     if (looksLikeEtsyKey(codeVal)) {
       const etsy = await validateEtsyKey(codeVal);
@@ -3250,6 +3391,7 @@ function promptMarkModulePaid(type, rowId, onDone) {
     const date = document.getElementById('modPaidDate')?.value || today();
     const tx = { id: uid(), date, type: TX_TYPE_FOR_MODULE[type], category: row.category, amount: amt, description: '' };
     state.transactions.push(tx);
+    trialUse('transaction');
     setRowPayments(row, rowPayTxIds(row).concat(tx.id));
     saveState();
     document.getElementById('tutorialOverlay').hidden = true;
@@ -3523,6 +3665,7 @@ function renderModule(type) {
     const newRow = { id: uid(), category: name, expected: 0 };
     if (meta.hasDates) { newRow.dueDate = el.querySelector('#newCatDate')?.value || ''; newRow.paid = false; }
     state.budgets[type].push(newRow);
+    trialUse(type);
     saveState(); renderModule(type);
   });
   el.querySelector('#cancelCatBtn').addEventListener('click', () => {
@@ -3689,6 +3832,7 @@ function addTransaction(opts) {
   }
   if (errEl) errEl.hidden = true;
   state.transactions.push({ id: uid(), date, type, category: cat, amount, description: desc });
+  trialUse('transaction');
   saveState();
   if (o.after) { o.after(); return true; }
   id('Amount').value = '';
@@ -3895,6 +4039,7 @@ function handleCSV(e) {
       const amount = parseFloat(amtStr);
       if (!date || !TYPES.has(type) || !category || isNaN(amount) || amount <= 0) { skipped++; continue; }
       state.transactions.push({ id: uid(), date, type, category, amount, description: rest.join(',') || '' });
+      trialUse('transaction');
       imported++;
     }
     saveState(); renderTxList();
@@ -4908,6 +5053,11 @@ function init() {
 
   initTheme();  // apply saved theme before rendering
   renderHub();
+
+  // Well after the page is usable, and never blocking it: confirm the keys
+  // that unlocked this browser are still good. Fails open, so being offline
+  // or having the script blocked never costs anyone access they paid for.
+  setTimeout(() => { revalidateUnlock('sbp'); revalidateUnlock('ubp'); }, 4000);
 
   // Budget tab navigation
   document.getElementById('budgetTabs')?.querySelectorAll('.btab').forEach(btn => {

@@ -27,7 +27,7 @@ const ADMIN_SCOPES = 'https://www.googleapis.com/auth/spreadsheets openid email 
 const ADMIN_SPREADSHEET_ID = '1J8q4Q6RjYrZLidROFJDtdu3hKdqWSsgXgI_Fdne9wK0';
 const ADMIN_ALLOWED_EMAIL = 'braydonbudde@gmail.com';  // your own Google account address, lowercase
 const ADMIN_SHEET_NAME = 'Events';
-const ADMIN_SHEET_RANGE = `${ADMIN_SHEET_NAME}!A2:L100000`;
+const ADMIN_SHEET_RANGE = `${ADMIN_SHEET_NAME}!A2:L200000`;
 // Same deployed Apps Script the site's analytics posts to - used here only to
 // read Lemon Squeezy sales totals. Deliberately duplicated rather than loading
 // analytics.js on this page, which would record the owner's own dashboard
@@ -258,6 +258,12 @@ async function adminFetchEvents(token) {
 // when a buyer claims at /claim, and by revoke/restore below.
 const ADMIN_KEYS_SHEET = 'Keys';
 const ADMIN_KEYS_RANGE = `${ADMIN_KEYS_SHEET}!A2:K10000`;
+// Addresses left by the "tell me when this launches" form. Written by
+// Code.gs's notify action; the sheet appears the first time one arrives.
+const ADMIN_NOTIFY_SHEET = 'Notify';
+const ADMIN_NOTIFY_RANGE = `${ADMIN_NOTIFY_SHEET}!A2:E10000`;
+let allNotify = [];
+let _notifyFetchError = '';
 let allKeys = [];
 
 // Why the Keys fetch came back empty, if it did. A silently empty tab is
@@ -265,6 +271,24 @@ let allKeys = [];
 // misconfiguration (wrong sheet, wrong spreadsheet, missing permission)
 // impossible to tell apart from normal quiet - so keep Google's own reason.
 let _keysFetchError = '';
+
+// A missing Notify sheet is the normal state until the first address is
+// collected, so that reads as empty rather than as an error.
+async function adminFetchNotify(token) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_NOTIFY_RANGE)}`;
+  try {
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) {
+      _notifyFetchError = res.status === 400 ? '' : String(res.status);
+      return [];
+    }
+    _notifyFetchError = '';
+    const j = await res.json();
+    return (j.values || []).map(r => ({
+      ts: r[0] || '', email: r[1] || '', tool: r[2] || '', source: r[3] || 'notify', visitorId: r[4] || ''
+    })).filter(r => r.email);
+  } catch (e) { _notifyFetchError = 'network'; return []; }
+}
 
 async function adminFetchKeys(token) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_KEYS_RANGE)}`;
@@ -1070,16 +1094,18 @@ const ETSY_DEVICE_LIMIT = 5;
 // the original fixed launch codes never touch that sheet, so they're folded
 // in from the redemption events instead.
 
-// The original fixed codes, so they can be told apart from Lemon Squeezy
-// keys - they are neither revocable at source nor tied to one order.
-const LAUNCH_CODE_SET = new Set(['0SCL1', '0SCD2', '0SCS3', '0SCV4', '0SCT5', '0SRL6', '0SRD7', '0SRS8', '0SRV9', '1SRT0',
-  '1UCL1', '1UCD2', '1UCS3', '1UCV4', '1UCT5', '1URL6', '1URD7', '1URS8', '1URV9', '2URT0']);
+// Keys are told apart by shape, not by a list. The list used to be here as
+// well as in script.js, which meant the launch codes were readable from two
+// public files rather than one.
 const SOURCE_LABEL = { etsy: 'Etsy', lemonsqueezy: 'Lemon Squeezy', launch: 'Launch code' };
 
 function keySource(key) {
   const k = String(key || '').trim().toUpperCase();
   if (k.startsWith('ETSY-')) return 'etsy';
-  if (LAUNCH_CODE_SET.has(k)) return 'launch';
+  // Lemon Squeezy issues UUIDs; a launch code is a short unbroken run of
+  // letters and digits.
+  if (/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/.test(k)) return 'lemonsqueezy';
+  if (/^[0-9A-Z]{4,12}$/.test(k)) return 'launch';
   return 'lemonsqueezy';
 }
 
@@ -1793,8 +1819,8 @@ function generateSampleAdminEvents() {
   const FEATURES_UBP = ['debt_added', 'sinking_fund_created', 'subscription_added', 'automation_enabled', 'allocation_enabled'];
   const THEMES = ['dark', 'synthwave', 'light', 'vintage-ledger', 'terminal'];
   const LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pl'];
-  const CODES_SBP = ['0SCL1', '0SCD2', '0SCS3', '0SRD7'];
-  const CODES_UBP = ['1UCL1', '1UCD2', '1URS8'];
+  const CODES_SBP = ['SAMPL1', 'SAMPL2', 'SAMPL3'];
+  const CODES_UBP = ['SAMPU1', 'SAMPU2'];
   const rand = arr => arr[Math.floor(Math.random() * arr.length)];
   const events = [];
   // row:0 is a deliberate sentinel - these events don't exist in the real
@@ -1935,7 +1961,132 @@ function wireFilterBar(rerender) {
   document.getElementById('admFilterClear')?.addEventListener('click', () => { filters.from = ''; filters.to = ''; filters.tool = ''; rerender(); });
 }
 
-const ADMIN_RENDERERS = { overview: renderOverview, redemptions: renderRedemptions, blogs: renderBlogs, settings: renderSettings };
+// ══════════════════════ Emails ══════════════════════
+// Every address the site has collected, in one list that can leave as a CSV.
+// Two sources today: buyers who claimed an Etsy key, and people who asked to
+// be told when a tool launches. Lemon Squeezy buyers are not here - that
+// sales proxy returns totals only, never customer records.
+let emailFilters = { source: '', tool: '', q: '' };
+
+function emailRows() {
+  const rows = [];
+  allKeys.forEach(k => {
+    if (!k.email) return;
+    rows.push({
+      email: String(k.email).trim().toLowerCase(), source: 'purchase', tool: k.tool || '',
+      detail: k.orderId ? 'Order ' + k.orderId : '', date: k.issuedAt || '', status: k.status || 'active'
+    });
+  });
+  allNotify.forEach(n => {
+    rows.push({
+      email: String(n.email).trim().toLowerCase(), source: 'notify', tool: n.tool || '',
+      detail: n.source || 'notify', date: n.ts || '', status: ''
+    });
+  });
+  // One row per address per source, keeping the most recent date.
+  const seen = new Map();
+  rows.forEach(r => {
+    const id = r.email + '|' + r.source + '|' + r.tool;
+    const prev = seen.get(id);
+    if (!prev || String(r.date) > String(prev.date)) seen.set(id, r);
+  });
+  return [...seen.values()].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+
+function emailFilteredRows() {
+  const q = emailFilters.q.trim().toLowerCase();
+  return emailRows().filter(r =>
+    (!emailFilters.source || r.source === emailFilters.source) &&
+    (!emailFilters.tool || r.tool === emailFilters.tool) &&
+    (!q || r.email.includes(q) || String(r.detail).toLowerCase().includes(q)));
+}
+
+function csvCell(v) {
+  const s = String(v == null ? '' : v);
+  // A leading =, +, - or @ makes a spreadsheet treat the cell as a formula,
+  // so it is prefixed rather than left to execute on open.
+  const safe = /^[=+\-@]/.test(s) ? "'" + s : s;
+  return /[",\n]/.test(safe) ? '"' + safe.replace(/"/g, '""') + '"' : safe;
+}
+
+function downloadEmailsCsv(rows, name) {
+  const header = ['Email', 'Source', 'Tool', 'Detail', 'Date', 'Status'];
+  const body = rows.map(r => [r.email, r.source, r.tool, r.detail, r.date, r.status].map(csvCell).join(','));
+  const blob = new Blob(['\uFEFF' + [header.join(','), ...body].join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name || ('ezzo-emails-' + new Date().toISOString().slice(0, 10) + '.csv');
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+
+function renderEmails() {
+  const el = document.getElementById('aview-emails');
+  if (!el) return;
+  const all = emailRows();
+  const rows = emailFilteredRows();
+  const unique = new Set(all.map(r => r.email)).size;
+  const purchases = all.filter(r => r.source === 'purchase').length;
+  const notifies = all.filter(r => r.source === 'notify').length;
+  const tools = [...new Set(all.map(r => r.tool).filter(Boolean))];
+
+  el.innerHTML = `
+    <div class="section-header"><h2 class="section-title">✉️ Email list</h2></div>
+    <p class="section-desc">Everyone who has given you an address, from an Etsy key claim or a launch notification.
+      Lemon Squeezy buyers are not included: that report returns totals only, so their addresses stay in the Lemon Squeezy dashboard.</p>
+    ${kpiRow([
+      { icon: '📇', label: 'Unique addresses', value: String(unique), sub: 'across both sources', color: '#6366f1' },
+      { icon: '🛒', label: 'From purchases', value: String(purchases), sub: 'Etsy key claims', color: '#10b981' },
+      { icon: '🔔', label: 'Launch notifications', value: String(notifies), sub: 'asked to be told', color: '#f59e0b' }
+    ])}
+    <div class="tx-filter-bar">
+      <input class="input input-sm" type="text" id="emQ" placeholder="Search address or order…" value="${esc(emailFilters.q)}">
+      <select class="select select-sm" id="emSource">
+        <option value="">All sources</option>
+        <option value="purchase" ${emailFilters.source==='purchase'?'selected':''}>Purchases</option>
+        <option value="notify" ${emailFilters.source==='notify'?'selected':''}>Launch notifications</option>
+      </select>
+      <select class="select select-sm" id="emTool">
+        <option value="">All tools</option>
+        ${tools.map(t => `<option value="${esc(t)}" ${emailFilters.tool===t?'selected':''}>${esc(t)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="adm-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px">
+      <button class="btn btn-primary btn-sm" id="emExport">⬇ Export ${rows.length} shown</button>
+      <button class="btn btn-ghost btn-sm" id="emExportAll">Export all ${all.length}</button>
+      <button class="btn btn-ghost btn-sm" id="emCopy">Copy addresses</button>
+    </div>
+    ${rows.length === 0
+      ? `<div class="empty-state"><div class="empty-icon">✉️</div><p class="empty-title">No addresses yet</p>
+           <p class="empty-sub">They appear here as buyers claim keys and visitors ask to be told about a launch.</p></div>`
+      : `<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
+          <th>Email</th><th>Source</th><th>Tool</th><th>Detail</th><th>Date</th>
+        </tr></thead><tbody>
+        ${rows.map(r => `<tr class="tx-row">
+          <td>${esc(r.email)}</td>
+          <td><span class="tx-pill">${r.source === 'purchase' ? 'Purchase' : 'Notify'}</span></td>
+          <td>${esc((r.tool || '').toUpperCase())}</td>
+          <td class="tx-desc">${esc(r.detail || '-')}</td>
+          <td class="tx-date">${esc(String(r.date).slice(0, 10))}</td>
+        </tr>`).join('')}
+        </tbody></table></div></div>`}`;
+
+  const rerender = () => renderEmails();
+  const q = document.getElementById('emQ');
+  q?.addEventListener('input', () => { emailFilters.q = q.value; clearTimeout(q._t); q._t = setTimeout(rerender, 250); });
+  document.getElementById('emSource')?.addEventListener('change', e => { emailFilters.source = e.target.value; rerender(); });
+  document.getElementById('emTool')?.addEventListener('change', e => { emailFilters.tool = e.target.value; rerender(); });
+  document.getElementById('emExport')?.addEventListener('click', () => downloadEmailsCsv(emailFilteredRows()));
+  document.getElementById('emExportAll')?.addEventListener('click', () => downloadEmailsCsv(emailRows(), 'ezzo-emails-all.csv'));
+  document.getElementById('emCopy')?.addEventListener('click', async () => {
+    const list = [...new Set(emailFilteredRows().map(r => r.email))].join(', ');
+    try { await navigator.clipboard.writeText(list); showToast('Addresses copied'); }
+    catch (e) { showToast('Could not copy'); }
+  });
+}
+
+const ADMIN_RENDERERS = { overview: renderOverview, redemptions: renderRedemptions, emails: renderEmails, blogs: renderBlogs, settings: renderSettings };
 function switchATab(tab) {
   currentATab = tab;
   document.querySelectorAll('#adminTabs .btab').forEach(b => b.classList.toggle('is-active', b.dataset.atab === tab));
@@ -1953,7 +2104,8 @@ function startLivePolling() {
       // Keys change far more rarely than events, so only refetch them on the
       // two tabs that read them - Keys itself, and Redemptions, which resolves
       // each key's order ID from them.
-      if (currentATab === 'keys' || currentATab === 'redemptions') allKeys = await adminFetchKeys(_adminAccessToken);
+      if (currentATab === 'keys' || currentATab === 'redemptions' || currentATab === 'emails') allKeys = await adminFetchKeys(_adminAccessToken);
+      if (currentATab === 'emails') allNotify = await adminFetchNotify(_adminAccessToken);
       _lastFetched = Date.now();
       (ADMIN_RENDERERS[currentATab] || renderOverview)();
     }
@@ -1979,6 +2131,7 @@ async function adminSignIn() {
     _adminEmail = email;
     allEvents = await adminFetchEvents(token);
     allKeys = await adminFetchKeys(token);
+    allNotify = await adminFetchNotify(token);
     _lastFetched = Date.now();
     Object.assign(overviewFilters, currentMonthBounds()); // reset to the current month on every sign-in, per explicit request
     document.getElementById('adminGate').hidden = true;

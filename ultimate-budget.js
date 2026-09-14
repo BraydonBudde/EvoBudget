@@ -117,7 +117,25 @@ function loadState() {
     return s;
   } catch { return null; }
 }
-function saveState()  { localStorage.setItem(UBP_KEY, JSON.stringify(state)); SYM=state.settings.symbol; syncPushDebounced('ubp'); }
+// A full localStorage used to throw straight through the caller, losing
+// the write with no message and often leaving the render half-done.
+let _saveWarned = false;
+function saveState() {
+  try {
+    localStorage.setItem(UBP_KEY, JSON.stringify(state));
+    _saveWarned = false;
+  } catch (e) {
+    if (!_saveWarned) {
+      _saveWarned = true;
+      try { showToast(t('save_failed')); } catch (e2) {}
+      try { trackEvent('save_failed', { name: e && e.name }); } catch (e2) {}
+    }
+    return false;
+  }
+  SYM=state.settings.symbol;
+  syncPushDebounced('ubp');
+  return true;
+}
 function syncSymbol() { SYM=state.settings.symbol; }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -138,27 +156,54 @@ const PURCHASE_URLS = {
 const PRICES        = { sbp:'$19.99', ubp:'$49.99' };
 // ▲▲ ─────────────────────────────────────────────────────── ▲▲
 
-function isTrial(){ return localStorage.getItem(UBP_MODE_KEY) === 'trial'; }
+// Entitlement decides this, not the mode flag. The two used to be able to
+// disagree: setting the mode to "full" lifted every cap without ever
+// claiming to have paid. Anything not demonstrably unlocked is a trial.
+function isUnlockedUbp(){ return localStorage.getItem('evobudget_ubp_unlocked') === '1'; }
+function isTrial(){ return !isUnlockedUbp(); }
 
 // Reaching this page with full access requires an active trial or a
 // redeemed launch code (evobudget_ubp_unlocked, set only by a validated
 // code in script.js). Both are set by budgetplanner.html's launcher before
 // it navigates here - a direct visit (bookmark, shared link, typed URL)
 // with neither set must not fall through to unrestricted full access.
-if (!isTrial() && localStorage.getItem('evobudget_ubp_unlocked') !== '1') {
+if (localStorage.getItem(UBP_MODE_KEY) !== 'trial' && !isUnlockedUbp()) {
   window.location.replace('budgetplanner');
 }
 
 // Returns true when the action is blocked (caller should stop and show the upgrade prompt).
+
+// ── Trial usage, counted over the life of the trial ───────────────────
+// Kept out of `state` deliberately: wiping the planner's data must not
+// also wipe the record of what the free tier has already been spent on.
+const TRIAL_USED_KEY = 'evobudget_trial_used';
+function trialUsed() {
+  try { return JSON.parse(localStorage.getItem(TRIAL_USED_KEY) || '{}') || {}; } catch (e) { return {}; }
+}
+function trialUse(kind, n) {
+  if (!isTrial()) return;
+  try {
+    const u = trialUsed();
+    u[kind] = (Number(u[kind]) || 0) + (n || 1);
+    localStorage.setItem(TRIAL_USED_KEY, JSON.stringify(u));
+  } catch (e) {}
+}
+// The larger of "what exists now" and "what has been created" decides, so
+// an existing trial is never suddenly cut off by this arriving, and a fresh
+// one cannot be topped back up by deleting rows.
+function trialCount(kind, live) {
+  return Math.max(Number(live) || 0, Number(trialUsed()[kind]) || 0);
+}
+
 function trialBlocks(kind){
   if(!isTrial()) return false;
   switch(kind){
-    case 'transaction':   return state.transactions.length >= TRIAL_LIMITS.transactions;
-    case 'recurring':     return (state.recurringTemplates||[]).length >= TRIAL_LIMITS.recurring;
-    case 'debts':         return (state.debts||[]).length >= TRIAL_LIMITS.debts;
-    case 'subscriptions': return (state.subscriptions||[]).length >= TRIAL_LIMITS.subscriptions;
-    case 'sinkingFunds':  return (state.sinkingFunds||[]).length >= TRIAL_LIMITS.sinkingFunds;
-    default:              return (state.budgets[kind]?.length||0) >= (TRIAL_LIMITS[kind]||Infinity);
+    case 'transaction':   return trialCount(kind, state.transactions.length) >= TRIAL_LIMITS.transactions;
+    case 'recurring':     return trialCount(kind, (state.recurringTemplates||[]).length) >= TRIAL_LIMITS.recurring;
+    case 'debts':         return trialCount(kind, (state.debts||[]).length) >= TRIAL_LIMITS.debts;
+    case 'subscriptions': return trialCount(kind, (state.subscriptions||[]).length) >= TRIAL_LIMITS.subscriptions;
+    case 'sinkingFunds':  return trialCount(kind, (state.sinkingFunds||[]).length) >= TRIAL_LIMITS.sinkingFunds;
+    default:              return trialCount(kind, state.budgets[kind]?.length||0) >= (TRIAL_LIMITS[kind]||Infinity);
   }
 }
 
@@ -250,10 +295,16 @@ function processRecurring() {
   if (state.settings && state.settings.automationEnabled === false) return 0;
   const todayStr=today();
   let generated=0;
+  // Automation used to be the one write path with no trial check on it, so
+  // three daily templates backdated a year quietly produced thousands of
+  // transactions against a cap of three. It stops at the cap now, and the
+  // schedule still advances so nothing is generated twice after upgrading.
+  let capped=false;
   for(const tmpl of state.recurringTemplates||[]){
     if(!tmpl.enabled||!tmpl.nextDue)continue;
     let guard=0;
     while(tmpl.nextDue<=todayStr && guard++<3660){
+      if(trialBlocks('transaction')){ capped=true; tmpl.nextDue=advanceByFreq(tmpl.nextDue,tmpl.frequency); continue; }
       let genAmount=tmpl.amount;
       if(tmpl.sourceType==='sinking_fund'){
         const fundRef=(state.sinkingFunds||[]).find(f=>f.id===tmpl.sourceId);
@@ -264,14 +315,16 @@ function processRecurring() {
         const tx={id:uid(),date:tmpl.nextDue,type:tmpl.type,category:tmpl.category,amount:genAmount,description:tmpl.label,recurringId:tmpl.id,allocation:tmpl.allocation||null};
         if(tmpl.type==='sinking_fund'&&state.allocation?.enabled){const sb=(state.allocation.buckets||[]).find(b=>b.id==='save');if(sb)tx.allocation=sb.id;}
         applySinkingFundDelta(tx,+1);
-        state.transactions.push(tx);generated++;
+        state.transactions.push(tx);trialUse('transaction');generated++;
       }
       tmpl.nextDue=advanceByFreq(tmpl.nextDue,tmpl.frequency);
     }
     // keep a linked subscription's own date in sync with its schedule
     if(tmpl.sourceType==='subscription'){const s=(state.subscriptions||[]).find(x=>x.id===tmpl.sourceId);if(s)s.nextBillingDate=tmpl.nextDue;}
   }
+  if(capped){ try{ showUpgradeModal({reason:'transaction'}); }catch(e){} }
   if(generated>0){saveState();return generated;}
+  if(capped) saveState();
   return 0;
 }
 
@@ -541,7 +594,7 @@ const TRANSLATIONS = {
     reset_desc:'Permanently deletes all your data. This cannot be undone.',
     reset_btn:'Reset everything',
     // Common
-    add:'Add', cancel:'Cancel',rename_title_prompt:'Rename your budget planner', save:'Save', delete:'Delete',dp_today:'Today',dp_clear:'Clear', edit:'Edit',field_info_aria:'About {0}',
+    add:'Add', save_failed:'Could not save: this browser is out of storage space.',cancel:'Cancel',rename_title_prompt:'Rename your budget planner', save:'Save', delete:'Delete',dp_today:'Today',dp_clear:'Clear', edit:'Edit',field_info_aria:'About {0}',
     paid:'Paid', due_date:'Due Date', category:'Category', amount:'Amount',
     description:'Description', date:'Date', type:'Type',
     add_category:'+ Add category', no_transactions:'No transactions yet.',
@@ -1086,7 +1139,7 @@ const TRANSLATIONS = {
     rollover_amount:'Übertragsbetrag',
     reset_desc:'Löscht alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.',
     reset_btn:'Alles zurücksetzen',
-    add:'Hinzufügen',cancel:'Abbrechen',rename_title_prompt:'Budgetplaner umbenennen',save:'Speichern',delete:'Löschen',dp_today:'Heute',dp_clear:'Löschen',edit:'Bearbeiten',field_info_aria:'Über {0}',
+    add:'Hinzufügen',save_failed:'Speichern fehlgeschlagen: Der Browserspeicher ist voll.',cancel:'Abbrechen',rename_title_prompt:'Budgetplaner umbenennen',save:'Speichern',delete:'Löschen',dp_today:'Heute',dp_clear:'Löschen',edit:'Bearbeiten',field_info_aria:'Über {0}',
     paid:'Bezahlt',due_date:'Fälligkeitsdatum',category:'Kategorie',amount:'Betrag',
     description:'Beschreibung',date:'Datum',type:'Typ',
     add_category:'+ Kategorie hinzufügen',no_transactions:'Noch keine Transaktionen.',
@@ -1610,7 +1663,7 @@ const TRANSLATIONS = {
     rollover_amount:'Montant du report',
     reset_desc:'Supprime définitivement toutes vos données. Irréversible.',
     reset_btn:'Tout réinitialiser',
-    add:'Ajouter',cancel:'Annuler',rename_title_prompt:'Renommer votre planificateur de budget',save:'Enregistrer',delete:'Supprimer',dp_today:"Aujourd'hui",dp_clear:'Effacer',edit:'Modifier',field_info_aria:'À propos de {0}',
+    add:'Ajouter',save_failed:'Enregistrement impossible : le stockage du navigateur est plein.',cancel:'Annuler',rename_title_prompt:'Renommer votre planificateur de budget',save:'Enregistrer',delete:'Supprimer',dp_today:"Aujourd'hui",dp_clear:'Effacer',edit:'Modifier',field_info_aria:'À propos de {0}',
     paid:'Payé',due_date:"Date d'échéance",category:'Catégorie',amount:'Montant',
     description:'Description',date:'Date',type:'Type',
     add_category:'+ Ajouter une catégorie',no_transactions:'Aucune transaction.',
@@ -2134,7 +2187,7 @@ const TRANSLATIONS = {
     rollover_amount:'Importe de saldo anterior',
     reset_desc:'Elimina permanentemente todos tus datos. No se puede deshacer.',
     reset_btn:'Restablecer todo',
-    add:'Añadir',cancel:'Cancelar',rename_title_prompt:'Renombrar tu planificador de presupuesto',save:'Guardar',delete:'Eliminar',dp_today:'Hoy',dp_clear:'Borrar',edit:'Editar',field_info_aria:'Acerca de {0}',
+    add:'Añadir',save_failed:'No se pudo guardar: el almacenamiento del navegador está lleno.',cancel:'Cancelar',rename_title_prompt:'Renombrar tu planificador de presupuesto',save:'Guardar',delete:'Eliminar',dp_today:'Hoy',dp_clear:'Borrar',edit:'Editar',field_info_aria:'Acerca de {0}',
     paid:'Pagado',due_date:'Fecha de vencimiento',category:'Categoría',amount:'Importe',
     description:'Descripción',date:'Fecha',type:'Tipo',
     add_category:'+ Añadir categoría',no_transactions:'Sin transacciones aún.',
@@ -2658,7 +2711,7 @@ const TRANSLATIONS = {
     rollover_amount:'Importo riporto',
     reset_desc:'Elimina definitivamente tutti i dati. Non reversibile.',
     reset_btn:'Reimposta tutto',
-    add:'Aggiungi',cancel:'Annulla',rename_title_prompt:'Rinomina il tuo pianificatore di budget',save:'Salva',delete:'Elimina',dp_today:'Oggi',dp_clear:'Cancella',edit:'Modifica',field_info_aria:'Informazioni su {0}',
+    add:'Aggiungi',save_failed:'Impossibile salvare: la memoria del browser è piena.',cancel:'Annulla',rename_title_prompt:'Rinomina il tuo pianificatore di budget',save:'Salva',delete:'Elimina',dp_today:'Oggi',dp_clear:'Cancella',edit:'Modifica',field_info_aria:'Informazioni su {0}',
     paid:'Pagato',due_date:'Data di scadenza',category:'Categoria',amount:'Importo',
     description:'Descrizione',date:'Data',type:'Tipo',
     add_category:'+ Aggiungi categoria',no_transactions:'Nessuna transazione.',
@@ -3183,7 +3236,7 @@ const TRANSLATIONS = {
     rollover_amount:'Kwota przeniesienia',
     reset_desc:'Trwale usuwa wszystkie dane. Nie można cofnąć.',
     reset_btn:'Zresetuj wszystko',
-    add:'Dodaj',cancel:'Anuluj',rename_title_prompt:'Zmień nazwę planera budżetu',save:'Zapisz',delete:'Usuń',dp_today:'Dziś',dp_clear:'Wyczyść',edit:'Edytuj',field_info_aria:'O {0}',
+    add:'Dodaj',save_failed:'Nie udało się zapisać: pamięć przeglądarki jest pełna.',cancel:'Anuluj',rename_title_prompt:'Zmień nazwę planera budżetu',save:'Zapisz',delete:'Usuń',dp_today:'Dziś',dp_clear:'Wyczyść',edit:'Edytuj',field_info_aria:'O {0}',
     paid:'Zapłacone',due_date:'Termin płatności',category:'Kategoria',amount:'Kwota',
     description:'Opis',date:'Data',type:'Typ',
     add_category:'+ Dodaj kategorię',no_transactions:'Brak transakcji.',
@@ -4554,6 +4607,7 @@ function promptPay(kind, id, onDone) {
     const date = document.getElementById('billPaidDate')?.value || today();
     const tx = { id: uid(), date, type: tg.txType, category: tg.category, amount: amt, description: '' };
     state.transactions.push(tx);
+    trialUse('transaction');
     if (tg.row) setRowPayments(tg.row, rowPayTxIds(tg.row).concat(tx.id));
     saveState();
     document.getElementById('tutorialOverlay').hidden = true;
@@ -4656,6 +4710,7 @@ function bindModuleEvents(type,meta,container,act) {
     const newRow={id:uid(),category:name,expected:0};
     if(meta.hasDates){newRow.dueDate=document.getElementById(`newCatDate-${type}`)?.value||'';newRow.paid=false;}
     (state.budgets[type]=state.budgets[type]||[]).push(newRow);
+    trialUse(type);
     saveState();renderBudget();
   });
   document.getElementById(`cancelCatBtn-${type}`)?.addEventListener('click',()=>{
@@ -4933,6 +4988,7 @@ function addTransaction(opts){
   }
   const newTx={id:uid(),date,type,category:cat,amount,description:desc,allocation:alloc||null};
   state.transactions.push(newTx);
+  trialUse('transaction');
   applySinkingFundDelta(newTx, +1);
   // Issue 13: auto-advance subscription billing date
   if(type==='subscription'){
@@ -5182,7 +5238,7 @@ function openRecurringModal(ruleId){
     }
     if(errEl)errEl.hidden=true;
     const entry={id:ruleId||uid(),label,type,category:cat,amount:amt,frequency:freq,nextDue,allocation:alloc,enabled:r?r.enabled:true,sourceType:r?.sourceType||null,sourceId:r?.sourceId||null};
-    if(isNew)state.recurringTemplates.push(entry);
+    if(isNew){state.recurringTemplates.push(entry);trialUse('recurring');}
     else{const idx=(state.recurringTemplates||[]).findIndex(x=>x.id===ruleId);if(idx!==-1)state.recurringTemplates[idx]=entry;}
     saveState();document.getElementById('tutorialOverlay').hidden=true;renderTransactions();
     showToast(t('recurring_saved'));
@@ -5421,7 +5477,7 @@ function openDebtModal(debtId){
       rateType:isArm?'arm':undefined,
       armFixedMonths:isArm?armFixedYears*12:undefined,
       armAdjustedRate:isArm?armRate:undefined};
-    if(isNew){did=uid();debtObj={id:did,...fields};state.debts.push(debtObj);trackEvent('feature_used',{feature:'debt_added'});}
+    if(isNew){did=uid();debtObj={id:did,...fields};state.debts.push(debtObj);trialUse('debts');trackEvent('feature_used',{feature:'debt_added'});}
     else{did=debtId;debtObj=state.debts.find(x=>x.id===debtId);if(debtObj){Object.assign(debtObj,fields);Object.keys(fields).forEach(k=>{if(fields[k]===undefined)delete debtObj[k];});}}
     if(automationOn()&&debtObj){if(auto)upsertLinkedTemplate('debt',did,{type:'debt',category:name||'Debt',label:(name||'Debt')+' '+t('automate_payment_word'),amount:totalMonthlyDebtCost(debtObj),frequency:'monthly',nextDue:nextDueFromDay(dueDay)});else removeLinkedTemplate('debt',did);}
     saveState();closeModal();renderDebt();showToast(t(isNew?'toast_debt_added':'toast_debt_updated'));
@@ -5559,6 +5615,7 @@ function renderSinking(){
       const tx={id:uid(),date:today(),type:'sinking_fund',category:f.name,amount:amt,description:f.name,allocation:null};
       if(state.allocation?.enabled){const sb=(state.allocation.buckets||[]).find(b=>b.id==='save');if(sb)tx.allocation=sb.id;}
       state.transactions.push(tx);
+      trialUse('transaction');
       applySinkingFundDelta(tx,+1);
       saveState();
       document.getElementById('tutorialOverlay').hidden=true;
@@ -5605,7 +5662,7 @@ function openFundModal(fundId){
     if(bad){if(errEl){errEl.textContent=t('sf_error_required');errEl.hidden=false;}return;}
     if(errEl)errEl.hidden=true;
     let fid,fundObj;
-    if(isNew){fid=uid();fundObj={id:fid,name,icon:selIcon,targetAmount:target,currentSaved:saved,targetDate:date,billingDay:auto?billingDay:null};state.sinkingFunds.push(fundObj);trackEvent('feature_used',{feature:'sinking_fund_created'});}
+    if(isNew){fid=uid();fundObj={id:fid,name,icon:selIcon,targetAmount:target,currentSaved:saved,targetDate:date,billingDay:auto?billingDay:null};state.sinkingFunds.push(fundObj);trialUse('sinkingFunds');trackEvent('feature_used',{feature:'sinking_fund_created'});}
     else{fid=fundId;fundObj=state.sinkingFunds.find(sf=>sf.id===fundId);if(fundObj){fundObj.name=name;fundObj.icon=selIcon;fundObj.targetAmount=target;fundObj.currentSaved=saved;fundObj.targetDate=date;if(auto)fundObj.billingDay=billingDay;}}
     if(automationOn()&&fundObj){if(auto){const amt=Math.round((calcFund(fundObj).requiredMonthly||0)*100)/100;upsertLinkedTemplate('sinking_fund',fid,{type:'sinking_fund',category:name,label:name,amount:amt,frequency:'monthly',nextDue:nextDueFromDay(billingDay)});}else removeLinkedTemplate('sinking_fund',fid);}
     saveState();closeModal();renderSinking();showToast(t(isNew?'toast_fund_created':'toast_fund_updated'));
@@ -5939,7 +5996,7 @@ function openSubModal(subId){
     if(errEl)errEl.hidden=true;
     const auto=document.getElementById('automateToggle')?.checked;
     let sid;
-    if(isNew){sid=uid();state.subscriptions.push({id:sid,name,amount,frequency:freq,category:cat,nextBillingDate:date,active:true,allocation:alloc});trackEvent('feature_used',{feature:'subscription_added'});}
+    if(isNew){sid=uid();state.subscriptions.push({id:sid,name,amount,frequency:freq,category:cat,nextBillingDate:date,active:true,allocation:alloc});trialUse('subscriptions');trackEvent('feature_used',{feature:'subscription_added'});}
     else{sid=subId;const s=state.subscriptions.find(s=>s.id===subId);if(s){if(amount!==s.amount)(s.priceHistory=s.priceHistory||[]).push({date:today(),from:s.amount,to:amount});s.name=name;s.amount=amount;s.frequency=freq;s.category=cat;s.nextBillingDate=date;s.allocation=alloc;}}
     if(automationOn()){if(auto)upsertLinkedTemplate('subscription',sid,{type:'subscription',category:cat||'Subscriptions',label:name,amount,frequency:freq,nextDue:date||today(),allocation:alloc});else removeLinkedTemplate('subscription',sid);}
     saveState();closeModal();renderSubscriptions();showToast(t(isNew?'toast_sub_added':'toast_sub_updated'));
@@ -7552,6 +7609,56 @@ function onbShowTips() {
 }
 
 document.addEventListener('DOMContentLoaded',init);
+
+// This page is the paid product, so an unlock withdrawn while it is open
+// has to take effect rather than wait for the next visit. script.js is not
+// loaded here, so the check is done directly against the same endpoint it
+// uses, with the same fail-open rule: only a definite revoked/not_found
+// from the server withdraws access.
+(function watchUnlock(){
+  const KEY_STORE = 'evobudget_ubp_key';
+  const CHECK_STORE = 'evobudget_ubp_checked';
+  const RECHECK_MS = 86400000;
+  let seq = 0;
+  function ask(key){
+    return new Promise(resolve => {
+      const endpoint = (typeof ANALYTICS_ENDPOINT === 'string') ? ANALYTICS_ENDPOINT : '';
+      if (!endpoint) { resolve(null); return; }
+      const cb = 'ezzoUbpKeyCb' + (++seq) + '_' + Math.floor(Math.random()*1e6);
+      const sc = document.createElement('script');
+      let done = false;
+      const finish = r => { if(done) return; done = true; clearTimeout(tm); window[cb] = function(){}; sc.parentNode && sc.parentNode.removeChild(sc); resolve(r); };
+      const tm = setTimeout(() => finish(null), 15000);
+      window[cb] = res => finish(res || null);
+      const isEtsy = /^ETSY(-[0-9A-F]{4}){3}-[0-9A-F]{12}$/i.test(key);
+      const qs = new URLSearchParams(isEtsy
+        ? { action:'validate', key: key, vid: (typeof _analyticsVisitorId === 'function' ? _analyticsVisitorId() : ''), cb: cb, _: String(Date.now()) }
+        : { action:'code', code: key, cb: cb, _: String(Date.now()) });
+      sc.src = endpoint + '?' + qs;
+      sc.onerror = () => finish(null);
+      document.head.appendChild(sc);
+    });
+  }
+  setTimeout(async () => {
+    try {
+      if (!isUnlockedUbp()) return;
+      const key = localStorage.getItem(KEY_STORE) || '';
+      if (!key) return;                               // unlocked before keys were recorded
+      const last = Number(localStorage.getItem(CHECK_STORE) || '0');
+      if (Date.now() - last < RECHECK_MS) return;
+      const res = await ask(key);
+      if (res && res.ok) { localStorage.setItem(CHECK_STORE, String(Date.now())); return; }
+      if (res && (res.error === 'revoked' || res.error === 'not_found')) {
+        localStorage.removeItem('evobudget_ubp_unlocked');
+        localStorage.removeItem(KEY_STORE);
+        localStorage.removeItem(CHECK_STORE);
+        try { trackEvent('unlock_revoked', { tool: 'ubp' }); } catch (e) {}
+        location.replace('budgetplanner');
+      }
+      // Anything else (offline, busy, device_limit) is inconclusive: leave it.
+    } catch (e) {}
+  }, 5000);
+})();
 
 // ── Keyboard Navigation (UBP) ─────────────────────────────────────────
 document.addEventListener('keydown', e => {

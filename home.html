@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260927" />
+  <link rel="stylesheet" href="style.css?v=20260928" />
 
   <!-- ═══════════════════════════════════════════════════════════════
        Bespoke, page-only layout for the Ezzo Hub landing page. Deliberately
@@ -902,7 +902,7 @@
     </div>
   </footer>
 
-  <script src="analytics.js?v=20260927"></script>
+  <script src="analytics.js?v=20260928"></script>
   <script>
     // Standalone marketing page - no dependency on script.js/the app bundle.
     // Deliberately does NOT read the saved planner theme: this page is site
@@ -1592,8 +1592,32 @@
         var input = form.querySelector('input[type="email"]');
         var slot = document.getElementById('toolCtaSlot');
         if (!tab || !input || !slot || !input.value.trim()) return;
-        localStorage.setItem(notifyStorageKey(tab.id), JSON.stringify({ email: input.value.trim(), ts: Date.now() }));
-        slot.innerHTML = ctaHTML(tab);
+        var email = input.value.trim();
+        var btn = form.querySelector('button[type="submit"]');
+        var existingErr = form.querySelector('.tool-notify-err');
+        if (existingErr) existingErr.remove();
+        if (btn) { btn.disabled = true; btn.textContent = 'Saving\u2026'; }
+
+        var send = (typeof submitNotifyEmail === 'function')
+          ? submitNotifyEmail(email, tab.id, 'home_notify')
+          : Promise.resolve({ ok: false, error: 'not_configured' });
+
+        send.then(function (res) {
+          if (res && res.ok) {
+            // Only remembered locally once it is actually recorded, so the
+            // tile never shows "we'll email you" over a lost address.
+            localStorage.setItem(notifyStorageKey(tab.id), JSON.stringify({ email: email, ts: Date.now() }));
+            slot.innerHTML = ctaHTML(tab);
+            return;
+          }
+          if (btn) { btn.disabled = false; btn.textContent = 'Notify me'; }
+          var msg = document.createElement('span');
+          msg.className = 'tool-notify-err';
+          msg.textContent = (res && res.error === 'bad_email')
+            ? 'That address does not look right.'
+            : 'Could not save that just now. Please try again.';
+          form.appendChild(msg);
+        });
       });
 
       function selectTab(tab, opts) {

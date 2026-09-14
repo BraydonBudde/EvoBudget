@@ -39,10 +39,16 @@ function _analyticsVisitorId() {
     return id;
   } catch (e) { return 'unknown'; }
 }
+// Set when this page load is the one that created the session id, so
+// session_start fires once per visit rather than once per page. The id
+// itself already survived navigation, so the dashboard's session count was
+// right, but the sheet was carrying a duplicate row for every page opened -
+// wasted rows, and wasted rate-limit budget shared with key redemption.
+let _analyticsSessionIsNew = false;
 function _analyticsSessionId() {
   try {
     let id = sessionStorage.getItem(ANALYTICS_SID_KEY);
-    if (!id) { id = _analyticsUid(); sessionStorage.setItem(ANALYTICS_SID_KEY, id); }
+    if (!id) { id = _analyticsUid(); sessionStorage.setItem(ANALYTICS_SID_KEY, id); _analyticsSessionIsNew = true; }
     return id;
   } catch (e) { return 'unknown'; }
 }
@@ -106,8 +112,40 @@ function trackEvent(type, detail) {
   } catch (e) { /* analytics must never break the app */ }
 }
 
+// "Tell me when this launches" used to write the address to localStorage
+// and stop there, so nobody was ever told anything and not one address
+// reached the owner. This posts it to the Notify sheet.
+let _notifyJsonpSeq = 0;
+function submitNotifyEmail(email, tool, source) {
+  return new Promise(resolve => {
+    if (!ANALYTICS_ENDPOINT) { resolve({ ok: false, error: 'not_configured' }); return; }
+    const cb = 'ezzoNotifyCb' + (++_notifyJsonpSeq) + '_' + Math.floor(Math.random() * 1e6);
+    const script = document.createElement('script');
+    let done = false;
+    const finish = r => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      window[cb] = function () {};
+      script.parentNode && script.parentNode.removeChild(script);
+      resolve(r);
+    };
+    const timer = setTimeout(() => finish({ ok: false, error: 'timeout' }), 12000);
+    window[cb] = res => finish(res && res.ok ? res : { ok: false, error: (res && res.error) || 'failed' });
+    const qs = new URLSearchParams({
+      action: 'notify', email: email, tool: tool || '', source: source || 'notify',
+      vid: _analyticsVisitorId(), cb: cb, _: String(Date.now())
+    });
+    script.src = ANALYTICS_ENDPOINT + '?' + qs;
+    script.onerror = () => finish({ ok: false, error: 'failed' });
+    document.head.appendChild(script);
+  });
+}
+
 (function initAnalytics() {
-  trackEvent('session_start');
+  // Touch the session id first so we know whether this load began the visit.
+  _analyticsSessionId();
+  if (_analyticsSessionIsNew) trackEvent('session_start');
   trackEvent('page_view');
   let heartbeatTimer = null;
   function startHeartbeat() {
@@ -127,5 +165,7 @@ function trackEvent(type, detail) {
     if (document.visibilityState === 'visible') { trackEvent('heartbeat'); startHeartbeat(); }
     else stopHeartbeat();
   });
-  window.addEventListener('pagehide', () => trackEvent('session_end'));
+  // Only on a real departure. pagehide also fires when navigating between
+  // this site's own pages, which used to close the session several times.
+  window.addEventListener('pagehide', e => { if (!e.persisted) trackEvent('session_end'); });
 })();
