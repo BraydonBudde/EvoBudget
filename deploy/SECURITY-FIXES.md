@@ -1,7 +1,8 @@
 # Launch hardening: what changed and what you must do
 
-Everything here ships in the site automatically **except the two steps under
-"You must do this"**. Until those are done, two of the fixes are inert.
+Everything here ships in the site automatically **except redeploying the
+Apps Script**, which the notify form, launch-code checking and the Events
+cleanup all depend on.
 
 ---
 
@@ -21,26 +22,29 @@ of the Events sheet.
 
 Two sheets are created on first use and need no setup:
 
-- **`Codes`** is seeded with the twenty launch codes that used to live in
-  `script.js`, so no existing buyer is affected. See step 2.
+- **`Codes`** is created empty. The twenty codes that used to live in
+  `script.js` are retired, not carried over. See step 2.
 - **`Notify`** fills up as people ask to be told about a launch.
 
-### 2. Rotate the launch codes
+### 2. Launch codes are retired, nothing to do
 
-The old twenty were readable by anyone who opened `ezzohub.com/script.js`,
-so treat all of them as public. They still work, on purpose, so that
-anybody mid-purchase is not stranded.
+All twenty were readable in the public bundle, and they are no longer sold
+against, so none are carried over. The `Codes` sheet is created empty and
+every one of the old codes is now refused.
 
-In the `Codes` sheet:
+Anyone who already redeemed one keeps their access. The daily re-check
+treats a retired code as inconclusive rather than as a withdrawal, so
+retiring them cannot evict a past buyer. Only a revoked or deleted **Etsy**
+key withdraws access, since those are issued per buyer.
 
-- To retire one, set its **Active** column to `no`.
-- To replace one, edit its **Code** cell. Longer is better: the format is
-  4 to 12 letters and digits.
-- Anyone who already redeemed keeps their access. Changing a code only
-  affects future redemptions.
+To issue a promotional code later, add a row to `Codes`:
 
-If you no longer sell via launch codes at all, set every row to `no`. Etsy
-keys and Lemon Squeezy licences are unaffected.
+| Code | Tool | Theme | Layout | Active |
+|---|---|---|---|---|
+| a long random string | sbp or ubp | dark | 1 classic, 2 radial | yes |
+
+Make it long. The old five-character ones were guessable even before the
+list leaked.
 
 ### 3. Before Lemon Squeezy goes live
 
@@ -61,7 +65,7 @@ in test mode, so nothing is being turned away today.
 
 | Before | Now |
 |---|---|
-| 20 codes sat in the public bundle | They live in the `Codes` sheet and are checked over the network |
+| 20 codes sat in the public bundle | Retired outright; any future code lives in the `Codes` sheet and is checked over the network |
 | Any Lemon Squeezy licence named "ultimate" unlocked | The store id must match yours |
 | Ultimate's automation ignored the trial cap | It stops at the cap and offers the upgrade |
 | Simple's caps read a flag that never meant "paid" | Both read the entitlement |
@@ -70,8 +74,10 @@ in test mode, so nothing is being turned away today.
 | Deleting rows refilled the free allowance | A separate tally counts what a trial has ever used |
 
 The daily re-check **fails open**. Being offline, having the script
-blocked, or a slow Apps Script never withdraws access. Only a definite
-"revoked" or "no such key" does.
+blocked, or a slow Apps Script never withdraws access. Only a revoked Etsy
+key, or one deleted from the `Keys` sheet, does. A retired launch code is
+treated as inconclusive on purpose, so retiring one cannot evict anybody
+who already redeemed it.
 
 ### Analytics
 

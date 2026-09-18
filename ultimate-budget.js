@@ -7648,7 +7648,12 @@ document.addEventListener('DOMContentLoaded',init);
       if (Date.now() - last < RECHECK_MS) return;
       const res = await ask(key);
       if (res && res.ok) { localStorage.setItem(CHECK_STORE, String(Date.now())); return; }
-      if (res && (res.error === 'revoked' || res.error === 'not_found')) {
+      // "not_found" means different things per key type. An Etsy key is
+      // issued per buyer, so its disappearance is a real withdrawal. A
+      // launch code is a shared one that gets retired, and retiring it must
+      // never evict the people who already redeemed it.
+      const isEtsyKey = /^ETSY(-[0-9A-F]{4}){3}-[0-9A-F]{12}$/i.test(key);
+      if (res && (res.error === 'revoked' || (res.error === 'not_found' && isEtsyKey))) {
         localStorage.removeItem('evobudget_ubp_unlocked');
         localStorage.removeItem(KEY_STORE);
         localStorage.removeItem(CHECK_STORE);

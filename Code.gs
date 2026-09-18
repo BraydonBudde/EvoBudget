@@ -213,25 +213,18 @@ function _keysSheet()   { return _sheet(KEYS_SHEET, ['Key', 'Tool', 'Theme', 'La
 function _blogsSheet()  { return _sheet(BLOGS_SHEET, ['Slug', 'Title', 'Excerpt', 'Category', 'Tool', 'Tags', 'Date', 'ReadMinutes', 'Image', 'ImageAlt', 'Body', 'Related', 'Status', 'Updated']); }
 function _notifySheet() { return _sheet(NOTIFY_SHEET, ['Timestamp', 'Email', 'Tool', 'Source', 'VisitorId']); }
 
-// Seeded on first creation with the codes that used to live in script.js,
-// so nothing an existing buyer holds stops working. Rotate them here: edit
-// the Code column, or set Active to "no" to retire one.
+// Starts empty. The twenty codes that used to be hardcoded in script.js
+// were readable by anyone who opened it, so they are retired rather than
+// carried over: with no rows here, every one of them is refused.
+//
+// To issue a promotional code, add a row: Code, Tool ("sbp"/"ubp"), Theme,
+// Layout (1 classic, 2 radial), Active ("yes"). Make it long - the old
+// five-character ones were guessable even before they leaked. Setting
+// Active to "no" retires a code without deleting the record of it.
+//
+// Retiring a code never affects anyone who already redeemed it.
 function _codesSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sh = ss.getSheetByName(CODES_SHEET);
-  if (sh) return sh;
-  sh = ss.insertSheet(CODES_SHEET);
-  sh.appendRow(['Code', 'Tool', 'Theme', 'Layout', 'Active']);
-  const themes = ['light', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
-  const seed = [
-    ['0SCL1','sbp',1],['0SCD2','sbp',1],['0SCS3','sbp',1],['0SCV4','sbp',1],['0SCT5','sbp',1],
-    ['0SRL6','sbp',2],['0SRD7','sbp',2],['0SRS8','sbp',2],['0SRV9','sbp',2],['1SRT0','sbp',2],
-    ['1UCL1','ubp',1],['1UCD2','ubp',1],['1UCS3','ubp',1],['1UCV4','ubp',1],['1UCT5','ubp',1],
-    ['1URL6','ubp',2],['1URD7','ubp',2],['1URS8','ubp',2],['1URV9','ubp',2],['2URT0','ubp',2]
-  ];
-  sh.getRange(2, 1, seed.length, 5).setValues(
-    seed.map(function (r, i) { return [r[0], r[1], themes[i % 5], r[2], 'yes']; }));
-  return sh;
+  return _sheet(CODES_SHEET, ['Code', 'Tool', 'Theme', 'Layout', 'Active']);
 }
 
 // Keeps the Events sheet from growing until it takes the spreadsheet, and
