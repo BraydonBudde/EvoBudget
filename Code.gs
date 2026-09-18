@@ -73,6 +73,9 @@ function doGet(e) {
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return _ok();
+    // Lemon Squeezy's webhook is the only POST that carries ?wh=, and its
+    // payloads are far larger than the analytics cap below allows.
+    if (e.parameter && e.parameter.wh) return _handleLsWebhook(e);
     if (e.postData.contents.length > MAX_BODY_BYTES) return _ok();
     if (!_underRateLimit()) return _ok();
 
@@ -168,6 +171,12 @@ const CODES_SHEET = 'Codes';
 // addresses it collects.
 const NOTIFY_SHEET = 'Notify';
 const NOTIFY_LIMIT_PER_MIN = 20;
+// Lemon Squeezy posts here when something is bought or refunded. Orders are
+// recorded and a push is sent, so a sale makes a noise on the owner's phone
+// rather than waiting to be noticed.
+const SALES_SHEET = 'Sales';
+// Order payloads are a good deal bigger than an analytics beacon.
+const WEBHOOK_MAX_BODY_BYTES = 120000;
 // Redemptions must not be starved by analytics traffic, so validation gets
 // its own bucket rather than sharing the global one. A buyer being told
 // "busy" because the site is having a good day is the worst possible bug.
@@ -212,6 +221,7 @@ function _stylesSheet() { return _sheet(STYLES_SHEET, ['Token', 'Tool', 'Theme',
 function _keysSheet()   { return _sheet(KEYS_SHEET, ['Key', 'Tool', 'Theme', 'Layout', 'OrderId', 'Email', 'IssuedAt', 'Status', 'Devices', 'RedeemCount', 'LastRedeemedAt']); }
 function _blogsSheet()  { return _sheet(BLOGS_SHEET, ['Slug', 'Title', 'Excerpt', 'Category', 'Tool', 'Tags', 'Date', 'ReadMinutes', 'Image', 'ImageAlt', 'Body', 'Related', 'Status', 'Updated']); }
 function _notifySheet() { return _sheet(NOTIFY_SHEET, ['Timestamp', 'Email', 'Tool', 'Source', 'VisitorId']); }
+function _salesSheet()  { return _sheet(SALES_SHEET, ['Timestamp', 'Event', 'OrderId', 'Email', 'Name', 'Product', 'Variant', 'Total', 'Currency', 'TestMode', 'Status']); }
 
 // Starts empty. The twenty codes that used to be hardcoded in script.js
 // were readable by anyone who opened it, so they are retired rather than
@@ -323,6 +333,107 @@ function _handleNotify(p) {
     sh.appendRow([new Date(), email, tool, source, vid]);
     return { ok: true, already: false };
   } catch (err) { return { ok: false, error: 'server' }; }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// LEMON SQUEEZY WEBHOOK  ->  phone notification
+// ══════════════════════════════════════════════════════════════════════
+// Apps Script's doPost cannot read request headers, so Lemon Squeezy's
+// X-Signature HMAC is not available to verify against. The shared secret
+// rides in the callback URL's query string instead (?wh=...), which is
+// weaker: anyone who learned the full URL could fake a notification. They
+// could not touch money or data, only make the phone chirp, so the trade is
+// deliberate. Keep the URL private and rotate the secret if it ever leaks.
+function _handleLsWebhook(e) {
+  try {
+    const want = PropertiesService.getScriptProperties().getProperty('LS_WEBHOOK_SECRET') || '';
+    const got = String((e.parameter && e.parameter.wh) || '');
+    if (!want || got !== want) return _ok();
+    const body = e.postData.contents;
+    if (!body || body.length > WEBHOOK_MAX_BODY_BYTES) return _ok();
+
+    const p = JSON.parse(body);
+    const event = String((p.meta && p.meta.event_name) || '').toLowerCase();
+    const a = (p.data && p.data.attributes) || {};
+    const orderId = String(a.order_number || (p.data && p.data.id) || '');
+
+    // Lemon Squeezy retries on failure, so the same order can arrive more
+    // than once. Recorded once, announced once.
+    const sh = _salesSheet();
+    const rows = sh.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][2]) === orderId && String(rows[i][1]) === event) return _ok();
+    }
+
+    const total = Number(a.total || 0) / 100;
+    const currency = String(a.currency || 'USD');
+    const first = (a.first_order_item || {});
+    const product = String(first.product_name || a.product_name || 'Ezzo Budget');
+    const variant = String(first.variant_name || '');
+    const testMode = a.test_mode === true;
+
+    sh.appendRow([new Date(), event, orderId, String(a.user_email || ''), String(a.user_name || ''),
+                  product, variant, total, currency, testMode ? 'test' : 'live', String(a.status || '')]);
+
+    if (event === 'order_created') {
+      _push('💰 Cha-ching!',
+        _money(total, currency) + ' — ' + product + (variant ? ' (' + variant + ')' : '') +
+        (testMode ? '\n[TEST MODE]' : '') + (a.user_email ? '\n' + a.user_email : ''),
+        'cashregister');
+    } else if (event === 'order_refunded') {
+      _push('↩️ Refund',
+        _money(total, currency) + ' — ' + product + (testMode ? '\n[TEST MODE]' : ''),
+        'falling');
+    }
+    return _ok();
+  } catch (err) { return _ok(); }
+}
+
+function _money(n, currency) {
+  const sym = { USD: '$', GBP: '£', EUR: '€', AUD: 'A$', CAD: 'C$', ZAR: 'R' }[currency] || (currency + ' ');
+  return sym + n.toFixed(2);
+}
+
+// Sends to whichever services are configured. Both may be set at once.
+// Nothing here throws: a notification failing must never make Lemon Squeezy
+// think the webhook failed, because it would then retry the whole thing.
+function _push(title, message, sound) {
+  const props = PropertiesService.getScriptProperties();
+
+  // Pushover: has a built-in "cashregister" tone, which is the whole point.
+  try {
+    const token = props.getProperty('PUSHOVER_TOKEN');
+    const user = props.getProperty('PUSHOVER_USER');
+    if (token && user) {
+      UrlFetchApp.fetch('https://api.pushover.net/1/messages.json', {
+        method: 'post',
+        payload: { token: token, user: user, title: title, message: message,
+                   sound: sound || 'cashregister', priority: '0' },
+        muteHttpExceptions: true
+      });
+    }
+  } catch (err) {}
+
+  // Telegram: free. Give the bot's chat its own notification tone on the
+  // phone and it rings however you like.
+  try {
+    const bot = props.getProperty('TELEGRAM_BOT_TOKEN');
+    const chat = props.getProperty('TELEGRAM_CHAT_ID');
+    if (bot && chat) {
+      UrlFetchApp.fetch('https://api.telegram.org/bot' + bot + '/sendMessage', {
+        method: 'post',
+        payload: { chat_id: chat, text: title + '\n' + message },
+        muteHttpExceptions: true
+      });
+    }
+  } catch (err) {}
+}
+
+// Run this from the editor to make the phone chirp without waiting for a
+// sale. Set up the properties first, then press Run.
+function testChaChing() {
+  _push('💰 Cha-ching!', '$49.99 — Ultimate Budget Planner\n[TEST NOTIFICATION]', 'cashregister');
+  return 'Sent. If nothing arrived, check the Script Properties.';
 }
 
 function _claimRateOk() {

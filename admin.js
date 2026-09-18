@@ -264,6 +264,12 @@ const ADMIN_NOTIFY_SHEET = 'Notify';
 const ADMIN_NOTIFY_RANGE = `${ADMIN_NOTIFY_SHEET}!A2:E10000`;
 let allNotify = [];
 let _notifyFetchError = '';
+// Orders posted by the Lemon Squeezy webhook. Until this existed the sales
+// report returned totals only, so a Lemon Squeezy buyer's address never
+// reached the email list.
+const ADMIN_SALES_SHEET = 'Sales';
+const ADMIN_SALES_RANGE = `${ADMIN_SALES_SHEET}!A2:K10000`;
+let allSales = [];
 let allKeys = [];
 
 // Why the Keys fetch came back empty, if it did. A silently empty tab is
@@ -288,6 +294,21 @@ async function adminFetchNotify(token) {
       ts: r[0] || '', email: r[1] || '', tool: r[2] || '', source: r[3] || 'notify', visitorId: r[4] || ''
     })).filter(r => r.email);
   } catch (e) { _notifyFetchError = 'network'; return []; }
+}
+
+// Absent until the first webhook lands, which is the normal state.
+async function adminFetchSales(token) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_SALES_RANGE)}`;
+  try {
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) return [];
+    const j = await res.json();
+    return (j.values || []).map(r => ({
+      ts: r[0] || '', event: r[1] || '', orderId: r[2] || '', email: r[3] || '', name: r[4] || '',
+      product: r[5] || '', variant: r[6] || '', total: Number(r[7] || 0), currency: r[8] || 'USD',
+      mode: r[9] || 'live', status: r[10] || ''
+    })).filter(r => r.event === 'order_created');
+  } catch (e) { return []; }
 }
 
 async function adminFetchKeys(token) {
@@ -1977,6 +1998,15 @@ function emailRows() {
       detail: k.orderId ? 'Order ' + k.orderId : '', date: k.issuedAt || '', status: k.status || 'active'
     });
   });
+  allSales.forEach(o => {
+    if (!o.email) return;
+    rows.push({
+      email: String(o.email).trim().toLowerCase(), source: 'purchase',
+      tool: /ultimate/i.test(o.product) ? 'ubp' : /simple/i.test(o.product) ? 'sbp' : '',
+      detail: 'Lemon Squeezy ' + (o.orderId ? '#' + o.orderId : '') + (o.mode === 'test' ? ' (test)' : ''),
+      date: o.ts || '', status: o.mode === 'test' ? 'test' : 'active'
+    });
+  });
   allNotify.forEach(n => {
     rows.push({
       email: String(n.email).trim().toLowerCase(), source: 'notify', tool: n.tool || '',
@@ -2033,8 +2063,8 @@ function renderEmails() {
 
   el.innerHTML = `
     <div class="section-header"><h2 class="section-title">✉️ Email list</h2></div>
-    <p class="section-desc">Everyone who has given you an address, from an Etsy key claim or a launch notification.
-      Lemon Squeezy buyers are not included: that report returns totals only, so their addresses stay in the Lemon Squeezy dashboard.</p>
+    <p class="section-desc">Everyone who has given you an address: Etsy key claims, Lemon Squeezy orders, and launch notifications.
+      Lemon Squeezy buyers appear from the moment the sale webhook is set up, so anything bought before that stays in their dashboard only.</p>
     ${kpiRow([
       { icon: '📇', label: 'Unique addresses', value: String(unique), sub: 'across both sources', color: '#6366f1' },
       { icon: '🛒', label: 'From purchases', value: String(purchases), sub: 'Etsy key claims', color: '#10b981' },
@@ -2105,7 +2135,10 @@ function startLivePolling() {
       // two tabs that read them - Keys itself, and Redemptions, which resolves
       // each key's order ID from them.
       if (currentATab === 'keys' || currentATab === 'redemptions' || currentATab === 'emails') allKeys = await adminFetchKeys(_adminAccessToken);
-      if (currentATab === 'emails') allNotify = await adminFetchNotify(_adminAccessToken);
+      if (currentATab === 'emails') {
+        allNotify = await adminFetchNotify(_adminAccessToken);
+        allSales = await adminFetchSales(_adminAccessToken);
+      }
       _lastFetched = Date.now();
       (ADMIN_RENDERERS[currentATab] || renderOverview)();
     }
@@ -2132,6 +2165,7 @@ async function adminSignIn() {
     allEvents = await adminFetchEvents(token);
     allKeys = await adminFetchKeys(token);
     allNotify = await adminFetchNotify(token);
+    allSales = await adminFetchSales(token);
     _lastFetched = Date.now();
     Object.assign(overviewFilters, currentMonthBounds()); // reset to the current month on every sign-in, per explicit request
     document.getElementById('adminGate').hidden = true;
