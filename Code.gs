@@ -419,6 +419,75 @@ function _push(title, message, sound) {
   } catch (err) {}
 }
 
+// Pretends Lemon Squeezy has just posted a sale, so the whole path can be
+// proven before the store is even activated: the secret check, recording the
+// order, and the notification. Run it from the editor and check your phone,
+// then look at the Sales sheet.
+//
+// It writes a real row, using an order number that makes clear where it came
+// from. Delete that row afterwards if you would rather it were not there.
+function simulateSale() {
+  const secret = PropertiesService.getScriptProperties().getProperty('LS_WEBHOOK_SECRET');
+  if (!secret) {
+    console.log('LS_WEBHOOK_SECRET is not set, so a real webhook would be rejected too.');
+    return 'no secret';
+  }
+  const payload = {
+    meta: { event_name: 'order_created' },
+    data: {
+      id: 'sim',
+      attributes: {
+        order_number: 'SIM-' + Date.now().toString().slice(-6),
+        user_email: 'simulated.buyer@example.com',
+        user_name: 'Simulated Buyer',
+        total: 4999, currency: 'USD', status: 'paid', test_mode: true,
+        first_order_item: { product_name: 'Ultimate Budget Planner', variant_name: 'Dark / Classic' }
+      }
+    }
+  };
+  doPost({ parameter: { wh: secret }, postData: { contents: JSON.stringify(payload) } });
+  console.log('Simulated a sale. Your phone should ring, and a row should appear on the Sales sheet.');
+  console.log('It is marked [TEST] because test_mode is set, exactly as a Lemon Squeezy test purchase would be.');
+  return 'sent';
+}
+
+// Says exactly why a notification did or did not go out. Unlike _push, which
+// swallows everything so a dead notification service can never make Lemon
+// Squeezy think the webhook failed, this reports the real answer. Run it from
+// the editor and read the Execution log.
+function diagnoseChaChing() {
+  const props = PropertiesService.getScriptProperties();
+  const names = Object.keys(props.getProperties()).sort();
+  console.log('Properties found: ' + (names.length ? names.join(', ') : 'NONE'));
+
+  const bot = props.getProperty('TELEGRAM_BOT_TOKEN');
+  const chat = props.getProperty('TELEGRAM_CHAT_ID');
+  // Only ever the shape of the token, never the token itself.
+  console.log('TELEGRAM_BOT_TOKEN: ' + (bot ? 'set, ' + bot.length + ' chars, begins "' + bot.slice(0, 4) + '", has colon: ' + (bot.indexOf(':') > 0) : '*** MISSING ***'));
+  console.log('TELEGRAM_CHAT_ID:   ' + (chat ? 'set to "' + chat + '"' : '*** MISSING ***'));
+
+  if (!bot || !chat) {
+    console.log('>> Stopping. Check the spelling of the property names in Project Settings, and that you pressed "Save script properties".');
+    return 'missing properties';
+  }
+  if (bot.indexOf(':') < 1) {
+    console.log('>> The token has no colon in it, so it is only half of one. It should look like 8914815160:AAG...');
+    return 'token looks wrong';
+  }
+
+  const res = UrlFetchApp.fetch('https://api.telegram.org/bot' + bot + '/sendMessage', {
+    method: 'post',
+    payload: { chat_id: chat, text: 'Diagnostic message from Apps Script' },
+    muteHttpExceptions: true
+  });
+  const code = res.getResponseCode();
+  console.log('Telegram replied HTTP ' + code);
+  console.log(res.getContentText());
+  if (code === 200) console.log('>> Sent. If the phone stayed quiet, the message is in Telegram but its notification is muted.');
+  else console.log('>> Telegram refused it. The description above says why.');
+  return 'HTTP ' + code;
+}
+
 // Run this from the editor to make the phone chirp without waiting for a
 // sale. Set up the properties first, then press Run.
 function testChaChing() {
