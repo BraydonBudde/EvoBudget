@@ -376,22 +376,12 @@ function _handleLsWebhook(e) {
                   product, variant, total, currency, testMode ? 'test' : 'live', String(a.status || '')]);
 
     if (event === 'order_created') {
-      _push('💰 Cha-ching!',
-        _money(total, currency) + ' — ' + product + (variant ? ' (' + variant + ')' : '') +
-        (testMode ? '\n[TEST MODE]' : '') + (a.user_email ? '\n' + a.user_email : ''),
-        'cashregister');
+      _push('💰 Cha-ching!', product + (testMode ? ' [TEST]' : ''), 'cashregister');
     } else if (event === 'order_refunded') {
-      _push('↩️ Refund',
-        _money(total, currency) + ' — ' + product + (testMode ? '\n[TEST MODE]' : ''),
-        'falling');
+      _push('↩️ Refund', product + (testMode ? ' [TEST]' : ''), 'falling');
     }
     return _ok();
   } catch (err) { return _ok(); }
-}
-
-function _money(n, currency) {
-  const sym = { USD: '$', GBP: '£', EUR: '€', AUD: 'A$', CAD: 'C$', ZAR: 'R' }[currency] || (currency + ' ');
-  return sym + n.toFixed(2);
 }
 
 // Sends to whichever services are configured. Both may be set at once.
@@ -432,7 +422,7 @@ function _push(title, message, sound) {
 // Run this from the editor to make the phone chirp without waiting for a
 // sale. Set up the properties first, then press Run.
 function testChaChing() {
-  _push('💰 Cha-ching!', '$49.99 — Ultimate Budget Planner\n[TEST NOTIFICATION]', 'cashregister');
+  _push('💰 Cha-ching!', 'Ultimate Budget Planner', 'cashregister');
   return 'Sent. If nothing arrived, check the Script Properties.';
 }
 
