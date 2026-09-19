@@ -1971,12 +1971,12 @@ function validateLaunchCode(code) {
 // ID is in its Lemon Squeezy dashboard URL (Products → click product →
 // the number in the address bar). Leave blank and the name-based fallback
 // below still works as long as the product name contains "Simple"/"Ultimate". ▼▼
+// Both planners are pinned by product id, so which one a licence opens no
+// longer depends on the product name matching a keyword. Renaming a product
+// in Lemon Squeezy cannot misroute a buyer; only these ids can.
 const LEMON_SQUEEZY_PRODUCT_TOOL = {
+  '1309210': 'sbp',   // Simple Budget Planner
   '1309261': 'ubp',   // Ultimate Budget Planner
-  // Simple Budget Planner's id goes here once a licence for it has been
-  // seen. Until then a Simple key still works: the store check below has
-  // already established it is one of ours, and the name fallback then
-  // decides which planner. Pinning the id is just tighter.
 };
 // The validate endpoint answers for EVERY store on Lemon Squeezy, not just
 // ours, and the reply carries no proof of which product it came from beyond
