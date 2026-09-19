@@ -654,8 +654,9 @@ function fetchLemonSqueezySales() {
     const timer = setTimeout(() => { lsSales = { loaded: true, configured: false, revenue: 0, orders: 0, error: 'timeout' }; finish(); }, 15000);
     window[cb] = res => {
       lsSales = (res && res.ok)
-        ? { loaded: true, configured: !!res.configured, revenue: Number(res.revenue || 0), orders: Number(res.orders || 0), testMode: !!res.testMode, error: '' }
-        : { loaded: true, configured: false, revenue: 0, orders: 0, testMode: false, error: (res && res.error) || 'failed' };
+        ? { loaded: true, configured: !!res.configured, revenue: Number(res.revenue || 0), orders: Number(res.orders || 0),
+            testOrders: Number(res.testOrders || 0), testRevenue: Number(res.testRevenue || 0), testMode: !!res.testMode, error: '' }
+        : { loaded: true, configured: false, revenue: 0, orders: 0, testOrders: 0, testRevenue: 0, testMode: false, error: (res && res.error) || 'failed' };
       finish();
     };
     const qs = new URLSearchParams({ action: 'sales', from: overviewFilters.from || '', to: overviewFilters.to || '', cb, _: String(Date.now()) });
@@ -807,10 +808,14 @@ function renderOverview() {
   const lsOrders = lsSales.configured ? lsSales.orders : 0;
   const totalRevenue = lsRevenue + etsy.revenue;
   const totalOrders = lsOrders + etsy.orders;
+  const testNote = lsSales.testOrders
+    ? ' · ' + lsSales.testOrders + ' test order' + (lsSales.testOrders === 1 ? '' : 's') +
+      ' ($' + lsSales.testRevenue.toFixed(2) + ') excluded'
+    : '';
   const salesSub = lsSales.configured
     ? (lsSales.testMode
-        ? '⚠ TEST orders - not real money'
-        : '$' + lsRevenue.toFixed(2) + ' Lemon Squeezy + $' + etsy.revenue.toFixed(2) + ' Etsy')
+        ? '⚠ Test orders only - no real sales yet'
+        : '$' + lsRevenue.toFixed(2) + ' Lemon Squeezy + $' + etsy.revenue.toFixed(2) + ' Etsy' + testNote)
     : (lsSales.loaded ? 'Etsy only - connect Lemon Squeezy for live revenue' : 'loading Lemon Squeezy...');
 
   // Funnel. The final step can only be observed through redemptions, since
@@ -858,7 +863,7 @@ function renderOverview() {
       </div></div>
       <div class="admin-kpi-stack">
         ${kpiRow([
-          { icon: '💰', label: 'Total sales', value: '$' + totalRevenue.toFixed(2), sub: salesSub, color: '#10b981', hint: 'Lemon Squeezy revenue is read live from their API. Etsy has no such feed, so Etsy sales are inferred from redeemed Etsy keys at list price, which undercounts anyone who bought but never redeemed.' },
+          { icon: '💰', label: 'Total sales', value: '$' + totalRevenue.toFixed(2), sub: salesSub, color: '#10b981', hint: 'Real money only: Lemon Squeezy test orders are counted separately and never included here. Lemon Squeezy revenue is read live from their API. Etsy has no such feed, so Etsy sales are inferred from redeemed Etsy keys at list price, which undercounts anyone who bought but never redeemed.' },
           { icon: '🧾', label: 'Orders', value: fmt(totalOrders), sub: lsSales.configured ? fmt(lsOrders) + ' Lemon Squeezy + ' + fmt(etsy.orders) + ' Etsy' : fmt(etsy.orders) + ' redeemed Etsy keys', color: '#6366f1', hint: 'Paid orders in this range. Etsy orders are counted from redeemed keys, so they can lag the actual sale by days.' }
         ])}
         ${kpiRow([

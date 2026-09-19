@@ -641,7 +641,7 @@ function _handleSales(p) {
     // range reads to a human ("1st to 5th" includes all of the 5th).
     const toMs = to ? new Date(to + 'T23:59:59Z').getTime() : Date.now();
 
-    let revenue = 0, orders = 0, refunded = 0, testOrders = 0;
+    let revenue = 0, orders = 0, refunded = 0, testOrders = 0, testRevenue = 0;
     let url = 'https://api.lemonsqueezy.com/v1/orders?page[size]=100&sort=-createdAt';
     // Bounded rather than "while there are pages": a store with a long
     // history would otherwise blow the script's execution time limit.
@@ -664,11 +664,12 @@ function _handleSales(p) {
         if (created < oldestOnPage) oldestOnPage = created;
         if (created < fromMs || created > toMs) continue;
         if (a.status === 'refunded') { refunded++; continue; }
-        // A test-mode API key returns test orders that look identical to
-        // real ones. Counting them is fine while trying the setup out, but
-        // the dashboard has to be able to say so - otherwise a key left on
-        // test would quietly present play money as revenue.
-        if (a.test_mode === true) testOrders++;
+        // Test orders look identical to real ones and used to be added
+        // straight into revenue. The only guard was a flag that tripped when
+        // EVERY order in range was a test, so the first real sale silently
+        // turned the warning off and left the play money in the total. They
+        // are counted separately now and never reach revenue.
+        if (a.test_mode === true) { testOrders++; testRevenue += Number(a.total || 0); continue; }
         // total is in cents, and already excludes tax handled by Lemon
         // Squeezy as merchant of record.
         revenue += Number(a.total || 0);
@@ -681,7 +682,10 @@ function _handleSales(p) {
       url = (body.links && body.links.next) || '';
     }
 
-    const out = { ok: true, configured: true, revenue: revenue / 100, orders: orders, refunded: refunded, testMode: testOrders > 0 && testOrders === orders };
+    // testOrders/testRevenue are reported alongside rather than folded in,
+    // so the headline figure is always money that actually arrived.
+    const out = { ok: true, configured: true, revenue: revenue / 100, orders: orders, refunded: refunded,
+                  testOrders: testOrders, testRevenue: testRevenue / 100, testMode: testOrders > 0 && orders === 0 };
     cache.put(cacheKey, JSON.stringify(out), LS_CACHE_SECONDS);
     return out;
   } catch (err) {
