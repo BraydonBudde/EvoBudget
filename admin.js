@@ -2171,7 +2171,6 @@ function salesRows() {
     if (o) redeemedOrders.add(String(o));
   });
   return allSales
-    .filter(o => showTestData || o.mode !== 'test')
     .filter(o => !salesFilters.mode || o.mode === salesFilters.mode)
     .filter(o => {
       const q = salesFilters.q.trim().toLowerCase();
@@ -2212,16 +2211,17 @@ function renderSales() {
         <option value="live" ${salesFilters.mode === 'live' ? 'selected' : ''}>Real sales only</option>
         <option value="test" ${salesFilters.mode === 'test' ? 'selected' : ''}>Test only</option>
       </select>
-      <label class="check-label" style="gap:8px;font-size:12px">
+      <label class="check-label" style="gap:8px;font-size:12px"
+             title="Test orders are always listed here. This only decides whether they are added to the revenue figure on the Overview tab.">
         <input type="checkbox" id="slShowTest" ${showTestData ? 'checked' : ''}><span class="checkmark checkmark--sm"></span>
-        <span>Count test data in Overview</span>
+        <span>Count test orders as revenue</span>
       </label>
     </div>
     ${rows.length === 0
       ? `<div class="empty-state"><div class="empty-icon">🧾</div><p class="empty-title">No orders yet</p>
-           <p class="empty-sub">${tests.length && !showTestData
-              ? tests.length + ' test order' + (tests.length === 1 ? '' : 's') + ' hidden. Tick the box above to include them.'
-              : 'Orders appear here the moment Lemon Squeezy reports them.'}</p></div>`
+           <p class="empty-sub">${salesFilters.mode
+              ? 'Nothing matches that filter. Set it back to "Live and test".'
+              : 'Orders appear the moment Lemon Squeezy reports one. If a sale rang your phone but is not listed here, the Apps Script needs redeploying.'}</p></div>`
       : `<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
           <th>Date</th><th>Order</th><th>Product</th><th>Buyer</th><th>Amount</th><th>Key used</th>
         </tr></thead><tbody>
