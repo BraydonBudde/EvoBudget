@@ -2039,7 +2039,7 @@ function emailRows() {
     if (!k.email) return;
     rows.push({
       email: String(k.email).trim().toLowerCase(), source: 'purchase', tool: k.tool || '',
-      detail: k.orderId ? 'Order ' + k.orderId : '', date: k.issuedAt || '', status: k.status || 'active'
+      detail: String(k.orderId || ''), date: k.issuedAt || '', status: k.status || 'active'
     });
   });
   allSales.forEach(o => {
@@ -2047,7 +2047,7 @@ function emailRows() {
     rows.push({
       email: String(o.email).trim().toLowerCase(), source: 'purchase',
       tool: /ultimate/i.test(o.product) ? 'ubp' : /simple/i.test(o.product) ? 'sbp' : '',
-      detail: 'Lemon Squeezy ' + (o.orderId ? '#' + o.orderId : '') + (o.mode === 'test' ? ' (test)' : ''),
+      detail: String(o.orderNumber || o.orderId || ''),
       date: o.ts || '', status: o.mode === 'test' ? 'test' : 'active'
     });
   });
