@@ -221,7 +221,14 @@ function _stylesSheet() { return _sheet(STYLES_SHEET, ['Token', 'Tool', 'Theme',
 function _keysSheet()   { return _sheet(KEYS_SHEET, ['Key', 'Tool', 'Theme', 'Layout', 'OrderId', 'Email', 'IssuedAt', 'Status', 'Devices', 'RedeemCount', 'LastRedeemedAt']); }
 function _blogsSheet()  { return _sheet(BLOGS_SHEET, ['Slug', 'Title', 'Excerpt', 'Category', 'Tool', 'Tags', 'Date', 'ReadMinutes', 'Image', 'ImageAlt', 'Body', 'Related', 'Status', 'Updated']); }
 function _notifySheet() { return _sheet(NOTIFY_SHEET, ['Timestamp', 'Email', 'Tool', 'Source', 'VisitorId']); }
-function _salesSheet()  { return _sheet(SALES_SHEET, ['Timestamp', 'Event', 'OrderId', 'Email', 'Name', 'Product', 'Variant', 'Total', 'Currency', 'TestMode', 'Status']); }
+function _salesSheet() {
+  const sh = _sheet(SALES_SHEET, ['Timestamp', 'Event', 'OrderId', 'Email', 'Name', 'Product',
+                                  'Variant', 'Total', 'Currency', 'TestMode', 'Status', 'OrderNumber']);
+  // An earlier version of this sheet stopped at column K. Add the missing
+  // header rather than making anyone recreate the sheet by hand.
+  if (String(sh.getRange(1, 12).getValue()).trim() !== 'OrderNumber') sh.getRange(1, 12).setValue('OrderNumber');
+  return sh;
+}
 
 // Starts empty. The twenty codes that used to be hardcoded in script.js
 // were readable by anyone who opened it, so they are retired rather than
@@ -355,14 +362,19 @@ function _handleLsWebhook(e) {
     const p = JSON.parse(body);
     const event = String((p.meta && p.meta.event_name) || '').toLowerCase();
     const a = (p.data && p.data.attributes) || {};
-    const orderId = String(a.order_number || (p.data && p.data.id) || '');
+    // order_id is what a licence validation returns, so it is the one a
+    // redemption can be matched on. order_number is what the buyer and the
+    // Lemon Squeezy UI see. Both are recorded.
+    const orderId = String((p.data && p.data.id) || a.order_id || '');
+    const orderNumber = String(a.order_number || '');
 
     // Lemon Squeezy retries on failure, so the same order can arrive more
     // than once. Recorded once, announced once.
     const sh = _salesSheet();
     const rows = sh.getDataRange().getValues();
     for (var i = 1; i < rows.length; i++) {
-      if (String(rows[i][2]) === orderId && String(rows[i][1]) === event) return _ok();
+      if (String(rows[i][1]) !== event) continue;
+      if (String(rows[i][2]) === orderId || (orderNumber && String(rows[i][11]) === orderNumber)) return _ok();
     }
 
     const total = Number(a.total || 0) / 100;
@@ -373,7 +385,7 @@ function _handleLsWebhook(e) {
     const testMode = a.test_mode === true;
 
     sh.appendRow([new Date(), event, orderId, String(a.user_email || ''), String(a.user_name || ''),
-                  product, variant, total, currency, testMode ? 'test' : 'live', String(a.status || '')]);
+                  product, variant, total, currency, testMode ? 'test' : 'live', String(a.status || ''), orderNumber]);
 
     if (event === 'order_created') {
       _push('💰 Cha-ching!', product + (testMode ? ' [TEST]' : ''), 'cashregister');

@@ -268,7 +268,7 @@ let _notifyFetchError = '';
 // report returned totals only, so a Lemon Squeezy buyer's address never
 // reached the email list.
 const ADMIN_SALES_SHEET = 'Sales';
-const ADMIN_SALES_RANGE = `${ADMIN_SALES_SHEET}!A2:K10000`;
+const ADMIN_SALES_RANGE = `${ADMIN_SALES_SHEET}!A2:L10000`;
 let allSales = [];
 let allKeys = [];
 
@@ -306,7 +306,7 @@ async function adminFetchSales(token) {
     return (j.values || []).map(r => ({
       ts: r[0] || '', event: r[1] || '', orderId: r[2] || '', email: r[3] || '', name: r[4] || '',
       product: r[5] || '', variant: r[6] || '', total: Number(r[7] || 0), currency: r[8] || 'USD',
-      mode: r[9] || 'live', status: r[10] || ''
+      mode: r[9] || 'live', status: r[10] || '', orderNumber: r[11] || ''
     })).filter(r => r.event === 'order_created');
   } catch (e) { return []; }
 }
@@ -1170,6 +1170,24 @@ function redemptionActivityRows() {
     row.lastSeen = Math.max(row.lastSeen, eventTime(e));
     if (row.fromEventsOnly) row.redeemed++;
   });
+
+  // A Lemon Squeezy redemption carries an order id but no buyer, since all
+  // the buyer ever does is type a key. The sale webhook knows who they are,
+  // so the two are matched on the order. Either identifier will do, because
+  // older rows recorded order_number where newer ones record order_id.
+  if (allSales.length) {
+    const byOrder = new Map();
+    allSales.forEach(o => {
+      if (!o.email) return;
+      if (o.orderId) byOrder.set(String(o.orderId), o.email);
+      if (o.orderNumber) byOrder.set(String(o.orderNumber), o.email);
+    });
+    byKey.forEach(r => {
+      if (r.email || !r.orderId) return;
+      const hit = byOrder.get(String(r.orderId));
+      if (hit) r.email = hit;
+    });
+  }
 
   // An order ID reached from more than one visitor is the strongest abuse
   // signal here, so it survives the merge onto the key row.
