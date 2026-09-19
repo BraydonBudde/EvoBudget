@@ -1972,17 +1972,18 @@ function validateLaunchCode(code) {
 // the number in the address bar). Leave blank and the name-based fallback
 // below still works as long as the product name contains "Simple"/"Ultimate". ▼▼
 const LEMON_SQUEEZY_PRODUCT_TOOL = {
-  // 'YOUR_SBP_PRODUCT_ID': 'sbp',
-  // 'YOUR_UBP_PRODUCT_ID': 'ubp',
+  '1309261': 'ubp',   // Ultimate Budget Planner
+  // Simple Budget Planner's id goes here once a licence for it has been
+  // seen. Until then a Simple key still works: the store check below has
+  // already established it is one of ours, and the name fallback then
+  // decides which planner. Pinning the id is just tighter.
 };
-// ▼▼ REQUIRED before Lemon Squeezy selling starts. Your store id is the
-// number in the Lemon Squeezy dashboard URL (Settings -> Stores). ▼▼
 // The validate endpoint answers for EVERY store on Lemon Squeezy, not just
-// yours, and the reply carries no proof of which product it came from
-// beyond what you check. Without this, a licence someone bought from an
+// ours, and the reply carries no proof of which product it came from beyond
+// what is checked here. Without this, a licence someone bought from an
 // unrelated seller for anything called "Ultimate ..." opened this planner.
 // Left blank, Lemon Squeezy keys are refused outright rather than trusted.
-const LEMON_SQUEEZY_STORE_ID = '';
+const LEMON_SQUEEZY_STORE_ID = '457921';
 // ▲▲ ──────────────────────────────────────────────────────────────────── ▲▲
 // ▲▲ ──────────────────────────────────────────────────────────────────── ▲▲
 
