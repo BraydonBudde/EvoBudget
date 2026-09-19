@@ -2033,38 +2033,56 @@ function wireFilterBar(rerender) {
 // sales proxy returns totals only, never customer records.
 let emailFilters = { source: '', tool: '', q: '' };
 
+// Newest-first, by real time where the date can be read and by position in
+// the sheet otherwise. Comparing the formatted strings put September after
+// October, which meant a repeat buyer's row could show an older order than
+// the one they had just placed.
+function emailRecency(r) {
+  const t = Date.parse(r.date);
+  return Number.isFinite(t) ? t : (r.seq || 0);
+}
+
 function emailRows() {
   const rows = [];
-  allKeys.forEach(k => {
+  allKeys.forEach((k, i) => {
     if (!k.email) return;
     rows.push({
+      seq: i,
       email: String(k.email).trim().toLowerCase(), source: 'purchase', tool: k.tool || '',
       detail: String(k.orderId || ''), date: k.issuedAt || '', status: k.status || 'active'
     });
   });
-  allSales.forEach(o => {
+  allSales.forEach((o, i) => {
     if (!o.email) return;
     rows.push({
+      seq: 2000000 + i,
       email: String(o.email).trim().toLowerCase(), source: 'purchase',
       tool: /ultimate/i.test(o.product) ? 'ubp' : /simple/i.test(o.product) ? 'sbp' : '',
       detail: String(o.orderNumber || o.orderId || ''),
       date: o.ts || '', status: o.mode === 'test' ? 'test' : 'active'
     });
   });
-  allNotify.forEach(n => {
+  allNotify.forEach((n, i) => {
     rows.push({
+      seq: 1000000 + i,
       email: String(n.email).trim().toLowerCase(), source: 'notify', tool: n.tool || '',
       detail: n.source || 'notify', date: n.ts || '', status: ''
     });
   });
   // One row per address per source, keeping the most recent date.
   const seen = new Map();
+  const count = new Map();
   rows.forEach(r => {
     const id = r.email + '|' + r.source + '|' + r.tool;
+    count.set(id, (count.get(id) || 0) + 1);
     const prev = seen.get(id);
-    if (!prev || String(r.date) > String(prev.date)) seen.set(id, r);
+    if (!prev || emailRecency(r) > emailRecency(prev)) seen.set(id, r);
   });
-  return [...seen.values()].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  // How many times this address has bought, so a repeat customer is not
+  // indistinguishable from a first-time one just because the list is
+  // deduplicated.
+  seen.forEach((r, id) => { r.orders = count.get(id) || 1; });
+  return [...seen.values()].sort((a, b) => emailRecency(b) - emailRecency(a));
 }
 
 function emailFilteredRows() {
@@ -2135,13 +2153,14 @@ function renderEmails() {
       ? `<div class="empty-state"><div class="empty-icon">✉️</div><p class="empty-title">No addresses yet</p>
            <p class="empty-sub">They appear here as buyers claim keys and visitors ask to be told about a launch.</p></div>`
       : `<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
-          <th>Email</th><th>Source</th><th>Tool</th><th>Detail</th><th>Date</th>
+          <th>Email</th><th>Source</th><th>Tool</th><th>Detail</th><th>Count</th><th>Date</th>
         </tr></thead><tbody>
         ${rows.map(r => `<tr class="tx-row">
           <td>${esc(r.email)}</td>
           <td><span class="tx-pill">${r.source === 'purchase' ? 'Purchase' : 'Notify'}</span></td>
           <td>${esc((r.tool || '').toUpperCase())}</td>
           <td class="tx-desc">${esc(r.detail || '-')}</td>
+          <td>${r.orders > 1 ? '×' + r.orders : ''}</td>
           <td class="tx-date">${esc(String(r.date).slice(0, 10))}</td>
         </tr>`).join('')}
         </tbody></table></div></div>`}`;
