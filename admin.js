@@ -270,6 +270,19 @@ let _notifyFetchError = '';
 const ADMIN_SALES_SHEET = 'Sales';
 const ADMIN_SALES_RANGE = `${ADMIN_SALES_SHEET}!A2:L10000`;
 let allSales = [];
+// Test orders are real rows that are not real money. They are always shown
+// somewhere, so nothing is ever silently missing, but they only count
+// towards revenue when this is on. Off by default so the headline figure
+// means money that arrived.
+const ADMIN_SHOWTEST_KEY = 'evobudget_admin_show_test';
+let showTestData = (() => {
+  try { return localStorage.getItem(ADMIN_SHOWTEST_KEY) === '1'; } catch (e) { return false; }
+})();
+function setShowTestData(on) {
+  showTestData = !!on;
+  try { localStorage.setItem(ADMIN_SHOWTEST_KEY, showTestData ? '1' : '0'); } catch (e) {}
+}
+let salesFilters = { mode: '', q: '' };
 let allKeys = [];
 
 // Why the Keys fetch came back empty, if it did. A silently empty tab is
@@ -804,16 +817,16 @@ function renderOverview() {
   const uniqueVisitors = uniqueBy(rangeEvents, e => e.visitorId).length;
 
   const etsy = etsySalesInRange(rangeEvents);
-  const lsRevenue = lsSales.configured ? lsSales.revenue : 0;
-  const lsOrders = lsSales.configured ? lsSales.orders : 0;
+  const lsRevenue = lsSales.configured ? (lsSales.revenue + (showTestData ? lsSales.testRevenue : 0)) : 0;
+  const lsOrders = lsSales.configured ? (lsSales.orders + (showTestData ? lsSales.testOrders : 0)) : 0;
   const totalRevenue = lsRevenue + etsy.revenue;
   const totalOrders = lsOrders + etsy.orders;
   const testNote = lsSales.testOrders
     ? ' · ' + lsSales.testOrders + ' test order' + (lsSales.testOrders === 1 ? '' : 's') +
-      ' ($' + lsSales.testRevenue.toFixed(2) + ') excluded'
+      ' ($' + lsSales.testRevenue.toFixed(2) + ')' + (showTestData ? ' INCLUDED' : ' excluded')
     : '';
   const salesSub = lsSales.configured
-    ? (lsSales.testMode
+    ? (lsSales.testMode && !showTestData
         ? '⚠ Test orders only - no real sales yet'
         : '$' + lsRevenue.toFixed(2) + ' Lemon Squeezy + $' + etsy.revenue.toFixed(2) + ' Etsy' + testNote)
     : (lsSales.loaded ? 'Etsy only - connect Lemon Squeezy for live revenue' : 'loading Lemon Squeezy...');
@@ -1178,14 +1191,22 @@ function redemptionActivityRows() {
   if (allSales.length) {
     const byOrder = new Map();
     allSales.forEach(o => {
-      if (!o.email) return;
-      if (o.orderId) byOrder.set(String(o.orderId), o.email);
-      if (o.orderNumber) byOrder.set(String(o.orderNumber), o.email);
+      const rec = { email: o.email || '', orderNumber: o.orderNumber || '', test: o.mode === 'test' };
+      if (o.orderId) byOrder.set(String(o.orderId), rec);
+      if (o.orderNumber) byOrder.set(String(o.orderNumber), rec);
     });
     byKey.forEach(r => {
-      if (r.email || !r.orderId) return;
+      if (!r.orderId) return;
       const hit = byOrder.get(String(r.orderId));
-      if (hit) r.email = hit;
+      if (!hit) return;
+      if (!r.email && hit.email) r.email = hit.email;
+      // Show the number the buyer was given, keeping the internal one for
+      // the detail panel so nothing is lost.
+      if (hit.orderNumber && hit.orderNumber !== r.orderId) {
+        r.internalOrderId = r.orderId;
+        r.orderId = hit.orderNumber;
+      }
+      r.testOrder = hit.test;
     });
   }
 
@@ -1238,7 +1259,7 @@ function activityTableHtml(rows) {
       const canRevoke = r.source !== 'launch';
       return `<tr class="admin-activity-row${revoked ? ' admin-row-muted' : ''}">
         <td class="admin-col-expand"><button class="admin-expand-btn" type="button" data-expand="${id}" aria-expanded="false" aria-label="Show details for ${esc(r.key)}">▸</button></td>
-        <td class="admin-table-strong">${r.orderId ? esc(r.orderId) : '<span class="admin-table-muted">—</span>'}${r.reused ? ` <span class="admin-reuse-badge" title="This order ID was used by ${r.reuseCount} different visitors">⚠ ×${r.reuseCount}</span>` : ''}</td>
+        <td class="admin-table-strong">${r.orderId ? esc(r.orderId) : '<span class="admin-table-muted">—</span>'}${r.testOrder ? ' <span class="admin-src-badge">TEST</span>' : ''}${r.reused ? ` <span class="admin-reuse-badge" title="This order ID was used by ${r.reuseCount} different visitors">⚠ ×${r.reuseCount}</span>` : ''}</td>
         <td>${esc(toolLabel(r.tool))}</td>
         <td class="admin-key-cell">${esc(r.key)} <span class="admin-src-badge">${esc(SOURCE_LABEL[r.source])}</span></td>
         <td class="admin-col-action">${canRevoke
@@ -2139,7 +2160,91 @@ function renderEmails() {
   });
 }
 
-const ADMIN_RENDERERS = { overview: renderOverview, redemptions: renderRedemptions, emails: renderEmails, blogs: renderBlogs, settings: renderSettings };
+// ══════════════════════ Sales ══════════════════════
+// Every Lemon Squeezy order the webhook has recorded. Redemptions only ever
+// showed keys, so an order that was paid for but whose key was never typed
+// in appeared nowhere at all. This is the order side of the same story.
+function salesRows() {
+  const redeemedOrders = new Set();
+  redemptionEvents().forEach(e => {
+    const o = e.detail && e.detail.orderId;
+    if (o) redeemedOrders.add(String(o));
+  });
+  return allSales
+    .filter(o => showTestData || o.mode !== 'test')
+    .filter(o => !salesFilters.mode || o.mode === salesFilters.mode)
+    .filter(o => {
+      const q = salesFilters.q.trim().toLowerCase();
+      if (!q) return true;
+      return [o.email, o.name, o.product, o.orderId, o.orderNumber]
+        .some(v => String(v || '').toLowerCase().includes(q));
+    })
+    .map(o => Object.assign({}, o, {
+      // Either identifier can mark it redeemed: which one a redemption
+      // reported changed when the webhook started recording both.
+      redeemed: redeemedOrders.has(String(o.orderId)) || (!!o.orderNumber && redeemedOrders.has(String(o.orderNumber)))
+    }))
+    .sort((a, b) => String(b.ts).localeCompare(String(a.ts)));
+}
+
+function renderSales() {
+  const el = document.getElementById('aview-sales');
+  if (!el) return;
+  const rows = salesRows();
+  const live = allSales.filter(o => o.mode !== 'test');
+  const tests = allSales.filter(o => o.mode === 'test');
+  const liveRevenue = live.reduce((s, o) => s + (Number(o.total) || 0), 0);
+  const unredeemed = rows.filter(o => !o.redeemed).length;
+
+  el.innerHTML = `
+    <div class="section-header"><h2 class="section-title">🧾 Sales</h2></div>
+    <p class="section-desc">Every Lemon Squeezy order, as it was paid, not as it was redeemed.
+      Etsy sales are not here: Etsy provides no feed, so those only become visible when a key is claimed.</p>
+    ${kpiRow([
+      { icon: '💰', label: 'Real revenue', value: '$' + liveRevenue.toFixed(2), sub: live.length + ' paid order' + (live.length === 1 ? '' : 's'), color: '#10b981' },
+      { icon: '🧪', label: 'Test orders', value: String(tests.length), sub: showTestData ? 'counted in Overview' : 'not counted anywhere', color: '#f59e0b' },
+      { icon: '🔑', label: 'Awaiting redemption', value: String(unredeemed), sub: 'paid but key not yet used', color: '#6366f1' }
+    ])}
+    <div class="tx-filter-bar">
+      <input class="input input-sm" type="text" id="slQ" placeholder="Search buyer, product or order…" value="${esc(salesFilters.q)}">
+      <select class="select select-sm" id="slMode">
+        <option value="">Live and test</option>
+        <option value="live" ${salesFilters.mode === 'live' ? 'selected' : ''}>Real sales only</option>
+        <option value="test" ${salesFilters.mode === 'test' ? 'selected' : ''}>Test only</option>
+      </select>
+      <label class="check-label" style="gap:8px;font-size:12px">
+        <input type="checkbox" id="slShowTest" ${showTestData ? 'checked' : ''}><span class="checkmark checkmark--sm"></span>
+        <span>Count test data in Overview</span>
+      </label>
+    </div>
+    ${rows.length === 0
+      ? `<div class="empty-state"><div class="empty-icon">🧾</div><p class="empty-title">No orders yet</p>
+           <p class="empty-sub">${tests.length && !showTestData
+              ? tests.length + ' test order' + (tests.length === 1 ? '' : 's') + ' hidden. Tick the box above to include them.'
+              : 'Orders appear here the moment Lemon Squeezy reports them.'}</p></div>`
+      : `<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
+          <th>Date</th><th>Order</th><th>Product</th><th>Buyer</th><th>Amount</th><th>Key used</th>
+        </tr></thead><tbody>
+        ${rows.map(o => `<tr class="tx-row">
+          <td class="tx-date">${esc(String(o.ts).slice(0, 10))}</td>
+          <td>${esc(o.orderNumber || o.orderId || '-')}${o.mode === 'test' ? ' <span class="admin-src-badge">TEST</span>' : ''}</td>
+          <td class="tx-cat">${esc(o.product)}${o.variant ? ' <span class="admin-table-muted">' + esc(o.variant) + '</span>' : ''}</td>
+          <td class="tx-desc">${esc(o.email || '-')}</td>
+          <td class="tx-amt">$${(Number(o.total) || 0).toFixed(2)}</td>
+          <td>${o.redeemed ? '✓' : '<span class="admin-table-muted">not yet</span>'}</td>
+        </tr>`).join('')}
+        </tbody></table></div></div>`}`;
+
+  const q = document.getElementById('slQ');
+  q?.addEventListener('input', () => { salesFilters.q = q.value; clearTimeout(q._t); q._t = setTimeout(renderSales, 250); });
+  document.getElementById('slMode')?.addEventListener('change', e => { salesFilters.mode = e.target.value; renderSales(); });
+  document.getElementById('slShowTest')?.addEventListener('change', e => {
+    setShowTestData(e.target.checked);
+    renderSales();
+  });
+}
+
+const ADMIN_RENDERERS = { overview: renderOverview, redemptions: renderRedemptions, sales: renderSales, emails: renderEmails, blogs: renderBlogs, settings: renderSettings };
 function switchATab(tab) {
   currentATab = tab;
   document.querySelectorAll('#adminTabs .btab').forEach(b => b.classList.toggle('is-active', b.dataset.atab === tab));
@@ -2158,10 +2263,10 @@ function startLivePolling() {
       // two tabs that read them - Keys itself, and Redemptions, which resolves
       // each key's order ID from them.
       if (currentATab === 'keys' || currentATab === 'redemptions' || currentATab === 'emails') allKeys = await adminFetchKeys(_adminAccessToken);
-      if (currentATab === 'emails') {
-        allNotify = await adminFetchNotify(_adminAccessToken);
+      if (currentATab === 'emails' || currentATab === 'sales' || currentATab === 'redemptions') {
         allSales = await adminFetchSales(_adminAccessToken);
       }
+      if (currentATab === 'emails') allNotify = await adminFetchNotify(_adminAccessToken);
       _lastFetched = Date.now();
       (ADMIN_RENDERERS[currentATab] || renderOverview)();
     }

@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261003" />
-  <link rel="stylesheet" href="admin.css?v=20261003" />
+  <link rel="stylesheet" href="style.css?v=20261004" />
+  <link rel="stylesheet" href="admin.css?v=20261004" />
 </head>
 <body>
 
@@ -93,6 +93,7 @@
       <nav class="budget-tabs" id="adminTabs" role="tablist" aria-label="Analytics sections">
         <button class="btab is-active" data-atab="overview" role="tab" type="button">📊 Overview</button>
         <button class="btab" data-atab="redemptions" role="tab" type="button">🔑 Redemptions</button>
+        <button class="btab" data-atab="sales" role="tab" type="button">🧾 Sales</button>
         <button class="btab" data-atab="emails" role="tab" type="button">✉️ Emails</button>
         <button class="btab" data-atab="blogs" role="tab" type="button">📝 Blogs</button>
         <button class="btab" data-atab="settings" role="tab" type="button">⚙️ Settings</button>
@@ -103,6 +104,7 @@
     <div class="app-scroll">
       <div class="bview is-active" id="aview-overview" role="tabpanel"></div>
       <div class="bview" id="aview-redemptions" role="tabpanel"></div>
+      <div class="bview" id="aview-sales" role="tabpanel"></div>
       <div class="bview" id="aview-emails" role="tabpanel"></div>
       <div class="bview" id="aview-blogs" role="tabpanel"></div>
       <div class="bview" id="aview-settings" role="tabpanel"></div>
@@ -110,8 +112,8 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer onload="if(typeof adminPrewarmTokenClient==='function')adminPrewarmTokenClient();"></script>
-  <script src="charts.js?v=20261003"></script>
-  <script src="globe.js?v=20261003"></script>
+  <script src="charts.js?v=20261004"></script>
+  <script src="globe.js?v=20261004"></script>
   <!-- penny.js loaded verbatim, unmodified - admin.js (below) defines the
        t()/state/saveState shims it expects, then overrides just its 3
        data-access functions (system instruction, tool declarations, tool
@@ -119,8 +121,8 @@
        budget questions. Every other Ezzo mechanic (key vault, streaming,
        model fallback, chat UI, voice) is the exact same code the budget
        tools use. See the "Ezzo integration" section in admin.js. -->
-  <script src="penny.js?v=20261003"></script>
-  <script src="blog-posts.js?v=20261003"></script>
-  <script src="admin.js?v=20261003"></script>
+  <script src="penny.js?v=20261004"></script>
+  <script src="blog-posts.js?v=20261004"></script>
+  <script src="admin.js?v=20261004"></script>
 </body>
 </html>
