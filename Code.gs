@@ -384,7 +384,10 @@ function _handleLsWebhook(e) {
     const variant = String(first.variant_name || '');
     const testMode = a.test_mode === true;
 
-    sh.appendRow([new Date(), event, orderId, String(a.user_email || ''), String(a.user_name || ''),
+    const buyerEmail = String(a.user_email || a.customer_email || a.email || '');
+    const buyerName  = String(a.user_name || a.customer_name || a.name || '');
+
+    sh.appendRow([new Date(), event, orderId, buyerEmail, buyerName,
                   product, variant, total, currency, testMode ? 'test' : 'live', String(a.status || ''), orderNumber]);
 
     if (event === 'order_created') {
