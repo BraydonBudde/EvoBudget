@@ -206,7 +206,25 @@ function _jsonp(cb, obj) {
 
 function _normEmail(v) { return String(v || '').trim().toLowerCase().slice(0, 120); }
 function _normOrder(v) { return String(v || '').trim().replace(/\s+/g, '').slice(0, 32); }
-function _looksLikeEmail(v) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v); }
+// Stricter than it looks like it needs to be, because this address is
+// bound to the order permanently: a typo cannot be corrected afterwards,
+// the second attempt is refused as already claimed. Rejects consecutive or
+// edge dots, bare hostnames with no dot, and single-character or numeric
+// top level domains, all of which the old pattern let through.
+function _looksLikeEmail(v) {
+  if (!v || v.length > 120 || /\s/.test(v)) return false;
+  const parts = String(v).split('@');
+  if (parts.length !== 2) return false;
+  const local = parts[0], domain = parts[1];
+  if (!local || local.length > 64 || /^\.|\.$|\.\./.test(local)) return false;
+  if (!domain || domain.length > 253 || /^[.-]|[.-]$|\.\./.test(domain)) return false;
+  const labels = domain.split('.');
+  if (labels.length < 2) return false;
+  for (var i = 0; i < labels.length; i++) {
+    if (!/^[A-Za-z0-9-]+$/.test(labels[i])) return false;
+  }
+  return /^[A-Za-z]{2,}$/.test(labels[labels.length - 1]);
+}
 // Etsy receipt numbers are numeric. Kept loose on length so a format change
 // on their side doesn't lock out real buyers.
 function _looksLikeOrder(v) { return /^[0-9]{6,20}$/.test(v); }

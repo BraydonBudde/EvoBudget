@@ -2873,6 +2873,12 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   .nl-fig { flex: 1 1 0; }
 }
 
+/* The note under the claim page's email field. It matters more than a hint
+   usually would: the address cannot be changed once the key is generated. */
+.claim-hint {
+  margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--text-faint);
+}
+
 /* The "tell me when this launches" form on the home page: only the failure
    line needs styling, the rest rides on .btn. */
 .tool-notify-err {

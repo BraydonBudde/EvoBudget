@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261007" />
+  <link rel="stylesheet" href="style.css?v=20261008" />
   <style>
     .claim-wrap { max-width: 520px; margin: 0 auto; padding: 40px 24px 80px; }
     .claim-wrap .wordmark { margin-bottom: 32px; text-decoration: none; }
@@ -67,17 +67,20 @@
         <h1 class="claim-title">Claim your license key</h1>
         <p class="claim-sub">Thanks for your purchase! Enter your Etsy order details below and we'll generate your key.</p>
 
-        <div class="claim-error" id="claimError" hidden></div>
+        <div class="claim-error" id="claimError" role="alert" aria-live="assertive" hidden></div>
 
         <div class="claim-field">
-          <label class="claim-label" for="claimOrder">Etsy order number</label>
-          <input class="input" type="text" id="claimOrder" inputmode="numeric" autocomplete="off" placeholder="e.g. 3847261950" />
+          <label class="claim-label" for="claimOrder">Etsy Order ID</label>
+          <input class="input" type="text" id="claimOrder" inputmode="numeric" autocomplete="off"
+                 placeholder="e.g. 3847261950" aria-describedby="claimError" required />
           <p class="claim-hint">Find this in your Etsy confirmation email, or under Purchases in your Etsy account.</p>
         </div>
 
         <div class="claim-field">
           <label class="claim-label" for="claimEmail">Email on the order</label>
-          <input class="input" type="email" id="claimEmail" autocomplete="email" placeholder="you@example.com" />
+          <input class="input" type="email" id="claimEmail" autocomplete="email" spellcheck="false"
+                 placeholder="you@example.com" aria-describedby="claimError claimEmailNote" required />
+          <p class="claim-hint" id="claimEmailNote">This address is tied to the order permanently, so check it before generating.</p>
           <p class="claim-hint">Must match the email used for the Etsy purchase.</p>
         </div>
 
@@ -114,11 +117,11 @@
     </div>
 
     <p class="claim-foot">
-      Trouble claiming? Message me through Etsy with your order number and I'll sort it out.
+      Trouble claiming? Message me through Etsy with your Order ID and I'll sort it out.
     </p>
   </div>
 
-  <script src="analytics.js?v=20261007"></script>
+  <script src="analytics.js?v=20261008"></script>
   <script>
   (function () {
     'use strict';
@@ -135,7 +138,7 @@
 
     var MESSAGES = {
       bad_link: "This claim link isn't valid. Please use the exact link from your Etsy order, or message me through Etsy and I'll send a fresh one.",
-      bad_order: 'That doesn\'t look like an Etsy order number. It should be numbers only, around 10 digits.',
+      bad_order: 'That doesn\'t look like an Etsy Order ID. It should be numbers only, around 10 digits.',
       bad_email: 'Please enter a valid email address.',
       order_taken: 'A key has already been claimed for this order using a different email. If that wasn\'t you, message me through Etsy.',
       busy: 'Too many requests right now. Please wait a moment and try again.',
@@ -144,11 +147,77 @@
       no_endpoint: 'Key claiming isn\'t configured yet. Please message me through Etsy and I\'ll send your key manually.'
     };
 
-    function showError(code) {
-      errEl.textContent = MESSAGES[code] || MESSAGES.server;
+    function showError(code, text) {
+      errEl.textContent = text || MESSAGES[code] || MESSAGES.server;
       errEl.hidden = false;
     }
-    function clearError() { errEl.hidden = true; }
+    function clearError() {
+      errEl.hidden = true;
+      [orderEl, emailEl].forEach(function (el) {
+        el.classList.remove('fk-invalid');
+        el.removeAttribute('aria-invalid');
+      });
+    }
+    // Marks the field at fault as well as saying what is wrong, so the
+    // message and the box to fix are not in two unrelated places.
+    function failField(el, code, text) {
+      showError(code, text);
+      el.classList.add('fk-invalid');
+      el.setAttribute('aria-invalid', 'true');
+      el.focus();
+    }
+
+    // Deliberately stricter than the browser's own type="email" check, which
+    // accepts things no mail server would. Still permissive about the local
+    // part, since real addresses are stranger than people expect.
+    function validEmail(v) {
+      if (!v || v.length > 120) return false;
+      if (/\s/.test(v)) return false;
+      var at = v.split('@');
+      if (at.length !== 2) return false;
+      var local = at[0], domain = at[1];
+      if (!local || local.length > 64) return false;
+      if (/^\.|\.$|\.\./.test(local)) return false;
+      if (!domain || domain.length > 253) return false;
+      if (/^[.-]|[.-]$|\.\./.test(domain)) return false;
+      var labels = domain.split('.');
+      if (labels.length < 2) return false;
+      for (var i = 0; i < labels.length; i++) {
+        if (!/^[A-Za-z0-9-]+$/.test(labels[i])) return false;
+      }
+      // A top level domain is letters, and never one character.
+      return /^[A-Za-z]{2,}$/.test(labels[labels.length - 1]);
+    }
+
+    // A mistyped address here cannot be undone: the order is bound to it, so
+    // a second attempt with the correct one is refused as already claimed.
+    // Worth one question before that happens.
+    var COMMON_DOMAINS = ['gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'live.com',
+      'yahoo.com', 'yahoo.co.uk', 'icloud.com', 'me.com', 'aol.com', 'proton.me', 'protonmail.com',
+      'gmx.com', 'mail.com', 'wp.pl', 'o2.pl', 'interia.pl', 'onet.pl'];
+    function editDistance(a, b) {
+      var prev = [], cur = [], i, j;
+      for (j = 0; j <= b.length; j++) prev[j] = j;
+      for (i = 1; i <= a.length; i++) {
+        cur[0] = i;
+        for (j = 1; j <= b.length; j++) {
+          cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        }
+        prev = cur.slice();
+      }
+      return prev[b.length];
+    }
+    function suggestDomain(domain) {
+      if (!domain || COMMON_DOMAINS.indexOf(domain) !== -1) return '';
+      for (var i = 0; i < COMMON_DOMAINS.length; i++) {
+        var d = COMMON_DOMAINS[i];
+        // One or two characters out, on a domain long enough that the
+        // similarity means something.
+        if (Math.abs(d.length - domain.length) <= 2 && editDistance(domain, d) <= 2 && d.length > 5) return d;
+      }
+      return '';
+    }
+    var typoAccepted = '';
 
     // JSONP: Apps Script can't send CORS headers, so a normal fetch could
     // never read the reply. A <script> tag isn't subject to CORS at all.
@@ -163,7 +232,9 @@
         if (done) return;
         done = true;
         clearTimeout(timer);
-        try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+        // Replaced rather than deleted: a reply arriving after the timeout
+        // would otherwise call undefined and throw in the console.
+        window[cb] = function () {};
         if (script.parentNode) script.parentNode.removeChild(script);
         onDone(res);
       }
@@ -183,9 +254,25 @@
       if (!token) { showError('bad_link'); return; }
 
       var order = (orderEl.value || '').trim().replace(/\s+/g, '');
-      var email = (emailEl.value || '').trim();
-      if (!/^[0-9]{6,20}$/.test(order)) { showError('bad_order'); orderEl.focus(); return; }
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showError('bad_email'); emailEl.focus(); return; }
+      var email = (emailEl.value || '').trim().toLowerCase();
+      emailEl.value = email;
+
+      if (!order) { failField(orderEl, null, 'Please enter your Etsy Order ID.'); return; }
+      if (/[^0-9]/.test(order)) { failField(orderEl, null, 'The Order ID is digits only. Remove any letters, spaces or symbols.'); return; }
+      if (!/^[0-9]{6,20}$/.test(order)) { failField(orderEl, 'bad_order'); return; }
+
+      if (!email) { failField(emailEl, null, 'Please enter the email address on your Etsy order.'); return; }
+      if (!validEmail(email)) { failField(emailEl, 'bad_email'); return; }
+
+      // One warning, not a block: unusual addresses are still real ones.
+      var domain = email.split('@')[1];
+      var better = suggestDomain(domain);
+      if (better && typoAccepted !== email) {
+        typoAccepted = email;
+        failField(emailEl, null, 'Did you mean @' + better + '? If ' + email +
+          ' is right, press Generate again. This address cannot be changed once the key is made.');
+        return;
+      }
 
       btn.disabled = true;
       btn.textContent = 'Generating...';
@@ -217,7 +304,7 @@
     btn.addEventListener('click', submit);
     [orderEl, emailEl].forEach(function (el) {
       el.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
-      el.addEventListener('input', clearError);
+      el.addEventListener('input', function () { clearError(); typoAccepted = ''; });
     });
 
     document.getElementById('claimCopyBtn').addEventListener('click', function () {
