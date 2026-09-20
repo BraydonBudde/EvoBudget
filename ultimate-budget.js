@@ -586,6 +586,7 @@ const TRANSLATIONS = {
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
+    nav_position:'Navigation', nav_position_desc:'Choose where the section menu sits. On a phone it always runs across the top.', nav_pos_top:'Top', nav_pos_left:'Left', nav_pos_right:'Right',
     dashboard_layout:'Dashboard Layout', dashboard_layout_desc:'Choose how your Dashboard is designed and visualised.',
     layout_1:'Classic', layout_2:'Radial Pulse', layout_coming_soon:'More Coming Soon!',
     changes_autosaved:'✅ Changes are saved automatically.',
@@ -612,8 +613,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Choose from five colour themes - Light, Dark, Synthwave, Vintage, or Terminal. Your preference is remembered across sessions.',
     help_sett_layout_p:'Choose from two Dashboard designs - Classic or Radial Pulse. Each shows the same underlying data with its own charts and arrangement, with more designs coming soon.',
     help_sett_nav_h:'Navigation',
-    help_sett_nav_top:'Top Navigation - Classic horizontal tab bar at the top (default).',
-    help_sett_nav_side:'Side Navigation - A floating icon rail to the left of your content. Click the arrow to expand and see full labels.',
+    help_sett_nav_top:'Top - the classic tab bar across the top of the page (default).',
+    help_sett_nav_side:'Left or Right - the sections become a vertical bar beside your content. A tablet shows icons only; a phone always falls back to the top bar.',
     help_sett_period_p:'The date range that defines “this budget”. Only transactions within this range count toward actuals. Use the 7 presets (This Month, Last Month, This Week, Last Week, Last 30 Days, This Quarter, This Year) for quick setup.',
     help_sett_rollover_p:"Any unspent money you want to carry forward from your previous period. It's added to your Net Leftover on the dashboard. With Auto-carry enabled, this updates automatically to match what was actually left over whenever you change the budget period - uncheck it to set the amount yourself.",
     // Calendar
@@ -1132,6 +1133,7 @@ const TRANSLATIONS = {
     currency:'Währung',rollover:'Übertrag',appearance:'Erscheinungsbild',
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
     light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Navigation', nav_position_desc:'Wähle, wo das Abschnittsmenü sitzt. Auf dem Handy läuft es immer oben quer.', nav_pos_top:'Oben', nav_pos_left:'Links', nav_pos_right:'Rechts',
     dashboard_layout:'Dashboard-Layout',dashboard_layout_desc:'Wähle, wie dein Dashboard gestaltet und visualisiert wird.',
     layout_1:'Klassisch',layout_2:'Radialer Puls',layout_coming_soon:'Bald mehr!',
     changes_autosaved:'✅ Änderungen werden automatisch gespeichert.',
@@ -1155,8 +1157,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Wähle aus fünf Farbthemen - Hell, Dunkel, Synthwave, Vintage oder Terminal. Deine Einstellung wird sitzungsübergreifend gespeichert.',
     help_sett_layout_p:'Wähle aus zwei Dashboard-Designs - Klassisch oder Radialer Puls. Jedes zeigt dieselben Daten mit eigenen Diagrammen und eigener Anordnung; weitere Designs folgen bald.',
     help_sett_nav_h:'Navigation',
-    help_sett_nav_top:'Obere Navigation - Klassische horizontale Tab-Leiste oben (Standard).',
-    help_sett_nav_side:'Seitennavigation - Eine schwebende Icon-Leiste links neben deinem Inhalt. Klicke auf den Pfeil, um sie zu erweitern und vollständige Beschriftungen zu sehen.',
+    help_sett_nav_top:'Oben - die klassische Tab-Leiste am oberen Rand (Standard).',
+    help_sett_nav_side:'Links oder Rechts - die Abschnitte werden zu einer senkrechten Leiste neben deinem Inhalt. Auf dem Tablet nur Symbole, auf dem Handy immer die obere Leiste.',
     help_sett_period_p:'Der Datumsbereich, der „dieses Budget“ definiert. Nur Transaktionen in diesem Bereich zählen zu deinen Istwerten. Nutze die 7 Schnellauswahlen (Diesen Monat, Letzten Monat, Diese Woche, Letzte Woche, Letzte 30 Tage, Dieses Quartal, Dieses Jahr) für eine schnelle Einrichtung.',
     help_sett_rollover_p:'Nicht ausgegebenes Geld, das du aus der vorherigen Periode übertragen möchtest. Es wird zu deinem Nettosaldo im Dashboard hinzugefügt. Ist die automatische Übertragung aktiviert, wird dieser Betrag bei jedem Wechsel des Budgetzeitraums automatisch an das tatsächlich übrige Geld angepasst - deaktiviere sie, um den Betrag selbst festzulegen.',
     cal_title:'Smart-Kalender',
@@ -1656,6 +1658,7 @@ const TRANSLATIONS = {
     currency:'Devise',rollover:'Report',appearance:'Apparence',
     language:'Langue',reset_data:'Réinitialiser les données',
     light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Navigation', nav_position_desc:'Choisissez où se place le menu des sections. Sur téléphone, il reste toujours en haut.', nav_pos_top:'Haut', nav_pos_left:'Gauche', nav_pos_right:'Droite',
     dashboard_layout:'Disposition du tableau de bord',dashboard_layout_desc:"Choisissez comment votre tableau de bord est conçu et visualisé.",
     layout_1:'Classique',layout_2:'Pulsation radiale',layout_coming_soon:'Bientôt plus !',
     changes_autosaved:'✅ Les modifications sont enregistrées automatiquement.',
@@ -1679,8 +1682,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Choisissez parmi cinq thèmes de couleur - Clair, Sombre, Synthwave, Vintage ou Terminal. Votre préférence est mémorisée entre les sessions.',
     help_sett_layout_p:"Choisissez parmi deux designs de tableau de bord - Classique ou Pulsation radiale. Chacun affiche les mêmes données avec ses propres graphiques et sa disposition ; d'autres designs arrivent bientôt.",
     help_sett_nav_h:'Navigation',
-    help_sett_nav_top:"Navigation supérieure - Barre d'onglets horizontale classique en haut (par défaut).",
-    help_sett_nav_side:"Navigation latérale - Une barre d'icônes flottante à gauche de votre contenu. Cliquez sur la flèche pour développer et voir les libellés complets.",
+    help_sett_nav_top:"Haut - la barre d'onglets classique en haut de la page (par défaut).",
+    help_sett_nav_side:'Gauche ou Droite - les sections deviennent une barre verticale à côté de votre contenu. Sur tablette, icônes seules ; sur téléphone, toujours la barre du haut.',
     help_sett_period_p:'La plage de dates définit « ce budget ». Seules les transactions dans cette plage comptent dans vos réels. Utilisez les 7 préréglages (Ce mois, Mois préc., Cette semaine, Semaine préc., 30 derniers jours, Ce trimestre, Cette année) pour une configuration rapide.',
     help_sett_rollover_p:"Tout argent non dépensé que vous souhaitez reporter de la période précédente. Il est ajouté à votre solde net sur le tableau de bord. Avec le report automatique activé, ce montant est mis à jour automatiquement pour refléter ce qu'il restait réellement chaque fois que vous changez la période budgétaire - décochez pour le définir vous-même.",
     cal_title:'Calendrier intelligent',
@@ -2180,6 +2183,7 @@ const TRANSLATIONS = {
     currency:'Moneda',rollover:'Saldo anterior',appearance:'Apariencia',
     language:'Idioma',reset_data:'Restablecer datos',
     light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Navegación', nav_position_desc:'Elige dónde se sitúa el menú de secciones. En el móvil siempre va en la parte superior.', nav_pos_top:'Arriba', nav_pos_left:'Izquierda', nav_pos_right:'Derecha',
     dashboard_layout:'Diseño del panel',dashboard_layout_desc:'Elige cómo se diseña y visualiza tu panel.',
     layout_1:'Clásico',layout_2:'Pulso radial',layout_coming_soon:'¡Más próximamente!',
     changes_autosaved:'✅ Los cambios se guardan automáticamente.',
@@ -2203,8 +2207,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Elige entre cinco temas de color - Claro, Oscuro, Synthwave, Vintage o Terminal. Tu preferencia se recuerda entre sesiones.',
     help_sett_layout_p:'Elige entre dos diseños de panel - Clásico o Pulso radial. Cada uno muestra los mismos datos con sus propios gráficos y disposición; más diseños próximamente.',
     help_sett_nav_h:'Navegación',
-    help_sett_nav_top:'Navegación superior - Barra de pestañas horizontal clásica en la parte superior (predeterminado).',
-    help_sett_nav_side:'Navegación lateral - Una barra de iconos flotante a la izquierda de tu contenido. Haz clic en la flecha para expandirla y ver las etiquetas completas.',
+    help_sett_nav_top:'Arriba - la clásica barra de pestañas en la parte superior (predeterminado).',
+    help_sett_nav_side:'Izquierda o Derecha - las secciones pasan a una barra vertical junto a tu contenido. En tablet solo iconos; en el móvil siempre vuelve la barra superior.',
     help_sett_period_p:'El rango de fechas que define “este presupuesto”. Solo las transacciones en este rango cuentan en tus datos reales. Usa los 7 preajustes (Este mes, Mes pasado, Esta semana, Sem. pasada, Últimos 30 días, Este trimestre, Este año) para configurar rápidamente.',
     help_sett_rollover_p:'Cualquier dinero no gastado que quieras traspasar del período anterior. Se añade a tu saldo neto en el panel. Con el traslado automático activado, este importe se actualiza automáticamente según lo que realmente sobró cada vez que cambias el período de presupuesto - desmárcalo para establecerlo tú mismo.',
     cal_title:'Calendario inteligente',
@@ -2704,6 +2708,7 @@ const TRANSLATIONS = {
     currency:'Valuta',rollover:'Riporto',appearance:'Aspetto',
     language:'Lingua',reset_data:'Reimposta dati',
     light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Navigazione', nav_position_desc:'Scegli dove si trova il menu delle sezioni. Su telefono resta sempre in alto.', nav_pos_top:'Alto', nav_pos_left:'Sinistra', nav_pos_right:'Destra',
     dashboard_layout:'Layout della dashboard',dashboard_layout_desc:'Scegli come viene progettata e visualizzata la tua dashboard.',
     layout_1:'Classico',layout_2:'Impulso radiale',layout_coming_soon:'Presto altri!',
     changes_autosaved:'✅ Le modifiche vengono salvate automaticamente.',
@@ -2727,8 +2732,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Scegli tra cinque temi di colore - Chiaro, Scuro, Synthwave, Vintage o Terminal. Le tue preferenze vengono ricordate tra le sessioni.',
     help_sett_layout_p:'Scegli tra due design della dashboard - Classico o Impulso radiale. Ognuno mostra gli stessi dati con grafici e disposizione propri; altri design in arrivo.',
     help_sett_nav_h:'Navigazione',
-    help_sett_nav_top:'Navigazione superiore - Barra a schede orizzontale classica in alto (predefinita).',
-    help_sett_nav_side:'Navigazione laterale - Una barra di icone fluttuante a sinistra del tuo contenuto. Fai clic sulla freccia per espanderla e vedere le etichette complete.',
+    help_sett_nav_top:'Alto - la classica barra a schede in cima alla pagina (predefinito).',
+    help_sett_nav_side:'Sinistra o Destra - le sezioni diventano una barra verticale accanto al contenuto. Su tablet solo icone; su telefono torna sempre la barra in alto.',
     help_sett_period_p:'L\'intervallo di date che definisce “questo budget”. Solo le transazioni in questo intervallo contano nei valori effettivi. Usa i 7 preset (Questo mese, Mese scorso, Questa settimana, Sett. scorsa, Ultimi 30 giorni, Questo trimestre, Quest’anno) per una configurazione rapida.',
     help_sett_rollover_p:"Qualsiasi denaro non speso che vuoi riportare dal periodo precedente. Viene aggiunto al tuo saldo netto nel pannello. Con il riporto automatico attivo, questo importo viene aggiornato automaticamente in base a quanto è effettivamente avanzato ogni volta che cambi il periodo di budget - deselezionalo per impostarlo manualmente.",
     // Calendario
@@ -3229,6 +3234,7 @@ const TRANSLATIONS = {
     currency:'Waluta',rollover:'Przeniesienie',appearance:'Wygląd',
     language:'Język',reset_data:'Zresetuj dane',
     light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Nawigacja', nav_position_desc:'Wybierz, gdzie ma być menu sekcji. Na telefonie zawsze jest na górze.', nav_pos_top:'Góra', nav_pos_left:'Lewo', nav_pos_right:'Prawo',
     dashboard_layout:'Układ pulpitu',dashboard_layout_desc:'Wybierz, jak Twój pulpit jest zaprojektowany i wizualizowany.',
     layout_1:'Klasyczny',layout_2:'Puls promienisty',layout_coming_soon:'Wkrótce więcej!',
     changes_autosaved:'✅ Zmiany są zapisywane automatycznie.',
@@ -3252,8 +3258,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Wybierz spośród pięciu motywów kolorystycznych - Jasny, Ciemny, Synthwave, Vintage lub Terminal. Twoje ustawienie jest zapamiętywane między sesjami.',
     help_sett_layout_p:'Wybierz spośród dwóch projektów pulpitu - Klasyczny lub Puls promienisty. Każdy pokazuje te same dane z własnymi wykresami i układem; więcej projektów wkrótce.',
     help_sett_nav_h:'Nawigacja',
-    help_sett_nav_top:'Górna nawigacja - Klasyczny poziomy pasek kart na górze (domyślny).',
-    help_sett_nav_side:'Boczna nawigacja - Pływający pasek ikon po lewej stronie treści. Kliknij strzałkę, aby rozwinąć i zobaczyć pełne etykiety.',
+    help_sett_nav_top:'Góra - klasyczny pasek kart na górze strony (domyślnie).',
+    help_sett_nav_side:'Lewo lub Prawo - sekcje stają się pionowym paskiem obok treści. Na tablecie tylko ikony, a na telefonie zawsze wraca górny pasek.',
     help_sett_period_p:'Zakres dat określający „ten budżet“. Tylko transakcje w tym zakresie liczą się do wartości rzeczywistych. Użyj 7 ustawień (Ten miesiąc, Poprz. miesiąc, Ten tydzień, Poprz. tydzień, Ostatnie 30 dni, Ten kwartał, Ten rok) do szybkiej konfiguracji.',
     help_sett_rollover_p:'Niewydane pieniądze, które chcesz przenieść z poprzedniego okresu. Są dodawane do salda netto na panelu. Gdy automatyczne przenoszenie jest włączone, kwota ta jest aktualizowana automatycznie na podstawie tego, co faktycznie zostało, za każdym razem, gdy zmienisz okres budżetowy - odznacz, aby ustawić ją samodzielnie.',
     cal_title:'Inteligentny Kalendarz',
@@ -3759,6 +3765,8 @@ function applyLanguage() {
       btn.textContent = emoji + tx;
     }
   });
+  // The rail's labels are copies of the tab bar's, so they follow it here.
+  if (document.querySelector('.nav-rail')) buildNavRail();
 }
 
 let _did=0;
@@ -3864,6 +3872,91 @@ const DASHBOARD_LAYOUT_ICONS = {
   1: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
   2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>'
 };
+// ── Navigation position: top (default) / left / right ─────────────────
+// The rail's buttons are generated from the tab bar rather than being a
+// second hand-maintained list, so what sections exist - and what they are
+// called in each of the six languages - can only ever come from one place.
+// The tab bar itself stays in the DOM while a rail is showing (CSS hides
+// it), which is what keeps applyLanguage's existing pass over .btab the
+// source for both of them.
+const NAV_POSITIONS = ['top', 'left', 'right'];
+const NAV_POS_ICONS = {
+  top:   '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/>',
+  left:  '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>',
+  right: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/>'
+};
+
+function getNavPosition() {
+  const v = state?.settings?.navPosition;
+  return NAV_POSITIONS.includes(v) ? v : 'top';
+}
+
+function buildNavRail() {
+  const tabs = document.getElementById('ubpTabs');
+  const shell = tabs?.closest('.tool-shell');
+  if (!tabs || !shell) return;
+  let rail = shell.querySelector('.nav-rail');
+  if (!rail) {
+    rail = document.createElement('nav');
+    rail.className = 'nav-rail';
+    rail.setAttribute('aria-label', tabs.getAttribute('aria-label') || '');
+    // Delegated, so redrawing the buttons never re-attaches listeners.
+    rail.addEventListener('click', e => {
+      const b = e.target.closest('.nav-rail-item');
+      if (b) switchTab(b.dataset.btab);
+    });
+    shell.insertBefore(rail, shell.firstChild);
+  }
+  rail.innerHTML = [...tabs.querySelectorAll('.btab[data-btab]')].map(b => {
+    const full = b.textContent.trim();
+    // The same emoji-prefix split applyLanguage uses when it rewrites these.
+    const icon = full.match(/^(\p{Emoji}[\uFE0F\u20E3]?\s*)/u)?.[0] || '';
+    const label = full.slice(icon.length).trim() || full;
+    const on = b.classList.contains('is-active');
+    return `<button class="nav-rail-item${on ? ' is-active' : ''}"${on ? ' aria-current="true"' : ''} data-btab="${esc(b.dataset.btab)}" type="button" title="${esc(label)}">
+      <span class="nav-rail-icon" aria-hidden="true">${esc(icon.trim())}</span><span class="nav-rail-label">${esc(label)}</span>
+    </button>`;
+  }).join('');
+}
+
+// The rail is built for left/right at any width. Falling back to the tab
+// bar on a phone is done purely in CSS, so a rotation or a resize needs no
+// JS to put the rail back - and the setting survives either way.
+function applyNavPosition() {
+  const pos = getNavPosition();
+  document.documentElement.dataset.nav = pos;
+  if (pos !== 'top') buildNavRail();
+}
+
+function navPositionCardHtml() {
+  const cur = getNavPosition();
+  const opts = NAV_POSITIONS.map(p => `
+    <button class="layout-opt${cur === p ? ' is-active' : ''}" data-nav-val="${p}" type="button" title="${t('nav_pos_' + p)}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${NAV_POS_ICONS[p]}</svg>
+      ${t('nav_pos_' + p)}
+    </button>`).join('');
+  return `<div class="panel"><div class="panel-inner">
+    <div class="settings-card-title">🧭 ${t('nav_position')}</div>
+    <p class="settings-desc">${t('nav_position_desc')}</p>
+    <div class="layout-setting-row">
+      <div class="layout-pill theme-pill" role="group" aria-label="${t('nav_position')}">${opts}</div>
+    </div>
+  </div></div>`;
+}
+
+function wireNavPositionPicker(el) {
+  el.querySelectorAll('[data-nav-val]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = NAV_POSITIONS.includes(btn.dataset.navVal) ? btn.dataset.navVal : 'top';
+      state.settings.navPosition = p;
+      saveState();
+      trackEvent('nav_position_changed', { position: p });
+      el.querySelectorAll('[data-nav-val]').forEach(b => b.classList.toggle('is-active', b === btn));
+      applyNavPosition();
+    });
+  });
+}
+
 function dashboardLayoutCardHtml() {
   if ((state.settings.dashboardLayout || 1) > 2) state.settings.dashboardLayout = 1;
   const cur = state.settings.dashboardLayout || 1;
@@ -3885,13 +3978,13 @@ function dashboardLayoutCardHtml() {
   </div></div>`;
 }
 function wireDashboardLayoutPicker(el) {
-  el.querySelectorAll('.layout-opt').forEach(btn => {
+  el.querySelectorAll('.layout-opt[data-layout-val]').forEach(btn => {
     btn.addEventListener('click', () => {
       const n = parseInt(btn.dataset.layoutVal, 10) || 1;
       state.settings.dashboardLayout = n;
       saveState();
       trackEvent('dashboard_layout_changed', { layout: n });
-      el.querySelectorAll('.layout-opt').forEach(b => b.classList.toggle('is-active', b === btn));
+      el.querySelectorAll('.layout-opt[data-layout-val]').forEach(b => b.classList.toggle('is-active', b === btn));
       renderDashboard();
     });
   });
@@ -3909,11 +4002,14 @@ function dispatchRender(tab) {
 function switchTab(tab) {
   currentTab=tab;
   trackEvent('tab_viewed', { tab });
-  // Sync all navigation variants
-  ['.btab','.side-nav-item','.cnav-btn'].forEach(sel =>
+  // Both navigations are kept in step. Only one is ever on screen, but the
+  // hidden one is what the other gets rebuilt from.
+  ['.btab','.nav-rail-item'].forEach(sel =>
     document.querySelectorAll(sel).forEach(b=>b.classList.toggle('is-active',b.dataset.btab===tab))
   );
   document.querySelectorAll('.btab[role="tab"]').forEach(b=>b.setAttribute('aria-selected',b.dataset.btab===tab?'true':'false'));
+  document.querySelectorAll('.nav-rail-item').forEach(b => b.dataset.btab === tab
+    ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'));
   document.querySelectorAll('.bview').forEach(v=>v.classList.remove('is-active'));
   document.getElementById(`bview-${tab}`)?.classList.add('is-active');
   if(tab==='transactions'){const g=processRecurring();if(g>0)setTimeout(()=>showToast(tf('recurring_generated',g)),300);}
@@ -6097,6 +6193,7 @@ function renderSettings(){
           <span class="recurring-toggle"><input type="checkbox" id="settAutomation" ${automationOn()?'checked':''}><span class="rec-toggle-track"></span></span>
         </label>
       </div></div>
+      ${navPositionCardHtml()}
       ${dashboardLayoutCardHtml()}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌙 ${t('appearance')}</div>
@@ -6214,6 +6311,7 @@ function renderSettings(){
   el.querySelectorAll('.theme-opt').forEach(btn => {
     btn.addEventListener('click', () => { applyTheme(btn.dataset.themeVal); trackEvent('theme_changed', { theme: btn.dataset.themeVal }); });
   });
+  wireNavPositionPicker(el);
   wireDashboardLayoutPicker(el);
 
   el.querySelectorAll('[data-sync-mode]').forEach(btn => {
@@ -7291,6 +7389,7 @@ async function init(){
     // Classic top tabs
     document.getElementById('ubpTabs')?.querySelectorAll('.btab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
     enableDragScroll(document.getElementById('ubpTabs'));
+    applyNavPosition();
 
     // Content dissolves under the empty nav ONLY while scrolled - at rest the
     // scroll region is fully transparent with no fade (see .app-scroll.is-scrolled).

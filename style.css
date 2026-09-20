@@ -2163,6 +2163,141 @@ input[type="number"].expected-input {
   border-color: var(--border-faint); color: var(--text-secondary);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   NAV POSITION - top (default) / left / right
+   ───────────────────────────────────────────────────────────────
+   The tool shell is normally a two-row flex column: the nav region
+   (.tool-sticky) stacked over its own scrolling content region
+   (.app-scroll). Docking the nav to a side turns that same shell
+   into a 2x2 grid with the rail spanning both rows, so both regions
+   keep their exact roles - .app-scroll in particular stays the one
+   and only scroll container, masks and all.
+
+   Nothing here applies without a [data-nav] of "left" or "right" on
+   <html>, so the default top layout is untouched by all of it.
+
+   The rail's buttons are generated in JS from the .btab buttons, so
+   the tab bar remains the single source of truth for what sections
+   exist and what they are called in each language.
+   ═══════════════════════════════════════════════════════════════ */
+:root { --rail-w: 190px; }
+
+.nav-rail { display: none; }
+
+/* Each selector carries one extra class beyond the originals so it
+   outranks `.app.tool-shell` and `.view.tool-shell.is-active`, which
+   both set display:flex. */
+html[data-nav="left"]  .app.tool-shell,
+html[data-nav="left"]  .view.tool-shell.is-active,
+html[data-nav="right"] .app.tool-shell,
+html[data-nav="right"] .view.tool-shell.is-active {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  max-width: calc(1122px + var(--rail-w));
+}
+html[data-nav="left"] .app.tool-shell,
+html[data-nav="left"] .view.tool-shell.is-active {
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  grid-template-areas: "rail head" "rail body";
+}
+html[data-nav="right"] .app.tool-shell,
+html[data-nav="right"] .view.tool-shell.is-active {
+  grid-template-columns: minmax(0, 1fr) var(--rail-w);
+  grid-template-areas: "head rail" "body rail";
+}
+html[data-nav="left"]  .tool-shell > .nav-rail,
+html[data-nav="right"] .tool-shell > .nav-rail { display: flex; grid-area: rail; }
+html[data-nav="left"]  .tool-shell > .tool-sticky,
+html[data-nav="right"] .tool-shell > .tool-sticky { grid-area: head; }
+html[data-nav="left"]  .tool-shell > .app-scroll,
+html[data-nav="right"] .tool-shell > .app-scroll { grid-area: body; }
+
+/* The tab bar is the rail's source, not a second copy of it on screen.
+   It stays in the DOM (and keeps being translated) while hidden. */
+html[data-nav="left"]  .tool-shell .budget-tabs,
+html[data-nav="right"] .tool-shell .budget-tabs { display: none; }
+
+/* Sitting flush against the rail's edge, the content wants a little
+   less padding on that side than it does against the window. */
+html[data-nav="left"]  .tool-shell > .tool-sticky,
+html[data-nav="left"]  .tool-shell > .app-scroll  { padding-left: 20px; }
+html[data-nav="right"] .tool-shell > .tool-sticky,
+html[data-nav="right"] .tool-shell > .app-scroll  { padding-right: 20px; }
+/* The tab bar's bottom padding went with it, so the header closes up. */
+html[data-nav="left"]  .tool-shell > .tool-sticky,
+html[data-nav="right"] .tool-shell > .tool-sticky { padding-bottom: 14px; }
+
+.nav-rail {
+  flex-direction: column; gap: 4px;
+  min-height: 0; overflow-y: auto; overflow-x: hidden;
+  padding: 30px 12px 24px;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.nav-rail::-webkit-scrollbar { width: 0; height: 0; display: none; }
+html[data-nav="left"]  .nav-rail { border-right: 1px solid var(--border-faint); }
+html[data-nav="right"] .nav-rail { border-left:  1px solid var(--border-faint); }
+
+.nav-rail-item {
+  appearance: none; border: 1px solid transparent; background: transparent;
+  display: flex; align-items: center; gap: 11px;
+  width: 100%; padding: 10px 12px; border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 13px; font-weight: 600; text-align: left;
+  color: var(--text-secondary); cursor: pointer;
+  white-space: nowrap; overflow: hidden; flex-shrink: 0;
+  transition: background .18s var(--ease), color .18s var(--ease),
+              border-color .18s var(--ease), box-shadow .22s var(--ease);
+}
+.nav-rail-item:hover:not(.is-active) {
+  background: rgba(var(--grad-indigo-rgb), .07);
+  color: var(--text-primary);
+  border-color: rgba(var(--grad-indigo-rgb), .3);
+}
+.nav-rail-item.is-active {
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+  color: #fff; border-color: transparent;
+  box-shadow: 0 4px 14px rgba(var(--grad-indigo-rgb), .3);
+}
+.nav-rail-icon {
+  font-size: 16px; line-height: 1; width: 22px;
+  flex-shrink: 0; text-align: center;
+}
+.nav-rail-label { overflow: hidden; text-overflow: ellipsis; }
+
+/* Tablet: too narrow to spend 190px on labels, wide enough for the rail
+   itself to still beat a scrolling tab bar. Icons only, with the label
+   left on the button's title for hover and for screen readers. */
+@media (max-width: 1080px) {
+  :root { --rail-w: 66px; }
+  .nav-rail { padding: 26px 9px 20px; }
+  .nav-rail-item { justify-content: center; gap: 0; padding: 11px 0; }
+  .nav-rail-icon { width: auto; font-size: 17px; }
+  .nav-rail-label {
+    position: absolute; width: 1px; height: 1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+}
+
+/* Phone: a side rail would eat the screen either way, so the setting is
+   kept but not honoured - the tab bar comes back exactly as it was. */
+@media (max-width: 760px) {
+  html[data-nav="left"]  .app.tool-shell,
+  html[data-nav="left"]  .view.tool-shell.is-active,
+  html[data-nav="right"] .app.tool-shell,
+  html[data-nav="right"] .view.tool-shell.is-active {
+    display: flex; flex-direction: column; max-width: 1122px;
+  }
+  html[data-nav="left"]  .tool-shell > .nav-rail,
+  html[data-nav="right"] .tool-shell > .nav-rail { display: none; }
+  html[data-nav="left"]  .tool-shell .budget-tabs,
+  html[data-nav="right"] .tool-shell .budget-tabs { display: flex; }
+  html[data-nav="left"]  .tool-shell > .tool-sticky,
+  html[data-nav="left"]  .tool-shell > .app-scroll,
+  html[data-nav="right"] .tool-shell > .tool-sticky,
+  html[data-nav="right"] .tool-shell > .app-scroll { padding-left: 16px; padding-right: 16px; }
+  html[data-nav="left"]  .tool-shell > .tool-sticky,
+  html[data-nav="right"] .tool-shell > .tool-sticky { padding-bottom: 4px; }
+}
+
 /* ── SIDEBAR layout ──────────────────────────────────────────── */
 .side-nav {
   display: none;

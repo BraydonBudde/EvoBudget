@@ -127,6 +127,7 @@ const TRANSLATIONS = {
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
+    nav_position:'Navigation', nav_position_desc:'Choose where the section menu sits. On a phone it always runs across the top.', nav_pos_top:'Top', nav_pos_left:'Left', nav_pos_right:'Right',
     dashboard_layout:'Dashboard Layout', dashboard_layout_desc:'Choose how your Dashboard is designed and visualised.',
     layout_1:'Classic', layout_2:'Radial Pulse', layout_coming_soon:'More Coming Soon!',
     changes_autosaved:'✅ Changes are saved automatically.',
@@ -407,6 +408,7 @@ const TRANSLATIONS = {
     currency:'Währung',rollover:'Übertrag',appearance:'Erscheinungsbild',
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
     light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Navigation', nav_position_desc:'Wähle, wo das Abschnittsmenü sitzt. Auf dem Handy läuft es immer oben quer.', nav_pos_top:'Oben', nav_pos_left:'Links', nav_pos_right:'Rechts',
     dashboard_layout:'Dashboard-Layout',dashboard_layout_desc:'Wähle, wie dein Dashboard gestaltet und visualisiert wird.',
     layout_1:'Klassisch',layout_2:'Radialer Puls',layout_coming_soon:'Bald mehr!',
     changes_autosaved:'✅ Änderungen werden automatisch gespeichert.',
@@ -666,6 +668,7 @@ const TRANSLATIONS = {
     currency:'Devise',rollover:'Report',appearance:'Apparence',
     language:'Langue',reset_data:'Réinitialiser les données',
     light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Navigation', nav_position_desc:'Choisissez où se place le menu des sections. Sur téléphone, il reste toujours en haut.', nav_pos_top:'Haut', nav_pos_left:'Gauche', nav_pos_right:'Droite',
     dashboard_layout:'Disposition du tableau de bord',dashboard_layout_desc:"Choisissez comment votre tableau de bord est conçu et visualisé.",
     layout_1:'Classique',layout_2:'Pulsation radiale',layout_coming_soon:'Bientôt plus !',
     changes_autosaved:'✅ Les modifications sont enregistrées automatiquement.',
@@ -925,6 +928,7 @@ const TRANSLATIONS = {
     currency:'Moneda',rollover:'Saldo anterior',appearance:'Apariencia',
     language:'Idioma',reset_data:'Restablecer datos',
     light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Navegación', nav_position_desc:'Elige dónde se sitúa el menú de secciones. En el móvil siempre va en la parte superior.', nav_pos_top:'Arriba', nav_pos_left:'Izquierda', nav_pos_right:'Derecha',
     dashboard_layout:'Diseño del panel',dashboard_layout_desc:'Elige cómo se diseña y visualiza tu panel.',
     layout_1:'Clásico',layout_2:'Pulso radial',layout_coming_soon:'¡Más próximamente!',
     changes_autosaved:'✅ Los cambios se guardan automáticamente.',
@@ -1184,6 +1188,7 @@ const TRANSLATIONS = {
     currency:'Valuta',rollover:'Riporto',appearance:'Aspetto',
     language:'Lingua',reset_data:'Reimposta dati',
     light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Navigazione', nav_position_desc:'Scegli dove si trova il menu delle sezioni. Su telefono resta sempre in alto.', nav_pos_top:'Alto', nav_pos_left:'Sinistra', nav_pos_right:'Destra',
     dashboard_layout:'Layout della dashboard',dashboard_layout_desc:'Scegli come viene progettata e visualizzata la tua dashboard.',
     layout_1:'Classico',layout_2:'Impulso radiale',layout_coming_soon:'Presto altri!',
     changes_autosaved:'✅ Le modifiche vengono salvate automaticamente.',
@@ -1442,6 +1447,7 @@ const TRANSLATIONS = {
     currency:'Waluta',rollover:'Przeniesienie',appearance:'Wygląd',
     language:'Język',reset_data:'Zresetuj dane',
     light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nav_position:'Nawigacja', nav_position_desc:'Wybierz, gdzie ma być menu sekcji. Na telefonie zawsze jest na górze.', nav_pos_top:'Góra', nav_pos_left:'Lewo', nav_pos_right:'Prawo',
     dashboard_layout:'Układ pulpitu',dashboard_layout_desc:'Wybierz, jak Twój pulpit jest zaprojektowany i wizualizowany.',
     layout_1:'Klasyczny',layout_2:'Puls promienisty',layout_coming_soon:'Wkrótce więcej!',
     changes_autosaved:'✅ Zmiany są zapisywane automatycznie.',
@@ -1672,6 +1678,8 @@ function applyLanguage() {
       btn.textContent = emoji + tx;
     }
   });
+  // The rail's labels are copies of the tab bar's, so they follow it here.
+  if (document.querySelector('.nav-rail')) buildNavRail();
 }
 
 
@@ -2559,6 +2567,91 @@ const DASHBOARD_LAYOUT_ICONS = {
   1: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
   2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>'
 };
+// ── Navigation position: top (default) / left / right ─────────────────
+// The rail's buttons are generated from the tab bar rather than being a
+// second hand-maintained list, so what sections exist - and what they are
+// called in each of the six languages - can only ever come from one place.
+// The tab bar itself stays in the DOM while a rail is showing (CSS hides
+// it), which is what keeps applyLanguage's existing pass over .btab the
+// source for both of them.
+const NAV_POSITIONS = ['top', 'left', 'right'];
+const NAV_POS_ICONS = {
+  top:   '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/>',
+  left:  '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>',
+  right: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/>'
+};
+
+function getNavPosition() {
+  const v = state?.settings?.navPosition;
+  return NAV_POSITIONS.includes(v) ? v : 'top';
+}
+
+function buildNavRail() {
+  const tabs = document.getElementById('budgetTabs');
+  const shell = tabs?.closest('.tool-shell');
+  if (!tabs || !shell) return;
+  let rail = shell.querySelector('.nav-rail');
+  if (!rail) {
+    rail = document.createElement('nav');
+    rail.className = 'nav-rail';
+    rail.setAttribute('aria-label', tabs.getAttribute('aria-label') || '');
+    // Delegated, so redrawing the buttons never re-attaches listeners.
+    rail.addEventListener('click', e => {
+      const b = e.target.closest('.nav-rail-item');
+      if (b) switchBTab(b.dataset.btab);
+    });
+    shell.insertBefore(rail, shell.firstChild);
+  }
+  rail.innerHTML = [...tabs.querySelectorAll('.btab[data-btab]')].map(b => {
+    const full = b.textContent.trim();
+    // The same emoji-prefix split applyLanguage uses when it rewrites these.
+    const icon = full.match(/^(\p{Emoji}[\uFE0F\u20E3]?\s*)/u)?.[0] || '';
+    const label = full.slice(icon.length).trim() || full;
+    const on = b.classList.contains('is-active');
+    return `<button class="nav-rail-item${on ? ' is-active' : ''}"${on ? ' aria-current="true"' : ''} data-btab="${esc(b.dataset.btab)}" type="button" title="${esc(label)}">
+      <span class="nav-rail-icon" aria-hidden="true">${esc(icon.trim())}</span><span class="nav-rail-label">${esc(label)}</span>
+    </button>`;
+  }).join('');
+}
+
+// The rail is built for left/right at any width. Falling back to the tab
+// bar on a phone is done purely in CSS, so a rotation or a resize needs no
+// JS to put the rail back - and the setting survives either way.
+function applyNavPosition() {
+  const pos = getNavPosition();
+  document.documentElement.dataset.nav = pos;
+  if (pos !== 'top') buildNavRail();
+}
+
+function navPositionCardHtml() {
+  const cur = getNavPosition();
+  const opts = NAV_POSITIONS.map(p => `
+    <button class="layout-opt${cur === p ? ' is-active' : ''}" data-nav-val="${p}" type="button" title="${t('nav_pos_' + p)}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${NAV_POS_ICONS[p]}</svg>
+      ${t('nav_pos_' + p)}
+    </button>`).join('');
+  return `<div class="panel"><div class="panel-inner">
+    <div class="settings-card-title">🧭 ${t('nav_position')}</div>
+    <p class="settings-desc">${t('nav_position_desc')}</p>
+    <div class="layout-setting-row">
+      <div class="layout-pill theme-pill" role="group" aria-label="${t('nav_position')}">${opts}</div>
+    </div>
+  </div></div>`;
+}
+
+function wireNavPositionPicker(el) {
+  el.querySelectorAll('[data-nav-val]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = NAV_POSITIONS.includes(btn.dataset.navVal) ? btn.dataset.navVal : 'top';
+      state.settings.navPosition = p;
+      saveState();
+      trackEvent('nav_position_changed', { position: p });
+      el.querySelectorAll('[data-nav-val]').forEach(b => b.classList.toggle('is-active', b === btn));
+      applyNavPosition();
+    });
+  });
+}
+
 function dashboardLayoutCardHtml() {
   if ((state.settings.dashboardLayout || 1) > 2) state.settings.dashboardLayout = 1;
   const cur = state.settings.dashboardLayout || 1;
@@ -2580,13 +2673,13 @@ function dashboardLayoutCardHtml() {
   </div></div>`;
 }
 function wireDashboardLayoutPicker(el) {
-  el.querySelectorAll('.layout-opt').forEach(btn => {
+  el.querySelectorAll('.layout-opt[data-layout-val]').forEach(btn => {
     btn.addEventListener('click', () => {
       const n = parseInt(btn.dataset.layoutVal, 10) || 1;
       state.settings.dashboardLayout = n;
       saveState();
       trackEvent('dashboard_layout_changed', { layout: n });
-      el.querySelectorAll('.layout-opt').forEach(b => b.classList.toggle('is-active', b === btn));
+      el.querySelectorAll('.layout-opt[data-layout-val]').forEach(b => b.classList.toggle('is-active', b === btn));
       renderDashboard();
     });
   });
@@ -2621,8 +2714,10 @@ function navigateTo(view) {
 function switchBTab(tab) {
   currentBTab = tab;
   trackEvent('tab_viewed', { tab });
-  document.querySelectorAll('.btab').forEach(b => b.classList.toggle('is-active', b.dataset.btab === tab));
+  document.querySelectorAll('.btab, .nav-rail-item').forEach(b => b.classList.toggle('is-active', b.dataset.btab === tab));
   document.querySelectorAll('.btab[role="tab"]').forEach(b => b.setAttribute('aria-selected', b.dataset.btab === tab ? 'true' : 'false'));
+  document.querySelectorAll('.nav-rail-item').forEach(b => b.dataset.btab === tab
+    ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'));
   document.querySelectorAll('.bview').forEach(v => v.classList.remove('is-active'));
   document.getElementById(`bview-${tab}`)?.classList.add('is-active');
   dispatchRender(tab);
@@ -4137,6 +4232,7 @@ function renderSettings() {
           <input class="input" type="number" id="settRollover" min="0" step="0.01"
                  value="${state.rollover || ''}" placeholder="0.00"></div>
       </div></div>
+      ${navPositionCardHtml()}
       ${dashboardLayoutCardHtml()}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌙 ${t('appearance')}</div>
@@ -4226,6 +4322,7 @@ function renderSettings() {
   el.querySelectorAll('.theme-opt').forEach(btn => {
     btn.addEventListener('click', () => { applyTheme(btn.dataset.themeVal); trackEvent('theme_changed', { theme: btn.dataset.themeVal }); });
   });
+  wireNavPositionPicker(el);
   wireDashboardLayoutPicker(el);
 
   el.querySelectorAll('[data-sync-mode]').forEach(btn => {
@@ -5067,6 +5164,7 @@ function init() {
 
   // Mouse drag-to-scroll on tab bar
   enableDragScroll(document.getElementById('budgetTabs'));
+  applyNavPosition();
 
   // Content dissolves under the empty nav ONLY while scrolled (none at rest)
   const _scroller = document.querySelector('#view-budget .app-scroll');
