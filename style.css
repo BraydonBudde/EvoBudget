@@ -2166,21 +2166,16 @@ input[type="number"].expected-input {
 /* ═══════════════════════════════════════════════════════════════
    NAV POSITION - top (default) / left / right
    ───────────────────────────────────────────────────────────────
-   The tool shell is normally a two-row flex column: the nav region
-   (.tool-sticky) stacked over its own scrolling content region
-   (.app-scroll). Docking the nav to a side turns that same shell
-   into a 2x2 grid with the rail spanning both rows, so both regions
-   keep their exact roles - .app-scroll in particular stays the one
-   and only scroll container, masks and all.
+   Docked to a side, the rail becomes the whole chrome: the app
+   title, the sections, up to three widgets and the tool buttons.
+   The topbar has nothing left to show, so it is hidden and the
+   shell becomes a single row: rail beside content. .app-scroll
+   stays the one and only scroll container, masks and all.
 
-   Nothing here applies without a [data-nav] of "left" or "right" on
-   <html>, so the default top layout is untouched by all of it.
-
-   The rail's buttons are generated in JS from the .btab buttons, so
-   the tab bar remains the single source of truth for what sections
-   exist and what they are called in each language.
+   Nothing here applies without a [data-nav] of "left" or "right"
+   on <html>, so the default top layout is untouched by all of it.
    ═══════════════════════════════════════════════════════════════ */
-:root { --rail-w: 190px; }
+:root { --rail-w: 268px; }
 
 .nav-rail { display: none; }
 
@@ -2192,55 +2187,55 @@ html[data-nav="left"]  .view.tool-shell.is-active,
 html[data-nav="right"] .app.tool-shell,
 html[data-nav="right"] .view.tool-shell.is-active {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   max-width: calc(1122px + var(--rail-w));
 }
 html[data-nav="left"] .app.tool-shell,
 html[data-nav="left"] .view.tool-shell.is-active {
   grid-template-columns: var(--rail-w) minmax(0, 1fr);
-  grid-template-areas: "rail head" "rail body";
+  grid-template-areas: "rail body";
 }
 html[data-nav="right"] .app.tool-shell,
 html[data-nav="right"] .view.tool-shell.is-active {
   grid-template-columns: minmax(0, 1fr) var(--rail-w);
-  grid-template-areas: "head rail" "body rail";
+  grid-template-areas: "body rail";
 }
 html[data-nav="left"]  .tool-shell > .nav-rail,
 html[data-nav="right"] .tool-shell > .nav-rail { display: flex; grid-area: rail; }
-html[data-nav="left"]  .tool-shell > .tool-sticky,
-html[data-nav="right"] .tool-shell > .tool-sticky { grid-area: head; }
 html[data-nav="left"]  .tool-shell > .app-scroll,
-html[data-nav="right"] .tool-shell > .app-scroll { grid-area: body; }
+html[data-nav="right"] .tool-shell > .app-scroll { grid-area: body; padding-top: 26px; }
 
-/* The tab bar is the rail's source, not a second copy of it on screen.
-   It stays in the DOM (and keeps being translated) while hidden. */
-html[data-nav="left"]  .tool-shell .budget-tabs,
-html[data-nav="right"] .tool-shell .budget-tabs { display: none; }
-
-/* Sitting flush against the rail's edge, the content wants a little
-   less padding on that side than it does against the window. */
+/* Everything the topbar held now lives in the rail, so it would be an
+   empty strip. The tab bar stays in the DOM while hidden: it is what the
+   rail's sections are generated from, and what applyLanguage translates. */
 html[data-nav="left"]  .tool-shell > .tool-sticky,
-html[data-nav="left"]  .tool-shell > .app-scroll  { padding-left: 20px; }
-html[data-nav="right"] .tool-shell > .tool-sticky,
-html[data-nav="right"] .tool-shell > .app-scroll  { padding-right: 20px; }
-/* The tab bar's bottom padding went with it, so the header closes up. */
-html[data-nav="left"]  .tool-shell > .tool-sticky,
-html[data-nav="right"] .tool-shell > .tool-sticky { padding-bottom: 14px; }
+html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
 
-.nav-rail {
-  flex-direction: column; gap: 4px;
-  min-height: 0; overflow-y: auto; overflow-x: hidden;
-  padding: 30px 12px 24px;
-  scrollbar-width: none; -ms-overflow-style: none;
+/* ── The rail ─────────────────────────────────────────────────── */
+.nav-rail { min-height: 0; padding: 16px 12px; }
+
+.nav-rail-box {
+  display: flex; flex-direction: column; gap: 14px;
+  width: 100%; min-height: 0;
+  padding: 15px 12px;
+  background: var(--surface-strong);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
 }
-.nav-rail::-webkit-scrollbar { width: 0; height: 0; display: none; }
-html[data-nav="left"]  .nav-rail { border-right: 1px solid var(--border-faint); }
-html[data-nav="right"] .nav-rail { border-left:  1px solid var(--border-faint); }
+
+.nav-rail-brand { display: flex; align-items: center; min-width: 0; padding: 2px 4px; }
+.nav-rail-brand .wordmark { font-size: 15px; gap: 9px; min-width: 0; }
+.nav-rail-brand .app-title-editable {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.nav-rail-sections { display: flex; flex-direction: column; gap: 3px; flex: 0 0 auto; }
 
 .nav-rail-item {
   appearance: none; border: 1px solid transparent; background: transparent;
   display: flex; align-items: center; gap: 11px;
-  width: 100%; padding: 10px 12px; border-radius: var(--radius-sm);
+  width: 100%; padding: 9px 11px; border-radius: var(--radius-sm);
   font-family: inherit; font-size: 13px; font-weight: 600; text-align: left;
   color: var(--text-secondary); cursor: pointer;
   white-space: nowrap; overflow: hidden; flex-shrink: 0;
@@ -2257,28 +2252,148 @@ html[data-nav="right"] .nav-rail { border-left:  1px solid var(--border-faint); 
   color: #fff; border-color: transparent;
   box-shadow: 0 4px 14px rgba(var(--grad-indigo-rgb), .3);
 }
-.nav-rail-icon {
-  font-size: 16px; line-height: 1; width: 22px;
-  flex-shrink: 0; text-align: center;
-}
+.nav-rail-icon { font-size: 16px; line-height: 1; width: 22px; flex-shrink: 0; text-align: center; }
 .nav-rail-label { overflow: hidden; text-overflow: ellipsis; }
 
-/* Tablet: too narrow to spend 190px on labels, wide enough for the rail
-   itself to still beat a scrolling tab bar. Icons only, with the label
-   left on the button's title for hover and for screen readers. */
-@media (max-width: 1080px) {
-  :root { --rail-w: 66px; }
-  .nav-rail { padding: 26px 9px 20px; }
+/* Takes the slack, so the tool buttons sit at the bottom of the box
+   whether there are three widgets or none. */
+.nav-rail-widgets {
+  display: flex; flex-direction: column; gap: 9px;
+  flex: 1 1 auto; min-height: 0;
+  overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.nav-rail-widgets::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+.nav-rail-tools {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 8px; flex: 0 0 auto;
+  padding-top: 13px; border-top: 1px solid var(--border-faint);
+}
+
+/* ── Widgets ──────────────────────────────────────────────────── */
+.nw-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 0 4px; font-size: 10px; font-weight: 800; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.nw-manage-btn {
+  appearance: none; border: 0; background: transparent; font-family: inherit;
+  font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--grad-indigo); cursor: pointer; padding: 3px 5px; border-radius: 6px;
+}
+.nw-manage-btn:hover { background: rgba(var(--grad-indigo-rgb), .1); }
+
+.nw-card {
+  display: flex; flex-direction: column; gap: 7px;
+  padding: 11px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-faint);
+  border-radius: var(--radius-sm);
+}
+.nw-card-title {
+  margin: 0; display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 700; color: var(--text-secondary);
+}
+.nw-big {
+  font-family: var(--font-display); font-size: 23px; font-weight: 800;
+  line-height: 1.05; color: var(--text-primary);
+}
+.nw-sub { font-size: 11px; line-height: 1.35; color: var(--text-faint); }
+.nw-empty { font-size: 12px; color: var(--text-faint); }
+.nw-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.nw-name {
+  font-size: 12px; font-weight: 600; color: var(--text-primary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nw-amt { font-size: 12.5px; font-weight: 700; color: var(--text-primary); flex-shrink: 0; }
+.nw-line { display: flex; flex-direction: column; gap: 4px; }
+.nw-bar {
+  height: 5px; border-radius: 3px; overflow: hidden;
+  background: rgba(var(--grad-indigo-rgb), .13);
+}
+.nw-bar span {
+  display: block; height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--grad-indigo), var(--grad-purple));
+}
+.nw-input { width: 100%; font-size: 12.5px; padding: 7px 9px; }
+.nw-err { font-size: 11px; line-height: 1.35; color: var(--expense); }
+
+.nw-act {
+  appearance: none; width: 100%; cursor: pointer;
+  padding: 8px 10px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-faint); background: var(--surface-strong);
+  font-family: inherit; font-size: 12px; font-weight: 700; color: var(--text-secondary);
+  transition: border-color .18s var(--ease), color .18s var(--ease), box-shadow .22s var(--ease);
+}
+.nw-act:hover { border-color: var(--grad-indigo); color: var(--grad-indigo); }
+.nw-act--go {
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+  color: #fff; border-color: transparent;
+}
+.nw-act--go:hover { color: #fff; box-shadow: 0 4px 14px rgba(var(--grad-indigo-rgb), .32); }
+
+.nw-add {
+  appearance: none; width: 100%; cursor: pointer;
+  padding: 10px; border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--border-faint); background: transparent;
+  font-family: inherit; font-size: 12px; font-weight: 700; color: var(--text-faint);
+  transition: border-color .18s var(--ease), color .18s var(--ease), background .18s var(--ease);
+}
+.nw-add:hover {
+  border-color: var(--grad-indigo); color: var(--grad-indigo);
+  background: rgba(var(--grad-indigo-rgb), .05);
+}
+
+/* ── The add / reorder / remove sheet ─────────────────────────── */
+.nw-mg { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 4px; }
+.nw-mg-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border: 1px solid var(--border-faint); border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+}
+.nw-mg-icon { font-size: 17px; width: 22px; flex-shrink: 0; text-align: center; }
+.nw-mg-name { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+.nw-mg-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.nw-mg-text strong { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+.nw-mg-text em { font-style: normal; font-size: 12px; line-height: 1.4; color: var(--text-faint); }
+.nw-mini {
+  appearance: none; width: 30px; height: 30px; flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border-faint); border-radius: 8px;
+  background: var(--surface-strong); color: var(--text-secondary);
+  font-family: inherit; font-size: 14px; line-height: 1;
+  transition: border-color .18s var(--ease), color .18s var(--ease);
+}
+.nw-mini:hover:not(:disabled) { border-color: var(--grad-indigo); color: var(--grad-indigo); }
+.nw-mini:disabled { opacity: .35; cursor: not-allowed; }
+.nw-mini--del:hover:not(:disabled) { border-color: var(--expense); color: var(--expense); }
+.nw-mg-h {
+  margin: 18px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.nw-mg-empty, .nw-mg-note { margin: 6px 2px; font-size: 12.5px; color: var(--text-faint); }
+
+/* ── Tablet: no room for labels or widgets, plenty for an icon rail ── */
+@media (max-width: 1150px) {
+  :root { --rail-w: 76px; }
+  .nav-rail { padding: 16px 9px; }
+  .nav-rail-box { padding: 12px 8px; gap: 11px; }
+  .nav-rail-brand { justify-content: center; padding: 2px 0; }
+  .nav-rail-brand .wordmark { gap: 0; }
+  .nav-rail-brand .app-title-editable { display: none; }
   .nav-rail-item { justify-content: center; gap: 0; padding: 11px 0; }
   .nav-rail-icon { width: auto; font-size: 17px; }
   .nav-rail-label {
     position: absolute; width: 1px; height: 1px;
     overflow: hidden; clip-path: inset(50%); white-space: nowrap;
   }
+  /* The widgets need their labels and inputs to be worth anything. */
+  .nav-rail-widgets { display: none; }
+  .nav-rail-tools { flex-direction: column; gap: 6px; }
 }
 
-/* Phone: a side rail would eat the screen either way, so the setting is
-   kept but not honoured - the tab bar comes back exactly as it was. */
+/* ── Phone: the rail cannot earn its width, so the tab bar returns ── */
 @media (max-width: 760px) {
   html[data-nav="left"]  .app.tool-shell,
   html[data-nav="left"]  .view.tool-shell.is-active,
@@ -2288,14 +2403,14 @@ html[data-nav="right"] .nav-rail { border-left:  1px solid var(--border-faint); 
   }
   html[data-nav="left"]  .tool-shell > .nav-rail,
   html[data-nav="right"] .tool-shell > .nav-rail { display: none; }
+  /* applyNavPosition hands the title and the tool buttons back to the
+     topbar at this width, so it has something to show again. */
+  html[data-nav="left"]  .tool-shell > .tool-sticky,
+  html[data-nav="right"] .tool-shell > .tool-sticky { display: block; }
   html[data-nav="left"]  .tool-shell .budget-tabs,
   html[data-nav="right"] .tool-shell .budget-tabs { display: flex; }
-  html[data-nav="left"]  .tool-shell > .tool-sticky,
   html[data-nav="left"]  .tool-shell > .app-scroll,
-  html[data-nav="right"] .tool-shell > .tool-sticky,
-  html[data-nav="right"] .tool-shell > .app-scroll { padding-left: 16px; padding-right: 16px; }
-  html[data-nav="left"]  .tool-shell > .tool-sticky,
-  html[data-nav="right"] .tool-shell > .tool-sticky { padding-bottom: 4px; }
+  html[data-nav="right"] .tool-shell > .app-scroll { padding-top: 0; }
 }
 
 /* ── SIDEBAR layout ──────────────────────────────────────────── */

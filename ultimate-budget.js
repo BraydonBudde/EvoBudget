@@ -134,6 +134,8 @@ function saveState() {
   }
   SYM=state.settings.symbol;
   syncPushDebounced('ubp');
+  // The rail's widgets read the same state, so they are redrawn with it.
+  try { navWidgetsQueueRefresh(); } catch (e) {}
   return true;
 }
 function syncSymbol() { SYM=state.settings.symbol; }
@@ -586,6 +588,16 @@ const TRANSLATIONS = {
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
+    nw_head:'Widgets', nw_title:'Sidebar widgets', nw_edit:'Edit', nw_add_btn:'Add widget', nw_add:'Add', nw_done:'Done',
+    nw_available:'Available', nw_none_yet:'No widgets yet.', nw_all_added:'Every widget is already in your sidebar.',
+    nw_full:'Remove one to add another. {0} is the maximum.', nw_pick_desc:'Pick up to {0}. They appear in the order below.',
+    nw_move_up:'Move up', nw_move_down:'Move down', nw_remove:'Remove', nw_log:'Log', nw_no_cats:'Add a category first',
+    nw_days_left:'days left of {0}', nw_no_spend:'Nothing spent yet this period.',
+    nw_quick_spend:'Quick Spend', nw_quick_spend_desc:'Log an expense without leaving the page.',
+    nw_free_to_spend:'Free to Spend', nw_free_to_spend_desc:'What is left once everything still due is set aside.',
+    nw_next_due:'Next Due', nw_next_due_desc:'The soonest payment you still owe, with a Pay button.',
+    nw_period:'Period', nw_period_desc:'How much of your budget period is left.',
+    nw_top_spend:'Top Spending', nw_top_spend_desc:'Your three biggest expense categories this period.',
     nav_position:'Navigation', nav_position_desc:'Choose where the section menu sits. On a phone it always runs across the top.', nav_pos_top:'Top', nav_pos_left:'Left', nav_pos_right:'Right',
     dashboard_layout:'Dashboard Layout', dashboard_layout_desc:'Choose how your Dashboard is designed and visualised.',
     layout_1:'Classic', layout_2:'Radial Pulse', layout_coming_soon:'More Coming Soon!',
@@ -1133,6 +1145,16 @@ const TRANSLATIONS = {
     currency:'Währung',rollover:'Übertrag',appearance:'Erscheinungsbild',
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
     light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_head:'Widgets', nw_title:'Seitenleisten-Widgets', nw_edit:'Bearbeiten', nw_add_btn:'Widget hinzufügen', nw_add:'Hinzufügen', nw_done:'Fertig',
+    nw_available:'Verfügbar', nw_none_yet:'Noch keine Widgets.', nw_all_added:'Alle Widgets sind bereits in deiner Seitenleiste.',
+    nw_full:'Entferne eines, um ein anderes hinzuzufügen. {0} ist das Maximum.', nw_pick_desc:'Wähle bis zu {0}. Sie erscheinen in der Reihenfolge unten.',
+    nw_move_up:'Nach oben', nw_move_down:'Nach unten', nw_remove:'Entfernen', nw_log:'Buchen', nw_no_cats:'Lege zuerst eine Kategorie an',
+    nw_days_left:'Tage übrig von {0}', nw_no_spend:'In diesem Zeitraum noch nichts ausgegeben.',
+    nw_quick_spend:'Schnellausgabe', nw_quick_spend_desc:'Eine Ausgabe buchen, ohne die Seite zu verlassen.',
+    nw_free_to_spend:'Frei verfügbar', nw_free_to_spend_desc:'Was übrig bleibt, wenn alles noch Fällige zurückgelegt ist.',
+    nw_next_due:'Nächste Fälligkeit', nw_next_due_desc:'Die nächste offene Zahlung, mit Zahlen-Schaltfläche.',
+    nw_period:'Zeitraum', nw_period_desc:'Wie viel von deinem Budgetzeitraum übrig ist.',
+    nw_top_spend:'Top-Ausgaben', nw_top_spend_desc:'Deine drei größten Ausgabenkategorien in diesem Zeitraum.',
     nav_position:'Navigation', nav_position_desc:'Wähle, wo das Abschnittsmenü sitzt. Auf dem Handy läuft es immer oben quer.', nav_pos_top:'Oben', nav_pos_left:'Links', nav_pos_right:'Rechts',
     dashboard_layout:'Dashboard-Layout',dashboard_layout_desc:'Wähle, wie dein Dashboard gestaltet und visualisiert wird.',
     layout_1:'Klassisch',layout_2:'Radialer Puls',layout_coming_soon:'Bald mehr!',
@@ -1658,6 +1680,16 @@ const TRANSLATIONS = {
     currency:'Devise',rollover:'Report',appearance:'Apparence',
     language:'Langue',reset_data:'Réinitialiser les données',
     light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_head:'Widgets', nw_title:'Widgets de la barre latérale', nw_edit:'Modifier', nw_add_btn:'Ajouter un widget', nw_add:'Ajouter', nw_done:'Terminé',
+    nw_available:'Disponibles', nw_none_yet:'Aucun widget pour le moment.', nw_all_added:'Tous les widgets sont déjà dans votre barre latérale.',
+    nw_full:'Retirez-en un pour en ajouter un autre. {0} au maximum.', nw_pick_desc:"Choisissez-en jusqu'à {0}. Ils apparaissent dans l'ordre ci-dessous.",
+    nw_move_up:'Monter', nw_move_down:'Descendre', nw_remove:'Retirer', nw_log:'Enregistrer', nw_no_cats:"Ajoutez d'abord une catégorie",
+    nw_days_left:'jours restants sur {0}', nw_no_spend:'Rien de dépensé sur cette période.',
+    nw_quick_spend:'Dépense rapide', nw_quick_spend_desc:'Enregistrez une dépense sans quitter la page.',
+    nw_free_to_spend:'Libre à dépenser', nw_free_to_spend_desc:'Ce qui reste une fois mis de côté tout ce qui est encore dû.',
+    nw_next_due:'Prochaine échéance', nw_next_due_desc:'Le prochain paiement dû, avec un bouton Payer.',
+    nw_period:'Période', nw_period_desc:"Ce qu'il reste de votre période budgétaire.",
+    nw_top_spend:'Principales dépenses', nw_top_spend_desc:'Vos trois plus grosses catégories de dépenses sur la période.',
     nav_position:'Navigation', nav_position_desc:'Choisissez où se place le menu des sections. Sur téléphone, il reste toujours en haut.', nav_pos_top:'Haut', nav_pos_left:'Gauche', nav_pos_right:'Droite',
     dashboard_layout:'Disposition du tableau de bord',dashboard_layout_desc:"Choisissez comment votre tableau de bord est conçu et visualisé.",
     layout_1:'Classique',layout_2:'Pulsation radiale',layout_coming_soon:'Bientôt plus !',
@@ -2183,6 +2215,16 @@ const TRANSLATIONS = {
     currency:'Moneda',rollover:'Saldo anterior',appearance:'Apariencia',
     language:'Idioma',reset_data:'Restablecer datos',
     light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_head:'Widgets', nw_title:'Widgets de la barra lateral', nw_edit:'Editar', nw_add_btn:'Añadir widget', nw_add:'Añadir', nw_done:'Listo',
+    nw_available:'Disponibles', nw_none_yet:'Aún no hay widgets.', nw_all_added:'Todos los widgets ya están en tu barra lateral.',
+    nw_full:'Quita uno para añadir otro. {0} es el máximo.', nw_pick_desc:'Elige hasta {0}. Aparecen en el orden de abajo.',
+    nw_move_up:'Subir', nw_move_down:'Bajar', nw_remove:'Quitar', nw_log:'Registrar', nw_no_cats:'Crea primero una categoría',
+    nw_days_left:'días restantes de {0}', nw_no_spend:'Todavía no has gastado nada en este período.',
+    nw_quick_spend:'Gasto rápido', nw_quick_spend_desc:'Registra un gasto sin salir de la página.',
+    nw_free_to_spend:'Libre para gastar', nw_free_to_spend_desc:'Lo que queda una vez apartado todo lo que aún debes.',
+    nw_next_due:'Próximo vencimiento', nw_next_due_desc:'El próximo pago pendiente, con un botón Pagar.',
+    nw_period:'Período', nw_period_desc:'Cuánto queda de tu período de presupuesto.',
+    nw_top_spend:'Mayores gastos', nw_top_spend_desc:'Tus tres mayores categorías de gasto de este período.',
     nav_position:'Navegación', nav_position_desc:'Elige dónde se sitúa el menú de secciones. En el móvil siempre va en la parte superior.', nav_pos_top:'Arriba', nav_pos_left:'Izquierda', nav_pos_right:'Derecha',
     dashboard_layout:'Diseño del panel',dashboard_layout_desc:'Elige cómo se diseña y visualiza tu panel.',
     layout_1:'Clásico',layout_2:'Pulso radial',layout_coming_soon:'¡Más próximamente!',
@@ -2708,6 +2750,16 @@ const TRANSLATIONS = {
     currency:'Valuta',rollover:'Riporto',appearance:'Aspetto',
     language:'Lingua',reset_data:'Reimposta dati',
     light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_head:'Widget', nw_title:'Widget della barra laterale', nw_edit:'Modifica', nw_add_btn:'Aggiungi widget', nw_add:'Aggiungi', nw_done:'Fatto',
+    nw_available:'Disponibili', nw_none_yet:'Ancora nessun widget.', nw_all_added:'Tutti i widget sono già nella barra laterale.',
+    nw_full:'Rimuovine uno per aggiungerne un altro. {0} è il massimo.', nw_pick_desc:"Scegline fino a {0}. Appaiono nell'ordine qui sotto.",
+    nw_move_up:'Sposta su', nw_move_down:'Sposta giù', nw_remove:'Rimuovi', nw_log:'Registra', nw_no_cats:'Crea prima una categoria',
+    nw_days_left:'giorni rimasti su {0}', nw_no_spend:'Ancora nessuna spesa in questo periodo.',
+    nw_quick_spend:'Spesa rapida', nw_quick_spend_desc:'Registra una spesa senza lasciare la pagina.',
+    nw_free_to_spend:'Libero da spendere', nw_free_to_spend_desc:'Ciò che resta una volta messo da parte tutto il dovuto.',
+    nw_next_due:'Prossima scadenza', nw_next_due_desc:'Il prossimo pagamento dovuto, con un pulsante Paga.',
+    nw_period:'Periodo', nw_period_desc:'Quanto resta del tuo periodo di budget.',
+    nw_top_spend:'Spese principali', nw_top_spend_desc:'Le tue tre maggiori categorie di spesa del periodo.',
     nav_position:'Navigazione', nav_position_desc:'Scegli dove si trova il menu delle sezioni. Su telefono resta sempre in alto.', nav_pos_top:'Alto', nav_pos_left:'Sinistra', nav_pos_right:'Destra',
     dashboard_layout:'Layout della dashboard',dashboard_layout_desc:'Scegli come viene progettata e visualizzata la tua dashboard.',
     layout_1:'Classico',layout_2:'Impulso radiale',layout_coming_soon:'Presto altri!',
@@ -3234,6 +3286,16 @@ const TRANSLATIONS = {
     currency:'Waluta',rollover:'Przeniesienie',appearance:'Wygląd',
     language:'Język',reset_data:'Zresetuj dane',
     light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_head:'Widżety', nw_title:'Widżety paska bocznego', nw_edit:'Edytuj', nw_add_btn:'Dodaj widżet', nw_add:'Dodaj', nw_done:'Gotowe',
+    nw_available:'Dostępne', nw_none_yet:'Brak widżetów.', nw_all_added:'Wszystkie widżety są już na pasku bocznym.',
+    nw_full:'Usuń jeden, aby dodać inny. {0} to maksimum.', nw_pick_desc:'Wybierz maksymalnie {0}. Pojawią się w kolejności poniżej.',
+    nw_move_up:'W górę', nw_move_down:'W dół', nw_remove:'Usuń', nw_log:'Zapisz', nw_no_cats:'Najpierw dodaj kategorię',
+    nw_days_left:'dni pozostało z {0}', nw_no_spend:'W tym okresie nic jeszcze nie wydano.',
+    nw_quick_spend:'Szybki wydatek', nw_quick_spend_desc:'Zapisz wydatek bez opuszczania strony.',
+    nw_free_to_spend:'Wolne środki', nw_free_to_spend_desc:'To, co zostaje po odłożeniu wszystkiego, co wciąż do zapłaty.',
+    nw_next_due:'Następna płatność', nw_next_due_desc:'Najbliższa niezapłacona pozycja, z przyciskiem Zapłać.',
+    nw_period:'Okres', nw_period_desc:'Ile zostało z Twojego okresu budżetowego.',
+    nw_top_spend:'Największe wydatki', nw_top_spend_desc:'Trzy największe kategorie wydatków w tym okresie.',
     nav_position:'Nawigacja', nav_position_desc:'Wybierz, gdzie ma być menu sekcji. Na telefonie zawsze jest na górze.', nav_pos_top:'Góra', nav_pos_left:'Lewo', nav_pos_right:'Prawo',
     dashboard_layout:'Układ pulpitu',dashboard_layout_desc:'Wybierz, jak Twój pulpit jest zaprojektowany i wizualizowany.',
     layout_1:'Klasyczny',layout_2:'Puls promienisty',layout_coming_soon:'Wkrótce więcej!',
@@ -3873,12 +3935,15 @@ const DASHBOARD_LAYOUT_ICONS = {
   2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>'
 };
 // ── Navigation position: top (default) / left / right ─────────────────
-// The rail's buttons are generated from the tab bar rather than being a
+// Docked left or right, the rail is the whole chrome: the app title, the
+// sections, the widgets, and the tool buttons. The topbar has nothing left
+// to show, so it is hidden and the rail becomes the only navigation.
+//
+// The section buttons are generated from the tab bar rather than being a
 // second hand-maintained list, so what sections exist - and what they are
-// called in each of the six languages - can only ever come from one place.
-// The tab bar itself stays in the DOM while a rail is showing (CSS hides
-// it), which is what keeps applyLanguage's existing pass over .btab the
-// source for both of them.
+// called in each of the six languages - can only come from one place. The
+// tab bar stays in the DOM while hidden, which is what keeps
+// applyLanguage's existing pass over .btab the source for both.
 const NAV_POSITIONS = ['top', 'left', 'right'];
 const NAV_POS_ICONS = {
   top:   '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/>',
@@ -3891,42 +3956,107 @@ function getNavPosition() {
   return NAV_POSITIONS.includes(v) ? v : 'top';
 }
 
-function buildNavRail() {
+// A phone has no room for a rail, so below this width the tab bar comes
+// back and the topbar takes its controls again. The setting is untouched:
+// widen the window and the rail returns.
+const NAV_RAIL_MQ = window.matchMedia('(max-width: 760px)');
+function navRailDocks() { return getNavPosition() !== 'top' && !NAV_RAIL_MQ.matches; }
+
+// ── Borrowing the topbar's controls ──────────────────────────────────
+// They are MOVED, not copied, so there is never a second #settingsNavBtn
+// and nothing needs rewiring - every button keeps the listener it was
+// given at startup. railRelease puts each one back where it began.
+const RAIL_ADOPT = ['backToHub', 'guideNavBtn', 'pennyNavBtn', 'settingsNavBtn'];
+let _railHome = null;
+
+function railRemember() {
+  if (_railHome) return;
+  _railHome = {};
+  const note = el => { if (el && el.id) _railHome[el.id] = { parent: el.parentNode, next: el.nextSibling }; };
+  const mark = document.querySelector('.tool-shell .wordmark');
+  if (mark && !mark.id) mark.id = 'railBrand';
+  note(mark);
+  RAIL_ADOPT.forEach(id => note(document.getElementById(id)));
+}
+
+function railAdopt(rail) {
+  railRemember();
+  const brand = rail.querySelector('.nav-rail-brand');
+  const tools = rail.querySelector('.nav-rail-tools');
+  const mark = document.getElementById('railBrand');
+  if (mark && brand && mark.parentNode !== brand) brand.appendChild(mark);
+  // Appended in RAIL_ADOPT order, which is the order they read in the rail.
+  RAIL_ADOPT.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && tools && el.parentNode !== tools) tools.appendChild(el);
+  });
+}
+
+function railRelease() {
+  if (!_railHome) return;
+  Object.keys(_railHome).forEach(id => {
+    const el = document.getElementById(id), home = _railHome[id];
+    if (!el || !home || !home.parent || el.parentNode === home.parent) return;
+    // Only aim for the original sibling if it is still where it was.
+    const before = (home.next && home.next.parentNode === home.parent) ? home.next : null;
+    home.parent.insertBefore(el, before);
+  });
+}
+
+// ── The rail itself ──────────────────────────────────────────────────
+function navRailEl() {
   const tabs = document.getElementById('ubpTabs');
-  const shell = tabs?.closest('.tool-shell');
-  if (!tabs || !shell) return;
+  const shell = tabs && tabs.closest('.tool-shell');
+  if (!shell) return null;
   let rail = shell.querySelector('.nav-rail');
   if (!rail) {
     rail = document.createElement('nav');
     rail.className = 'nav-rail';
     rail.setAttribute('aria-label', tabs.getAttribute('aria-label') || '');
-    // Delegated, so redrawing the buttons never re-attaches listeners.
+    rail.innerHTML = '<div class="nav-rail-box">' +
+      '<div class="nav-rail-brand"></div>' +
+      '<div class="nav-rail-sections" id="navRailSections"></div>' +
+      '<div class="nav-rail-widgets" id="navWidgets"></div>' +
+      '<div class="nav-rail-tools"></div>' +
+      '</div>';
+    // Delegated, so redrawing the sections never re-attaches listeners.
     rail.addEventListener('click', e => {
       const b = e.target.closest('.nav-rail-item');
       if (b) switchTab(b.dataset.btab);
     });
     shell.insertBefore(rail, shell.firstChild);
   }
-  rail.innerHTML = [...tabs.querySelectorAll('.btab[data-btab]')].map(b => {
-    const full = b.textContent.trim();
-    // The same emoji-prefix split applyLanguage uses when it rewrites these.
-    const icon = full.match(/^(\p{Emoji}[\uFE0F\u20E3]?\s*)/u)?.[0] || '';
-    const label = full.slice(icon.length).trim() || full;
-    const on = b.classList.contains('is-active');
-    return `<button class="nav-rail-item${on ? ' is-active' : ''}"${on ? ' aria-current="true"' : ''} data-btab="${esc(b.dataset.btab)}" type="button" title="${esc(label)}">
-      <span class="nav-rail-icon" aria-hidden="true">${esc(icon.trim())}</span><span class="nav-rail-label">${esc(label)}</span>
-    </button>`;
-  }).join('');
+  return rail;
 }
 
-// The rail is built for left/right at any width. Falling back to the tab
-// bar on a phone is done purely in CSS, so a rotation or a resize needs no
-// JS to put the rail back - and the setting survives either way.
-function applyNavPosition() {
-  const pos = getNavPosition();
-  document.documentElement.dataset.nav = pos;
-  if (pos !== 'top') buildNavRail();
+function buildNavRail() {
+  const rail = navRailEl();
+  const tabs = document.getElementById('ubpTabs');
+  if (!rail || !tabs) return;
+  rail.querySelector('#navRailSections').innerHTML =
+    [...tabs.querySelectorAll('.btab[data-btab]')].map(b => {
+      const full = b.textContent.trim();
+      // The same emoji-prefix split applyLanguage uses when it rewrites these.
+      const icon = full.match(/^(\p{Emoji}[️⃣]?\s*)/u)?.[0] || '';
+      const label = full.slice(icon.length).trim() || full;
+      const on = b.classList.contains('is-active');
+      return `<button class="nav-rail-item${on ? ' is-active' : ''}"${on ? ' aria-current="true"' : ''} data-btab="${esc(b.dataset.btab)}" type="button" title="${esc(label)}">
+      <span class="nav-rail-icon" aria-hidden="true">${esc(icon.trim())}</span><span class="nav-rail-label">${esc(label)}</span>
+    </button>`;
+    }).join('');
+  railAdopt(rail);
+  renderNavWidgets();
 }
+
+// Called on load, on a change of setting, and when the window crosses the
+// phone breakpoint. Everything about the top layout is left alone.
+function applyNavPosition() {
+  document.documentElement.dataset.nav = getNavPosition();
+  if (navRailDocks()) buildNavRail();
+  else railRelease();
+}
+if (NAV_RAIL_MQ.addEventListener) NAV_RAIL_MQ.addEventListener('change', applyNavPosition);
+else if (NAV_RAIL_MQ.addListener) NAV_RAIL_MQ.addListener(applyNavPosition);
 
 function navPositionCardHtml() {
   const cur = getNavPosition();
@@ -3955,6 +4085,211 @@ function wireNavPositionPicker(el) {
       applyNavPosition();
     });
   });
+}
+
+// ══ Sidebar widgets ═══════════════════════════════════════════════════
+// Up to three, chosen and ordered by the user. Each one reads the same
+// helpers the dashboard reads, so a widget can never disagree with the
+// panel it is sitting next to.
+const NAV_WIDGET_MAX = 3;
+const NAV_WIDGETS = ['quick_spend', 'free_to_spend', 'next_due', 'period', 'top_spend'];
+const NAV_WIDGET_ICON = {
+  quick_spend: '⚡', free_to_spend: '💸', next_due: '📌',
+  period: '📆', top_spend: '📊'
+};
+// Each app names these differently: UBP's due items are bill/debt/
+// subscription, SBP's are the module keys bills/debt. The pay function
+// each one hands this to expects its own spelling.
+const NAV_WIDGET_PAYABLE = new Set(['bill', 'debt', 'subscription']);
+
+function navWidgetList() {
+  const v = state?.settings?.navWidgets;
+  if (!Array.isArray(v)) return [];
+  // Unknown ids (an older build, a hand-edited file) are dropped rather
+  // than rendered as a blank card.
+  return v.filter((id, i) => NAV_WIDGETS.indexOf(id) !== -1 && v.indexOf(id) === i)
+          .slice(0, NAV_WIDGET_MAX);
+}
+
+function navWidgetSave(list) {
+  state.settings.navWidgets = list.slice(0, NAV_WIDGET_MAX);
+  saveState();
+  renderNavWidgets();
+}
+
+function navWidgetBody(id) {
+  switch (id) {
+    case 'free_to_spend': {
+      const free = computeSummary(computeActuals()).leftover - nlCommitted().total;
+      const p = nlDaysInPeriod();
+      const rate = (p.left > 0 && free > 0) ? tf('nl_free_rate', fmt(free / p.left), p.left) : '';
+      return `<div class="nw-big" style="color:${free < 0 ? 'var(--expense)' : 'var(--income)'}">${free < 0 ? '−' : ''}${fmt(Math.abs(free))}</div>
+        ${rate ? `<div class="nw-sub">${rate}</div>` : ''}`;
+    }
+    case 'next_due': {
+      const next = nlCommitted().items
+        .slice().sort((a, b) => String(a.date).localeCompare(String(b.date)))[0];
+      if (!next) return `<div class="nw-empty">${t('nl_nothing_due')}</div>`;
+      const payable = next.id && NAV_WIDGET_PAYABLE.has(next.type);
+      return `<div class="nw-row"><span class="nw-name">${esc(next.label)}</span>
+          <strong class="nw-amt">${fmt(next.amount)}</strong></div>
+        <div class="nw-sub">${esc(formatDateShort(next.date))}</div>
+        ${payable ? `<button class="nw-act" type="button" data-nw-pay="${esc(next.id)}"
+          data-nw-paytype="${esc(next.type)}">${t('pay_btn')}</button>` : ''}`;
+    }
+    case 'period': {
+      const p = nlDaysInPeriod();
+      return `<div class="nw-big">${p.left}</div>
+        <div class="nw-sub">${tf('nw_days_left', p.total)}</div>
+        <div class="nw-bar"><span style="width:${p.pct}%"></span></div>`;
+    }
+    case 'top_spend': {
+      const rows = Object.entries(computeActuals().expenses || {})
+        .filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      if (!rows.length) return `<div class="nw-empty">${t('nw_no_spend')}</div>`;
+      const max = rows[0][1];
+      return rows.map(([cat, v]) => `<div class="nw-line">
+          <div class="nw-row"><span class="nw-name">${esc(cat)}</span>
+            <strong class="nw-amt">${fmt(v)}</strong></div>
+          <div class="nw-bar"><span style="width:${Math.round(v / max * 100)}%"></span></div>
+        </div>`).join('');
+    }
+    case 'quick_spend': {
+      const cats = getCats('expense');
+      // Hidden fields rather than a date picker and a type menu: this
+      // widget is deliberately "an expense, today", and addTransaction
+      // reads both by id, so all of its validation and trial gating apply
+      // exactly as they do in the full Add Transaction modal.
+      return `<input type="hidden" id="wqsDate" value="${today()}">
+        <input type="hidden" id="wqsType" value="expense">
+        <select class="select nw-input" id="wqsCategory" aria-label="${t('tx_category')}">${
+          cats.length ? cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('')
+                      : `<option value="">${t('nw_no_cats')}</option>`}</select>
+        ${state.allocation?.enabled ? `<select class="select nw-input" id="wqsAlloc" aria-label="${t('alloc_label')}"><option value="">${t('alloc_optional')}</option>${(state.allocation.buckets || []).map(b => `<option value="${b.id}">${esc(getAllocBucketDisplayName(b))}</option>`).join('')}</select>` : ''}
+        <input class="input nw-input" type="number" id="wqsAmount" min="0" step="0.01"
+               placeholder="${esc(SYM)}0.00" aria-label="${t('tx_amount')}">
+        <div class="nw-err" id="wqsError" hidden></div>
+        <button class="nw-act nw-act--go" type="button" id="wqsLog">${t('nw_log')}</button>`;
+    }
+  }
+  return '';
+}
+
+function renderNavWidgets() {
+  const host = document.getElementById('navWidgets');
+  if (!host) return;
+  const list = navWidgetList();
+  host.innerHTML = `
+    <div class="nw-head">
+      <span>${t('nw_head')}</span>
+      ${list.length ? `<button class="nw-manage-btn" id="navWidgetManage" type="button"
+        title="${t('nw_title')}" aria-label="${t('nw_title')}">${t('nw_edit')}</button>` : ''}
+    </div>
+    ${list.map(id => `<section class="nw-card" data-nw="${id}">
+      <h4 class="nw-card-title"><span aria-hidden="true">${NAV_WIDGET_ICON[id]}</span>${t('nw_' + id)}</h4>
+      ${navWidgetBody(id)}
+    </section>`).join('')}
+    ${list.length < NAV_WIDGET_MAX
+      ? `<button class="nw-add" id="navWidgetAdd" type="button">+ ${t('nw_add_btn')}</button>`
+      : ''}`;
+  wireNavWidgets(host);
+}
+
+function wireNavWidgets(host) {
+  host.querySelector('#wqsLog')?.addEventListener('click', () => {
+    addTransaction({ prefix: 'wqs', after: () => {
+      showToast(t('toast_tx_added'));
+      if (currentTab === 'dashboard') renderDashboard();
+      renderNavWidgets();
+    } });
+  });
+  host.querySelectorAll('[data-nw-pay]').forEach(b => b.addEventListener('click', () =>
+    promptPay(b.dataset.nwPaytype, b.dataset.nwPay, () => {
+      if (currentTab === 'dashboard') renderDashboard();
+      renderNavWidgets();
+    })));
+  host.querySelector('#navWidgetAdd')?.addEventListener('click', openNavWidgetPicker);
+  host.querySelector('#navWidgetManage')?.addEventListener('click', openNavWidgetPicker);
+}
+
+// Redrawn after any save, so a figure in the rail can never be staler than
+// the page beside it. Skipped while a widget has focus, or typing an amount
+// would wipe the field out from under the user.
+let _navWidgetQueued = false;
+function navWidgetsQueueRefresh() {
+  const host = document.getElementById('navWidgets');
+  if (!host || _navWidgetQueued) return;
+  _navWidgetQueued = true;
+  requestAnimationFrame(() => {
+    _navWidgetQueued = false;
+    const h = document.getElementById('navWidgets');
+    if (h && !h.contains(document.activeElement)) renderNavWidgets();
+  });
+}
+
+// One place to add, remove and reorder. Every change applies to the rail
+// behind the modal straight away, so the effect is visible while choosing
+// rather than only after closing.
+function openNavWidgetPicker() {
+  const body = () => document.getElementById('modalBody');
+
+  const draw = () => {
+    const cur = navWidgetList();
+    const spare = NAV_WIDGETS.filter(id => cur.indexOf(id) === -1);
+    body().innerHTML = `
+      <p class="settings-desc">${tf('nw_pick_desc', NAV_WIDGET_MAX)}</p>
+      <div class="nw-mg">
+        ${cur.length ? cur.map((id, i) => `
+          <div class="nw-mg-row">
+            <span class="nw-mg-icon" aria-hidden="true">${NAV_WIDGET_ICON[id]}</span>
+            <span class="nw-mg-name">${t('nw_' + id)}</span>
+            <button class="nw-mini" type="button" data-nw-move="${i}" data-nw-to="${i - 1}"
+              ${i === 0 ? 'disabled' : ''} aria-label="${t('nw_move_up')}" title="${t('nw_move_up')}">&#8593;</button>
+            <button class="nw-mini" type="button" data-nw-move="${i}" data-nw-to="${i + 1}"
+              ${i === cur.length - 1 ? 'disabled' : ''} aria-label="${t('nw_move_down')}" title="${t('nw_move_down')}">&#8595;</button>
+            <button class="nw-mini nw-mini--del" type="button" data-nw-remove="${i}"
+              aria-label="${t('nw_remove')}" title="${t('nw_remove')}">&#215;</button>
+          </div>`).join('') : `<p class="nw-mg-empty">${t('nw_none_yet')}</p>`}
+      </div>
+      ${spare.length ? `<h4 class="nw-mg-h">${t('nw_available')}</h4>
+      <div class="nw-mg">
+        ${spare.map(id => `
+          <div class="nw-mg-row nw-mg-row--add">
+            <span class="nw-mg-icon" aria-hidden="true">${NAV_WIDGET_ICON[id]}</span>
+            <span class="nw-mg-text"><strong>${t('nw_' + id)}</strong><em>${t('nw_' + id + '_desc')}</em></span>
+            <button class="btn btn-secondary btn-sm" type="button" data-nw-add="${id}"
+              ${cur.length >= NAV_WIDGET_MAX ? 'disabled' : ''}>${t('nw_add')}</button>
+          </div>`).join('')}
+      </div>
+      ${cur.length >= NAV_WIDGET_MAX ? `<p class="nw-mg-note">${tf('nw_full', NAV_WIDGET_MAX)}</p>` : ''}`
+      : `<p class="nw-mg-note">${t('nw_all_added')}</p>`}
+      <div class="edit-tx-actions">
+        <button class="btn btn-primary" id="nwDone" type="button">${t('nw_done')}</button>
+      </div>`;
+
+    body().querySelectorAll('[data-nw-move]').forEach(b => b.addEventListener('click', () => {
+      const l = navWidgetList(), from = +b.dataset.nwMove, to = +b.dataset.nwTo;
+      if (to < 0 || to >= l.length) return;
+      l.splice(to, 0, l.splice(from, 1)[0]);
+      navWidgetSave(l); draw();
+    }));
+    body().querySelectorAll('[data-nw-remove]').forEach(b => b.addEventListener('click', () => {
+      const l = navWidgetList();
+      l.splice(+b.dataset.nwRemove, 1);
+      navWidgetSave(l); draw();
+    }));
+    body().querySelectorAll('[data-nw-add]').forEach(b => b.addEventListener('click', () => {
+      const l = navWidgetList();
+      if (l.length >= NAV_WIDGET_MAX) return;
+      l.push(b.dataset.nwAdd);
+      navWidgetSave(l); draw();
+    }));
+    body().querySelector('#nwDone')?.addEventListener('click', closeModal);
+  };
+
+  document.getElementById('modalTitle').textContent = t('nw_title');
+  draw();
+  document.getElementById('tutorialOverlay').hidden = false;
 }
 
 function dashboardLayoutCardHtml() {
