@@ -3558,22 +3558,41 @@ function dashIsSleek() { return (state?.settings?.dashboardLayout || 1) === SLEE
 let _sleekTabsHome = null;
 
 function applyDashChrome() {
-  const sleek = dashIsSleek();
-  document.documentElement.dataset.dash = sleek ? 'sleek' : 'classic';
+  document.documentElement.dataset.dash = dashIsSleek() ? 'sleek' : 'classic';
   const tabs = document.getElementById('budgetTabs');
   const bar = document.querySelector('.tool-shell .tool-topbar');
-  if (!tabs || !bar) return;
-  // Only while the sections actually run along the top. Docked to a side
-  // the whole topbar is hidden, so there is no line to join.
-  const onOneLine = sleek && getNavPosition() === 'top';
-  if (onOneLine) {
-    if (!_sleekTabsHome) _sleekTabsHome = { parent: tabs.parentNode, next: tabs.nextSibling };
-    if (tabs.parentNode !== bar) bar.insertBefore(tabs, bar.querySelector('.tool-topbar-right'));
-  } else if (_sleekTabsHome && tabs.parentNode !== _sleekTabsHome.parent) {
-    const before = (_sleekTabsHome.next && _sleekTabsHome.next.parentNode === _sleekTabsHome.parent)
-      ? _sleekTabsHome.next : null;
-    _sleekTabsHome.parent.insertBefore(tabs, before);
+  const tools = bar && bar.querySelector('.tool-topbar-right');
+  if (!tabs || !bar || !tools) return;
+
+  // Docked to a side, the rail owns all of this and the topbar is hidden;
+  // railRelease has already put the tab bar back where it started.
+  if (getNavPosition() !== 'top') {
+    if (_sleekTabsHome && tabs.parentNode !== _sleekTabsHome.parent) {
+      const before = (_sleekTabsHome.next && _sleekTabsHome.next.parentNode === _sleekTabsHome.parent)
+        ? _sleekTabsHome.next : null;
+      _sleekTabsHome.parent.insertBefore(tabs, before);
+    }
+    return;
   }
+
+  // Two pills on one line: the sections on the left, the tools on the right.
+  if (!_sleekTabsHome) _sleekTabsHome = { parent: tabs.parentNode, next: tabs.nextSibling };
+  if (tabs.parentNode !== bar) bar.insertBefore(tabs, tools);
+
+  // Gathered into the one group, in a fixed order, from wherever the markup
+  // or the rail last left them. appendChild moves a node it already owns,
+  // so re-running this settles the order rather than appending duplicates.
+  RAIL_ADOPT.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) tools.appendChild(el);
+  });
+
+  // Whatever group they came from is now empty, and an empty flex child
+  // still takes the row's gap - which pushed the sections pill off the
+  // left edge. CSS :empty cannot see this: the element still holds the
+  // whitespace between the tags it used to wrap.
+  const left = bar.querySelector('.tool-topbar-left');
+  if (left) left.style.display = left.querySelector('*') ? '' : 'none';
 }
 
 function sleekGreeting() {
