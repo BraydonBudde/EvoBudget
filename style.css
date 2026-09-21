@@ -198,7 +198,13 @@ a.btn-back-round { text-decoration: none; }
 
 /* ── Budget tabs ─────────────────────────────────────────────────────── */
 .budget-tabs {
-  display: flex; gap: 5px; overflow-x: auto; padding: 4px 0 14px;
+  display: inline-flex; gap: 4px; align-items: center;
+  width: max-content; max-width: 100%;
+  padding: 4px; border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  border: 1px solid var(--border-faint);
+  box-shadow: var(--shadow-card);
+  overflow-x: auto;
   scrollbar-width: none; -webkit-overflow-scrolling: touch;
 }
 .budget-tabs::-webkit-scrollbar { display: none; }
@@ -264,22 +270,23 @@ a.btn-back-round { text-decoration: none; }
   .tool-shell .app-scroll { padding: 0 16px 48px; }
 }
 .btab {
-  appearance: none; border: 1px solid var(--border-faint);
-  background: var(--surface-strong); backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 9px 14px; border-radius: var(--radius-sm); font-size: 13px;
+  appearance: none; border: none; background: transparent;
+  padding: 9px 15px; border-radius: var(--radius-pill); font-size: 13px;
   font-weight: 600; color: var(--text-secondary); white-space: nowrap;
-  flex: 1 1 auto; font-family: inherit; position: relative;
-  transition: transform .22s var(--ease), box-shadow .22s var(--ease), color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+  flex: 0 0 auto; font-family: inherit; position: relative;
+  transition: color .2s var(--ease), background .2s var(--ease), box-shadow .22s var(--ease);
 }
-.btab::after { content:''; position:absolute; left:50%; right:50%; bottom:5px; height:2px; border-radius:2px; background:linear-gradient(90deg,var(--grad-indigo),var(--grad-purple)); transition:left .28s var(--ease), right .28s var(--ease); }
-.btab:hover:not(.is-active) { color: var(--text-primary); transform: translateY(-2px); box-shadow: 0 10px 22px -8px rgba(99,102,241,.42); border-color: rgba(99,102,241,.4); }
-.btab:hover:not(.is-active)::after { left: 15px; right: 15px; }
-.btab.is-active::after { display: none; }
+/* The underline the old flat tabs used is gone: the pill itself is now the
+   thing that says which one you are on, and two markers for one state read
+   as a mistake. */
+.btab:hover:not(.is-active) {
+  color: var(--text-primary);
+  background: rgba(var(--grad-indigo-rgb), .09);
+}
 .btab.is-active {
   background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
-  color: #fff; border-color: transparent;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.30);
+  color: #fff;
+  box-shadow: 0 3px 10px -2px rgba(var(--grad-indigo-rgb), .45);
 }
 .bview { display: none; }
 .bview.is-active { display: block; animation: fade-in 0.25s var(--ease); }
@@ -1294,8 +1301,8 @@ input[type="number"].expected-input {
      fades: a fade at the start dims the first tab even at scroll position 0,
      where nothing is cut off, so it reads as a fault rather than a hint. */
   .budget-tabs {
-    mask-image: linear-gradient(to right, black 0, black calc(100% - 20px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 20px), transparent 100%);
+    mask-image: linear-gradient(to right, black 0, black calc(100% - 28px), transparent calc(100% - 4px));
+    -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 28px), transparent calc(100% - 4px));
   }
   .app { padding: 20px 16px 60px; }
   .tool-grid { grid-template-columns: 1fr; max-width: 100%; }
@@ -1311,8 +1318,8 @@ input[type="number"].expected-input {
   .summary-cards { grid-template-columns: 1fr; }
   .hub-title { font-size: 1.9rem; }
   .wordmark { font-size: 17px; }
-  .budget-tabs { gap: 4px; }
-  .btab { padding: 8px 11px; font-size: 12px; }
+  .budget-tabs { gap: 2px; padding: 3px; }
+  .btab { padding: 8px 12px; font-size: 12px; }
   .tool-topbar .wordmark { display: none; }
 }
 
@@ -2501,7 +2508,7 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
   html[data-nav="left"]  .tool-shell > .tool-sticky,
   html[data-nav="right"] .tool-shell > .tool-sticky { display: block; }
   html[data-nav="left"]  .tool-shell .budget-tabs,
-  html[data-nav="right"] .tool-shell .budget-tabs { display: flex; }
+  html[data-nav="right"] .tool-shell .budget-tabs { display: inline-flex; }
   html[data-nav="left"]  .tool-shell > .app-scroll,
   html[data-nav="right"] .tool-shell > .app-scroll { padding-top: 0; }
 }
@@ -2644,7 +2651,9 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
 .dleg-stack .dleg-label { flex: none; }
 
 /* ── SBP dashboard nav → content spacing ────────────────────── */
-.budget-tabs { padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border-faint); }
+/* The pill has its own edge now, so the rule underneath it would be a
+   second one drawn a few pixels below the first. */
+.budget-tabs { margin-bottom: 16px; }
 
 /* ── Dark mode sidebar ───────────────────────────────────────── */
 [data-theme="dark"] .side-nav { background: rgba(14,8,32,.92); border-right-color: rgba(var(--grad-indigo-rgb),.1); }
