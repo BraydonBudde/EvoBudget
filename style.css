@@ -124,8 +124,9 @@ p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { .blob { animation: none !important; } }
 
 /* ── Layout shell ────────────────────────────────────────────────────── */
+:root { --shell-w: 1122px; }
 .app {
-  max-width: 1122px; margin: 0 auto;
+  max-width: var(--shell-w); margin: 0 auto;
   padding: 28px 24px 80px; min-height: 100vh;
 }
 @keyframes fade-in {
@@ -222,7 +223,7 @@ a.btn-back-round { text-decoration: none; }
    content because it is simply never in the nav's space. */
 .tool-shell {
   position: fixed; inset: 0; z-index: 5;
-  max-width: 1122px; margin: 0 auto; padding: 0;
+  max-width: var(--shell-w); margin: 0 auto; padding: 0;
   display: flex; flex-direction: column;
 }
 .app.tool-shell { padding: 0; }                         /* beat responsive .app padding */
@@ -2195,7 +2196,7 @@ html[data-nav="right"] .app.tool-shell,
 html[data-nav="right"] .view.tool-shell.is-active {
   display: grid;
   grid-template-rows: minmax(0, 1fr);
-  max-width: calc(1122px + var(--rail-w));
+  max-width: calc(var(--shell-w) + var(--rail-w));
 }
 html[data-nav="left"] .app.tool-shell,
 html[data-nav="left"] .view.tool-shell.is-active {
@@ -2499,7 +2500,7 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
   html[data-nav="left"]  .view.tool-shell.is-active,
   html[data-nav="right"] .app.tool-shell,
   html[data-nav="right"] .view.tool-shell.is-active {
-    display: flex; flex-direction: column; max-width: 1122px;
+    display: flex; flex-direction: column; max-width: var(--shell-w);
   }
   html[data-nav="left"]  .tool-shell > .nav-rail,
   html[data-nav="right"] .tool-shell > .nav-rail { display: none; }
@@ -2511,6 +2512,110 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
   html[data-nav="right"] .tool-shell .budget-tabs { display: flex; }
   html[data-nav="left"]  .tool-shell > .app-scroll,
   html[data-nav="right"] .tool-shell > .app-scroll { padding-top: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYOUT 3: "SLEEK"
+   ───────────────────────────────────────────────────────────────
+   A wider shell, one line of chrome, and a header that opens with
+   a greeting rather than a page title. Everything below the header
+   is Classic's own markup, untouched.
+
+   All of it hangs off [data-dash="sleek"] on <html>, so the other
+   two layouts are not affected by a single rule here.
+   ═══════════════════════════════════════════════════════════════ */
+html[data-dash="sleek"] { --shell-w: 1320px; }
+
+/* ── Brand, sections and tools on one line ───────────────────── */
+/* applyDashChrome moves the tab bar in here; flex-basis lets it take the
+   middle on a wide screen and drop to its own full-width line when the
+   row can no longer hold it, with no second breakpoint to maintain. */
+html[data-dash="sleek"] .tool-topbar { flex-wrap: wrap; gap: 10px; }
+html[data-dash="sleek"] .tool-topbar > .budget-tabs {
+  flex: 1 1 340px; width: auto; min-width: 0; margin: 0;
+}
+html[data-dash="sleek"] .tool-shell > .tool-sticky { padding-bottom: 12px; }
+
+/* ── The header ──────────────────────────────────────────────── */
+.sleek-head { margin: 0 0 18px; }
+.sleek-head-top {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.sleek-hello { min-width: 0; }
+.sleek-eyebrow {
+  margin: 0 0 2px; font-size: 12.5px; font-weight: 600;
+  color: var(--text-secondary); text-transform: capitalize;
+}
+.sleek-greeting {
+  margin: 0; font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 40px); font-weight: 600; line-height: 1.1;
+  letter-spacing: -.02em; color: var(--text-primary);
+}
+/* The heading's own controls, moved across from the row Classic built. */
+.sleek-actions {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-left: auto;
+}
+/* The period bar is given an order for the heading row Classic builds it
+   into. Brought across here it would sit behind the help icon, so the
+   group states its own order rather than inheriting that intent. */
+.sleek-head .sleek-actions > * { order: 0; }
+
+/* ── The strip: plan on the left, flow on the right ──────────── */
+.sleek-strip {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 28px; flex-wrap: wrap;
+  padding: 16px 20px; border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--border-faint);
+}
+.sleek-pills {
+  display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 10px 18px; flex: 1 1 420px; min-width: 0;
+}
+.sleek-pill { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.sleek-pill-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--text-faint);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sleek-pill-track {
+  height: 7px; border-radius: var(--radius-pill); overflow: hidden;
+  background: rgba(var(--grad-indigo-rgb), .12);
+}
+.sleek-pill-track span { display: block; height: 100%; border-radius: var(--radius-pill); }
+.sleek-pill-pct { font-size: 11.5px; font-weight: 700; color: var(--text-secondary); }
+
+.sleek-figs { display: flex; align-items: flex-start; gap: 26px; flex: 0 1 auto; }
+.sleek-fig { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.sleek-fig strong {
+  font-family: var(--font-display); font-size: clamp(19px, 2vw, 26px);
+  font-weight: 800; line-height: 1.1; letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+.sleek-fig span {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--text-faint);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Narrow ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .sleek-strip { gap: 16px; padding: 14px 16px; }
+  .sleek-pills { grid-template-columns: repeat(2, minmax(110px, 1fr)); flex-basis: 100%; }
+  .sleek-figs { gap: 18px; flex-basis: 100%; justify-content: space-between; }
+}
+@media (max-width: 760px) {
+  html[data-dash="sleek"] .tool-topbar > .tool-topbar-left  { order: 1; }
+  html[data-dash="sleek"] .tool-topbar > .tool-topbar-right { order: 2; margin-left: auto; }
+  html[data-dash="sleek"] .tool-topbar > .budget-tabs { order: 3; flex: 1 1 100%; }
+}
+@media (max-width: 560px) {
+  .sleek-head-top { align-items: flex-start; }
+  .sleek-actions { margin-left: 0; width: 100%; }
+  .sleek-figs { gap: 12px; }
 }
 
 /* ── SIDEBAR layout ──────────────────────────────────────────── */

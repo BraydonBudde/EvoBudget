@@ -645,6 +645,7 @@ const TRANSLATIONS = {
     nw_top_spend:'Top Spending', nw_top_spend_desc:'Your three biggest expense categories this period.',
     nav_position:'Navigation', nav_position_desc:'Choose where the section menu sits. On a phone it always runs across the top.', nav_pos_top:'Top', nav_pos_left:'Left', nav_pos_right:'Right',
     dashboard_layout:'Dashboard Layout', dashboard_layout_desc:'Choose how your Dashboard is designed and visualised.',
+    layout_3:'Sleek', greet_morning:'Good morning', greet_afternoon:'Good afternoon', greet_evening:'Good evening',
     layout_1:'Classic', layout_2:'Radial Pulse', layout_coming_soon:'More Coming Soon!',
     changes_autosaved:'✅ Changes are saved automatically.',
     rollover_desc:'Carry unspent money from your previous period into this one.',rollover_autocarry_label:'Auto-carry from previous period',rollover_autocarry_hint:'When you change the budget period, this amount is recalculated automatically from what was actually left over last time. Uncheck to set it manually instead.',toast_rollover_autoset:'Rollover auto-set to {0} from last period',
@@ -1209,6 +1210,7 @@ const TRANSLATIONS = {
     nw_top_spend:'Top-Ausgaben', nw_top_spend_desc:'Deine drei größten Ausgabenkategorien in diesem Zeitraum.',
     nav_position:'Navigation', nav_position_desc:'Wähle, wo das Abschnittsmenü sitzt. Auf dem Handy läuft es immer oben quer.', nav_pos_top:'Oben', nav_pos_left:'Links', nav_pos_right:'Rechts',
     dashboard_layout:'Dashboard-Layout',dashboard_layout_desc:'Wähle, wie dein Dashboard gestaltet und visualisiert wird.',
+    layout_3:'Sleek', greet_morning:'Guten Morgen', greet_afternoon:'Guten Tag', greet_evening:'Guten Abend',
     layout_1:'Klassisch',layout_2:'Radialer Puls',layout_coming_soon:'Bald mehr!',
     changes_autosaved:'✅ Änderungen werden automatisch gespeichert.',
     rollover_desc:'Überträgt nicht ausgegebenes Geld aus der vorherigen Periode.',rollover_autocarry_label:'Automatisch aus der vorherigen Periode übertragen',rollover_autocarry_hint:'Wenn du den Budgetzeitraum änderst, wird dieser Betrag automatisch aus dem tatsächlichen Restbetrag der letzten Periode neu berechnet. Deaktiviere dies, um ihn manuell festzulegen.',toast_rollover_autoset:'Übertrag automatisch auf {0} aus der letzten Periode gesetzt',
@@ -1751,6 +1753,7 @@ const TRANSLATIONS = {
     nw_top_spend:'Principales dépenses', nw_top_spend_desc:'Vos trois plus grosses catégories de dépenses sur la période.',
     nav_position:'Navigation', nav_position_desc:'Choisissez où se place le menu des sections. Sur téléphone, il reste toujours en haut.', nav_pos_top:'Haut', nav_pos_left:'Gauche', nav_pos_right:'Droite',
     dashboard_layout:'Disposition du tableau de bord',dashboard_layout_desc:"Choisissez comment votre tableau de bord est conçu et visualisé.",
+    layout_3:'Sleek', greet_morning:'Bonjour', greet_afternoon:'Bon après-midi', greet_evening:'Bonsoir',
     layout_1:'Classique',layout_2:'Pulsation radiale',layout_coming_soon:'Bientôt plus !',
     changes_autosaved:'✅ Les modifications sont enregistrées automatiquement.',
     rollover_desc:"Reporte l'argent non dépensé de la période précédente.",rollover_autocarry_label:'Report automatique depuis la période précédente',rollover_autocarry_hint:"Quand vous changez la période budgétaire, ce montant est recalculé automatiquement à partir de ce qu'il restait réellement la dernière fois. Décochez pour le définir manuellement.",toast_rollover_autoset:'Report automatiquement défini sur {0} depuis la dernière période',
@@ -2293,6 +2296,7 @@ const TRANSLATIONS = {
     nw_top_spend:'Mayores gastos', nw_top_spend_desc:'Tus tres mayores categorías de gasto de este período.',
     nav_position:'Navegación', nav_position_desc:'Elige dónde se sitúa el menú de secciones. En el móvil siempre va en la parte superior.', nav_pos_top:'Arriba', nav_pos_left:'Izquierda', nav_pos_right:'Derecha',
     dashboard_layout:'Diseño del panel',dashboard_layout_desc:'Elige cómo se diseña y visualiza tu panel.',
+    layout_3:'Sleek', greet_morning:'Buenos días', greet_afternoon:'Buenas tardes', greet_evening:'Buenas noches',
     layout_1:'Clásico',layout_2:'Pulso radial',layout_coming_soon:'¡Más próximamente!',
     changes_autosaved:'✅ Los cambios se guardan automáticamente.',
     rollover_desc:'Traspasa el dinero no gastado del período anterior.',rollover_autocarry_label:'Trasladar automáticamente del período anterior',rollover_autocarry_hint:'Cuando cambias el período de presupuesto, este importe se recalcula automáticamente según lo que realmente sobró la última vez. Desmarca para configurarlo manualmente.',toast_rollover_autoset:'Remanente ajustado automáticamente a {0} del período anterior',
@@ -2835,6 +2839,7 @@ const TRANSLATIONS = {
     nw_top_spend:'Spese principali', nw_top_spend_desc:'Le tue tre maggiori categorie di spesa del periodo.',
     nav_position:'Navigazione', nav_position_desc:'Scegli dove si trova il menu delle sezioni. Su telefono resta sempre in alto.', nav_pos_top:'Alto', nav_pos_left:'Sinistra', nav_pos_right:'Destra',
     dashboard_layout:'Layout della dashboard',dashboard_layout_desc:'Scegli come viene progettata e visualizzata la tua dashboard.',
+    layout_3:'Sleek', greet_morning:'Buongiorno', greet_afternoon:'Buon pomeriggio', greet_evening:'Buonasera',
     layout_1:'Classico',layout_2:'Impulso radiale',layout_coming_soon:'Presto altri!',
     changes_autosaved:'✅ Le modifiche vengono salvate automaticamente.',
     rollover_desc:'Riporta il denaro non speso dal periodo precedente.',rollover_autocarry_label:'Riporto automatico dal periodo precedente',rollover_autocarry_hint:"Quando cambi il periodo di budget, questo importo viene ricalcolato automaticamente in base a quanto è effettivamente avanzato l'ultima volta. Deseleziona per impostarlo manualmente.",toast_rollover_autoset:"Riporto impostato automaticamente su {0} dall'ultimo periodo",
@@ -3378,6 +3383,7 @@ const TRANSLATIONS = {
     nw_top_spend:'Największe wydatki', nw_top_spend_desc:'Trzy największe kategorie wydatków w tym okresie.',
     nav_position:'Nawigacja', nav_position_desc:'Wybierz, gdzie ma być menu sekcji. Na telefonie zawsze jest na górze.', nav_pos_top:'Góra', nav_pos_left:'Lewo', nav_pos_right:'Prawo',
     dashboard_layout:'Układ pulpitu',dashboard_layout_desc:'Wybierz, jak Twój pulpit jest zaprojektowany i wizualizowany.',
+    layout_3:'Sleek', greet_morning:'Dzień dobry', greet_afternoon:'Dzień dobry', greet_evening:'Dobry wieczór',
     layout_1:'Klasyczny',layout_2:'Puls promienisty',layout_coming_soon:'Wkrótce więcej!',
     changes_autosaved:'✅ Zmiany są zapisywane automatycznie.',
     rollover_desc:'Przenieś niewydane środki z poprzedniego okresu.',rollover_autocarry_label:'Automatyczne przenoszenie z poprzedniego okresu',rollover_autocarry_hint:'Gdy zmienisz okres budżetowy, ta kwota zostanie automatycznie przeliczona na podstawie tego, co faktycznie zostało ostatnim razem. Odznacz, aby ustawić ją ręcznie.',toast_rollover_autoset:'Przeniesienie automatycznie ustawione na {0} z poprzedniego okresu',
@@ -4012,7 +4018,9 @@ function initTheme(){applyTheme(localStorage.getItem('evobudget_theme')||'dark')
 // ── Dashboard Layout picker (Settings) ─────────────────────────────────
 const DASHBOARD_LAYOUT_ICONS = {
   1: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
-  2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>'
+  2: '<circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5"/>',
+  // A wide header band over a row of cards: the shape Sleek makes.
+  3: '<rect x="3" y="4" width="18" height="6" rx="1.6"/><rect x="3" y="13" width="8" height="7" rx="1.6"/><rect x="14" y="13" width="7" height="7" rx="1.6"/>'
 };
 // ── Navigation position: top (default) / left / right ─────────────────
 // Docked left or right, the rail is the whole chrome: the app title, the
@@ -4134,6 +4142,9 @@ function applyNavPosition() {
   document.documentElement.dataset.nav = getNavPosition();
   if (navRailDocks()) buildNavRail();
   else railRelease();
+  // Whether the tab bar can share the topbar's line depends on where the
+  // nav sits, so the two are decided together and in this order.
+  try { applyDashChrome(); } catch (e) {}
 }
 if (NAV_RAIL_MQ.addEventListener) NAV_RAIL_MQ.addEventListener('change', applyNavPosition);
 else if (NAV_RAIL_MQ.addListener) NAV_RAIL_MQ.addListener(applyNavPosition);
@@ -4589,17 +4600,13 @@ function openNavWidgetPicker() {
 }
 
 function dashboardLayoutCardHtml() {
-  if ((state.settings.dashboardLayout || 1) > 2) state.settings.dashboardLayout = 1;
+  if ((state.settings.dashboardLayout || 1) > 3) state.settings.dashboardLayout = 1;
   const cur = state.settings.dashboardLayout || 1;
-  const opts = [1, 2].map(n => `
+  const opts = [1, 2, 3].map(n => `
     <button class="layout-opt${cur === n ? ' is-active' : ''}" data-layout-val="${n}" type="button" title="${t('layout_' + n)}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${DASHBOARD_LAYOUT_ICONS[n]}</svg>
       ${t('layout_' + n)}
-    </button>`).join('') + `
-    <button class="layout-opt layout-opt--soon" type="button" disabled title="${t('layout_coming_soon')}">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>
-      ${t('layout_coming_soon')}
-    </button>`;
+    </button>`).join('');
   return `<div class="panel"><div class="panel-inner">
     <div class="settings-card-title">📊 ${t('dashboard_layout')}</div>
     <p class="settings-desc">${t('dashboard_layout_desc')}</p>
@@ -4615,6 +4622,7 @@ function wireDashboardLayoutPicker(el) {
       state.settings.dashboardLayout = n;
       saveState();
       trackEvent('dashboard_layout_changed', { layout: n });
+      applyDashChrome();
       el.querySelectorAll('.layout-opt[data-layout-val]').forEach(b => b.classList.toggle('is-active', b === btn));
       renderDashboard();
     });
@@ -4710,8 +4718,126 @@ function renderDashboard() {
   const layout = state.settings.dashboardLayout || 1;
   ({
     1: renderDashboardLayout1,
-    2: renderDashboardLayout2
+    2: renderDashboardLayout2,
+    3: renderDashboardLayout3
   }[layout] || renderDashboardLayout1)();
+}
+
+// ══ Layout 3: "Sleek" ═════════════════════════════════════════════════
+// Not a third copy of the dashboard. Sleek renders Classic and then
+// replaces its heading with a greeting and a strip of figures, so the cards
+// below can never drift out of step with the layout they were written for.
+// It also changes the chrome: with the sections along the top, brand, nav
+// and tools share one line and the shell is wider, which is where the
+// reference layout gets its composure.
+const SLEEK_LAYOUT = 3;
+function dashIsSleek() { return (state?.settings?.dashboardLayout || 1) === SLEEK_LAYOUT; }
+
+// Where the tab bar sits when it is not borrowed by the topbar.
+let _sleekTabsHome = null;
+
+function applyDashChrome() {
+  const sleek = dashIsSleek();
+  document.documentElement.dataset.dash = sleek ? 'sleek' : 'classic';
+  const tabs = document.getElementById('ubpTabs');
+  const bar = document.querySelector('.tool-shell .tool-topbar');
+  if (!tabs || !bar) return;
+  // Only while the sections actually run along the top. Docked to a side
+  // the whole topbar is hidden, so there is no line to join.
+  const onOneLine = sleek && getNavPosition() === 'top';
+  if (onOneLine) {
+    if (!_sleekTabsHome) _sleekTabsHome = { parent: tabs.parentNode, next: tabs.nextSibling };
+    if (tabs.parentNode !== bar) bar.insertBefore(tabs, bar.querySelector('.tool-topbar-right'));
+  } else if (_sleekTabsHome && tabs.parentNode !== _sleekTabsHome.parent) {
+    const before = (_sleekTabsHome.next && _sleekTabsHome.next.parentNode === _sleekTabsHome.parent)
+      ? _sleekTabsHome.next : null;
+    _sleekTabsHome.parent.insertBefore(tabs, before);
+  }
+}
+
+function sleekGreeting() {
+  const h = new Date().getHours();
+  return t(h < 12 ? 'greet_morning' : h < 18 ? 'greet_afternoon' : 'greet_evening');
+}
+
+function sleekDateLine() {
+  try {
+    return new Date().toLocaleDateString((state?.settings?.language) || 'en',
+      { weekday: 'long', day: 'numeric', month: 'long' });
+  } catch (e) { return ''; }
+}
+
+// Four slim bars, one per budget section, each reading actual against what
+// was planned. The same numbers the Cash Flow panel below works from, so a
+// glance at the top and a read of the panel cannot disagree.
+function sleekPillsHtml(act) {
+  const rows = [
+    { key: 'income',   label: t('tab_income'),   color: 'var(--income)' },
+    { key: 'expenses', label: t('tab_expenses'), color: 'var(--expense)' },
+    { key: 'bills',    label: t('tab_bills'),    color: 'var(--bill)' },
+    { key: 'savings',  label: t('tab_savings'),  color: '#3b82f6' }
+  ];
+  return rows.map(r => {
+    const budget = (state.budgets?.[r.key] || []);
+    const exp = budget.reduce((s, x) => s + (Number(x.expected) || 0), 0);
+    const done = Object.values(act[r.key] || {}).reduce((s, v) => s + (Number(v) || 0), 0);
+    const pct = exp > 0 ? Math.round(done / exp * 100) : (done > 0 ? 100 : 0);
+    return `<div class="sleek-pill">
+      <span class="sleek-pill-label">${esc(r.label)}</span>
+      <div class="sleek-pill-track"><span style="width:${Math.min(100, pct)}%;background:${r.color}"></span></div>
+      <span class="sleek-pill-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+// The period's flow, which the hero below deliberately does not repeat: the
+// hero answers what is left, these answer what moved.
+function sleekFigsHtml(sum) {
+  const figs = [
+    { label: t('total_income'),   value: sum.totalIncome,  color: 'var(--income)' },
+    { label: t('total_outgoing'), value: sum.totalOut,     color: 'var(--expense)' },
+    { label: t('total_savings'),  value: sum.totalSavings, color: '#3b82f6' }
+  ];
+  return figs.map(f => `<div class="sleek-fig">
+    <strong style="color:${f.color}">${fmt(f.value)}</strong>
+    <span>${esc(f.label)}</span>
+  </div>`).join('');
+}
+
+function renderDashboardLayout3() {
+  // Classic first: every card, already wired, with its own listeners intact.
+  renderDashboardLayout1();
+
+  const el = document.getElementById('bview-dashboard');
+  const head = el?.querySelector('.section-header');
+  if (!head) return;
+
+  const act = computeActuals(), sum = computeSummary(act);
+
+  const wrap = document.createElement('header');
+  wrap.className = 'sleek-head';
+  wrap.innerHTML = `
+    <div class="sleek-head-top">
+      <div class="sleek-hello">
+        <p class="sleek-eyebrow">${esc(sleekDateLine())}</p>
+        <h2 class="sleek-greeting">${esc(sleekGreeting())}</h2>
+      </div>
+      <div class="sleek-actions"></div>
+    </div>
+    <div class="sleek-strip">
+      <div class="sleek-pills">${sleekPillsHtml(act)}</div>
+      <div class="sleek-figs">${sleekFigsHtml(sum)}</div>
+    </div>`;
+
+  // The controls are MOVED out of the old heading, not rebuilt, so the
+  // period bar, the Add button and the help icon keep the listeners
+  // renderDashboardLayout1 just gave them.
+  const actions = wrap.querySelector('.sleek-actions');
+  head.querySelectorAll(':scope > *').forEach(node => {
+    if (node.classList.contains('section-title')) return;   // the greeting replaces it
+    actions.appendChild(node);
+  });
+  head.replaceWith(wrap);
 }
 
 function renderDashboardLayout1() {
