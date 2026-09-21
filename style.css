@@ -2428,23 +2428,29 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
   box-shadow: 0 0 0 2px rgba(var(--grad-indigo-rgb), .18);
 }
 
-/* ── Ezzo in the rail ─────────────────────────────────────────────
-   In the topbar this button expands sideways on hover, out of an
-   absolutely positioned inner. In a narrow rail that expansion has
-   nowhere to go and lands on the buttons beside it, so here it stays a
-   plain circle and only changes colour, exactly like its neighbours. */
-.nav-rail-tools .penny-nav-btn-inner {
+/* ── Ezzo, wherever the tools are gathered ───────────────────────
+   Left to itself this button expands sideways on hover, out of an
+   absolutely positioned inner. Inside a pill of other buttons that
+   expansion has nowhere to go and lands on its neighbours, so in both
+   the rail and the topbar's tools pill it stays a plain circle and only
+   changes colour, exactly as they do. */
+.nav-rail-tools .penny-nav-btn-inner,
+html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn-inner {
   position: static; width: 36px; height: 36px; padding: 0;
   justify-content: center; gap: 0;
   transition: color .15s, background .15s, border-color .15s;
 }
 .nav-rail-tools .penny-nav-btn:hover .penny-nav-btn-inner,
-.nav-rail-tools .penny-nav-btn:focus-visible .penny-nav-btn-inner {
+.nav-rail-tools .penny-nav-btn:focus-visible .penny-nav-btn-inner,
+html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:hover .penny-nav-btn-inner,
+html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:focus-visible .penny-nav-btn-inner {
   width: 36px; padding: 0; justify-content: center; gap: 0;
   color: var(--grad-indigo);
 }
-.nav-rail-tools .penny-nav-pill-text { display: none; }
-.nav-rail-tools .penny-nav-btn.penny-off .penny-nav-icon { animation: none; }
+.nav-rail-tools .penny-nav-pill-text,
+html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-pill-text { display: none; }
+.nav-rail-tools .penny-nav-btn.penny-off .penny-nav-icon,
+html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off .penny-nav-icon { animation: none; }
 
 /* ── The add / reorder / remove sheet ─────────────────────────── */
 .nw-mg { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 4px; }
@@ -2554,16 +2560,13 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right > .btn-icon,
 html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn-inner {
   border-color: transparent; background: transparent; box-shadow: none;
 }
-html[data-nav="top"] .tool-topbar > .tool-topbar-right > .btn-icon:hover {
+html[data-nav="top"] .tool-topbar > .tool-topbar-right > .btn-icon:hover,
+html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:hover .penny-nav-btn-inner {
   background: rgba(var(--grad-indigo-rgb), .1); color: var(--grad-indigo);
-}
-html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:hover .penny-nav-btn-inner,
-html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:focus-visible .penny-nav-btn-inner {
-  background: rgba(var(--grad-indigo-rgb), .1);
 }
 
 /* ── The header ──────────────────────────────────────────────── */
-.sleek-head { margin: 0 0 18px; }
+.sleek-head { margin: 0 0 16px; }
 .sleek-head-top {
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 16px; flex-wrap: wrap; margin-bottom: 16px;
@@ -2591,7 +2594,7 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:focus-visi
 /* ── The strip: plan on the left, flow on the right ──────────── */
 .sleek-strip {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 28px; flex-wrap: wrap;
+  gap: 28px; flex-wrap: wrap; margin: 0 0 16px;
   padding: 16px 20px; border-radius: var(--radius-lg);
   background: var(--surface-strong);
   border: 1px solid var(--border-faint);
@@ -3222,6 +3225,15 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   margin: 11px 0;
 }
 .nl-hero.is-negative .nl-value { color: var(--expense); }
+/* The decimals, tinted apart from the whole units. */
+.nl-dec { font-style: normal; }
+/* On the deep grounds a green this size is the loudest thing on screen and
+   reads as a status rather than as the figure it is. Plain white lets the
+   hero be a number again; going under still shouts, which it should. */
+[data-theme="dark"] .nl-hero:not(.is-negative) .nl-value,
+[data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-value { color: #fff; }
+[data-theme="dark"] .nl-hero:not(.is-negative) .nl-dec,
+[data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-dec { color: #93c5fd; }
 .nl-sub { font-size: 13.5px; color: var(--text-secondary); line-height: 1.55; }
 .nl-sub b { color: var(--text-primary); font-weight: 600; }
 .nl-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }

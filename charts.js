@@ -645,7 +645,7 @@ function animateSpendLineIn(container, isCurrent) {
 // the caller already used for the final string - so the animation can
 // never drift from, or briefly show different rounding/formatting than,
 // what the template already rendered.
-function animateCountUp(el, target, render, dur, isCurrent) {
+function animateCountUp(el, target, render, dur, isCurrent, asHtml) {
   if (!el || typeof target !== 'number' || !isFinite(target)) return;
   dur = dur || DASH_ANIM_DUR;
   const startTime = performance.now();
@@ -653,9 +653,10 @@ function animateCountUp(el, target, render, dur, isCurrent) {
     if (isCurrent && !isCurrent()) return; // a newer render has since taken over this element
     const p = Math.min(1, (now - startTime) / dur);
     const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = render(target * eased);
+    const put = v => { if (asHtml) el.innerHTML = render(v); else el.textContent = render(v); };
+    put(target * eased);
     if (p < 1) requestAnimationFrame(tick);
-    else el.textContent = render(target); // exact final value, no float drift
+    else put(target); // exact final value, no float drift
   }
   requestAnimationFrame(tick);
 }
@@ -673,6 +674,6 @@ function animateDashboardEntrance(container, countUps) {
   animateArcsIn(container, isCurrent);
   animatePieIn(container, isCurrent);
   animateSpendLineIn(container, isCurrent);
-  (countUps || []).forEach(c => { if (c && c.el) animateCountUp(c.el, c.target, c.render || fmt, undefined, isCurrent); });
+  (countUps || []).forEach(c => { if (c && c.el) animateCountUp(c.el, c.target, c.render || fmt, undefined, isCurrent, c.html); });
 }
 

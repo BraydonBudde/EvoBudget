@@ -4842,10 +4842,6 @@ function renderDashboardLayout3() {
         <h2 class="sleek-greeting">${esc(sleekGreeting())}</h2>
       </div>
       <div class="sleek-actions"></div>
-    </div>
-    <div class="sleek-strip">
-      <div class="sleek-pills">${sleekPillsHtml(act)}</div>
-      <div class="sleek-figs">${sleekFigsHtml(sum)}</div>
     </div>`;
 
   // The controls are MOVED out of the old heading, not rebuilt, so the
@@ -4857,6 +4853,15 @@ function renderDashboardLayout3() {
     actions.appendChild(node);
   });
   head.replaceWith(wrap);
+
+  // The strip sits under the hero, not over it: the leftover is the figure
+  // the screen is about, and anything above it competes for that job.
+  const strip = document.createElement('div');
+  strip.className = 'sleek-strip';
+  strip.innerHTML = `<div class="sleek-pills">${sleekPillsHtml(act)}</div>
+    <div class="sleek-figs">${sleekFigsHtml(sum)}</div>`;
+  const hero = el.querySelector('.nl-hero');
+  (hero || wrap).after(strip);
 }
 
 function renderDashboardLayout1() {
@@ -4955,7 +4960,8 @@ function renderDashboardLayout1() {
       formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
         { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
     animateDashboardEntrance(el, [
-      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), render: v => (sum.leftover < 0 ? '−' : '') + fmt(v) }
+      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), html: true,
+        render: v => (sum.leftover < 0 ? '\u2212' : '') + nlAmountHtml(v) }
     ]);
   });
   el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
@@ -5103,7 +5109,8 @@ function renderDashboardLayout2() {
           { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
     });
     animateDashboardEntrance(el, [
-      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), render: v => (sum.leftover < 0 ? '−' : '') + fmt(v) }
+      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), html: true,
+        render: v => (sum.leftover < 0 ? '\u2212' : '') + nlAmountHtml(v) }
     ]);
   });
   el.querySelectorAll('[data-btab]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.btab)));
@@ -7958,6 +7965,15 @@ function wireNlHero(scope) {
   });
 }
 
+// The decimals get their own span so a theme can tint them apart from the
+// whole units. fmt always formats en-US with two places, whichever side the
+// currency symbol lands on, so the last dot is always the decimal point.
+function nlAmountHtml(v) {
+  const s = fmt(Math.abs(Number(v) || 0));
+  const i = s.lastIndexOf('.');
+  return i < 0 ? esc(s) : esc(s.slice(0, i)) + '<i class="nl-dec">' + esc(s.slice(i)) + '</i>';
+}
+
 function nlHeroHtml(leftover, opts) {
   const o = opts || {};
   const neg = leftover < 0;
@@ -7985,7 +8001,7 @@ function nlHeroHtml(leftover, opts) {
   return `<div class="panel nl-hero${neg ? ' is-negative' : ''}">
     <div class="nl-left">
       <div class="nl-label">${t('dash_net_leftover')}</div>
-      <div class="nl-value leftover-value">${neg ? '\u2212' : ''}${fmt(Math.abs(leftover))}</div>
+      <div class="nl-value leftover-value">${neg ? '\u2212' : ''}${nlAmountHtml(leftover)}</div>
       ${sub ? `<div class="nl-sub">${sub}</div>` : ''}
       <div class="nl-meta">${pills}</div>
       <div class="nl-track"><i style="width:${p.pct}%"></i></div>
