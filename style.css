@@ -198,8 +198,8 @@ a.btn-back-round { text-decoration: none; }
 
 /* ── Budget tabs ─────────────────────────────────────────────────────── */
 .budget-tabs {
-  display: inline-flex; gap: 4px; align-items: center;
-  width: max-content; max-width: 100%;
+  display: flex; gap: 4px; align-items: center;
+  width: 100%;
   padding: 4px; border-radius: var(--radius-pill);
   background: var(--surface-strong);
   border: 1px solid var(--border-faint);
@@ -273,7 +273,7 @@ a.btn-back-round { text-decoration: none; }
   appearance: none; border: none; background: transparent;
   padding: 9px 15px; border-radius: var(--radius-pill); font-size: 13px;
   font-weight: 600; color: var(--text-secondary); white-space: nowrap;
-  flex: 0 0 auto; font-family: inherit; position: relative;
+  flex: 1 1 auto; font-family: inherit; position: relative;
   transition: color .2s var(--ease), background .2s var(--ease), box-shadow .22s var(--ease);
 }
 /* The underline the old flat tabs used is gone: the pill itself is now the
@@ -2508,7 +2508,7 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
   html[data-nav="left"]  .tool-shell > .tool-sticky,
   html[data-nav="right"] .tool-shell > .tool-sticky { display: block; }
   html[data-nav="left"]  .tool-shell .budget-tabs,
-  html[data-nav="right"] .tool-shell .budget-tabs { display: inline-flex; }
+  html[data-nav="right"] .tool-shell .budget-tabs { display: flex; }
   html[data-nav="left"]  .tool-shell > .app-scroll,
   html[data-nav="right"] .tool-shell > .app-scroll { padding-top: 0; }
 }
