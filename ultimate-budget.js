@@ -312,7 +312,9 @@ function processRecurring() {
         const fundRef=(state.sinkingFunds||[]).find(f=>f.id===tmpl.sourceId);
         if(fundRef){genAmount=Math.round((calcFund(fundRef).requiredMonthly||0)*100)/100;tmpl.amount=genAmount;}
       }
-      const already=state.transactions.some(tx=>tx.recurringId===tmpl.id&&tx.date===tmpl.nextDue);
+      // recurringDate catches the occurrence someone already paid early;
+      // tx.date catches the ordinary generated one.
+      const already=state.transactions.some(tx=>tx.recurringId===tmpl.id&&(tx.recurringDate||tx.date)===tmpl.nextDue);
       if(!already&&genAmount>0){
         const tx={id:uid(),date:tmpl.nextDue,type:tmpl.type,category:tmpl.category,amount:genAmount,description:tmpl.label,recurringId:tmpl.id,allocation:tmpl.allocation||null};
         if(tmpl.type==='sinking_fund'&&state.allocation?.enabled){const sb=(state.allocation.buckets||[]).find(b=>b.id==='save');if(sb)tx.allocation=sb.id;}
@@ -512,6 +514,34 @@ function calcFund(f) {
 }
 
 // ── Upcoming Events ───────────────────────────────────────────────────
+// ── Paying a scheduled automation by hand ────────────────────────────
+// An occurrence is identified by its template plus the day it falls on.
+// Paying early writes a transaction dated the day it was really paid and
+// tags it with recurringDate to say which occurrence it settles. That tag
+// is also what stops processRecurring generating the same one again when
+// its day comes round, so there is no second copy and no schedule to nudge.
+function autoOccurrenceAmount(tmpl) {
+  // A sinking-fund template's amount is derived from the fund, exactly as
+  // processRecurring derives it, so the row and the automatic transaction
+  // can never quote different figures.
+  if (tmpl.sourceType === 'sinking_fund') {
+    const f = (state.sinkingFunds || []).find(x => x.id === tmpl.sourceId);
+    if (f) return Math.round((calcFund(f).requiredMonthly || 0) * 100) / 100;
+  }
+  return Number(tmpl.amount) || 0;
+}
+// Automatically generated transactions carry no recurringDate - their own
+// date is the occurrence - so both kinds are matched the same way.
+function autoOccurrencePayments(tmplId, occDate) {
+  return (state.transactions || [])
+    .filter(tx => tx.recurringId === tmplId && (tx.recurringDate || tx.date) === occDate)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+}
+function autoOccurrencePaid(tmplId, occDate) {
+  return payRound2(autoOccurrencePayments(tmplId, occDate)
+    .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0));
+}
+
 function getUpcomingEvents(days, act) {
   const events=[], now=new Date();
   const end=new Date(now.getFullYear(),now.getMonth(),now.getDate()+days);
@@ -546,7 +576,15 @@ function getUpcomingEvents(days, act) {
     for(const tmpl of state.recurringTemplates||[]){
       if(!tmpl.enabled||tmpl.sourceType==='subscription'||tmpl.sourceType==='debt') continue;
       const isSink=tmpl.sourceType==='sinking_fund';
-      templateDatesInRange(tmpl,startISO,endISO).forEach(iso=>events.push({date:iso,label:tmpl.label||tmpl.category,type:isSink?'sinking':'auto',amount:tmpl.amount||0,color:isSink?'#06b6d4':'#8b5cf6',paid:false}));
+      // Carries srcId and occDate so it can be paid by hand, and reports
+      // what is left of it rather than the whole amount once part is in.
+      templateDatesInRange(tmpl,startISO,endISO).forEach(iso=>{
+        const exp=autoOccurrenceAmount(tmpl), done=autoOccurrencePaid(tmpl.id,iso);
+        events.push({date:iso,label:tmpl.label||tmpl.category,type:isSink?'sinking':'auto',
+                     amount:Math.max(0,payRound2(exp-done)),color:isSink?'#06b6d4':'#8b5cf6',
+                     paid:exp>0?done>=exp-0.005:done>0,srcId:tmpl.id,occDate:iso,
+                     paidSoFar:done,expected:exp});
+      });
     }
   }
   events.sort((a,b)=>a.date.localeCompare(b.date));
@@ -588,6 +626,7 @@ const TRANSLATIONS = {
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
+    auto_badge:'Auto', auto_badge_title:'Added automatically on this date. Pay it now to settle it early or by hand.',
     nw_calendar:'Calendar', nw_calendar_desc:'This month at a glance, with today and every due date marked.',
     nw_cal_due:'Due', nw_cal_spent:'Spent',
     nw_today:'Today', nw_today_desc:"Today's share of what is free, and what is left of it.", nw_today_sub:'spent {0} of {1} today',
@@ -1151,6 +1190,7 @@ const TRANSLATIONS = {
     currency:'Währung',rollover:'Übertrag',appearance:'Erscheinungsbild',
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
     light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    auto_badge:'Auto', auto_badge_title:'Wird an diesem Tag automatisch gebucht. Jetzt zahlen, um es früher oder von Hand zu erledigen.',
     nw_calendar:'Kalender', nw_calendar_desc:'Dieser Monat auf einen Blick, mit heute und jedem Fälligkeitstag.',
     nw_cal_due:'Fällig', nw_cal_spent:'Ausgegeben',
     nw_today:'Heute', nw_today_desc:'Der heutige Anteil am frei Verfügbaren, und was davon übrig ist.', nw_today_sub:'heute {0} von {1} ausgegeben',
@@ -1692,6 +1732,7 @@ const TRANSLATIONS = {
     currency:'Devise',rollover:'Report',appearance:'Apparence',
     language:'Langue',reset_data:'Réinitialiser les données',
     light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    auto_badge:'Auto', auto_badge_title:"Ajouté automatiquement à cette date. Payez maintenant pour le régler plus tôt ou à la main.",
     nw_calendar:'Calendrier', nw_calendar_desc:"Le mois en un coup d'oeil, avec aujourd'hui et chaque échéance.",
     nw_cal_due:'Dû', nw_cal_spent:'Dépensé',
     nw_today:"Aujourd'hui", nw_today_desc:"La part du jour sur ce qui est libre, et ce qu'il en reste.", nw_today_sub:"{0} dépensé sur {1} aujourd'hui",
@@ -2233,6 +2274,7 @@ const TRANSLATIONS = {
     currency:'Moneda',rollover:'Saldo anterior',appearance:'Apariencia',
     language:'Idioma',reset_data:'Restablecer datos',
     light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    auto_badge:'Auto', auto_badge_title:'Se añade automáticamente en esta fecha. Págalo ahora para saldarlo antes o a mano.',
     nw_calendar:'Calendario', nw_calendar_desc:'El mes de un vistazo, con hoy y cada fecha de vencimiento.',
     nw_cal_due:'Pendiente', nw_cal_spent:'Gastado',
     nw_today:'Hoy', nw_today_desc:'La parte de hoy de lo que está libre, y lo que queda de ella.', nw_today_sub:'hoy has gastado {0} de {1}',
@@ -2774,6 +2816,7 @@ const TRANSLATIONS = {
     currency:'Valuta',rollover:'Riporto',appearance:'Aspetto',
     language:'Lingua',reset_data:'Reimposta dati',
     light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    auto_badge:'Auto', auto_badge_title:'Viene aggiunto automaticamente in questa data. Pagalo ora per saldarlo prima o a mano.',
     nw_calendar:'Calendario', nw_calendar_desc:'Il mese a colpo d\u2019occhio, con oggi e ogni scadenza.',
     nw_cal_due:'Da pagare', nw_cal_spent:'Speso',
     nw_today:'Oggi', nw_today_desc:'La quota di oggi su quanto è libero, e cosa ne resta.', nw_today_sub:'oggi hai speso {0} di {1}',
@@ -3316,6 +3359,7 @@ const TRANSLATIONS = {
     currency:'Waluta',rollover:'Przeniesienie',appearance:'Wygląd',
     language:'Język',reset_data:'Zresetuj dane',
     light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    auto_badge:'Auto', auto_badge_title:'Zostanie dodane automatycznie w tym dniu. Zapłać teraz, aby rozliczyć wcześniej lub ręcznie.',
     nw_calendar:'Kalendarz', nw_calendar_desc:'Ten miesiąc na pierwszy rzut oka, z dziś i każdym terminem.',
     nw_cal_due:'Do zapłaty', nw_cal_spent:'Wydano',
     nw_today:'Dziś', nw_today_desc:'Dzisiejsza część wolnych środków i to, co z niej zostało.', nw_today_sub:'dziś wydano {0} z {1}',
@@ -4141,7 +4185,7 @@ const NAV_WIDGET_ICON = {
 // Each app names these differently: UBP's due items are bill/debt/
 // subscription, SBP's are the module keys bills/debt. The pay function
 // each one hands this to expects its own spelling.
-const NAV_WIDGET_PAYABLE = new Set(['bill', 'debt', 'subscription']);
+const NAV_WIDGET_PAYABLE = new Set(['bill', 'debt', 'subscription', 'auto', 'sinking']);
 
 function navWidgetList() {
   const v = state?.settings?.navWidgets;
@@ -4317,9 +4361,10 @@ function navWidgetBody(id) {
       const payable = next.id && NAV_WIDGET_PAYABLE.has(next.type);
       return `<div class="nw-row"><span class="nw-name">${esc(next.label)}</span>
           <strong class="nw-amt">${fmt(next.amount)}</strong></div>
-        <div class="nw-sub">${esc(formatDateShort(next.date))}</div>
+        <div class="nw-sub">${esc(formatDateShort(next.date))}${AUTO_KINDS.has(next.type)
+          ? ` <i class="nl-auto">${t('auto_badge')}</i>` : ''}</div>
         ${payable ? `<button class="nw-act" type="button" data-nw-pay="${esc(next.id)}"
-          data-nw-paytype="${esc(next.type)}">${t('pay_btn')}</button>` : ''}`;
+          data-nw-paytype="${esc(next.type)}" data-nw-paydate="${esc(next.occDate || next.date)}">${t('pay_btn')}</button>` : ''}`;
     }
     case 'period': {
       const p = nlDaysInPeriod();
@@ -4391,7 +4436,7 @@ function wireNavWidgets(host) {
     promptPay(b.dataset.nwPaytype, b.dataset.nwPay, () => {
       if (currentTab === 'dashboard') renderDashboard();
       renderNavWidgets();
-    })));
+    }, b.dataset.nwPaydate)));
   const note = host.querySelector('#wnNote');
   if (note) {
     // Saved as you type, but not on every keystroke. The queued redraw
@@ -5154,7 +5199,7 @@ function setRowPayments(row, ids) {
 // transactions, matched on the entity's name.
 function subOrDebtPaid(actuals, name) { return payRound2(Number(actuals[name]) || 0); }
 
-function payTarget(kind, id) {
+function payTarget(kind, id, occDate) {
   if (kind === 'bill') {
     const row = (state.budgets.bills || []).find(b => b.id === id);
     return row && { kind, id, row, label: row.category, category: row.category,
@@ -5170,9 +5215,22 @@ function payTarget(kind, id) {
     return sub && { kind, id, label: sub.name, category: sub.name,
                     txType: 'subscription', expected: monthlySubAmt(sub) || 0 };
   }
+  // One dated occurrence of a scheduled automation. Without a date there
+  // is nothing to settle, so it is refused rather than guessed at.
+  if (AUTO_KINDS.has(kind)) {
+    if (!occDate) return null;
+    const tmpl = (state.recurringTemplates || []).find(x => x.id === id);
+    return tmpl && { kind, id, occDate, tmpl, label: tmpl.label || tmpl.category,
+                     category: tmpl.category, txType: tmpl.type,
+                     expected: autoOccurrenceAmount(tmpl) };
+  }
   return null;
 }
 function targetPayments(tg) {
+  // An automation's payments are the ones tagged to that occurrence, not
+  // everything in the period sharing its category - two occurrences of the
+  // same template would otherwise each claim the other's payment.
+  if (tg.occDate) return autoOccurrencePayments(tg.id, tg.occDate);
   if (tg.row) return rowPayments(tg.row);
   const a = state.settings.periodStart || '', b = state.settings.periodEnd || '';
   return state.transactions
@@ -5204,8 +5262,8 @@ function removeTargetPayment(tg, txId, onDone) {
 // Bills reach this through the Budget tab checkbox; bills, debts and
 // subscriptions all reach it from the calendar and the dashboard hero.
 function promptMarkBillPaid(billId, onDone) { promptPay('bill', billId, onDone); }
-function promptPay(kind, id, onDone) {
-  const tg = payTarget(kind, id);
+function promptPay(kind, id, onDone, occDate) {
+  const tg = payTarget(kind, id, occDate);
   if (!tg) return;
   const paidSoFar = targetPaid(tg);
   const prefill = targetRemaining(tg) || tg.expected;
@@ -5281,6 +5339,16 @@ function promptPay(kind, id, onDone) {
     }
     const date = document.getElementById('billPaidDate')?.value || today();
     const tx = { id: uid(), date, type: tg.txType, category: tg.category, amount: amt, description: '' };
+    if (tg.occDate) {
+      // Tagged to the occurrence it settles, whatever day it was paid on.
+      tx.recurringId = tg.id;
+      tx.recurringDate = tg.occDate;
+      tx.description = tg.label || '';
+      if (tg.tmpl && tg.tmpl.allocation) tx.allocation = tg.tmpl.allocation;
+      // A fund contribution has to move the fund, the same way the
+      // automatic one would have.
+      applySinkingFundDelta(tx, +1);
+    }
     state.transactions.push(tx);
     trialUse('transaction');
     if (tg.row) setRowPayments(tg.row, rowPayTxIds(tg.row).concat(tx.id));
@@ -6390,7 +6458,14 @@ function renderCalendar(){
     for(const tmpl of state.recurringTemplates||[]){
       if(!tmpl.enabled||tmpl.sourceType==='subscription'||tmpl.sourceType==='debt') continue;
       const isSink=tmpl.sourceType==='sinking_fund';
-      templateDatesInRange(tmpl,mStart,mEnd).forEach(iso=>{const d=parseInt(iso.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:isSink?'sinking':'auto',label:tmpl.label||tmpl.category,amount:tmpl.amount||0,color:isSink?'#06b6d4':'#8b5cf6'});});
+      templateDatesInRange(tmpl,mStart,mEnd).forEach(iso=>{
+        const d=parseInt(iso.split('-')[2]); if(d<1||d>daysInMo) return;
+        const exp=autoOccurrenceAmount(tmpl), done=autoOccurrencePaid(tmpl.id,iso);
+        addEv(d,{type:isSink?'sinking':'auto',label:tmpl.label||tmpl.category,
+                 amount:Math.max(0,payRound2(exp-done)),color:isSink?'#06b6d4':'#8b5cf6',
+                 id:tmpl.id,occDate:iso,part:done,expected:exp,
+                 settled:exp>0?done>=exp-0.005:done>0});
+      });
     }
   }
 
@@ -6416,6 +6491,12 @@ function renderCalendar(){
       const status=ev.settled?`<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`
         :ev.part>0?`<span class="cal-ev-status is-part">${tf('nl_partial_of',fmt(ev.part),fmt(ev.expected))}</span>`:'';
       return `${status}<button class="pay-btn" type="button" data-cal-pay="${ev.type}" data-cal-id="${ev.id}">${t('pay_btn')}</button>`;
+    }
+    // A scheduled automation can be settled by hand too, early or instead.
+    if(AUTO_KINDS.has(ev.type)&&ev.id&&ev.occDate){
+      if(ev.settled) return `<span class="cal-ev-status is-paid">${t('cal_paid')}</span>`;
+      const status=ev.part>0?`<span class="cal-ev-status is-part">${tf('nl_partial_of',fmt(ev.part),fmt(ev.expected))}</span>`:'';
+      return `${status}<button class="pay-btn" type="button" data-cal-pay="${ev.type}" data-cal-id="${ev.id}" data-cal-date="${esc(ev.occDate)}">${t('pay_btn')}</button>`;
     }
     return '';
   };
@@ -6482,7 +6563,7 @@ function renderCalendar(){
   }));
   // Debts, subscriptions and part-paid bills: one button, same modal.
   el.querySelectorAll('[data-cal-pay]').forEach(b=>b.addEventListener('click',()=>{
-    promptPay(b.dataset.calPay,b.dataset.calId,()=>renderCalendar());
+    promptPay(b.dataset.calPay,b.dataset.calId,()=>renderCalendar(),b.dataset.calDate);
   }));
   document.getElementById('calPrev')?.addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}calSelectedDay=null;renderCalendar();});
   document.getElementById('calEmptyAdd')?.addEventListener('click',()=>switchTab('transactions'));
@@ -7657,7 +7738,8 @@ function nlCommitted() {
   const items = events
     .filter(ev => !ev.paid && (Number(ev.amount) || 0) > 0 && (!end || ev.date <= end))
     .map(ev => ({ label: ev.label, date: ev.date, amount: Number(ev.amount) || 0,
-                  type: ev.type, id: ev.srcId, paidSoFar: ev.paidSoFar || 0, expected: ev.expected || 0 }));
+                  type: ev.type, id: ev.srcId, occDate: ev.occDate || ev.date,
+                  paidSoFar: ev.paidSoFar || 0, expected: ev.expected || 0 }));
   return { total: items.reduce((s, i) => s + i.amount, 0), items: items };
 }
 
@@ -7691,18 +7773,21 @@ function nlYoursPanelHtml(leftover) {
     </div>` : ''}`;
 }
 
-const PAYABLE_KINDS = new Set(['bill', 'debt', 'subscription']);
+const PAYABLE_KINDS = new Set(['bill', 'debt', 'subscription', 'auto', 'sinking']);
+const AUTO_KINDS = new Set(['auto', 'sinking']);
 
 // One row per payment still owed. The list is shown only when asked for,
 // so the panel stays quiet by default.
 function nlDueRowHtml(i) {
   const payable = i.id && PAYABLE_KINDS.has(i.type);
+  const auto = AUTO_KINDS.has(i.type);
   // The paid-so-far note is its own grid row rather than part of the label
   // cell, so it has the full width to sit on and never has to wrap.
   return `<div class="nl-due-row${payable ? ' nl-due-row--pay' : ''}">
-    <span>${esc(i.label)}</span>
+    <span><i class="nl-lbl">${esc(i.label)}</i>${auto
+      ? `<i class="nl-auto" title="${esc(t('auto_badge_title'))}">${t('auto_badge')}</i>` : ''}</span>
     <time>${esc(formatDateShort(i.date))}</time><b>${fmt(i.amount)}</b>
-    ${payable ? `<button class="pay-btn" type="button" data-pay-type="${esc(i.type)}" data-pay-id="${esc(i.id)}">${t('pay_btn')}</button>` : ''}
+    ${payable ? `<button class="pay-btn" type="button" data-pay-type="${esc(i.type)}" data-pay-id="${esc(i.id)}" data-pay-date="${esc(i.occDate || i.date)}">${t('pay_btn')}</button>` : ''}
     ${i.paidSoFar > 0 ? `<em class="nl-part">${tf('nl_partial_of', fmt(i.paidSoFar), fmt(i.expected))}</em>` : ''}
   </div>`;
 }
@@ -7717,7 +7802,7 @@ function wireNlHero(scope) {
   });
   scope.querySelectorAll('.pay-btn[data-pay-id]').forEach(btn => {
     btn.addEventListener('click', () =>
-      promptPay(btn.dataset.payType, btn.dataset.payId, () => renderDashboard()));
+      promptPay(btn.dataset.payType, btn.dataset.payId, () => renderDashboard(), btn.dataset.payDate));
   });
 }
 

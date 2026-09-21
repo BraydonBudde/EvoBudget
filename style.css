@@ -3146,7 +3146,20 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 /* The paid-so-far note spans the row's full width on a line of its own, so
    it never breaks in two however narrow the label column gets. nowrap is the
    backstop for absurd amounts; at any real figure it has room to spare. */
-.nl-due-row > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The label cell now holds the name and, for a scheduled item, a badge
+   beside it. The ellipsis moves onto the name itself so the badge is never
+   the part that gets cut off. */
+.nl-due-row > span { min-width: 0; display: flex; align-items: baseline; gap: 6px; }
+.nl-lbl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal; }
+.nl-auto {
+  flex-shrink: 0; font-style: normal; font-size: 9.5px; font-weight: 800;
+  letter-spacing: .06em; text-transform: uppercase; line-height: 1.6;
+  padding: 0 6px; border-radius: var(--radius-pill);
+  color: var(--grad-indigo); background: rgba(var(--grad-indigo-rgb), .12);
+  border: 1px solid rgba(var(--grad-indigo-rgb), .22);
+}
+/* In the widget it sits on the date line, where there is less room. */
+.nw-sub .nl-auto { font-size: 9px; padding: 0 5px; }
 .nl-part {
   grid-column: 1 / -1; display: block; font-style: normal; font-size: 11px;
   color: var(--text-faint); margin: 1px 0 0;

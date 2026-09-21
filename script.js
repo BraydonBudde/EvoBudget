@@ -5441,7 +5441,7 @@ function nlDueRowHtml(i) {
   // The paid-so-far note is its own grid row rather than part of the label
   // cell, so it has the full width to sit on and never has to wrap.
   return `<div class="nl-due-row nl-due-row--pay">
-    <span>${esc(i.label)}</span>
+    <span><i class="nl-lbl">${esc(i.label)}</i></span>
     <time>${esc(formatDateShort(i.date))}</time><b>${fmt(i.amount)}</b>
     <button class="pay-btn" type="button" data-pay-type="${esc(i.type)}" data-pay-id="${esc(i.id)}">${t('pay_btn')}</button>
     ${i.paidSoFar > 0 ? `<em class="nl-part">${tf('nl_partial_of', fmt(i.paidSoFar), fmt(i.expected))}</em>` : ''}
