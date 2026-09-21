@@ -2345,6 +2345,93 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
   background: rgba(var(--grad-indigo-rgb), .05);
 }
 
+
+/* ── Mini calendar ────────────────────────────────────────────── */
+.nw-cal-month {
+  font-size: 12px; font-weight: 700; color: var(--text-primary);
+  text-align: center; text-transform: capitalize;
+}
+.nw-cal-dow, .nw-cal-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+}
+.nw-cal-dow {
+  font-size: 9px; font-weight: 700; color: var(--text-faint);
+  text-transform: uppercase; text-align: center; margin-bottom: 1px;
+}
+.nw-cal-day {
+  position: relative; aspect-ratio: 1; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 10.5px; font-weight: 600; color: var(--text-secondary);
+  border-radius: 6px;
+}
+/* A dot under the date rather than a coloured cell, so today's ring is
+   never competing with a status for the same pixels. */
+.nw-cal-day.has-due::after, .nw-cal-day.has-spend::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%;
+  width: 3px; height: 3px; margin-left: -1.5px; border-radius: 50%;
+}
+.nw-cal-day.has-due::after { background: var(--bill); }
+.nw-cal-day.has-spend::after { background: var(--text-faint); opacity: .7; }
+.nw-cal-day.is-today {
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+  color: #fff; font-weight: 800;
+}
+.nw-cal-day.is-today.has-due::after, .nw-cal-day.is-today.has-spend::after {
+  background: #fff; opacity: .95;
+}
+.nw-cal-key {
+  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  font-size: 10px; color: var(--text-faint);
+}
+.nw-cal-key i {
+  width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+  display: inline-block; margin-left: 4px;
+}
+.nw-cal-key i:first-child { margin-left: 0; }
+.nw-cal-key .k-due { background: var(--bill); }
+.nw-cal-key .k-spend { background: var(--text-faint); opacity: .7; }
+
+/* ── Over-spent today reads as a warning, not as progress ─────── */
+.nw-bar.is-over span { background: linear-gradient(90deg, var(--expense), var(--bill)); }
+
+/* ── Notes ────────────────────────────────────────────────────── */
+.nw-note {
+  width: 100%; resize: vertical; min-height: 66px; max-height: 190px;
+  font-family: inherit; font-size: 12.5px; line-height: 1.45; padding: 8px 9px;
+}
+.nw-note-saved { color: var(--income); font-weight: 600; }
+
+/* ── Dragging a widget into place ─────────────────────────────── */
+.nw-mg-row[draggable="true"] { cursor: grab; }
+.nw-mg-row[draggable="true"]:active { cursor: grabbing; }
+.nw-mg-grip {
+  flex-shrink: 0; letter-spacing: -2px; font-size: 13px; line-height: 1;
+  color: var(--text-faint); opacity: .6; user-select: none;
+}
+.nw-mg-row.is-dragging { opacity: .45; }
+.nw-mg-row.is-over {
+  border-color: var(--grad-indigo);
+  box-shadow: 0 0 0 2px rgba(var(--grad-indigo-rgb), .18);
+}
+
+/* ── Ezzo in the rail ─────────────────────────────────────────────
+   In the topbar this button expands sideways on hover, out of an
+   absolutely positioned inner. In a narrow rail that expansion has
+   nowhere to go and lands on the buttons beside it, so here it stays a
+   plain circle and only changes colour, exactly like its neighbours. */
+.nav-rail-tools .penny-nav-btn-inner {
+  position: static; width: 36px; height: 36px; padding: 0;
+  justify-content: center; gap: 0;
+  transition: color .15s, background .15s, border-color .15s;
+}
+.nav-rail-tools .penny-nav-btn:hover .penny-nav-btn-inner,
+.nav-rail-tools .penny-nav-btn:focus-visible .penny-nav-btn-inner {
+  width: 36px; padding: 0; justify-content: center; gap: 0;
+  color: var(--grad-indigo);
+}
+.nav-rail-tools .penny-nav-pill-text { display: none; }
+.nav-rail-tools .penny-nav-btn.penny-off .penny-nav-icon { animation: none; }
+
 /* ── The add / reorder / remove sheet ─────────────────────────── */
 .nw-mg { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 4px; }
 .nw-mg-row {

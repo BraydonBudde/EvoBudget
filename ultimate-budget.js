@@ -588,6 +588,12 @@ const TRANSLATIONS = {
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
     light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
+    nw_calendar:'Calendar', nw_calendar_desc:'This month at a glance, with today and every due date marked.',
+    nw_cal_due:'Due', nw_cal_spent:'Spent',
+    nw_today:'Today', nw_today_desc:"Today's share of what is free, and what is left of it.", nw_today_sub:'spent {0} of {1} today',
+    nw_forecast:'Forecast', nw_forecast_desc:'Where this period lands if the rest of it looks like the start.', nw_forecast_sub:'at {0}/day, day {1} of {2}',
+    nw_vs_last:'Vs Last Period', nw_vs_last_desc:'Spending at this same point last period, up or down.', nw_vs_last_sub:'{0} vs {1} by day {2}', nw_vs_last_none:'Nothing to compare with yet.',
+    nw_notes:'Notes', nw_notes_desc:'Somewhere to put a thought. It never touches your numbers.', nw_notes_ph:'Cancel the gym, check the water bill\u2026', nw_notes_saved:'Saved',
     nw_head:'Widgets', nw_title:'Sidebar widgets', nw_edit:'Edit', nw_add_btn:'Add widget', nw_add:'Add', nw_done:'Done',
     nw_available:'Available', nw_none_yet:'No widgets yet.', nw_all_added:'Every widget is already in your sidebar.',
     nw_full:'Remove one to add another. {0} is the maximum.', nw_pick_desc:'Pick up to {0}. They appear in the order below.',
@@ -1145,6 +1151,12 @@ const TRANSLATIONS = {
     currency:'Währung',rollover:'Übertrag',appearance:'Erscheinungsbild',
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
     light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_calendar:'Kalender', nw_calendar_desc:'Dieser Monat auf einen Blick, mit heute und jedem Fälligkeitstag.',
+    nw_cal_due:'Fällig', nw_cal_spent:'Ausgegeben',
+    nw_today:'Heute', nw_today_desc:'Der heutige Anteil am frei Verfügbaren, und was davon übrig ist.', nw_today_sub:'heute {0} von {1} ausgegeben',
+    nw_forecast:'Prognose', nw_forecast_desc:'Wo dieser Zeitraum landet, wenn es so weitergeht wie bisher.', nw_forecast_sub:'{0}/Tag, Tag {1} von {2}',
+    nw_vs_last:'Vs. Vorperiode', nw_vs_last_desc:'Ausgaben zum gleichen Zeitpunkt der Vorperiode, hoch oder runter.', nw_vs_last_sub:'{0} statt {1} bis Tag {2}', nw_vs_last_none:'Noch nichts zum Vergleichen.',
+    nw_notes:'Notizen', nw_notes_desc:'Platz für einen Gedanken. Berührt deine Zahlen nie.', nw_notes_ph:'Fitnessstudio kündigen, Wasserrechnung prüfen\u2026', nw_notes_saved:'Gespeichert',
     nw_head:'Widgets', nw_title:'Seitenleisten-Widgets', nw_edit:'Bearbeiten', nw_add_btn:'Widget hinzufügen', nw_add:'Hinzufügen', nw_done:'Fertig',
     nw_available:'Verfügbar', nw_none_yet:'Noch keine Widgets.', nw_all_added:'Alle Widgets sind bereits in deiner Seitenleiste.',
     nw_full:'Entferne eines, um ein anderes hinzuzufügen. {0} ist das Maximum.', nw_pick_desc:'Wähle bis zu {0}. Sie erscheinen in der Reihenfolge unten.',
@@ -1680,6 +1692,12 @@ const TRANSLATIONS = {
     currency:'Devise',rollover:'Report',appearance:'Apparence',
     language:'Langue',reset_data:'Réinitialiser les données',
     light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_calendar:'Calendrier', nw_calendar_desc:"Le mois en un coup d'oeil, avec aujourd'hui et chaque échéance.",
+    nw_cal_due:'Dû', nw_cal_spent:'Dépensé',
+    nw_today:"Aujourd'hui", nw_today_desc:"La part du jour sur ce qui est libre, et ce qu'il en reste.", nw_today_sub:"{0} dépensé sur {1} aujourd'hui",
+    nw_forecast:'Prévision', nw_forecast_desc:'Où finit la période si la suite ressemble au début.', nw_forecast_sub:'{0}/jour, jour {1} sur {2}',
+    nw_vs_last:'Vs période précédente', nw_vs_last_desc:'Vos dépenses au même point de la période précédente.', nw_vs_last_sub:'{0} contre {1} au jour {2}', nw_vs_last_none:'Rien à comparer pour le moment.',
+    nw_notes:'Notes', nw_notes_desc:'Un endroit pour une idée. Ne touche jamais à vos chiffres.', nw_notes_ph:"Résilier la salle de sport, vérifier la facture d'eau\u2026", nw_notes_saved:'Enregistré',
     nw_head:'Widgets', nw_title:'Widgets de la barre latérale', nw_edit:'Modifier', nw_add_btn:'Ajouter un widget', nw_add:'Ajouter', nw_done:'Terminé',
     nw_available:'Disponibles', nw_none_yet:'Aucun widget pour le moment.', nw_all_added:'Tous les widgets sont déjà dans votre barre latérale.',
     nw_full:'Retirez-en un pour en ajouter un autre. {0} au maximum.', nw_pick_desc:"Choisissez-en jusqu'à {0}. Ils apparaissent dans l'ordre ci-dessous.",
@@ -2215,6 +2233,12 @@ const TRANSLATIONS = {
     currency:'Moneda',rollover:'Saldo anterior',appearance:'Apariencia',
     language:'Idioma',reset_data:'Restablecer datos',
     light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_calendar:'Calendario', nw_calendar_desc:'El mes de un vistazo, con hoy y cada fecha de vencimiento.',
+    nw_cal_due:'Pendiente', nw_cal_spent:'Gastado',
+    nw_today:'Hoy', nw_today_desc:'La parte de hoy de lo que está libre, y lo que queda de ella.', nw_today_sub:'hoy has gastado {0} de {1}',
+    nw_forecast:'Previsión', nw_forecast_desc:'Dónde acaba el período si sigue como ha empezado.', nw_forecast_sub:'{0}/día, día {1} de {2}',
+    nw_vs_last:'Vs período anterior', nw_vs_last_desc:'Tu gasto en el mismo punto del período anterior.', nw_vs_last_sub:'{0} frente a {1} en el día {2}', nw_vs_last_none:'Todavía no hay nada que comparar.',
+    nw_notes:'Notas', nw_notes_desc:'Un sitio para una idea. Nunca toca tus números.', nw_notes_ph:'Cancelar el gimnasio, revisar el agua\u2026', nw_notes_saved:'Guardado',
     nw_head:'Widgets', nw_title:'Widgets de la barra lateral', nw_edit:'Editar', nw_add_btn:'Añadir widget', nw_add:'Añadir', nw_done:'Listo',
     nw_available:'Disponibles', nw_none_yet:'Aún no hay widgets.', nw_all_added:'Todos los widgets ya están en tu barra lateral.',
     nw_full:'Quita uno para añadir otro. {0} es el máximo.', nw_pick_desc:'Elige hasta {0}. Aparecen en el orden de abajo.',
@@ -2750,6 +2774,12 @@ const TRANSLATIONS = {
     currency:'Valuta',rollover:'Riporto',appearance:'Aspetto',
     language:'Lingua',reset_data:'Reimposta dati',
     light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_calendar:'Calendario', nw_calendar_desc:'Il mese a colpo d\u2019occhio, con oggi e ogni scadenza.',
+    nw_cal_due:'Da pagare', nw_cal_spent:'Speso',
+    nw_today:'Oggi', nw_today_desc:'La quota di oggi su quanto è libero, e cosa ne resta.', nw_today_sub:'oggi hai speso {0} di {1}',
+    nw_forecast:'Previsione', nw_forecast_desc:'Dove finisce il periodo se prosegue come è iniziato.', nw_forecast_sub:'{0}/giorno, giorno {1} di {2}',
+    nw_vs_last:'Vs periodo scorso', nw_vs_last_desc:'La tua spesa allo stesso punto del periodo scorso.', nw_vs_last_sub:'{0} contro {1} al giorno {2}', nw_vs_last_none:'Ancora niente da confrontare.',
+    nw_notes:'Note', nw_notes_desc:'Un posto per un pensiero. Non tocca mai i tuoi numeri.', nw_notes_ph:'Disdire la palestra, controllare la bolletta\u2026', nw_notes_saved:'Salvato',
     nw_head:'Widget', nw_title:'Widget della barra laterale', nw_edit:'Modifica', nw_add_btn:'Aggiungi widget', nw_add:'Aggiungi', nw_done:'Fatto',
     nw_available:'Disponibili', nw_none_yet:'Ancora nessun widget.', nw_all_added:'Tutti i widget sono già nella barra laterale.',
     nw_full:'Rimuovine uno per aggiungerne un altro. {0} è il massimo.', nw_pick_desc:"Scegline fino a {0}. Appaiono nell'ordine qui sotto.",
@@ -3286,6 +3316,12 @@ const TRANSLATIONS = {
     currency:'Waluta',rollover:'Przeniesienie',appearance:'Wygląd',
     language:'Język',reset_data:'Zresetuj dane',
     light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    nw_calendar:'Kalendarz', nw_calendar_desc:'Ten miesiąc na pierwszy rzut oka, z dziś i każdym terminem.',
+    nw_cal_due:'Do zapłaty', nw_cal_spent:'Wydano',
+    nw_today:'Dziś', nw_today_desc:'Dzisiejsza część wolnych środków i to, co z niej zostało.', nw_today_sub:'dziś wydano {0} z {1}',
+    nw_forecast:'Prognoza', nw_forecast_desc:'Gdzie skończy się okres, jeśli dalej pójdzie jak dotąd.', nw_forecast_sub:'{0}/dzień, dzień {1} z {2}',
+    nw_vs_last:'Vs poprzedni okres', nw_vs_last_desc:'Twoje wydatki w tym samym momencie poprzedniego okresu.', nw_vs_last_sub:'{0} wobec {1} do dnia {2}', nw_vs_last_none:'Nie ma jeszcze czego porównywać.',
+    nw_notes:'Notatki', nw_notes_desc:'Miejsce na myśl. Nigdy nie dotyka Twoich liczb.', nw_notes_ph:'Wypowiedzieć siłownię, sprawdzić rachunek za wodę\u2026', nw_notes_saved:'Zapisano',
     nw_head:'Widżety', nw_title:'Widżety paska bocznego', nw_edit:'Edytuj', nw_add_btn:'Dodaj widżet', nw_add:'Dodaj', nw_done:'Gotowe',
     nw_available:'Dostępne', nw_none_yet:'Brak widżetów.', nw_all_added:'Wszystkie widżety są już na pasku bocznym.',
     nw_full:'Usuń jeden, aby dodać inny. {0} to maksimum.', nw_pick_desc:'Wybierz maksymalnie {0}. Pojawią się w kolejności poniżej.',
@@ -4091,11 +4127,16 @@ function wireNavPositionPicker(el) {
 // Up to three, chosen and ordered by the user. Each one reads the same
 // helpers the dashboard reads, so a widget can never disagree with the
 // panel it is sitting next to.
-const NAV_WIDGET_MAX = 3;
-const NAV_WIDGETS = ['quick_spend', 'free_to_spend', 'next_due', 'period', 'top_spend'];
+const NAV_WIDGET_MAX = 5;
+// Ordered as they read in the picker: the two you act on, then the ones
+// that tell you something, then the one that just holds a thought.
+const NAV_WIDGETS = ['quick_spend', 'today', 'next_due', 'calendar', 'free_to_spend',
+                     'forecast', 'vs_last', 'top_spend', 'period', 'notes'];
 const NAV_WIDGET_ICON = {
-  quick_spend: '⚡', free_to_spend: '💸', next_due: '📌',
-  period: '📆', top_spend: '📊'
+  quick_spend: '⚡', today: '☀️', next_due: '📌',
+  calendar: '📅', free_to_spend: '💸', forecast: '🔮',
+  vs_last: '⚖️', top_spend: '📊', period: '📆',
+  notes: '🗒️'
 };
 // Each app names these differently: UBP's due items are bill/debt/
 // subscription, SBP's are the module keys bills/debt. The pay function
@@ -4117,8 +4158,151 @@ function navWidgetSave(list) {
   renderNavWidgets();
 }
 
+// ── Shared date and spend helpers for the widgets ────────────────────
+// Deliberately local rather than leaning on each app's own period maths,
+// because only one of the two has computePrevSummary - and a widget that
+// quietly means something different in Simple than in Ultimate is worse
+// than no widget. NL_SPEND_TYPES is each app's own definition of "spending",
+// so the totals here always agree with the hero's.
+function navIso(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
+         '-' + String(d.getDate()).padStart(2, '0');
+}
+function navToday() { return navIso(new Date()); }
+
+function navDateAdd(iso, days) {
+  const d = new Date(iso + 'T00:00:00');
+  if (isNaN(d)) return iso;
+  d.setDate(d.getDate() + days);
+  return navIso(d);
+}
+
+// The current budget period, or the one of equal length directly before it.
+function navPeriodBounds(previous) {
+  const ps = state?.settings?.periodStart, pe = state?.settings?.periodEnd;
+  if (!ps || !pe) return null;
+  const s = new Date(ps + 'T00:00:00'), e = new Date(pe + 'T00:00:00');
+  if (isNaN(s) || isNaN(e) || e < s) return null;
+  if (!previous) return { start: ps, end: pe };
+  const span = Math.round((e - s) / 86400000);
+  const end = navDateAdd(ps, -1);
+  return { start: navDateAdd(end, -span), end: end };
+}
+
+function navSpendBetween(start, end) {
+  if (!start || !end) return 0;
+  return (state.transactions || []).reduce((sum, tx) =>
+    (tx.date >= start && tx.date <= end && NL_SPEND_TYPES.indexOf(tx.type) !== -1)
+      ? sum + (Number(tx.amount) || 0) : sum, 0);
+}
+
+function navLang() { return (state?.settings?.language) || 'en'; }
+
+// Monday-first initials, taken from the browser rather than from twenty more
+// translation keys that would then have to be kept in step.
+function navWeekdayInitials() {
+  const out = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(Date.UTC(2024, 0, 1 + i));   // 1 Jan 2024 was a Monday
+    let s = '';
+    try { s = d.toLocaleDateString(navLang(), { weekday: 'narrow', timeZone: 'UTC' }); }
+    catch (e) { s = 'MTWTFSS'[i]; }
+    out.push(s);
+  }
+  return out;
+}
+
 function navWidgetBody(id) {
   switch (id) {
+    // A glanceable month: today ringed, a warm dot on a day something is
+    // still owed, a faint one on a day money actually moved.
+    case 'calendar': {
+      const now = new Date(), y = now.getFullYear(), m = now.getMonth();
+      const days = new Date(y, m + 1, 0).getDate();
+      const lead = (new Date(y, m, 1).getDay() + 6) % 7;      // Monday first
+      const cell = d => y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      const due = new Set(nlCommitted().items.map(i => i.date));
+      const moved = new Set((state.transactions || [])
+        .filter(tx => NL_SPEND_TYPES.indexOf(tx.type) !== -1).map(tx => tx.date));
+      const todayKey = navToday();
+      let title = '';
+      try { title = now.toLocaleDateString(navLang(), { month: 'long', year: 'numeric' }); }
+      catch (e) { title = String(y); }
+
+      let grid = '';
+      for (let i = 0; i < lead; i++) grid += '<span class="nw-cal-pad"></span>';
+      for (let d = 1; d <= days; d++) {
+        const k = cell(d), cls = ['nw-cal-day'];
+        if (k === todayKey) cls.push('is-today');
+        if (due.has(k)) cls.push('has-due');
+        else if (moved.has(k)) cls.push('has-spend');
+        grid += `<span class="${cls.join(' ')}">${d}</span>`;
+      }
+      return `<div class="nw-cal-month">${esc(title)}</div>
+        <div class="nw-cal-dow">${navWeekdayInitials().map(w => `<span>${esc(w)}</span>`).join('')}</div>
+        <div class="nw-cal-grid">${grid}</div>
+        <div class="nw-cal-key"><i class="k-due"></i>${t('nw_cal_due')}<i class="k-spend"></i>${t('nw_cal_spent')}</div>`;
+    }
+
+    // The period figure divided by the days left is a rate; this is the one
+    // that answers "can I buy this now". Today's spending is already inside
+    // the leftover, so the allowance is what remains of today's share.
+    case 'today': {
+      const free = computeSummary(computeActuals()).leftover - nlCommitted().total;
+      const p = nlDaysInPeriod();
+      const allow = p.left > 0 ? free / p.left : free;
+      const spent = nlSpentToday();
+      const left = allow - spent;
+      const pct = allow > 0 ? Math.min(100, Math.round(spent / allow * 100)) : (spent > 0 ? 100 : 0);
+      return `<div class="nw-big" style="color:${left < 0 ? 'var(--expense)' : 'var(--income)'}">${left < 0 ? '−' : ''}${fmt(Math.abs(left))}</div>
+        <div class="nw-sub">${tf('nw_today_sub', fmt(spent), fmt(Math.max(0, allow)))}</div>
+        <div class="nw-bar${left < 0 ? ' is-over' : ''}"><span style="width:${pct}%"></span></div>`;
+    }
+
+    // Where this period ends up if the rest of it looks like the part
+    // already spent. The number nobody else puts in front of you until the
+    // month is over and it is too late to act on it.
+    case 'forecast': {
+      const p = nlDaysInPeriod();
+      const cur = navPeriodBounds(false);
+      if (!cur) return `<div class="nw-empty">${t('nw_no_spend')}</div>`;
+      const today = navToday();
+      const spent = navSpendBetween(cur.start, today < cur.end ? today : cur.end);
+      if (spent <= 0) return `<div class="nw-empty">${t('nw_no_spend')}</div>`;
+      const perDay = spent / Math.max(1, p.dayOf);
+      const projected = perDay * p.total;
+      const pct = projected > 0 ? Math.min(100, Math.round(spent / projected * 100)) : 0;
+      return `<div class="nw-big">${fmt(projected)}</div>
+        <div class="nw-sub">${tf('nw_forecast_sub', fmt(perDay), p.dayOf, p.total)}</div>
+        <div class="nw-bar"><span style="width:${pct}%"></span></div>`;
+    }
+
+    // Compared at the same distance into each period, so a period that is
+    // only half over is never measured against a whole one.
+    case 'vs_last': {
+      const p = nlDaysInPeriod();
+      const cur = navPeriodBounds(false), prev = navPeriodBounds(true);
+      if (!cur || !prev) return `<div class="nw-empty">${t('nw_vs_last_none')}</div>`;
+      const now = navSpendBetween(cur.start, navDateAdd(cur.start, p.dayOf - 1));
+      const then = navSpendBetween(prev.start, navDateAdd(prev.start, p.dayOf - 1));
+      if (then <= 0) return `<div class="nw-empty">${t('nw_vs_last_none')}</div>`;
+      const diff = now - then;
+      const pct = Math.round(diff / then * 100);
+      const worse = diff > 0;
+      return `<div class="nw-big" style="color:${worse ? 'var(--expense)' : 'var(--income)'}">${worse ? '+' : '−'}${Math.abs(pct)}%</div>
+        <div class="nw-sub">${tf('nw_vs_last_sub', fmt(now), fmt(then), p.dayOf)}</div>`;
+    }
+
+    // The one box in the planner with no amount, no category and no date.
+    // It never touches a figure; it is just somewhere to put the thing you
+    // would otherwise forget before you get to the Transactions tab.
+    case 'notes': {
+      const v = typeof state?.settings?.navNote === 'string' ? state.settings.navNote : '';
+      return `<textarea class="input nw-note" id="wnNote" rows="4" maxlength="600"
+          placeholder="${t('nw_notes_ph')}" aria-label="${t('nw_notes')}">${esc(v)}</textarea>
+        <div class="nw-sub nw-note-saved" id="wnNoteSaved" hidden>${t('nw_notes_saved')}</div>`;
+    }
+
     case 'free_to_spend': {
       const free = computeSummary(computeActuals()).leftover - nlCommitted().total;
       const p = nlDaysInPeriod();
@@ -4208,6 +4392,29 @@ function wireNavWidgets(host) {
       if (currentTab === 'dashboard') renderDashboard();
       renderNavWidgets();
     })));
+  const note = host.querySelector('#wnNote');
+  if (note) {
+    // Saved as you type, but not on every keystroke. The queued redraw
+    // skips a widget that has focus, so the box is never pulled out from
+    // under the cursor mid-sentence.
+    let noteTimer = null;
+    note.addEventListener('input', () => {
+      clearTimeout(noteTimer);
+      noteTimer = setTimeout(() => {
+        state.settings.navNote = note.value;
+        saveState();
+        const flag = document.getElementById('wnNoteSaved');
+        if (flag) {
+          flag.hidden = false;
+          setTimeout(() => { if (flag) flag.hidden = true; }, 1400);
+        }
+      }, 500);
+    });
+    note.addEventListener('blur', () => {
+      clearTimeout(noteTimer);
+      if (state.settings.navNote !== note.value) { state.settings.navNote = note.value; saveState(); }
+    });
+  }
   host.querySelector('#navWidgetAdd')?.addEventListener('click', openNavWidgetPicker);
   host.querySelector('#navWidgetManage')?.addEventListener('click', openNavWidgetPicker);
 }
@@ -4232,6 +4439,9 @@ function navWidgetsQueueRefresh() {
 // rather than only after closing.
 function openNavWidgetPicker() {
   const body = () => document.getElementById('modalBody');
+  // Dragging is the quick way; the arrows are the one that works on a
+  // touch screen and with a keyboard, so both stay.
+  let dragFrom = null;
 
   const draw = () => {
     const cur = navWidgetList();
@@ -4240,7 +4450,8 @@ function openNavWidgetPicker() {
       <p class="settings-desc">${tf('nw_pick_desc', NAV_WIDGET_MAX)}</p>
       <div class="nw-mg">
         ${cur.length ? cur.map((id, i) => `
-          <div class="nw-mg-row">
+          <div class="nw-mg-row" draggable="true" data-nw-idx="${i}">
+            <span class="nw-mg-grip" aria-hidden="true">&#8942;&#8942;</span>
             <span class="nw-mg-icon" aria-hidden="true">${NAV_WIDGET_ICON[id]}</span>
             <span class="nw-mg-name">${t('nw_' + id)}</span>
             <button class="nw-mini" type="button" data-nw-move="${i}" data-nw-to="${i - 1}"
@@ -4266,6 +4477,39 @@ function openNavWidgetPicker() {
       <div class="edit-tx-actions">
         <button class="btn btn-primary" id="nwDone" type="button">${t('nw_done')}</button>
       </div>`;
+
+    const rows = () => [...body().querySelectorAll('.nw-mg-row[data-nw-idx]')];
+    const clearMarks = () => rows().forEach(r => r.classList.remove('is-dragging', 'is-over'));
+    rows().forEach(row => {
+      row.addEventListener('dragstart', e => {
+        dragFrom = Number(row.dataset.nwIdx);
+        row.classList.add('is-dragging');
+        if (e.dataTransfer) {
+          e.dataTransfer.effectAllowed = 'move';
+          // Firefox starts no drag at all without some payload set.
+          try { e.dataTransfer.setData('text/plain', String(dragFrom)); } catch (err) {}
+        }
+      });
+      row.addEventListener('dragend', () => { dragFrom = null; clearMarks(); });
+      row.addEventListener('dragover', e => {
+        if (dragFrom === null) return;
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+        rows().forEach(r => r.classList.toggle('is-over',
+          r === row && Number(r.dataset.nwIdx) !== dragFrom));
+      });
+      row.addEventListener('dragleave', () => row.classList.remove('is-over'));
+      row.addEventListener('drop', e => {
+        e.preventDefault();
+        const to = Number(row.dataset.nwIdx), from = dragFrom;
+        dragFrom = null; clearMarks();
+        if (from === null || Number.isNaN(to) || to === from) return;
+        const l = navWidgetList();
+        if (from < 0 || from >= l.length) return;
+        l.splice(to, 0, l.splice(from, 1)[0]);
+        navWidgetSave(l); draw();
+      });
+    });
 
     body().querySelectorAll('[data-nw-move]').forEach(b => b.addEventListener('click', () => {
       const l = navWidgetList(), from = +b.dataset.nwMove, to = +b.dataset.nwTo;

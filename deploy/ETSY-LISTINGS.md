@@ -8,6 +8,9 @@ Deliberately NOT claimed, because the apps do not do them: offline use,
 Add to Home Screen / installable app, device linking by code, multiple
 bank accounts, biometric recovery, auto-backup to a file.
 
+The sidebar Notes widget covers what a competitor calls a "brain dump", so
+that one is now fair to claim if you want it in the copy.
+
 ---
 
 ## LISTING 1: Ultimate Budget Planner
@@ -38,6 +41,7 @@ It is a real app, not a printable and not a spreadsheet template. You open it an
 Five themes: Light, Dark, Synthwave, Vintage Ledger and Terminal.
 Two dashboard layouts: Classic cards, or Radial Pulse if you prefer rings to bars.
 Three navigation positions: the section menu across the top, or down the left or the right.
+Put the menu on a side and it carries widgets too: pick up to five, drag them into the order you want.
 Colours mean the same thing in all of them, so nothing moves when you switch.
 
 💵 WHAT IT DOES
@@ -157,6 +161,7 @@ It is a real app, not a printable and not a spreadsheet template. You open it an
 Five themes: Light, Dark, Synthwave, Vintage Ledger and Terminal.
 Two dashboard layouts: Classic cards, or Radial Pulse if you prefer rings to bars.
 Three navigation positions: the section menu across the top, or down the left or the right.
+Put the menu on a side and it carries widgets too: pick up to five, drag them into the order you want.
 Colours mean the same thing in all of them, so nothing moves when you switch.
 
 💵 WHAT IT DOES
