@@ -2295,6 +2295,12 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
   margin: 0; display: flex; align-items: center; gap: 7px;
   font-size: 11px; font-weight: 700; color: var(--text-secondary);
 }
+.nw-card-title .cc-label-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Sized down for an 11px heading, and pushed to the far edge of it. The
+   shared rule carries a right margin meant for a form label. */
+.nw-card-title .cc-info {
+  margin: 0 0 0 auto; width: 16px; height: 16px; font-size: 10px;
+}
 .nw-big {
   font-family: var(--font-display); font-size: 23px; font-weight: 800;
   line-height: 1.05; color: var(--text-primary);

@@ -4407,6 +4407,7 @@ function navWidgetBody(id) {
 function renderNavWidgets() {
   const host = document.getElementById('navWidgets');
   if (!host) return;
+  document.querySelectorAll('.cc-tip-pop').forEach(el => el.remove());
   const list = navWidgetList();
   host.innerHTML = `
     <div class="nw-head">
@@ -4415,7 +4416,12 @@ function renderNavWidgets() {
         title="${t('nw_title')}" aria-label="${t('nw_title')}">${t('nw_edit')}</button>` : ''}
     </div>
     ${list.map(id => `<section class="nw-card" data-nw="${id}">
-      <h4 class="nw-card-title"><span aria-hidden="true">${NAV_WIDGET_ICON[id]}</span>${t('nw_' + id)}</h4>
+      <h4 class="nw-card-title">
+        <span aria-hidden="true">${NAV_WIDGET_ICON[id]}</span>
+        <span class="cc-label-text">${t('nw_' + id)}</span>
+        <button class="cc-info" type="button" data-tip="${esc(t('nw_' + id + '_desc'))}"
+                aria-label="${esc(tf('field_info_aria', t('nw_' + id)))}">i</button>
+      </h4>
       ${navWidgetBody(id)}
     </section>`).join('')}
     ${list.length < NAV_WIDGET_MAX
@@ -4425,6 +4431,7 @@ function renderNavWidgets() {
 }
 
 function wireNavWidgets(host) {
+  initFieldTips(host);
   host.querySelector('#wqsLog')?.addEventListener('click', () => {
     addTransaction({ prefix: 'wqs', after: () => {
       showToast(t('toast_tx_added'));
