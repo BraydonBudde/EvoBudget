@@ -3242,16 +3242,8 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
    before it runs. */
 [data-theme="dark"] .nl-hero:not(.is-negative) .nl-value,
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-value { color: #fff; }
-/* White on the light ground would vanish, so it is outlined in the same
-   colour as the greeting above it: the figure reads as the heading's
-   sibling while staying open rather than solid. */
 [data-theme="light"] .nl-hero:not(.is-negative) .nl-value,
-:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-value {
-  color: #fff;
-  -webkit-text-stroke: 1px var(--text-primary);
-  text-stroke: 1px var(--text-primary);
-  paint-order: stroke fill;
-}
+:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-value { color: #fff; }
 
 [data-theme="dark"] .nl-hero:not(.is-negative) .nl-dec,
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-dec,
