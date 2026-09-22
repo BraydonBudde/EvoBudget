@@ -1794,7 +1794,7 @@ function applyLanguage() {
 function defaultState() {
   const { start, end } = getMonthBounds();
   return {
-    settings: { currency: 'USD', symbol: '$', periodStart: start, periodEnd: end, language: 'en', hideUpgrade: false, dashboardLayout: 1, dashboardAnimations: true, onboardingDone: false },
+    settings: { currency: 'USD', symbol: '$', periodStart: start, periodEnd: end, language: 'en', hideUpgrade: false, dashboardLayout:SLEEK_LAYOUT, dashboardAnimations: true, onboardingDone: false },
     rollover: 0,
     budgets: {
       income: [
@@ -3255,9 +3255,8 @@ function openNavWidgetPicker() {
 }
 
 function dashboardLayoutCardHtml() {
-  if ((state.settings.dashboardLayout || 1) > 3) state.settings.dashboardLayout = 1;
-  const cur = state.settings.dashboardLayout || 1;
-  const opts = [1, 2, 3].map(n => `
+  const cur = getDashLayout();
+  const opts = DASH_LAYOUTS.map(n => `
     <button class="layout-opt${cur === n ? ' is-active' : ''}" data-layout-val="${n}" type="button" title="${t('layout_' + n)}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${DASHBOARD_LAYOUT_ICONS[n]}</svg>
       ${t('layout_' + n)}
@@ -3542,12 +3541,12 @@ function loadSampleData() {
   showToast(t('sample_loaded_toast'));
 }
 function renderDashboard() {
-  const layout = state.settings.dashboardLayout || 1;
+  // renderDashboardLayout1 is still reachable, but only through Sleek,
+  // which calls it and then swaps its heading.
   ({
-    1: renderDashboardLayout1,
     2: renderDashboardLayout2,
     3: renderDashboardLayout3
-  }[layout] || renderDashboardLayout1)();
+  }[getDashLayout()] || renderDashboardLayout3)();
 }
 
 // ══ Layout 3: "Sleek" ═════════════════════════════════════════════════
@@ -3558,12 +3557,31 @@ function renderDashboard() {
 // and tools share one line and the shell is wider, which is where the
 // reference layout gets its composure.
 const SLEEK_LAYOUT = 3;
-function dashIsSleek() { return (state?.settings?.dashboardLayout || 1) === SLEEK_LAYOUT; }
+// Sleek first, and Classic no longer among them. Classic is not deleted:
+// Sleek renders it and then replaces its heading, so it is still the thing
+// doing the work - it just stopped being a choice of its own.
+const DASH_LAYOUTS = [SLEEK_LAYOUT, 2];
+
+function getDashLayout() {
+  const v = state?.settings?.dashboardLayout;
+  return DASH_LAYOUTS.indexOf(v) !== -1 ? v : SLEEK_LAYOUT;
+}
+// Moves anyone still on Classic across, once, so the stored value stops
+// naming a layout that can no longer be picked. Nothing of theirs is lost:
+// Sleek is the same dashboard with a different header.
+function migrateDashLayout() {
+  const st = state && state.settings;
+  if (!st || DASH_LAYOUTS.indexOf(st.dashboardLayout) !== -1) return;
+  st.dashboardLayout = SLEEK_LAYOUT;
+  try { saveState(); } catch (e) {}
+}
+function dashIsSleek() { return getDashLayout() === SLEEK_LAYOUT; }
 
 // Where the tab bar sits when it is not borrowed by the topbar.
 let _sleekTabsHome = null;
 
 function applyDashChrome() {
+  migrateDashLayout();
   document.documentElement.dataset.dash = dashIsSleek() ? 'sleek' : 'classic';
   const tabs = document.getElementById('budgetTabs');
   const bar = document.querySelector('.tool-shell .tool-topbar');

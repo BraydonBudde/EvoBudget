@@ -3229,13 +3229,26 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .nl-hero.is-negative .nl-value { color: var(--expense); }
 /* The decimals, tinted apart from the whole units. */
 .nl-dec { font-style: normal; }
-/* On the deep grounds a green this size is the loudest thing on screen and
-   reads as a status rather than as the figure it is. Plain white lets the
-   hero be a number again; going under still shouts, which it should. */
+/* A green this size is the loudest thing on screen and reads as a status
+   rather than as the figure it is. Letting it take the same colour as the
+   page's own heading makes the hero a number again. Going under still
+   shouts, which it should, so negative keeps the red and its decimals with
+   it - an accent inside that figure would only soften it.
+
+   Vintage and Terminal are left alone: on those two the green is the
+   theme's own voice rather than a status colour.
+
+   applyTheme always stamps an attribute, but the :not() covers the instant
+   before it runs. */
 [data-theme="dark"] .nl-hero:not(.is-negative) .nl-value,
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-value { color: #fff; }
+[data-theme="light"] .nl-hero:not(.is-negative) .nl-value,
+:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-value { color: var(--text-primary); }
+
 [data-theme="dark"] .nl-hero:not(.is-negative) .nl-dec,
-[data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-dec { color: #93c5fd; }
+[data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-dec,
+[data-theme="light"] .nl-hero:not(.is-negative) .nl-dec,
+:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-dec { color: #93c5fd; }
 .nl-sub { font-size: 13.5px; color: var(--text-secondary); line-height: 1.55; }
 .nl-sub b { color: var(--text-primary); font-weight: 600; }
 .nl-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
