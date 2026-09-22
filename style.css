@@ -1302,14 +1302,6 @@ input[type="number"].expected-input {
   .summary-cards { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 700px) {
-  /* Fade the tab bar's trailing edge so a horizontally-scrollable row of tabs
-     visibly hints that more tabs exist off-screen. Only the trailing edge
-     fades: a fade at the start dims the first tab even at scroll position 0,
-     where nothing is cut off, so it reads as a fault rather than a hint. */
-  .budget-tabs {
-    mask-image: linear-gradient(to right, black 0, black calc(100% - 28px), transparent calc(100% - 4px));
-    -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 28px), transparent calc(100% - 4px));
-  }
   .app { padding: 20px 16px 60px; }
   .tool-grid { grid-template-columns: 1fr; max-width: 100%; }
   .summary-cards { grid-template-columns: 1fr 1fr; }
@@ -2670,8 +2662,7 @@ html[data-dash="sleek"] .sleek-actions .help-icon-btn {
    to scroll. The tools give up a few pixels each and what they save goes
    straight to the sections, which is the right trade: the tools are a fixed
    set that never grows, while the sections are the thing being navigated.
-   Past this the row scrolls inside its own pill, which is what the trailing
-   fade has been hinting at since 700px. */
+   Past this the row scrolls inside its own pill. */
 @media (max-width: 480px) {
   html[data-nav="top"] .tool-topbar { --nav-ctl: 32px; }
   html[data-nav="top"] .tool-topbar > .budget-tabs .btab { min-width: 34px; }
