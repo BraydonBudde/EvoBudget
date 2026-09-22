@@ -3811,9 +3811,10 @@ function renderDashboardLayout1() {
     wireChartHover(el, '.spend-line-dot', { format: d =>
       formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
         { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
+    const nlFree = nlHeroTarget(el);
     animateDashboardEntrance(el, [
-      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), html: true,
-        render: v => (sum.leftover < 0 ? '\u2212' : '') + nlAmountHtml(v) }
+      { el: el.querySelector('.leftover-value'), target: Math.abs(nlFree), html: true,
+        render: v => (nlFree < 0 ? '\u2212' : '') + nlAmountHtml(v) }
     ]);
   });
   el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
@@ -3973,9 +3974,10 @@ function renderDashboardLayout2() {
         formatSpendTooltipHtml(spendPoints[parseInt(d.idx, 10)] || { label: d.label, value: parseFloat(d.val) || 0, items: [] },
           { typeLabel: spendTypeLabel, typeColor: spendTypeColor, moreText: n => tf('spend_tip_more', n) }) });
     });
+    const nlFree = nlHeroTarget(el);
     animateDashboardEntrance(el, [
-      { el: el.querySelector('.leftover-value'), target: Math.abs(sum.leftover), html: true,
-        render: v => (sum.leftover < 0 ? '\u2212' : '') + nlAmountHtml(v) }
+      { el: el.querySelector('.leftover-value'), target: Math.abs(nlFree), html: true,
+        render: v => (nlFree < 0 ? '\u2212' : '') + nlAmountHtml(v) }
     ]);
   });
   el.querySelectorAll('[data-btab]').forEach(b => b.addEventListener('click', () => switchBTab(b.dataset.btab)));
@@ -5547,23 +5549,31 @@ function nlCommitted() {
   return { total: items.reduce((s, i) => s + i.amount, 0), items: items };
 }
 
-// The right-hand panel. Splits the headline figure into what is already
-// committed and what is genuinely free, because a leftover of 3,000 with
-// rent still to go is not 3,000 you can spend.
-function nlYoursPanelHtml(leftover) {
-  const c = nlCommitted();
-  const p = nlDaysInPeriod();
-  const free = leftover - c.total;
+// The breakdown beside the headline. The hero states what is free to spend,
+// so this is where the two figures behind it sit: the period's raw leftover
+// and the part of it that is already committed.
+function nlYoursPanelHtml(leftover, committed) {
+  // The caller usually holds the committed figure already, because the hero
+  // needs it to work out what is free. Recomputing here would walk every
+  // upcoming event a second time for the same answer, so it is passed in
+  // where there is one. The disclosure toggle redraws this panel on its own
+  // with nothing else to hand, so the fallback stays.
+  const c = committed || nlCommitted();
   const endLabel = state.settings.periodEnd ? formatDateDisplay(state.settings.periodEnd) : '';
-  const rate = (p.left > 0 && free > 0) ? tf('nl_free_rate', fmt(free / p.left), p.left) : '';
   // Hidden unless asked for, so the panel stays quiet by default.
   const open = state.settings.nlDueOpen === true;
+  // The leftover has no note of its own: the rate belongs to free-to-spend
+  // and followed it up into the hero. The empty slot stays so both figures
+  // keep the same label/amount/note rhythm, which is what holds them level
+  // at phone widths where they sit side by side. Empty, it is 5px of margin
+  // and no height, the same as this slot rendered whenever there was no
+  // rate to show.
   return `
     <div class="nl-figs">
       <div class="nl-fig">
-        <span>${t('nl_free_to_spend')}</span>
-        <strong style="color:${free < 0 ? 'var(--expense)' : 'var(--income)'}">${free < 0 ? '\u2212' : ''}${fmt(Math.abs(free))}</strong>
-        <em>${rate}</em>
+        <span>${t('nl_total')}</span>
+        <strong style="color:${leftover < 0 ? 'var(--expense)' : 'var(--income)'}">${leftover < 0 ? '\u2212' : ''}${fmt(Math.abs(leftover))}</strong>
+        <em></em>
       </div>
       <div class="nl-fig">
         <span>${t('nl_still_to_pay')}${c.items.length ? `<button class="nl-due-toggle" type="button" id="nlDueToggle"
@@ -5619,21 +5629,39 @@ function nlAmountHtml(v) {
   return i < 0 ? esc(s) : esc(s.slice(0, i)) + '<i class="nl-dec">' + esc(s.slice(i)) + '</i>';
 }
 
+// The headline figure, read back off the element the render just wrote.
+// The entrance count-up has to land on the same number the markup used,
+// and the render has already paid for working it out.
+function nlHeroTarget(scope) {
+  const el = scope.querySelector('.leftover-value');
+  return el ? (parseFloat(el.dataset.nlValue) || 0) : 0;
+}
+
 function nlHeroHtml(leftover, opts) {
   const o = opts || {};
-  const neg = leftover < 0;
   const p = nlDaysInPeriod();
   const kept = o.income > 0 ? Math.round((leftover - (state.rollover || 0)) / o.income * 100) : 0;
 
-  // No per-day line here any more: the panel states the free-to-spend rate,
-  // which is the honest one. Repeating a rate based on the full leftover
-  // beside it would contradict it. The sub-line is kept for the two cases
-  // the panel cannot speak to.
+  // The headline is what is genuinely free to spend rather than the raw
+  // leftover: a leftover of 3,000 with rent still to go is not 3,000 you
+  // can spend, so the figure a glance lands on is the one that can be
+  // acted on. The leftover keeps its place in the breakdown beside it.
+  //
+  // Committed is worked out once here and handed to the panel, so the walk
+  // over upcoming events runs once and the two figures cannot disagree.
+  const c = nlCommitted();
+  const free = leftover - c.total;
+  const neg = free < 0;
+
+  // The rate describes the free figure, so it moves up here with it. When
+  // there is nothing free to spend the sub-line has the more urgent thing
+  // to say instead.
+  const rate = (p.left > 0 && free > 0) ? tf('nl_free_rate', fmt(free / p.left), p.left) : '';
   const sub = !o.income
     ? t('nl_empty')
     : neg
-      ? tf('nl_over_by', fmt(Math.abs(leftover)), p.left)
-      : '';
+      ? tf('nl_over_by', fmt(Math.abs(free)), p.left)
+      : rate;
 
   const pills = [
     `<div class="nl-pill"><span>${t('nl_spent_today')}</span><strong>${fmt(nlSpentToday())}</strong></div>`,
@@ -5645,14 +5673,14 @@ function nlHeroHtml(leftover, opts) {
 
   return `<div class="panel nl-hero${neg ? ' is-negative' : ''}">
     <div class="nl-left">
-      <div class="nl-label">${t('dash_net_leftover_period')}</div>
-      <div class="nl-value leftover-value">${neg ? '\u2212' : ''}${nlAmountHtml(leftover)}</div>
+      <div class="nl-label">${t('nl_free_to_spend')}</div>
+      <div class="nl-value leftover-value" data-nl-value="${free}">${neg ? '\u2212' : ''}${nlAmountHtml(free)}</div>
       ${sub ? `<div class="nl-sub">${sub}</div>` : ''}
       <div class="nl-meta">${pills}</div>
       <div class="nl-track"><i style="width:${p.pct}%"></i></div>
       <div class="nl-track-cap">${tf('nl_day_of', p.dayOf, p.total)}</div>
     </div>
-    <div class="nl-right">${nlYoursPanelHtml(leftover)}</div>
+    <div class="nl-right">${nlYoursPanelHtml(leftover, c)}</div>
   </div>`;
 }
 
