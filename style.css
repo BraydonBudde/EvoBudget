@@ -426,7 +426,6 @@ a.btn-back-round { text-decoration: none; }
 }
 .btn-help-sm:hover { color: var(--grad-indigo); }
 
-
 /* ═══════════════════════════════════════════════════════════════
    HUB
 ═══════════════════════════════════════════════════════════════ */
@@ -1337,7 +1336,6 @@ input[type="number"].expected-input {
 }
 .help-icon-btn:hover { color: var(--grad-indigo); border-color: var(--grad-indigo); }
 
-
 /* ═══════════════════════════════════════════════════════════════
    THEME PILL TOGGLE
 ═══════════════════════════════════════════════════════════════ */
@@ -1480,7 +1478,6 @@ input[type="number"].expected-input {
   background: rgba(var(--grad-indigo-rgb),.12);
   color: var(--text-primary);
 }
-
 
 /* ═══════════════════════════════════════════════════════════════
    SYNTHWAVE THEME - 80s retrowave neon
@@ -2359,7 +2356,6 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
   background: rgba(var(--grad-indigo-rgb), .05);
 }
 
-
 /* ── Mini calendar ────────────────────────────────────────────── */
 .nw-cal-month {
   font-size: 12px; font-weight: 700; color: var(--text-primary);
@@ -2520,7 +2516,6 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
   html[data-nav="right"] .tool-shell > .app-scroll { padding-top: 0; }
 }
 
-
 /* ═══════════════════════════════════════════════════════════════
    LAYOUT 3: "SLEEK"
    ───────────────────────────────────────────────────────────────
@@ -2590,8 +2585,6 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:hover .pen
    into. Brought across here it would sit behind the help icon, so the
    group states its own order rather than inheriting that intent. */
 .sleek-head .sleek-actions > * { order: 0; }
-
-
 
 /* ── Sleek: the period controls read as two pills ───────────────
    The dates are one control and the presets are another, so each group
@@ -3244,30 +3237,6 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-value { color: #fff; }
 [data-theme="light"] .nl-hero:not(.is-negative) .nl-value,
 :root:not([data-theme]) .nl-hero:not(.is-negative) .nl-value { color: #fff; }
-/* White needs something to sit on, and on light the hero was nearly white
-   itself. Thinning its surface lets the page's own backdrop come through
-   and carry the figure.
-
-   The backdrop drifts, though, so on its own the contrast would come and
-   go with the blobs. The corner wash is the floor: a deep indigo anchored
-   where the figure sits, faded out well before the pills, so the number
-   holds whatever is passing underneath. The rest of the card stays light,
-   which keeps the green, the red and the Show pill exactly as they were. */
-[data-theme="light"] .nl-hero:not(.is-negative),
-:root:not([data-theme]) .nl-hero:not(.is-negative) {
-  background-color: rgba(255, 255, 255, .26);
-  /* Centred on the figure rather than pinned to the corner. Anchored at the
-     corner the wash had already faded by the time it reached the decimals,
-     leaving light blue on a pale ground; now the whole number sits on it and
-     the decimals keep the very colour they have on the dark themes. */
-  background-image:
-    radial-gradient(46% 62% at 14% 20%, rgba(55, 48, 163, .46), rgba(55, 48, 163, .20) 58%, transparent 82%),
-    linear-gradient(135deg, rgba(var(--grad-indigo-rgb), .07), transparent 70%);
-}
-/* Sitting on the wash now, so it takes the figure's side rather than the
-   card's. */
-[data-theme="light"] .nl-hero:not(.is-negative) .nl-label,
-:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-label { color: rgba(255, 255, 255, .82); }
 
 [data-theme="dark"] .nl-hero:not(.is-negative) .nl-dec,
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-dec,
