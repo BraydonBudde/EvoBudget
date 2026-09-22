@@ -289,6 +289,12 @@ a.btn-back-round { text-decoration: none; }
   color: #fff;
   box-shadow: 0 3px 10px -2px rgba(var(--grad-indigo-rgb), .45);
 }
+/* The icon and the label are separate elements so a narrow screen can set
+   the label aside and leave the icon standing. At full width it reads
+   exactly as it always did: icon, a space, then the word. */
+.btab-ico { font-style: normal; }
+.btab-txt { margin-left: 6px; }
+
 .bview { display: none; }
 .bview.is-active { display: block; animation: fade-in 0.25s var(--ease); }
 
@@ -2631,9 +2637,58 @@ html[data-dash="sleek"] .sleek-actions .help-icon-btn {
 }
 
 /* ── Narrow ──────────────────────────────────────────────────── */
+/* Both pills hold the one line at every width. The tabs give up their
+   labels first and run on their icons; if even those will not fit, the
+   pill scrolls inside itself rather than pushing the tools onto a second
+   row. The tools pill never collapses: it is a fixed three or four icons
+   that never grows, and already the smaller of the two.
+
+   The label is set aside rather than removed: display:none would take it
+   out of the accessibility tree too, and with the icon marked aria-hidden
+   each tab would be left with no name at all. Clipped, it still names the
+   button and still follows the language, which an aria-label copied off to
+   one side would not. */
 @media (max-width: 760px) {
-  html[data-nav="top"] .tool-topbar > .tool-topbar-right { order: 2; margin-left: auto; }
-  html[data-nav="top"] .tool-topbar > .budget-tabs { order: 3; flex: 1 1 100%; }
+  /* One control height across the whole row. Both pills carry the same
+     padding and border, so matching what sits inside them is what keeps the
+     two the same height instead of one standing a few pixels proud. */
+  html[data-nav="top"] .tool-topbar { flex-wrap: nowrap; --nav-ctl: 36px; }
+  html[data-nav="top"] .tool-topbar > .budget-tabs { flex: 1 1 0; min-width: 0; }
+  html[data-nav="top"] .tool-topbar > .tool-topbar-right { flex: 0 0 auto; }
+  html[data-nav="top"] .tool-topbar > .budget-tabs .btab {
+    display: flex; align-items: center; justify-content: center;
+    flex: 1 1 auto; min-width: 38px; height: var(--nav-ctl); padding: 0;
+  }
+  html[data-nav="top"] .tool-topbar > .budget-tabs .btab-ico { font-size: 15px; }
+  html[data-nav="top"] .tool-topbar > .budget-tabs .btab-txt {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+}
+
+/* Phone: tighter again, so more of the row is reachable before the pill has
+   to scroll. The tools give up a few pixels each and what they save goes
+   straight to the sections, which is the right trade: the tools are a fixed
+   set that never grows, while the sections are the thing being navigated.
+   Past this the row scrolls inside its own pill, which is what the trailing
+   fade has been hinting at since 700px. */
+@media (max-width: 480px) {
+  html[data-nav="top"] .tool-topbar { --nav-ctl: 32px; }
+  html[data-nav="top"] .tool-topbar > .budget-tabs .btab { min-width: 34px; }
+  html[data-nav="top"] .tool-topbar > .tool-topbar-right { gap: 2px; padding: 3px; }
+  html[data-nav="top"] .tool-topbar > .tool-topbar-right > .btn-icon,
+  html[data-nav="top"] .tool-topbar > .tool-topbar-right > .penny-nav-btn,
+  html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn-inner,
+  html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:hover .penny-nav-btn-inner,
+  html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:focus-visible .penny-nav-btn-inner {
+    width: var(--nav-ctl); height: var(--nav-ctl);
+    min-width: var(--nav-ctl); min-height: var(--nav-ctl);
+  }
+  /* Ezzo sizes its glyph off the button, so it comes down with it rather
+     than rattling around inside a smaller circle. */
+  html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-icon svg {
+    width: 21px; height: 21px;
+  }
 }
 @media (max-width: 560px) {
   .sleek-head-top { align-items: flex-start; }

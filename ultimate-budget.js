@@ -3913,10 +3913,18 @@ function applyLanguage() {
     const key = 'tab_' + btn.dataset.btab;
     const tx = TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key];
     if (tx) {
-      // Preserve emoji prefix if present
+      btn.title = tx;
+      // The icon and the label are separate elements so a narrow screen can
+      // set the label aside and run on the icon alone. Only the label is
+      // rewritten; writing over the button would flatten both back into one
+      // text node and the split would be lost on the first language change.
+      const txt = btn.querySelector('.btab-txt');
+      if (txt) { txt.textContent = tx; return; }
+      // Markup that predates the split: rebuild it, keeping the emoji.
       const current = btn.textContent.trim();
       const emoji = current.match(/^(\p{Emoji}[\uFE0F\u20E3]?\s*)/u)?.[0] || '';
-      btn.textContent = emoji + tx;
+      btn.innerHTML = '<i class="btab-ico" aria-hidden="true">' + esc(emoji.trim()) +
+        '</i><span class="btab-txt">' + esc(tx) + '</span>';
     }
   });
   // The rail's labels are copies of the tab bar's, so they follow it here.
@@ -4129,13 +4137,18 @@ function buildNavRail() {
   if (!rail || !tabs) return;
   rail.querySelector('#navRailSections').innerHTML =
     [...tabs.querySelectorAll('.btab[data-btab]')].map(b => {
+      // The tab carries its icon and its label as separate elements, so the
+      // rail can take each of them rather than guessing where one ends. The
+      // emoji-prefix split stays as the fallback for anything without them.
+      const ico = b.querySelector('.btab-ico');
+      const txt = b.querySelector('.btab-txt');
       const full = b.textContent.trim();
-      // The same emoji-prefix split applyLanguage uses when it rewrites these.
-      const icon = full.match(/^(\p{Emoji}[️⃣]?\s*)/u)?.[0] || '';
-      const label = full.slice(icon.length).trim() || full;
+      const pre = full.match(/^(\p{Emoji}[️⃣]?\s*)/u)?.[0] || '';
+      const icon = ico ? ico.textContent.trim() : pre.trim();
+      const label = txt ? txt.textContent.trim() : (full.slice(pre.length).trim() || full);
       const on = b.classList.contains('is-active');
       return `<button class="nav-rail-item${on ? ' is-active' : ''}"${on ? ' aria-current="true"' : ''} data-btab="${esc(b.dataset.btab)}" type="button" title="${esc(label)}">
-      <span class="nav-rail-icon" aria-hidden="true">${esc(icon.trim())}</span><span class="nav-rail-label">${esc(label)}</span>
+      <span class="nav-rail-icon" aria-hidden="true">${esc(icon)}</span><span class="nav-rail-label">${esc(label)}</span>
     </button>`;
     }).join('');
   railAdopt(rail);
