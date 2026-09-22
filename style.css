@@ -2032,13 +2032,49 @@ input[type="number"].expected-input {
   border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
 
-/* What the choice is worth against the other method. */
-.dc-note { margin: 11px 0 0; font-size: 12px; line-height: 1.45; color: var(--text-faint); }
-.dc-note--win  { color: var(--income); font-weight: 600; }
+/* What the choice is worth, as the two figures side by side rather than a
+   claim about them. The method in force is marked; the other is there to
+   be compared against, which is the only way a reader can see that the
+   setting does something. */
+.dc-compare {
+  margin-top: 11px; padding: 11px 12px 10px;
+  border: 1px solid var(--border-faint); border-radius: var(--radius-md);
+  background: rgba(var(--grad-indigo-rgb), .04);
+}
+.dcx-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dcx-cell {
+  position: relative; min-width: 0; padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  display: flex; flex-direction: column; gap: 2px;
+  transition: border-color .18s var(--ease), background .18s var(--ease);
+}
+/* The one in force reads forward; the other stays legible but quiet, so
+   the pair is a comparison and not two competing claims. */
+.dcx-cell.is-on {
+  border-color: rgba(var(--grad-indigo-rgb), .3);
+  background: var(--surface-strong);
+}
+.dcx-cell:not(.is-on) { opacity: .72; }
+.dcx-name {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--text-faint);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dcx-figure {
+  font-family: var(--font-display); font-size: 17px; font-weight: 800;
+  line-height: 1.1; color: var(--text-primary); font-variant-numeric: tabular-nums;
+}
+.dcx-sub { font-size: 10.5px; line-height: 1.35; color: var(--text-faint); }
+.dcx-verdict {
+  margin: 9px 0 0; font-size: 12px; line-height: 1.45;
+  color: var(--text-secondary);
+}
+.dcx-verdict.is-win  { color: var(--income); font-weight: 600; }
 /* Not an error, so not the expense red: this is the cost of a choice the
    user is entitled to make, and snowball is picked for reasons a figure
    does not capture. */
-.dc-note--cost { color: var(--bill); font-weight: 600; }
+.dcx-verdict.is-cost { color: var(--bill); font-weight: 600; }
 
 /* The amount reads as a figure rather than a form field: the currency sits
    inside the control and the spinners go, which is what made it look like

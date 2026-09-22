@@ -521,11 +521,17 @@ function runDebtPayoff() {
   const debtFreeDate=toLocalISO(new Date(now.getFullYear(),now.getMonth()+month,1));
   return {
     months:month, totalInterest:Math.round(totalInterest*100)/100, debtFreeDate,
+    // The order money is aimed in, which is what the method chooses. Kept
+    // separate because it is not the order debts finish in: under avalanche
+    // the first debt attacked is often the largest and the last cleared.
+    attackOrder:priority.map(p=>p.id),
     payoffOrder:priority.map(p=>{
       const w=working.find(x=>x.id===p.id),mo=w.paidOffMonth;
       const dt=mo?toLocalISO(new Date(now.getFullYear(),now.getMonth()+mo,1)):null;
       return {...p,paidOffMonth:mo,paidOffDate:dt?formatDateDisplay(dt):'-'};
-    })
+    // Numbered 1, 2, 3 against a date each, so it has to read down the page
+    // in the order they are actually cleared.
+    }).sort((a,b)=>(a.paidOffMonth||9e9)-(b.paidOffMonth||9e9))
   };
 }
 
@@ -754,7 +760,7 @@ const TRANSLATIONS = {
     dpc_title:'Debt Payoff',dpc_add_btn:'+ Add debt',
     dpc_desc:"Enter every debt, pick a payoff strategy, and see exactly when you'll be debt-free and how much interest you'll pay in total.",
     dpc_method_label:'Payoff method',
-    dpc_avalanche:'Avalanche',dpc_snowball:'Snowball',dpc_saves_interest:'Saves {0} in interest against {1}',dpc_same_either_way:'Same result either way with your current debts',dpc_method_hint:'Which debt your spare money goes to first',dpc_months_sooner:'{0} months sooner',dpc_costs_interest:'Costs {0} more in interest than {1}',dpc_months_longer:'{0} months longer',
+    dpc_avalanche:'Avalanche',dpc_snowball:'Snowball',dpc_saves_interest:'Saves {0} in interest against {1}',dpc_same_either_way:'Same result either way with your current debts',dpc_same_order:'Both methods reach your debts in the same order here, so the plan and the figures are identical. Your smallest balance is also your highest rate.',dpc_same_no_extra:'With nothing extra to put in, there is no spare money to aim, so both methods follow the same path. Add an amount above and they separate.',dpc_method_hint:'Which debt your spare money goes to first',dpc_months_sooner:'{0} months sooner',dpc_costs_interest:'Costs {0} more in interest than {1}',dpc_months_longer:'{0} months longer',
     dpc_snowball_desc:'Lowest balance first - quick wins keep you motivated',
     dpc_avalanche_desc:'Highest rate first - saves the most money overall',
     dpc_extra_label:'Extra monthly payment',
@@ -1317,7 +1323,7 @@ const TRANSLATIONS = {
     dpc_title:'Schuldentilgung',dpc_add_btn:'+ Schuld hinzufügen',
     dpc_desc:'Trage jede Schuld ein, wähle eine Rückzahlungsstrategie und sieh genau, wann du schuldenfrei bist und wie viel Zinsen du insgesamt zahlst.',
     dpc_method_label:'Rückzahlungsmethode',
-    dpc_avalanche:'Lawine',dpc_snowball:'Schneeball',dpc_saves_interest:'Spart {0} Zinsen gegenüber {1}',dpc_same_either_way:'Mit deinen aktuellen Schulden gleiches Ergebnis',dpc_method_hint:'Welche Schuld dein zusätzliches Geld zuerst bekommt',dpc_months_sooner:'{0} Monate früher',dpc_costs_interest:'Kostet {0} mehr Zinsen als {1}',dpc_months_longer:'{0} Monate länger',
+    dpc_avalanche:'Lawine',dpc_snowball:'Schneeball',dpc_saves_interest:'Spart {0} Zinsen gegenüber {1}',dpc_same_either_way:'Mit deinen aktuellen Schulden gleiches Ergebnis',dpc_same_order:'Beide Methoden gehen deine Schulden hier in derselben Reihenfolge an, also sind Plan und Zahlen identisch. Dein kleinster Saldo hat zugleich den höchsten Zinssatz.',dpc_same_no_extra:'Ohne zusätzliche Zahlung gibt es kein freies Geld zu lenken, also verlaufen beide Methoden gleich. Trage oben einen Betrag ein, dann trennen sie sich.',dpc_method_hint:'Welche Schuld dein zusätzliches Geld zuerst bekommt',dpc_months_sooner:'{0} Monate früher',dpc_costs_interest:'Kostet {0} mehr Zinsen als {1}',dpc_months_longer:'{0} Monate länger',
     dpc_snowball_desc:'Niedrigstes Saldo zuerst - schnelle Erfolge halten dich motiviert',
     dpc_avalanche_desc:'Höchste Zinsen zuerst - spart insgesamt am meisten Geld',
     dpc_extra_label:'Zusätzliche monatliche Zahlung',
@@ -1862,7 +1868,7 @@ const TRANSLATIONS = {
     dpc_title:'Remboursement de dettes',dpc_add_btn:'+ Ajouter une dette',
     dpc_desc:"Saisissez chaque dette, choisissez une stratégie de remboursement et voyez exactement quand vous serez libre de dettes et combien d'intérêts vous paierez au total.",
     dpc_method_label:'Méthode de remboursement',
-    dpc_avalanche:'Avalanche',dpc_snowball:'Boule de neige',dpc_saves_interest:"Économise {0} d'intérêts par rapport à {1}",dpc_same_either_way:'Même résultat dans les deux cas avec vos dettes actuelles',dpc_method_hint:"Quelle dette reçoit votre argent supplémentaire en premier",dpc_months_sooner:'{0} mois plus tôt',dpc_costs_interest:"Coûte {0} d'intérêts de plus que {1}",dpc_months_longer:'{0} mois de plus',
+    dpc_avalanche:'Avalanche',dpc_snowball:'Boule de neige',dpc_saves_interest:"Économise {0} d'intérêts par rapport à {1}",dpc_same_either_way:'Même résultat dans les deux cas avec vos dettes actuelles',dpc_same_order:"Les deux méthodes abordent vos dettes dans le même ordre ici, donc le plan et les chiffres sont identiques. Votre plus petit solde porte aussi le taux le plus élevé.",dpc_same_no_extra:"Sans paiement supplémentaire, il n'y a pas d'argent disponible à diriger, donc les deux méthodes suivent le même chemin. Ajoutez un montant ci-dessus et elles divergent.",dpc_method_hint:"Quelle dette reçoit votre argent supplémentaire en premier",dpc_months_sooner:'{0} mois plus tôt',dpc_costs_interest:"Coûte {0} d'intérêts de plus que {1}",dpc_months_longer:'{0} mois de plus',
     dpc_snowball_desc:"Solde le plus bas d'abord - les petites victoires vous gardent motivé",
     dpc_avalanche_desc:"Taux le plus élevé d'abord - économise le plus d'argent au total",
     dpc_extra_label:'Paiement mensuel supplémentaire',
@@ -2407,7 +2413,7 @@ const TRANSLATIONS = {
     dpc_title:'Pago de deudas',dpc_add_btn:'+ Añadir deuda',
     dpc_desc:'Introduce cada deuda, elige una estrategia de pago y ve exactamente cuándo estarás libre de deudas y cuántos intereses pagarás en total.',
     dpc_method_label:'Método de pago',
-    dpc_avalanche:'Avalancha',dpc_snowball:'Bola de nieve',dpc_saves_interest:'Ahorra {0} en intereses frente a {1}',dpc_same_either_way:'Mismo resultado de cualquier forma con tus deudas actuales',dpc_method_hint:'A qué deuda va primero tu dinero extra',dpc_months_sooner:'{0} meses antes',dpc_costs_interest:'Cuesta {0} más en intereses que {1}',dpc_months_longer:'{0} meses más',
+    dpc_avalanche:'Avalancha',dpc_snowball:'Bola de nieve',dpc_saves_interest:'Ahorra {0} en intereses frente a {1}',dpc_same_either_way:'Mismo resultado de cualquier forma con tus deudas actuales',dpc_same_order:'Ambos métodos abordan tus deudas en el mismo orden aquí, así que el plan y las cifras son idénticos. Tu saldo más bajo tiene también la tasa más alta.',dpc_same_no_extra:'Sin pago extra no hay dinero disponible que dirigir, así que ambos métodos siguen el mismo camino. Añade una cantidad arriba y se separan.',dpc_method_hint:'A qué deuda va primero tu dinero extra',dpc_months_sooner:'{0} meses antes',dpc_costs_interest:'Cuesta {0} más en intereses que {1}',dpc_months_longer:'{0} meses más',
     dpc_snowball_desc:'Saldo más bajo primero - las victorias rápidas te mantienen motivado',
     dpc_avalanche_desc:'Tasa más alta primero - ahorra más dinero en total',
     dpc_extra_label:'Pago mensual extra',
@@ -2953,7 +2959,7 @@ const TRANSLATIONS = {
     dpc_title:'Pagamento debiti',dpc_add_btn:'+ Aggiungi debito',
     dpc_desc:'Inserisci ogni debito, scegli una strategia di rimborso e scopri esattamente quando sarai libero dai debiti e quanti interessi pagherai in totale.',
     dpc_method_label:'Metodo di rimborso',
-    dpc_avalanche:'Valanga',dpc_snowball:'Palla di neve',dpc_saves_interest:'Risparmia {0} di interessi rispetto a {1}',dpc_same_either_way:'Stesso risultato in entrambi i casi con i tuoi debiti attuali',dpc_method_hint:'A quale debito vanno per primi i tuoi soldi in più',dpc_months_sooner:'{0} mesi prima',dpc_costs_interest:'Costa {0} di interessi in più di {1}',dpc_months_longer:'{0} mesi in più',
+    dpc_avalanche:'Valanga',dpc_snowball:'Palla di neve',dpc_saves_interest:'Risparmia {0} di interessi rispetto a {1}',dpc_same_either_way:'Stesso risultato in entrambi i casi con i tuoi debiti attuali',dpc_same_order:'Entrambi i metodi affrontano i tuoi debiti nello stesso ordine, quindi piano e cifre sono identici. Il saldo più basso ha anche il tasso più alto.',dpc_same_no_extra:'Senza un pagamento extra non c\'è denaro libero da indirizzare, quindi i due metodi seguono la stessa strada. Aggiungi un importo sopra e si separano.',dpc_method_hint:'A quale debito vanno per primi i tuoi soldi in più',dpc_months_sooner:'{0} mesi prima',dpc_costs_interest:'Costa {0} di interessi in più di {1}',dpc_months_longer:'{0} mesi in più',
     dpc_snowball_desc:'Saldo più basso prima - le piccole vittorie ti mantengono motivato',
     dpc_avalanche_desc:'Tasso più alto prima - risparmia di più nel complesso',
     dpc_extra_label:'Pagamento mensile extra',
@@ -3498,7 +3504,7 @@ const TRANSLATIONS = {
     dpc_title:'Spłata długów',dpc_add_btn:'+ Dodaj dług',
     dpc_desc:'Wprowadź każdy dług, wybierz strategię spłaty i sprawdź dokładnie, kiedy będziesz wolny od długów i ile odsetek zapłacisz łącznie.',
     dpc_method_label:'Metoda spłaty',
-    dpc_avalanche:'Lawina',dpc_snowball:'Śnieżka',dpc_saves_interest:'Oszczędza {0} odsetek w porównaniu z {1}',dpc_same_either_way:'Przy obecnych długach wynik jest taki sam',dpc_method_hint:'Do którego długu trafiają najpierw dodatkowe pieniądze',dpc_months_sooner:'o {0} miesięcy wcześniej',dpc_costs_interest:'Kosztuje {0} odsetek więcej niż {1}',dpc_months_longer:'o {0} miesięcy dłużej',
+    dpc_avalanche:'Lawina',dpc_snowball:'Śnieżka',dpc_saves_interest:'Oszczędza {0} odsetek w porównaniu z {1}',dpc_same_either_way:'Przy obecnych długach wynik jest taki sam',dpc_same_order:'Obie metody podchodzą do Twoich długów w tej samej kolejności, więc plan i liczby są identyczne. Twoje najniższe saldo ma też najwyższe oprocentowanie.',dpc_same_no_extra:'Bez dodatkowej wpłaty nie ma wolnych środków do skierowania, więc obie metody idą tą samą drogą. Dodaj kwotę powyżej, a się rozejdą.',dpc_method_hint:'Do którego długu trafiają najpierw dodatkowe pieniądze',dpc_months_sooner:'o {0} miesięcy wcześniej',dpc_costs_interest:'Kosztuje {0} odsetek więcej niż {1}',dpc_months_longer:'o {0} miesięcy dłużej',
     dpc_snowball_desc:'Najniższe saldo najpierw - szybkie sukcesy utrzymują motywację',
     dpc_avalanche_desc:'Najwyższe oprocentowanie najpierw - oszczędza najwięcej pieniędzy',
     dpc_extra_label:'Dodatkowa miesięczna płatność',
@@ -6527,18 +6533,27 @@ function renderDebt(){
   // changed. It also puts the difference on screen, where before the
   // choice looked inert.
   const methodNote=(()=>{
-    if(!state.debts.length||!result) return '';
+    // With one debt there is no order to choose, so there is nothing to
+    // say about the choice.
+    if(state.debts.length<2||!result) return '';
     const other=method==='avalanche'?'snowball':'avalanche';
     const keep=state.debtSettings.method;
     let alt=null;
     try{ state.debtSettings={...state.debtSettings,method:other}; alt=runDebtPayoff(); }
     finally{ state.debtSettings={...state.debtSettings,method:keep}; }
     if(!alt) return '';
+    // When both methods aim at the debts in the same sequence there is
+    // nothing for them to disagree about, and the figures match exactly.
+    // That happens often and honestly: the smallest balance is usually the
+    // card with the highest rate. Saying only "same result" invites the
+    // reader to think the setting is broken, so it says why.
+    const sameOrder=JSON.stringify(result.attackOrder)===JSON.stringify(alt.attackOrder);
+    const tie=sameOrder;
     const otherName=other==='avalanche'?t('dpc_avalanche'):t('dpc_snowball');
+    const mineName=method==='avalanche'?t('dpc_avalanche'):t('dpc_snowball');
     // Positive means the chosen method is ahead, negative means it is behind.
     // Both have to be said: a method that costs more should not be described
-    // as making no difference, which is what only reading the winning case
-    // did when snowball was picked.
+    // as making no difference.
     const saved=alt.totalInterest-result.totalInterest;
     const sooner=alt.months-result.months;
     // Under a unit either way is rounding, not a reason to pick.
@@ -6550,9 +6565,21 @@ function renderDebt(){
     }
     if(sooner>=1) bits.push(tf('dpc_months_sooner',sooner));
     else if(sooner<=-1) bits.push(tf('dpc_months_longer',-sooner));
-    if(!bits.length) return `<p class="dc-note">${t('dpc_same_either_way')}</p>`;
     const ahead=saved>=1||sooner>=1;
-    return `<p class="dc-note${ahead?' dc-note--win':' dc-note--cost'}">${bits.join(' · ')}</p>`;
+    const verdict=bits.length
+      ? `<p class="dcx-verdict${ahead?' is-win':' is-cost'}">${bits.join(' · ')}</p>`
+      : `<p class="dcx-verdict">${t(tie ? 'dpc_same_order'
+          : (extraPayment > 0 ? 'dpc_same_either_way' : 'dpc_same_no_extra'))}</p>`;
+    // Both methods shown against each other, so the difference is a figure
+    // to read rather than a claim to trust. The one in force is marked.
+    const cell=(name,on,res)=>`<div class="dcx-cell${on?' is-on':''}">
+      <span class="dcx-name">${name}</span>
+      <strong class="dcx-figure">${fmt(res.totalInterest)}</strong>
+      <span class="dcx-sub">${t('dpc_interest_label')} · ${tf('dpc_months_from_now',res.months)}</span>
+    </div>`;
+    const mine=cell(mineName,true,result), theirs=cell(otherName,false,alt);
+    const pair=method==='avalanche'?mine+theirs:theirs+mine;
+    return `<div class="dc-compare"><div class="dcx-row">${pair}</div>${verdict}</div>`;
   })();
   const totDebt=state.debts.reduce((s,d)=>s+d.balance,0),totMin=state.debts.reduce((s,d)=>s+d.minimumPayment,0);
   const totEscrow=state.debts.reduce((s,d)=>s+(d.type==='mortgage'?(d.escrowMonthly||0):0),0);
