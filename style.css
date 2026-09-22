@@ -3244,6 +3244,26 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-value { color: #fff; }
 [data-theme="light"] .nl-hero:not(.is-negative) .nl-value,
 :root:not([data-theme]) .nl-hero:not(.is-negative) .nl-value { color: #fff; }
+/* White needs something to sit on, and on light the hero was nearly white
+   itself. Thinning its surface lets the page's own backdrop come through
+   and carry the figure.
+
+   The backdrop drifts, though, so on its own the contrast would come and
+   go with the blobs. The corner wash is the floor: a deep indigo anchored
+   where the figure sits, faded out well before the pills, so the number
+   holds whatever is passing underneath. The rest of the card stays light,
+   which keeps the green, the red and the Show pill exactly as they were. */
+[data-theme="light"] .nl-hero:not(.is-negative),
+:root:not([data-theme]) .nl-hero:not(.is-negative) {
+  background-color: rgba(255, 255, 255, .26);
+  background-image:
+    radial-gradient(85% 115% at 0% 0%, rgba(67, 56, 202, .34), rgba(67, 56, 202, .06) 46%, transparent 64%),
+    linear-gradient(135deg, rgba(var(--grad-indigo-rgb), .07), transparent 70%);
+}
+/* Sitting on the wash now, so it takes the figure's side rather than the
+   card's. */
+[data-theme="light"] .nl-hero:not(.is-negative) .nl-label,
+:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-label { color: rgba(255, 255, 255, .82); }
 
 [data-theme="dark"] .nl-hero:not(.is-negative) .nl-dec,
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-dec,
