@@ -2808,6 +2808,111 @@ function buildNavRail() {
 
 // Called on load, on a change of setting, and when the window crosses the
 // phone breakpoint. Everything about the top layout is left alone.
+// ── Swipe between sections ────────────────────────────────────────────
+// Phones and tablets only: a horizontal drag across the content moves to
+// the next or previous section, in the order the tab bar shows them. It is
+// the tab bar that is read and switchBTab that runs, so a swipe lands
+// exactly where tapping the tab would, and the rail stays in step because
+// that function already keeps both navigations together.
+//
+// Only the sections are in the cycle. The tools (home, guidebook, Ezzo,
+// settings) are not places in the same sense, so they are never swiped to.
+const SWIPE_MAX_W = 1024;   // above this there is a pointer and the tabs are easy to hit
+const SWIPE_MIN_X = 60;     // far enough to mean it
+const SWIPE_MAX_T = 700;    // and quick enough to be a swipe rather than a slow drag
+const SWIPE_RATIO = 1.5;    // clearly sideways, so a scroll that drifts is not taken as one
+
+// A pane that can scroll sideways owns the gesture, but only while it still
+// has somewhere to go in the direction being swiped: a table already hard
+// against its right edge has nothing left to give, so a further swipe left
+// belongs to the section behind it. Checked at the end of the gesture, which
+// is the first moment the direction is known.
+function swipeOwnsGesture(el, dir) {
+  for (let n = el; n && n !== document.body; n = n.parentElement) {
+    if (n.scrollWidth > n.clientWidth + 2) {
+      const ox = getComputedStyle(n).overflowX;
+      if (ox !== 'auto' && ox !== 'scroll') continue;
+      const room = dir > 0
+        ? n.scrollLeft < n.scrollWidth - n.clientWidth - 2   // more to reveal on the right
+        : n.scrollLeft > 2;                                  // more to reveal on the left
+      if (room) return true;
+    }
+  }
+  return false;
+}
+
+// Only what genuinely owns a sideways drag is kept back: a slider, the tab
+// strip, a widget being reordered, anything on top in a dialog. Buttons and
+// plain fields are deliberately not on this list. These screens are mostly
+// form, and excluding them left the gesture working only in the gaps, which
+// is the same as it not working. A drag of this length never becomes a tap,
+// so nothing is triggered on the way past.
+const SWIPE_KEEP = 'input[type="range"], [contenteditable], .budget-tabs, .nav-rail, .nw-mg-row, .nw-note, [draggable="true"], dialog, .modal-card, .onb-card, .tutorial-card';
+
+// A field being typed in keeps its drag, so moving the caret still works.
+function swipeInLiveField(el) {
+  const a = document.activeElement;
+  if (!a || !/^(INPUT|TEXTAREA)$/.test(a.tagName)) return false;
+  return a === el || a.contains(el);
+}
+
+let _swX = 0, _swY = 0, _swT = 0, _swLive = false, _swTarget = null;
+
+function swipeSections() {
+  return [...document.querySelectorAll('#budgetTabs .btab[data-btab]')];
+}
+
+function swipeStep(dir) {
+  const tabs = swipeSections();
+  if (tabs.length < 2) return;
+  const at = tabs.findIndex(b => b.classList.contains('is-active'));
+  if (at < 0) return;
+  const to = at + dir;
+  // The ends are the ends: wrapping from the last section back to the first
+  // would make a swipe jump the whole width of the bar.
+  if (to < 0 || to >= tabs.length) return;
+  switchBTab(tabs[to].dataset.btab);
+}
+
+function initSwipeNav() {
+  const scope = document.querySelector('.tool-shell') || document.body;
+  if (!scope || scope.dataset.swipeWired) return;
+  scope.dataset.swipeWired = '1';
+
+  // Both listeners are passive: the gesture is only ever read, never taken
+  // off the browser, so vertical scrolling stays exactly as smooth as it was.
+  scope.addEventListener('touchstart', e => {
+    _swLive = false;
+    if (e.touches.length !== 1) return;              // a pinch is not a swipe
+    if (window.innerWidth > SWIPE_MAX_W) return;
+    if (e.target.closest(SWIPE_KEEP)) return;
+    if (swipeInLiveField(e.target)) return;
+    _swTarget = e.target;
+    _swX = e.touches[0].clientX;
+    _swY = e.touches[0].clientY;
+    _swT = Date.now();
+    _swLive = true;
+  }, { passive: true });
+
+  scope.addEventListener('touchend', e => {
+    if (!_swLive) return;
+    _swLive = false;
+    if (e.changedTouches.length !== 1) return;
+    if (Date.now() - _swT > SWIPE_MAX_T) return;
+    const dx = e.changedTouches[0].clientX - _swX;
+    const dy = e.changedTouches[0].clientY - _swY;
+    if (Math.abs(dx) < SWIPE_MIN_X) return;
+    if (Math.abs(dx) < Math.abs(dy) * SWIPE_RATIO) return;
+    // Dragging the content left brings the next section in from the right,
+    // the way a page of anything else moves under a finger.
+    const dir = dx < 0 ? 1 : -1;
+    if (swipeOwnsGesture(_swTarget, dir)) return;
+    swipeStep(dir);
+  }, { passive: true });
+
+  scope.addEventListener('touchcancel', () => { _swLive = false; }, { passive: true });
+}
+
 function applyNavPosition() {
   document.documentElement.dataset.nav = getNavPosition();
   if (navRailDocks()) buildNavRail();
@@ -5941,6 +6046,7 @@ function init() {
   // Mouse drag-to-scroll on tab bar
   enableDragScroll(document.getElementById('budgetTabs'));
   applyNavPosition();
+  initSwipeNav();
 
   // Content dissolves under the empty nav ONLY while scrolled (none at rest)
   const _scroller = document.querySelector('#view-budget .app-scroll');

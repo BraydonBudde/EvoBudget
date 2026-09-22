@@ -419,7 +419,17 @@ a.btn-back-round { text-decoration: none; }
   flex-wrap: wrap; margin-bottom: 18px;
 }
 .section-title { font-size: 20px; font-weight: 700; flex: 1; }
-.section-header-actions { display: flex; align-items: center; gap: 8px; }
+/* One control height across a section's header row. The help button was 28px
+   beside pills of 34, and a glyph inside one of them ("Import CSV") took that
+   one to 35, so the row had three heights in it. Everything is pinned to the
+   same number and the help button takes it on both axes, which is what keeps
+   it a circle rather than the oval an aspect-ratio would give it here: as a
+   flex item its width resolves from its content, not from its height. */
+.section-header-actions { display: flex; align-items: center; gap: 8px; --hdr-ctl-h: 34px; }
+.section-header-actions > .btn { height: var(--hdr-ctl-h); padding-top: 0; padding-bottom: 0; }
+.section-header-actions > .help-icon-btn {
+  width: var(--hdr-ctl-h); height: var(--hdr-ctl-h); font-size: 14px;
+}
 .section-desc {
   font-size: 13px; color: var(--text-secondary);
   line-height: 1.65; margin-bottom: 18px;
@@ -1307,8 +1317,18 @@ input[type="number"].expected-input {
   .summary-cards { grid-template-columns: 1fr 1fr; }
   .charts-col { grid-template-columns: 1fr; }
   .settings-grid { grid-template-columns: 1fr; }
-  .tx-form-row { flex-direction: column; }
+  /* Stacked, flex-basis is a height, not a width. The description field's
+     "flex: 1 1 180px" was sizing it 180px tall and then letting it grow,
+     which left a band of dead space above the Add button and pushed the
+     button far down the panel. Column direction wants its own sizing. */
+  .tx-form-row { flex-direction: column; align-items: stretch; }
   .tx-form-row .field, .tx-form-row .field-grow { width: 100%; }
+  .tx-form-row .field, .tx-form-row .field-grow, .tx-form-row .field-btn {
+    flex: 0 0 auto;
+  }
+  /* The spacer label only exists to drop the button level with the inputs
+     beside it. Stacked there is nothing to line up with. */
+  .tx-form-row .field-btn > label { display: none; }
   .leftover-inner { flex-direction: column; gap: 14px; }
   .field-grid { grid-template-columns: 1fr; }
 }
@@ -2686,6 +2706,84 @@ html[data-dash="sleek"] .sleek-actions .help-icon-btn {
   .sleek-actions { margin-left: 0; width: 100%; }
 }
 
+/* ── Sleek: the period row holds one line all the way down ──────
+   The dates, the presets and the help button stay on a single line at
+   every width and run the full width of the header, rather than each
+   dropping to a line of its own. Nothing is hidden and nothing moves:
+   the row simply gives up padding, then letter size, then the calendar
+   glyph, in that order, as the space runs out.
+
+   The dates group takes the squeeze first, because it is the one with
+   slack: the presets cannot shrink past their own words. Below 470px the
+   glyph goes, since it decorates a field that already reads as a date.
+   .date-field-val ellipses as a last resort, so a width narrower than
+   anything here degrades to "30 Sept 20..." rather than spilling out. */
+@media (max-width: 900px) {
+  html[data-dash="sleek"] .sleek-actions {
+    width: 100%; margin-left: 0; flex-wrap: nowrap; gap: 8px;
+  }
+  html[data-dash="sleek"] .sleek-actions .period-bar {
+    flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; gap: 8px; width: auto; margin: 0;
+  }
+  html[data-dash="sleek"] .sleek-actions .period-bar-dates { flex: 1 1 auto; min-width: 0; }
+  html[data-dash="sleek"] .sleek-actions .period-bar-chips {
+    flex: 0 1 auto; min-width: 0; width: auto; margin-left: 0; flex-wrap: nowrap;
+  }
+  html[data-dash="sleek"] .sleek-actions .period-chip { flex: 0 1 auto; }
+  html[data-dash="sleek"] .sleek-actions .help-icon-btn { flex: 0 0 auto; }
+  html[data-dash="sleek"] .sleek-actions .period-bar .date-field-styled {
+    min-width: 0; flex: 1 1 0;
+  }
+  html[data-dash="sleek"] .sleek-actions .date-field-val {
+    min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  }
+  /* Every control on the row is exactly one height, so the help button still
+     matches the pills beside it once they start shrinking. min-height alone
+     let the contents push a pill a pixel or two proud of its neighbours, and
+     a round button next to two pills of slightly different heights is the
+     thing this was meant to stop. The inner controls give up their vertical
+     padding and take the pill's height instead. */
+  html[data-dash="sleek"] .sleek-actions .period-bar-dates,
+  html[data-dash="sleek"] .sleek-actions .period-bar-chips {
+    height: var(--sleek-ctl-h); min-height: 0;
+  }
+  html[data-dash="sleek"] .sleek-actions .period-bar-dates .date-field-styled,
+  html[data-dash="sleek"] .sleek-actions .period-chip {
+    height: 100%; padding-top: 0; padding-bottom: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+}
+@media (max-width: 620px) {
+  html[data-dash="sleek"] .sleek-actions .period-bar-dates .date-field-styled {
+    padding: 5px 8px; gap: 5px;
+  }
+  html[data-dash="sleek"] .sleek-actions .date-field-val { font-size: 12.5px; }
+  html[data-dash="sleek"] .sleek-actions .period-chip { padding: 6px 9px; font-size: 12px; }
+}
+@media (max-width: 470px) {
+  html[data-dash="sleek"] .sleek-actions .date-cal-icon { display: none; }
+  html[data-dash="sleek"] .sleek-actions .period-bar-dates .date-field-styled { padding: 5px 5px; }
+  html[data-dash="sleek"] .sleek-actions .date-field-val { font-size: 11.5px; }
+  html[data-dash="sleek"] .sleek-actions .period-chip { padding: 6px 6px; font-size: 11px; }
+  html[data-dash="sleek"] .sleek-actions,
+  html[data-dash="sleek"] .sleek-actions .period-bar { gap: 6px; }
+  html[data-dash="sleek"] .sleek-actions .period-bar-dates { gap: 2px; }
+  html[data-dash="sleek"] .sleek-actions .period-bar-chips { gap: 2px; }
+  html[data-dash="sleek"] { --sleek-ctl-h: 36px; }
+}
+@media (max-width: 400px) {
+  html[data-dash="sleek"] .sleek-actions .date-field-val { font-size: 11px; }
+  html[data-dash="sleek"] .sleek-actions .period-bar-dates .date-field-styled { padding: 5px 3px; }
+  html[data-dash="sleek"] .sleek-actions .period-chip { padding: 6px 4px; font-size: 10.5px; }
+  html[data-dash="sleek"] .sleek-actions,
+  html[data-dash="sleek"] .sleek-actions .period-bar { gap: 4px; }
+  html[data-dash="sleek"] { --sleek-ctl-h: 34px; }
+}
+@media (max-width: 365px) {
+  html[data-dash="sleek"] .sleek-actions .period-chip { padding: 6px 3px; font-size: 10px; }
+  html[data-dash="sleek"] .sleek-actions .date-field-val { font-size: 10.5px; }
+}
+
 /* ── SIDEBAR layout ──────────────────────────────────────────── */
 .side-nav {
   display: none;
@@ -3062,28 +3160,33 @@ details[open] > .recurring-summary::before { transform: rotate(90deg); }
 .recurring-body.is-empty .recurring-empty { text-align: center; }
 .recurring-body.is-empty #addRecurringBtn { display: block; margin: 0 auto; }
 .recurring-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+/* A wrapping line rather than a rigid seven-column grid. The grid could not
+   shrink past the sum of its auto columns, so a row with a wide type tag
+   ("Subscription" against "Bill") pushed its controls out through the side of
+   the panel anywhere between about 480px and 560px of row width. Nor did the
+   grid buy any alignment: every row is its own grid, so a longer amount in one
+   row moved that row's columns and no other.
+
+   Wrapping cannot overflow, and margin-left:auto still pins the controls hard
+   right whenever the row does fit on one line, which is what the grid looked
+   like at full width. */
 .recurring-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto auto auto auto;
-  align-items: center; gap: 8px;
+  display: flex; flex-wrap: wrap; align-items: center;
+  column-gap: 8px; row-gap: 4px;
   padding: 6px 8px; border-radius: var(--radius-sm);
   background: var(--glass); border: 1px solid var(--border-faint);
   font-size: 12px;
 }
-.recurring-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.recurring-row-label { font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recurring-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: auto; }
+.recurring-row-label { flex: 1 1 auto; min-width: 0; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .recurring-row-cat  { color: var(--text-secondary); font-size: 11px; }
 .recurring-row-amt  { font-weight: 700; font-family: var(--font-display); color: var(--text-primary); white-space: nowrap; }
 .recurring-row-freq { font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing:.05em; white-space: nowrap; }
 .recurring-row-due  { font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
 @media (max-width: 480px) {
-  /* 7-column recurring rule rows overflow/clip on phones - wrap them */
-  .recurring-row {
-    display: flex; flex-wrap: wrap; align-items: center;
-    column-gap: 8px; row-gap: 4px;
-  }
-  .recurring-row-label { flex: 1 1 55%; min-width: 0; white-space: normal; }
-  .recurring-actions { margin-left: auto; }
+  /* On a phone the label gets a share of the line rather than whatever is
+     left over, and is allowed to run to a second line instead of clipping. */
+  .recurring-row-label { flex: 1 1 55%; white-space: normal; }
 }
 /* Toggle switch */
 .recurring-toggle { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
