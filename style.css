@@ -1964,19 +1964,110 @@ input[type="number"].expected-input {
 .module-section-title { font-family:var(--font-display); font-size: 16px; font-weight: 700; }
 
 /* ── Debt Payoff ───────────────────────────────────────────── */
-.debt-config-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
-.method-toggle { display: flex; gap: 10px; flex-wrap: wrap; }
-.method-btn {
-  appearance: none; border: 2px solid var(--border-faint);
-  background: var(--surface-strong); border-radius: var(--radius-md);
-  padding: 12px 16px; cursor: pointer; text-align: left;
-  transition: border-color .2s, background .2s; font-family: inherit;
-  min-width: 200px; flex: 1;
+/* ── Debt payoff: the method and the extra payment, side by side ──────
+   Two columns on desktop and tablet, the method taking the room it needs
+   for two readable cards and the amount holding a fixed lane beside it.
+   They stack only once the pair can no longer share a line. */
+.debt-config { margin-bottom: 16px; }
+.debt-config-row {
+  display: grid; gap: 22px; align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 240px);
 }
-.method-btn:hover { border-color: var(--grad-purple); }
-.method-btn.is-active { border-color: var(--grad-indigo); background: rgba(99,102,241,.08); }
-.method-btn-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
-.method-btn-desc  { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+.dc-col { min-width: 0; }
+.dc-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.dc-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.dc-hint { font-size: 11.5px; color: var(--text-faint); line-height: 1.45; }
+.dc-hint--block { display: block; margin-top: 9px; }
+
+/* Two cards of equal width, so neither reads as the recommended one by
+   being the larger. Which is chosen is said by the tick and the wash. */
+.method-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.method-btn {
+  position: relative; appearance: none; cursor: pointer; font-family: inherit;
+  display: flex; align-items: flex-start; gap: 11px; text-align: left;
+  padding: 13px 38px 13px 13px;
+  border: 1px solid var(--border-faint); border-radius: var(--radius-md);
+  background: var(--surface-strong);
+  transition: border-color .18s var(--ease), background .18s var(--ease),
+    box-shadow .18s var(--ease), transform .18s var(--ease);
+}
+.method-btn:hover { border-color: rgba(var(--grad-indigo-rgb), .45); }
+.method-btn:active { transform: translateY(1px); }
+.method-btn.is-active {
+  border-color: var(--grad-indigo);
+  background: linear-gradient(135deg, rgba(var(--grad-indigo-rgb), .13), rgba(var(--grad-indigo-rgb), .04));
+  box-shadow: 0 4px 14px -7px rgba(var(--grad-indigo-rgb), .6);
+}
+.method-btn-icon {
+  flex: none; width: 34px; height: 34px; border-radius: 10px;
+  display: grid; place-items: center; font-size: 17px; line-height: 1;
+  background: rgba(var(--grad-indigo-rgb), .1);
+  transition: background .18s var(--ease);
+}
+.method-btn.is-active .method-btn-icon {
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+.method-btn-text { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.method-btn-title { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
+.method-btn-desc  { font-size: 11.5px; color: var(--text-secondary); line-height: 1.45; }
+
+/* A ring until chosen, then a filled check. The radio it stands in for is
+   the button itself, which carries role and aria-checked. */
+.method-btn-tick {
+  position: absolute; top: 13px; right: 13px;
+  width: 17px; height: 17px; border-radius: 50%;
+  border: 1.5px solid var(--text-faint); opacity: .55;
+  transition: border-color .18s var(--ease), background .18s var(--ease), opacity .18s var(--ease);
+}
+.method-btn.is-active .method-btn-tick {
+  border-color: transparent; opacity: 1;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+.method-btn.is-active .method-btn-tick::after {
+  content: ''; position: absolute; left: 5px; top: 2px;
+  width: 4px; height: 8px; border: solid #fff;
+  border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+
+/* What the choice is worth against the other method. */
+.dc-note { margin: 11px 0 0; font-size: 12px; line-height: 1.45; color: var(--text-faint); }
+.dc-note--win  { color: var(--income); font-weight: 600; }
+/* Not an error, so not the expense red: this is the cost of a choice the
+   user is entitled to make, and snowball is picked for reasons a figure
+   does not capture. */
+.dc-note--cost { color: var(--bill); font-weight: 600; }
+
+/* The amount reads as a figure rather than a form field: the currency sits
+   inside the control and the spinners go, which is what made it look like
+   a spreadsheet cell next to the cards. */
+.dc-money {
+  display: flex; align-items: center; height: 46px; padding: 0 13px;
+  border: 1px solid var(--border-faint); border-radius: var(--radius-md);
+  background: var(--surface-strong);
+  transition: border-color .18s var(--ease), box-shadow .18s var(--ease);
+}
+.dc-money:focus-within {
+  border-color: var(--grad-indigo);
+  box-shadow: 0 0 0 3px rgba(var(--grad-indigo-rgb), .15);
+}
+.dc-money-sym { flex: none; font-size: 14px; font-weight: 700; color: var(--text-faint); }
+.dc-money-input {
+  flex: 1; min-width: 0; appearance: none; -moz-appearance: textfield;
+  border: none; background: transparent; outline: none;
+  font-family: var(--font-display); font-size: 20px; font-weight: 800;
+  color: var(--text-primary); padding: 0 0 0 5px;
+  font-variant-numeric: tabular-nums;
+}
+.dc-money-input::-webkit-outer-spin-button,
+.dc-money-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Below this the two method cards cannot both stay readable on a line. */
+@media (max-width: 480px) {
+  .method-toggle { grid-template-columns: 1fr; }
+}
 .field-hint { font-size: 11px; color: var(--text-faint); margin-top: 5px; line-height: 1.5; }
 
 /* Debt results */
@@ -2105,7 +2196,7 @@ input[type="number"].expected-input {
 }
 @media (max-width: 700px) {
   .pro-stats-row { grid-template-columns: 1fr 1fr; }
-  .method-toggle { flex-direction: column; }
+  .debt-config-row { grid-template-columns: 1fr; }
   .debt-results-cards { grid-template-columns: 1fr; }
   .sub-summary-bar { grid-template-columns: 1fr 1fr; }
   .sf-grid { grid-template-columns: 1fr 1fr; }

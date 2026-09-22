@@ -456,10 +456,18 @@ function runDebtPayoff() {
   if (!active.length) return null;
   let working=active.map(d=>({...d,remaining:d.balance,paidOffMonth:null}));
   const priority=[...working].sort((a,b)=>method==='snowball'?a.balance-b.balance:b.interestRate-a.interestRate);
-  let month=0,totalInterest=0;
+  // Whatever was going into a debt each month keeps being paid once that
+  // debt is gone, and goes to whichever debt the chosen method puts next.
+  // That rollover is the entire difference between the two methods, so
+  // without it the order was decorative and both gave the same answer.
+  let month=0,totalInterest=0,rolled=0;
   const now=new Date();
   while (working.some(d=>d.remaining>0.01)&&month<600) {
-    month++; let freed=0;
+    month++;
+    // Spare money this month: the unspent tail of a payment that cleared
+    // its debt early. Separate from rolled, which is what earlier months
+    // have already handed over for good.
+    let freed=0, clearing=0;
     for (const d of working) {
       if (d.remaining<=0) continue;
       if (d.rateType==='arm'&&d.amortType!=='equal_principal'&&d.armFixedMonths>0&&month===d.armFixedMonths+1) {
@@ -472,19 +480,36 @@ function runDebtPayoff() {
       const minPay=d.minPayMode==='percent'?Math.max(d.minPayFloor||0,d.remaining*(d.minPayPercent||0)/100)
         :(d.amortType==='equal_principal'&&d.termMonths>0)?(d.balance/d.termMonths)+interest
         :(d._currentFixedPayment||d.minimumPayment);
-      const pay=Math.min(d.remaining,minPay+targeted);
+      const due=minPay+targeted;
+      d._due=due;
+      const pay=Math.min(d.remaining,due);
       d.remaining-=pay;
       d._monthPayment=pay; d._monthInterest=interest; d._monthPrincipal=pay-interest;
-      if (d.remaining<0.01){freed+=(minPay+targeted)-Math.max(0,(minPay+targeted)-pay);d.remaining=0;if(!d.paidOffMonth)d.paidOffMonth=month;}
+      if (d.remaining<0.01){
+        // Only the part of this payment the debt did not need is spare now.
+        // The old line resolved to the whole payment, which handed money
+        // already spent on this debt to the others as well.
+        freed+=due-pay;
+        clearing+=due;
+        d.remaining=0;
+        if(!d.paidOffMonth)d.paidOffMonth=month;
+      }
     }
-    let avail=extraPayment+freed;
+    let avail=extraPayment+freed+rolled;
     for (const p of priority) {
       const a=working.find(w=>w.id===p.id); if(!a||a.remaining<=0) continue;
       const pay=Math.min(a.remaining,avail); a.remaining-=pay; avail-=pay;
       a._monthPayment=(a._monthPayment||0)+pay; a._monthPrincipal=(a._monthPrincipal||0)+pay;
-      if(a.remaining<0.01){if(!a.paidOffMonth)a.paidOffMonth=month;a.remaining=0;}
+      if(a.remaining<0.01){
+        if(!a.paidOffMonth)a.paidOffMonth=month;
+        a.remaining=0;
+        clearing+=a._due||0;   // its own payment rolls on from next month too
+      }
       if(avail<=0) break;
     }
+    // Added after the round, not during it: a debt cleared this month has
+    // already had this month's payment counted once, as freed.
+    rolled+=clearing;
     const dateStr=toLocalISO(new Date(now.getFullYear(),now.getMonth()+month,1));
     for (const d of working) {
       if (d._monthPayment===undefined) continue;
@@ -729,6 +754,7 @@ const TRANSLATIONS = {
     dpc_title:'Debt Payoff',dpc_add_btn:'+ Add debt',
     dpc_desc:"Enter every debt, pick a payoff strategy, and see exactly when you'll be debt-free and how much interest you'll pay in total.",
     dpc_method_label:'Payoff method',
+    dpc_avalanche:'Avalanche',dpc_snowball:'Snowball',dpc_saves_interest:'Saves {0} in interest against {1}',dpc_same_either_way:'Same result either way with your current debts',dpc_method_hint:'Which debt your spare money goes to first',dpc_months_sooner:'{0} months sooner',dpc_costs_interest:'Costs {0} more in interest than {1}',dpc_months_longer:'{0} months longer',
     dpc_snowball_desc:'Lowest balance first - quick wins keep you motivated',
     dpc_avalanche_desc:'Highest rate first - saves the most money overall',
     dpc_extra_label:'Extra monthly payment',
@@ -1291,6 +1317,7 @@ const TRANSLATIONS = {
     dpc_title:'Schuldentilgung',dpc_add_btn:'+ Schuld hinzufügen',
     dpc_desc:'Trage jede Schuld ein, wähle eine Rückzahlungsstrategie und sieh genau, wann du schuldenfrei bist und wie viel Zinsen du insgesamt zahlst.',
     dpc_method_label:'Rückzahlungsmethode',
+    dpc_avalanche:'Lawine',dpc_snowball:'Schneeball',dpc_saves_interest:'Spart {0} Zinsen gegenüber {1}',dpc_same_either_way:'Mit deinen aktuellen Schulden gleiches Ergebnis',dpc_method_hint:'Welche Schuld dein zusätzliches Geld zuerst bekommt',dpc_months_sooner:'{0} Monate früher',dpc_costs_interest:'Kostet {0} mehr Zinsen als {1}',dpc_months_longer:'{0} Monate länger',
     dpc_snowball_desc:'Niedrigstes Saldo zuerst - schnelle Erfolge halten dich motiviert',
     dpc_avalanche_desc:'Höchste Zinsen zuerst - spart insgesamt am meisten Geld',
     dpc_extra_label:'Zusätzliche monatliche Zahlung',
@@ -1835,6 +1862,7 @@ const TRANSLATIONS = {
     dpc_title:'Remboursement de dettes',dpc_add_btn:'+ Ajouter une dette',
     dpc_desc:"Saisissez chaque dette, choisissez une stratégie de remboursement et voyez exactement quand vous serez libre de dettes et combien d'intérêts vous paierez au total.",
     dpc_method_label:'Méthode de remboursement',
+    dpc_avalanche:'Avalanche',dpc_snowball:'Boule de neige',dpc_saves_interest:"Économise {0} d'intérêts par rapport à {1}",dpc_same_either_way:'Même résultat dans les deux cas avec vos dettes actuelles',dpc_method_hint:"Quelle dette reçoit votre argent supplémentaire en premier",dpc_months_sooner:'{0} mois plus tôt',dpc_costs_interest:"Coûte {0} d'intérêts de plus que {1}",dpc_months_longer:'{0} mois de plus',
     dpc_snowball_desc:"Solde le plus bas d'abord - les petites victoires vous gardent motivé",
     dpc_avalanche_desc:"Taux le plus élevé d'abord - économise le plus d'argent au total",
     dpc_extra_label:'Paiement mensuel supplémentaire',
@@ -2379,6 +2407,7 @@ const TRANSLATIONS = {
     dpc_title:'Pago de deudas',dpc_add_btn:'+ Añadir deuda',
     dpc_desc:'Introduce cada deuda, elige una estrategia de pago y ve exactamente cuándo estarás libre de deudas y cuántos intereses pagarás en total.',
     dpc_method_label:'Método de pago',
+    dpc_avalanche:'Avalancha',dpc_snowball:'Bola de nieve',dpc_saves_interest:'Ahorra {0} en intereses frente a {1}',dpc_same_either_way:'Mismo resultado de cualquier forma con tus deudas actuales',dpc_method_hint:'A qué deuda va primero tu dinero extra',dpc_months_sooner:'{0} meses antes',dpc_costs_interest:'Cuesta {0} más en intereses que {1}',dpc_months_longer:'{0} meses más',
     dpc_snowball_desc:'Saldo más bajo primero - las victorias rápidas te mantienen motivado',
     dpc_avalanche_desc:'Tasa más alta primero - ahorra más dinero en total',
     dpc_extra_label:'Pago mensual extra',
@@ -2924,6 +2953,7 @@ const TRANSLATIONS = {
     dpc_title:'Pagamento debiti',dpc_add_btn:'+ Aggiungi debito',
     dpc_desc:'Inserisci ogni debito, scegli una strategia di rimborso e scopri esattamente quando sarai libero dai debiti e quanti interessi pagherai in totale.',
     dpc_method_label:'Metodo di rimborso',
+    dpc_avalanche:'Valanga',dpc_snowball:'Palla di neve',dpc_saves_interest:'Risparmia {0} di interessi rispetto a {1}',dpc_same_either_way:'Stesso risultato in entrambi i casi con i tuoi debiti attuali',dpc_method_hint:'A quale debito vanno per primi i tuoi soldi in più',dpc_months_sooner:'{0} mesi prima',dpc_costs_interest:'Costa {0} di interessi in più di {1}',dpc_months_longer:'{0} mesi in più',
     dpc_snowball_desc:'Saldo più basso prima - le piccole vittorie ti mantengono motivato',
     dpc_avalanche_desc:'Tasso più alto prima - risparmia di più nel complesso',
     dpc_extra_label:'Pagamento mensile extra',
@@ -3468,6 +3498,7 @@ const TRANSLATIONS = {
     dpc_title:'Spłata długów',dpc_add_btn:'+ Dodaj dług',
     dpc_desc:'Wprowadź każdy dług, wybierz strategię spłaty i sprawdź dokładnie, kiedy będziesz wolny od długów i ile odsetek zapłacisz łącznie.',
     dpc_method_label:'Metoda spłaty',
+    dpc_avalanche:'Lawina',dpc_snowball:'Śnieżka',dpc_saves_interest:'Oszczędza {0} odsetek w porównaniu z {1}',dpc_same_either_way:'Przy obecnych długach wynik jest taki sam',dpc_method_hint:'Do którego długu trafiają najpierw dodatkowe pieniądze',dpc_months_sooner:'o {0} miesięcy wcześniej',dpc_costs_interest:'Kosztuje {0} odsetek więcej niż {1}',dpc_months_longer:'o {0} miesięcy dłużej',
     dpc_snowball_desc:'Najniższe saldo najpierw - szybkie sukcesy utrzymują motywację',
     dpc_avalanche_desc:'Najwyższe oprocentowanie najpierw - oszczędza najwięcej pieniędzy',
     dpc_extra_label:'Dodatkowa miesięczna płatność',
@@ -6490,21 +6521,73 @@ function openDebtModal(debtId){
 }
 function renderDebt(){
   const DT=debtTypes(),result=runDebtPayoff(),{method,extraPayment}=state.debtSettings;
+  // What the chosen method is worth against the other one, in the only
+  // terms that matter here. Running the projection a second time is the
+  // honest way to say it: the same engine, the same debts, one setting
+  // changed. It also puts the difference on screen, where before the
+  // choice looked inert.
+  const methodNote=(()=>{
+    if(!state.debts.length||!result) return '';
+    const other=method==='avalanche'?'snowball':'avalanche';
+    const keep=state.debtSettings.method;
+    let alt=null;
+    try{ state.debtSettings={...state.debtSettings,method:other}; alt=runDebtPayoff(); }
+    finally{ state.debtSettings={...state.debtSettings,method:keep}; }
+    if(!alt) return '';
+    const otherName=other==='avalanche'?t('dpc_avalanche'):t('dpc_snowball');
+    // Positive means the chosen method is ahead, negative means it is behind.
+    // Both have to be said: a method that costs more should not be described
+    // as making no difference, which is what only reading the winning case
+    // did when snowball was picked.
+    const saved=alt.totalInterest-result.totalInterest;
+    const sooner=alt.months-result.months;
+    // Under a unit either way is rounding, not a reason to pick.
+    const bits=[];
+    if(saved>=1){
+      bits.push(tf('dpc_saves_interest',fmt(saved),otherName));
+    } else if(saved<=-1){
+      bits.push(tf('dpc_costs_interest',fmt(-saved),otherName));
+    }
+    if(sooner>=1) bits.push(tf('dpc_months_sooner',sooner));
+    else if(sooner<=-1) bits.push(tf('dpc_months_longer',-sooner));
+    if(!bits.length) return `<p class="dc-note">${t('dpc_same_either_way')}</p>`;
+    const ahead=saved>=1||sooner>=1;
+    return `<p class="dc-note${ahead?' dc-note--win':' dc-note--cost'}">${bits.join(' · ')}</p>`;
+  })();
   const totDebt=state.debts.reduce((s,d)=>s+d.balance,0),totMin=state.debts.reduce((s,d)=>s+d.minimumPayment,0);
   const totEscrow=state.debts.reduce((s,d)=>s+(d.type==='mortgage'?(d.escrowMonthly||0):0),0);
   const totExtra=state.debts.reduce((s,d)=>s+(d.targetedExtra||0),0);
   const el=document.getElementById('bview-debt');
   el.innerHTML=`<div class="section-header"><h2 class="section-title">💳 ${t('dpc_title')}</h2><div class="section-header-actions">${helpBtn('debt')}<button class="btn btn-ghost btn-sm" id="addDebtBtn">${t('dpc_add_btn')}</button></div></div>
     <p class="section-desc">${t('dpc_desc')}</p>
-    <div class="panel" style="margin-bottom:16px"><div class="panel-inner-sm">
+    <div class="panel debt-config"><div class="panel-inner-sm">
       <div class="debt-config-row">
-        <div><label class="field-label" style="margin-bottom:8px">${t('dpc_method_label')}</label>
-          <div class="method-toggle">
-            <button class="method-btn${method==='snowball'?' is-active':''}" data-method="snowball" type="button"><div class="method-btn-title">⛄ Snowball</div><div class="method-btn-desc">${t('dpc_snowball_desc')}</div></button>
-            <button class="method-btn${method==='avalanche'?' is-active':''}" data-method="avalanche" type="button"><div class="method-btn-title">🌊 Avalanche</div><div class="method-btn-desc">${t('dpc_avalanche_desc')}</div></button>
+        <div class="dc-col dc-col--method">
+          <div class="dc-head"><span class="dc-label">${t('dpc_method_label')}</span><span class="dc-hint">${t('dpc_method_hint')}</span></div>
+          <div class="method-toggle" role="radiogroup">
+            ${[
+              ['avalanche','🌊',t('dpc_avalanche'),t('dpc_avalanche_desc')],
+              ['snowball','⛄',t('dpc_snowball'),t('dpc_snowball_desc')]
+            ].map(([k,icon,name,desc])=>`
+              <button class="method-btn${method===k?' is-active':''}" data-method="${k}" type="button" role="radio" aria-checked="${method===k}">
+                <span class="method-btn-icon" aria-hidden="true">${icon}</span>
+                <span class="method-btn-text">
+                  <span class="method-btn-title">${name}</span>
+                  <span class="method-btn-desc">${desc}</span>
+                </span>
+                <span class="method-btn-tick" aria-hidden="true"></span>
+              </button>`).join('')}
           </div>
+          ${methodNote}
         </div>
-        <div class="field" style="min-width:200px"><label class="field-label">${t('dpc_extra_label')} (${SYM})</label><input class="input" type="number" id="extraPayment" min="0" step="10" value="${extraPayment||''}" placeholder="0.00"><div class="field-hint">${t('dpc_extra_hint')}</div></div>
+        <div class="dc-col dc-col--extra">
+          <div class="dc-head"><span class="dc-label">${t('dpc_extra_label')}</span></div>
+          <div class="dc-money">
+            <span class="dc-money-sym">${SYM}</span>
+            <input class="dc-money-input" type="number" id="extraPayment" min="0" step="10" value="${extraPayment||''}" placeholder="0.00" inputmode="decimal">
+          </div>
+          <div class="dc-hint dc-hint--block">${t('dpc_extra_hint')}</div>
+        </div>
       </div>
     </div></div>
     ${state.debts.length===0
