@@ -3749,7 +3749,10 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
    transparent to pointer events so the page can still be scrolled and
    tapped either side of the raised button. */
 .nav-dock {
-  --dock-h: 62px;
+  --dock-h: 70px;
+  /* How much of the button sits below the top edge. The well is cut to
+     match, so changing this one number moves both together. */
+  --dock-sink: .85;
   --dock-lift: 10px;
   --dock-safe: env(safe-area-inset-bottom, 0px);
   --dock-add: 56px;
@@ -3775,8 +3778,8 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
      plain rectangle either side of it. Sizing the slice in pixels rather
      than percent is what keeps the curve identical on a 320px screen and
      a 760px one. */
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 62' preserveAspectRatio='none'%3E%3Cpath d='M0,0 H6.63 A12,12 0 0 1 18.19,8.8 A33,33 0 0 0 81.81,8.8 A12,12 0 0 1 93.37,0 H100 V62 H0 Z' fill='%23fff'/%3E%3C/svg%3E"), linear-gradient(#000, #000), linear-gradient(#000, #000);
-          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 62' preserveAspectRatio='none'%3E%3Cpath d='M0,0 H6.63 A12,12 0 0 1 18.19,8.8 A33,33 0 0 0 81.81,8.8 A12,12 0 0 1 93.37,0 H100 V62 H0 Z' fill='%23fff'/%3E%3C/svg%3E"), linear-gradient(#000, #000), linear-gradient(#000, #000);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 70' preserveAspectRatio='none'%3E%3Cpath d='M0,0 H5.65 A12,12 0 0 1 17.48,14.03 A33,33 1 1 0 82.52,14.03 A12,12 0 0 1 94.35,0 H100 V70 H0 Z' fill='%23fff'/%3E%3C/svg%3E"), linear-gradient(#000, #000), linear-gradient(#000, #000);
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 70' preserveAspectRatio='none'%3E%3Cpath d='M0,0 H5.65 A12,12 0 0 1 17.48,14.03 A33,33 1 1 0 82.52,14.03 A12,12 0 0 1 94.35,0 H100 V70 H0 Z' fill='%23fff'/%3E%3C/svg%3E"), linear-gradient(#000, #000), linear-gradient(#000, #000);
   -webkit-mask-position: top center, top left, top right;
           mask-position: top center, top left, top right;
   -webkit-mask-size: var(--dock-well) 100%,
@@ -3852,7 +3855,7 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 .nav-dock-add {
   pointer-events: auto;
   position: absolute; left: 50%; transform: translateX(-50%);
-  bottom: calc(var(--dock-lift) + var(--dock-safe) + var(--dock-h) - var(--dock-add) / 2);
+  bottom: calc(var(--dock-lift) + var(--dock-safe) + var(--dock-h) - var(--dock-add) * var(--dock-sink));
   width: var(--dock-add); height: var(--dock-add);
   border: 0; border-radius: 50%; cursor: pointer;
   display: grid; place-items: center;
@@ -3877,7 +3880,7 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   .dash-fab { display: none; }
   .dash-log-btn { display: none; }
   /* Room to scroll the last card clear of the bar. */
-  .tool-shell > .app-scroll { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
+  .tool-shell > .app-scroll { padding-bottom: calc(94px + env(safe-area-inset-bottom, 0px)); }
 }
 /* The floating button would otherwise sit on top of the last panel once the
    page is scrolled to the bottom. */
