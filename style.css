@@ -1836,6 +1836,20 @@ input[type="number"].expected-input {
   background: rgba(var(--grad-indigo-rgb),.12);
   color: var(--text-primary);
 }
+
+/* Tapping a tab on a touch screen leaves :hover behind on it. Swipe to
+   the next section and that tab still carried a lit background, so two
+   tabs looked chosen at once. Only one ever is, and it says so with the
+   gradient. Every theme restates the hover colour, so this clears the
+   whole family in one place, after all of them. */
+@media (hover: none) {
+  .btab:hover:not(.is-active),
+  [data-theme="dark"] .btab:hover:not(.is-active),
+  [data-theme="synthwave"] .btab:hover:not(.is-active),
+  [data-theme="terminal"] .btab:hover:not(.is-active) {
+    background: transparent; color: var(--text-secondary);
+  }
+}
 [data-theme="terminal"] .side-nav { background: rgba(10,10,10,.92); border-right-color: rgba(var(--grad-indigo-rgb),.1); }
 [data-theme="terminal"] .side-nav-item:hover:not(.is-active) { background: rgba(var(--grad-indigo-rgb),.08); }
 [data-theme="terminal"] .side-nav-item.is-active { background: rgba(var(--grad-indigo-rgb),.14); }
@@ -3753,17 +3767,41 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 
 /* Bare inside the bar: their own rings would read as buttons on a button,
    and the target is the whole cell rather than the glyph. */
+/* One size for every seat in the bar. The assistant carries an inner
+   element that does its own drawing, and sizing only that left it
+   overflowing a 36px button and sitting five pixels low against the
+   rest, so the button and its inner are set together. */
 .nav-dock .btn-icon,
+.nav-dock > .nav-dock-bar .penny-nav-btn,
 .nav-dock .penny-nav-btn-inner {
   border-color: transparent; background: transparent; box-shadow: none;
   width: 46px; height: 46px; min-width: 46px; min-height: 46px;
+  border-radius: 50%;
 }
-.nav-dock .btn-icon:hover,
+.nav-dock .penny-nav-icon svg { width: 19px; height: 19px; }
+
+/* One press state across the row. Pointer devices get it on hover, and
+   every device gets it while the finger or button is down, so the four
+   behave alike instead of each showing its own idea of being chosen. */
 .nav-dock .btn-icon:active,
-.nav-dock .penny-nav-btn:hover .penny-nav-btn-inner {
+.nav-dock .penny-nav-btn:active .penny-nav-btn-inner {
   background: rgba(var(--grad-indigo-rgb), .1); color: var(--grad-indigo);
 }
-.nav-dock .penny-nav-icon svg { width: 22px; height: 22px; }
+@media (hover: hover) {
+  .nav-dock .btn-icon:hover,
+  .nav-dock .penny-nav-btn:hover .penny-nav-btn-inner {
+    background: rgba(var(--grad-indigo-rgb), .1); color: var(--grad-indigo);
+  }
+}
+/* A touch browser leaves :hover on whatever was tapped last, which read
+   as a second, stale selection sitting beside the real one. Nothing is
+   chosen in this bar: every item is an action. */
+@media (hover: none) {
+  .nav-dock .btn-icon:hover,
+  .nav-dock .penny-nav-btn:hover .penny-nav-btn-inner {
+    background: transparent; color: inherit;
+  }
+}
 
 /* Raised clear of the bar, the way the reference has it: the one action
    worth interrupting the row for. */
@@ -3775,10 +3813,17 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
   font-family: var(--font-display); font-size: 27px; font-weight: 700; line-height: 1;
   color: var(--text-on-grad);
   background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
-  box-shadow: 0 10px 24px -6px rgba(var(--grad-indigo-rgb), .75);
-  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+  transition: transform .15s var(--ease);
 }
 .nav-dock-add:active { transform: scale(.94); }
+/* Twice the reach of the text glyph it replaces, and centred exactly:
+   the box is square, the artwork is drawn about the middle of its own
+   viewBox, and place-items does the rest. */
+.nav-dock-plus {
+  width: 28px; height: 28px; display: block;
+  fill: none; stroke: currentColor; stroke-width: 2.4;
+  stroke-linecap: round;
+}
 
 @media (max-width: 760px) {
   .nav-dock { display: block; }

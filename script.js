@@ -2895,7 +2895,7 @@ function buildNavDock() {
     dock.innerHTML = `<div class="nav-dock-bar">
       <div class="nav-dock-side" id="navDockLeft"></div>
       <button class="nav-dock-add" id="navDockAdd" type="button"
-        title="${esc(t('tx_add_title'))}" aria-label="${esc(t('tx_add_title'))}">\u002B</button>
+        title="${esc(t('tx_add_title'))}" aria-label="${esc(t('tx_add_title'))}"><svg class="nav-dock-plus" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button>
       <div class="nav-dock-side" id="navDockRight"></div>
     </div>`;
     shell.appendChild(dock);
