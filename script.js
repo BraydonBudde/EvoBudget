@@ -1772,6 +1772,16 @@ function t(key) {
 }
 function tf(key,...args){let s=t(key);args.forEach((v,i)=>s=s.replaceAll(`{${i}}`,v));return s;}
 
+// Home leads to the dashboard rather than back out to the tools page, so
+// it says so, in whatever language is set. Called at startup and again
+// whenever the language changes.
+function syncHomeLabel() {
+  const b = document.getElementById('backToHub');
+  if (!b) return;
+  const label = t('tab_dashboard');
+  b.title = label;
+  b.setAttribute('aria-label', label);
+}
 function applyLanguage() {
   const lang = state?.settings?.language || 'en';
   document.documentElement.lang = lang;
@@ -1794,6 +1804,7 @@ function applyLanguage() {
         '</i><span class="btab-txt">' + esc(tx) + '</span>';
     }
   });
+  syncHomeLabel();
   // The rail's labels are copies of the tab bar's, so they follow it here.
   if (document.querySelector('.nav-rail')) buildNavRail();
 }
@@ -6072,7 +6083,11 @@ function init() {
   if (_scroller) _scroller.addEventListener('scroll', () => _scroller.classList.toggle('is-scrolled', _scroller.scrollTop > 4), { passive: true });
 
   // Back to hub
-  document.getElementById('backToHub')?.addEventListener('click', () => navigateTo('hub'));
+  // Once the planner is open, the tools page is not where "home" means.
+  // The dashboard is. The upgrade banner still carries anyone who wants
+  // the other planner straight to it.
+  document.getElementById('backToHub')?.addEventListener('click', () => switchBTab('dashboard'));
+  syncHomeLabel();
 
   // Settings gear → Settings tab
   document.getElementById('settingsNavBtn')?.addEventListener('click', () => switchBTab('settings'));

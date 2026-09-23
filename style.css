@@ -1632,7 +1632,6 @@ input[type="number"].expected-input {
 [data-theme="synthwave"] .side-nav-item.is-active { background: rgba(var(--grad-indigo-rgb),.14); }
 [data-theme="synthwave"] .command-nav { background: rgba(0,0,0,.32); }
 [data-theme="synthwave"] .cnav-btn.is-active { color: var(--text-primary); }
-[data-theme="synthwave"] .recurring-panel { background: rgba(var(--grad-indigo-rgb),.04); }
 [data-theme="synthwave"] .fk-dialog-icon        { background: rgba(var(--grad-indigo-rgb),.18); }
 [data-theme="synthwave"] .fk-dialog--danger .fk-dialog-icon { background: rgba(244,63,94,.20); }
 [data-theme="synthwave"] .app-title-editable:hover { background: rgba(255,255,255,.08); }
@@ -1855,7 +1854,6 @@ input[type="number"].expected-input {
 [data-theme="terminal"] .side-nav-item.is-active { background: rgba(var(--grad-indigo-rgb),.14); }
 [data-theme="terminal"] .command-nav { background: rgba(0,0,0,.32); }
 [data-theme="terminal"] .cnav-btn.is-active { color: var(--text-primary); }
-[data-theme="terminal"] .recurring-panel { background: rgba(var(--grad-indigo-rgb),.04); }
 [data-theme="terminal"] .fk-dialog-icon        { background: rgba(var(--grad-indigo-rgb),.18); }
 [data-theme="terminal"] .fk-dialog--danger .fk-dialog-icon { background: rgba(244,63,94,.20); }
 [data-theme="terminal"] .app-title-editable:hover { background: rgba(255,255,255,.08); }
@@ -3292,12 +3290,14 @@ html[data-dash="sleek"] .sleek-actions .help-icon-btn {
 /* ═══════════════════════════════════════════════════════════════
    RECURRING RULES PANEL (Issue 20)
 ═══════════════════════════════════════════════════════════════ */
+/* The same surface as the cards it sits among. It used to carry a tint of
+   its own, four per-theme shades of it, which made the automations read
+   as a different kind of thing from the panel directly below it. */
 .recurring-panel {
   margin: 10px 0 4px; border-radius: var(--radius-md);
-  border: 1px solid var(--border-faint);
-  background: rgba(30,27,46,.04);
+  border: 1px solid var(--border-soft);
+  background: var(--surface);
 }
-[data-theme="dark"] .recurring-panel { background: rgba(var(--grad-indigo-rgb),.04); }
 .recurring-summary {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 14px; cursor: pointer; user-select: none;
@@ -3784,22 +3784,36 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
    every device gets it while the finger or button is down, so the four
    behave alike instead of each showing its own idea of being chosen. */
 .nav-dock .btn-icon:active,
-.nav-dock .penny-nav-btn:active .penny-nav-btn-inner {
-  background: rgba(var(--grad-indigo-rgb), .1); color: var(--grad-indigo);
+.nav-dock .penny-nav-btn:active .penny-nav-btn-inner,
+.nav-dock .penny-nav-btn.penny-off:active .penny-nav-btn-inner {
+  background: rgba(var(--grad-indigo-rgb), .1);
+  color: var(--grad-indigo); border-color: transparent;
 }
 @media (hover: hover) {
   .nav-dock .btn-icon:hover,
-  .nav-dock .penny-nav-btn:hover .penny-nav-btn-inner {
-    background: rgba(var(--grad-indigo-rgb), .1); color: var(--grad-indigo);
+  .nav-dock .penny-nav-btn:hover .penny-nav-btn-inner,
+  .nav-dock .penny-nav-btn:focus-visible .penny-nav-btn-inner,
+  .nav-dock .penny-nav-btn.penny-off:hover .penny-nav-btn-inner,
+  .nav-dock .penny-nav-btn.penny-off:focus-visible .penny-nav-btn-inner {
+    background: rgba(var(--grad-indigo-rgb), .1);
+    color: var(--grad-indigo); border-color: transparent;
   }
+}
+/* The glyph is drawn in currentColor, so it follows the colour above on
+   its own. This only stops the off-state rule dimming it back down. */
+.nav-dock .penny-nav-btn.penny-off:hover .penny-nav-icon,
+.nav-dock .penny-nav-btn.penny-off:focus-visible .penny-nav-icon,
+.nav-dock .penny-nav-btn.penny-off:active .penny-nav-icon {
+  color: inherit; opacity: 1;
 }
 /* A touch browser leaves :hover on whatever was tapped last, which read
    as a second, stale selection sitting beside the real one. Nothing is
    chosen in this bar: every item is an action. */
 @media (hover: none) {
   .nav-dock .btn-icon:hover,
-  .nav-dock .penny-nav-btn:hover .penny-nav-btn-inner {
-    background: transparent; color: inherit;
+  .nav-dock .penny-nav-btn:hover .penny-nav-btn-inner,
+  .nav-dock .penny-nav-btn.penny-off:hover .penny-nav-btn-inner {
+    background: transparent; color: inherit; border-color: transparent;
   }
 }
 
