@@ -976,6 +976,25 @@ a.btn { text-decoration: none; }
 .onb-tip-icon { flex-shrink: 0; font-size: 17px; line-height: 1.4; }
 .onb-tip strong { color: var(--text-primary); }
 
+/* The closing offer. Held apart from the tips above it, because it is the
+   one thing on the card that asks for a decision rather than telling the
+   reader something, and it carries the button that acts on it. */
+.onb-sync {
+  display: flex; align-items: center; gap: 12px; text-align: left;
+  margin: 4px 0 22px; padding: 13px 14px;
+  border: 1px solid var(--border-faint); border-radius: var(--radius-md);
+  background: rgba(var(--grad-indigo-rgb), .07);
+}
+.onb-sync-icon { flex-shrink: 0; font-size: 19px; line-height: 1; }
+.onb-sync-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.onb-sync-text strong { font-size: 13px; color: var(--text-primary); }
+.onb-sync-text span { font-size: 12.5px; line-height: 1.45; color: var(--text-secondary); }
+.onb-sync-btn { flex-shrink: 0; }
+@media (max-width: 460px) {
+  .onb-sync { flex-wrap: wrap; }
+  .onb-sync-btn { width: 100%; justify-content: center; }
+}
+
 /* Spotlight steps - dim the real UI, highlight one live element, float a coach card near it */
 .onb-mask { position: fixed; inset: 0; z-index: 1300; pointer-events: none; }
 .onb-mask-hole {
@@ -2576,6 +2595,7 @@ html[data-nav="right"] .tool-shell > .tool-sticky { display: none; }
    the rail and the topbar's tools pill it stays a plain circle and only
    changes colour, exactly as they do. */
 .nav-rail-tools .penny-nav-btn-inner,
+.nav-dock .penny-nav-btn-inner,
 html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn-inner {
   position: static; width: 36px; height: 36px; padding: 0;
   justify-content: center; gap: 0;
@@ -2583,14 +2603,18 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn-inner {
 }
 .nav-rail-tools .penny-nav-btn:hover .penny-nav-btn-inner,
 .nav-rail-tools .penny-nav-btn:focus-visible .penny-nav-btn-inner,
+.nav-dock .penny-nav-btn:hover .penny-nav-btn-inner,
+.nav-dock .penny-nav-btn:focus-visible .penny-nav-btn-inner,
 html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:hover .penny-nav-btn-inner,
 html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn:focus-visible .penny-nav-btn-inner {
   width: 36px; padding: 0; justify-content: center; gap: 0;
   color: var(--grad-indigo);
 }
 .nav-rail-tools .penny-nav-pill-text,
+.nav-dock .penny-nav-pill-text,
 html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-pill-text { display: none; }
 .nav-rail-tools .penny-nav-btn.penny-off .penny-nav-icon,
+.nav-dock .penny-nav-btn.penny-off .penny-nav-icon,
 html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off .penny-nav-icon { animation: none; }
 
 /* ── The add / reorder / remove sheet ─────────────────────────── */
@@ -3700,6 +3724,70 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
 @media (max-width: 700px) {
   .dash-log-btn { display: none; }
   .dash-fab { display: flex; }
+}
+
+/* ── The phone dock ────────────────────────────────────────────────
+   On a phone the tools come off the top bar and sit along the bottom,
+   within reach of a thumb, with quick-add raised in the middle. The
+   sections then have the whole top line to themselves.
+
+   The bar is the only part that takes a press. The strip around it stays
+   transparent to pointer events so the page can still be scrolled and
+   tapped either side of the raised button. */
+.nav-dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  display: none; pointer-events: none;
+  padding: 0 12px calc(10px + env(safe-area-inset-bottom, 0px));
+}
+.nav-dock-bar {
+  pointer-events: auto; position: relative;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  gap: 6px; height: 60px; padding: 0 6px;
+  border-radius: 26px;
+  background: var(--surface-strong);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-faint);
+  box-shadow: 0 -1px 18px rgba(10, 6, 24, .12), 0 12px 32px -14px rgba(10, 6, 24, .45);
+}
+.nav-dock-side { display: flex; align-items: center; justify-content: space-evenly; min-width: 0; }
+
+/* Bare inside the bar: their own rings would read as buttons on a button,
+   and the target is the whole cell rather than the glyph. */
+.nav-dock .btn-icon,
+.nav-dock .penny-nav-btn-inner {
+  border-color: transparent; background: transparent; box-shadow: none;
+  width: 46px; height: 46px; min-width: 46px; min-height: 46px;
+}
+.nav-dock .btn-icon:hover,
+.nav-dock .btn-icon:active,
+.nav-dock .penny-nav-btn:hover .penny-nav-btn-inner {
+  background: rgba(var(--grad-indigo-rgb), .1); color: var(--grad-indigo);
+}
+.nav-dock .penny-nav-icon svg { width: 22px; height: 22px; }
+
+/* Raised clear of the bar, the way the reference has it: the one action
+   worth interrupting the row for. */
+.nav-dock-add {
+  position: relative; top: -14px;
+  width: 56px; height: 56px; flex: none;
+  border: 0; border-radius: 50%; cursor: pointer;
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-size: 27px; font-weight: 700; line-height: 1;
+  color: var(--text-on-grad);
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+  box-shadow: 0 10px 24px -6px rgba(var(--grad-indigo-rgb), .75);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+.nav-dock-add:active { transform: scale(.94); }
+
+@media (max-width: 760px) {
+  .nav-dock { display: block; }
+  /* The dock carries quick-add now, so the floating button and the header
+     button would both be a second way to do the same thing. */
+  .dash-fab { display: none; }
+  .dash-log-btn { display: none; }
+  /* Room to scroll the last card clear of the bar. */
+  .tool-shell > .app-scroll { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
 }
 /* The floating button would otherwise sit on top of the last panel once the
    page is scrolled to the bottom. */

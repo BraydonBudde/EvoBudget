@@ -1194,7 +1194,7 @@ const TRANSLATIONS = {
     onb_tip1_h:'Guide button',onb_tip1_b:'Tap the ? icon on any tab for detailed help on that section.',
     onb_tip2_h:'Fill in the rest',onb_tip2_b:"Don't forget Expenses, Bills & Savings - the same way you just did Income.",
     onb_tip3_h:'Pro tools',onb_tip3_b:'Explore the Debt Payoff calculator, Sinking Funds, Subscriptions and the Smart Calendar.',
-    onb_tip4_h:'Sync across devices',onb_tip4_b:'Turn on Google Sync in Settings to access your budget from any device.',
+    onb_tip4_h:'Sync across devices',nav_dock_aria:'Quick actions',onb_tip4_b:'Turn on Google Sync in Settings to access your budget from any device.',
     onb_finish_btn:'Start budgeting →',
     sync_card_title:'☁️ Data &amp; Sync',sync_card_desc:'Choose how your data is stored and kept up to date across devices.',
     sync_mode_local_title:'This device only',sync_mode_local_desc:'Data is saved on this device only',
@@ -4299,10 +4299,66 @@ function initSwipeNav() {
   scope.addEventListener('touchcancel', () => { _swLive = false; }, { passive: true });
 }
 
+const SHELL_SEL = '.app.tool-shell';
+
+// ── The phone dock ───────────────────────────────────────────────────
+// On a phone the tools leave the top bar and gather in a bar along the
+// bottom, where a thumb reaches them, with quick-add raised in the middle.
+// The sections keep the top to themselves and run the full width.
+//
+// The four buttons are the same nodes the rail borrows, moved rather than
+// copied, so every listener they were given at startup still applies and
+// railRelease still knows where each one came from.
+function navDockActive() { return NAV_RAIL_MQ.matches; }
+
+function buildNavDock() {
+  const shell = document.querySelector(SHELL_SEL);
+  if (!shell) return;
+  railRemember();
+  let dock = document.getElementById('navDock');
+  if (!dock) {
+    dock = document.createElement('nav');
+    dock.className = 'nav-dock';
+    dock.id = 'navDock';
+    dock.setAttribute('aria-label', t('nav_dock_aria'));
+    dock.innerHTML = `<div class="nav-dock-bar">
+      <div class="nav-dock-side" id="navDockLeft"></div>
+      <button class="nav-dock-add" id="navDockAdd" type="button"
+        title="${esc(t('tx_add_title'))}" aria-label="${esc(t('tx_add_title'))}">\u002B</button>
+      <div class="nav-dock-side" id="navDockRight"></div>
+    </div>`;
+    shell.appendChild(dock);
+    dock.querySelector('#navDockAdd').addEventListener('click', openQuickAddTx);
+  }
+  const left = dock.querySelector('#navDockLeft');
+  const right = dock.querySelector('#navDockRight');
+  // Home and the guide to the left of quick-add, Ezzo and settings to its
+  // right. Anything an app does not have is simply absent.
+  const place = (ids, into) => ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.parentNode !== into) into.appendChild(el);
+  });
+  place(['backToHub', 'guideNavBtn'], left);
+  place(['pennyNavBtn', 'settingsNavBtn'], right);
+}
+
+// Hands the buttons back before the dock is taken away, or they would go
+// with it.
+function navDockRemove() {
+  const dock = document.getElementById('navDock');
+  if (!dock) return;
+  railRelease();
+  dock.remove();
+}
+
 function applyNavPosition() {
   document.documentElement.dataset.nav = getNavPosition();
-  if (navRailDocks()) buildNavRail();
-  else railRelease();
+  // Three possible homes for the tools, and exactly one of them owns the
+  // buttons at a time: the side rail on a wide screen, the bottom dock on
+  // a phone, the top bar otherwise.
+  if (navRailDocks()) { navDockRemove(); buildNavRail(); }
+  else if (navDockActive()) buildNavDock();
+  else { navDockRemove(); railRelease(); }
   // Whether the tab bar can share the topbar's line depends on where the
   // nav sits, so the two are decided together and in this order.
   try { applyDashChrome(); } catch (e) {}
@@ -4940,7 +4996,9 @@ function applyDashChrome() {
   // Gathered into the one group, in a fixed order, from wherever the markup
   // or the rail last left them. appendChild moves a node it already owns,
   // so re-running this settles the order rather than appending duplicates.
-  RAIL_ADOPT.forEach(id => {
+  // On a phone the dock holds them instead, and pulling them back up here
+  // would empty it on every render.
+  if (!navDockActive()) RAIL_ADOPT.forEach(id => {
     const el = document.getElementById(id);
     if (el) tools.appendChild(el);
   });
@@ -4951,6 +5009,10 @@ function applyDashChrome() {
   // whitespace between the tags it used to wrap.
   const left = bar.querySelector('.tool-topbar-left');
   if (left) left.style.display = left.querySelector('*') ? '' : 'none';
+  // Same for the tools group once the dock has taken its buttons: an empty
+  // flex child still claims the row gap, and the sections pill is supposed
+  // to have the whole line to itself now.
+  tools.style.display = tools.querySelector('*') ? '' : 'none';
 }
 
 function sleekGreeting() {
@@ -8579,12 +8641,14 @@ function onbClearOverlay() {
   if (onbResizeHandler) { window.removeEventListener('resize', onbResizeHandler); window.removeEventListener('scroll', onbResizeHandler, true); onbResizeHandler = null; }
 }
 
-function onbFinish() {
+// tab: where to land afterwards. The wrap-up can send the reader to
+// Settings, which is the one place the tutorial points at by name.
+function onbFinish(tab) {
   onbClearOverlay();
   state.settings.onboardingDone = true;
   saveState();
   onbActive = false;
-  switchTab('dashboard');
+  switchTab(tab || 'dashboard');
 }
 
 function onbSkipAll() {
@@ -8774,7 +8838,14 @@ function onbShowTips() {
         <div class="onb-tip"><span class="onb-tip-icon">📖</span><span><strong>${t('onb_tip1_h')}</strong> ${t('onb_tip1_b')}</span></div>
         <div class="onb-tip"><span class="onb-tip-icon">🎨</span><span><strong>${t('onb_tip2_h')}</strong> ${t('onb_tip2_b')}</span></div>
         <div class="onb-tip"><span class="onb-tip-icon">⚡</span><span><strong>${t('onb_tip3_h')}</strong> ${t('onb_tip3_b')}</span></div>
-        <div class="onb-tip"><span class="onb-tip-icon">☁️</span><span><strong>${t('onb_tip4_h')}</strong> ${t('onb_tip4_b')}</span></div>
+      </div>
+      <div class="onb-sync">
+        <span class="onb-sync-icon" aria-hidden="true">☁️</span>
+        <span class="onb-sync-text">
+          <strong>${t('onb_tip4_h')}</strong>
+          <span>${t('onb_tip4_b')}</span>
+        </span>
+        <button class="btn btn-ghost btn-sm onb-sync-btn" id="onbSyncBtn" type="button">${t('tab_settings')}</button>
       </div>
       <div class="onb-actions">
         <button class="btn btn-primary" id="onbFinishBtn" type="button">${t('onb_finish_btn')}</button>
@@ -8782,6 +8853,9 @@ function onbShowTips() {
     </div>`;
   document.body.appendChild(ov);
   ov.querySelector('#onbFinishBtn').addEventListener('click', () => onbCloseOverlayEl(ov, onbFinish));
+  // Straight to the switch rather than to the dashboard, so the offer can
+  // be taken up in the moment it is made.
+  ov.querySelector('#onbSyncBtn')?.addEventListener('click', () => onbCloseOverlayEl(ov, () => onbFinish('settings')));
   requestAnimationFrame(() => ov.classList.add('is-in'));
 }
 

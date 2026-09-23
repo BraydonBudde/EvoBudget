@@ -303,7 +303,7 @@ const TRANSLATIONS = {
     onb_tips_sub:'A few more things worth knowing:',
     onb_tip1_h:'Guide button',onb_tip1_b:'Tap the ? icon on any tab for detailed help on that section.',
     onb_tip2_h:'Fill in the rest',onb_tip2_b:"Don't forget Expenses, Bills, Debt & Savings - the same way you just did Income.",
-    onb_tip3_h:'Sync across devices',onb_tip3_b:'Turn on Google Sync in Settings to access your budget from any device.',
+    onb_tip3_h:'Sync across devices',nav_dock_aria:'Quick actions',onb_tip3_b:'Turn on Google Sync in Settings to access your budget from any device.',
     onb_tip4_h:'Export anytime',onb_tip4_b:'Download a CSV backup of your data whenever you like, from Settings.',
     onb_finish_btn:'Start budgeting →',
     dash_stat_income:'Total Income',dash_stat_of_expected:'of {0} expected',
@@ -2338,57 +2338,6 @@ function showGoogleReauthModal(tool) {
   requestAnimationFrame(() => ov.classList.add('is-in'));
 }
 
-// ── Local vs Google Sync choice (shown once, right after a code is redeemed) ──
-function showSyncChoiceModal(tool) {
-  document.getElementById('fkSyncOverlay')?.remove();
-  const ov = document.createElement('div');
-  ov.className = 'fk-code-overlay';
-  ov.id = 'fkSyncOverlay';
-  ov.setAttribute('role', 'dialog');
-  ov.setAttribute('aria-modal', 'true');
-  ov.innerHTML = `
-    <div class="fk-code-card fk-sync-card" role="document">
-      <h2 class="fk-code-title">${t('sync_welcome')}</h2>
-      <p class="fk-code-sub">${t('sync_choose')}</p>
-      <button class="fk-sync-option fk-sync-option--google" id="fkSyncGoogle" type="button">
-        <span class="fk-sync-option-badge">${t('sync_recommended')}</span>
-        <span class="fk-sync-option-icon fk-sync-option-icon--google">${SYNC_ICON_GOOGLE}</span>
-        <span class="fk-sync-option-text">
-          <span class="fk-sync-option-title">${t('sync_continue_google')}</span>
-          <span class="fk-sync-option-desc">${t('sync_desc_multi_device')}</span>
-        </span>
-        <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
-      </button>
-      <button class="fk-sync-option" id="fkSyncLocal" type="button">
-        <span class="fk-sync-option-icon">${SYNC_ICON_LOCAL}</span>
-        <span class="fk-sync-option-text">
-          <span class="fk-sync-option-title">${t('sync_use_no_account')}</span>
-          <span class="fk-sync-option-desc">${t('sync_desc_this_device')}</span>
-        </span>
-        <span class="fk-sync-option-chevron">${SYNC_ICON_CHEVRON}</span>
-      </button>
-      <p class="fk-code-error" id="fkSyncError" hidden></p>
-      <p class="fk-sync-status" id="fkSyncStatus" hidden>${t('sync_status_wait')}</p>
-      <p class="fk-sync-footer">${t('sync_footer_note')}</p>
-    </div>`;
-  document.body.appendChild(ov);
-  const close = () => { ov.classList.add('is-leaving'); setTimeout(() => ov.remove(), 180); };
-  const statusEl = ov.querySelector('#fkSyncStatus');
-  const errEl = ov.querySelector('#fkSyncError');
-  ov.querySelector('#fkSyncLocal')?.addEventListener('click', () => { syncSetMode(tool, 'local'); close(); enterFull(tool); });
-  ov.querySelector('#fkSyncGoogle')?.addEventListener('click', async () => {
-    errEl.hidden = true; statusEl.hidden = false;
-    ov.querySelectorAll('.fk-sync-option').forEach(b => b.disabled = true);
-    try { await syncSignInAndAdopt(tool); syncSetMode(tool, 'google'); close(); enterFull(tool); }
-    catch (e) {
-      statusEl.hidden = true;
-      errEl.textContent = syncFriendlyError(e); errEl.hidden = false;
-      ov.querySelectorAll('.fk-sync-option').forEach(b => b.disabled = false);
-    }
-  });
-  requestAnimationFrame(() => ov.classList.add('is-in'));
-}
-
 // ── License key prompt ─────────────────────────────────────────────────
 function showAccessCodeModal(tool) {
   document.getElementById('fkCodeOverlay')?.remove();
@@ -2438,7 +2387,11 @@ function showAccessCodeModal(tool) {
     else { state.settings.dashboardLayout = cfg.layout; saveState(); }
     applyTheme(cfg.theme);
     close();
-    showSyncChoiceModal(cfg.tool);
+    // Local by default: nothing to sign in to, nothing to decide, straight
+    // into the tutorial. Google sync is offered at the end of that tutorial
+    // and lives in Settings, where it can be turned on at any time.
+    syncSetMode(cfg.tool, 'local');
+    enterFull(cfg.tool);
   };
   const redeemLemonSqueezyKey = (lsResult, codeVal, orderIdVal) => {
     // Unlike a launch code, a Lemon Squeezy key carries no layout/theme -
@@ -2447,7 +2400,11 @@ function showAccessCodeModal(tool) {
     rememberUnlockKey(lsResult.tool, codeVal);
     trackEvent('launch_code_redeemed', { code: codeVal, tool: lsResult.tool, orderId: orderIdVal, source: 'lemonsqueezy' });
     close();
-    showSyncChoiceModal(lsResult.tool);
+    // Local by default: nothing to sign in to, nothing to decide, straight
+    // into the tutorial. Google sync is offered at the end of that tutorial
+    // and lives in Settings, where it can be turned on at any time.
+    syncSetMode(lsResult.tool, 'local');
+    enterFull(lsResult.tool);
   };
   const submit = async () => {
     const codeVal = input.value.trim().toUpperCase();
@@ -2913,10 +2870,66 @@ function initSwipeNav() {
   scope.addEventListener('touchcancel', () => { _swLive = false; }, { passive: true });
 }
 
+const SHELL_SEL = '#view-budget.tool-shell';
+
+// ── The phone dock ───────────────────────────────────────────────────
+// On a phone the tools leave the top bar and gather in a bar along the
+// bottom, where a thumb reaches them, with quick-add raised in the middle.
+// The sections keep the top to themselves and run the full width.
+//
+// The four buttons are the same nodes the rail borrows, moved rather than
+// copied, so every listener they were given at startup still applies and
+// railRelease still knows where each one came from.
+function navDockActive() { return NAV_RAIL_MQ.matches; }
+
+function buildNavDock() {
+  const shell = document.querySelector(SHELL_SEL);
+  if (!shell) return;
+  railRemember();
+  let dock = document.getElementById('navDock');
+  if (!dock) {
+    dock = document.createElement('nav');
+    dock.className = 'nav-dock';
+    dock.id = 'navDock';
+    dock.setAttribute('aria-label', t('nav_dock_aria'));
+    dock.innerHTML = `<div class="nav-dock-bar">
+      <div class="nav-dock-side" id="navDockLeft"></div>
+      <button class="nav-dock-add" id="navDockAdd" type="button"
+        title="${esc(t('tx_add_title'))}" aria-label="${esc(t('tx_add_title'))}">\u002B</button>
+      <div class="nav-dock-side" id="navDockRight"></div>
+    </div>`;
+    shell.appendChild(dock);
+    dock.querySelector('#navDockAdd').addEventListener('click', openQuickAddTx);
+  }
+  const left = dock.querySelector('#navDockLeft');
+  const right = dock.querySelector('#navDockRight');
+  // Home and the guide to the left of quick-add, Ezzo and settings to its
+  // right. Anything an app does not have is simply absent.
+  const place = (ids, into) => ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.parentNode !== into) into.appendChild(el);
+  });
+  place(['backToHub', 'guideNavBtn'], left);
+  place(['pennyNavBtn', 'settingsNavBtn'], right);
+}
+
+// Hands the buttons back before the dock is taken away, or they would go
+// with it.
+function navDockRemove() {
+  const dock = document.getElementById('navDock');
+  if (!dock) return;
+  railRelease();
+  dock.remove();
+}
+
 function applyNavPosition() {
   document.documentElement.dataset.nav = getNavPosition();
-  if (navRailDocks()) buildNavRail();
-  else railRelease();
+  // Three possible homes for the tools, and exactly one of them owns the
+  // buttons at a time: the side rail on a wide screen, the bottom dock on
+  // a phone, the top bar otherwise.
+  if (navRailDocks()) { navDockRemove(); buildNavRail(); }
+  else if (navDockActive()) buildNavDock();
+  else { navDockRemove(); railRelease(); }
   // Whether the tab bar can share the topbar's line depends on where the
   // nav sits, so the two are decided together and in this order.
   try { applyDashChrome(); } catch (e) {}
@@ -3724,7 +3737,9 @@ function applyDashChrome() {
   // Gathered into the one group, in a fixed order, from wherever the markup
   // or the rail last left them. appendChild moves a node it already owns,
   // so re-running this settles the order rather than appending duplicates.
-  RAIL_ADOPT.forEach(id => {
+  // On a phone the dock holds them instead, and pulling them back up here
+  // would empty it on every render.
+  if (!navDockActive()) RAIL_ADOPT.forEach(id => {
     const el = document.getElementById(id);
     if (el) tools.appendChild(el);
   });
@@ -3735,6 +3750,10 @@ function applyDashChrome() {
   // whitespace between the tags it used to wrap.
   const left = bar.querySelector('.tool-topbar-left');
   if (left) left.style.display = left.querySelector('*') ? '' : 'none';
+  // Same for the tools group once the dock has taken its buttons: an empty
+  // flex child still claims the row gap, and the sections pill is supposed
+  // to have the whole line to itself now.
+  tools.style.display = tools.querySelector('*') ? '' : 'none';
 }
 
 function sleekGreeting() {
@@ -6273,12 +6292,14 @@ function onbClearOverlay() {
   if (onbResizeHandler) { window.removeEventListener('resize', onbResizeHandler); window.removeEventListener('scroll', onbResizeHandler, true); onbResizeHandler = null; }
 }
 
-function onbFinish() {
+// tab: where to land afterwards. The wrap-up can send the reader to
+// Settings, which is the one place the tutorial points at by name.
+function onbFinish(tab) {
   onbClearOverlay();
   state.settings.onboardingDone = true;
   saveState();
   onbActive = false;
-  switchBTab('dashboard');
+  switchBTab(tab || 'dashboard');
 }
 
 function onbSkipAll() {
@@ -6467,8 +6488,15 @@ function onbShowTips() {
       <div class="onb-tips-list">
         <div class="onb-tip"><span class="onb-tip-icon">📖</span><span><strong>${t('onb_tip1_h')}</strong> ${t('onb_tip1_b')}</span></div>
         <div class="onb-tip"><span class="onb-tip-icon">🎨</span><span><strong>${t('onb_tip2_h')}</strong> ${t('onb_tip2_b')}</span></div>
-        <div class="onb-tip"><span class="onb-tip-icon">☁️</span><span><strong>${t('onb_tip3_h')}</strong> ${t('onb_tip3_b')}</span></div>
         <div class="onb-tip"><span class="onb-tip-icon">📤</span><span><strong>${t('onb_tip4_h')}</strong> ${t('onb_tip4_b')}</span></div>
+      </div>
+      <div class="onb-sync">
+        <span class="onb-sync-icon" aria-hidden="true">☁️</span>
+        <span class="onb-sync-text">
+          <strong>${t('onb_tip3_h')}</strong>
+          <span>${t('onb_tip3_b')}</span>
+        </span>
+        <button class="btn btn-ghost btn-sm onb-sync-btn" id="onbSyncBtn" type="button">${t('tab_settings')}</button>
       </div>
       <div class="onb-actions">
         <button class="btn btn-primary" id="onbFinishBtn" type="button">${t('onb_finish_btn')}</button>
@@ -6476,6 +6504,9 @@ function onbShowTips() {
     </div>`;
   document.body.appendChild(ov);
   ov.querySelector('#onbFinishBtn').addEventListener('click', () => onbCloseOverlayEl(ov, onbFinish));
+  // Straight to the switch rather than to the dashboard, so the offer can
+  // be taken up in the moment it is made.
+  ov.querySelector('#onbSyncBtn')?.addEventListener('click', () => onbCloseOverlayEl(ov, () => onbFinish('settings')));
   requestAnimationFrame(() => ov.classList.add('is-in'));
 }
 
