@@ -151,9 +151,15 @@ const TRIAL_LIMITS = { transactions:3, recurring:3, income:3, expenses:3, bills:
 // TEST MODE links (ezzohub.lemonsqueezy.com store is not yet activated) -
 // swap these for the live-mode checkout links once the store is approved
 // and the products are copied over via Lemon Squeezy's "Copy to Live Mode".
+// ⚠ TEMPORARY: both buttons go to the Etsy listing while Lemon Squeezy
+// reviews the account. Put these two back when that review is done:
+//   sbp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/06896e34-a3a0-485d-a470-891e1bd45b6d'
+//   ubp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/82d76580-b132-4c74-8d1c-2a383087510c'
+// Nothing else needs changing: the tracking and the funnel do not care
+// where the link points.
 const PURCHASE_URLS = {
-  sbp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/06896e34-a3a0-485d-a470-891e1bd45b6d',
-  ubp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/82d76580-b132-4c74-8d1c-2a383087510c',
+  sbp: 'https://www.etsy.com/listing/4579311708/adhd-budget-planner-app-paycheck-budget',
+  ubp: 'https://www.etsy.com/listing/4579311708/adhd-budget-planner-app-paycheck-budget',
 };
 const PRICES        = { sbp:'$19.99', ubp:'$49.99' };
 // ▲▲ ─────────────────────────────────────────────────────── ▲▲

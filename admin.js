@@ -568,7 +568,7 @@ const WEBSITE_PAGES = new Set(['home', 'budgetplanner', 'claim', 'legal', '']);
 const IN_APP_EVENTS = new Set(['tab_viewed', 'feature_used', 'theme_changed', 'language_changed', 'dashboard_layout_changed', 'sync_mode_chosen']);
 // Buying signals count wherever they happen - the upgrade prompt lives
 // inside the planners, and those are exactly the conversions worth seeing.
-const ALWAYS_COUNT_EVENTS = new Set(['purchase_initiated', 'launch_code_redeemed']);
+const ALWAYS_COUNT_EVENTS = new Set(['purchase_initiated', 'launch_code_redeemed', 'trial_started']);
 
 function isWebsiteEvent(e) {
   if (ALWAYS_COUNT_EVENTS.has(e.type)) return true;
@@ -750,7 +750,10 @@ function vBarChartHtml(groups, opts) {
 }
 
 // ── Conversion funnel ─────────────────────────────────────────────────
-function funnelHtml(steps) {
+// opts lets a second funnel describe itself. Left out, the wording is
+// exactly what it has always been, so the funnel above is untouched.
+function funnelHtml(steps, opts) {
+  const o = opts || {};
   const top = steps[0].value || 0;
   const last = steps[steps.length - 1].value || 0;
   // The headline number: what share of visits end in a sale. Shown to one
@@ -758,9 +761,9 @@ function funnelHtml(steps) {
   // rounding that to "0%" would hide real movement.
   const overall = top ? (last / top * 100) : 0;
   const overallTxt = overall > 0 && overall < 1 ? overall.toFixed(2) : overall.toFixed(1);
-  const header = `<div class="admin-funnel-rate">
+  const header = `<div class="admin-funnel-rate${o.tone ? ' admin-funnel-rate--' + o.tone : ''}">
     <div class="admin-funnel-rate-num">${overallTxt}%</div>
-    <div class="admin-funnel-rate-label">overall conversion<small>${fmt(last)} of ${fmt(top)} sessions ended in a purchase</small></div>
+    <div class="admin-funnel-rate-label">${esc(o.label || 'overall conversion')}<small>${o.sub || (fmt(last) + ' of ' + fmt(top) + ' sessions ended in a purchase')}</small></div>
   </div>`;
   return header + `<div class="admin-funnel">${steps.map((s, i) => {
     const pctOfTop = top ? (s.value / top * 100) : 0;
@@ -840,6 +843,22 @@ function renderOverview() {
     { label: 'Completed purchase', value: totalOrders, color: '#10b981', note: lsSales.configured ? 'Lemon Squeezy orders + redeemed Etsy keys' : 'redeemed Etsy keys only' }
   ];
 
+  // The question the funnel above cannot answer on its own: of the people
+  // who actually tried a planner, how many went on to press buy. Counted
+  // per visitor rather than per session, because trying it one evening and
+  // buying the next morning is two sessions and one person, and the
+  // session view would score that as a miss.
+  const demoPeople = new Set(rangeEvents.filter(e => e.type === 'trial_started').map(e => e.visitorId));
+  const buyPeople = new Set(rangeEvents.filter(e => e.type === 'purchase_initiated').map(e => e.visitorId));
+  const demoThenBuy = [...demoPeople].filter(v => buyPeople.has(v)).length;
+  const demoSteps = [
+    { label: 'Tried the demo', value: demoPeople.size, color: '#06b6d4', note: 'opened a free planner' },
+    { label: 'Then pressed buy', value: demoThenBuy, color: '#a855f7', note: 'the same people, later in the range' }
+  ];
+  const demoSub = demoPeople.size
+    ? fmt(demoThenBuy) + ' of ' + fmt(demoPeople.size) + ' people who tried it went on to checkout'
+    : 'nobody has opened the free demo in this range yet';
+
   // Today reads by hour; any longer range reads by day.
   const isToday = activeQuickRange() === 'today';
   const toMs = overviewFilters.to ? new Date(overviewFilters.to + 'T23:59:59').getTime() : now;
@@ -894,6 +913,10 @@ function renderOverview() {
       <div class="panel chart-panel"><div class="panel-inner-sm">
         ${panelTitle('Conversion funnel', 'How many sessions reach each stage. The final step is only visible through redemptions, since checkout completes on Lemon Squeezy.')}
         ${funnelHtml(funnelSteps)}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Demo to checkout', 'Of the people who actually opened a free planner, how many went on to press a buy button. Counted per person rather than per session, so trying it one evening and buying the next morning still counts.')}
+        ${funnelHtml(demoSteps, { label: 'of demo users pressed buy', sub: demoSub, tone: 'demo' })}
       </div></div>
       <div class="panel chart-panel"><div class="panel-inner-sm">
         ${panelTitle('Sales by product', 'Etsy sales split by planner, from redeemed keys. Lemon Squeezy revenue is not split per product here.')}

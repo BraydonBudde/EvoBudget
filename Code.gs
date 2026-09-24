@@ -868,3 +868,79 @@ function _blogDate(v) {
   }
   return String(v).trim().slice(0, 10);
 }
+
+// ══════════════════════════════════════════════════════════════════════
+//  STARTING THE FIGURES OVER
+//  ────────────────────────────────────────────────────────────────────
+//  Run these by hand from the Apps Script editor: pick one from the
+//  function dropdown and press Run. None of them is reachable over HTTP,
+//  by design, so nothing outside this editor can ever trigger one.
+//
+//  What each one touches, and what it deliberately does not:
+//
+//    resetAnalytics()    empties Events. Visits, sessions, funnels.
+//    resetSales()        empties Sales. Lemon Squeezy order records.
+//    resetRedemptions()  clears the redemption counters on Keys.
+//    resetEverything()   all three, in one go.
+//
+//  Styles, Blogs and Codes are never touched by any of them. Those are
+//  settings rather than history, and losing them would take the shop
+//  down rather than clear a number.
+//
+//  ⚠ On redemptions, read this before running it. The keys themselves
+//  are NOT deleted, and that is not a detail. Every customer who has ever
+//  bought holds a key that is checked against the Keys sheet, and a row
+//  removed from it is a person locked out of something they paid for.
+//  resetRedemptions only blanks the three columns that are statistics:
+//  RedeemCount, LastRedeemedAt and Devices. Key, Tool, Theme, Layout,
+//  OrderId, Email, IssuedAt and Status are all left exactly as they are,
+//  so every key keeps working and anything revoked stays revoked.
+//
+//  Clearing Devices does have one real effect worth knowing: it frees
+//  every device slot, so a customer already using their three can add
+//  three more. For a reset before launch that is what you want. Later on
+//  it quietly widens the limit for existing buyers.
+// ══════════════════════════════════════════════════════════════════════
+
+// Removes every row under the header, leaving the sheet and its columns
+// in place so the next write lands in the right shape.
+function _clearRows(sh, label) {
+  const last = sh.getLastRow();
+  if (last < 2) { Logger.log(label + ": already empty"); return 0; }
+  const n = last - 1;
+  sh.deleteRows(2, n);
+  Logger.log(label + ": cleared " + n + " row" + (n === 1 ? "" : "s"));
+  return n;
+}
+
+function resetAnalytics() {
+  return _clearRows(_getSheet(), 'Events');
+}
+
+function resetSales() {
+  return _clearRows(_salesSheet(), 'Sales');
+}
+
+// Blanks the statistics on every key and leaves the keys themselves
+// untouched. See the warning above before running this on a live shop.
+function resetRedemptions() {
+  const sh = _keysSheet();
+  const last = sh.getLastRow();
+  if (last < 2) { Logger.log('Keys: nothing to reset'); return 0; }
+  const n = last - 1;
+  // Columns 9, 10 and 11: Devices, RedeemCount, LastRedeemedAt. Written
+  // as one range so a long sheet is one call rather than one per row.
+  const blanks = [];
+  for (var i = 0; i < n; i++) blanks.push(['', 0, '']);
+  sh.getRange(2, 9, n, 3).setValues(blanks);
+  Logger.log('Keys: reset the counters on ' + n + ' key' + (n === 1 ? '' : 's') +
+    '. The keys themselves are untouched and still work.');
+  return n;
+}
+
+function resetEverything() {
+  const e = resetAnalytics();
+  const s = resetSales();
+  const k = resetRedemptions();
+  Logger.log('Done. Events ' + e + ', Sales ' + s + ', Keys reset ' + k + '.');
+}

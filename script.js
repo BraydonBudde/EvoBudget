@@ -1898,9 +1898,15 @@ const TRIAL_LIMITS = { transactions: 3, income: 3, expenses: 3, bills: 3, debt: 
 // TEST MODE links (ezzohub.lemonsqueezy.com store is not yet activated) -
 // swap these for the live-mode checkout links once the store is approved
 // and the products are copied over via Lemon Squeezy's "Copy to Live Mode".
+// ⚠ TEMPORARY: both buttons go to the Etsy listing while Lemon Squeezy
+// reviews the account. Put these two back when that review is done:
+//   sbp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/06896e34-a3a0-485d-a470-891e1bd45b6d'
+//   ubp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/82d76580-b132-4c74-8d1c-2a383087510c'
+// Nothing else needs changing: the tracking and the funnel do not care
+// where the link points.
 const PURCHASE_URLS = {
-  sbp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/06896e34-a3a0-485d-a470-891e1bd45b6d',
-  ubp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/82d76580-b132-4c74-8d1c-2a383087510c',
+  sbp: 'https://www.etsy.com/listing/4579311708/adhd-budget-planner-app-paycheck-budget',
+  ubp: 'https://www.etsy.com/listing/4579311708/adhd-budget-planner-app-paycheck-budget',
 };
 const PRICES        = { sbp: '$19.99', ubp: '$49.99' };
 // ▲▲ ─────────────────────────────────────────────────────── ▲▲
@@ -2295,7 +2301,14 @@ function pendingDeepLinkTool(params) {
 }
 
 function enterFull(tool)  { if (tool === 'ubp') { setUbpMode('full'); syncStashTokenForHandoff('ubp'); window.location.href = 'ultimate-budget'; } else enterSbpFull(); }
-function enterTrial(tool) { if (tool === 'ubp') { setUbpMode('trial'); window.location.href = 'ultimate-budget'; } else enterSbpTrial(); }
+// The first step of the demo-to-purchase funnel. Every route into the
+// free demo passes through here, including the one that starts UBP,
+// which is launched from this page before the browser leaves it.
+function enterTrial(tool) {
+  trackEvent('trial_started', { tool });
+  if (tool === 'ubp') { setUbpMode('trial'); window.location.href = 'ultimate-budget'; }
+  else enterSbpTrial();
+}
 
 async function openFull(tool) {
   if (!isUnlocked(tool)) { showAccessCodeModal(tool); return; }
