@@ -7031,15 +7031,33 @@ function renderSubscriptions(){
   const byCat={};
   for(const s of active){const c=s.category||'Other';byCat[c]=(byCat[c]||0)+monthlySubAmt(s);}
   const catEntries=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
-  const catSegs=catEntries.map(([label,value],i)=>({label:subCatLabel(label),value,color:COLORS[i%COLORS.length],pct:totMo>0?value/totMo*100:0}));
+  // One colour per category, worked out once and used by both the chart
+  // and the rows, so a subscription in the list carries the same colour as
+  // its slice. Paused ones are not in the chart but still need a colour,
+  // so they are appended after the ones that are.
+  const allCats=[...new Set(state.subscriptions.map(x=>x.category||'Other'))];
+  const catOrder=catEntries.map(([c])=>c).concat(allCats.filter(c=>!byCat[c]).sort());
+  const catColor={};
+  catOrder.forEach((c,i)=>{catColor[c]=COLORS[i%COLORS.length];});
+  const subTint=(hex,a)=>{const n=parseInt(hex.slice(1),16);
+    return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;};
+  const catSegs=catEntries.map(([label,value])=>({label:subCatLabel(label),value,color:catColor[label],pct:totMo>0?value/totMo*100:0}));
 
   // Build summary bar HTML
+  // The monthly figure is the one that answers "what is this costing me",
+  // so it leads and the rest support it, rather than four numbers of equal
+  // weight spread across the width with nothing to look at first.
   const summaryBar = state.subscriptions.length > 0
-    ? `<div class="sub-summary-bar">
-        <div class="sub-sum-item"><div class="sub-sum-label">${t('sub_sum_monthly')}</div><div class="sub-sum-value">${fmt(totMo)}</div></div>
-        <div class="sub-sum-item"><div class="sub-sum-label">${t('sub_sum_annual')}</div><div class="sub-sum-value">${fmt(totYr)}</div></div>
-        <div class="sub-sum-item"><div class="sub-sum-label">${t('sub_active')}</div><div class="sub-sum-value">${active.length}</div></div>
-        <div class="sub-sum-item"><div class="sub-sum-label">${t('sub_paused')}</div><div class="sub-sum-value">${state.subscriptions.length-active.length}</div></div>
+    ? `<div class="sub-summary">
+        <div class="sub-hero">
+          <span class="sub-hero-label">${t('sub_sum_monthly')}</span>
+          <strong class="sub-hero-value">${fmt(totMo)}</strong>
+          <span class="sub-hero-sub">${fmt(totYr)} ${t('sub_sum_annual').toLowerCase()}</span>
+        </div>
+        <div class="sub-stats">
+          <div class="sub-stat"><strong>${active.length}</strong><em>${t('sub_active')}</em></div>
+          <div class="sub-stat"><strong>${state.subscriptions.length-active.length}</strong><em>${t('sub_paused')}</em></div>
+        </div>
       </div>` : '';
 
   // Build list HTML
@@ -7060,18 +7078,23 @@ function renderSubscriptions(){
           const tooltip=hist.map(hEntry=>`${formatDateDisplay(hEntry.date)}: ${fmt(hEntry.from)} \u2192 ${fmt(hEntry.to)}`).join(' | ');
           priceDelta=`<span class="sub-price-delta ${up?'is-up':'is-down'}" title="${tooltip}">${up?'\u2191':'\u2193'} ${fmt(Math.abs(latest.to-latest.from))}</span>`;
         }
-        return `<div class="sub-card panel${sub.active===false?' sub-paused':''}">
-          <div class="sub-card-inner">
-            <div class="sub-card-head">
-              <div class="sub-card-left">
-                <div class="sub-name">${esc(sub.name)}</div>
-                <div class="sub-meta"><span class="sub-cat-pill">${esc(subCatLabel(sub.category))}</span>${nextDue}</div>
+        const col=catColor[sub.category||'Other']||COLORS[0];
+        const initial=(sub.name||'?').trim().charAt(0).toUpperCase()||'?';
+        // The monthly equivalent and any price change share one line under
+        // the amount, rather than stacking and making every row taller.
+        const under=[sub.frequency!=='monthly'?`<span class="sub-eq">\u2248 ${fmt(monthlySubAmt(sub))}/mo</span>`:'',priceDelta].filter(Boolean).join('');
+        return `<div class="sub-row panel${sub.active===false?' is-paused':''}" style="--sub-c:${col};--sub-bg:${subTint(col,.16)}">
+            <span class="sub-avatar" aria-hidden="true">${esc(initial)}</span>
+            <div class="sub-main">
+              <div class="sub-name-row">
+                <span class="sub-name">${esc(sub.name)}</span>
+                ${sub.active===false?`<span class="sub-flag">${t('sub_paused')}</span>`:''}
               </div>
-              <div class="sub-amount-block">
-                <div class="sub-amount">${fmt(sub.amount)}<span class="sub-freq">/${freqLabel}</span></div>
-                ${sub.frequency!=='monthly'?`<div class="sub-monthly-eq">\u2248 ${fmt(monthlySubAmt(sub))}/mo</div>`:''}
-                ${priceDelta}
-              </div>
+              <div class="sub-meta"><span class="sub-cat-pill">${esc(subCatLabel(sub.category))}</span>${nextDue}</div>
+            </div>
+            <div class="sub-amount-block">
+              <div class="sub-amount">${fmt(sub.amount)}<span class="sub-freq">/${freqLabel}</span></div>
+              ${under?`<div class="sub-under">${under}</div>`:''}
             </div>
             <div class="sub-card-foot">
               <div class="sub-toggle-rows">
@@ -7083,7 +7106,6 @@ function renderSubscriptions(){
                 <button class="del-btn" data-sub-del="${sub.id}" type="button" title="${t('delete')}">×</button>
               </div>
             </div>
-          </div>
         </div>`;
       }).join('');
 
