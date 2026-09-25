@@ -285,6 +285,13 @@ const TRANSLATIONS = {
     mod_desc_debt:'Stay on top of loan and mortgage repayments. Set expected amounts and mark each as paid.',
     mod_desc_savings:'Set a savings goal for each bucket. Actual contributions come from your logged transactions.',
     mod_add_category:'+ Add category',mod_add_new_category:'Add new category',mod_cat_name_label:'Name',
+    tx_way_manual_sub:'One off, on any date you choose',
+    bud_quick_add:'Quick add',
+    bud_sugg_income:'Salary|Freelance|Bonus|Interest|Side hustle|Benefits|Rental income|Gifts',
+    bud_sugg_expenses:'Groceries|Fuel|Transport|Dining out|Coffee|Clothing|Household|Health|Pets|Entertainment|Childcare|Hobbies',
+    bud_sugg_bills:'Rent|Mortgage|Electricity|Gas|Water|Internet|Phone|Insurance|Car payment|Childcare',
+    bud_sugg_debt:'Credit card|Car loan|Student loan|Mortgage|Overdraft|Personal loan|Store card|Family loan',
+    bud_sugg_savings:'Emergency fund|Holiday|Pension|Investments|House deposit|Car fund|Christmas|Wedding',
     mod_set_date:'Set date',mod_remove:'Remove',mod_mark_paid:'Mark as paid',mod_total:'Total',mod_paid_amount_label:'Amount paid',mod_paid_amount_hint:"How much you actually paid - this gets logged as a transaction so your spending history stays accurate, even if it's different from your budgeted amount.",mod_paid_save_btn:'Log payment',mod_paid_budgeted_hint:'Budgeted: {0}',mod_paid_amount_required:'Please enter a valid amount.',toast_mod_paid:'Payment logged',
     dash_period_title:'Click to change budget period',
     sample_loaded_toast:'Sample data loaded',
@@ -296,7 +303,7 @@ const TRANSLATIONS = {
     onb_spot_budget_title:'Set an expected amount',
     onb_spot_budget_body:"This is where you plan ahead. Type how much you expect to earn from your first income source below.",
     onb_spot_tx_title:'Log your first transaction',
-    onb_spot_tx_body:"Transactions are what actually happened. Fill in the date, category, and amount below, then hit Add to log your first one.",
+    onb_spot_tx_body:"Transactions are what actually happened. Press Add transaction, fill in the date, category and amount, and your first one is logged.",
     onb_next_btn:'Next',
     onb_nice_toast:'Nice! Moving on...',
     onb_tips_title:"You're all set!",
@@ -581,6 +588,13 @@ const TRANSLATIONS = {
     mod_desc_debt:'Behalte Kredit- und Hypothekenzahlungen im Blick. Lege erwartete Beträge fest und markiere jede als bezahlt.',
     mod_desc_savings:'Lege ein Sparziel für jeden Topf fest. Tatsächliche Beiträge stammen aus deinen erfassten Transaktionen.',
     mod_add_category:'+ Kategorie hinzufügen',mod_add_new_category:'Neue Kategorie hinzufügen',mod_cat_name_label:'Name',
+    tx_way_manual_sub:'Einmalig, an einem beliebigen Datum',
+    bud_quick_add:'Schnell hinzufügen',
+    bud_sugg_income:'Gehalt|Freiberuflich|Bonus|Zinsen|Nebenjob|Sozialleistungen|Mieteinnahmen|Geschenke',
+    bud_sugg_expenses:'Lebensmittel|Kraftstoff|Verkehr|Essen gehen|Kaffee|Kleidung|Haushalt|Gesundheit|Haustiere|Unterhaltung|Kinderbetreuung|Hobbys',
+    bud_sugg_bills:'Miete|Hypothek|Strom|Gas|Wasser|Internet|Telefon|Versicherung|Autorate|Kinderbetreuung',
+    bud_sugg_debt:'Kreditkarte|Autokredit|Studienkredit|Hypothek|Dispokredit|Privatkredit|Kundenkarte|Familiendarlehen',
+    bud_sugg_savings:'Notgroschen|Urlaub|Rente|Investitionen|Hauskaution|Autofonds|Weihnachten|Hochzeit',
     mod_set_date:'Datum festlegen',mod_remove:'Entfernen',mod_mark_paid:'Als bezahlt markieren',mod_total:'Gesamt',mod_paid_amount_label:'Bezahlter Betrag',mod_paid_amount_hint:'Wie viel du tatsächlich bezahlt hast - wird als Transaktion erfasst, damit deine Ausgabenhistorie stimmt, auch wenn es vom budgetierten Betrag abweicht.',mod_paid_save_btn:'Zahlung erfassen',mod_paid_budgeted_hint:'Budgetiert: {0}',mod_paid_amount_required:'Bitte gib einen gültigen Betrag ein.',toast_mod_paid:'Zahlung erfasst',
     dash_period_title:'Klicken, um den Budgetzeitraum zu ändern',
     sample_loaded_toast:'Beispieldaten geladen',
@@ -859,6 +873,13 @@ const TRANSLATIONS = {
     mod_desc_debt:'Gardez le contrôle de vos remboursements de prêts et d’hypothèque. Définissez les montants prévus et marquez chacun comme payé.',
     mod_desc_savings:'Définissez un objectif d’épargne pour chaque tirelire. Les contributions réelles proviennent de vos transactions enregistrées.',
     mod_add_category:'+ Ajouter une catégorie',mod_add_new_category:'Ajouter une nouvelle catégorie',mod_cat_name_label:'Nom',
+    tx_way_manual_sub:'Une fois, à la date de votre choix',
+    bud_quick_add:'Ajout rapide',
+    bud_sugg_income:'Salaire|Freelance|Prime|Intérêts|Activité secondaire|Allocations|Revenus locatifs|Cadeaux',
+    bud_sugg_expenses:'Courses|Carburant|Transport|Restaurant|Café|Vêtements|Maison|Santé|Animaux|Loisirs|Garde d\'enfants|Passe-temps',
+    bud_sugg_bills:'Loyer|Prêt immobilier|Électricité|Gaz|Eau|Internet|Téléphone|Assurance|Crédit auto|Garde d\'enfants',
+    bud_sugg_debt:'Carte de crédit|Crédit auto|Prêt étudiant|Prêt immobilier|Découvert|Prêt personnel|Carte de magasin|Prêt familial',
+    bud_sugg_savings:'Épargne de précaution|Vacances|Retraite|Placements|Apport immobilier|Fonds voiture|Noël|Mariage',
     mod_set_date:'Définir la date',mod_remove:'Supprimer',mod_mark_paid:'Marquer comme payé',mod_total:'Total',mod_paid_amount_label:'Montant payé',mod_paid_amount_hint:"Le montant que vous avez réellement payé - il sera enregistré comme transaction afin que votre historique reste exact, même s'il diffère du montant budgété.",mod_paid_save_btn:'Enregistrer le paiement',mod_paid_budgeted_hint:'Budgété : {0}',mod_paid_amount_required:'Veuillez saisir un montant valide.',toast_mod_paid:'Paiement enregistré',
     dash_period_title:'Cliquez pour changer la période budgétaire',
     sample_loaded_toast:'Données d’exemple chargées',
@@ -1137,6 +1158,13 @@ const TRANSLATIONS = {
     mod_desc_debt:'Mantente al día con tus pagos de préstamos e hipoteca. Define los montos previstos y marca cada uno como pagado.',
     mod_desc_savings:'Define una meta de ahorro para cada fondo. Las contribuciones reales provienen de tus transacciones registradas.',
     mod_add_category:'+ Añadir categoría',mod_add_new_category:'Añadir nueva categoría',mod_cat_name_label:'Nombre',
+    tx_way_manual_sub:'Una vez, en la fecha que elijas',
+    bud_quick_add:'Añadir rápido',
+    bud_sugg_income:'Salario|Freelance|Bonificación|Intereses|Trabajo extra|Prestaciones|Ingresos por alquiler|Regalos',
+    bud_sugg_expenses:'Supermercado|Combustible|Transporte|Comer fuera|Café|Ropa|Hogar|Salud|Mascotas|Ocio|Guardería|Aficiones',
+    bud_sugg_bills:'Alquiler|Hipoteca|Electricidad|Gas|Agua|Internet|Teléfono|Seguro|Cuota del coche|Guardería',
+    bud_sugg_debt:'Tarjeta de crédito|Préstamo del coche|Préstamo estudiantil|Hipoteca|Descubierto|Préstamo personal|Tarjeta de tienda|Préstamo familiar',
+    bud_sugg_savings:'Fondo de emergencia|Vacaciones|Jubilación|Inversiones|Entrada de casa|Fondo del coche|Navidad|Boda',
     mod_set_date:'Definir fecha',mod_remove:'Eliminar',mod_mark_paid:'Marcar como pagado',mod_total:'Total',mod_paid_amount_label:'Importe pagado',mod_paid_amount_hint:'Cuánto pagaste realmente - se registrará como transacción para que tu historial de gastos sea exacto, aunque sea distinto del importe presupuestado.',mod_paid_save_btn:'Registrar pago',mod_paid_budgeted_hint:'Presupuestado: {0}',mod_paid_amount_required:'Introduce un importe válido.',toast_mod_paid:'Pago registrado',
     dash_period_title:'Haz clic para cambiar el período de presupuesto',
     sample_loaded_toast:'Datos de ejemplo cargados',
@@ -1415,6 +1443,13 @@ const TRANSLATIONS = {
     mod_desc_debt:'Resta al passo con i pagamenti di prestiti e mutui. Imposta gli importi previsti e segna ciascuno come pagato.',
     mod_desc_savings:'Imposta un obiettivo di risparmio per ogni salvadanaio. I contributi effettivi provengono dalle transazioni registrate.',
     mod_add_category:'+ Aggiungi categoria',mod_add_new_category:'Aggiungi nuova categoria',mod_cat_name_label:'Nome',
+    tx_way_manual_sub:'Una volta, nella data che scegli',
+    bud_quick_add:'Aggiunta rapida',
+    bud_sugg_income:'Stipendio|Freelance|Bonus|Interessi|Secondo lavoro|Sussidi|Affitti attivi|Regali',
+    bud_sugg_expenses:'Spesa|Carburante|Trasporti|Ristoranti|Caffè|Abbigliamento|Casa|Salute|Animali|Svago|Asilo|Hobby',
+    bud_sugg_bills:'Affitto|Mutuo|Elettricità|Gas|Acqua|Internet|Telefono|Assicurazione|Rata auto|Asilo',
+    bud_sugg_debt:'Carta di credito|Prestito auto|Prestito studio|Mutuo|Scoperto|Prestito personale|Carta fedeltà|Prestito familiare',
+    bud_sugg_savings:'Fondo emergenza|Vacanze|Pensione|Investimenti|Anticipo casa|Fondo auto|Natale|Matrimonio',
     mod_set_date:'Imposta data',mod_remove:'Rimuovi',mod_mark_paid:'Segna come pagato',mod_total:'Totale',mod_paid_amount_label:'Importo pagato',mod_paid_amount_hint:"Quanto hai effettivamente pagato - viene registrato come transazione così la tua cronologia di spesa resta accurata, anche se diverso dall'importo previsto.",mod_paid_save_btn:'Registra pagamento',mod_paid_budgeted_hint:'Preventivato: {0}',mod_paid_amount_required:'Inserisci un importo valido.',toast_mod_paid:'Pagamento registrato',
     dash_period_title:'Clicca per cambiare il periodo di budget',
     dash_stat_income:'Entrate totali',dash_stat_of_expected:'di {0} previsto',
@@ -1692,6 +1727,13 @@ const TRANSLATIONS = {
     mod_desc_debt:'Trzymaj rękę na pulsie spłat kredytów i hipotek. Ustal spodziewane kwoty i oznacz każdą jako opłaconą.',
     mod_desc_savings:'Ustal cel oszczędnościowy dla każdego funduszu. Rzeczywiste wpłaty pochodzą z zarejestrowanych transakcji.',
     mod_add_category:'+ Dodaj kategorię',mod_add_new_category:'Dodaj nową kategorię',mod_cat_name_label:'Nazwa',
+    tx_way_manual_sub:'Jednorazowo, w dowolnym dniu',
+    bud_quick_add:'Szybkie dodawanie',
+    bud_sugg_income:'Wynagrodzenie|Freelance|Premia|Odsetki|Dodatkowa praca|Świadczenia|Dochód z najmu|Prezenty',
+    bud_sugg_expenses:'Zakupy|Paliwo|Transport|Jedzenie na mieście|Kawa|Odzież|Dom|Zdrowie|Zwierzęta|Rozrywka|Opieka nad dziećmi|Hobby',
+    bud_sugg_bills:'Czynsz|Kredyt hipoteczny|Prąd|Gaz|Woda|Internet|Telefon|Ubezpieczenie|Rata za auto|Opieka nad dziećmi',
+    bud_sugg_debt:'Karta kredytowa|Kredyt samochodowy|Kredyt studencki|Kredyt hipoteczny|Debet|Pożyczka gotówkowa|Karta sklepowa|Pożyczka od rodziny',
+    bud_sugg_savings:'Fundusz awaryjny|Wakacje|Emerytura|Inwestycje|Wkład na mieszkanie|Fundusz na auto|Święta|Wesele',
     mod_set_date:'Ustaw datę',mod_remove:'Usuń',mod_mark_paid:'Oznacz jako opłacone',mod_total:'Suma',mod_paid_amount_label:'Zapłacona kwota',mod_paid_amount_hint:'Ile faktycznie zapłaciłeś - zostanie to zapisane jako transakcja, aby Twoja historia wydatków była dokładna, nawet jeśli różni się od zaplanowanej kwoty.',mod_paid_save_btn:'Zapisz płatność',mod_paid_budgeted_hint:'Zaplanowano: {0}',mod_paid_amount_required:'Podaj prawidłową kwotę.',toast_mod_paid:'Płatność zapisana',
     dash_period_title:'Kliknij, aby zmienić okres budżetowy',
     dash_stat_income:'Łączne przychody',dash_stat_of_expected:'z {0} spodziewanych',
@@ -4160,6 +4202,96 @@ const MODULE_META = {
 // the category name had no editor at all: renaming meant deleting the row
 // and rebuilding it, which detached every transaction filed under it. Same
 // modal shape as the transaction editor.
+// Adding a row used to reveal a card wedged under the table, which meant
+// scrolling to find it and again to get back. It is the same job as editing
+// a row, so it is the same modal, with suggestions on top.
+function openAddBudgetRow(type) {
+  const meta = MODULE_META[type];
+  if (!meta) return;
+  const rows = state.budgets[type] || [];
+  // Nothing already in this section, since a second row under one name
+  // would pool its actuals with the first.
+  const taken = new Set(rows.map(r => (r.category || '').toLowerCase()));
+  const suggestions = (t('bud_sugg_' + type) || '').split('|')
+    .map(x => x.trim()).filter(x => x && !taken.has(x.toLowerCase()));
+
+  document.getElementById('modalTitle').textContent = `${t('mod_add_new_category')} \u00b7 ${t(meta.titleKey)}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="field"><label class="field-label">${t('mod_cat_name_label')}</label>
+      <input class="input" type="text" id="abCat" maxlength="60" autocomplete="off"></div>
+    ${suggestions.length ? `<div class="quick-add">
+      <span class="quick-add-label">${t('bud_quick_add')}</span>
+      <div class="quick-add-chips">${suggestions.map(x =>
+        `<button class="quick-chip" type="button" data-sugg="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+    </div>` : ''}
+    <div class="field"><label class="field-label">${t('expected')} (${SYM})</label>
+      <input class="input" type="number" id="abExp" min="0" step="0.01" placeholder="0.00" inputmode="decimal"></div>
+    ${meta.hasDates ? `<div class="field"><label class="field-label">${t('due_date')}</label>
+      <div class="date-field-styled" id="abDateWrap">
+        <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="date-field-val" id="abDateDisp">${t('mod_set_date')}</span>
+        <input type="date" id="abDate" value="">
+      </div></div>` : ''}
+    <div class="tx-error" id="abError" hidden></div>
+    <div class="edit-tx-actions">
+      <button class="btn btn-primary" id="abSave" type="button">${t('add')}</button>
+      <button class="btn btn-ghost btn-sm" id="abCancel" type="button">${t('cancel')}</button>
+    </div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+  const nameEl = document.getElementById('abCat');
+  // After the overlay's own focus move, which runs on a microtask and would
+  // otherwise win. Only with a real pointer: on a phone the keyboard would
+  // spring up and cover the suggestions, which are the reason to be here.
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches)
+    setTimeout(() => nameEl?.focus(), 0);
+
+  const showErr = msg => { const e = document.getElementById('abError'); if (e) { e.textContent = msg; e.hidden = false; } };
+  document.getElementById('modalBody').addEventListener('input', () => {
+    const e = document.getElementById('abError'); if (e) e.hidden = true;
+  });
+  document.getElementById('abDateWrap')?.addEventListener('click', () => {
+    openDatePicker(document.getElementById('abDate'), document.getElementById('abDateWrap'));
+  });
+  document.getElementById('abDate')?.addEventListener('change', e => {
+    document.getElementById('abDateDisp').textContent = e.target.value ? formatDateDisplay(e.target.value) : t('mod_set_date');
+  });
+  // A chip fills the name and hands over to the amount, rather than adding
+  // the row outright: the amount is the part worth asking for.
+  document.querySelectorAll('#modalBody .quick-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (nameEl) nameEl.value = chip.dataset.sugg;
+      document.querySelectorAll('#modalBody .quick-chip').forEach(c => c.classList.toggle('is-on', c === chip));
+      const e = document.getElementById('abError'); if (e) e.hidden = true;
+      document.getElementById('abExp')?.focus();
+    });
+  });
+
+  const save = () => {
+    // Checked here as well as on the button that opened this, since the
+    // limit can be reached while the modal is open.
+    if (trialBlocks(type)) { closeModal(); showUpgradeModal({ reason: 'category', type }); return; }
+    const name = (document.getElementById('abCat')?.value || '').trim();
+    const expRaw = document.getElementById('abExp')?.value ?? '';
+    const exp = expRaw === '' ? 0 : parseFloat(expRaw);
+    if (!name) return showErr(t('bud_name_required'));
+    if (rows.some(r => (r.category || '').toLowerCase() === name.toLowerCase())) return showErr(t('bud_name_taken'));
+    if (isNaN(exp) || exp < 0) return showErr(t('bud_expected_invalid'));
+    const newRow = { id: uid(), category: name, expected: exp };
+    if (meta.hasDates) { newRow.dueDate = document.getElementById('abDate')?.value || ''; newRow.paid = false; }
+    (state.budgets[type] = state.budgets[type] || []).push(newRow);
+    trialUse(type);
+    saveState(); closeModal(); renderModule(type);
+    showToast(t('toast_saved'));
+  };
+  document.getElementById('abSave')?.addEventListener('click', save);
+  // Enter on the name or the amount commits, which is what a two-field form
+  // invites. Not on the date, where Enter belongs to the picker.
+  ['abCat', 'abExp'].forEach(id => document.getElementById(id)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); save(); }
+  }));
+  document.getElementById('abCancel')?.addEventListener('click', closeModal);
+}
+
 function openEditBudgetRow(type, id) {
   const meta = MODULE_META[type];
   const rows = state.budgets[type] || [];
@@ -4438,7 +4570,7 @@ function renderModule(type) {
             <tr>
               <th>${t('category')}</th>
               <th><span class="cc-label-text">${t('expected')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('expected'))}">i</button></th>
-              ${meta.hasDates ? `<th>${t('due_date')}</th>` : ''}
+              ${meta.hasDates ? `<th class="col-sm-hide">${t('due_date')}</th>` : ''}
               <th><span class="cc-label-text">${t('actual')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('actual'))}">i</button></th>
               <th class="prog-cell"><span class="cc-label-text">${t('progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('progress'))}">i</button></th>
               ${meta.hasDates ? `<th>${t('paid')}</th>` : ''}
@@ -4455,7 +4587,7 @@ function renderModule(type) {
                   <td class="cat-cell"><span class="cat-name">${esc(row.category)}</span></td>
                   <td><input class="expected-input" type="number" min="0" step="0.01"
                              value="${row.expected || ''}" placeholder="0.00" data-id="${row.id}"></td>
-                  ${meta.hasDates ? `<td>
+                  ${meta.hasDates ? `<td class="col-sm-hide">
                     <div class="date-cell-styled" id="dwrap-${row.id}" data-input-id="dinp-${row.id}">
                       <span class="date-cell-val" id="dcell-${row.id}">${row.dueDate ? formatDateDisplay(row.dueDate) : `<span class="no-date">${t('mod_set_date')}</span>`}</span>
                       <input type="date" id="dinp-${row.id}" class="date-input" value="${row.dueDate || ''}" data-id="${row.id}">
@@ -4494,7 +4626,7 @@ function renderModule(type) {
             <tr class="total-row">
               <td><strong>${t('mod_total')}</strong></td>
               <td><strong>${fmt(totalExp)}</strong></td>
-              ${meta.hasDates ? '<td></td>' : ''}
+              ${meta.hasDates ? '<td class="col-sm-hide"></td>' : ''}
               <td><strong>${fmt(totalAct)}</strong></td>
               <td class="prog-cell">
                 <div class="prog-bar-wrap">
@@ -4511,21 +4643,6 @@ function renderModule(type) {
       </div>
     </div>
 
-    <div class="panel add-cat-card" id="addCatCard" style="display:none">
-      <div class="panel-inner-sm">
-        <div class="add-cat-title">${t('mod_add_new_category')}</div>
-        <div class="add-cat-row">
-          <div class="field"><label class="field-label field-label--tip">${tipLabel(t('mod_cat_name_label'),'mod_name_hint',false)}</label>
-            <input class="input input-sm" type="text" id="newCatName" placeholder="e.g. Freelance"></div>
-          ${meta.hasDates ? `<div class="field"><label class="field-label field-label--tip">${tipLabel(t('due_date'),'mod_due_date_hint',false)}</label>
-            <input class="input input-sm" type="date" id="newCatDate"></div>` : ''}
-          <div class="add-cat-btns">
-            <button class="btn btn-primary btn-sm" id="saveCatBtn" type="button">${t('add')}</button>
-            <button class="btn btn-ghost btn-sm"   id="cancelCatBtn" type="button">${t('cancel')}</button>
-          </div>
-        </div>
-      </div>
-    </div>
   `;
 
   const el = document.getElementById(`bview-${type}`);
@@ -4635,22 +4752,7 @@ function renderModule(type) {
   // Add category
   el.querySelector('#addRowBtn').addEventListener('click', () => {
     if (trialBlocks(type)) { showUpgradeModal({ reason: 'category', type }); return; }
-    el.querySelector('#addCatCard').style.display = '';
-    el.querySelector('#newCatName')?.focus();
-  });
-  el.querySelector('#saveCatBtn').addEventListener('click', () => {
-    if (trialBlocks(type)) { showUpgradeModal({ reason: 'category', type }); return; }
-    const name = el.querySelector('#newCatName')?.value.trim();
-    if (!name) { el.querySelector('#newCatName')?.focus(); return; }
-    const newRow = { id: uid(), category: name, expected: 0 };
-    if (meta.hasDates) { newRow.dueDate = el.querySelector('#newCatDate')?.value || ''; newRow.paid = false; }
-    state.budgets[type].push(newRow);
-    trialUse(type);
-    saveState(); renderModule(type);
-  });
-  el.querySelector('#cancelCatBtn').addEventListener('click', () => {
-    el.querySelector('#addCatCard').style.display = 'none';
-    const n = el.querySelector('#newCatName'); if (n) n.value = '';
+    openAddBudgetRow(type);
   });
 
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
@@ -4688,105 +4790,91 @@ function renderTxList(){
   const isFiltered=txFilter.search||txFilter.type;
   const countLabel=isFiltered?t('tx_showing').replace('{n}',count).replace('{total}',total):`${total} ${total===1?t('tx_transaction_one'):t('tx_transaction_many')}`;
   const pagination=count>TX_PAGE_SIZE?`<div class="tx-pagination"><button class="btn btn-ghost btn-sm" id="txPrevBtn" ${page===0?'disabled':''}>${t('tx_prev')}</button><span class="tx-page-label">${t('tx_page_of').replace('{n}',page+1).replace('{total}',totalPages)}</span><button class="btn btn-ghost btn-sm" id="txNextBtn" ${page>=totalPages-1?'disabled':''}>${t('tx_next')}</button></div>`:'';
-  el.innerHTML=`<div class="tx-list-header"><span>${countLabel}</span>${total>0?`<button class="link-btn" id="clearAllBtn2" type="button">${t('tx_clear_all')}</button>`:''}</div>
-    ${count===0&&total===0
-      ?`<div class="empty-state"><div class="empty-icon">\uD83D\uDCCB</div><p>${t('tx_empty')}</p><p class="empty-sub">${t('tx_empty_sub')}</p></div>`
+  // The count and the clear-all live in the toolbar above, which is not
+  // rebuilt here, so they are updated rather than reprinted.
+  const countEl=document.getElementById('txCount');
+  if(countEl)countEl.textContent=countLabel;
+  const clearEl=document.getElementById('clearAllBtn2');
+  if(clearEl)clearEl.hidden=total===0;
+  el.innerHTML=`${count===0&&total===0
+      ?`<div class="empty-state"><div class="empty-icon">\uD83D\uDCCB</div><p class="empty-title">${t('tx_empty')}</p><p class="empty-sub">${t('tx_empty_sub')}</p><button class="btn btn-primary btn-sm empty-cta" id="txEmptyAdd" type="button">\u002B ${t('tx_add_title')}</button></div>`
       :count===0
       ?`<div class="empty-state"><div class="empty-icon">\uD83D\uDD0D</div><p>${t('tx_no_results')}</p></div>`
-      :`<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
-          <th>${t('tx_date')}</th><th>${t('tx_type')}</th><th>${t('tx_category')}</th>
-          <th>${t('tx_th_amount')}</th><th>${t('tx_th_desc')}</th><th></th>
+      :`<div class="tx-table-wrap"><table class="tx-table"><thead><tr>
+          <th>${t('tx_date')}</th><th class="col-sm-hide">${t('tx_type')}</th><th>${t('tx_category')}</th>
+          <th>${t('tx_th_amount')}</th><th class="col-sm-hide">${t('tx_th_desc')}</th><th></th>
         </tr></thead><tbody>
         ${paged.map(tx=>`<tr class="tx-row">
           <td class="tx-date">${formatDateDisplay(tx.date)}</td>
-          <td><span class="tx-pill tx-pill--${tx.type}">${esc(txTypeLabel(tx.type))}</span></td>
+          <td class="col-sm-hide"><span class="tx-pill tx-pill--${tx.type}">${esc(txTypeLabel(tx.type))}</span></td>
           <td class="tx-cat">${esc(tx.category)}</td>
           <td class="tx-amt tx-amt--${tx.type}">${tx.type==='income'?'+':'\u2212'}${fmt(tx.amount)}</td>
-          <td class="tx-desc">${esc(tx.description||'-')}</td>
+          <td class="tx-desc col-sm-hide">${esc(tx.description||'-')}</td>
           <td><div class="tx-actions"><button class="edit-btn" data-tx="${tx.id}" type="button" title="${t('edit')}" aria-label="${t('edit')}">\u270f\ufe0f</button><button class="del-btn" data-tx="${tx.id}" type="button" title="${t('delete')}" aria-label="${t('delete')}">\xd7</button></div></td>
-        </tr>`).join('')}</tbody></table></div></div>${pagination}`}`;
+        </tr>`).join('')}</tbody></table></div>${pagination}`}`;
   el.querySelectorAll('.edit-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>openEditTx(b.dataset.tx)));
   el.querySelectorAll('.del-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>{state.transactions=state.transactions.filter(t=>t.id!==b.dataset.tx);syncModulePaidLinks();saveState();renderTxList();}));
-  document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{if(await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')})){state.transactions=[];syncModulePaidLinks();saveState();renderTxList();}});
+  document.getElementById('txEmptyAdd')?.addEventListener('click',openAddTxFromList);
   document.getElementById('txPrevBtn')?.addEventListener('click',()=>{if(txPage>0){txPage--;renderTxList();}});
   document.getElementById('txNextBtn')?.addEventListener('click',()=>{if(txPage<totalPages-1){txPage++;renderTxList();}});
 }
 function renderTransactions() {
   const el=document.getElementById('bview-transactions');
+  // One way in, given its own card rather than six fields laid across the
+  // top of the page: on a phone that form was most of a screen on its own.
   el.innerHTML=`<div class="section-header"><h2 class="section-title">\uD83D\uDCCB ${t('tab_transactions')}</h2>
       <div class="section-header-actions">
         <button class="help-icon-btn" data-help="transactions" type="button" aria-label="${t('help_aria')}">?</button>
         <label class="btn btn-ghost btn-sm csv-label" title="${t('tx_import_csv')}">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label>
       </div></div>
-    <div class="panel tx-form-panel"><div class="panel-inner-sm">
-      <div class="panel-title-sm" style="margin-bottom:14px">${t('tx_add_title')}</div>
-      <div class="tx-form-row">
-        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_date'),'tx_date_hint',false)}</label>
-          <div class="date-field-styled" id="txDateWrap">
-            <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            <span class="date-field-val" id="txDateDisp">${formatDateDisplay(today())}</span>
-            <input type="date" id="txDate" value="${today()}">
-          </div></div>
-        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_type'),'tx_type_hint',false)}</label>
-          <select class="select" id="txType">
-            <option value="expense" selected>${t('tx_type_expense')}</option>
-            <option value="bill">${t('tx_type_bill')}</option>
-            <option value="savings">${t('tx_type_savings')}</option>
-            <option value="debt">${t('tx_type_debt')}</option>
-            <option value="income">${t('tx_type_income')}</option>
-          </select></div>
-        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_category'),'tx_category_hint',false)}</label><select class="select" id="txCategory"></select></div>
-        <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('tx_amount')} (${SYM})`,'tx_amount_hint',false)}</label>
-          <input class="input" type="number" id="txAmount" min="0" step="0.01" placeholder="0.00"></div>
-        <div class="field field-grow"><label class="field-label field-label--tip">${tipLabel(t('tx_desc_label'),'tx_desc_hint',false)}</label>
-          <input class="input" type="text" id="txDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
-        <div class="field field-btn"><label class="field-label" style="visibility:hidden">.</label>
-          <button class="btn btn-primary" id="addTxBtn" type="button">${t('tx_add_btn')}</button></div>
+    <div class="panel tx-ways"><div class="panel-inner-sm"><div class="tx-ways-row">
+      <div class="tx-way">
+        <span class="tx-way-ico" aria-hidden="true">\u270D\uFE0F</span>
+        <span class="tx-way-txt"><span class="tx-way-title">${t('tx_add_title')}</span><span class="tx-way-sub">${t('tx_way_manual_sub')}</span></span>
+        <span class="tx-way-btns"><button class="btn btn-primary btn-sm" id="txOpenAddBtn" type="button">${t('tx_add_btn')}</button></span>
       </div>
-      <div class="tx-error" id="txError" hidden></div>
-    </div></div>
-    <div class="tx-filter-bar tx-filter-bar--3col">
-      <input class="input input-sm" type="text" id="txSearch" placeholder="${t('tx_search_ph')}" value="${esc(txFilter.search)}">
-      <select class="select select-sm" id="txTypeFilter">
-        <option value="">${t('tx_filter_all_types')}</option>
-        <option value="income"${txFilter.type==='income'?' selected':''}>${t('tx_type_income')}</option>
-        <option value="expense"${txFilter.type==='expense'?' selected':''}>${t('tx_type_expense')}</option>
-        <option value="bill"${txFilter.type==='bill'?' selected':''}>${t('tx_type_bill')}</option>
-        <option value="debt"${txFilter.type==='debt'?' selected':''}>${t('tx_type_debt')}</option>
-        <option value="savings"${txFilter.type==='savings'?' selected':''}>${t('tx_type_savings')}</option>
-      </select>
-      <select class="select select-sm" id="txSort">
-        <option value="date_desc"${txFilter.sort==='date_desc'?' selected':''}>${t('tx_sort_date_new')}</option>
-        <option value="date_asc"${txFilter.sort==='date_asc'?' selected':''}>${t('tx_sort_date_old')}</option>
-        <option value="amount_desc"${txFilter.sort==='amount_desc'?' selected':''}>${t('tx_sort_amt_high')}</option>
-        <option value="amount_asc"${txFilter.sort==='amount_asc'?' selected':''}>${t('tx_sort_amt_low')}</option>
-      </select>
-    </div>
-    <div id="txListWrap"></div>`;
+    </div></div></div>
+    <div class="panel tx-panel"><div class="tx-panel-inner">
+      <div class="tx-toolbar">
+        <span class="tx-toolbar-count" id="txCount"></span>
+        <div class="tx-toolbar-fields">
+          <input class="input input-sm tx-search" type="search" id="txSearch" placeholder="${esc(t('tx_search_ph'))}" value="${esc(txFilter.search)}" aria-label="${esc(t('tx_search_ph'))}">
+          <select class="select select-sm" id="txTypeFilter" aria-label="${esc(t('tx_filter_all_types'))}">
+            <option value="">${t('tx_filter_all_types')}</option>
+            ${['income','expense','bill','savings','debt'].map(k=>
+              `<option value="${k}"${txFilter.type===k?' selected':''}>${t('tx_type_'+k)}</option>`).join('')}
+          </select>
+          <select class="select select-sm" id="txSort" aria-label="${esc(t('tx_sort_date_new'))}">
+            <option value="date_desc"${txFilter.sort==='date_desc'?' selected':''}>${t('tx_sort_date_new')}</option>
+            <option value="date_asc"${txFilter.sort==='date_asc'?' selected':''}>${t('tx_sort_date_old')}</option>
+            <option value="amount_desc"${txFilter.sort==='amount_desc'?' selected':''}>${t('tx_sort_amt_high')}</option>
+            <option value="amount_asc"${txFilter.sort==='amount_asc'?' selected':''}>${t('tx_sort_amt_low')}</option>
+          </select>
+        </div>
+        <button class="link-btn tx-clear-all" id="clearAllBtn2" type="button" hidden>${t('tx_clear_all')}</button>
+      </div>
+      <div id="txListWrap"></div>
+    </div></div>`;
   renderTxList();
-  populateTxCats();
-  document.getElementById('txDateWrap')?.addEventListener('click',()=>{openDatePicker(document.getElementById('txDate'),document.getElementById('txDateWrap'));});
-  document.getElementById('txDate')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '||e.key==='ArrowDown'){e.preventDefault();openDatePicker(document.getElementById('txDate'),document.getElementById('txDateWrap'));}});
-  document.getElementById('txDate')?.addEventListener('change',e=>{document.getElementById('txDateDisp').textContent=formatDateDisplay(e.target.value);});
-  document.getElementById('txType')?.addEventListener('change',populateTxCats);
-  document.getElementById('addTxBtn')?.addEventListener('click',addTransaction);
+  document.getElementById('txOpenAddBtn')?.addEventListener('click',openAddTxFromList);
   document.getElementById('csvInput')?.addEventListener('change',handleCSV);
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
   initFieldTips(el);
+  // The filters sit outside #txListWrap on purpose: the list is rebuilt on
+  // every keystroke, and a search box inside it would lose focus each time.
   document.getElementById('txSearch')?.addEventListener('input',e=>{txFilter.search=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txTypeFilter')?.addEventListener('change',e=>{txFilter.type=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txSort')?.addEventListener('change',e=>{txFilter.sort=e.target.value;txPage=0;renderTxList();});
+  document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{
+    if(!await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')}))return;
+    state.transactions=[];syncModulePaidLinks();saveState();renderTransactions();
+  });
 }
-function populateTxCats() {
-  const type = document.getElementById('txType')?.value;
-  const cats = getCats(type);
-  const sel  = document.getElementById('txCategory');
-  if (!sel) return;
-  sel.innerHTML = cats.length > 0
-    ? cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('')
-    : `<option value="">${t('no_cat_setup')}</option>`;
+// The trial gate belongs on the door: the form should not open only to refuse.
+function openAddTxFromList(){
+  if(trialBlocks('transaction')){ showUpgradeModal({reason:'transaction'}); return; }
+  openQuickAddTx();
 }
-
 // Reads its fields by id prefix so the Transactions form and the dashboard's
 // quick-add modal can share it. Without a prefix it is the inline form, which
 // is also how the click listener calls it - the event argument it gets passed
@@ -4879,7 +4967,11 @@ function openQuickAddTx() {
   document.getElementById('qaSaveBtn')?.addEventListener('click', () => {
     addTransaction({ prefix: 'qa', after: () => {
       closeModal();
-      renderDashboard();
+      // Whatever tab is open, not always the dashboard: this modal is
+      // reached from the dock too, from anywhere in the app. Settings is the
+      // exception, since a new transaction changes nothing there and a
+      // re-render would wipe out a half-finished field.
+      if (currentBTab !== 'settings') dispatchRender(currentBTab);
       showToast(t('toast_tx_added'));
     } });
   });
@@ -6426,7 +6518,7 @@ const ONB_SPOTLIGHT_STEPS = [
     isDone: () => state.budgets.income.some(r => (r.expected || 0) > 0),
   },
   {
-    tab: 'transactions', selector: '.tx-form-panel',
+    tab: 'transactions', selector: '.tx-ways',
     titleKey: 'onb_spot_tx_title', bodyKey: 'onb_spot_tx_body',
     isDone: () => state.transactions.length > 0,
   },
@@ -6547,13 +6639,6 @@ document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const active = document.activeElement;
   if (!active) return;
-
-  // Transaction form: Enter in amount or desc triggers Add
-  if (active.id === 'txAmount' || active.id === 'txDesc') {
-    e.preventDefault();
-    document.getElementById('addTxBtn')?.click();
-    return;
-  }
 
   // Settings date fields: Enter moves to next or saves
   if (active.id === 'settStart') {

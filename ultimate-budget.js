@@ -813,6 +813,10 @@ const TRANSLATIONS = {
     dpc_interest_label:'\uD83D\uDCB8 Total interest',dpc_on_top:'on top of',dpc_principal:'principal',
     dpc_monthly_label:'\uD83D\uDCC5 Monthly total',dpc_min_abbr:'min',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Payoff order - \u26c4 Snowball (lowest balance first)',
+    dpc_focus_word:'Focus',
+    dpc_focus_seq:'Extra money goes here first: {0}',
+    dpc_focus_none:'Set an extra monthly payment above and this order decides which debt it clears first.',
+    dpc_focus_hint:'Where your extra money is aimed, in order',
     dpc_payoff_order_av:'Payoff order - \uD83C\uDF0A Avalanche (highest rate first)',
     dpc_paid_off:'Paid off:',dpc_balance_word:'balance',dpc_apr_word:'APR',
     help_dpc_intro:'This calculator builds a personalised debt payoff plan based on your debts and chosen strategy.',
@@ -849,6 +853,12 @@ const TRANSLATIONS = {
     tx_add_btn:'Add',tx_error_required:'Please fill all required fields.',tx_error_no_cats:'No categories exist for this type yet. Add one in your budget first.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
     tx_clear_all:'Clear all',tx_empty:'No transactions yet.',tx_select_all_page:'Select all on this page',tx_n_selected:'{0} selected',tx_delete_selected:'Delete selected',tx_clear_selection:'Clear selection',tx_select_all_matching:'Select all {0} matching',tx_tag_as:'Tag as:',tx_tagged_toast:'{0} transactions tagged',confirm_delete_selected_tx:'Delete {0} selected transactions? This cannot be undone.',
+    tx_way_manual_sub:'One off, on any date you choose',
+    tx_way_auto_none:'Nothing repeating yet',
+    tx_way_auto_one:'1 rule running',
+    tx_way_auto_many:'{0} rules running',
+    tx_way_view:'View all',
+    tx_way_close:'Close',
     tx_type_income:'Income',tx_type_expense:'Expense',tx_type_bill:'Bill',tx_type_savings:'Savings',
     tx_th_amount:'Amount',tx_th_desc:'Description',
     tx_edit_title:'\u270F\uFE0F Edit Transaction',tx_save_changes:'Save changes',
@@ -875,6 +885,11 @@ const TRANSLATIONS = {
     bud_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
     bud_total:'Total',bud_set_date:'Set date',
     bud_add_btn:'+ Add',bud_add_cat_title:'Add new category',
+    bud_quick_add:'Quick add',
+    bud_sugg_income:'Salary|Freelance|Bonus|Interest|Side hustle|Benefits|Rental income|Gifts',
+    bud_sugg_expenses:'Groceries|Fuel|Transport|Dining out|Coffee|Clothing|Household|Health|Pets|Entertainment|Childcare|Hobbies',
+    bud_sugg_bills:'Rent|Mortgage|Electricity|Gas|Water|Internet|Phone|Insurance|Car payment|Childcare',
+    bud_sugg_savings:'Emergency fund|Holiday|Pension|Investments|House deposit|Car fund|Christmas|Wedding',
     bud_cat_name_label:'Category name',bud_cat_name_ph:'e.g. Freelance',
     bud_add_cat_btn:'Add',bud_due_date_label:'Due date',
     bud_cat_name_hint:'A short name for this category, like "Rent" or "Groceries".',
@@ -1192,7 +1207,7 @@ const TRANSLATIONS = {
     onb_spot_budget_title:'Set an expected amount',
     onb_spot_budget_body:"This is where you plan ahead. Type how much you expect to earn from your first income source below.",
     onb_spot_tx_title:'Log your first transaction',
-    onb_spot_tx_body:"Transactions are what actually happened. Fill in the date, category, and amount below, then hit Add to log your first one.",
+    onb_spot_tx_body:"Transactions are what actually happened. Press Add transaction, fill in the date, category and amount, and your first one is logged.",
     onb_next_btn:'Next',
     onb_nice_toast:'Nice! Moving on...',
     onb_tips_title:"You're all set!",
@@ -1376,6 +1391,10 @@ const TRANSLATIONS = {
     dpc_interest_label:'💸 Gesamtzinsen',dpc_on_top:'zusätzlich zu',dpc_principal:'Hauptbetrag',
     dpc_monthly_label:'📅 Monatlich gesamt',dpc_min_abbr:'Min.',dpc_extra_abbr:'Extra',
     dpc_payoff_order_sf:'Tilgungsreihenfolge - ⛄ Schneeball (niedrigstes Saldo zuerst)',
+    dpc_focus_word:'Fokus',
+    dpc_focus_seq:'Zusätzliches Geld geht zuerst hierhin: {0}',
+    dpc_focus_none:'Lege oben eine zusätzliche monatliche Zahlung fest, dann entscheidet diese Reihenfolge, welche Schuld zuerst getilgt wird.',
+    dpc_focus_hint:'Wohin dein zusätzliches Geld fließt, in der Reihenfolge',
     dpc_payoff_order_av:'Tilgungsreihenfolge - 🌊 Lawine (höchste Zinsen zuerst)',
     dpc_paid_off:'Abbezahlt:',dpc_balance_word:'Saldo',dpc_apr_word:'Zinssatz',
     help_dpc_intro:'Dieser Rechner erstellt einen personalisierten Tilgungsplan basierend auf deinen Schulden und der gewählten Strategie.',
@@ -1412,6 +1431,12 @@ const TRANSLATIONS = {
     tx_add_btn:'Hinzufügen',tx_error_required:'Bitte alle Pflichtfelder ausfüllen.',tx_error_no_cats:'Für diesen Typ gibt es noch keine Kategorien. Lege zuerst eine in deinem Budget an.',
     tx_transaction_one:'Transaktion',tx_transaction_many:'Transaktionen',
     tx_clear_all:'Alle löschen',tx_empty:'Noch keine Transaktionen.',tx_select_all_page:'Alle auf dieser Seite auswählen',tx_n_selected:'{0} ausgewählt',tx_delete_selected:'Auswahl löschen',tx_clear_selection:'Auswahl aufheben',tx_select_all_matching:'Alle {0} übereinstimmenden auswählen',tx_tag_as:'Taggen als:',tx_tagged_toast:'{0} Transaktionen getaggt',confirm_delete_selected_tx:'{0} ausgewählte Transaktionen löschen? Dies kann nicht rückgängig gemacht werden.',
+    tx_way_manual_sub:'Einmalig, an einem beliebigen Datum',
+    tx_way_auto_none:'Noch nichts Wiederkehrendes',
+    tx_way_auto_one:'1 Regel aktiv',
+    tx_way_auto_many:'{0} Regeln aktiv',
+    tx_way_view:'Alle ansehen',
+    tx_way_close:'Schließen',
     tx_type_income:'Einnahmen',tx_type_expense:'Ausgaben',tx_type_bill:'Rechnung',tx_type_savings:'Ersparnisse',
     tx_th_amount:'Betrag',tx_th_desc:'Beschreibung',
     tx_edit_title:'\u270F\uFE0F Transaktion bearbeiten',tx_save_changes:'Änderungen speichern',
@@ -1438,6 +1463,11 @@ const TRANSLATIONS = {
     bud_th_progress_hint:'Wie viel Prozent des geplanten Betrags bisher verbraucht wurde.',
     bud_total:'Gesamt',bud_set_date:'Datum wählen',
     bud_add_btn:'+ Hinzufügen',bud_add_cat_title:'Neue Kategorie hinzufügen',
+    bud_quick_add:'Schnell hinzufügen',
+    bud_sugg_income:'Gehalt|Freiberuflich|Bonus|Zinsen|Nebenjob|Sozialleistungen|Mieteinnahmen|Geschenke',
+    bud_sugg_expenses:'Lebensmittel|Kraftstoff|Verkehr|Essen gehen|Kaffee|Kleidung|Haushalt|Gesundheit|Haustiere|Unterhaltung|Kinderbetreuung|Hobbys',
+    bud_sugg_bills:'Miete|Hypothek|Strom|Gas|Wasser|Internet|Telefon|Versicherung|Autorate|Kinderbetreuung',
+    bud_sugg_savings:'Notgroschen|Urlaub|Rente|Investitionen|Hauskaution|Autofonds|Weihnachten|Hochzeit',
     bud_cat_name_label:'Kategoriename',bud_cat_name_ph:'z.B. Freiberuflich',
     bud_add_cat_btn:'Hinzufügen',bud_due_date_label:'Fälligkeitsdatum',
     bud_cat_name_hint:'Ein kurzer Name für diese Kategorie, z.B. "Miete" oder "Lebensmittel".',
@@ -1921,6 +1951,10 @@ const TRANSLATIONS = {
     dpc_interest_label:'💸 Intérêts totaux',dpc_on_top:'en plus de',dpc_principal:'principal',
     dpc_monthly_label:'📅 Total mensuel',dpc_min_abbr:'min',dpc_extra_abbr:'suppl.',
     dpc_payoff_order_sf:"Ordre de remboursement - ⛄ Boule de neige (solde le plus bas d'abord)",
+    dpc_focus_word:'Priorité',
+    dpc_focus_seq:'L\'argent supplémentaire va d\'abord ici : {0}',
+    dpc_focus_none:'Définissez un paiement mensuel supplémentaire ci-dessus et cet ordre décide quelle dette est soldée en premier.',
+    dpc_focus_hint:'Où va votre argent supplémentaire, dans l\'ordre',
     dpc_payoff_order_av:"Ordre de remboursement - 🌊 Avalanche (taux le plus élevé d'abord)",
     dpc_paid_off:'Remboursé :',dpc_balance_word:'solde',dpc_apr_word:'taux',
     help_dpc_intro:"Ce calculateur établit un plan de remboursement personnalisé basé sur vos dettes et la stratégie choisie.",
@@ -1957,6 +1991,12 @@ const TRANSLATIONS = {
     tx_add_btn:'Ajouter',tx_error_required:'Veuillez remplir tous les champs obligatoires.',tx_error_no_cats:'Aucune catégorie n’existe encore pour ce type. Créez-en une dans votre budget.',
     tx_transaction_one:'transaction',tx_transaction_many:'transactions',
     tx_clear_all:'Tout effacer',tx_empty:'Aucune transaction encore.',tx_select_all_page:'Tout sélectionner sur cette page',tx_n_selected:'{0} sélectionnée(s)',tx_delete_selected:'Supprimer la sélection',tx_clear_selection:'Effacer la sélection',tx_select_all_matching:'Sélectionner les {0} correspondantes',tx_tag_as:'Taguer :',tx_tagged_toast:'{0} transactions taguées',confirm_delete_selected_tx:'Supprimer {0} transactions sélectionnées ? Cette action est irréversible.',
+    tx_way_manual_sub:'Une fois, à la date de votre choix',
+    tx_way_auto_none:'Rien de récurrent pour le moment',
+    tx_way_auto_one:'1 règle active',
+    tx_way_auto_many:'{0} règles actives',
+    tx_way_view:'Tout voir',
+    tx_way_close:'Fermer',
     tx_type_income:'Revenu',tx_type_expense:'Dépense',tx_type_bill:'Facture',tx_type_savings:'Épargne',
     tx_th_amount:'Montant',tx_th_desc:'Description',
     tx_edit_title:'\u270F\uFE0F Modifier la transaction',tx_save_changes:'Enregistrer les modifications',
@@ -1983,6 +2023,11 @@ const TRANSLATIONS = {
     bud_th_progress_hint:'Le pourcentage du montant prévu déjà utilisé.',
     bud_total:'Total',bud_set_date:'Définir date',
     bud_add_btn:'+ Ajouter',bud_add_cat_title:'Ajouter une catégorie',
+    bud_quick_add:'Ajout rapide',
+    bud_sugg_income:'Salaire|Freelance|Prime|Intérêts|Activité secondaire|Allocations|Revenus locatifs|Cadeaux',
+    bud_sugg_expenses:'Courses|Carburant|Transport|Restaurant|Café|Vêtements|Maison|Santé|Animaux|Loisirs|Garde d\'enfants|Passe-temps',
+    bud_sugg_bills:'Loyer|Prêt immobilier|Électricité|Gaz|Eau|Internet|Téléphone|Assurance|Crédit auto|Garde d\'enfants',
+    bud_sugg_savings:'Épargne de précaution|Vacances|Retraite|Placements|Apport immobilier|Fonds voiture|Noël|Mariage',
     bud_cat_name_label:'Nom de la catégorie',bud_cat_name_ph:'ex. Freelance',
     bud_add_cat_btn:'Ajouter',bud_due_date_label:"Date d'échéance",
     bud_cat_name_hint:'Un nom court pour cette catégorie, comme « Loyer » ou « Courses ».',
@@ -2466,6 +2511,10 @@ const TRANSLATIONS = {
     dpc_interest_label:'💸 Intereses totales',dpc_on_top:'además de',dpc_principal:'principal',
     dpc_monthly_label:'📅 Total mensual',dpc_min_abbr:'mín',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Orden de pago - ⛄ Bola de nieve (saldo más bajo primero)',
+    dpc_focus_word:'Prioridad',
+    dpc_focus_seq:'El dinero extra va primero aquí: {0}',
+    dpc_focus_none:'Define un pago mensual extra arriba y este orden decide qué deuda se liquida primero.',
+    dpc_focus_hint:'Adónde va tu dinero extra, en orden',
     dpc_payoff_order_av:'Orden de pago - 🌊 Avalancha (tasa más alta primero)',
     dpc_paid_off:'Pagado:',dpc_balance_word:'saldo',dpc_apr_word:'TAE',
     help_dpc_intro:'Esta calculadora elabora un plan de pago de deudas personalizado basado en tus deudas y la estrategia elegida.',
@@ -2502,6 +2551,12 @@ const TRANSLATIONS = {
     tx_add_btn:'Añadir',tx_error_required:'Por favor, completa todos los campos obligatorios.',tx_error_no_cats:'Aún no hay categorías de este tipo. Crea una en tu presupuesto primero.',
     tx_transaction_one:'transacción',tx_transaction_many:'transacciones',
     tx_clear_all:'Borrar todo',tx_empty:'Aún no hay transacciones.',tx_select_all_page:'Seleccionar todo en esta página',tx_n_selected:'{0} seleccionadas',tx_delete_selected:'Eliminar seleccionadas',tx_clear_selection:'Borrar selección',tx_select_all_matching:'Seleccionar las {0} coincidentes',tx_tag_as:'Etiquetar:',tx_tagged_toast:'{0} transacciones etiquetadas',confirm_delete_selected_tx:'¿Eliminar {0} transacciones seleccionadas? Esta acción no se puede deshacer.',
+    tx_way_manual_sub:'Una vez, en la fecha que elijas',
+    tx_way_auto_none:'Todavía nada recurrente',
+    tx_way_auto_one:'1 regla activa',
+    tx_way_auto_many:'{0} reglas activas',
+    tx_way_view:'Ver todas',
+    tx_way_close:'Cerrar',
     tx_type_income:'Ingreso',tx_type_expense:'Gasto',tx_type_bill:'Factura',tx_type_savings:'Ahorro',
     tx_th_amount:'Importe',tx_th_desc:'Descripción',
     tx_edit_title:'\u270F\uFE0F Editar transacción',tx_save_changes:'Guardar cambios',
@@ -2528,6 +2583,11 @@ const TRANSLATIONS = {
     bud_th_progress_hint:'Qué porcentaje del monto previsto se ha usado hasta ahora.',
     bud_total:'Total',bud_set_date:'Seleccionar fecha',
     bud_add_btn:'+ Añadir',bud_add_cat_title:'Añadir nueva categoría',
+    bud_quick_add:'Añadir rápido',
+    bud_sugg_income:'Salario|Freelance|Bonificación|Intereses|Trabajo extra|Prestaciones|Ingresos por alquiler|Regalos',
+    bud_sugg_expenses:'Supermercado|Combustible|Transporte|Comer fuera|Café|Ropa|Hogar|Salud|Mascotas|Ocio|Guardería|Aficiones',
+    bud_sugg_bills:'Alquiler|Hipoteca|Electricidad|Gas|Agua|Internet|Teléfono|Seguro|Cuota del coche|Guardería',
+    bud_sugg_savings:'Fondo de emergencia|Vacaciones|Jubilación|Inversiones|Entrada de casa|Fondo del coche|Navidad|Boda',
     bud_cat_name_label:'Nombre de categoría',bud_cat_name_ph:'p.ej. Autónomo',
     bud_add_cat_btn:'Añadir',bud_due_date_label:'Fecha de vencimiento',
     bud_cat_name_hint:'Un nombre corto para esta categoría, como "Alquiler" o "Comestibles".',
@@ -3012,6 +3072,10 @@ const TRANSLATIONS = {
     dpc_interest_label:'💸 Interessi totali',dpc_on_top:'oltre a',dpc_principal:'capitale',
     dpc_monthly_label:'📅 Totale mensile',dpc_min_abbr:'min',dpc_extra_abbr:'extra',
     dpc_payoff_order_sf:'Ordine di rimborso - ⛄ Palla di neve (saldo più basso prima)',
+    dpc_focus_word:'Priorità',
+    dpc_focus_seq:'Il denaro extra va prima qui: {0}',
+    dpc_focus_none:'Imposta un pagamento mensile extra sopra e questo ordine decide quale debito viene estinto per primo.',
+    dpc_focus_hint:'Dove va il tuo denaro extra, in ordine',
     dpc_payoff_order_av:'Ordine di rimborso - 🌊 Valanga (tasso più alto prima)',
     dpc_paid_off:'Pagato:',dpc_balance_word:'saldo',dpc_apr_word:'TAEG',
     help_dpc_intro:'Questo calcolatore elabora un piano di rimborso personalizzato basato sui tuoi debiti e sulla strategia scelta.',
@@ -3048,6 +3112,12 @@ const TRANSLATIONS = {
     tx_add_btn:'Aggiungi',tx_error_required:'Compila tutti i campi obbligatori.',tx_error_no_cats:'Non esistono ancora categorie di questo tipo. Creane una nel tuo budget.',
     tx_transaction_one:'transazione',tx_transaction_many:'transazioni',
     tx_clear_all:'Cancella tutto',tx_empty:'Nessuna transazione ancora.',tx_select_all_page:'Seleziona tutto in questa pagina',tx_n_selected:'{0} selezionate',tx_delete_selected:'Elimina selezionate',tx_clear_selection:'Deseleziona',tx_select_all_matching:'Seleziona tutte le {0} corrispondenti',tx_tag_as:'Tagga:',tx_tagged_toast:'{0} transazioni taggate',confirm_delete_selected_tx:'Eliminare {0} transazioni selezionate? Questa azione non può essere annullata.',
+    tx_way_manual_sub:'Una volta, nella data che scegli',
+    tx_way_auto_none:'Ancora nulla di ricorrente',
+    tx_way_auto_one:'1 regola attiva',
+    tx_way_auto_many:'{0} regole attive',
+    tx_way_view:'Vedi tutte',
+    tx_way_close:'Chiudi',
     tx_type_income:'Entrata',tx_type_expense:'Spesa',tx_type_bill:'Bolletta',tx_type_savings:'Risparmio',
     tx_th_amount:'Importo',tx_th_desc:'Descrizione',
     tx_edit_title:'\u270F\uFE0F Modifica transazione',tx_save_changes:'Salva modifiche',
@@ -3074,6 +3144,11 @@ const TRANSLATIONS = {
     bud_th_progress_hint:'Quale percentuale dell’importo previsto è stata utilizzata finora.',
     bud_total:'Totale',bud_set_date:'Imposta data',
     bud_add_btn:'+ Aggiungi',bud_add_cat_title:'Aggiungi nuova categoria',
+    bud_quick_add:'Aggiunta rapida',
+    bud_sugg_income:'Stipendio|Freelance|Bonus|Interessi|Secondo lavoro|Sussidi|Affitti attivi|Regali',
+    bud_sugg_expenses:'Spesa|Carburante|Trasporti|Ristoranti|Caffè|Abbigliamento|Casa|Salute|Animali|Svago|Asilo|Hobby',
+    bud_sugg_bills:'Affitto|Mutuo|Elettricità|Gas|Acqua|Internet|Telefono|Assicurazione|Rata auto|Asilo',
+    bud_sugg_savings:'Fondo emergenza|Vacanze|Pensione|Investimenti|Anticipo casa|Fondo auto|Natale|Matrimonio',
     bud_cat_name_label:'Nome categoria',bud_cat_name_ph:'es. Freelance',
     bud_add_cat_btn:'Aggiungi',bud_due_date_label:'Data di scadenza',
     bud_cat_name_hint:'Un nome breve per questa categoria, come "Affitto" o "Spesa".',
@@ -3557,6 +3632,10 @@ const TRANSLATIONS = {
     dpc_interest_label:'💸 Łączne odsetki',dpc_on_top:'ponad',dpc_principal:'kapitału',
     dpc_monthly_label:'📅 Suma miesięczna',dpc_min_abbr:'min',dpc_extra_abbr:'dod.',
     dpc_payoff_order_sf:'Kolejność spłaty - ⛄ Śnieżka (najniższe saldo najpierw)',
+    dpc_focus_word:'Priorytet',
+    dpc_focus_seq:'Dodatkowe pieniądze idą najpierw tutaj: {0}',
+    dpc_focus_none:'Ustaw powyżej dodatkową miesięczną wpłatę, a ta kolejność zdecyduje, który dług zostanie spłacony pierwszy.',
+    dpc_focus_hint:'Gdzie trafiają Twoje dodatkowe pieniądze, w kolejności',
     dpc_payoff_order_av:'Kolejność spłaty - 🌊 Lawina (najwyższe oprocentowanie najpierw)',
     dpc_paid_off:'Spłacono:',dpc_balance_word:'saldo',dpc_apr_word:'Oprocent.',
     help_dpc_intro:'Ten kalkulator tworzy spersonalizowany plan spłaty długów na podstawie Twoich długów i wybranej strategii.',
@@ -3593,6 +3672,12 @@ const TRANSLATIONS = {
     tx_add_btn:'Dodaj',tx_error_required:'Proszę wypełnić wszystkie wymagane pola.',tx_error_no_cats:'Nie ma jeszcze kategorii tego typu. Najpierw dodaj ją w swoim budżecie.',
     tx_transaction_one:'transakcja',tx_transaction_many:'transakcji',
     tx_clear_all:'Wyczyść wszystko',tx_empty:'Brak transakcji.',tx_select_all_page:'Zaznacz wszystkie na tej stronie',tx_n_selected:'Zaznaczono: {0}',tx_delete_selected:'Usuń zaznaczone',tx_clear_selection:'Wyczyść zaznaczenie',tx_select_all_matching:'Zaznacz wszystkie pasujące ({0})',tx_tag_as:'Oznacz jako:',tx_tagged_toast:'Oznaczono transakcji: {0}',confirm_delete_selected_tx:'Usunąć {0} zaznaczonych transakcji? Tej operacji nie można cofnąć.',
+    tx_way_manual_sub:'Jednorazowo, w dowolnym dniu',
+    tx_way_auto_none:'Jeszcze nic się nie powtarza',
+    tx_way_auto_one:'1 aktywna reguła',
+    tx_way_auto_many:'Aktywne reguły: {0}',
+    tx_way_view:'Zobacz wszystkie',
+    tx_way_close:'Zamknij',
     tx_type_income:'Przychód',tx_type_expense:'Wydatek',tx_type_bill:'Rachunek',tx_type_savings:'Oszczędności',
     tx_th_amount:'Kwota',tx_th_desc:'Opis',
     tx_edit_title:'\u270F\uFE0F Edytuj transakcję',tx_save_changes:'Zapisz zmiany',
@@ -3619,6 +3704,11 @@ const TRANSLATIONS = {
     bud_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
     bud_total:'Suma',bud_set_date:'Ustaw datę',
     bud_add_btn:'+ Dodaj',bud_add_cat_title:'Dodaj nową kategorię',
+    bud_quick_add:'Szybkie dodawanie',
+    bud_sugg_income:'Wynagrodzenie|Freelance|Premia|Odsetki|Dodatkowa praca|Świadczenia|Dochód z najmu|Prezenty',
+    bud_sugg_expenses:'Zakupy|Paliwo|Transport|Jedzenie na mieście|Kawa|Odzież|Dom|Zdrowie|Zwierzęta|Rozrywka|Opieka nad dziećmi|Hobby',
+    bud_sugg_bills:'Czynsz|Kredyt hipoteczny|Prąd|Gaz|Woda|Internet|Telefon|Ubezpieczenie|Rata za auto|Opieka nad dziećmi',
+    bud_sugg_savings:'Fundusz awaryjny|Wakacje|Emerytura|Inwestycje|Wkład na mieszkanie|Fundusz na auto|Święta|Wesele',
     bud_cat_name_label:'Nazwa kategorii',bud_cat_name_ph:'np. Freelance',
     bud_add_cat_btn:'Dodaj',bud_due_date_label:'Data płatności',
     bud_cat_name_hint:'Krótka nazwa tej kategorii, np. "Czynsz" lub "Zakupy spożywcze".',
@@ -5485,6 +5575,87 @@ function openEditBudgetRow(type, id) {
   });
 }
 
+// Adding a row used to reveal a card wedged under the table, which meant
+// scrolling to find it and again to get back. It is the same job as editing
+// a row, so it is the same modal, with suggestions on top.
+function openAddBudgetRow(type) {
+  const meta = getModMeta()[type];
+  if (!meta) return;
+  const rows = state.budgets[type] || [];
+  // Nothing already in this section, since a second row under one name
+  // would pool its actuals with the first.
+  const taken = new Set(rows.map(r => (r.category || '').toLowerCase()));
+  const suggestions = (t('bud_sugg_' + type) || '').split('|')
+    .map(x => x.trim()).filter(x => x && !taken.has(x.toLowerCase()));
+
+  document.getElementById('modalTitle').textContent = `${t('bud_add_cat_title')} \u00b7 ${meta.title}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="field"><label class="field-label field-label--tip">${tipLabel(t('bud_cat_name_label'),'bud_cat_name_hint',false)}</label>
+      <input class="input" type="text" id="abCat" maxlength="60"${suggestions.length?'':` placeholder="${esc(t('bud_cat_name_ph'))}"`} autocomplete="off"></div>
+    ${suggestions.length ? `<div class="quick-add">
+      <span class="quick-add-label">${t('bud_quick_add')}</span>
+      <div class="quick-add-chips">${suggestions.map(x =>
+        `<button class="quick-chip" type="button" data-sugg="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+    </div>` : ''}
+    <div class="field"><label class="field-label">${t('bud_th_expected')} (${SYM})</label>
+      <input class="input" type="number" id="abExp" min="0" step="0.01" placeholder="0.00" inputmode="decimal"></div>
+    ${meta.hasDates ? `<div class="field"><label class="field-label field-label--tip">${tipLabel(t('bud_due_date_label'),'bud_due_date_hint',false)}</label>
+      ${styledDateField('abDate', 'abDateWrap', '')}</div>` : ''}
+    <div class="tx-error" id="abError" hidden></div>
+    <div class="edit-tx-actions">
+      <button class="btn btn-primary" id="abSave" type="button">${t('bud_add_cat_btn')}</button>
+      <button class="btn btn-ghost btn-sm" id="abCancel" type="button">${t('cancel')}</button>
+    </div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+  if (meta.hasDates) bindDateField('abDate', 'abDateWrap');
+  const nameEl = document.getElementById('abCat');
+  // After the overlay's own focus move, which runs on a microtask and would
+  // otherwise win. Only with a real pointer: on a phone the keyboard would
+  // spring up and cover the suggestions, which are the reason to be here.
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches)
+    setTimeout(() => nameEl?.focus(), 0);
+
+  const showErr = msg => { const e = document.getElementById('abError'); if (e) { e.textContent = msg; e.hidden = false; } };
+  document.getElementById('modalBody').addEventListener('input', () => {
+    const e = document.getElementById('abError'); if (e) e.hidden = true;
+  });
+  // A chip fills the name and hands over to the amount, rather than adding
+  // the row outright: the amount is the part worth asking for.
+  document.querySelectorAll('#modalBody .quick-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (nameEl) nameEl.value = chip.dataset.sugg;
+      document.querySelectorAll('#modalBody .quick-chip').forEach(c => c.classList.toggle('is-on', c === chip));
+      const e = document.getElementById('abError'); if (e) e.hidden = true;
+      document.getElementById('abExp')?.focus();
+    });
+  });
+
+  const save = () => {
+    // Checked here as well as on the button that opened this, since the
+    // limit can be reached while the modal is open.
+    if (trialBlocks(type)) { closeModal(); showUpgradeModal({ reason: 'category', type }); return; }
+    const name = (document.getElementById('abCat')?.value || '').trim();
+    const expRaw = document.getElementById('abExp')?.value ?? '';
+    const exp = expRaw === '' ? 0 : parseFloat(expRaw);
+    if (!name) return showErr(t('bud_name_required'));
+    if (rows.some(r => (r.category || '').toLowerCase() === name.toLowerCase())) return showErr(t('bud_name_taken'));
+    if (isNaN(exp) || exp < 0) return showErr(t('bud_expected_invalid'));
+    const newRow = { id: uid(), category: name, expected: exp };
+    if (meta.hasDates) { newRow.dueDate = document.getElementById('abDate')?.value || ''; newRow.paid = false; }
+    (state.budgets[type] = state.budgets[type] || []).push(newRow);
+    trialUse(type);
+    saveState(); closeModal(); renderBudget();
+    showToast(t('toast_saved'));
+  };
+  document.getElementById('abSave')?.addEventListener('click', save);
+  // Enter on the name or the amount commits, which is what a two-field form
+  // invites. Not on the date, where Enter belongs to the picker.
+  ['abCat', 'abExp'].forEach(id => document.getElementById(id)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); save(); }
+  }));
+  document.getElementById('abCancel')?.addEventListener('click', closeModal);
+}
+
 function buildModuleHTML(type,meta,act) {
   const rows=state.budgets[type]||[],typeAct=act[type]||{};
   const totExp=rows.reduce((t,r)=>t+(r.expected||0),0),totAct=rows.reduce((t,r)=>t+(typeAct[r.category]||0),0);
@@ -5493,7 +5664,7 @@ function buildModuleHTML(type,meta,act) {
   return `<div class="budget-module-section"><div class="module-section-header"><h3 class="module-section-title">${meta.icon} ${meta.title}</h3><button class="btn btn-ghost btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button></div>
     <div class="panel" style="margin-bottom:18px"><div class="module-table-wrap"><table class="module-table"><thead><tr>
       <th>${t('bud_th_category')}</th><th><span class="cc-label-text">${t('bud_th_expected')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_expected'))}">i</button></th>
-      ${meta.hasDates?`<th>${t('bud_th_due_date')}</th>`:''}
+      ${meta.hasDates?`<th class="col-sm-hide">${t('bud_th_due_date')}</th>`:''}
       <th><span class="cc-label-text">${t('bud_th_actual')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_actual'))}">i</button></th><th class="prog-cell"><span class="cc-label-text">${t('bud_th_progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_progress'))}">i</button></th>
       ${meta.hasDates?`<th>${t('bud_th_paid')}</th>`:''}<th></th>
     </tr></thead>
@@ -5501,7 +5672,7 @@ function buildModuleHTML(type,meta,act) {
       const a=typeAct[row.category]||0,p=pct(a,row.expected),ovr=!meta.isInc&&p>100;
       return`<tr class="module-row"><td><span class="cat-name">${esc(row.category)}</span></td>
         <td><input class="expected-input mod-exp" type="number" min="0" step="0.01" value="${row.expected||''}" placeholder="0.00" data-id="${row.id}" data-type="${type}"></td>
-        ${meta.hasDates?`<td><div class="date-cell-styled" id="dw-${row.id}" data-input-id="di-${row.id}"><span class="date-cell-val" id="dc-${row.id}">${row.dueDate?formatDateDisplay(row.dueDate):noDate}</span><input type="date" id="di-${row.id}" class="mod-date" value="${row.dueDate||''}" data-id="${row.id}" data-type="${type}"></div></td>`:''}
+        ${meta.hasDates?`<td class="col-sm-hide"><div class="date-cell-styled" id="dw-${row.id}" data-input-id="di-${row.id}"><span class="date-cell-val" id="dc-${row.id}">${row.dueDate?formatDateDisplay(row.dueDate):noDate}</span><input type="date" id="di-${row.id}" class="mod-date" value="${row.dueDate||''}" data-id="${row.id}" data-type="${type}"></div></td>`:''}
         <td><span class="actual-val${ovr?' is-over':meta.isInc&&p>=100?' is-good':''}">${fmt(a)}</span></td>
         <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':ovr?' prog-bar--over':' prog-bar--normal'}" id="pb-${row.id}" style="width:${Math.min(p,100)}%"></div></div><span class="prog-label${ovr?' is-over':''}" id="pl-${row.id}">${p}%</span></td>
         ${meta.hasDates?`<td class="paid-cell">${rowPayState(row)==='partial'
@@ -5510,23 +5681,11 @@ function buildModuleHTML(type,meta,act) {
         <td><div class="tx-actions"><button class="edit-btn mod-edit" data-id="${row.id}" data-type="${type}" type="button" title="${t('edit')}" aria-label="${t('edit')}">✏️</button><button class="del-btn mod-del" data-id="${row.id}" data-type="${type}" type="button" aria-label="${t('delete')}">×</button></div></td></tr>`;
     }).join('')}</tbody>
     <tfoot><tr class="total-row"><td><strong>${t('bud_total')}</strong></td><td><strong id="te-${type}">${fmt(totExp)}</strong></td>
-      ${meta.hasDates?'<td></td>':''}
+      ${meta.hasDates?'<td class="col-sm-hide"></td>':''}
       <td><strong>${fmt(totAct)}</strong></td>
       <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':totOvr?' prog-bar--over':' prog-bar--normal'}" id="tpb-${type}" style="width:${Math.min(totP,100)}%"></div></div><span class="prog-label${totOvr?' is-over':''}" id="tpl-${type}">${totP}%</span></td>
       ${meta.hasDates?'<td></td>':''}<td></td></tr></tfoot></table></div></div>
-    <div class="panel add-cat-card" id="addCatCard-${type}" style="display:none">
-      <div class="panel-inner-sm">
-        <div class="add-cat-title">${t('bud_add_cat_title')}</div>
-        <div class="add-cat-row">
-          <div class="field"><label class="field-label field-label--tip">${tipLabel(t('bud_cat_name_label'),'bud_cat_name_hint',false)}</label><input class="input input-sm" type="text" id="newCatName-${type}" placeholder="${t('bud_cat_name_ph')}"></div>
-          ${meta.hasDates?`<div class="field"><label class="field-label field-label--tip">${tipLabel(t('bud_due_date_label'),'bud_due_date_hint',false)}</label><input class="input input-sm" type="date" id="newCatDate-${type}"></div>`:''}
-          <div class="add-cat-btns">
-            <button class="btn btn-primary btn-sm" id="saveCatBtn-${type}" type="button">${t('bud_add_cat_btn')}</button>
-            <button class="btn btn-ghost btn-sm" id="cancelCatBtn-${type}" type="button">${t('cancel')}</button>
-          </div>
-        </div>
-      </div>
-    </div></div>`;
+    </div>`;
 }
 
 // Marking a bill paid logs the actual amount as a real transaction rather than
@@ -5821,24 +5980,8 @@ function bindModuleEvents(type,meta,container,act) {
   container.querySelectorAll(`.mod-add-btn[data-type="${type}"]`).forEach(btn=>{
     btn.addEventListener('click',()=>{
       if(trialBlocks(type)){ showUpgradeModal({reason:'category',type}); return; }
-      const card=document.getElementById(`addCatCard-${type}`);
-      if(card){card.style.display='';document.getElementById(`newCatName-${type}`)?.focus();}
+      openAddBudgetRow(type);
     });
-  });
-  document.getElementById(`saveCatBtn-${type}`)?.addEventListener('click',()=>{
-    if(trialBlocks(type)){ showUpgradeModal({reason:'category',type}); return; }
-    const name=document.getElementById(`newCatName-${type}`)?.value.trim();
-    if(!name){document.getElementById(`newCatName-${type}`)?.focus();return;}
-    const newRow={id:uid(),category:name,expected:0};
-    if(meta.hasDates){newRow.dueDate=document.getElementById(`newCatDate-${type}`)?.value||'';newRow.paid=false;}
-    (state.budgets[type]=state.budgets[type]||[]).push(newRow);
-    trialUse(type);
-    saveState();renderBudget();
-  });
-  document.getElementById(`cancelCatBtn-${type}`)?.addEventListener('click',()=>{
-    const card=document.getElementById(`addCatCard-${type}`);
-    if(card)card.style.display='none';
-    const n=document.getElementById(`newCatName-${type}`);if(n)n.value='';
   });
 }
 
@@ -5883,30 +6026,35 @@ function renderTxList(){
       ${bulkTagBtns}
       <button class="btn btn-danger btn-sm" id="txDeleteSelected">${t('tx_delete_selected')}</button>
     </div>`:'';
-  el.innerHTML=`<div class="tx-list-header"><span>${countLabel}</span>${total>0?`<button class="link-btn" id="clearAllBtn2">${t('tx_clear_all')}</button>`:''}</div>
-    ${bulkBar}
+  // The count and the clear-all live in the toolbar above, which is not
+  // rebuilt here, so they are updated rather than reprinted.
+  const countEl=document.getElementById('txCount');
+  if(countEl)countEl.textContent=countLabel;
+  const clearEl=document.getElementById('clearAllBtn2');
+  if(clearEl)clearEl.hidden=total===0;
+  el.innerHTML=`${bulkBar}
     ${count===0&&total===0
       ?`<div class="empty-state"><div class="empty-icon">\uD83D\uDCCB</div><p class="empty-title">${t('tx_empty')}</p><button class="btn btn-primary btn-sm empty-cta" id="txEmptyAdd" type="button">\u002B ${t('tx_add_title')}</button></div>`
       :count===0
       ?`<div class="empty-state"><div class="empty-icon">\uD83D\uDD0D</div><p>${t('tx_no_results')}</p></div>`
-      :`<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
+      :`<div class="tx-table-wrap"><table class="tx-table"><thead><tr>
           <th class="tx-sel-col"><label class="check-label"><input type="checkbox" id="txSelectPage" aria-label="${t('tx_select_all_page')}" ${allPageSelected?'checked':''}><span class="checkmark checkmark--sm"></span></label></th>
-          <th>${t('tx_date')}</th><th>${t('tx_type')}</th><th>${t('tx_category')}</th>
-          <th>${t('tx_th_amount')}</th><th>${t('tx_th_desc')}</th><th></th>
+          <th>${t('tx_date')}</th><th class="col-sm-hide">${t('tx_type')}</th><th>${t('tx_category')}</th>
+          <th>${t('tx_th_amount')}</th><th class="col-sm-hide">${t('tx_th_desc')}</th><th class="col-sm-hide"></th><th></th>
         </tr></thead><tbody>
         ${paged.map(tx=>`<tr class="tx-row${txSelected.has(tx.id)?' is-selected':''}">
           <td class="tx-sel-col"><label class="check-label"><input type="checkbox" class="tx-sel-cb" data-tx="${tx.id}" ${txSelected.has(tx.id)?'checked':''}><span class="checkmark checkmark--sm"></span></label></td>
           <td class="tx-date">${formatDateDisplay(tx.date)}</td>
-          <td><span class="tx-pill tx-pill--${tx.type}">${esc(txTypeLabel(tx.type))}</span></td>
+          <td class="col-sm-hide"><span class="tx-pill tx-pill--${tx.type}">${esc(txTypeLabel(tx.type))}</span></td>
           <td class="tx-cat">${esc(tx.category)}</td>
           <td class="tx-amt tx-amt--${tx.type}">${tx.type==='income'?'+':'\u2212'}${fmt(tx.amount)}</td>
-          <td class="tx-desc">${esc(tx.description||'-')}</td>
-          <td>${state.allocation?.enabled&&tx.allocation?`<span class="alloc-badge" style="background:${(state.allocation.buckets||[]).find(b=>b.id===tx.allocation)?.color||'#94a3b8'}22;color:${(state.allocation.buckets||[]).find(b=>b.id===tx.allocation)?.color||'#94a3b8'};border:1px solid ${(state.allocation.buckets||[]).find(b=>b.id===tx.allocation)?.color||'#94a3b8'}44">${esc((state.allocation.buckets||[]).find(b=>b.id===tx.allocation)?.name||tx.allocation)}</span>`:''}${tx.type!=='income'&&tx.type!=='savings'&&tx.type!=='sinking_fund'&&state.allocation?.enabled&&!tx.allocation?'<span class="alloc-badge alloc-badge--unset">?</span>':''}</td>
+          <td class="tx-desc col-sm-hide">${esc(tx.description||'-')}</td>
+          <td class="col-sm-hide">${state.allocation?.enabled&&tx.allocation?`<span class="alloc-badge" style="background:${(state.allocation.buckets||[]).find(b=>b.id===tx.allocation)?.color||'#94a3b8'}22;color:${(state.allocation.buckets||[]).find(b=>b.id===tx.allocation)?.color||'#94a3b8'};border:1px solid ${(state.allocation.buckets||[]).find(b=>b.id===tx.allocation)?.color||'#94a3b8'}44">${esc((state.allocation.buckets||[]).find(b=>b.id===tx.allocation)?.name||tx.allocation)}</span>`:''}${tx.type!=='income'&&tx.type!=='savings'&&tx.type!=='sinking_fund'&&state.allocation?.enabled&&!tx.allocation?'<span class="alloc-badge alloc-badge--unset">?</span>':''}</td>
           <td><div class="tx-actions"><button class="edit-btn" data-tx="${tx.id}" title="Edit">\u270f\ufe0f</button><button class="del-btn" data-tx="${tx.id}" title="Delete">\xd7</button></div></td>
-        </tr>`).join('')}</tbody></table></div></div>${pagination}`}`;
+        </tr>`).join('')}</tbody></table></div>${pagination}`}`;
   el.querySelectorAll('.edit-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>openEditTx(b.dataset.tx)));
   el.querySelectorAll('.del-btn[data-tx]').forEach(b=>b.addEventListener('click',()=>{const tx=state.transactions.find(t=>t.id===b.dataset.tx);applySinkingFundDelta(tx,-1);state.transactions=state.transactions.filter(t=>t.id!==b.dataset.tx);txSelected.delete(b.dataset.tx);syncBillPaidLinks();saveState();renderTxList();}));
-  document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{if(await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')})){state.transactions=[];txSelected.clear();syncBillPaidLinks();saveState();renderTxList();}});
+  document.getElementById('txEmptyAdd')?.addEventListener('click',openAddTxFromList);
   document.getElementById('txPrevBtn')?.addEventListener('click',()=>{if(txPage>0){txPage--;renderTxList();}});
   document.getElementById('txNextBtn')?.addEventListener('click',()=>{if(txPage<totalPages-1){txPage++;renderTxList();}});
   document.getElementById('txSelectPage')?.addEventListener('change',e=>{pageIds.forEach(id=>{if(e.target.checked)txSelected.add(id);else txSelected.delete(id);});renderTxList();});
@@ -5930,6 +6078,62 @@ function renderTxList(){
   });
   refreshRecurringAmounts();
 }
+// One row per rule, and the listeners that go with them. Both live here
+// because the list is built in a modal now and rebuilt whenever a rule is
+// toggled, edited or removed.
+function recurringRowsHtml(){
+  return (state.recurringTemplates||[]).map(tmpl=>`<div class="recurring-row" data-rid="${tmpl.id}">
+    <span class="tx-pill tx-pill--${tmpl.type}" style="font-size:10px">${esc(txTypeLabel(tmpl.type))}</span>
+    <span class="recurring-row-label">${esc(tmpl.label||tmpl.category)}${tmpl.sourceType?`<span class="rec-source-badge" title="${t('automate_linked')}">${({subscription:'\u{1F504}',sinking_fund:'\u{1F3FA}',debt:'\u{1F4B3}'})[tmpl.sourceType]||'\u{1F517}'}</span>`:''}</span>
+    <span class="recurring-row-cat">${esc(tmpl.category)}</span>
+    <span class="recurring-row-amt">${SYM}${(tmpl.amount||0).toFixed(2)}</span>
+    <span class="recurring-row-freq">${t('freq_'+tmpl.frequency)||tmpl.frequency}</span>
+    <span class="recurring-row-due">${tmpl.nextDue}</span>
+    <span class="recurring-actions">
+      <label class="recurring-toggle" title="${t(tmpl.enabled?'recurring_active':'recurring_paused')}"><input type="checkbox" class="rec-toggle-cb" data-rid="${tmpl.id}" ${tmpl.enabled?'checked':''}><span class="rec-toggle-track"></span></label>
+      <button class="edit-btn rec-edit-btn" data-rid="${tmpl.id}" type="button" title="${t('edit')}" aria-label="${t('edit')}">\u270f\ufe0f</button>
+      <button class="del-btn rec-del-btn" data-rid="${tmpl.id}" type="button" title="${t('recurring_remove')}" aria-label="${t('recurring_remove')}">\u00d7</button>
+    </span>
+  </div>`).join('');
+}
+function bindRecurringRows(scope){
+  scope.querySelectorAll('.rec-edit-btn[data-rid]').forEach(b=>b.addEventListener('click',()=>{
+    const tmpl=(state.recurringTemplates||[]).find(x=>x.id===b.dataset.rid);
+    // A rule that belongs to a subscription, fund or debt is edited where it
+    // was created, so the two cannot drift apart.
+    if(tmpl?.sourceType==='subscription'){closeModal();switchTab('subscriptions');openSubModal(tmpl.sourceId);}
+    else if(tmpl?.sourceType==='sinking_fund'){closeModal();switchTab('sinking');openFundModal(tmpl.sourceId);}
+    else if(tmpl?.sourceType==='debt'){closeModal();switchTab('debt');openDebtModal(tmpl.sourceId);}
+    else openRecurringModal(b.dataset.rid);
+  }));
+  scope.querySelectorAll('.rec-del-btn[data-rid]').forEach(b=>b.addEventListener('click',()=>{
+    state.recurringTemplates=(state.recurringTemplates||[]).filter(r=>r.id!==b.dataset.rid);
+    saveState();renderTransactions();openRecurringList();
+  }));
+  scope.querySelectorAll('.rec-toggle-cb[data-rid]').forEach(cb=>cb.addEventListener('change',()=>{
+    const r=(state.recurringTemplates||[]).find(r=>r.id===cb.dataset.rid);
+    if(r){r.enabled=cb.checked;saveState();renderTransactions();}
+  }));
+}
+// The rules, in a modal rather than a dropdown wedged above the list. "Add"
+// and "View" are separate doors now, so neither is hidden behind the other.
+function openRecurringList(){
+  const rows=state.recurringTemplates||[];
+  document.getElementById('modalTitle').textContent=`\u26a1 ${t('recurring_title')}`;
+  document.getElementById('modalBody').innerHTML=`
+    <p class="recurring-desc">${t('recurring_desc')}</p>
+    ${rows.length?`<div class="recurring-list">${recurringRowsHtml()}</div>`
+      :`<p class="recurring-empty">${t('recurring_empty')}</p>`}
+    <div class="edit-tx-actions">
+      <button class="btn btn-primary" id="recListAddBtn" type="button">${t('recurring_add_rule')}</button>
+      <button class="btn btn-ghost btn-sm" id="recListCloseBtn" type="button">${t('tx_way_close')}</button>
+    </div>`;
+  document.getElementById('tutorialOverlay').hidden=false;
+  bindRecurringRows(document.getElementById('modalBody'));
+  document.getElementById('recListAddBtn')?.addEventListener('click',()=>openRecurringModal(null));
+  document.getElementById('recListCloseBtn')?.addEventListener('click',closeModal);
+}
+
 // Update the amounts shown in the Automatic Transactions panel in place (preserves open state / scroll / form)
 function refreshRecurringAmounts(){
   (state.recurringTemplates||[]).forEach(tmpl=>{
@@ -5940,114 +6144,76 @@ function refreshRecurringAmounts(){
 function renderTransactions() {
   const el=document.getElementById('bview-transactions');
   const allocEnabled=state.allocation?.enabled;
+  const autoCount=(state.recurringTemplates||[]).length;
+  // Two ways to get a transaction in, side by side and equally visible: log
+  // one now, or set it to repeat. The inline form and the dropdown that used
+  // to hold these were two unrelated blocks above the list.
   el.innerHTML=`<div class="section-header"><h2 class="section-title">\uD83D\uDCCB ${t('tab_transactions')}</h2><div class="section-header-actions">${helpBtn('transactions')}<label class="btn btn-ghost btn-sm csv-label">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label></div></div>
     <p class="section-desc">${t('tx_page_desc')}</p>
-    <details class="recurring-panel panel">
-      <summary class="recurring-summary"><span class="recurring-summary-title"><span class="recurring-summary-icon" aria-hidden="true">⚡</span>${t('recurring_title')}</span><span class="recurring-count">${(state.recurringTemplates||[]).length||''}</span></summary>
-      <div class="recurring-body${(state.recurringTemplates||[]).length===0?' is-empty':''}">
-        <p class="recurring-desc">${t('recurring_desc')}</p>
-        ${(state.recurringTemplates||[]).length===0
-          ?`<p class="recurring-empty">${t('recurring_empty')}</p>`
-          :`<div class="recurring-list">${(state.recurringTemplates||[]).map(tmpl=>`<div class="recurring-row" data-rid="${tmpl.id}">
-            <span class="tx-pill tx-pill--${tmpl.type}" style="font-size:10px">${esc(txTypeLabel(tmpl.type))}</span>
-            <span class="recurring-row-label">${esc(tmpl.label||tmpl.category)}${tmpl.sourceType?`<span class="rec-source-badge" title="${t('automate_linked')}">${({subscription:'🔄',sinking_fund:'🏺',debt:'💳'})[tmpl.sourceType]||'🔗'}</span>`:''}</span>
-            <span class="recurring-row-cat">${esc(tmpl.category)}</span>
-            <span class="recurring-row-amt">${SYM}${(tmpl.amount||0).toFixed(2)}</span>
-            <span class="recurring-row-freq">${t('freq_'+tmpl.frequency)||tmpl.frequency}</span>
-            <span class="recurring-row-due">${tmpl.nextDue}</span>
-            <span class="recurring-actions">
-              <label class="recurring-toggle" title="${t(tmpl.enabled?'recurring_active':'recurring_paused')}"><input type="checkbox" class="rec-toggle-cb" data-rid="${tmpl.id}" ${tmpl.enabled?'checked':''}><span class="rec-toggle-track"></span></label>
-              <button class="sf-edit-btn btn-icon-tiny rec-edit-btn" data-rid="${tmpl.id}" type="button" title="${t('edit')}">✏️</button>
-              <button class="del-btn btn-icon-tiny rec-del-btn" data-rid="${tmpl.id}" type="button" title="${t('recurring_remove')}">×</button>
-            </span>
-          </div>`).join('')}</div>`}
-        <button class="btn btn-ghost btn-sm" id="addRecurringBtn" type="button">${t('recurring_add_rule')}</button>
+    <div class="panel tx-ways"><div class="panel-inner-sm"><div class="tx-ways-row">
+      <div class="tx-way">
+        <span class="tx-way-ico" aria-hidden="true">\u270D\uFE0F</span>
+        <span class="tx-way-txt"><span class="tx-way-title">${t('tx_add_title')}</span><span class="tx-way-sub">${t('tx_way_manual_sub')}</span></span>
+        <span class="tx-way-btns"><button class="btn btn-primary btn-sm" id="txOpenAddBtn" type="button">${t('tx_add_btn')}</button></span>
       </div>
-    </details>
-    <div class="panel tx-form-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('tx_add_title')}</div>
-      <div class="tx-form-row">
-        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_date'),'tx_date_hint',false)}</label>${styledDateField('txDate','txDateWrap',today())}</div>
-        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_type'),'tx_type_hint',false)}</label><select class="select" id="txType">
-          <option value="expense" selected>${t('tx_type_expense')}</option>
-          <option value="bill">${t('tx_type_bill')}</option>
-          <option value="subscription">${t('tx_type_subscription')}</option>
-          <option value="savings">${t('tx_type_savings')}</option>
-          <option value="sinking_fund">${t('tx_type_sinking_fund')}</option>
-          <option value="debt">${t('tx_type_debt')}</option>
-          <option value="income">${t('tx_type_income')}</option>
-        </select></div>
-        <div class="field"><label class="field-label field-label--tip">${tipLabel(t('tx_category'),'tx_category_hint',false)}</label><select class="select" id="txCategory"></select></div>
-        ${allocEnabled?`<div class="field" id="txAllocWrap"><label class="field-label field-label--tip">${tipLabel(t('alloc_label'),'alloc_label_hint',true)}</label><select class="select" id="txAlloc"><option value="">${t('alloc_optional')}</option>${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}">${esc(getAllocBucketDisplayName(b))}</option>`).join('')}</select></div><div class="field" id="txSaveHint" style="display:none"><label class="field-label">${t('alloc_label')}</label><span class="alloc-auto-tag-badge">${(()=>{const sb=(state.allocation.buckets||[]).find(b=>b.id==='save');return`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${sb?.color||'#10b981'};margin-right:6px;flex-shrink:0"></span>${tf('alloc_auto_tag',sb?getAllocBucketDisplayName(sb):'Save')}`;})()}</span></div>`:''}
-        <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('tx_amount')} (${SYM})`,'tx_amount_hint',false)}</label><input class="input" type="number" id="txAmount" min="0" step="0.01" placeholder="0.00"></div>
-        <div class="field field-grow"><label class="field-label field-label--tip">${tipLabel(t('tx_desc_label'),'tx_desc_hint',false)}</label><input class="input" type="text" id="txDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
-        <div class="field field-btn"><label class="field-label" style="visibility:hidden">.</label><button class="btn btn-primary" id="addTxBtn" type="button">${t('tx_add_btn')}</button></div>
-      </div><div class="tx-error" id="txError" hidden></div>
-    </div></div>
-    <div class="tx-filter-bar${allocEnabled?'':' tx-filter-bar--3col'}">
-      <input class="input input-sm" type="text" id="txSearch" placeholder="${t('tx_search_ph')}" value="${esc(txFilter.search)}">
-      <select class="select select-sm" id="txTypeFilter">
-        <option value="">${t('tx_filter_all_types')}</option>
-        <option value="income"${txFilter.type==='income'?' selected':''}>${t('tx_type_income')}</option>
-        <option value="expense"${txFilter.type==='expense'?' selected':''}>${t('tx_type_expense')}</option>
-        <option value="bill"${txFilter.type==='bill'?' selected':''}>${t('tx_type_bill')}</option>
-        <option value="savings"${txFilter.type==='savings'?' selected':''}>${t('tx_type_savings')}</option>
-        <option value="debt"${txFilter.type==='debt'?' selected':''}>${t('tx_type_debt')}</option>
-        <option value="subscription"${txFilter.type==='subscription'?' selected':''}>${t('tx_type_subscription')}</option>
-        <option value="sinking_fund"${txFilter.type==='sinking_fund'?' selected':''}>${t('tx_type_sinking_fund')}</option>
-      </select>
-      ${allocEnabled?`<select class="select select-sm" id="txAllocFilter">
-        <option value="">${t('tx_filter_all_alloc')}</option>
-        <option value="untagged"${txFilter.alloc==='untagged'?' selected':''}>${t('alloc_untagged')}</option>
-        ${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}"${txFilter.alloc===b.id?' selected':''}>${esc(getAllocBucketDisplayName(b))}</option>`).join('')}
-      </select>`:''}
-      <select class="select select-sm" id="txSort">
-        <option value="date_desc"${txFilter.sort==='date_desc'?' selected':''}>${t('tx_sort_date_new')}</option>
-        <option value="date_asc"${txFilter.sort==='date_asc'?' selected':''}>${t('tx_sort_date_old')}</option>
-        <option value="amount_desc"${txFilter.sort==='amount_desc'?' selected':''}>${t('tx_sort_amt_high')}</option>
-        <option value="amount_asc"${txFilter.sort==='amount_asc'?' selected':''}>${t('tx_sort_amt_low')}</option>
-      </select>
-    </div>
-    <div id="txListWrap"></div>`;
+      <div class="tx-way tx-way--auto">
+        <span class="tx-way-ico" aria-hidden="true">\u26A1</span>
+        <span class="tx-way-txt"><span class="tx-way-title">${t('recurring_title')}</span><span class="tx-way-sub">${autoCount===0?t('tx_way_auto_none'):autoCount===1?t('tx_way_auto_one'):tf('tx_way_auto_many',autoCount)}</span></span>
+        <span class="tx-way-btns">
+          <button class="btn btn-ghost btn-sm" id="addRecurringBtn" type="button">${t('bud_add_btn')}</button>
+          <button class="btn btn-ghost btn-sm" id="viewRecurringBtn" type="button"${autoCount?'':' disabled'}>${t('tx_way_view')}</button>
+        </span>
+      </div>
+    </div></div></div>
+    <div class="panel tx-panel"><div class="tx-panel-inner">
+      <div class="tx-toolbar">
+        <span class="tx-toolbar-count" id="txCount"></span>
+        <div class="tx-toolbar-fields">
+          <input class="input input-sm tx-search" type="search" id="txSearch" placeholder="${esc(t('tx_search_ph'))}" value="${esc(txFilter.search)}" aria-label="${esc(t('tx_search_ph'))}">
+          <select class="select select-sm" id="txTypeFilter" aria-label="${esc(t('tx_filter_all_types'))}">
+            <option value="">${t('tx_filter_all_types')}</option>
+            ${['income','expense','bill','savings','debt','subscription','sinking_fund'].map(k=>
+              `<option value="${k}"${txFilter.type===k?' selected':''}>${t('tx_type_'+k)}</option>`).join('')}
+          </select>
+          ${allocEnabled?`<select class="select select-sm" id="txAllocFilter" aria-label="${esc(t('tx_filter_all_alloc'))}">
+            <option value="">${t('tx_filter_all_alloc')}</option>
+            <option value="untagged"${txFilter.alloc==='untagged'?' selected':''}>${t('alloc_untagged')}</option>
+            ${(state.allocation.buckets||[]).map(b=>`<option value="${b.id}"${txFilter.alloc===b.id?' selected':''}>${esc(getAllocBucketDisplayName(b))}</option>`).join('')}
+          </select>`:''}
+          <select class="select select-sm" id="txSort" aria-label="${esc(t('tx_sort_date_new'))}">
+            <option value="date_desc"${txFilter.sort==='date_desc'?' selected':''}>${t('tx_sort_date_new')}</option>
+            <option value="date_asc"${txFilter.sort==='date_asc'?' selected':''}>${t('tx_sort_date_old')}</option>
+            <option value="amount_desc"${txFilter.sort==='amount_desc'?' selected':''}>${t('tx_sort_amt_high')}</option>
+            <option value="amount_asc"${txFilter.sort==='amount_asc'?' selected':''}>${t('tx_sort_amt_low')}</option>
+          </select>
+        </div>
+        <button class="link-btn tx-clear-all" id="clearAllBtn2" type="button" hidden>${t('tx_clear_all')}</button>
+      </div>
+      <div id="txListWrap"></div>
+    </div></div>`;
   renderTxList();
-  bindDateField('txDate','txDateWrap');
-  populateTxCats();
-  const updateAllocVisibility=()=>{
-    const type=document.getElementById('txType')?.value;
-    const wrap=document.getElementById('txAllocWrap');
-    if(wrap)wrap.style.display=(type==='income'||type==='savings'||type==='sinking_fund')?'none':'';
-    const hint=document.getElementById('txSaveHint');
-    // savings shows hint; sinking_fund runs silently (allocation stamped on save)
-    if(hint)hint.style.display=(type==='savings'&&allocEnabled)?'':'none';
-  };
-  document.getElementById('txType')?.addEventListener('change',()=>{populateTxCats();updateAllocVisibility();});
-  document.getElementById('txAlloc')?.addEventListener('change',()=>{document.getElementById('txAlloc')?.classList.remove('select--error');document.getElementById('txAllocWrap')?.querySelector('.field-error-msg')?.remove();});
-  // Clear per-field invalid state as soon as the user fixes the field
-  document.getElementById('txAmount')?.addEventListener('input',e=>e.target.classList.remove('fk-invalid'));
-  document.getElementById('txCategory')?.addEventListener('change',e=>e.target.classList.remove('fk-invalid'));
-  document.getElementById('txDate')?.addEventListener('change',()=>document.getElementById('txDateWrap')?.classList.remove('fk-invalid'));
-  updateAllocVisibility();
-  document.getElementById('addTxBtn')?.addEventListener('click',addTransaction);
-  document.getElementById('txEmptyAdd')?.addEventListener('click',()=>{const a=document.getElementById('txAmount');a?.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>a?.focus(),200);});
+  document.getElementById('txOpenAddBtn')?.addEventListener('click',openAddTxFromList);
   document.getElementById('csvInput')?.addEventListener('change',handleCSV);
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
   initFieldTips(el);
+  // The filters sit outside #txListWrap on purpose: the list is rebuilt on
+  // every keystroke, and a search box inside it would lose focus each time.
   document.getElementById('txSearch')?.addEventListener('input',e=>{txFilter.search=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txTypeFilter')?.addEventListener('change',e=>{txFilter.type=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txAllocFilter')?.addEventListener('change',e=>{txFilter.alloc=e.target.value;txPage=0;renderTxList();});
   document.getElementById('txSort')?.addEventListener('change',e=>{txFilter.sort=e.target.value;txPage=0;renderTxList();});
-  // Recurring rules listeners
+  document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{
+    if(!await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')}))return;
+    state.transactions=[];txSelected.clear();syncBillPaidLinks();saveState();renderTransactions();
+  });
   document.getElementById('addRecurringBtn')?.addEventListener('click',()=>openRecurringModal(null));
-  el.querySelectorAll('.rec-edit-btn[data-rid]').forEach(b=>b.addEventListener('click',()=>{
-    const tmpl=(state.recurringTemplates||[]).find(x=>x.id===b.dataset.rid);
-    if(tmpl?.sourceType==='subscription'){switchTab('subscriptions');openSubModal(tmpl.sourceId);}
-    else if(tmpl?.sourceType==='sinking_fund'){switchTab('sinking');openFundModal(tmpl.sourceId);}
-    else if(tmpl?.sourceType==='debt'){switchTab('debt');openDebtModal(tmpl.sourceId);}
-    else openRecurringModal(b.dataset.rid);
-  }));
-  el.querySelectorAll('.rec-del-btn[data-rid]').forEach(b=>b.addEventListener('click',()=>{state.recurringTemplates=(state.recurringTemplates||[]).filter(r=>r.id!==b.dataset.rid);saveState();renderTransactions();document.querySelector('#bview-transactions .recurring-panel')?.setAttribute('open','');}));
-  el.querySelectorAll('.rec-toggle-cb[data-rid]').forEach(cb=>cb.addEventListener('change',()=>{const r=(state.recurringTemplates||[]).find(r=>r.id===cb.dataset.rid);if(r){r.enabled=cb.checked;saveState();}}));
+  document.getElementById('viewRecurringBtn')?.addEventListener('click',openRecurringList);
 }
-function populateTxCats(){const type=document.getElementById('txType')?.value,cats=getCats(type),sel=document.getElementById('txCategory');if(!sel)return;sel.innerHTML=cats.length>0?cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join(''):'<option value="">- set up categories first -</option>';}
+// The trial gate belongs on the door: the form should not open only to refuse.
+function openAddTxFromList(){
+  if(trialBlocks('transaction')){ showUpgradeModal({reason:'transaction'}); return; }
+  openQuickAddTx();
+}
 // Adjust a sinking fund's currentSaved when a sinking_fund tx is added (+1) or removed (-1)
 function applySinkingFundDelta(tx, sign) {
   if (tx?.type !== 'sinking_fund') return;
@@ -6187,7 +6353,11 @@ function openQuickAddTx(){
   document.getElementById('qaSaveBtn')?.addEventListener('click',()=>{
     addTransaction({prefix:'qa',after:()=>{
       closeModal();
-      renderDashboard();
+      // Whatever tab is open, not always the dashboard: this modal is
+      // reached from the dock too, from anywhere in the app. Settings is the
+      // exception, since a new transaction changes nothing there and a
+      // re-render would wipe out a half-finished field.
+      if (currentTab !== 'settings') dispatchRender(currentTab);
       showToast(t('toast_tx_added'));
     }});
   });
@@ -6700,20 +6870,20 @@ function renderDebt(){
     ${state.debts.length===0
       ?`<div class="empty-state"><div class="empty-icon">💳</div><p class="empty-title">${t('dpc_empty_title')}</p><p class="empty-sub">${t('dpc_empty_sub')}</p><button class="btn btn-primary btn-sm empty-cta" id="debtEmptyAdd" type="button">${t('dpc_add_btn')}</button></div>`
       :`<div class="panel" style="margin-bottom:16px"><div class="module-table-wrap"><table class="module-table debt-table"><thead><tr>
-          <th>${t('dpc_th_name')}</th><th>${t('dpc_th_type')}</th><th>${t('dpc_th_balance')} (${SYM})</th>
-          <th>${t('dpc_th_apr')}</th><th>${t('dpc_th_min')}</th><th title="${t('dpc_extra_col_hint')}">${t('dpc_th_extra')}</th><th>${t('automate_th')}</th><th></th>
+          <th>${t('dpc_th_name')}</th><th class="col-sm-hide">${t('dpc_th_type')}</th><th>${t('dpc_th_balance')} (${SYM})</th>
+          <th class="col-sm-hide">${t('dpc_th_apr')}</th><th class="col-sm-hide">${t('dpc_th_min')}</th><th class="col-sm-hide" title="${t('dpc_extra_col_hint')}">${t('dpc_th_extra')}</th><th>${t('automate_th')}</th><th></th>
         </tr></thead><tbody>
         ${state.debts.map(d=>`<tr class="module-row">
           <td><strong>${esc(d.name)||'<span style="color:var(--text-faint)">-</span>'}</strong></td>
-          <td>${DT[d.type]||esc(d.type)}</td>
+          <td class="col-sm-hide">${DT[d.type]||esc(d.type)}</td>
           <td>${fmt(d.balance)}</td>
-          <td>${(d.interestRate||0)}%${d.rateType==='arm'?`<div class="field-hint" style="margin:2px 0 0">${tf('dpc_arm_caption',Math.round((d.armFixedMonths||0)/12))}</div>`:''}</td>
-          <td>${fmt(d.minimumPayment)}${d.minPayMode==='percent'?`<div class="field-hint" style="margin:2px 0 0">${tf('dpc_min_pct_caption',d.minPayPercent||0)}</div>`:d.amortType==='equal_principal'?`<div class="field-hint" style="margin:2px 0 0">${t('dpc_declining_caption')}</div>`:''}</td>
-          <td><input class="expected-input" type="number" min="0" step="10" value="${d.targetedExtra||''}" placeholder="0.00" data-debt-extra="${d.id}"></td>
+          <td class="col-sm-hide">${(d.interestRate||0)}%${d.rateType==='arm'?`<div class="field-hint" style="margin:2px 0 0">${tf('dpc_arm_caption',Math.round((d.armFixedMonths||0)/12))}</div>`:''}</td>
+          <td class="col-sm-hide">${fmt(d.minimumPayment)}${d.minPayMode==='percent'?`<div class="field-hint" style="margin:2px 0 0">${tf('dpc_min_pct_caption',d.minPayPercent||0)}</div>`:d.amortType==='equal_principal'?`<div class="field-hint" style="margin:2px 0 0">${t('dpc_declining_caption')}</div>`:''}</td>
+          <td class="col-sm-hide"><input class="expected-input" type="number" min="0" step="10" value="${d.targetedExtra||''}" placeholder="0.00" data-debt-extra="${d.id}"></td>
           <td><label class="recurring-toggle" title="${t('automate_label')}"><input type="checkbox" class="debt-auto-cb" data-debt-auto="${d.id}" ${findLinkedTemplate('debt',d.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></td>
-          <td><div class="row-actions"><button class="btn-icon-tiny" data-debt-schedule="${d.id}" type="button" title="${t('dpc_schedule_btn_title')}">ℹ️</button><button class="sf-edit-btn btn-icon-tiny" data-debt-edit="${d.id}" type="button" title="${t('edit')}">✏️</button><button class="btn-icon-tiny del-btn" data-debt-id="${d.id}" type="button" aria-label="${t('delete')}">×</button></div></td>
+          <td><div class="tx-actions"><button class="edit-btn" data-debt-schedule="${d.id}" type="button" title="${t('dpc_schedule_btn_title')}" aria-label="${t('dpc_schedule_btn_title')}">ℹ️</button><button class="edit-btn" data-debt-edit="${d.id}" type="button" title="${t('edit')}" aria-label="${t('edit')}">✏️</button><button class="del-btn" data-debt-id="${d.id}" type="button" title="${t('delete')}" aria-label="${t('delete')}">×</button></div></td>
         </tr>`).join('')}</tbody>
-        <tfoot><tr class="total-row"><td colspan="2"><strong>${t('dpc_totals')}</strong></td><td><strong>${fmt(totDebt)}</strong></td><td></td><td><strong>${fmt(totMin)}${t('dpc_mo_suffix')}</strong></td><td><strong>${fmt(totExtra)}${t('dpc_mo_suffix')}</strong></td><td colspan="2"></td></tr></tfoot>
+        <tfoot><tr class="total-row"><td><strong>${t('dpc_totals')}</strong></td><td class="col-sm-hide"></td><td><strong>${fmt(totDebt)}</strong></td><td class="col-sm-hide"></td><td class="col-sm-hide"><strong>${fmt(totMin)}${t('dpc_mo_suffix')}</strong></td><td class="col-sm-hide"><strong>${fmt(totExtra)}${t('dpc_mo_suffix')}</strong></td><td colspan="2"></td></tr></tfoot>
       </table></div></div>`}
     ${state.debts.length>0&&result?`<div class="debt-results">
       <div class="debt-results-cards">
@@ -6722,15 +6892,30 @@ function renderDebt(){
         <div class="dr-card dr-card--blue"><div class="dr-label">${t('dpc_monthly_label')}</div><div class="dr-value">${fmt(totMin+(extraPayment||0)+totExtra+totEscrow)}</div><div class="dr-sub">${fmt(totMin)} ${t('dpc_min_abbr')} + ${fmt(extraPayment||0)} ${t('dpc_extra_abbr')}${totExtra>0?` + ${tf('dpc_targeted_extra_note',fmt(totExtra))}`:''}${totEscrow>0?` + ${tf('dpc_escrow_note',fmt(totEscrow))}`:''}</div></div>
       </div>
       <div class="panel" style="margin-top:16px"><div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:14px">${method==='snowball'?t('dpc_payoff_order_sf'):t('dpc_payoff_order_av')}</div>
+        <div class="panel-title-sm" style="margin-bottom:4px">${method==='snowball'?t('dpc_payoff_order_sf'):t('dpc_payoff_order_av')}</div>
+        ${(()=>{
+          // Order the money is aimed in, named. This is the line that moves
+          // when the method changes, so it reads before the list does.
+          const spare=(extraPayment||0)+totExtra;
+          if(spare<=0) return `<p class="po-sub">${t('dpc_focus_none')}</p>`;
+          const byId=new Map(state.debts.map(d=>[d.id,d]));
+          const names=result.attackOrder.map(id=>esc(byId.get(id)?.name||'')).filter(Boolean);
+          return `<p class="po-sub">${tf('dpc_focus_seq',names.join(' <span class="po-arrow">\u2192</span> '))}</p>`;
+        })()}
+        <div class="payoff-order-list">
         ${result.payoffOrder.map((d,i)=>{
           let termNote='';
           if(d.termMonths>0&&d.paidOffMonth){
             const years=Math.round(d.termMonths/12),diff=d.termMonths-d.paidOffMonth;
             termNote=diff>0?` • ${tf('dpc_term_note_faster',diff,years)}`:diff<0?` • ${tf('dpc_term_note_slower',-diff,years)}`:` • ${tf('dpc_term_note_onschedule',years)}`;
           }
-          return `<div class="payoff-order-row"><span class="po-num">${i+1}</span><div class="po-info"><div class="po-name">${esc(d.name)}</div><div class="po-detail">${DT[d.type]||d.type} • ${fmt(d.balance)} ${t('dpc_balance_word')} • ${d.interestRate}% ${t('dpc_apr_word')}${termNote}</div></div><div class="po-date">${t('dpc_paid_off')} <strong>${d.paidOffDate}</strong></div></div>`;
+          // Rank in the attack order, which is the method's own answer and
+          // the one thing on this card that changes when it is switched.
+          const rank=result.attackOrder.indexOf(d.id)+1;
+          const focus=rank>0?`<span class="po-focus${rank===1?' is-first':''}" title="${esc(t('dpc_focus_hint'))}">🎯 ${t('dpc_focus_word')} ${rank}</span>`:'';
+          return `<div class="payoff-order-row"><span class="po-num">${i+1}</span><div class="po-info"><div class="po-name">${esc(d.name)}${focus}</div><div class="po-detail">${DT[d.type]||d.type} • ${fmt(d.balance)} ${t('dpc_balance_word')} • ${d.interestRate}% ${t('dpc_apr_word')}${termNote}</div></div><div class="po-date">${t('dpc_paid_off')} <strong>${d.paidOffDate}</strong></div></div>`;
         }).join('')}
+        </div>
       </div></div>
     </div>`:''}`;
   document.getElementById('addDebtBtn')?.addEventListener('click',()=>openDebtModal(null));
@@ -8790,7 +8975,7 @@ const ONB_SPOTLIGHT_STEPS = [
     isDone: () => state.budgets.income.some(r => (r.expected || 0) > 0),
   },
   {
-    tab: 'transactions', selector: '.tx-form-panel',
+    tab: 'transactions', selector: '.tx-ways',
     titleKey: 'onb_spot_tx_title', bodyKey: 'onb_spot_tx_body',
     isDone: () => state.transactions.length > 0,
   },
@@ -8965,19 +9150,6 @@ document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const active = document.activeElement;
   if (!active) return;
-
-  // Transaction form
-  if (active.id === 'txAmount' || active.id === 'txDesc') {
-    e.preventDefault(); document.getElementById('addTxBtn')?.click(); return;
-  }
-
-  // Add-category inline form
-  if (active.id && active.id.startsWith('newCatName-')) {
-    e.preventDefault();
-    const type = active.id.replace('newCatName-', '');
-    document.getElementById('saveCatBtn-' + type)?.click();
-    return;
-  }
 
   // Subscription name / amount in modal
   if (active.id === 'subName' || active.id === 'subAmount') {

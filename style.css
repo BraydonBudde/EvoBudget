@@ -1110,49 +1110,81 @@ input[type="number"].expected-input {
 .check-label input:checked + .checkmark::after { content: '✓'; color: white; font-size: 13px; font-weight: 800; }
 
 /* Add category card */
-.add-cat-card { margin-top: 12px; }
-.add-cat-card .panel-inner-sm { padding: 18px 22px; }
-.add-cat-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
-.add-cat-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
-.add-cat-row .field { margin-bottom: 0; }
-.add-cat-btns { display: flex; gap: 8px; padding-bottom: 1px; }
 
 /* ═══════════════════════════════════════════════════════════════
    TRANSACTIONS
 ═══════════════════════════════════════════════════════════════ */
-.tx-form-panel { margin: 10px 0 6px; }
-.tx-filter-bar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px; padding: 10px 14px;
-  background: rgba(30,27,46,.04); border-radius: var(--radius-md);
-  border: 1px solid var(--border-faint); margin: 10px 0 4px;
-}
-.tx-filter-bar--3col { grid-template-columns: repeat(3, 1fr); }
-[data-theme="dark"] .tx-filter-bar { background: rgba(var(--grad-indigo-rgb),.06); }
-.tx-filter-bar > * {
-  width: 100%; height: 32px; box-sizing: border-box;
-  font-size: 12px; min-width: 0;
-}
-.tx-filter-bar .input-sm  { padding: 0 10px; }
-.tx-filter-bar .select-sm { padding: 0 8px; }
 .input-sm { height: 32px; font-size: 12px; padding: 0 10px; }
 .select-sm { height: 32px; font-size: 12px; padding: 0 8px; }
-.tx-form-row {
-  display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;
+
+/* ── The ways in ────────────────────────────────────────────────────────
+   Log one now, or set it to repeat. Two tiles of equal weight, because
+   neither is the advanced option. The simple planner shows only the first,
+   which then spans the row. */
+.tx-ways { margin: 10px 0 14px; }
+.tx-ways-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.tx-way {
+  display: flex; align-items: center; gap: 13px; min-width: 0; flex-wrap: wrap;
+  padding: 14px 16px; border-radius: var(--radius-md);
+  background: rgba(30,27,46,.03); border: 1px solid var(--border-faint);
 }
-.tx-form-row .field { flex: 0 0 auto; min-width: 110px; margin-bottom: 0; }
-.tx-form-row .field-grow { flex: 1 1 180px; }
-.tx-form-row .field-btn { flex: 0 0 auto; }
+[data-theme="dark"] .tx-way { background: rgba(var(--grad-indigo-rgb),.05); }
+.tx-way-ico {
+  flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  background: rgba(var(--grad-indigo-rgb), .11);
+}
+.tx-way--auto .tx-way-ico { background: rgba(245,158,11,.14); }
+/* 130px before the text gives up and lets the buttons drop to their own
+   line, rather than the title squeezing itself into two cramped words. */
+.tx-way-txt { flex: 1 1 130px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.tx-way-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.tx-way-sub { font-size: 12px; color: var(--text-secondary); }
+.tx-way-btns { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; }
+@media (max-width: 480px) {
+  /* Dropped under the text and sharing the width, so neither is clipped. */
+  .tx-way-btns { flex: 1 1 100%; }
+  .tx-way-btns .btn { flex: 1 1 0; }
+}
+
+/* ── The list and its filters, in one card ──────────────────────────────
+   The filters are outside #txListWrap in the DOM, since the list is rebuilt
+   on every keystroke and a search box inside it would lose focus. They read
+   as one card all the same. */
+.tx-panel { margin-bottom: 4px; }
+.tx-panel-inner { padding: 4px 0 0; }
+.tx-toolbar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 13px 16px; border-bottom: 1px solid var(--border-faint);
+}
+.tx-toolbar-count {
+  font-size: 13px; font-weight: 700; color: var(--text-secondary);
+  white-space: nowrap; margin-right: auto;
+}
+.tx-toolbar-fields { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+/* .select and .input are 100% wide by default, which in a flex row makes
+   each of them claim the whole line. Here they size to their content. */
+.tx-toolbar-fields > .input, .tx-toolbar-fields > .select { width: auto; flex: 0 0 auto; }
+.tx-search { width: 200px; flex: 0 1 200px; }
+.tx-toolbar-fields > .select-sm { min-width: 124px; }
+.tx-clear-all { flex-shrink: 0; }
+.tx-panel .tx-table-wrap { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+.tx-panel .tx-pagination { padding: 12px 16px; }
+.tx-panel .empty-state { padding: 34px 20px; }
+.tx-panel .tx-bulk-bar { margin: 0; border-radius: 0; border-left: none; border-right: none; }
+@media (max-width: 760px) {
+  /* The count moves onto its own line and the filters take the next, rather
+     than the four of them squeezing onto one. */
+  .tx-toolbar { padding: 12px 14px; gap: 10px; }
+  .tx-toolbar-count { margin-right: 0; flex: 1 1 auto; }
+  .tx-toolbar-fields { flex: 1 1 100%; }
+  .tx-search { flex: 1 1 100%; width: auto; }
+  .tx-toolbar-fields .select-sm { flex: 1 1 120px; }
+}
 .tx-error {
   margin-top: 12px; font-size: 13px; font-weight: 600;
   color: var(--error); background: var(--error-bg);
   border-radius: var(--radius-sm); padding: 10px 14px;
-}
-.tx-list-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin: 14px 0 8px; font-size: 13px; font-weight: 600;
-  color: var(--text-secondary);
 }
 /* pagination controls (issue 17) */
 .tx-pagination {
@@ -1216,7 +1248,7 @@ input[type="number"].expected-input {
 .tx-amt--savings,.tx-amt--sinking_fund { color: #0d9488; }
 
 .tx-cat  { color: var(--text-secondary); }
-.tx-date { font-size: 12px; color: var(--text-secondary); }
+.tx-date { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
 .tx-desc {
   font-size: 12px; color: var(--text-faint);
   max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -1272,9 +1304,13 @@ input[type="number"].expected-input {
 /* ═══════════════════════════════════════════════════════════════
    MODAL
 ═══════════════════════════════════════════════════════════════ */
+/* Above the onboarding spotlight mask (1300) and its coach card (1310), and
+   below the welcome and wrap-up cards (1400) and toasts (2000). The tutorial
+   step that asks for a first transaction now opens this modal, and at 1000 it
+   was painted under the spotlight's dimming. */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(15,10,30,.58);
-  backdrop-filter: blur(5px); z-index: 1000;
+  backdrop-filter: blur(5px); z-index: 1320;
   display: flex; align-items: center; justify-content: center;
   padding: 24px;
 }
@@ -1336,18 +1372,6 @@ input[type="number"].expected-input {
   .summary-cards { grid-template-columns: 1fr 1fr; }
   .charts-col { grid-template-columns: 1fr; }
   .settings-grid { grid-template-columns: 1fr; }
-  /* Stacked, flex-basis is a height, not a width. The description field's
-     "flex: 1 1 180px" was sizing it 180px tall and then letting it grow,
-     which left a band of dead space above the Add button and pushed the
-     button far down the panel. Column direction wants its own sizing. */
-  .tx-form-row { flex-direction: column; align-items: stretch; }
-  .tx-form-row .field, .tx-form-row .field-grow { width: 100%; }
-  .tx-form-row .field, .tx-form-row .field-grow, .tx-form-row .field-btn {
-    flex: 0 0 auto;
-  }
-  /* The spacer label only exists to drop the button level with the inputs
-     beside it. Stacked there is nothing to line up with. */
-  .tx-form-row .field-btn > label { display: none; }
   .leftover-inner { flex-direction: column; gap: 14px; }
   .field-grid { grid-template-columns: 1fr; }
 }
@@ -1410,6 +1434,34 @@ input[type="number"].expected-input {
 }
 .edit-btn:hover { color: var(--grad-indigo); background: var(--savings-bg); }
 .tx-actions { display: flex; align-items: center; gap: 2px; white-space: nowrap; }
+/* ── Quick-add suggestions (add-category modal) ─────────────────────────
+   Tapping one fills the name and hands over to the amount. Same chip
+   language as the period presets in Settings, so it reads as familiar. */
+.quick-add { margin: -6px 0 18px; }
+.quick-add-label {
+  display: block; margin-bottom: 8px;
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.quick-add-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.quick-chip {
+  appearance: none; cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 600;
+  padding: 6px 12px; border-radius: var(--radius-pill);
+  color: var(--text-secondary); background: var(--surface-strong);
+  border: 1px solid var(--border-faint);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.quick-chip:hover {
+  color: var(--grad-indigo); border-color: rgba(var(--grad-indigo-rgb), .38);
+  background: rgba(var(--grad-indigo-rgb), .08);
+}
+.quick-chip.is-on {
+  color: #fff; border-color: transparent;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+@media (hover: none) { .quick-chip:hover { color: var(--text-secondary); background: var(--surface-strong); border-color: var(--border-faint); } }
+@media (hover: none) { .quick-chip.is-on:hover { color: #fff; border-color: transparent; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple)); } }
+
 .edit-tx-actions {
   display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap;
 }
@@ -1568,7 +1620,6 @@ input[type="number"].expected-input {
 [data-theme="synthwave"] .alloc-strip-wrap { background: rgba(var(--grad-indigo-rgb),.30); }
 [data-theme="synthwave"] .alloc-card { background: rgba(0,0,0,.24); }
 [data-theme="synthwave"] .dleg-row:hover, [data-theme="synthwave"] .dleg-row.is-active { background: rgba(var(--grad-indigo-rgb),.1); }
-[data-theme="synthwave"] .tx-filter-bar { background: rgba(var(--grad-indigo-rgb),.06); }
 [data-theme="synthwave"] .tx-table tbody tr.is-selected td { background: rgba(var(--grad-indigo-rgb),.1); }
 [data-theme="synthwave"] .tx-bulk-bar { background: rgba(var(--grad-indigo-rgb),.06); }
 [data-theme="synthwave"] .backdrop { background: radial-gradient(120% 100% at 50% 0%, #16032c 0%, #0a0118 55%, #05000f 100%); }
@@ -1786,7 +1837,6 @@ input[type="number"].expected-input {
 [data-theme="terminal"] .alloc-strip-wrap { background: rgba(var(--grad-indigo-rgb),.30); }
 [data-theme="terminal"] .alloc-card { background: rgba(0,0,0,.24); }
 [data-theme="terminal"] .dleg-row:hover, [data-theme="terminal"] .dleg-row.is-active { background: rgba(var(--grad-indigo-rgb),.1); }
-[data-theme="terminal"] .tx-filter-bar { background: rgba(var(--grad-indigo-rgb),.06); }
 [data-theme="terminal"] .tx-table tbody tr.is-selected td { background: rgba(var(--grad-indigo-rgb),.1); }
 [data-theme="terminal"] .tx-bulk-bar { background: rgba(var(--grad-indigo-rgb),.06); }
 [data-theme="terminal"] .backdrop { background: radial-gradient(ellipse at 50% 15%, #0a2413 0%, #04100a 55%, #000000 100%); }
@@ -2154,6 +2204,49 @@ input[type="number"].expected-input {
 .po-name   { font-weight: 700; font-size: 14px; }
 .po-detail { font-size: 12px; color: var(--text-secondary); }
 .po-date   { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+/* The order the spare money is aimed in: the one part of this card the
+   payoff method actually decides, so it sits above the list and again on
+   each row. The list itself stays in the order debts are cleared. */
+.po-sub { font-size: 12px; color: var(--text-secondary); margin: 0 0 12px; line-height: 1.5; }
+.po-arrow { color: var(--text-faint); margin: 0 2px; }
+.po-focus {
+  display: inline-flex; align-items: center; gap: 4px; margin-left: 8px;
+  font-size: 10px; font-weight: 700; letter-spacing: .02em;
+  padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+  color: var(--text-secondary); background: var(--surface-strong);
+  border: 1px solid var(--border-faint);
+}
+.po-focus.is-first {
+  color: var(--grad-indigo);
+  background: rgba(var(--grad-indigo-rgb), .12);
+  border-color: rgba(var(--grad-indigo-rgb), .32);
+}
+
+/* ── Table columns that stand down on a narrow screen ──────────────────
+   Every one of these is also editable in the row's own editor, so hiding
+   it here loses nothing and stops the table scrolling sideways. Header,
+   body and footer all carry the class, or the columns stop lining up. */
+@media (max-width: 700px) {
+  .module-table .col-sm-hide,
+  .tx-table .col-sm-hide,
+  .debt-table .col-sm-hide { display: none; }
+  /* The bar is decoration for a percentage that is already implied by the
+     expected and actual columns beside it, and it was the widest column in
+     the table. */
+  .module-table .prog-cell { display: none; }
+}
+/* On a phone the columns that are left still have to fit. Generous cell
+   padding and nowrap headings alone were enough to push the table past the
+   edge, so both give a little here. */
+@media (max-width: 480px) {
+  .module-table th, .tx-table th { padding: 10px 8px; }
+  .module-table td, .tx-table td, .module-table .total-row td { padding: 8px 6px; }
+  .module-table th, .tx-table th { white-space: normal; }
+  /* 110px of number field is more than any of these amounts needs, and on a
+     phone it was the last thing pushing the table past the edge. */
+  .expected-input { width: 78px; padding: 7px 8px; }
+  .debt-table .expected-input { width: 70px; }
+}
 
 /* ── Sinking Funds ─────────────────────────────────────────── */
 .sf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 14px; margin-bottom: 14px; }
@@ -2368,7 +2461,6 @@ input[type="number"].expected-input {
 /* ── Mobile collapse fixes (prevent horizontal clipping) ─────── */
 @media (max-width: 480px) {
   /* 4-/3-column filter bars are too tight to be usable on phones */
-  .tx-filter-bar, .tx-filter-bar--3col { grid-template-columns: 1fr 1fr; }
   /* 3 allocation cards force a nowrap target badge to overflow its column */
   .alloc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* Modal padding eats the whole viewport on small screens */
@@ -5262,4 +5354,8 @@ body.penny-drawer-open { overflow: hidden; }
 .debt-table th { white-space: nowrap; }
 .debt-table td { overflow-wrap: break-word; }
 .debt-table .expected-input { width: 90px; }
+/* Was .row-actions with bordered .btn-icon-tiny boxes, which matched no
+   other table in the app. Now the same flat pair the budget and
+   transaction tables use, info button included. */
+.debt-table .tx-actions { justify-content: flex-end; }
 .total-row td { overflow-wrap: break-word; }
