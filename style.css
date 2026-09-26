@@ -2225,8 +2225,13 @@ input[type="number"].expected-input {
 /* ── Table columns that stand down on a narrow screen ──────────────────
    Every one of these is also editable in the row's own editor, so hiding
    it here loses nothing and stops the table scrolling sideways. Header,
-   body and footer all carry the class, or the columns stop lining up. */
-@media (max-width: 700px) {
+   body and footer all carry the class, or the columns stop lining up.
+
+   760px, because that is where the app itself becomes mobile: the tab bar
+   collapses to icons and the dock appears. At 700px there was a 60px band
+   where everything else had gone mobile and the tables had not. "Mobile"
+   has to mean one width across the whole app. */
+@media (max-width: 760px) {
   .module-table .col-sm-hide,
   .tx-table .col-sm-hide,
   .debt-table .col-sm-hide { display: none; }
@@ -2234,6 +2239,15 @@ input[type="number"].expected-input {
      expected and actual columns beside it, and it was the widest column in
      the table. */
   .module-table .prog-cell { display: none; }
+}
+/* Just above the mobile line the full set of columns is still shown, and at
+   tablet portrait (768px) that did not fit: the bills table ran 35px past
+   the edge of its card and the debt table 4px. The padding and the progress
+   column give a little rather than the card scrolling sideways. */
+@media (max-width: 820px) {
+  .module-table th { padding: 11px 10px; }
+  .module-table td, .module-table .total-row td { padding: 8px 8px; }
+  .module-table .prog-cell { min-width: 92px; }
 }
 /* On a phone the columns that are left still have to fit. Generous cell
    padding and nowrap headings alone were enough to push the table past the
