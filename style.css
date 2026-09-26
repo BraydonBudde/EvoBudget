@@ -1032,6 +1032,31 @@ a.btn { text-decoration: none; }
 }
 .module-table th .cc-label-text { text-transform: uppercase; }
 .module-table th .cc-info { margin-left: 5px; text-transform: none; vertical-align: middle; }
+/* The icon belongs to the heading before it. Left to wrap, it drops onto a
+   line of its own, which doubles the height of the header row and shifts
+   every column under it. Heading and icon travel together or not at all. */
+.module-table th:has(.cc-info), .tx-table th:has(.cc-info) { white-space: nowrap; }
+.module-table th .cc-label-text { white-space: nowrap; }
+
+/* The first column was left sitting 7px off the edge of its own card once
+   the cell padding came down, which reads as though it is falling out. */
+@media (max-width: 760px) {
+  .module-table th:first-child,
+  .module-table td:first-child,
+  .module-table .total-row td:first-child { padding-left: 16px; }
+  /* On a phone the icon is a poor tap target wedged into a heading, and it
+     was the thing pushing these headings wide enough to wrap. The same
+     guidance is a tap away in the section's own help panel. */
+  .module-table th .cc-info, .tx-table th .cc-info { display: none; }
+  /* Every figure in these columns is already printed with its currency, so
+     repeating it in the heading only makes the column wider than the phone. */
+  .th-cur { display: none; }
+}
+/* Smallest phones: with the icon already hidden there is nothing left for a
+   wrapped heading to strand, so wrapping is the safe last resort. */
+@media (max-width: 400px) {
+  .module-table th, .debt-table th { white-space: normal; }
+}
 .module-table td {
   padding: 8px 10px; border-bottom: 1px solid rgba(30,27,46,.05);
   vertical-align: middle;
@@ -2255,11 +2280,15 @@ input[type="number"].expected-input {
 @media (max-width: 480px) {
   .module-table th, .tx-table th { padding: 10px 8px; }
   .module-table td, .tx-table td, .module-table .total-row td { padding: 8px 6px; }
-  .module-table th, .tx-table th { white-space: normal; }
-  /* 110px of number field is more than any of these amounts needs, and on a
-     phone it was the last thing pushing the table past the edge. */
-  .expected-input { width: 78px; padding: 7px 8px; }
-  .debt-table .expected-input { width: 70px; }
+  /* A fixed 110px is wider than most of these amounts need, but a fixed
+     narrow width clips the ones that are genuinely long: a four figure rent
+     or salary is ordinary. Sized to its column instead, with a floor, so it
+     grows for the figures that need it and stays out of the way otherwise. */
+  .expected-input {
+    width: 100%; min-width: 58px; max-width: 108px;
+    padding: 7px 8px; font-size: 13px;
+  }
+  .debt-table .expected-input { min-width: 54px; }
 }
 
 /* ── Sinking Funds ─────────────────────────────────────────── */

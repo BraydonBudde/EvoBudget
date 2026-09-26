@@ -4514,15 +4514,6 @@ function promptMarkModulePaid(type, rowId, onDone) {
 }
 // Unticking a row undoes the whole thing: every transaction it created goes
 // with it, including the parts of a payment made in instalments.
-function unmarkModulePaid(type, rowId, onDone) {
-  const row = (state.budgets[type] || []).find(r => r.id === rowId);
-  if (!row) return;
-  const ids = new Set(rowPayTxIds(row));
-  if (ids.size) state.transactions = state.transactions.filter(tx => !ids.has(tx.id));
-  setRowPayments(row, []);
-  saveState();
-  onDone();
-}
 // Keeps bill/debt "paid" status honest whenever a transaction is removed through
 // any of the delete paths (single delete, edit-modal delete, clear all) - a row
 // linked to a since-deleted transaction can't stay marked paid.
@@ -4569,11 +4560,10 @@ function renderModule(type) {
           <thead>
             <tr>
               <th>${t('category')}</th>
-              <th><span class="cc-label-text">${t('expected')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('expected'))}">i</button></th>
+              <th><span class="cc-label-text">${t('expected')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('expected'))}">i</button></th>
               ${meta.hasDates ? `<th class="col-sm-hide">${t('due_date')}</th>` : ''}
-              <th><span class="cc-label-text">${t('actual')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('actual'))}">i</button></th>
+              <th><span class="cc-label-text">${t('actual')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('actual'))}">i</button></th>
               <th class="prog-cell"><span class="cc-label-text">${t('progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('progress'))}">i</button></th>
-              ${meta.hasDates ? `<th>${t('paid')}</th>` : ''}
               <th></th>
             </tr>
           </thead>
@@ -4603,16 +4593,6 @@ function renderModule(type) {
                     </div>
                     <span class="prog-label${ovr ? ' is-over' : ''}">${p}%</span>
                   </td>
-                  ${meta.hasDates ? `
-                  <td class="paid-cell">
-                    ${rowPayState(row) === 'partial'
-                      ? `<button class="paid-part" type="button" data-part-id="${row.id}"
-                                 title="${esc(tf('nl_partial_of', fmt(rowPaidAmount(row)), fmt(row.expected || 0)))}">${t('paid_partial')}</button>`
-                      : `<label class="check-label" aria-label="${t('mod_mark_paid')}">
-                      <input type="checkbox" class="paid-cb" ${row.paid ? 'checked' : ''} data-id="${row.id}">
-                      <span class="checkmark"></span>
-                    </label>`}
-                  </td>` : ''}
                   <td class="action-cell">
                     <div class="tx-actions">
                       <button class="edit-btn" data-edit-id="${row.id}" type="button" title="${t('edit')}" aria-label="${t('edit')}">✏️</button>
@@ -4635,7 +4615,6 @@ function renderModule(type) {
                 </div>
                 <span class="prog-label${totalOvr ? ' is-over' : ''}">${totalP}%</span>
               </td>
-              ${meta.hasDates ? '<td></td>' : ''}
               <td></td>
             </tr>
           </tfoot>
@@ -4715,20 +4694,6 @@ function renderModule(type) {
         e.preventDefault();
         openDatePicker(document.getElementById(wrap.dataset.inputId), wrap);
       }
-    });
-  });
-
-  // The partial pill reopens the same modal, so the rest can be logged or
-  // what is already in can be taken back out.
-  el.querySelectorAll('.paid-part[data-part-id]').forEach(btn => {
-    btn.addEventListener('click', () => promptMarkModulePaid(type, btn.dataset.partId, () => renderModule(type)));
-  });
-
-  // Paid checkboxes
-  el.querySelectorAll('.paid-cb').forEach(cb => {
-    cb.addEventListener('change', () => {
-      if (cb.checked) { cb.checked = false; promptMarkModulePaid(type, cb.dataset.id, () => renderModule(type)); }
-      else { unmarkModulePaid(type, cb.dataset.id, () => renderModule(type)); }
     });
   });
 
@@ -5484,7 +5449,6 @@ const HELP = {
     body: () => `<p>${t('help_bills_intro')}</p>
 <ul>
   <li><strong>${t('due_date')}</strong> - ${t('help_bills_duedate_li')}</li>
-  <li><strong>${t('paid')}</strong> - ${t('help_bills_paid_li')}</li>
   <li><strong>${t('actual')}</strong> - ${t('help_bills_actual_li')}</li>
 </ul>`
   },
@@ -5494,7 +5458,6 @@ const HELP = {
 <ul>
   <li><strong>${t('expected')}</strong> - ${t('help_debt_expected_li')}</li>
   <li><strong>${t('due_date')}</strong> - ${t('help_debt_duedate_li')}</li>
-  <li><strong>${t('paid')}</strong> - ${t('help_debt_paid_li')}</li>
 </ul>`
   },
   savings: {

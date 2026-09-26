@@ -904,7 +904,7 @@ const TRANSLATIONS = {
     help_bud_col_indigo:'Indigo - expense within budget',
     help_bud_col_red:'Red - expense over budget',
     help_bud_bills_h:'Bills section',
-    help_bud_bills_p:"Bills have a Due Date (click to open the date picker) and a Paid checkbox. Checking Paid asks for the amount you actually paid and logs it as a transaction, since bills like utilities rarely match your budgeted amount exactly. These dates also appear on the Smart Calendar.",
+    help_bud_bills_p:"Bills have a Due Date (click to open the date picker), and those dates show on the Smart Calendar. Mark a bill paid from the Calendar or the dashboard, where you are asked for the amount you actually paid and it is logged as a transaction, since bills like utilities rarely match your budgeted amount exactly.",
     help_bud_tip:'\uD83D\uDCA1 Use "+ Add category" to create custom categories for any section.',
     dash_total_income:'Total Income',dash_of:'of',dash_expected_sfx:'expected',
     dash_total_outgoing:'Total Outgoing',dash_budgeted_sfx:'budgeted',
@@ -1482,7 +1482,7 @@ const TRANSLATIONS = {
     help_bud_col_indigo:'Indigo - Ausgaben im Rahmen des Budgets',
     help_bud_col_red:'Rot - Ausgaben über dem Budget',
     help_bud_bills_h:'Bereich Rechnungen',
-    help_bud_bills_p:'Rechnungen haben ein Fälligkeitsdatum (klicke darauf, um die Datumsauswahl zu öffnen) und ein Bezahlt-Kontrollkästchen. Beim Aktivieren von Bezahlt wirst du nach dem tatsächlich gezahlten Betrag gefragt, der als Transaktion erfasst wird - da Rechnungen wie Nebenkosten selten genau dem budgetierten Betrag entsprechen. Diese Daten erscheinen auch im Smart-Kalender.',
+    help_bud_bills_p:"Rechnungen haben ein Fälligkeitsdatum (klicke darauf, um die Datumsauswahl zu öffnen), und diese Daten erscheinen im Smart-Kalender. Als bezahlt markierst du eine Rechnung im Kalender oder im Dashboard. Dort wirst du nach dem tatsächlich gezahlten Betrag gefragt, der als Transaktion erfasst wird, da Rechnungen wie Nebenkosten selten genau dem budgetierten Betrag entsprechen.",
     help_bud_tip:'\uD83D\uDCA1 Verwende "+ Kategorie hinzufügen", um benutzerdefinierte Kategorien für jeden Bereich zu erstellen.',
     dash_total_income:'Gesamteinnahmen',dash_of:'von',dash_expected_sfx:'erwartet',
     dash_total_outgoing:'Gesamtausgaben',dash_budgeted_sfx:'budgetiert',
@@ -2042,7 +2042,7 @@ const TRANSLATIONS = {
     help_bud_col_indigo:'Indigo - dépense dans le budget',
     help_bud_col_red:'Rouge - dépense dépassant le budget',
     help_bud_bills_h:'Section Factures',
-    help_bud_bills_p:"Les factures ont une Date d'échéance (cliquez pour ouvrir le sélecteur de date) et une case Payé. Cocher Payé vous demande le montant réellement payé et l'enregistre comme transaction, car des factures comme les charges correspondent rarement exactement au montant budgété. Ces dates apparaissent aussi dans le Calendrier intelligent.",
+    help_bud_bills_p:"Les factures ont une Date d'échéance (cliquez pour ouvrir le sélecteur de date), et ces dates apparaissent dans le calendrier intelligent. Marquez une facture comme payée depuis le calendrier ou le tableau de bord : le montant réellement payé vous est demandé et enregistré comme transaction, car les factures comme les charges correspondent rarement au montant budgété.",
     help_bud_tip:'\uD83D\uDCA1 Utilisez « + Ajouter une catégorie » pour créer des catégories personnalisées pour chaque section.',
     dash_total_income:'Revenus totaux',dash_of:'de',dash_expected_sfx:'prévu',
     dash_total_outgoing:'Dépenses totales',dash_budgeted_sfx:'budgété',
@@ -2602,7 +2602,7 @@ const TRANSLATIONS = {
     help_bud_col_indigo:'Índigo - gasto dentro del presupuesto',
     help_bud_col_red:'Rojo - gasto por encima del presupuesto',
     help_bud_bills_h:'Sección Facturas',
-    help_bud_bills_p:'Las facturas tienen una Fecha de vencimiento (haz clic para abrir el selector de fecha) y una casilla Pagado. Al marcar Pagado se te pide el importe que realmente pagaste y se registra como transacción, ya que facturas como las de suministros rara vez coinciden exactamente con el importe presupuestado. Estas fechas también aparecen en el Calendario inteligente.',
+    help_bud_bills_p:"Las facturas tienen una Fecha de vencimiento (haz clic para abrir el selector de fecha), y esas fechas aparecen en el calendario inteligente. Marca una factura como pagada desde el calendario o el panel: se te pedirá el importe que realmente pagaste y se registrará como transacción, ya que facturas como los suministros rara vez coinciden exactamente con el importe presupuestado.",
     help_bud_tip:'\uD83D\uDCA1 Usa «+ Añadir categoría» para crear categorías personalizadas en cualquier sección.',
     dash_total_income:'Ingresos totales',dash_of:'de',dash_expected_sfx:'previsto',
     dash_total_outgoing:'Gastos totales',dash_budgeted_sfx:'presupuestado',
@@ -3163,7 +3163,7 @@ const TRANSLATIONS = {
     help_bud_col_indigo:'Indigo - spesa entro il budget',
     help_bud_col_red:'Rosso - spesa oltre il budget',
     help_bud_bills_h:'Sezione Bollette',
-    help_bud_bills_p:"Le bollette hanno una Data di scadenza (clicca per aprire il selettore data) e una casella Pagato. Selezionando Pagato ti viene chiesto l'importo effettivamente pagato, che viene registrato come transazione, poiché bollette come le utenze raramente corrispondono esattamente all'importo previsto. Queste date appaiono anche nel Calendario intelligente.",
+    help_bud_bills_p:"Le bollette hanno una Data di scadenza (clicca per aprire il selettore data), e queste date compaiono nel calendario intelligente. Segna una bolletta come pagata dal calendario o dalla dashboard: ti verrà chiesto l'importo effettivamente pagato, registrato come transazione, poiché bollette come le utenze raramente corrispondono esattamente all'importo preventivato.",
     help_bud_tip:'\uD83D\uDCA1 Usa "+ Aggiungi categoria" per creare categorie personalizzate per qualsiasi sezione.',
     dash_total_income:'Entrate totali',dash_of:'di',dash_expected_sfx:'previsto',
     dash_total_outgoing:'Uscite totali',dash_budgeted_sfx:'a budget',
@@ -3723,7 +3723,7 @@ const TRANSLATIONS = {
     help_bud_col_indigo:'Indigo - wydatek w ramach budżetu',
     help_bud_col_red:'Czerwony - wydatek powyżej budżetu',
     help_bud_bills_h:'Sekcja Rachunki',
-    help_bud_bills_p:'Rachunki mają Datę płatności (kliknij, aby otworzyć wybierak daty) i pole wyboru Zapłacono. Zaznaczenie Zapłacono poprosi o rzeczywiście zapłaconą kwotę i zapisze ją jako transakcję, ponieważ rachunki takie jak media rzadko dokładnie odpowiadają zaplanowanej kwocie. Daty te pojawiają się też w Inteligentnym Kalendarzu.',
+    help_bud_bills_p:"Rachunki mają Datę płatności (kliknij, aby otworzyć wybierak daty), a te daty pojawiają się w inteligentnym kalendarzu. Rachunek oznaczysz jako zapłacony w kalendarzu lub na pulpicie: zostaniesz zapytany o faktycznie zapłaconą kwotę, która zostanie zapisana jako transakcja, ponieważ rachunki takie jak media rzadko dokładnie odpowiadają zaplanowanej kwocie.",
     help_bud_tip:'\uD83D\uDCA1 Użyj "+ Dodaj kategorię", aby tworzyć niestandardowe kategorie dla każdej sekcji.',
     dash_total_income:'Łączne przychody',dash_of:'z',dash_expected_sfx:'planowanych',
     dash_total_outgoing:'Łączne wydatki',dash_budgeted_sfx:'budżetowanych',
@@ -5663,10 +5663,10 @@ function buildModuleHTML(type,meta,act) {
   const noDate=`<span class="no-date">${t('bud_set_date')}</span>`;
   return `<div class="budget-module-section"><div class="module-section-header"><h3 class="module-section-title">${meta.icon} ${meta.title}</h3><button class="btn btn-ghost btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button></div>
     <div class="panel" style="margin-bottom:18px"><div class="module-table-wrap"><table class="module-table"><thead><tr>
-      <th>${t('bud_th_category')}</th><th><span class="cc-label-text">${t('bud_th_expected')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_expected'))}">i</button></th>
+      <th>${t('bud_th_category')}</th><th><span class="cc-label-text">${t('bud_th_expected')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_expected'))}">i</button></th>
       ${meta.hasDates?`<th class="col-sm-hide">${t('bud_th_due_date')}</th>`:''}
-      <th><span class="cc-label-text">${t('bud_th_actual')} (${SYM})</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_actual'))}">i</button></th><th class="prog-cell"><span class="cc-label-text">${t('bud_th_progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_progress'))}">i</button></th>
-      ${meta.hasDates?`<th>${t('bud_th_paid')}</th>`:''}<th></th>
+      <th><span class="cc-label-text">${t('bud_th_actual')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_actual'))}">i</button></th><th class="prog-cell"><span class="cc-label-text">${t('bud_th_progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_progress'))}">i</button></th>
+      <th></th>
     </tr></thead>
     <tbody>${rows.map(row=>{
       const a=typeAct[row.category]||0,p=pct(a,row.expected),ovr=!meta.isInc&&p>100;
@@ -5675,16 +5675,13 @@ function buildModuleHTML(type,meta,act) {
         ${meta.hasDates?`<td class="col-sm-hide"><div class="date-cell-styled" id="dw-${row.id}" data-input-id="di-${row.id}"><span class="date-cell-val" id="dc-${row.id}">${row.dueDate?formatDateDisplay(row.dueDate):noDate}</span><input type="date" id="di-${row.id}" class="mod-date" value="${row.dueDate||''}" data-id="${row.id}" data-type="${type}"></div></td>`:''}
         <td><span class="actual-val${ovr?' is-over':meta.isInc&&p>=100?' is-good':''}">${fmt(a)}</span></td>
         <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':ovr?' prog-bar--over':' prog-bar--normal'}" id="pb-${row.id}" style="width:${Math.min(p,100)}%"></div></div><span class="prog-label${ovr?' is-over':''}" id="pl-${row.id}">${p}%</span></td>
-        ${meta.hasDates?`<td class="paid-cell">${rowPayState(row)==='partial'
-          ?`<button class="paid-part" type="button" data-part-id="${row.id}" title="${esc(tf('nl_partial_of',fmt(rowPaidAmount(row)),fmt(row.expected||0)))}">${t('paid_partial')}</button>`
-          :`<label class="check-label"><input type="checkbox" class="mod-paid" ${row.paid?'checked':''} data-id="${row.id}" data-type="${type}"><span class="checkmark"></span></label>`}</td>`:''}
         <td><div class="tx-actions"><button class="edit-btn mod-edit" data-id="${row.id}" data-type="${type}" type="button" title="${t('edit')}" aria-label="${t('edit')}">✏️</button><button class="del-btn mod-del" data-id="${row.id}" data-type="${type}" type="button" aria-label="${t('delete')}">×</button></div></td></tr>`;
     }).join('')}</tbody>
     <tfoot><tr class="total-row"><td><strong>${t('bud_total')}</strong></td><td><strong id="te-${type}">${fmt(totExp)}</strong></td>
       ${meta.hasDates?'<td class="col-sm-hide"></td>':''}
       <td><strong>${fmt(totAct)}</strong></td>
       <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':totOvr?' prog-bar--over':' prog-bar--normal'}" id="tpb-${type}" style="width:${Math.min(totP,100)}%"></div></div><span class="prog-label${totOvr?' is-over':''}" id="tpl-${type}">${totP}%</span></td>
-      ${meta.hasDates?'<td></td>':''}<td></td></tr></tfoot></table></div></div>
+      <td></td></tr></tfoot></table></div></div>
     </div>`;
 }
 
@@ -5797,8 +5794,9 @@ function removeTargetPayment(tg, txId, onDone) {
   showToast(t('toast_payment_removed'));
 }
 
-// Bills reach this through the Budget tab checkbox; bills, debts and
-// subscriptions all reach it from the calendar and the dashboard hero.
+// Bills, debts and subscriptions all reach this from the calendar and the
+// dashboard hero. The Budget tab used to offer a tick box of its own; that
+// tab plans a budget now and does not settle it.
 function promptMarkBillPaid(billId, onDone) { promptPay('bill', billId, onDone); }
 function promptPay(kind, id, onDone, occDate) {
   const tg = payTarget(kind, id, occDate);
@@ -5899,15 +5897,6 @@ function promptPay(kind, id, onDone, occDate) {
 }
 // Unticking a bill undoes the whole thing: every transaction it created goes
 // with it, including the parts of a payment made in instalments.
-function unmarkBillPaid(billId, onDone) {
-  const row = (state.budgets.bills || []).find(b => b.id === billId);
-  if (!row) return;
-  const ids = new Set(rowPayTxIds(row));
-  if (ids.size) state.transactions = state.transactions.filter(tx => !ids.has(tx.id));
-  setRowPayments(row, []);
-  saveState();
-  onDone();
-}
 // Keeps bill "paid" status honest whenever a transaction is removed through any
 // of the several delete paths (single delete, bulk delete, clear all, edit-modal
 // delete) - a bill linked to a since-deleted transaction can't stay marked paid.
@@ -5954,15 +5943,6 @@ function bindModuleEvents(type,meta,container,act) {
         if(e.key==='Enter'||e.key===' '||e.key==='ArrowDown'){e.preventDefault();openDatePicker(document.getElementById(wrap.dataset.inputId),wrap);}
       });
     });
-    // The partial pill reopens the same modal, so the rest can be logged or
-    // what is already in can be taken back out.
-    container.querySelectorAll('.paid-part[data-part-id]').forEach(btn=>{
-      btn.addEventListener('click',()=>promptMarkBillPaid(btn.dataset.partId,()=>renderBudget()));
-    });
-    container.querySelectorAll(`.mod-paid[data-type="${type}"]`).forEach(cb=>{cb.addEventListener('change',()=>{
-      if(cb.checked){cb.checked=false;promptMarkBillPaid(cb.dataset.id,()=>renderBudget());}
-      else{unmarkBillPaid(cb.dataset.id,()=>renderBudget());}
-    });});
   }
   const TX_TYPE_FOR_MODULE={income:'income',expenses:'expense',bills:'bill',debt:'debt',savings:'savings'};
   container.querySelectorAll(`.mod-edit[data-type="${type}"]`).forEach(btn=>{
@@ -6870,7 +6850,7 @@ function renderDebt(){
     ${state.debts.length===0
       ?`<div class="empty-state"><div class="empty-icon">💳</div><p class="empty-title">${t('dpc_empty_title')}</p><p class="empty-sub">${t('dpc_empty_sub')}</p><button class="btn btn-primary btn-sm empty-cta" id="debtEmptyAdd" type="button">${t('dpc_add_btn')}</button></div>`
       :`<div class="panel" style="margin-bottom:16px"><div class="module-table-wrap"><table class="module-table debt-table"><thead><tr>
-          <th>${t('dpc_th_name')}</th><th class="col-sm-hide">${t('dpc_th_type')}</th><th>${t('dpc_th_balance')} (${SYM})</th>
+          <th>${t('dpc_th_name')}</th><th class="col-sm-hide">${t('dpc_th_type')}</th><th>${t('dpc_th_balance')}<span class="th-cur"> (${SYM})</span></th>
           <th class="col-sm-hide">${t('dpc_th_apr')}</th><th class="col-sm-hide">${t('dpc_th_min')}</th><th class="col-sm-hide" title="${t('dpc_extra_col_hint')}">${t('dpc_th_extra')}</th><th>${t('automate_th')}</th><th></th>
         </tr></thead><tbody>
         ${state.debts.map(d=>`<tr class="module-row">
