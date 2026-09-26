@@ -158,7 +158,7 @@ const TRANSLATIONS = {
     mod_name_hint:'The label you’ll see for this category everywhere in the app.',mod_due_date_hint:'When this is due each month - used for the calendar and paid tracking.',
     mod_th_expected_hint:'The amount you plan to budget for this category each month.',mod_th_actual_hint:'Calculated automatically from your logged transactions in this category.',mod_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
     tx_date_hint:'The date this transaction happened.',tx_type_hint:'What kind of transaction this is - controls which category list you can pick from.',tx_category_hint:'Which budget category this transaction counts toward.',tx_amount_hint:'How much money this transaction was for.',tx_desc_hint:'An optional note to help you remember what this was for.',
-    paid:'Paid', due_date:'Due Date', category:'Category', amount:'Amount',
+    paid:'Paid', due_date:'Due date', category:'Category', amount:'Amount',
     description:'Description', date:'Date', type:'Type',
     add_category:'+ Add category', no_transactions:'No transactions yet.',
     // Upgrade
@@ -1602,7 +1602,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Nazwa, którą zobaczysz dla tej kategorii w całej aplikacji.',mod_due_date_hint:'Kiedy termin płatności przypada każdego miesiąca - używane do kalendarza i śledzenia płatności.',
     mod_th_expected_hint:'Kwota, którą planujesz przeznaczyć na tę kategorię każdego miesiąca.',mod_th_actual_hint:'Obliczane automatycznie na podstawie zarejestrowanych transakcji w tej kategorii.',mod_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
     tx_date_hint:'Data, kiedy miała miejsce ta transakcja.',tx_type_hint:'Jaki to rodzaj transakcji - określa, z jakiej listy kategorii możesz wybierać.',tx_category_hint:'Do której kategorii budżetu należy ta transakcja.',tx_amount_hint:'Ile pieniędzy dotyczyło tej transakcji.',tx_desc_hint:'Opcjonalna notatka, która pomoże ci zapamiętać, czego to dotyczyło.',
-    paid:'Zapłacone',due_date:'Termin płatności',category:'Kategoria',amount:'Kwota',
+    paid:'Zapłacone',due_date:'Data płatności',category:'Kategoria',amount:'Kwota',
     description:'Opis',date:'Data',type:'Typ',
     add_category:'+ Dodaj kategorię',no_transactions:'Brak transakcji.',
     upgrade_title:'Przejdź na Ultimate Budget Planner',
