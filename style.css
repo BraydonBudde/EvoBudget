@@ -292,7 +292,18 @@ a.btn-back-round { text-decoration: none; }
 /* The icon and the label are separate elements so a narrow screen can set
    the label aside and leave the icon standing. At full width it reads
    exactly as it always did: icon, a space, then the word. */
-.btab-ico { font-style: normal; }
+.btab-ico { font-style: normal; display: inline-flex; align-items: center; justify-content: center; }
+/* Every chrome icon is the same drawing at the same size, tinted by the
+   thing it sits in rather than by a font's own palette. */
+.app-ico { width: 1em; height: 1em; flex: 0 0 auto; }
+.btab-ico .app-ico { width: 17px; height: 17px; }
+.nav-rail-icon .app-ico { width: 18px; height: 18px; }
+.section-title .app-ico {
+  width: .82em; height: .82em; margin-right: .1em;
+  vertical-align: -.04em; color: var(--grad-indigo);
+}
+.module-section-title .app-ico { width: 1.05em; height: 1.05em; vertical-align: -.16em; color: var(--grad-indigo); }
+.nav-rail-icon { display: inline-flex; align-items: center; justify-content: center; }
 .btab-txt { margin-left: 6px; }
 
 .bview { display: none; }
@@ -2337,8 +2348,15 @@ input[type="number"].expected-input {
    planned. Income is not in it, since none of it is "left to spend". */
 .bud-summary { margin-bottom: 22px; }
 .bud-summary-inner { padding: 18px 20px 16px; }
-.bud-sum-figures { display: flex; flex-wrap: wrap; gap: 28px; margin-bottom: 14px; }
-.bud-sum-fig { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.bud-sum-figures {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 14px;
+}
+.bud-sum-fig {
+  display: flex; flex-direction: column; gap: 4px; min-width: 0;
+  padding: 14px 16px; border-radius: var(--radius-md);
+  background: var(--surface-strong); border: 1px solid var(--border-faint);
+}
 .bud-sum-label {
   font-size: 10px; font-weight: 700; letter-spacing: .08em;
   text-transform: uppercase; color: var(--text-faint);
@@ -2360,8 +2378,10 @@ input[type="number"].expected-input {
 }
 .bud-sum-fill.is-over { background: linear-gradient(90deg, #fb7185, var(--error, #f43f5e)); }
 .bud-sum-note { margin: 10px 0 0; font-size: 12px; color: var(--text-secondary); }
-@media (max-width: 480px) {
-  .bud-sum-figures { gap: 18px; }
+@media (max-width: 560px) {
+  /* Three across is too narrow to read on a phone, so they stack. */
+  .bud-sum-figures { grid-template-columns: 1fr; gap: 8px; }
+  .bud-sum-fig { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 12px; }
   .bud-sum-value { font-size: 1.25rem; }
 }
 

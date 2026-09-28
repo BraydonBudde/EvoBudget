@@ -1846,6 +1846,7 @@ function applyLanguage() {
         '</i><span class="btab-txt">' + esc(tx) + '</span>';
     }
   });
+  paintTabIcons();
   syncHomeLabel();
   // The rail's labels are copies of the tab bar's, so they follow it here.
   if (document.querySelector('.nav-rail')) buildNavRail();
@@ -2814,15 +2815,16 @@ function buildNavRail() {
       // The tab carries its icon and its label as separate elements, so the
       // rail can take each of them rather than guessing where one ends. The
       // emoji-prefix split stays as the fallback for anything without them.
-      const ico = b.querySelector('.btab-ico');
+      // The icon is drawn from the shared set by the tab's own name rather
+      // than copied out of the tab, which held text when it was an emoji and
+      // holds markup now.
       const txt = b.querySelector('.btab-txt');
       const full = b.textContent.trim();
-      const pre = full.match(/^(\p{Emoji}[️⃣]?\s*)/u)?.[0] || '';
-      const icon = ico ? ico.textContent.trim() : pre.trim();
-      const label = txt ? txt.textContent.trim() : (full.slice(pre.length).trim() || full);
+      const icon = appIconSvg(b.dataset.btab);
+      const label = txt ? txt.textContent.trim() : full;
       const on = b.classList.contains('is-active');
       return `<button class="nav-rail-item${on ? ' is-active' : ''}"${on ? ' aria-current="true"' : ''} data-btab="${esc(b.dataset.btab)}" type="button" title="${esc(label)}">
-      <span class="nav-rail-icon" aria-hidden="true">${esc(icon)}</span><span class="nav-rail-label">${esc(label)}</span>
+      <span class="nav-rail-icon" aria-hidden="true">${icon}</span><span class="nav-rail-label">${esc(label)}</span>
     </button>`;
     }).join('');
   railAdopt(rail);
@@ -3918,7 +3920,7 @@ function renderDashboardLayout1() {
   const isCurrentRender = markRenderGen(el);
   el.innerHTML = `
     <div class="section-header section-header--period">
-      <h2 class="section-title">${t('tab_dashboard')}</h2>
+      <h2 class="section-title">${appIconSvg('dashboard')} ${t('tab_dashboard')}</h2>
       ${periodBarHtml()}
       ${dashLogControlsHtml()}
       <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
@@ -4101,7 +4103,7 @@ function renderDashboardLayout2() {
   const isCurrentRender = markRenderGen(el);
   el.innerHTML = `
     <div class="section-header section-header--period">
-      <h2 class="section-title">${t('tab_dashboard')}</h2>
+      <h2 class="section-title">${appIconSvg('dashboard')} ${t('tab_dashboard')}</h2>
       ${periodBarHtml()}
       ${dashLogControlsHtml()}
       <button class="help-icon-btn" data-help="dashboard" type="button" aria-label="${t('help_aria')}">?</button>
@@ -4527,17 +4529,38 @@ function syncModulePaidLinks() {
 
 // One envelope. The figure worth reading first differs by section: what is
 // left in an envelope you spend from, what has landed in one you fill.
-// One icon per section, all drawn the same way: a 24x24 box, stroked, never
-// filled, so they read as one set rather than four borrowed glyphs.
-const BUD_ICON_PATHS = {
-  income:   '<path d="M12 3.4v9.4"/><path d="M8.2 9 12 12.8 15.8 9"/><path d="M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3"/>',
-  expenses: '<path d="M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6"/><circle cx="9.6" cy="19.6" r="1.3"/><circle cx="17.4" cy="19.6" r="1.3"/>',
-  bills:    '<path d="M6 3.2h8l4 4v13.6H6z"/><path d="M14 3.2v4h4"/><path d="M9.2 12.2h5.6"/><path d="M9.2 16.2h5.6"/>',
-  savings:  '<path d="M3 9.6 12 4.2l9 5.4"/><path d="M6.2 11.2v6.6"/><path d="M12 11.2v6.6"/><path d="M17.8 11.2v6.6"/><path d="M3.6 20.6h16.8"/>',
-  debt:     '<rect x="2.6" y="5.2" width="18.8" height="13.6" rx="2.4"/><path d="M2.6 10h18.8"/>'
+// One icon for every section of the app, drawn the same way: a 24x24 box,
+// stroked at one weight, never filled. Emoji were rendering at a different
+// weight and shape on every platform, and could not take the colour of the
+// thing they sat in.
+const APP_ICONS = {
+  dashboard:     '<rect x="3.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="13.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="3.2" y="13.4" width="7.6" height="7.2" rx="1.7"/><rect x="13.2" y="13.4" width="7.6" height="7.2" rx="1.7"/>',
+  budget:        '<path d="M12 3.2v17.6"/><path d="M16.2 6.6H9.9a2.85 2.85 0 0 0 0 5.7h4.2a2.85 2.85 0 0 1 0 5.7H7.8"/>',
+  transactions:  '<path d="M4 7.4h12.6"/><path d="M13.6 4.4 16.9 7.4 13.6 10.4"/><path d="M20 16.6H7.4"/><path d="M10.4 13.6 7.1 16.6 10.4 19.6"/>',
+  debt:          '<rect x="2.6" y="5.2" width="18.8" height="13.6" rx="2.4"/><path d="M2.6 10h18.8"/>',
+  subscriptions: '<path d="M20.4 11.2a8.4 8.4 0 0 0-14.4-5.3L3.2 8.6"/><path d="M3.6 12.8a8.4 8.4 0 0 0 14.4 5.3l2.8-2.7"/><path d="M3.2 4.6v4h4"/><path d="M20.8 19.4v-4h-4"/>',
+  sinking:       '<circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="4.3"/><circle cx="12" cy="12" r="0.9"/>',
+  calendar:      '<rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/>',
+  settings:      '<path d="M3.6 7.2h9.2"/><path d="M18.4 7.2h2"/><circle cx="15.6" cy="7.2" r="2.2"/><path d="M3.6 16.8h2"/><path d="M11.2 16.8h9.2"/><circle cx="8.4" cy="16.8" r="2.2"/>',
+  income:        '<path d="M12 3.4v9.4"/><path d="M8.2 9 12 12.8 15.8 9"/><path d="M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3"/>',
+  expenses:      '<path d="M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6"/><circle cx="9.6" cy="19.6" r="1.3"/><circle cx="17.4" cy="19.6" r="1.3"/>',
+  bills:         '<path d="M6 3.2h8l4 4v13.6H6z"/><path d="M14 3.2v4h4"/><path d="M9.2 12.2h5.6"/><path d="M9.2 16.2h5.6"/>',
+  savings:       '<path d="M3 9.6 12 4.2l9 5.4"/><path d="M6.2 11.2v6.6"/><path d="M12 11.2v6.6"/><path d="M17.8 11.2v6.6"/><path d="M3.6 20.6h16.8"/>'
 };
-function budgetIconSvg(type){
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${BUD_ICON_PATHS[type] || BUD_ICON_PATHS.expenses}</svg>`;
+function appIconSvg(name){
+  const d = APP_ICONS[name];
+  if (!d) return '';
+  return `<svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+}
+// The budget cards ask by section name, which is the same key.
+function budgetIconSvg(type){ return appIconSvg(type) || appIconSvg('expenses'); }
+// The tab bar ships empty icon slots naming what belongs in them, so the set
+// lives in one place rather than being pasted into two HTML files.
+function paintTabIcons(){
+  document.querySelectorAll('.btab-ico[data-ico]').forEach(el => {
+    const svg = appIconSvg(el.dataset.ico);
+    if (svg && el.innerHTML !== svg) el.innerHTML = svg;
+  });
 }
 
 function envCardHtml(row, o) {
@@ -4582,7 +4605,7 @@ function renderModule(type) {
 
   document.getElementById(`bview-${type}`).innerHTML = `
     <div class="section-header">
-      <h2 class="section-title">${meta.icon} ${t(meta.titleKey)}</h2>
+      <h2 class="section-title">${appIconSvg(type)} ${t(meta.titleKey)}</h2>
       <div class="section-header-actions">
         <button class="help-icon-btn" data-help="${type}" type="button" aria-label="${t('help_aria')}">?</button>
         <button class="btn btn-ghost btn-sm" id="addRowBtn" type="button">${t('mod_add_category')}</button>
@@ -4752,7 +4775,7 @@ function renderTransactions() {
   const el=document.getElementById('bview-transactions');
   // One way in, given its own card rather than six fields laid across the
   // top of the page: on a phone that form was most of a screen on its own.
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">\uD83D\uDCCB ${t('tab_transactions')}</h2>
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('transactions')} ${t('tab_transactions')}</h2>
       <div class="section-header-actions">
         <button class="help-icon-btn" data-help="transactions" type="button" aria-label="${t('help_aria')}">?</button>
         <label class="btn btn-ghost btn-sm csv-label" title="${t('tx_import_csv')}">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label>
@@ -5077,7 +5100,7 @@ function renderSettings() {
 
   el.innerHTML = `
     <div class="section-header">
-      <h2 class="section-title">⚙️ ${t('tab_settings')}</h2>
+      <h2 class="section-title">${appIconSvg('settings')} ${t('tab_settings')}</h2>
       <button class="help-icon-btn" data-help="settings" type="button" aria-label="${t('help_aria')}">?</button>
     </div>
 
@@ -6629,3 +6652,9 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') { e.preventDefault(); document.getElementById('calNext')?.click(); }
   }
 });
+
+// The tab bars ship empty icon slots naming what belongs in them. Fill them
+// as soon as the markup exists, not only when the language changes, since
+// the language only changes if someone asks for it.
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paintTabIcons);
+else paintTabIcons();
