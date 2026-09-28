@@ -2319,6 +2319,123 @@ input[type="number"].expected-input {
   .debt-table .expected-input { min-width: 54px; }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   BUDGET ENVELOPES
+   A category holds an amount: you put money in and take money out, and
+   what is left is the figure worth reading first. The flap is drawn with
+   a clip-path on one pseudo-element rather than an image, so it tints
+   with whatever theme is on.
+═══════════════════════════════════════════════════════════════ */
+.module-section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.module-section-title { flex: 0 0 auto; }
+.module-section-total {
+  flex: 1 1 auto; min-width: 0; font-size: 13px; color: var(--text-faint);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.module-section-total strong { color: var(--text-secondary); font-weight: 700; }
+.module-section-header .mod-add-btn { flex: 0 0 auto; margin-left: auto; }
+/* The simple planner puts one section to a tab, so its running total sits on
+   a line of its own under the section heading rather than beside it. */
+.module-section-header--solo { margin: -2px 0 12px; }
+.module-section-header--solo .module-section-total { flex: 1 1 auto; }
+
+.env-grid {
+  display: grid; gap: 14px; margin-bottom: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+}
+.env-card {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: flex; flex-direction: column;
+  padding: 18px 18px 16px; border-radius: var(--radius-md);
+  background: var(--surface); border: 1px solid var(--border-faint);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(20,8,50,.06));
+  transition: border-color .18s var(--ease), transform .18s var(--ease), box-shadow .18s var(--ease);
+}
+.env-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(var(--grad-indigo-rgb), .32);
+  box-shadow: 0 12px 28px -14px rgba(20,8,50,.4);
+}
+@media (hover: none) { .env-card:hover { transform: none; box-shadow: none; border-color: var(--border-faint); } }
+/* The flap: full width at the top, tapering to a point at the centre. */
+.env-flap {
+  position: absolute; z-index: -1; top: 0; left: 0; right: 0; height: 104px;
+  clip-path: polygon(0 0, 100% 0, 100% 30%, 50% 100%, 0 30%);
+  background: linear-gradient(180deg, rgba(var(--grad-indigo-rgb), .16), rgba(var(--grad-indigo-rgb), .02));
+  pointer-events: none;
+}
+.env-card--in .env-flap { background: linear-gradient(180deg, rgba(16,185,129,.16), rgba(16,185,129,.02)); }
+.env-card.is-over .env-flap { background: linear-gradient(180deg, rgba(244,63,94,.16), rgba(244,63,94,.02)); }
+.env-icon {
+  width: 40px; height: 40px; border-radius: 12px; margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  color: var(--grad-indigo); background: var(--surface-strong);
+  border: 1px solid var(--border-faint);
+}
+.env-icon svg { width: 20px; height: 20px; }
+.env-card--in .env-icon { color: var(--success, #10b981); }
+.env-card.is-over .env-icon { color: var(--error, #f43f5e); }
+
+/* Two lines of room whether the name needs them or not, so every card's
+   figure, bar and footnote sit at the same height across the row. */
+.env-name {
+  font-family: var(--font-display); font-size: 1.15rem; font-weight: 800;
+  line-height: 1.25; margin: 0 0 2px; color: var(--text-primary);
+  min-height: 2.5em; display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: break-word;
+}
+.env-sub { font-size: 12px; color: var(--text-secondary); margin: 0 0 14px; min-height: 1.3em; }
+/* Sections without a due day have no subtitle at all, so the figure moves
+   up rather than leaving a blank line where one never appears. */
+.env-name:last-of-type { margin-bottom: 14px; }
+.env-figure {
+  font-family: var(--font-display); font-size: 1.9rem; font-weight: 800;
+  line-height: 1.1; color: var(--grad-indigo); font-variant-numeric: tabular-nums;
+}
+.env-card--in .env-figure { color: var(--success, #10b981); }
+.env-card.is-over .env-figure { color: var(--error, #f43f5e); }
+.env-cap {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-faint); margin: 4px 0 12px;
+}
+.env-card .prog-bar-wrap { margin-bottom: 8px; }
+.env-meta { font-size: 12px; color: var(--text-secondary); margin: 0 0 16px; font-variant-numeric: tabular-nums; }
+
+/* Pushed to the bottom, so the action rows line up across every card in
+   the row however tall the names above them are. */
+.env-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.env-btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 600;
+  padding: 7px 13px; border-radius: var(--radius-pill); flex: 0 1 auto;
+  color: var(--text-secondary); background: var(--surface-strong);
+  border: 1px solid var(--border-faint);
+  transition: color .15s, background .15s, border-color .15s;
+}
+.env-btn:hover {
+  color: var(--grad-indigo); border-color: rgba(var(--grad-indigo-rgb), .38);
+  background: rgba(var(--grad-indigo-rgb), .08);
+}
+.env-btn--go { color: var(--text-primary); }
+.env-btn--danger:hover { color: var(--error, #f43f5e); border-color: rgba(244,63,94,.38); background: rgba(244,63,94,.08); }
+@media (hover: none) {
+  .env-btn:hover, .env-btn--danger:hover {
+    color: var(--text-secondary); background: var(--surface-strong); border-color: var(--border-faint);
+  }
+  .env-btn--go:hover { color: var(--text-primary); }
+}
+
+.env-empty { margin-bottom: 18px; }
+.env-empty .panel-inner-sm { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.env-empty-text { margin: 0; font-size: 13px; color: var(--text-secondary); }
+
+@media (max-width: 560px) {
+  /* One envelope per row, rather than two too narrow to read. */
+  .env-grid { grid-template-columns: 1fr; gap: 12px; }
+  .module-section-total { flex: 1 1 100%; order: 3; }
+}
+
 /* ── Sinking Funds ─────────────────────────────────────────── */
 .sf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 14px; margin-bottom: 14px; }
 .sf-card .sf-card-inner { padding: 20px; }

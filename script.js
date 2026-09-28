@@ -158,7 +158,7 @@ const TRANSLATIONS = {
     mod_name_hint:'The label you’ll see for this category everywhere in the app.',mod_due_date_hint:'When this is due each month - used for the calendar and paid tracking.',
     mod_th_expected_hint:'The amount you plan to budget for this category each month.',mod_th_actual_hint:'Calculated automatically from your logged transactions in this category.',mod_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
     tx_date_hint:'The date this transaction happened.',tx_type_hint:'What kind of transaction this is - controls which category list you can pick from.',tx_category_hint:'Which budget category this transaction counts toward.',tx_amount_hint:'How much money this transaction was for.',tx_desc_hint:'An optional note to help you remember what this was for.',
-    paid:'Paid', due_date:'Due date',due_day:'Due day',due_day_hint:'The day of the month this is due',bud_due_day_invalid:'Enter a due day between 1 and 31, or leave it blank.', category:'Category', amount:'Amount',
+    paid:'Paid', due_date:'Due date',due_day:'Due day',env_left:'left to spend',env_over:'over budget',env_in:'received',env_saved:'saved',env_meta_out:'{0} spent · {1} budgeted',env_meta_in:'{0} of {1}',env_log:'Log',due_day_hint:'The day of the month this is due',bud_due_day_invalid:'Enter a due day between 1 and 31, or leave it blank.', category:'Category', amount:'Amount',
     description:'Description', date:'Date', type:'Type',
     add_category:'+ Add category', no_transactions:'No transactions yet.',
     // Upgrade
@@ -463,7 +463,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Die Bezeichnung, die du überall in der App für diese Kategorie siehst.',mod_due_date_hint:'Wann dies jeden Monat fällig ist - wird für den Kalender und die Bezahlt-Markierung verwendet.',
     mod_th_expected_hint:'Der Betrag, den du monatlich für diese Kategorie einplanst.',mod_th_actual_hint:'Wird automatisch aus deinen erfassten Transaktionen in dieser Kategorie berechnet.',mod_th_progress_hint:'Wie viel Prozent des geplanten Betrags bisher verbraucht wurde.',
     tx_date_hint:'Das Datum, an dem diese Transaktion stattfand.',tx_type_hint:'Um welche Art von Transaktion es sich handelt - bestimmt, aus welcher Kategorieliste du wählen kannst.',tx_category_hint:'Welcher Budgetkategorie diese Transaktion zugerechnet wird.',tx_amount_hint:'Wie viel Geld diese Transaktion betraf.',tx_desc_hint:'Eine optionale Notiz, damit du dich erinnerst, wofür das war.',
-    paid:'Bezahlt',due_date:'Fälligkeitsdatum',due_day:'Fälligkeitstag',due_day_hint:'Der Tag im Monat, an dem dies fällig ist',bud_due_day_invalid:'Gib einen Fälligkeitstag zwischen 1 und 31 ein oder lass das Feld leer.',category:'Kategorie',amount:'Betrag',
+    paid:'Bezahlt',due_date:'Fälligkeitsdatum',due_day:'Fälligkeitstag',env_left:'übrig',env_over:'über Budget',env_in:'erhalten',env_saved:'gespart',env_meta_out:'{0} ausgegeben · {1} geplant',env_meta_in:'{0} von {1}',env_log:'Buchen',due_day_hint:'Der Tag im Monat, an dem dies fällig ist',bud_due_day_invalid:'Gib einen Fälligkeitstag zwischen 1 und 31 ein oder lass das Feld leer.',category:'Kategorie',amount:'Betrag',
     description:'Beschreibung',date:'Datum',type:'Typ',
     add_category:'+ Kategorie hinzufügen',no_transactions:'Noch keine Transaktionen.',
     upgrade_title:'Upgrade auf Ultimate Budget Planner',
@@ -748,7 +748,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Le nom que vous verrez pour cette catégorie partout dans l’application.',mod_due_date_hint:'Quand cela est dû chaque mois - utilisé pour le calendrier et le suivi des paiements.',
     mod_th_expected_hint:'Le montant que vous prévoyez de budgétiser pour cette catégorie chaque mois.',mod_th_actual_hint:'Calculé automatiquement à partir de vos transactions enregistrées dans cette catégorie.',mod_th_progress_hint:'Le pourcentage du montant prévu déjà utilisé.',
     tx_date_hint:'La date à laquelle cette transaction a eu lieu.',tx_type_hint:'Le type de transaction - détermine la liste de catégories disponible.',tx_category_hint:'La catégorie budgétaire à laquelle cette transaction est associée.',tx_amount_hint:'Le montant de cette transaction.',tx_desc_hint:'Une note facultative pour vous rappeler à quoi cela correspondait.',
-    paid:'Payé',due_date:"Date d'échéance",due_day:"Jour d'échéance",due_day_hint:'Le jour du mois où cela est dû',bud_due_day_invalid:"Saisissez un jour d'échéance entre 1 et 31, ou laissez le champ vide.",category:'Catégorie',amount:'Montant',
+    paid:'Payé',due_date:"Date d'échéance",due_day:"Jour d'échéance",env_left:'restant',env_over:'dépassement',env_in:'reçu',env_saved:'épargné',env_meta_out:'{0} dépensé · {1} prévu',env_meta_in:'{0} sur {1}',env_log:'Saisir',due_day_hint:'Le jour du mois où cela est dû',bud_due_day_invalid:"Saisissez un jour d'échéance entre 1 et 31, ou laissez le champ vide.",category:'Catégorie',amount:'Montant',
     description:'Description',date:'Date',type:'Type',
     add_category:'+ Ajouter une catégorie',no_transactions:'Aucune transaction.',
     upgrade_title:'Passer à Ultimate Budget Planner',
@@ -1033,7 +1033,7 @@ const TRANSLATIONS = {
     mod_name_hint:'El nombre que verás para esta categoría en toda la aplicación.',mod_due_date_hint:'Cuándo vence esto cada mes - se usa para el calendario y el seguimiento de pagos.',
     mod_th_expected_hint:'La cantidad que planeas presupuestar para esta categoría cada mes.',mod_th_actual_hint:'Se calcula automáticamente a partir de tus transacciones registradas en esta categoría.',mod_th_progress_hint:'Qué porcentaje del monto previsto se ha usado hasta ahora.',
     tx_date_hint:'La fecha en que ocurrió esta transacción.',tx_type_hint:'Qué tipo de transacción es - determina de qué lista de categorías puedes elegir.',tx_category_hint:'A qué categoría del presupuesto pertenece esta transacción.',tx_amount_hint:'Cuánto dinero fue esta transacción.',tx_desc_hint:'Una nota opcional para ayudarte a recordar para qué fue esto.',
-    paid:'Pagado',due_date:'Fecha de vencimiento',due_day:'Día de vencimiento',due_day_hint:'El día del mes en que vence',bud_due_day_invalid:'Introduce un día de vencimiento entre 1 y 31, o déjalo en blanco.',category:'Categoría',amount:'Importe',
+    paid:'Pagado',due_date:'Fecha de vencimiento',due_day:'Día de vencimiento',env_left:'disponible',env_over:'sobre el presupuesto',env_in:'recibido',env_saved:'ahorrado',env_meta_out:'{0} gastado · {1} presupuestado',env_meta_in:'{0} de {1}',env_log:'Registrar',due_day_hint:'El día del mes en que vence',bud_due_day_invalid:'Introduce un día de vencimiento entre 1 y 31, o déjalo en blanco.',category:'Categoría',amount:'Importe',
     description:'Descripción',date:'Fecha',type:'Tipo',
     add_category:'+ Añadir categoría',no_transactions:'Sin transacciones aún.',
     upgrade_title:'Actualiza a Ultimate Budget Planner',
@@ -1318,7 +1318,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Il nome che vedrai per questa categoria in tutta l’app.',mod_due_date_hint:'Quando scade ogni mese - usato per il calendario e il monitoraggio dei pagamenti.',
     mod_th_expected_hint:'L’importo che prevedi di destinare a questa categoria ogni mese.',mod_th_actual_hint:'Calcolato automaticamente dalle transazioni registrate in questa categoria.',mod_th_progress_hint:'Quale percentuale dell’importo previsto è stata utilizzata finora.',
     tx_date_hint:'La data in cui è avvenuta questa transazione.',tx_type_hint:'Il tipo di transazione - determina da quale elenco di categorie puoi scegliere.',tx_category_hint:'A quale categoria di budget appartiene questa transazione.',tx_amount_hint:'Quanto denaro riguardava questa transazione.',tx_desc_hint:'Una nota facoltativa per aiutarti a ricordare a cosa si riferiva.',
-    paid:'Pagato',due_date:'Data di scadenza',due_day:'Giorno di scadenza',due_day_hint:'Il giorno del mese in cui scade',bud_due_day_invalid:'Inserisci un giorno di scadenza tra 1 e 31, oppure lascia vuoto.',category:'Categoria',amount:'Importo',
+    paid:'Pagato',due_date:'Data di scadenza',due_day:'Giorno di scadenza',env_left:'disponibile',env_over:'oltre il budget',env_in:'ricevuto',env_saved:'risparmiato',env_meta_out:'{0} speso · {1} previsto',env_meta_in:'{0} su {1}',env_log:'Registra',due_day_hint:'Il giorno del mese in cui scade',bud_due_day_invalid:'Inserisci un giorno di scadenza tra 1 e 31, oppure lascia vuoto.',category:'Categoria',amount:'Importo',
     description:'Descrizione',date:'Data',type:'Tipo',
     add_category:'+ Aggiungi categoria',no_transactions:'Nessuna transazione.',
     upgrade_title:'Passa a Ultimate Budget Planner',
@@ -1602,7 +1602,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Nazwa, którą zobaczysz dla tej kategorii w całej aplikacji.',mod_due_date_hint:'Kiedy termin płatności przypada każdego miesiąca - używane do kalendarza i śledzenia płatności.',
     mod_th_expected_hint:'Kwota, którą planujesz przeznaczyć na tę kategorię każdego miesiąca.',mod_th_actual_hint:'Obliczane automatycznie na podstawie zarejestrowanych transakcji w tej kategorii.',mod_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
     tx_date_hint:'Data, kiedy miała miejsce ta transakcja.',tx_type_hint:'Jaki to rodzaj transakcji - określa, z jakiej listy kategorii możesz wybierać.',tx_category_hint:'Do której kategorii budżetu należy ta transakcja.',tx_amount_hint:'Ile pieniędzy dotyczyło tej transakcji.',tx_desc_hint:'Opcjonalna notatka, która pomoże ci zapamiętać, czego to dotyczyło.',
-    paid:'Zapłacone',due_date:'Data płatności',due_day:'Dzień płatności',due_day_hint:'Dzień miesiąca, w którym przypada płatność',bud_due_day_invalid:'Podaj dzień płatności od 1 do 31 albo zostaw puste.',category:'Kategoria',amount:'Kwota',
+    paid:'Zapłacone',due_date:'Data płatności',due_day:'Dzień płatności',env_left:'pozostało',env_over:'ponad budżet',env_in:'otrzymano',env_saved:'zaoszczędzono',env_meta_out:'wydano {0} · plan {1}',env_meta_in:'{0} z {1}',env_log:'Zapisz',due_day_hint:'Dzień miesiąca, w którym przypada płatność',bud_due_day_invalid:'Podaj dzień płatności od 1 do 31 albo zostaw puste.',category:'Kategoria',amount:'Kwota',
     description:'Opis',date:'Data',type:'Typ',
     add_category:'+ Dodaj kategorię',no_transactions:'Brak transakcji.',
     upgrade_title:'Przejdź na Ultimate Budget Planner',
@@ -4525,6 +4525,37 @@ function syncModulePaidLinks() {
   return changed;
 }
 
+// One envelope. The figure worth reading first differs by section: what is
+// left in an envelope you spend from, what has landed in one you fill.
+function envCardHtml(row, o) {
+  const act = o.actuals[row.category] || 0;
+  const exp = row.expected || 0;
+  const p = pct(act, exp);
+  const over = !o.isInc && exp > 0 && act > exp;
+  const headline = o.isInc ? act : exp - act;
+  const cap = o.isInc
+    ? (o.type === 'savings' ? t('env_saved') : t('env_in'))
+    : (over ? t('env_over') : t('env_left'));
+  const day = o.hasDates ? rowDueDay(row) : 0;
+  return `<article class="env-card${over ? ' is-over' : ''}${o.isInc ? ' env-card--in' : ''}">
+    <span class="env-flap" aria-hidden="true"></span>
+    <span class="env-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg>
+    </span>
+    <h4 class="env-name" title="${esc(row.category)}">${esc(row.category)}</h4>
+    ${o.hasDates ? `<p class="env-sub">${day ? t('due_day') + ' ' + day : '&nbsp;'}</p>` : ''}
+    <div class="env-figure">${headline < 0 ? '\u2212' : ''}${fmt(Math.abs(headline))}</div>
+    <div class="env-cap">${cap}</div>
+    <div class="prog-bar-wrap"><div class="prog-bar${o.isInc ? ' prog-bar--income' : over ? ' prog-bar--over' : ' prog-bar--normal'}" style="width:${Math.min(p, 100)}%"></div></div>
+    <p class="env-meta">${o.isInc ? tf('env_meta_in', fmt(act), fmt(exp)) : tf('env_meta_out', fmt(act), fmt(exp))}</p>
+    <div class="env-actions">
+      <button class="env-btn env-btn--go" data-env-log="${row.id}" type="button">${t('env_log')}</button>
+      <button class="env-btn edit-btn" data-edit-id="${row.id}" type="button">${t('edit')}</button>
+      <button class="env-btn env-btn--danger del-btn" data-id="${row.id}" type="button">${t('mod_remove')}</button>
+    </div>
+  </article>`;
+}
+
 function renderModule(type) {
   const meta    = MODULE_META[type];
   const rows    = state.budgets[type];
@@ -4546,66 +4577,15 @@ function renderModule(type) {
     </div>
     <p class="section-desc">${t(meta.descKey)}</p>
 
-    <div class="panel">
-      <div class="module-table-wrap">
-        <table class="module-table">
-          <thead>
-            <tr>
-              <th>${t('category')}</th>
-              <th><span class="cc-label-text">${t('expected')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('expected'))}">i</button></th>
-              <th><span class="cc-label-text">${t('actual')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('actual'))}">i</button></th>
-              <th class="prog-cell"><span class="cc-label-text">${t('progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('progress'))}">i</button></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.map(row => {
-              const act = actuals[row.category] || 0;
-              const p   = pct(act, row.expected);
-              const ovr = !isInc && p > 100;
-              return `
-                <tr class="module-row">
-                  <td class="cat-cell"><span class="cat-name">${esc(row.category)}</span></td>
-                  <td><input class="expected-input" type="number" min="0" step="0.01"
-                             value="${row.expected || ''}" placeholder="0.00" data-id="${row.id}"></td>
-                  <td class="act-cell">
-                    <span class="actual-val${ovr ? ' is-over' : isInc && p >= 100 ? ' is-good' : ''}">${fmt(act)}</span>
-                  </td>
-                  <td class="prog-cell">
-                    <div class="prog-bar-wrap">
-                      <div class="prog-bar${isInc ? ' prog-bar--income' : ovr ? ' prog-bar--over' : ' prog-bar--normal'}"
-                           style="width:${Math.min(p, 100)}%"></div>
-                    </div>
-                    <span class="prog-label${ovr ? ' is-over' : ''}">${p}%</span>
-                  </td>
-                  <td class="action-cell">
-                    <div class="tx-actions">
-                      <button class="edit-btn" data-edit-id="${row.id}" type="button" title="${t('edit')}" aria-label="${t('edit')}">✏️</button>
-                      <button class="del-btn" data-id="${row.id}" type="button" title="${t('mod_remove')}" aria-label="${t('mod_remove')}">×</button>
-                    </div>
-                  </td>
-                </tr>`;
-            }).join('')}
-          </tbody>
-          <tfoot>
-            <tr class="total-row">
-              <td><strong>${t('mod_total')}</strong></td>
-              <td><strong>${fmt(totalExp)}</strong></td>
-              <td><strong>${fmt(totalAct)}</strong></td>
-              <td class="prog-cell">
-                <div class="prog-bar-wrap">
-                  <div class="prog-bar${isInc ? ' prog-bar--income' : totalOvr ? ' prog-bar--over' : ' prog-bar--normal'}"
-                       style="width:${Math.min(totalP, 100)}%"></div>
-                </div>
-                <span class="prog-label${totalOvr ? ' is-over' : ''}">${totalP}%</span>
-              </td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
-
+    ${rows.length ? `<div class="module-section-header module-section-header--solo">
+      <span class="module-section-total"><strong>${fmt(totalAct)}</strong> / ${fmt(totalExp)}</span>
+    </div>` : ''}
+    ${rows.length === 0
+      ? `<div class="panel env-empty"><div class="panel-inner-sm">
+          <p class="env-empty-text">${t('mod_add_new_category')}</p>
+          <button class="btn btn-primary btn-sm" id="addRowBtnEmpty" type="button">${t('mod_add_category')}</button>
+        </div></div>`
+      : `<div class="env-grid">${rows.map(r => envCardHtml(r, { actuals, isInc, type, hasDates: meta.hasDates })).join('')}</div>`}
   `;
 
   const el = document.getElementById(`bview-${type}`);
@@ -4672,7 +4652,21 @@ function renderModule(type) {
     });
   });
 
+  // Log a transaction straight into this envelope.
+  el.querySelectorAll('[data-env-log]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const row = (state.budgets[type] || []).find(r => r.id === btn.dataset.envLog);
+      if (!row) return;
+      if (trialBlocks('transaction')) { showUpgradeModal({ reason: 'transaction' }); return; }
+      openQuickAddTx({ type: TX_TYPE_FOR_MODULE[type], category: row.category });
+    });
+  });
+
   // Add category
+  el.querySelector('#addRowBtnEmpty')?.addEventListener('click', () => {
+    if (trialBlocks(type)) { showUpgradeModal({ reason: 'category', type }); return; }
+    openAddBudgetRow(type);
+  });
   el.querySelector('#addRowBtn').addEventListener('click', () => {
     if (trialBlocks(type)) { showUpgradeModal({ reason: 'category', type }); return; }
     openAddBudgetRow(type);
@@ -4836,7 +4830,9 @@ function addTransaction(opts) {
 // ── Quick add, from the dashboard ──────────────────────────────────────
 // Its own id prefix, because the Transactions tab's form stays in the DOM
 // once that tab has been opened and would otherwise win getElementById.
-function openQuickAddTx() {
+// prefill lets a caller open this already pointed at one category, which is
+// what an envelope's Log button does.
+function openQuickAddTx(prefill) {
   document.getElementById('modalTitle').textContent = t('tx_add_title');
   document.getElementById('modalBody').innerHTML = `
     <div class="field">

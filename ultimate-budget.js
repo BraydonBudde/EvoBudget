@@ -904,7 +904,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Calculated automatically from your logged transactions in this category.',
     bud_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
     bud_total:'Total',bud_set_date:'Set date',
-    bud_add_btn:'+ Add',bud_add_cat_title:'Add new category',
+    bud_add_btn:'+ Add',env_left:'left to spend',env_over:'over budget',env_in:'received',env_saved:'saved',env_meta_out:'{0} spent · {1} budgeted',env_meta_in:'{0} of {1}',env_log:'Log',bud_add_cat_title:'Add new category',
     bud_quick_add:'Quick add',
     bud_sugg_income:'Salary|Freelance|Bonus|Interest|Side hustle|Benefits|Rental income|Gifts',
     bud_sugg_expenses:'Groceries|Fuel|Transport|Dining out|Coffee|Clothing|Household|Health|Pets|Entertainment|Childcare|Hobbies',
@@ -1482,7 +1482,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Wird automatisch aus deinen erfassten Transaktionen in dieser Kategorie berechnet.',
     bud_th_progress_hint:'Wie viel Prozent des geplanten Betrags bisher verbraucht wurde.',
     bud_total:'Gesamt',bud_set_date:'Datum wählen',
-    bud_add_btn:'+ Hinzufügen',bud_add_cat_title:'Neue Kategorie hinzufügen',
+    bud_add_btn:'+ Hinzufügen',env_left:'übrig',env_over:'über Budget',env_in:'erhalten',env_saved:'gespart',env_meta_out:'{0} ausgegeben · {1} geplant',env_meta_in:'{0} von {1}',env_log:'Buchen',bud_add_cat_title:'Neue Kategorie hinzufügen',
     bud_quick_add:'Schnell hinzufügen',
     bud_sugg_income:'Gehalt|Freiberuflich|Bonus|Zinsen|Nebenjob|Sozialleistungen|Mieteinnahmen|Geschenke',
     bud_sugg_expenses:'Lebensmittel|Kraftstoff|Verkehr|Essen gehen|Kaffee|Kleidung|Haushalt|Gesundheit|Haustiere|Unterhaltung|Kinderbetreuung|Hobbys',
@@ -2042,7 +2042,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Calculé automatiquement à partir de vos transactions enregistrées dans cette catégorie.',
     bud_th_progress_hint:'Le pourcentage du montant prévu déjà utilisé.',
     bud_total:'Total',bud_set_date:'Définir date',
-    bud_add_btn:'+ Ajouter',bud_add_cat_title:'Ajouter une catégorie',
+    bud_add_btn:'+ Ajouter',env_left:'restant',env_over:'dépassement',env_in:'reçu',env_saved:'épargné',env_meta_out:'{0} dépensé · {1} prévu',env_meta_in:'{0} sur {1}',env_log:'Saisir',bud_add_cat_title:'Ajouter une catégorie',
     bud_quick_add:'Ajout rapide',
     bud_sugg_income:'Salaire|Freelance|Prime|Intérêts|Activité secondaire|Allocations|Revenus locatifs|Cadeaux',
     bud_sugg_expenses:'Courses|Carburant|Transport|Restaurant|Café|Vêtements|Maison|Santé|Animaux|Loisirs|Garde d\'enfants|Passe-temps',
@@ -2602,7 +2602,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Se calcula automáticamente a partir de tus transacciones registradas en esta categoría.',
     bud_th_progress_hint:'Qué porcentaje del monto previsto se ha usado hasta ahora.',
     bud_total:'Total',bud_set_date:'Seleccionar fecha',
-    bud_add_btn:'+ Añadir',bud_add_cat_title:'Añadir nueva categoría',
+    bud_add_btn:'+ Añadir',env_left:'disponible',env_over:'sobre el presupuesto',env_in:'recibido',env_saved:'ahorrado',env_meta_out:'{0} gastado · {1} presupuestado',env_meta_in:'{0} de {1}',env_log:'Registrar',bud_add_cat_title:'Añadir nueva categoría',
     bud_quick_add:'Añadir rápido',
     bud_sugg_income:'Salario|Freelance|Bonificación|Intereses|Trabajo extra|Prestaciones|Ingresos por alquiler|Regalos',
     bud_sugg_expenses:'Supermercado|Combustible|Transporte|Comer fuera|Café|Ropa|Hogar|Salud|Mascotas|Ocio|Guardería|Aficiones',
@@ -3163,7 +3163,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Calcolato automaticamente dalle transazioni registrate in questa categoria.',
     bud_th_progress_hint:'Quale percentuale dell’importo previsto è stata utilizzata finora.',
     bud_total:'Totale',bud_set_date:'Imposta data',
-    bud_add_btn:'+ Aggiungi',bud_add_cat_title:'Aggiungi nuova categoria',
+    bud_add_btn:'+ Aggiungi',env_left:'disponibile',env_over:'oltre il budget',env_in:'ricevuto',env_saved:'risparmiato',env_meta_out:'{0} speso · {1} previsto',env_meta_in:'{0} su {1}',env_log:'Registra',bud_add_cat_title:'Aggiungi nuova categoria',
     bud_quick_add:'Aggiunta rapida',
     bud_sugg_income:'Stipendio|Freelance|Bonus|Interessi|Secondo lavoro|Sussidi|Affitti attivi|Regali',
     bud_sugg_expenses:'Spesa|Carburante|Trasporti|Ristoranti|Caffè|Abbigliamento|Casa|Salute|Animali|Svago|Asilo|Hobby',
@@ -3723,7 +3723,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Obliczane automatycznie na podstawie zarejestrowanych transakcji w tej kategorii.',
     bud_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
     bud_total:'Suma',bud_set_date:'Ustaw datę',
-    bud_add_btn:'+ Dodaj',bud_add_cat_title:'Dodaj nową kategorię',
+    bud_add_btn:'+ Dodaj',env_left:'pozostało',env_over:'ponad budżet',env_in:'otrzymano',env_saved:'zaoszczędzono',env_meta_out:'wydano {0} · plan {1}',env_meta_in:'{0} z {1}',env_log:'Zapisz',bud_add_cat_title:'Dodaj nową kategorię',
     bud_quick_add:'Szybkie dodawanie',
     bud_sugg_income:'Wynagrodzenie|Freelance|Premia|Odsetki|Dodatkowa praca|Świadczenia|Dochód z najmu|Prezenty',
     bud_sugg_expenses:'Zakupy|Paliwo|Transport|Jedzenie na mieście|Kawa|Odzież|Dom|Zdrowie|Zwierzęta|Rozrywka|Opieka nad dziećmi|Hobby',
@@ -5689,24 +5689,47 @@ function buildModuleHTML(type,meta,act) {
   const rows=state.budgets[type]||[],typeAct=act[type]||{};
   const totExp=rows.reduce((t,r)=>t+(r.expected||0),0),totAct=rows.reduce((t,r)=>t+(typeAct[r.category]||0),0);
   const totP=pct(totAct,totExp),totOvr=!meta.isInc&&totAct>totExp&&totExp>0;
-  return `<div class="budget-module-section"><div class="module-section-header"><h3 class="module-section-title">${meta.icon} ${meta.title}</h3><button class="btn btn-ghost btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button></div>
-    <div class="panel" style="margin-bottom:18px"><div class="module-table-wrap"><table class="module-table"><thead><tr>
-      <th>${t('bud_th_category')}</th><th><span class="cc-label-text">${t('bud_th_expected')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_expected'))}">i</button></th>
-      <th><span class="cc-label-text">${t('bud_th_actual')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_actual'))}">i</button></th><th class="prog-cell"><span class="cc-label-text">${t('bud_th_progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('bud_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('bud_th_progress'))}">i</button></th>
-      <th></th>
-    </tr></thead>
-    <tbody>${rows.map(row=>{
-      const a=typeAct[row.category]||0,p=pct(a,row.expected),ovr=!meta.isInc&&p>100;
-      return`<tr class="module-row"><td><span class="cat-name">${esc(row.category)}</span></td>
-        <td><input class="expected-input mod-exp" type="number" min="0" step="0.01" value="${row.expected||''}" placeholder="0.00" data-id="${row.id}" data-type="${type}"></td>
-        <td><span class="actual-val${ovr?' is-over':meta.isInc&&p>=100?' is-good':''}">${fmt(a)}</span></td>
-        <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':ovr?' prog-bar--over':' prog-bar--normal'}" id="pb-${row.id}" style="width:${Math.min(p,100)}%"></div></div><span class="prog-label${ovr?' is-over':''}" id="pl-${row.id}">${p}%</span></td>
-        <td><div class="tx-actions"><button class="edit-btn mod-edit" data-id="${row.id}" data-type="${type}" type="button" title="${t('edit')}" aria-label="${t('edit')}">✏️</button><button class="del-btn mod-del" data-id="${row.id}" data-type="${type}" type="button" aria-label="${t('delete')}">×</button></div></td></tr>`;
-    }).join('')}</tbody>
-    <tfoot><tr class="total-row"><td><strong>${t('bud_total')}</strong></td><td><strong id="te-${type}">${fmt(totExp)}</strong></td>
-      <td><strong>${fmt(totAct)}</strong></td>
-      <td class="prog-cell"><div class="prog-bar-wrap"><div class="prog-bar${meta.isInc?' prog-bar--income':totOvr?' prog-bar--over':' prog-bar--normal'}" id="tpb-${type}" style="width:${Math.min(totP,100)}%"></div></div><span class="prog-label${totOvr?' is-over':''}" id="tpl-${type}">${totP}%</span></td>
-      <td></td></tr></tfoot></table></div></div>
+  // The figure worth reading first differs by section: what is left in an
+  // envelope you spend from, what has landed in one you fill.
+  const card = row => {
+    const a = typeAct[row.category] || 0;
+    const exp = row.expected || 0;
+    const p = pct(a, exp);
+    const over = !meta.isInc && exp > 0 && a > exp;
+    const headline = meta.isInc ? a : exp - a;
+    const cap = meta.isInc
+      ? (type === 'savings' ? t('env_saved') : t('env_in'))
+      : (over ? t('env_over') : t('env_left'));
+    const day = meta.hasDates ? rowDueDay(row) : 0;
+    return `<article class="env-card${over ? ' is-over' : ''}${meta.isInc ? ' env-card--in' : ''}" data-env-id="${row.id}" data-env-type="${type}">
+      <span class="env-flap" aria-hidden="true"></span>
+      <span class="env-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg>
+      </span>
+      <h4 class="env-name" title="${esc(row.category)}">${esc(row.category)}</h4>
+      ${meta.hasDates ? `<p class="env-sub">${day ? `${t('dpc_th_due')} ${day}` : '&nbsp;'}</p>` : ''}
+      <div class="env-figure">${headline < 0 ? '\u2212' : ''}${fmt(Math.abs(headline))}</div>
+      <div class="env-cap">${cap}</div>
+      <div class="prog-bar-wrap"><div class="prog-bar${meta.isInc ? ' prog-bar--income' : over ? ' prog-bar--over' : ' prog-bar--normal'}" id="pb-${row.id}" style="width:${Math.min(p, 100)}%"></div></div>
+      <p class="env-meta" id="pl-${row.id}">${meta.isInc ? tf('env_meta_in', fmt(a), fmt(exp)) : tf('env_meta_out', fmt(a), fmt(exp))}</p>
+      <div class="env-actions">
+        <button class="env-btn env-btn--go" data-env-log="${row.id}" data-type="${type}" type="button">${t('env_log')}</button>
+        <button class="env-btn mod-edit" data-id="${row.id}" data-type="${type}" type="button">${t('edit')}</button>
+        <button class="env-btn env-btn--danger mod-del" data-id="${row.id}" data-type="${type}" type="button">${t('delete')}</button>
+      </div>
+    </article>`;
+  };
+  return `<div class="budget-module-section"><div class="module-section-header">
+      <h3 class="module-section-title">${meta.icon} ${meta.title}</h3>
+      ${rows.length ? `<span class="module-section-total"><strong id="te-${type}">${fmt(totAct)}</strong> / ${fmt(totExp)}</span>` : ''}
+      <button class="btn btn-ghost btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button>
+    </div>
+    ${rows.length === 0
+      ? `<div class="panel env-empty"><div class="panel-inner-sm">
+          <p class="env-empty-text">${t('bud_add_cat_title')}</p>
+          <button class="btn btn-primary btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button>
+        </div></div>`
+      : `<div class="env-grid">${rows.map(card).join('')}</div>`}
     </div>`;
 }
 
@@ -5940,25 +5963,15 @@ function syncBillPaidLinks() {
 }
 
 function bindModuleEvents(type,meta,container,act) {
-  container.querySelectorAll(`.mod-exp[data-type="${type}"]`).forEach(inp=>{
-    inp.addEventListener('input',()=>{
-      const lv=parseFloat(inp.value)||0,rowId=inp.dataset.id,typeAct=computeActuals()[type]||{};
-      const rowObj=(state.budgets[type]||[]).find(r=>r.id===rowId); if(!rowObj) return;
-      const a=typeAct[rowObj.category]||0,p=pct(a,lv),over=!meta.isInc&&p>100;
-      const bar=document.getElementById('pb-'+rowId),lbl=document.getElementById('pl-'+rowId);
-      if(bar){bar.className=`prog-bar${meta.isInc?' prog-bar--income':over?' prog-bar--over':' prog-bar--normal'}`;bar.style.width=`${Math.min(p,100)}%`;}
-      if(lbl){lbl.className=`prog-label${over?' is-over':''}`;lbl.textContent=`${p}%`;}
-      const totExp=(state.budgets[type]||[]).reduce((s,r)=>s+(r.id===rowId?lv:(r.expected||0)),0);
-      const totAct=(state.budgets[type]||[]).reduce((s,r)=>s+(typeAct[r.category]||0),0);
-      const tP=pct(totAct,totExp),tO=!meta.isInc&&totAct>totExp&&totExp>0;
-      const te=document.getElementById('te-'+type),tpb=document.getElementById('tpb-'+type),tpl=document.getElementById('tpl-'+type);
-      if(te)te.textContent=fmt(totExp);
-      if(tpb){tpb.className=`prog-bar${meta.isInc?' prog-bar--income':tO?' prog-bar--over':' prog-bar--normal'}`;tpb.style.width=`${Math.min(tP,100)}%`;}
-      if(tpl){tpl.className=`prog-label${tO?' is-over':''}`;tpl.textContent=`${tP}%`;}
-    });
-    inp.addEventListener('change',()=>{const row=(state.budgets[type]||[]).find(r=>r.id===inp.dataset.id);if(row){row.expected=parseFloat(inp.value)||0;saveState();}});
-  });
   const TX_TYPE_FOR_MODULE={income:'income',expenses:'expense',bills:'bill',debt:'debt',savings:'savings'};
+  container.querySelectorAll(`[data-env-log][data-type="${type}"]`).forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const row=(state.budgets[type]||[]).find(r=>r.id===btn.dataset.envLog);
+      if(!row)return;
+      if(trialBlocks('transaction')){ showUpgradeModal({reason:'transaction'}); return; }
+      openQuickAddTx({type:BUD_TX_TYPE[type],category:row.category});
+    });
+  });
   container.querySelectorAll(`.mod-edit[data-type="${type}"]`).forEach(btn=>{
     btn.addEventListener('click',()=>openEditBudgetRow(type,btn.dataset.id));
   });
@@ -6301,7 +6314,9 @@ function addTransaction(opts){
 // ── Quick add, from the dashboard ──────────────────────────────────────
 // Its own id prefix, because the Transactions tab's form stays in the DOM
 // once that tab has been opened and would otherwise win getElementById.
-function openQuickAddTx(){
+// prefill lets a caller open this already pointed at one category, which is
+// what an envelope's Log button does.
+function openQuickAddTx(prefill){
   const allocEnabled=!!state.allocation?.enabled;
   document.getElementById('modalTitle').textContent=t('tx_add_title');
   document.getElementById('modalBody').innerHTML=`
@@ -6336,7 +6351,15 @@ function openQuickAddTx(){
     const cats=getCats(document.getElementById('qaType')?.value);
     if(sel) sel.innerHTML=cats.length?cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join(''):'<option value="">- set up categories first -</option>';
   };
+  if(prefill&&prefill.type){
+    const ty=document.getElementById('qaType');
+    if(ty&&[...ty.options].some(o=>o.value===prefill.type)) ty.value=prefill.type;
+  }
   fillQaCats();
+  if(prefill&&prefill.category){
+    const sel=document.getElementById('qaCategory');
+    if(sel&&[...sel.options].some(o=>o.value===prefill.category)) sel.value=prefill.category;
+  }
   document.getElementById('qaType')?.addEventListener('change',fillQaCats);
   bindDateField('qaDate','qaDateWrap');
   document.getElementById('modalBody')?.addEventListener('input',()=>{
