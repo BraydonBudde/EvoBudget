@@ -4527,6 +4527,19 @@ function syncModulePaidLinks() {
 
 // One envelope. The figure worth reading first differs by section: what is
 // left in an envelope you spend from, what has landed in one you fill.
+// One icon per section, all drawn the same way: a 24x24 box, stroked, never
+// filled, so they read as one set rather than four borrowed glyphs.
+const BUD_ICON_PATHS = {
+  income:   '<path d="M12 3.4v9.4"/><path d="M8.2 9 12 12.8 15.8 9"/><path d="M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3"/>',
+  expenses: '<path d="M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6"/><circle cx="9.6" cy="19.6" r="1.3"/><circle cx="17.4" cy="19.6" r="1.3"/>',
+  bills:    '<path d="M6 3.2h8l4 4v13.6H6z"/><path d="M14 3.2v4h4"/><path d="M9.2 12.2h5.6"/><path d="M9.2 16.2h5.6"/>',
+  savings:  '<path d="M3 9.6 12 4.2l9 5.4"/><path d="M6.2 11.2v6.6"/><path d="M12 11.2v6.6"/><path d="M17.8 11.2v6.6"/><path d="M3.6 20.6h16.8"/>',
+  debt:     '<rect x="2.6" y="5.2" width="18.8" height="13.6" rx="2.4"/><path d="M2.6 10h18.8"/>'
+};
+function budgetIconSvg(type){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${BUD_ICON_PATHS[type] || BUD_ICON_PATHS.expenses}</svg>`;
+}
+
 function envCardHtml(row, o) {
   const act = o.actuals[row.category] || 0;
   const exp = row.expected || 0;
@@ -4540,7 +4553,7 @@ function envCardHtml(row, o) {
   return `<article class="env-card${over ? ' is-over' : ''}${o.isInc ? ' env-card--in' : ''}">
     <span class="env-flap" aria-hidden="true"></span>
     <span class="env-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg>
+      ${budgetIconSvg(o.type)}
     </span>
     <h4 class="env-name" title="${esc(row.category)}">${esc(row.category)}</h4>
     ${o.hasDates ? `<p class="env-sub">${day ? t('due_day') + ' ' + day : '&nbsp;'}</p>` : ''}

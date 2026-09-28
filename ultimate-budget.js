@@ -904,7 +904,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Calculated automatically from your logged transactions in this category.',
     bud_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
     bud_total:'Total',bud_set_date:'Set date',
-    bud_add_btn:'+ Add',env_left:'left to spend',env_over:'over budget',env_in:'received',env_saved:'saved',env_meta_out:'{0} spent · {1} budgeted',env_meta_in:'{0} of {1}',env_log:'Log',bud_add_cat_title:'Add new category',
+    bud_add_btn:'+ Add',bud_add_any:'+ Add budget',env_sum_left:'Left',env_sum_spent:'Spent',env_sum_target:'Targets',env_sum_note:'{0}% of what you planned has gone out',bud_section_label:'Section',env_left:'left to spend',env_over:'over budget',env_in:'received',env_saved:'saved',env_meta_out:'{0} spent · {1} budgeted',env_meta_in:'{0} of {1}',env_log:'Log',bud_add_cat_title:'Add new category',
     bud_quick_add:'Quick add',
     bud_sugg_income:'Salary|Freelance|Bonus|Interest|Side hustle|Benefits|Rental income|Gifts',
     bud_sugg_expenses:'Groceries|Fuel|Transport|Dining out|Coffee|Clothing|Household|Health|Pets|Entertainment|Childcare|Hobbies',
@@ -1482,7 +1482,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Wird automatisch aus deinen erfassten Transaktionen in dieser Kategorie berechnet.',
     bud_th_progress_hint:'Wie viel Prozent des geplanten Betrags bisher verbraucht wurde.',
     bud_total:'Gesamt',bud_set_date:'Datum wählen',
-    bud_add_btn:'+ Hinzufügen',env_left:'übrig',env_over:'über Budget',env_in:'erhalten',env_saved:'gespart',env_meta_out:'{0} ausgegeben · {1} geplant',env_meta_in:'{0} von {1}',env_log:'Buchen',bud_add_cat_title:'Neue Kategorie hinzufügen',
+    bud_add_btn:'+ Hinzufügen',bud_add_any:'+ Budget hinzufügen',env_sum_left:'Übrig',env_sum_spent:'Ausgegeben',env_sum_target:'Geplant',env_sum_note:'{0}% des Geplanten sind ausgegeben',bud_section_label:'Bereich',env_left:'übrig',env_over:'über Budget',env_in:'erhalten',env_saved:'gespart',env_meta_out:'{0} ausgegeben · {1} geplant',env_meta_in:'{0} von {1}',env_log:'Buchen',bud_add_cat_title:'Neue Kategorie hinzufügen',
     bud_quick_add:'Schnell hinzufügen',
     bud_sugg_income:'Gehalt|Freiberuflich|Bonus|Zinsen|Nebenjob|Sozialleistungen|Mieteinnahmen|Geschenke',
     bud_sugg_expenses:'Lebensmittel|Kraftstoff|Verkehr|Essen gehen|Kaffee|Kleidung|Haushalt|Gesundheit|Haustiere|Unterhaltung|Kinderbetreuung|Hobbys',
@@ -2042,7 +2042,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Calculé automatiquement à partir de vos transactions enregistrées dans cette catégorie.',
     bud_th_progress_hint:'Le pourcentage du montant prévu déjà utilisé.',
     bud_total:'Total',bud_set_date:'Définir date',
-    bud_add_btn:'+ Ajouter',env_left:'restant',env_over:'dépassement',env_in:'reçu',env_saved:'épargné',env_meta_out:'{0} dépensé · {1} prévu',env_meta_in:'{0} sur {1}',env_log:'Saisir',bud_add_cat_title:'Ajouter une catégorie',
+    bud_add_btn:'+ Ajouter',bud_add_any:'+ Ajouter un budget',env_sum_left:'Restant',env_sum_spent:'Dépensé',env_sum_target:'Prévu',env_sum_note:'{0}% du montant prévu est sorti',bud_section_label:'Section',env_left:'restant',env_over:'dépassement',env_in:'reçu',env_saved:'épargné',env_meta_out:'{0} dépensé · {1} prévu',env_meta_in:'{0} sur {1}',env_log:'Saisir',bud_add_cat_title:'Ajouter une catégorie',
     bud_quick_add:'Ajout rapide',
     bud_sugg_income:'Salaire|Freelance|Prime|Intérêts|Activité secondaire|Allocations|Revenus locatifs|Cadeaux',
     bud_sugg_expenses:'Courses|Carburant|Transport|Restaurant|Café|Vêtements|Maison|Santé|Animaux|Loisirs|Garde d\'enfants|Passe-temps',
@@ -2602,7 +2602,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Se calcula automáticamente a partir de tus transacciones registradas en esta categoría.',
     bud_th_progress_hint:'Qué porcentaje del monto previsto se ha usado hasta ahora.',
     bud_total:'Total',bud_set_date:'Seleccionar fecha',
-    bud_add_btn:'+ Añadir',env_left:'disponible',env_over:'sobre el presupuesto',env_in:'recibido',env_saved:'ahorrado',env_meta_out:'{0} gastado · {1} presupuestado',env_meta_in:'{0} de {1}',env_log:'Registrar',bud_add_cat_title:'Añadir nueva categoría',
+    bud_add_btn:'+ Añadir',bud_add_any:'+ Añadir presupuesto',env_sum_left:'Disponible',env_sum_spent:'Gastado',env_sum_target:'Previsto',env_sum_note:'Ha salido el {0}% de lo previsto',bud_section_label:'Sección',env_left:'disponible',env_over:'sobre el presupuesto',env_in:'recibido',env_saved:'ahorrado',env_meta_out:'{0} gastado · {1} presupuestado',env_meta_in:'{0} de {1}',env_log:'Registrar',bud_add_cat_title:'Añadir nueva categoría',
     bud_quick_add:'Añadir rápido',
     bud_sugg_income:'Salario|Freelance|Bonificación|Intereses|Trabajo extra|Prestaciones|Ingresos por alquiler|Regalos',
     bud_sugg_expenses:'Supermercado|Combustible|Transporte|Comer fuera|Café|Ropa|Hogar|Salud|Mascotas|Ocio|Guardería|Aficiones',
@@ -3163,7 +3163,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Calcolato automaticamente dalle transazioni registrate in questa categoria.',
     bud_th_progress_hint:'Quale percentuale dell’importo previsto è stata utilizzata finora.',
     bud_total:'Totale',bud_set_date:'Imposta data',
-    bud_add_btn:'+ Aggiungi',env_left:'disponibile',env_over:'oltre il budget',env_in:'ricevuto',env_saved:'risparmiato',env_meta_out:'{0} speso · {1} previsto',env_meta_in:'{0} su {1}',env_log:'Registra',bud_add_cat_title:'Aggiungi nuova categoria',
+    bud_add_btn:'+ Aggiungi',bud_add_any:'+ Aggiungi budget',env_sum_left:'Disponibile',env_sum_spent:'Speso',env_sum_target:'Previsto',env_sum_note:'È uscito il {0}% del previsto',bud_section_label:'Sezione',env_left:'disponibile',env_over:'oltre il budget',env_in:'ricevuto',env_saved:'risparmiato',env_meta_out:'{0} speso · {1} previsto',env_meta_in:'{0} su {1}',env_log:'Registra',bud_add_cat_title:'Aggiungi nuova categoria',
     bud_quick_add:'Aggiunta rapida',
     bud_sugg_income:'Stipendio|Freelance|Bonus|Interessi|Secondo lavoro|Sussidi|Affitti attivi|Regali',
     bud_sugg_expenses:'Spesa|Carburante|Trasporti|Ristoranti|Caffè|Abbigliamento|Casa|Salute|Animali|Svago|Asilo|Hobby',
@@ -3723,7 +3723,7 @@ const TRANSLATIONS = {
     bud_th_actual_hint:'Obliczane automatycznie na podstawie zarejestrowanych transakcji w tej kategorii.',
     bud_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
     bud_total:'Suma',bud_set_date:'Ustaw datę',
-    bud_add_btn:'+ Dodaj',env_left:'pozostało',env_over:'ponad budżet',env_in:'otrzymano',env_saved:'zaoszczędzono',env_meta_out:'wydano {0} · plan {1}',env_meta_in:'{0} z {1}',env_log:'Zapisz',bud_add_cat_title:'Dodaj nową kategorię',
+    bud_add_btn:'+ Dodaj',bud_add_any:'+ Dodaj budżet',env_sum_left:'Pozostało',env_sum_spent:'Wydano',env_sum_target:'Plan',env_sum_note:'Wyszło {0}% zaplanowanej kwoty',bud_section_label:'Sekcja',env_left:'pozostało',env_over:'ponad budżet',env_in:'otrzymano',env_saved:'zaoszczędzono',env_meta_out:'wydano {0} · plan {1}',env_meta_in:'{0} z {1}',env_log:'Zapisz',bud_add_cat_title:'Dodaj nową kategorię',
     bud_quick_add:'Szybkie dodawanie',
     bud_sugg_income:'Wynagrodzenie|Freelance|Premia|Odsetki|Dodatkowa praca|Świadczenia|Dochód z najmu|Prezenty',
     bud_sugg_expenses:'Zakupy|Paliwo|Transport|Jedzenie na mieście|Kawa|Odzież|Dom|Zdrowie|Zwierzęta|Rozrywka|Opieka nad dziećmi|Hobby',
@@ -5507,14 +5507,51 @@ function getModMeta(){return{
   savings:{icon:'🏦',title:t('bud_section_savings'), isInc:true, hasDates:false},
 };}
 
+// What the whole budget adds up to, across everything money goes out of.
+// Income is left out: nothing is "left to spend" of money coming in.
+function budgetSummaryHtml(act) {
+  const OUT = ['expenses', 'bills', 'savings'];
+  let target = 0, spent = 0;
+  OUT.forEach(type => {
+    const rows = state.budgets[type] || [], a = act[type] || {};
+    rows.forEach(r => { target += r.expected || 0; spent += a[r.category] || 0; });
+  });
+  const left = target - spent;
+  const p = pct(spent, target);
+  const over = target > 0 && spent > target;
+  return `<div class="panel bud-summary"><div class="bud-summary-inner">
+    <div class="bud-sum-figures">
+      <div class="bud-sum-fig${over ? ' is-over' : ''}">
+        <span class="bud-sum-label">${t('env_sum_left')}</span>
+        <strong class="bud-sum-value">${left < 0 ? '\u2212' : ''}${fmt(Math.abs(left))}</strong>
+      </div>
+      <div class="bud-sum-fig">
+        <span class="bud-sum-label">${t('env_sum_spent')}</span>
+        <strong class="bud-sum-value">${fmt(spent)}</strong>
+      </div>
+      <div class="bud-sum-fig">
+        <span class="bud-sum-label">${t('env_sum_target')}</span>
+        <strong class="bud-sum-value">${fmt(target)}</strong>
+      </div>
+    </div>
+    <div class="bud-sum-track"><div class="bud-sum-fill${over ? ' is-over' : ''}" style="width:${Math.min(p, 100)}%"></div></div>
+    <p class="bud-sum-note">${tf('env_sum_note', p)}</p>
+  </div></div>`;
+}
+
 function renderBudget() {
   const act=computeActuals(), MOD_META=getModMeta();
   const el=document.getElementById('bview-budget');
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">💰 ${t('tab_budget')}</h2>${helpBtn('budget')}</div>
-    <p class="section-desc">${t('bud_desc')}</p>`+
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">💰 ${t('tab_budget')}</h2>
+      <div class="section-header-actions">${helpBtn('budget')}<button class="btn btn-primary btn-sm" id="budAddAny" type="button">${t('bud_add_any')}</button></div>
+    </div>
+    <p class="section-desc">${t('bud_desc')}</p>
+    ${budgetSummaryHtml(act)}`+
     Object.entries(MOD_META).map(([type,meta])=>buildModuleHTML(type,meta,act)).join('');
   Object.entries(MOD_META).forEach(([type,meta])=>bindModuleEvents(type,meta,el,act));
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
+  // Opened without a section, so the form asks which one it belongs to.
+  document.getElementById('budAddAny')?.addEventListener('click',()=>openAddBudgetRow(null));
   initFieldTips(el);
 }
 
@@ -5602,8 +5639,14 @@ function openEditBudgetRow(type, id) {
 // Adding a row used to reveal a card wedged under the table, which meant
 // scrolling to find it and again to get back. It is the same job as editing
 // a row, so it is the same modal, with suggestions on top.
-function openAddBudgetRow(type) {
-  const meta = getModMeta()[type];
+function openAddBudgetRow(type, forcePicker) {
+  const META = getModMeta();
+  // Opened from the section's own button the section is known; opened from
+  // the one button above them all it is asked for, and everything below
+  // follows whatever is picked.
+  const pickSection = !type || forcePicker;
+  if (!type) type = 'expenses';
+  const meta = META[type];
   if (!meta) return;
   const rows = state.budgets[type] || [];
   // Nothing already in this section, since a second row under one name
@@ -5614,6 +5657,9 @@ function openAddBudgetRow(type) {
 
   document.getElementById('modalTitle').textContent = `${t('bud_add_cat_title')} \u00b7 ${meta.title}`;
   document.getElementById('modalBody').innerHTML = `
+    ${pickSection ? `<div class="field"><label class="field-label">${t('bud_section_label')}</label>
+      <select class="select" id="abSection">${Object.entries(META).map(([k, m]) =>
+        `<option value="${k}"${k === type ? ' selected' : ''}>${m.icon} ${esc(m.title)}</option>`).join('')}</select></div>` : ''}
     <div class="field"><label class="field-label field-label--tip">${tipLabel(t('bud_cat_name_label'),'bud_cat_name_hint',false)}</label>
       <input class="input" type="text" id="abCat" maxlength="60"${suggestions.length?'':` placeholder="${esc(t('bud_cat_name_ph'))}"`} autocomplete="off"></div>
     ${suggestions.length ? `<div class="quick-add">
@@ -5632,6 +5678,9 @@ function openAddBudgetRow(type) {
       <button class="btn btn-ghost btn-sm" id="abCancel" type="button">${t('cancel')}</button>
     </div>`;
   document.getElementById('tutorialOverlay').hidden = false;
+  // Changing the section reopens the form on it, so its own suggestions and
+  // its own due-day field come with it.
+  document.getElementById('abSection')?.addEventListener('change', e => openAddBudgetRow(e.target.value, true));
   const nameEl = document.getElementById('abCat');
   // After the overlay's own focus move, which runs on a microtask and would
   // otherwise win. Only with a real pointer: on a phone the keyboard would
@@ -5685,6 +5734,19 @@ function openAddBudgetRow(type) {
   document.getElementById('abCancel')?.addEventListener('click', closeModal);
 }
 
+// One icon per section, all drawn the same way: a 24x24 box, stroked, never
+// filled, so they read as one set rather than four borrowed glyphs.
+const BUD_ICON_PATHS = {
+  income:   '<path d="M12 3.4v9.4"/><path d="M8.2 9 12 12.8 15.8 9"/><path d="M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3"/>',
+  expenses: '<path d="M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6"/><circle cx="9.6" cy="19.6" r="1.3"/><circle cx="17.4" cy="19.6" r="1.3"/>',
+  bills:    '<path d="M6 3.2h8l4 4v13.6H6z"/><path d="M14 3.2v4h4"/><path d="M9.2 12.2h5.6"/><path d="M9.2 16.2h5.6"/>',
+  savings:  '<path d="M3 9.6 12 4.2l9 5.4"/><path d="M6.2 11.2v6.6"/><path d="M12 11.2v6.6"/><path d="M17.8 11.2v6.6"/><path d="M3.6 20.6h16.8"/>',
+  debt:     '<rect x="2.6" y="5.2" width="18.8" height="13.6" rx="2.4"/><path d="M2.6 10h18.8"/>'
+};
+function budgetIconSvg(type){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${BUD_ICON_PATHS[type] || BUD_ICON_PATHS.expenses}</svg>`;
+}
+
 function buildModuleHTML(type,meta,act) {
   const rows=state.budgets[type]||[],typeAct=act[type]||{};
   const totExp=rows.reduce((t,r)=>t+(r.expected||0),0),totAct=rows.reduce((t,r)=>t+(typeAct[r.category]||0),0);
@@ -5704,7 +5766,7 @@ function buildModuleHTML(type,meta,act) {
     return `<article class="env-card${over ? ' is-over' : ''}${meta.isInc ? ' env-card--in' : ''}" data-env-id="${row.id}" data-env-type="${type}">
       <span class="env-flap" aria-hidden="true"></span>
       <span class="env-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg>
+        ${budgetIconSvg(type)}
       </span>
       <h4 class="env-name" title="${esc(row.category)}">${esc(row.category)}</h4>
       ${meta.hasDates ? `<p class="env-sub">${day ? `${t('dpc_th_due')} ${day}` : '&nbsp;'}</p>` : ''}

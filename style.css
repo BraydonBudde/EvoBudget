@@ -124,7 +124,7 @@ p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { .blob { animation: none !important; } }
 
 /* ── Layout shell ────────────────────────────────────────────────────── */
-:root { --shell-w: 1320px; }
+:root { --shell-w: 1500px; }
 .app {
   max-width: var(--shell-w); margin: 0 auto;
   padding: 28px 24px 80px; min-height: 100vh;
@@ -414,11 +414,19 @@ a.btn-back-round { text-decoration: none; }
 .tool-card-top .badge { flex-shrink: 0; white-space: nowrap; }
 
 /* ── Section header ──────────────────────────────────────────────────── */
+/* Every section opens the same way: a display-sized title with its own
+   sentence underneath and whatever it can do on the right. */
 .section-header {
-  display: flex; align-items: center; gap: 10px;
-  flex-wrap: wrap; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 14px;
+  flex-wrap: wrap; margin-bottom: 8px;
 }
-.section-title { font-size: 20px; font-weight: 700; flex: 1; }
+.section-title {
+  flex: 1 1 280px; min-width: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 2.6vw, 2.35rem);
+  font-weight: 800; line-height: 1.14; letter-spacing: -.02em;
+}
+.section-header-actions { margin-left: auto; }
 /* One control height across a section's header row. The help button was 28px
    beside pills of 34, and a glyph inside one of them ("Import CSV") took that
    one to 35, so the row had three heights in it. Everything is pinned to the
@@ -431,8 +439,12 @@ a.btn-back-round { text-decoration: none; }
   width: var(--hdr-ctl-h); height: var(--hdr-ctl-h); font-size: 14px;
 }
 .section-desc {
-  font-size: 13px; color: var(--text-secondary);
-  line-height: 1.65; margin-bottom: 18px;
+  font-size: 14px; color: var(--text-secondary);
+  line-height: 1.6; margin-bottom: 22px; max-width: 64ch;
+}
+@media (max-width: 560px) {
+  .section-title { font-size: 1.6rem; flex: 1 1 100%; }
+  .section-header-actions { margin-left: 0; }
 }
 .btn-help-sm {
   appearance: none; border: 1px solid var(--border-faint);
@@ -2319,6 +2331,39 @@ input[type="number"].expected-input {
   .debt-table .expected-input { min-width: 54px; }
 }
 
+
+/* ── The budget at a glance ────────────────────────────────────────────
+   Three figures and one bar: what is left, what has gone, and what was
+   planned. Income is not in it, since none of it is "left to spend". */
+.bud-summary { margin-bottom: 22px; }
+.bud-summary-inner { padding: 18px 20px 16px; }
+.bud-sum-figures { display: flex; flex-wrap: wrap; gap: 28px; margin-bottom: 14px; }
+.bud-sum-fig { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.bud-sum-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.bud-sum-value {
+  font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
+  line-height: 1.1; color: var(--text-primary); font-variant-numeric: tabular-nums;
+}
+.bud-sum-fig:first-child .bud-sum-value { color: var(--grad-indigo); }
+.bud-sum-fig.is-over .bud-sum-value { color: var(--error, #f43f5e); }
+.bud-sum-track {
+  height: 6px; border-radius: var(--radius-pill); overflow: hidden;
+  background: rgba(var(--grad-indigo-rgb), .12);
+}
+.bud-sum-fill {
+  height: 100%; border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--grad-indigo), var(--grad-purple));
+  transition: width .5s var(--ease);
+}
+.bud-sum-fill.is-over { background: linear-gradient(90deg, #fb7185, var(--error, #f43f5e)); }
+.bud-sum-note { margin: 10px 0 0; font-size: 12px; color: var(--text-secondary); }
+@media (max-width: 480px) {
+  .bud-sum-figures { gap: 18px; }
+  .bud-sum-value { font-size: 1.25rem; }
+}
 
 /* ═══════════════════════════════════════════════════════════════
    BUDGET ENVELOPES
