@@ -1038,12 +1038,40 @@ a.btn { text-decoration: none; }
 .module-table th:has(.cc-info), .tx-table th:has(.cc-info) { white-space: nowrap; }
 .module-table th .cc-label-text { white-space: nowrap; }
 
-/* The first column was left sitting 7px off the edge of its own card once
-   the cell padding came down, which reads as though it is falling out. */
+/* The same inset at every width, so the first column sits off the edge of
+   its card by the same amount on a phone as on a desktop. */
+.module-table th:first-child,
+.module-table td:first-child,
+.module-table .total-row td:first-child { padding-left: 16px; }
+
+/* ── One grid across every budget section ──────────────────────────────
+   Income, Expenses, Bills and Savings all show the same five columns, so
+   they are given the same widths and read as one table broken into
+   sections rather than four that happen to sit above each other. Fixed
+   layout is what stops a long category name in one section shifting its
+   Expected column out of line with the next. The debt table is excluded:
+   it has a different set of columns. */
+.module-table:not(.debt-table) { table-layout: fixed; }
+.module-table:not(.debt-table) th:nth-child(2) { width: 150px; }
+.module-table:not(.debt-table) th:nth-child(3) { width: 130px; }
+.module-table:not(.debt-table) th.prog-cell    { width: 172px; }
+.module-table:not(.debt-table) th:last-child   { width: 92px; }
+/* Fixed columns cannot widen for a long name, so it wraps instead of
+   spilling into the column beside it. Breaking between words first, and
+   hyphenating a word that cannot fit on its own, rather than cutting one in
+   half wherever the edge happens to fall. */
+.module-table:not(.debt-table) td:first-child {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
 @media (max-width: 760px) {
-  .module-table th:first-child,
-  .module-table td:first-child,
-  .module-table .total-row td:first-child { padding-left: 16px; }
+  /* Progress has gone by here, so the three that remain share the width.
+     Kept as tight as their contents allow, because every pixel they give up
+     is one the category name gets to stay on a single line. */
+  .module-table:not(.debt-table) th:nth-child(2) { width: 80px; }
+  .module-table:not(.debt-table) th:nth-child(3) { width: 80px; }
+  .module-table:not(.debt-table) th:last-child   { width: 68px; }
   /* On a phone the icon is a poor tap target wedged into a heading, and it
      was the thing pushing these headings wide enough to wrap. The same
      guidance is a tap away in the section's own help panel. */

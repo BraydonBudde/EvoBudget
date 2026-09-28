@@ -158,7 +158,7 @@ const TRANSLATIONS = {
     mod_name_hint:'The label you’ll see for this category everywhere in the app.',mod_due_date_hint:'When this is due each month - used for the calendar and paid tracking.',
     mod_th_expected_hint:'The amount you plan to budget for this category each month.',mod_th_actual_hint:'Calculated automatically from your logged transactions in this category.',mod_th_progress_hint:'How much of your expected amount has been used so far, as a percentage.',
     tx_date_hint:'The date this transaction happened.',tx_type_hint:'What kind of transaction this is - controls which category list you can pick from.',tx_category_hint:'Which budget category this transaction counts toward.',tx_amount_hint:'How much money this transaction was for.',tx_desc_hint:'An optional note to help you remember what this was for.',
-    paid:'Paid', due_date:'Due date', category:'Category', amount:'Amount',
+    paid:'Paid', due_date:'Due date',due_day:'Due day',due_day_hint:'The day of the month this is due',bud_due_day_invalid:'Enter a due day between 1 and 31, or leave it blank.', category:'Category', amount:'Amount',
     description:'Description', date:'Date', type:'Type',
     add_category:'+ Add category', no_transactions:'No transactions yet.',
     // Upgrade
@@ -463,7 +463,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Die Bezeichnung, die du überall in der App für diese Kategorie siehst.',mod_due_date_hint:'Wann dies jeden Monat fällig ist - wird für den Kalender und die Bezahlt-Markierung verwendet.',
     mod_th_expected_hint:'Der Betrag, den du monatlich für diese Kategorie einplanst.',mod_th_actual_hint:'Wird automatisch aus deinen erfassten Transaktionen in dieser Kategorie berechnet.',mod_th_progress_hint:'Wie viel Prozent des geplanten Betrags bisher verbraucht wurde.',
     tx_date_hint:'Das Datum, an dem diese Transaktion stattfand.',tx_type_hint:'Um welche Art von Transaktion es sich handelt - bestimmt, aus welcher Kategorieliste du wählen kannst.',tx_category_hint:'Welcher Budgetkategorie diese Transaktion zugerechnet wird.',tx_amount_hint:'Wie viel Geld diese Transaktion betraf.',tx_desc_hint:'Eine optionale Notiz, damit du dich erinnerst, wofür das war.',
-    paid:'Bezahlt',due_date:'Fälligkeitsdatum',category:'Kategorie',amount:'Betrag',
+    paid:'Bezahlt',due_date:'Fälligkeitsdatum',due_day:'Fälligkeitstag',due_day_hint:'Der Tag im Monat, an dem dies fällig ist',bud_due_day_invalid:'Gib einen Fälligkeitstag zwischen 1 und 31 ein oder lass das Feld leer.',category:'Kategorie',amount:'Betrag',
     description:'Beschreibung',date:'Datum',type:'Typ',
     add_category:'+ Kategorie hinzufügen',no_transactions:'Noch keine Transaktionen.',
     upgrade_title:'Upgrade auf Ultimate Budget Planner',
@@ -748,7 +748,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Le nom que vous verrez pour cette catégorie partout dans l’application.',mod_due_date_hint:'Quand cela est dû chaque mois - utilisé pour le calendrier et le suivi des paiements.',
     mod_th_expected_hint:'Le montant que vous prévoyez de budgétiser pour cette catégorie chaque mois.',mod_th_actual_hint:'Calculé automatiquement à partir de vos transactions enregistrées dans cette catégorie.',mod_th_progress_hint:'Le pourcentage du montant prévu déjà utilisé.',
     tx_date_hint:'La date à laquelle cette transaction a eu lieu.',tx_type_hint:'Le type de transaction - détermine la liste de catégories disponible.',tx_category_hint:'La catégorie budgétaire à laquelle cette transaction est associée.',tx_amount_hint:'Le montant de cette transaction.',tx_desc_hint:'Une note facultative pour vous rappeler à quoi cela correspondait.',
-    paid:'Payé',due_date:"Date d'échéance",category:'Catégorie',amount:'Montant',
+    paid:'Payé',due_date:"Date d'échéance",due_day:"Jour d'échéance",due_day_hint:'Le jour du mois où cela est dû',bud_due_day_invalid:"Saisissez un jour d'échéance entre 1 et 31, ou laissez le champ vide.",category:'Catégorie',amount:'Montant',
     description:'Description',date:'Date',type:'Type',
     add_category:'+ Ajouter une catégorie',no_transactions:'Aucune transaction.',
     upgrade_title:'Passer à Ultimate Budget Planner',
@@ -1033,7 +1033,7 @@ const TRANSLATIONS = {
     mod_name_hint:'El nombre que verás para esta categoría en toda la aplicación.',mod_due_date_hint:'Cuándo vence esto cada mes - se usa para el calendario y el seguimiento de pagos.',
     mod_th_expected_hint:'La cantidad que planeas presupuestar para esta categoría cada mes.',mod_th_actual_hint:'Se calcula automáticamente a partir de tus transacciones registradas en esta categoría.',mod_th_progress_hint:'Qué porcentaje del monto previsto se ha usado hasta ahora.',
     tx_date_hint:'La fecha en que ocurrió esta transacción.',tx_type_hint:'Qué tipo de transacción es - determina de qué lista de categorías puedes elegir.',tx_category_hint:'A qué categoría del presupuesto pertenece esta transacción.',tx_amount_hint:'Cuánto dinero fue esta transacción.',tx_desc_hint:'Una nota opcional para ayudarte a recordar para qué fue esto.',
-    paid:'Pagado',due_date:'Fecha de vencimiento',category:'Categoría',amount:'Importe',
+    paid:'Pagado',due_date:'Fecha de vencimiento',due_day:'Día de vencimiento',due_day_hint:'El día del mes en que vence',bud_due_day_invalid:'Introduce un día de vencimiento entre 1 y 31, o déjalo en blanco.',category:'Categoría',amount:'Importe',
     description:'Descripción',date:'Fecha',type:'Tipo',
     add_category:'+ Añadir categoría',no_transactions:'Sin transacciones aún.',
     upgrade_title:'Actualiza a Ultimate Budget Planner',
@@ -1318,7 +1318,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Il nome che vedrai per questa categoria in tutta l’app.',mod_due_date_hint:'Quando scade ogni mese - usato per il calendario e il monitoraggio dei pagamenti.',
     mod_th_expected_hint:'L’importo che prevedi di destinare a questa categoria ogni mese.',mod_th_actual_hint:'Calcolato automaticamente dalle transazioni registrate in questa categoria.',mod_th_progress_hint:'Quale percentuale dell’importo previsto è stata utilizzata finora.',
     tx_date_hint:'La data in cui è avvenuta questa transazione.',tx_type_hint:'Il tipo di transazione - determina da quale elenco di categorie puoi scegliere.',tx_category_hint:'A quale categoria di budget appartiene questa transazione.',tx_amount_hint:'Quanto denaro riguardava questa transazione.',tx_desc_hint:'Una nota facoltativa per aiutarti a ricordare a cosa si riferiva.',
-    paid:'Pagato',due_date:'Data di scadenza',category:'Categoria',amount:'Importo',
+    paid:'Pagato',due_date:'Data di scadenza',due_day:'Giorno di scadenza',due_day_hint:'Il giorno del mese in cui scade',bud_due_day_invalid:'Inserisci un giorno di scadenza tra 1 e 31, oppure lascia vuoto.',category:'Categoria',amount:'Importo',
     description:'Descrizione',date:'Data',type:'Tipo',
     add_category:'+ Aggiungi categoria',no_transactions:'Nessuna transazione.',
     upgrade_title:'Passa a Ultimate Budget Planner',
@@ -1602,7 +1602,7 @@ const TRANSLATIONS = {
     mod_name_hint:'Nazwa, którą zobaczysz dla tej kategorii w całej aplikacji.',mod_due_date_hint:'Kiedy termin płatności przypada każdego miesiąca - używane do kalendarza i śledzenia płatności.',
     mod_th_expected_hint:'Kwota, którą planujesz przeznaczyć na tę kategorię każdego miesiąca.',mod_th_actual_hint:'Obliczane automatycznie na podstawie zarejestrowanych transakcji w tej kategorii.',mod_th_progress_hint:'Jaki procent planowanej kwoty został dotychczas wykorzystany.',
     tx_date_hint:'Data, kiedy miała miejsce ta transakcja.',tx_type_hint:'Jaki to rodzaj transakcji - określa, z jakiej listy kategorii możesz wybierać.',tx_category_hint:'Do której kategorii budżetu należy ta transakcja.',tx_amount_hint:'Ile pieniędzy dotyczyło tej transakcji.',tx_desc_hint:'Opcjonalna notatka, która pomoże ci zapamiętać, czego to dotyczyło.',
-    paid:'Zapłacone',due_date:'Data płatności',category:'Kategoria',amount:'Kwota',
+    paid:'Zapłacone',due_date:'Data płatności',due_day:'Dzień płatności',due_day_hint:'Dzień miesiąca, w którym przypada płatność',bud_due_day_invalid:'Podaj dzień płatności od 1 do 31 albo zostaw puste.',category:'Kategoria',amount:'Kwota',
     description:'Opis',date:'Data',type:'Typ',
     add_category:'+ Dodaj kategorię',no_transactions:'Brak transakcji.',
     upgrade_title:'Przejdź na Ultimate Budget Planner',
@@ -1877,19 +1877,19 @@ function defaultState() {
         { id: uid(), category: 'Self-development',  expected: 0 }
       ],
       bills: [
-        { id: uid(), category: 'Internet',         expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'Electricity',      expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'Water',            expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'Mobile',           expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'Life Insurance',   expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'Health Insurance', expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'City Garbage',     expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'Gas',              expected: 0, dueDate: '', paid: false }
+        { id: uid(), category: 'Internet',         expected: 0, paid: false },
+        { id: uid(), category: 'Electricity',      expected: 0, paid: false },
+        { id: uid(), category: 'Water',            expected: 0, paid: false },
+        { id: uid(), category: 'Mobile',           expected: 0, paid: false },
+        { id: uid(), category: 'Life Insurance',   expected: 0, paid: false },
+        { id: uid(), category: 'Health Insurance', expected: 0, paid: false },
+        { id: uid(), category: 'City Garbage',     expected: 0, paid: false },
+        { id: uid(), category: 'Gas',              expected: 0, paid: false }
       ],
       debt: [
-        { id: uid(), category: 'Student Loans', expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'Mortgage',      expected: 0, dueDate: '', paid: false },
-        { id: uid(), category: 'Car Payments',  expected: 0, dueDate: '', paid: false }
+        { id: uid(), category: 'Student Loans', expected: 0, paid: false },
+        { id: uid(), category: 'Mortgage',      expected: 0, paid: false },
+        { id: uid(), category: 'Car Payments',  expected: 0, paid: false }
       ],
       savings: [
         { id: uid(), category: 'Travel Fund',    expected: 0 },
@@ -3707,11 +3707,12 @@ window.addEventListener('scroll',()=>document.querySelectorAll('.cc-tip-pop').fo
 function loadSampleData() {
   const ps = state.settings.periodStart, pe = state.settings.periodEnd;
   const day = n => { const d = new Date(ps + 'T00:00:00'); d.setDate(d.getDate() + n); const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); return iso > pe ? pe : iso; };
+  const dayOf = n => parseInt(day(n).split('-')[2], 10);
   state.budgets = {
     income: [{ id: uid(), category: 'Paycheck', expected: 3200 }, { id: uid(), category: 'Side Hustle', expected: 400 }],
     expenses: [{ id: uid(), category: 'Food', expected: 450 }, { id: uid(), category: 'Transportation', expected: 150 }, { id: uid(), category: 'Social Life', expected: 120 }],
-    bills: [{ id: uid(), category: 'Internet', expected: 70, dueDate: day(24), paid: false }, { id: uid(), category: 'Mobile', expected: 55, dueDate: day(19), paid: false }, { id: uid(), category: 'Electricity', expected: 130, dueDate: day(21), paid: false }],
-    debt: [{ id: uid(), category: 'Student Loans', expected: 180, dueDate: day(15), paid: false }],
+    bills: [{ id: uid(), category: 'Internet', expected: 70, dueDay: dayOf(24), paid: false }, { id: uid(), category: 'Mobile', expected: 55, dueDay: dayOf(19), paid: false }, { id: uid(), category: 'Electricity', expected: 130, dueDay: dayOf(21), paid: false }],
+    debt: [{ id: uid(), category: 'Student Loans', expected: 180, dueDay: dayOf(15), paid: false }],
     savings: [{ id: uid(), category: 'Travel Fund', expected: 200 }, { id: uid(), category: 'Car Fund', expected: 100 }]
   };
   state.transactions = [
@@ -4226,12 +4227,9 @@ function openAddBudgetRow(type) {
     </div>` : ''}
     <div class="field"><label class="field-label">${t('expected')} (${SYM})</label>
       <input class="input" type="number" id="abExp" min="0" step="0.01" placeholder="0.00" inputmode="decimal"></div>
-    ${meta.hasDates ? `<div class="field"><label class="field-label">${t('due_date')}</label>
-      <div class="date-field-styled" id="abDateWrap">
-        <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        <span class="date-field-val" id="abDateDisp">${t('mod_set_date')}</span>
-        <input type="date" id="abDate" value="">
-      </div></div>` : ''}
+    ${meta.hasDates ? `<div class="field"><label class="field-label">${t('due_day')}</label>
+      <input class="input" type="number" id="abDueDay" min="1" max="31" step="1" inputmode="numeric" placeholder="1-31">
+      <span class="field-hint">${t('due_day_hint')}</span></div>` : ''}
     <div class="tx-error" id="abError" hidden></div>
     <div class="edit-tx-actions">
       <button class="btn btn-primary" id="abSave" type="button">${t('add')}</button>
@@ -4248,12 +4246,6 @@ function openAddBudgetRow(type) {
   const showErr = msg => { const e = document.getElementById('abError'); if (e) { e.textContent = msg; e.hidden = false; } };
   document.getElementById('modalBody').addEventListener('input', () => {
     const e = document.getElementById('abError'); if (e) e.hidden = true;
-  });
-  document.getElementById('abDateWrap')?.addEventListener('click', () => {
-    openDatePicker(document.getElementById('abDate'), document.getElementById('abDateWrap'));
-  });
-  document.getElementById('abDate')?.addEventListener('change', e => {
-    document.getElementById('abDateDisp').textContent = e.target.value ? formatDateDisplay(e.target.value) : t('mod_set_date');
   });
   // A chip fills the name and hands over to the amount, rather than adding
   // the row outright: the amount is the part worth asking for.
@@ -4277,7 +4269,12 @@ function openAddBudgetRow(type) {
     if (rows.some(r => (r.category || '').toLowerCase() === name.toLowerCase())) return showErr(t('bud_name_taken'));
     if (isNaN(exp) || exp < 0) return showErr(t('bud_expected_invalid'));
     const newRow = { id: uid(), category: name, expected: exp };
-    if (meta.hasDates) { newRow.dueDate = document.getElementById('abDate')?.value || ''; newRow.paid = false; }
+    if (meta.hasDates) {
+      const rawDay = document.getElementById('abDueDay')?.value ?? '';
+      if (rawDay !== '' && !(Number(rawDay) >= 1 && Number(rawDay) <= 31)) return showErr(t('bud_due_day_invalid'));
+      setRowDueDay(newRow, rawDay);
+      newRow.paid = false;
+    }
     (state.budgets[type] = state.budgets[type] || []).push(newRow);
     trialUse(type);
     saveState(); closeModal(); renderModule(type);
@@ -4305,12 +4302,9 @@ function openEditBudgetRow(type, id) {
       <input class="input" type="text" id="ebCat" maxlength="60" value="${esc(row.category)}"></div>
     <div class="field"><label class="field-label">${t('expected')} (${SYM})</label>
       <input class="input" type="number" id="ebExp" min="0" step="0.01" value="${row.expected || ''}" placeholder="0.00"></div>
-    ${meta.hasDates ? `<div class="field"><label class="field-label">${t('due_date')}</label>
-      <div class="date-field-styled" id="ebDateWrap">
-        <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        <span class="date-field-val" id="ebDateDisp">${row.dueDate ? formatDateDisplay(row.dueDate) : t('mod_set_date')}</span>
-        <input type="date" id="ebDate" value="${row.dueDate || ''}">
-      </div></div>` : ''}
+    ${meta.hasDates ? `<div class="field"><label class="field-label">${t('due_day')}</label>
+      <input class="input" type="number" id="ebDueDay" min="1" max="31" step="1" inputmode="numeric" placeholder="1-31" value="${rowDueDay(row) || ''}">
+      <span class="field-hint">${t('due_day_hint')}</span></div>` : ''}
     <div class="tx-error" id="ebError" hidden></div>
     <div class="edit-tx-actions">
       <button class="btn btn-primary" id="ebSave" type="button">${t('save_changes')}</button>
@@ -4324,12 +4318,6 @@ function openEditBudgetRow(type, id) {
     const e = document.getElementById('ebError'); if (e) e.hidden = true;
   });
 
-  document.getElementById('ebDateWrap')?.addEventListener('click', () => {
-    openDatePicker(document.getElementById('ebDate'), document.getElementById('ebDateWrap'));
-  });
-  document.getElementById('ebDate')?.addEventListener('change', e => {
-    document.getElementById('ebDateDisp').textContent = e.target.value ? formatDateDisplay(e.target.value) : t('mod_set_date');
-  });
 
   document.getElementById('ebSave')?.addEventListener('click', () => {
     const name = document.getElementById('ebCat').value.trim();
@@ -4351,7 +4339,11 @@ function openEditBudgetRow(type, id) {
     }
     row.category = name;
     row.expected = exp;
-    if (meta.hasDates) row.dueDate = document.getElementById('ebDate').value || '';
+    if (meta.hasDates) {
+      const rawDay = document.getElementById('ebDueDay')?.value ?? '';
+      if (rawDay !== '' && !(Number(rawDay) >= 1 && Number(rawDay) <= 31)) return showErr(t('bud_due_day_invalid'));
+      setRowDueDay(row, rawDay);
+    }
     saveState(); closeModal(); renderModule(type);
     showToast(t('toast_saved'));
   });
@@ -4561,7 +4553,6 @@ function renderModule(type) {
             <tr>
               <th>${t('category')}</th>
               <th><span class="cc-label-text">${t('expected')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_expected_hint'))}" aria-label="${tf('field_info_aria',t('expected'))}">i</button></th>
-              ${meta.hasDates ? `<th class="col-sm-hide">${t('due_date')}</th>` : ''}
               <th><span class="cc-label-text">${t('actual')}<span class="th-cur"> (${SYM})</span></span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_actual_hint'))}" aria-label="${tf('field_info_aria',t('actual'))}">i</button></th>
               <th class="prog-cell"><span class="cc-label-text">${t('progress')}</span><button class="cc-info" type="button" data-tip="${esc(t('mod_th_progress_hint'))}" aria-label="${tf('field_info_aria',t('progress'))}">i</button></th>
               <th></th>
@@ -4577,12 +4568,6 @@ function renderModule(type) {
                   <td class="cat-cell"><span class="cat-name">${esc(row.category)}</span></td>
                   <td><input class="expected-input" type="number" min="0" step="0.01"
                              value="${row.expected || ''}" placeholder="0.00" data-id="${row.id}"></td>
-                  ${meta.hasDates ? `<td class="col-sm-hide">
-                    <div class="date-cell-styled" id="dwrap-${row.id}" data-input-id="dinp-${row.id}">
-                      <span class="date-cell-val" id="dcell-${row.id}">${row.dueDate ? formatDateDisplay(row.dueDate) : `<span class="no-date">${t('mod_set_date')}</span>`}</span>
-                      <input type="date" id="dinp-${row.id}" class="date-input" value="${row.dueDate || ''}" data-id="${row.id}">
-                    </div>
-                  </td>` : ''}
                   <td class="act-cell">
                     <span class="actual-val${ovr ? ' is-over' : isInc && p >= 100 ? ' is-good' : ''}">${fmt(act)}</span>
                   </td>
@@ -4606,7 +4591,6 @@ function renderModule(type) {
             <tr class="total-row">
               <td><strong>${t('mod_total')}</strong></td>
               <td><strong>${fmt(totalExp)}</strong></td>
-              ${meta.hasDates ? '<td class="col-sm-hide"></td>' : ''}
               <td><strong>${fmt(totalAct)}</strong></td>
               <td class="prog-cell">
                 <div class="prog-bar-wrap">
@@ -4668,32 +4652,6 @@ function renderModule(type) {
     inp.addEventListener('change', () => {
       const row = state.budgets[type].find(r => r.id === inp.dataset.id);
       if (row) { row.expected = parseFloat(inp.value) || 0; saveState(); }
-    });
-  });
-
-  // Due date inputs - save state and refresh formatted display
-  el.querySelectorAll('.date-input').forEach(inp => {
-    inp.addEventListener('change', () => {
-      const row = state.budgets[type].find(r => r.id === inp.dataset.id);
-      if (row) { row.dueDate = inp.value; saveState(); }
-      const dispEl = document.getElementById(`dcell-${inp.dataset.id}`);
-      if (dispEl) dispEl.innerHTML = inp.value
-        ? formatDateDisplay(inp.value)
-        : `<span class="no-date">${t('mod_set_date')}</span>`;
-    });
-  });
-
-  // Click on styled date cells opens the native picker
-  el.querySelectorAll('.date-cell-styled').forEach(wrap => {
-    wrap.addEventListener('click', () => {
-      const inp = document.getElementById(wrap.dataset.inputId);
-      openDatePicker(inp, wrap);
-    });
-    document.getElementById(wrap.dataset.inputId)?.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        openDatePicker(document.getElementById(wrap.dataset.inputId), wrap);
-      }
     });
   });
 
@@ -5745,19 +5703,54 @@ function nlSpentToday() {
 // Money already spoken for: unpaid bill and debt rows whose due date still
 // falls inside this period. Their expected amount is used, because by
 // definition nothing has been paid against them yet.
+// A budget row's due day, 1 to 31, or 0 for none. Saves written before this
+// was a day held a whole date and only its day was ever meaningful, so that
+// is read through here rather than rewritten on load.
+function rowDueDay(row){
+  if(row.dueDay!==undefined&&row.dueDay!==null&&row.dueDay!==''){
+    const d=parseInt(row.dueDay,10)||0;
+    return d>=1&&d<=31?d:0;
+  }
+  if(row.dueDate){ const d=parseInt(String(row.dueDate).split('-')[2],10)||0; return d>=1&&d<=31?d:0; }
+  return 0;
+}
+// Writing it leaves any old dueDate alone: rowDueDay prefers dueDay, so the
+// stale field is never read again, and a rollback still finds its own data.
+function setRowDueDay(row,val){
+  const d=parseInt(val,10)||0;
+  if(d>=1&&d<=31) row.dueDay=d; else delete row.dueDay;
+}
+// The next time that day comes round, on or after today. Short months clamp
+// to their last day, so a 31st still lands in February.
+function nextDueFromDay(day){
+  day=Math.min(31,Math.max(1,parseInt(day,10)||1));
+  const now=new Date(); now.setHours(0,0,0,0);
+  let y=now.getFullYear(), m=now.getMonth();
+  const mk=(yy,mm)=>{const last=new Date(yy,mm+1,0).getDate();return new Date(yy,mm,Math.min(day,last));};
+  let d=mk(y,m);
+  if(d<now){ m++; if(m>11){m=0;y++;} d=mk(y,m); }
+  return toLocalISO(d);
+}
+
 function nlCommitted() {
   const today = toLocalISO(new Date());
   const end = state.settings.periodEnd || '';
   const items = [];
   ['bills', 'debt'].forEach(type => {
     (state.budgets[type] || []).forEach(r => {
-      if (r.paid || !r.dueDate) return;
-      if (r.dueDate < today) return;
-      if (end && r.dueDate > end) return;
+      if (r.paid) return;
+      const day = rowDueDay(r);
+      if (!day) return;
+      // The next time this day comes round. It used to compare a stored
+      // date against today, so a row whose date had passed was dropped for
+      // good instead of coming round again next period.
+      const due = nextDueFromDay(day);
+      if (due < today) return;
+      if (end && due > end) return;
       // A part-paid row commits only what is left of it.
       const amt = rowRemaining(r);
       if (amt > 0) items.push({
-        label: r.category, date: r.dueDate, amount: amt,
+        label: r.category, date: due, amount: amt,
         type: type, id: r.id, paidSoFar: rowPaidAmount(r), expected: Number(r.expected) || 0
       });
     });
