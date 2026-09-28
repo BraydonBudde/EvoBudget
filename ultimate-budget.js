@@ -471,8 +471,12 @@ function computeActuals() {
 function computeSummary(act) {
   const sum=o=>Object.values(o||{}).reduce((s,v)=>s+v,0);
   const totalIncome=sum(act.income), totalExpenses=sum(act.expenses),
-        totalBills=sum(act.bills), totalSavings=sum(act.savings),
-        totalDebt=sum(act.debt), totalSubscriptions=sum(act.bills);
+        totalSavings=sum(act.savings), totalDebt=sum(act.debt);
+  const subNames=new Set((state.bills||[]).filter(b=>b.kind==='subscription').map(b=>b.name));
+  let totalSubscriptions=0, totalBills=0;
+  Object.entries(act.bills||{}).forEach(([name,v])=>{
+    if(subNames.has(name)) totalSubscriptions+=v; else totalBills+=v;
+  });
   const totalOut=totalExpenses+totalBills+totalDebt+totalSubscriptions;
   const savingsRate=totalIncome>0?Math.round((totalSavings/totalIncome)*100):0;
   const leftover=(state.rollover||0)+totalIncome-totalOut-totalSavings;
@@ -510,7 +514,7 @@ function monthlySubAmt(s) {
 function annualSubAmt(s) {
   switch(s.frequency){case'annual':return s.amount;case'weekly':return s.amount*52;case'quarterly':return s.amount*4;default:return s.amount*12;}
 }
-function totalSubMonthly() { return state.bills.filter(s=>s.active!==false).reduce((t,s)=>t+monthlySubAmt(s),0); }
+function totalSubMonthly() { return state.bills.filter(s=>s.active!==false&&s.kind==='subscription').reduce((t,s)=>t+monthlySubAmt(s),0); }
 
 // ── Debt Payoff Algorithm ─────────────────────────────────────────────
 function calcAmortizationPayment(principal,aprPercent,termMonths) {
@@ -5270,7 +5274,7 @@ function renderDashboardLayout1() {
   const act=computeActuals(),sum=computeSummary(act),result=runDebtPayoff(),subMo=totalSubMonthly();
   const expInc=state.budgets.income.reduce((t,r)=>t+(r.expected||0),0);
   const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
-  const expBil=(state.bills||[]).reduce((t,r)=>t+(r.amount||0),0);
+  const expBil=(state.bills||[]).filter(r=>r.active!==false&&r.kind!=='subscription').reduce((t,r)=>t+monthlySubAmt(r),0);
   const expSav=(state.sinkingFunds||[]).reduce((t,f)=>t+(calcFund(f).requiredMonthly||0),0);
   const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
   const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
@@ -5282,7 +5286,6 @@ function renderDashboardLayout1() {
     ...state.budgets.expenses.map(r=>({label:r.category,value:act.expenses[r.category]||0})),
     ...(state.bills||[]).map(r=>({label:r.name,value:act.bills[r.name]||0})),
     ...Object.entries(act.debt||{}).map(([name,val])=>({label:name,value:val})),
-    ...Object.entries(act.bills||{}).map(([name,val])=>({label:name,value:val})),
   ].filter(s=>s.value>0).sort((a,b)=>b.value-a.value), COLORS);
   const spTot=spendSegs.reduce((t,s)=>t+s.value,0);
   const flowRows=[
@@ -5376,7 +5379,7 @@ function renderDashboardLayout2() {
   const act=computeActuals(),sum=computeSummary(act),result=runDebtPayoff(),subMo=totalSubMonthly();
   const expInc=state.budgets.income.reduce((t,r)=>t+(r.expected||0),0);
   const expExp=state.budgets.expenses.reduce((t,r)=>t+(r.expected||0),0);
-  const expBil=(state.bills||[]).reduce((t,r)=>t+(r.amount||0),0);
+  const expBil=(state.bills||[]).filter(r=>r.active!==false&&r.kind!=='subscription').reduce((t,r)=>t+monthlySubAmt(r),0);
   const expSav=(state.sinkingFunds||[]).reduce((t,f)=>t+(calcFund(f).requiredMonthly||0),0);
   const expDebt=state.debts.reduce((s,d)=>s+totalMonthlyDebtCost(d),0);
   const expOut=expExp+expBil+expDebt+subMo,leftColor=sum.leftover>=0?'#10b981':'#f43f5e';
@@ -5388,7 +5391,6 @@ function renderDashboardLayout2() {
     ...state.budgets.expenses.map(r=>({label:r.category,value:act.expenses[r.category]||0})),
     ...(state.bills||[]).map(r=>({label:r.name,value:act.bills[r.name]||0})),
     ...Object.entries(act.debt||{}).map(([name,val])=>({label:name,value:val})),
-    ...Object.entries(act.bills||{}).map(([name,val])=>({label:name,value:val})),
   ].filter(s=>s.value>0).sort((a,b)=>b.value-a.value), COLORS);
   const spTot=spendSegs.reduce((t,s)=>t+s.value,0);
 
