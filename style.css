@@ -2459,6 +2459,89 @@ input[type="number"].expected-input {
   .cu-pay { padding: 6px 12px; }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   List view. The toggle in each section header swaps the cards for rows:
+   an icon or date leaf, the name with one line under it, a thin bar where
+   there is progress, the figure that matters, and small icon buttons. The
+   columns are fixed so rows line up down the page. */
+.view-toggle .app-ico { width: 16px; height: 16px; }
+.view-toggle[aria-pressed="true"] { color: var(--grad-indigo); border-color: rgba(var(--grad-indigo-rgb), .5); }
+.lv {
+  background: var(--surface); border: 1px solid var(--border-soft); box-shadow: var(--shadow-card);
+  border-radius: 16px; padding: 4px 16px; margin-bottom: 16px;
+}
+.lv-row {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) minmax(60px, 120px) auto auto;
+  align-items: center; gap: 14px; padding: 11px 0;
+  border-top: 1px solid var(--border-faint);
+}
+.lv-row:first-child { border-top: none; }
+.lv-ico {
+  width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center;
+  background: rgba(var(--grad-indigo-rgb), .08); color: var(--grad-indigo);
+}
+.lv-ico .app-ico, .lv-ico svg { width: 20px; height: 20px; }
+.lv-emoji { font-size: 19px; line-height: 1; }
+.lv-leaf {
+  width: 40px; height: 40px; border-radius: 11px; line-height: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 1.5px solid var(--border-faint); background: var(--surface-strong);
+}
+.lv-ico:has(> .lv-leaf) { background: none; }
+.lv-leaf b { font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: var(--text-primary); }
+.lv-leaf small { margin-top: 2px; font-size: 8.5px; font-weight: 700; letter-spacing: .08em; color: var(--text-faint); }
+.lv-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lv-name { font-weight: 700; font-size: 14.5px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lv-sub { font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lv-tag {
+  margin-left: 8px; padding: 1px 7px; border-radius: var(--radius-pill); vertical-align: 1px;
+  font-size: 10.5px; font-weight: 600; color: var(--text-secondary); border: 1px solid var(--border-faint);
+}
+.lv-bar { height: 6px; border-radius: 99px; background: var(--border-faint); overflow: hidden; }
+.lv-bar:empty { background: none; }
+.lv-bar-fill { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #6366f1, #c026d3); }
+.lv-bar-fill.is-in { background: linear-gradient(90deg, #10b981, #06b6d4); }
+.lv-bar-fill.is-over { background: linear-gradient(90deg, #fb923c, #f43f5e); }
+.lv-fig {
+  display: flex; flex-direction: column; align-items: flex-end; min-width: 84px;
+  font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; color: var(--text-primary);
+}
+.lv-fig small { font-size: 11.5px; font-weight: 500; color: var(--text-faint); }
+.lv-row.is-over .lv-fig { color: #f43f5e; }
+.lv-row.is-paused { opacity: .55; }
+.lv-row.is-done .lv-sub { color: #10b981; }
+.lv-acts { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.lv-act {
+  appearance: none; cursor: pointer; width: 32px; height: 32px; border-radius: 9px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid transparent; color: var(--text-secondary);
+  transition: color .15s, border-color .15s, background .15s;
+}
+.lv-act .app-ico { width: 16px; height: 16px; }
+.lv-act:hover { color: var(--grad-indigo); border-color: var(--border-faint); background: var(--surface-strong); }
+.lv-act--del:hover { color: #f43f5e; }
+.lv-acts .sub-pay-btn { margin-right: 4px; }
+.lv-total .lv-name { text-transform: uppercase; font-size: 12px; letter-spacing: .06em; color: var(--text-secondary); }
+.lv-total .lv-fig { font-size: 16px; }
+/* The calendar as a list: the month's events are the view. */
+.cal-as-list .cal-grid-wrap, .cal-as-list .cal-legend { display: none; }
+.cal-as-list .panel:has(> .cal-grid-wrap) { display: none; }
+@media (max-width: 760px) {
+  .lv { padding: 2px 12px; }
+  .lv-row {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    grid-template-areas: "ico main fig" "ico bar acts";
+    gap: 6px 12px; padding: 10px 0;
+  }
+  .lv-ico { grid-area: ico; width: 36px; height: 36px; align-self: start; }
+  .lv-leaf { width: 36px; height: 36px; }
+  .lv-main { grid-area: main; }
+  .lv-fig { grid-area: fig; min-width: 0; }
+  .lv-bar { grid-area: bar; align-self: center; }
+  .lv-acts { grid-area: acts; }
+  .lv-act { width: 30px; height: 30px; }
+}
+
 /* ── The budget at a glance ────────────────────────────────────────────
    Three figures and one bar: what is left, what has gone, and what was
    planned. Income is not in it, since none of it is "left to spend". */

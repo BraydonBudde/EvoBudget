@@ -1019,7 +1019,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Debt-free',dash_interest_label:'Interest',
     dash_months_label:'Months',dash_method_label:'Method',
     dash_set_balances:'Set balances to see results.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_sinking_fund:'Add to a goal',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_sinking_fund:'Add to goal',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_sinking_fund:'Goal',qa_type_debt:'Debt',qa_type_income:'Income',qa_type_it:'type it instead',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_sinking_fund:'Add a saving goal first.',qa_no_cats_debt:'Add a debt first.',qa_no_cats_income:'Add an income category on the Budget tab first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_title:'Coming up',cu_all:'All bills',cu_paid:'Paid',cu_today:'today',cu_tomorrow:'tomorrow',cu_yesterday:'yesterday',cu_in_days:'in {0} days',cu_days_ago:'{0} days ago',cu_empty:'Nothing due in the next {0} days.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',view_as_list:'Show as a list',view_as_cards:'Show as cards',sf_saved_so_far:'saved so far',sf_open_ended:'no target',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_sinking_fund:'Add to a goal',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_sinking_fund:'Add to goal',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_sinking_fund:'Goal',qa_type_debt:'Debt',qa_type_income:'Income',qa_type_it:'type it instead',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_sinking_fund:'Add a saving goal first.',qa_no_cats_debt:'Add a debt first.',qa_no_cats_income:'Add an income category on the Budget tab first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_title:'Coming up',cu_all:'All bills',cu_paid:'Paid',cu_today:'today',cu_tomorrow:'tomorrow',cu_yesterday:'yesterday',cu_in_days:'in {0} days',cu_days_ago:'{0} days ago',cu_empty:'Nothing due in the next {0} days.',
     dash_no_sinking:'No saving goals yet.',dash_create_one:'Create one \u2192',
     help_dash_intro:'The Dashboard gives you a real-time financial overview. All numbers update automatically as you log transactions.',
     help_dash_hero_h:'Hero stats row',
@@ -1597,7 +1597,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Schuldenfrei',dash_interest_label:'Zinsen',
     dash_months_label:'Monate',dash_method_label:'Methode',
     dash_set_balances:'Salden eingeben, um Ergebnisse zu sehen.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Bevorstehend ({0} Tage)',dash_nothing_scheduled:'Nichts geplant.',qa_title_expense:'Ausgabe hinzufügen',qa_title_bill:'Rechnung bezahlen',qa_title_sinking_fund:'Zum Ziel hinzufügen',qa_title_debt:'Schuld bezahlen',qa_title_income:'Einnahme hinzufügen',qa_go_expense:'Ausgabe hinzufügen',qa_go_bill:'Rechnung bezahlen',qa_go_sinking_fund:'Zum Ziel',qa_go_debt:'Schuld bezahlen',qa_go_income:'Einnahme hinzufügen',qa_type_expense:'Ausgabe',qa_type_bill:'Rechnung',qa_type_sinking_fund:'Ziel',qa_type_debt:'Schuld',qa_type_income:'Einnahme',qa_type_it:'lieber eintippen',qa_clear:'Löschen',qa_backspace:'Letzte Ziffer löschen',qa_tap_cat:'Tippe auf eine Kategorie',qa_no_cats_expense:'Noch keine Ausgabenkategorien, du kannst diese später zuordnen.',qa_no_cats_bill:'Lege zuerst eine Rechnung an.',qa_no_cats_sinking_fund:'Lege zuerst ein Sparziel an.',qa_no_cats_debt:'Lege zuerst eine Schuld an.',qa_no_cats_income:'Lege zuerst eine Einnahmekategorie an.',qa_uncat:'Ohne Kategorie',qa_uncat_chip:'Ohne Kategorie · später zuordnen',qa_add_note:'Notiz',qa_again:'Speichern und weitere',qa_after:'Danach: {0} bis {1}, etwa {2} pro Tag.',cu_today_cap:'Heute',cu_yesterday_cap:'Gestern',cu_title:'Demnächst',cu_all:'Alle Rechnungen',cu_paid:'Bezahlt',cu_today:'heute',cu_tomorrow:'morgen',cu_yesterday:'gestern',cu_in_days:'in {0} Tagen',cu_days_ago:'vor {0} Tagen',cu_empty:'In den nächsten {0} Tagen ist nichts fällig.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Bevorstehend ({0} Tage)',dash_nothing_scheduled:'Nichts geplant.',view_as_list:'Als Liste anzeigen',view_as_cards:'Als Karten anzeigen',sf_saved_so_far:'bisher gespart',sf_open_ended:'ohne Ziel',qa_title_expense:'Ausgabe hinzufügen',qa_title_bill:'Rechnung bezahlen',qa_title_sinking_fund:'Zum Ziel hinzufügen',qa_title_debt:'Schuld bezahlen',qa_title_income:'Einnahme hinzufügen',qa_go_expense:'Ausgabe hinzufügen',qa_go_bill:'Rechnung bezahlen',qa_go_sinking_fund:'Zum Ziel',qa_go_debt:'Schuld bezahlen',qa_go_income:'Einnahme hinzufügen',qa_type_expense:'Ausgabe',qa_type_bill:'Rechnung',qa_type_sinking_fund:'Ziel',qa_type_debt:'Schuld',qa_type_income:'Einnahme',qa_type_it:'lieber eintippen',qa_clear:'Löschen',qa_backspace:'Letzte Ziffer löschen',qa_tap_cat:'Tippe auf eine Kategorie',qa_no_cats_expense:'Noch keine Ausgabenkategorien, du kannst diese später zuordnen.',qa_no_cats_bill:'Lege zuerst eine Rechnung an.',qa_no_cats_sinking_fund:'Lege zuerst ein Sparziel an.',qa_no_cats_debt:'Lege zuerst eine Schuld an.',qa_no_cats_income:'Lege zuerst eine Einnahmekategorie an.',qa_uncat:'Ohne Kategorie',qa_uncat_chip:'Ohne Kategorie · später zuordnen',qa_add_note:'Notiz',qa_again:'Speichern und weitere',qa_after:'Danach: {0} bis {1}, etwa {2} pro Tag.',cu_today_cap:'Heute',cu_yesterday_cap:'Gestern',cu_title:'Demnächst',cu_all:'Alle Rechnungen',cu_paid:'Bezahlt',cu_today:'heute',cu_tomorrow:'morgen',cu_yesterday:'gestern',cu_in_days:'in {0} Tagen',cu_days_ago:'vor {0} Tagen',cu_empty:'In den nächsten {0} Tagen ist nichts fällig.',
     dash_no_sinking:'Noch keine Sparziele.',dash_create_one:'Einen erstellen \u2192',
     help_dash_intro:'Das Dashboard gibt dir einen Echtzeit-Überblick über deine Finanzen. Alle Zahlen werden automatisch aktualisiert, wenn du Transaktionen erfasst.',
     help_dash_hero_h:'Statistikübersicht',
@@ -2157,7 +2157,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Sans dette',dash_interest_label:'Intérêts',
     dash_months_label:'Mois',dash_method_label:'Méthode',
     dash_set_balances:'Entrez les soldes pour voir les résultats.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 À venir ({0} jours)',dash_nothing_scheduled:'Rien de planifié.',qa_title_expense:'Ajouter une dépense',qa_title_bill:'Payer une facture',qa_title_sinking_fund:'Alimenter un objectif',qa_title_debt:'Payer une dette',qa_title_income:'Ajouter un revenu',qa_go_expense:'Ajouter',qa_go_bill:'Payer',qa_go_sinking_fund:'Alimenter',qa_go_debt:'Payer',qa_go_income:'Ajouter',qa_type_expense:'Dépense',qa_type_bill:'Facture',qa_type_sinking_fund:'Objectif',qa_type_debt:'Dette',qa_type_income:'Revenu',qa_type_it:'le saisir plutôt',qa_clear:'Effacer',qa_backspace:'Effacer le dernier chiffre',qa_tap_cat:'Touchez une catégorie',qa_no_cats_expense:'Aucune catégorie pour le moment, vous pourrez la classer plus tard.',qa_no_cats_bill:"Ajoutez d'abord une facture.",qa_no_cats_sinking_fund:"Ajoutez d'abord un objectif.",qa_no_cats_debt:"Ajoutez d'abord une dette.",qa_no_cats_income:"Ajoutez d'abord une catégorie de revenu.",qa_uncat:'Sans catégorie',qa_uncat_chip:'Sans catégorie · à classer',qa_add_note:'Ajouter une note',qa_again:'Enregistrer et continuer',qa_after:'Ensuite : {0} jusqu’au {1}, environ {2} par jour.',cu_today_cap:"Aujourd'hui",cu_yesterday_cap:'Hier',cu_title:'À venir',cu_all:'Toutes les factures',cu_paid:'Payé',cu_today:"aujourd'hui",cu_tomorrow:'demain',cu_yesterday:'hier',cu_in_days:'dans {0} jours',cu_days_ago:'il y a {0} jours',cu_empty:'Rien à payer dans les {0} prochains jours.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 À venir ({0} jours)',dash_nothing_scheduled:'Rien de planifié.',view_as_list:'Afficher en liste',view_as_cards:'Afficher en cartes',sf_saved_so_far:'épargné à ce jour',sf_open_ended:'sans objectif chiffré',qa_title_expense:'Ajouter une dépense',qa_title_bill:'Payer une facture',qa_title_sinking_fund:'Alimenter un objectif',qa_title_debt:'Payer une dette',qa_title_income:'Ajouter un revenu',qa_go_expense:'Ajouter',qa_go_bill:'Payer',qa_go_sinking_fund:'Alimenter',qa_go_debt:'Payer',qa_go_income:'Ajouter',qa_type_expense:'Dépense',qa_type_bill:'Facture',qa_type_sinking_fund:'Objectif',qa_type_debt:'Dette',qa_type_income:'Revenu',qa_type_it:'le saisir plutôt',qa_clear:'Effacer',qa_backspace:'Effacer le dernier chiffre',qa_tap_cat:'Touchez une catégorie',qa_no_cats_expense:'Aucune catégorie pour le moment, vous pourrez la classer plus tard.',qa_no_cats_bill:"Ajoutez d'abord une facture.",qa_no_cats_sinking_fund:"Ajoutez d'abord un objectif.",qa_no_cats_debt:"Ajoutez d'abord une dette.",qa_no_cats_income:"Ajoutez d'abord une catégorie de revenu.",qa_uncat:'Sans catégorie',qa_uncat_chip:'Sans catégorie · à classer',qa_add_note:'Ajouter une note',qa_again:'Enregistrer et continuer',qa_after:'Ensuite : {0} jusqu’au {1}, environ {2} par jour.',cu_today_cap:"Aujourd'hui",cu_yesterday_cap:'Hier',cu_title:'À venir',cu_all:'Toutes les factures',cu_paid:'Payé',cu_today:"aujourd'hui",cu_tomorrow:'demain',cu_yesterday:'hier',cu_in_days:'dans {0} jours',cu_days_ago:'il y a {0} jours',cu_empty:'Rien à payer dans les {0} prochains jours.',
     dash_no_sinking:'Aucun objectif d’épargne.',dash_create_one:'En créer un \u2192',
     help_dash_intro:"Le tableau de bord vous donne un aperçu financier en temps réel. Tous les chiffres se mettent à jour automatiquement lorsque vous enregistrez des transactions.",
     help_dash_hero_h:'Statistiques principales',
@@ -2717,7 +2717,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Sin deuda',dash_interest_label:'Intereses',
     dash_months_label:'Meses',dash_method_label:'Método',
     dash_set_balances:'Introduce los saldos para ver los resultados.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Próximos ({0} días)',dash_nothing_scheduled:'Nada programado.',qa_title_expense:'Añadir gasto',qa_title_bill:'Pagar factura',qa_title_sinking_fund:'Aportar a una meta',qa_title_debt:'Pagar deuda',qa_title_income:'Añadir ingreso',qa_go_expense:'Añadir gasto',qa_go_bill:'Pagar',qa_go_sinking_fund:'Aportar',qa_go_debt:'Pagar',qa_go_income:'Añadir',qa_type_expense:'Gasto',qa_type_bill:'Factura',qa_type_sinking_fund:'Meta',qa_type_debt:'Deuda',qa_type_income:'Ingreso',qa_type_it:'escribirlo',qa_clear:'Borrar',qa_backspace:'Borrar el último dígito',qa_tap_cat:'Toca una categoría',qa_no_cats_expense:'Aún no hay categorías, puedes clasificarlo después.',qa_no_cats_bill:'Añade primero una factura.',qa_no_cats_sinking_fund:'Añade primero una meta.',qa_no_cats_debt:'Añade primero una deuda.',qa_no_cats_income:'Añade primero una categoría de ingresos.',qa_uncat:'Sin categoría',qa_uncat_chip:'Sin categoría · clasificar luego',qa_add_note:'Añadir nota',qa_again:'Guardar y añadir otro',qa_after:'Después: {0} hasta el {1}, unos {2} al día.',cu_today_cap:'Hoy',cu_yesterday_cap:'Ayer',cu_title:'Próximos',cu_all:'Todas las facturas',cu_paid:'Pagado',cu_today:'hoy',cu_tomorrow:'mañana',cu_yesterday:'ayer',cu_in_days:'en {0} días',cu_days_ago:'hace {0} días',cu_empty:'Nada vence en los próximos {0} días.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Próximos ({0} días)',dash_nothing_scheduled:'Nada programado.',view_as_list:'Ver como lista',view_as_cards:'Ver como tarjetas',sf_saved_so_far:'ahorrado hasta ahora',sf_open_ended:'sin objetivo',qa_title_expense:'Añadir gasto',qa_title_bill:'Pagar factura',qa_title_sinking_fund:'Aportar a una meta',qa_title_debt:'Pagar deuda',qa_title_income:'Añadir ingreso',qa_go_expense:'Añadir gasto',qa_go_bill:'Pagar',qa_go_sinking_fund:'Aportar',qa_go_debt:'Pagar',qa_go_income:'Añadir',qa_type_expense:'Gasto',qa_type_bill:'Factura',qa_type_sinking_fund:'Meta',qa_type_debt:'Deuda',qa_type_income:'Ingreso',qa_type_it:'escribirlo',qa_clear:'Borrar',qa_backspace:'Borrar el último dígito',qa_tap_cat:'Toca una categoría',qa_no_cats_expense:'Aún no hay categorías, puedes clasificarlo después.',qa_no_cats_bill:'Añade primero una factura.',qa_no_cats_sinking_fund:'Añade primero una meta.',qa_no_cats_debt:'Añade primero una deuda.',qa_no_cats_income:'Añade primero una categoría de ingresos.',qa_uncat:'Sin categoría',qa_uncat_chip:'Sin categoría · clasificar luego',qa_add_note:'Añadir nota',qa_again:'Guardar y añadir otro',qa_after:'Después: {0} hasta el {1}, unos {2} al día.',cu_today_cap:'Hoy',cu_yesterday_cap:'Ayer',cu_title:'Próximos',cu_all:'Todas las facturas',cu_paid:'Pagado',cu_today:'hoy',cu_tomorrow:'mañana',cu_yesterday:'ayer',cu_in_days:'en {0} días',cu_days_ago:'hace {0} días',cu_empty:'Nada vence en los próximos {0} días.',
     dash_no_sinking:'Aún no hay metas de ahorro.',dash_create_one:'Crear uno \u2192',
     help_dash_intro:'El panel te ofrece un resumen financiero en tiempo real. Todos los números se actualizan automáticamente cuando registras transacciones.',
     help_dash_hero_h:'Fila de estadísticas principales',
@@ -3278,7 +3278,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Senza debiti',dash_interest_label:'Interessi',
     dash_months_label:'Mesi',dash_method_label:'Metodo',
     dash_set_balances:'Inserisci i saldi per vedere i risultati.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 In arrivo ({0} giorni)',dash_nothing_scheduled:'Niente in programma.',qa_title_expense:'Aggiungi spesa',qa_title_bill:'Paga bolletta',qa_title_sinking_fund:'Versa su un obiettivo',qa_title_debt:'Paga debito',qa_title_income:'Aggiungi entrata',qa_go_expense:'Aggiungi spesa',qa_go_bill:'Paga',qa_go_sinking_fund:'Versa',qa_go_debt:'Paga',qa_go_income:'Aggiungi',qa_type_expense:'Spesa',qa_type_bill:'Bolletta',qa_type_sinking_fund:'Obiettivo',qa_type_debt:'Debito',qa_type_income:'Entrata',qa_type_it:'scrivilo',qa_clear:'Cancella',qa_backspace:"Cancella l'ultima cifra",qa_tap_cat:'Tocca una categoria',qa_no_cats_expense:'Nessuna categoria ancora, puoi assegnarla dopo.',qa_no_cats_bill:'Aggiungi prima una bolletta.',qa_no_cats_sinking_fund:'Aggiungi prima un obiettivo.',qa_no_cats_debt:'Aggiungi prima un debito.',qa_no_cats_income:'Aggiungi prima una categoria di entrata.',qa_uncat:'Senza categoria',qa_uncat_chip:'Senza categoria · da sistemare',qa_add_note:'Aggiungi nota',qa_again:'Salva e aggiungi un altro',qa_after:'Dopo: {0} fino al {1}, circa {2} al giorno.',cu_today_cap:'Oggi',cu_yesterday_cap:'Ieri',cu_title:'In arrivo',cu_all:'Tutte le bollette',cu_paid:'Pagato',cu_today:'oggi',cu_tomorrow:'domani',cu_yesterday:'ieri',cu_in_days:'tra {0} giorni',cu_days_ago:'{0} giorni fa',cu_empty:'Niente in scadenza nei prossimi {0} giorni.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 In arrivo ({0} giorni)',dash_nothing_scheduled:'Niente in programma.',view_as_list:'Mostra come elenco',view_as_cards:'Mostra come schede',sf_saved_so_far:'risparmiato finora',sf_open_ended:'senza obiettivo',qa_title_expense:'Aggiungi spesa',qa_title_bill:'Paga bolletta',qa_title_sinking_fund:'Versa su un obiettivo',qa_title_debt:'Paga debito',qa_title_income:'Aggiungi entrata',qa_go_expense:'Aggiungi spesa',qa_go_bill:'Paga',qa_go_sinking_fund:'Versa',qa_go_debt:'Paga',qa_go_income:'Aggiungi',qa_type_expense:'Spesa',qa_type_bill:'Bolletta',qa_type_sinking_fund:'Obiettivo',qa_type_debt:'Debito',qa_type_income:'Entrata',qa_type_it:'scrivilo',qa_clear:'Cancella',qa_backspace:"Cancella l'ultima cifra",qa_tap_cat:'Tocca una categoria',qa_no_cats_expense:'Nessuna categoria ancora, puoi assegnarla dopo.',qa_no_cats_bill:'Aggiungi prima una bolletta.',qa_no_cats_sinking_fund:'Aggiungi prima un obiettivo.',qa_no_cats_debt:'Aggiungi prima un debito.',qa_no_cats_income:'Aggiungi prima una categoria di entrata.',qa_uncat:'Senza categoria',qa_uncat_chip:'Senza categoria · da sistemare',qa_add_note:'Aggiungi nota',qa_again:'Salva e aggiungi un altro',qa_after:'Dopo: {0} fino al {1}, circa {2} al giorno.',cu_today_cap:'Oggi',cu_yesterday_cap:'Ieri',cu_title:'In arrivo',cu_all:'Tutte le bollette',cu_paid:'Pagato',cu_today:'oggi',cu_tomorrow:'domani',cu_yesterday:'ieri',cu_in_days:'tra {0} giorni',cu_days_ago:'{0} giorni fa',cu_empty:'Niente in scadenza nei prossimi {0} giorni.',
     dash_no_sinking:'Ancora nessun obiettivo.',dash_create_one:'Creane uno \u2192',
     help_dash_intro:'Il pannello offre una panoramica finanziaria in tempo reale. Tutti i numeri si aggiornano automaticamente quando registri le transazioni.',
     help_dash_hero_h:'Statistiche principali',
@@ -3838,7 +3838,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Wolny od długów',dash_interest_label:'Odsetki',
     dash_months_label:'Miesiące',dash_method_label:'Metoda',
     dash_set_balances:'Wpisz salda, aby zobaczyć wyniki.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Nadchodzące ({0} dni)',dash_nothing_scheduled:'Nic zaplanowanego.',qa_title_expense:'Dodaj wydatek',qa_title_bill:'Zapłać rachunek',qa_title_sinking_fund:'Wpłać na cel',qa_title_debt:'Spłać dług',qa_title_income:'Dodaj przychód',qa_go_expense:'Dodaj wydatek',qa_go_bill:'Zapłać',qa_go_sinking_fund:'Wpłać',qa_go_debt:'Spłać',qa_go_income:'Dodaj',qa_type_expense:'Wydatek',qa_type_bill:'Rachunek',qa_type_sinking_fund:'Cel',qa_type_debt:'Dług',qa_type_income:'Przychód',qa_type_it:'wpisz ręcznie',qa_clear:'Wyczyść',qa_backspace:'Usuń ostatnią cyfrę',qa_tap_cat:'Wybierz kategorię',qa_no_cats_expense:'Brak kategorii, możesz przypisać później.',qa_no_cats_bill:'Najpierw dodaj rachunek.',qa_no_cats_sinking_fund:'Najpierw dodaj cel.',qa_no_cats_debt:'Najpierw dodaj dług.',qa_no_cats_income:'Najpierw dodaj kategorię przychodu.',qa_uncat:'Bez kategorii',qa_uncat_chip:'Bez kategorii · przypisz później',qa_add_note:'Dodaj notatkę',qa_again:'Zapisz i dodaj kolejny',qa_after:'Potem: {0} do {1}, około {2} dziennie.',cu_today_cap:'Dziś',cu_yesterday_cap:'Wczoraj',cu_title:'Wkrótce',cu_all:'Wszystkie rachunki',cu_paid:'Zapłacone',cu_today:'dziś',cu_tomorrow:'jutro',cu_yesterday:'wczoraj',cu_in_days:'za {0} dni',cu_days_ago:'{0} dni temu',cu_empty:'Nic nie jest do zapłaty w ciągu {0} dni.',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Nadchodzące ({0} dni)',dash_nothing_scheduled:'Nic zaplanowanego.',view_as_list:'Pokaż jako listę',view_as_cards:'Pokaż jako karty',sf_saved_so_far:'zaoszczędzono dotąd',sf_open_ended:'bez celu',qa_title_expense:'Dodaj wydatek',qa_title_bill:'Zapłać rachunek',qa_title_sinking_fund:'Wpłać na cel',qa_title_debt:'Spłać dług',qa_title_income:'Dodaj przychód',qa_go_expense:'Dodaj wydatek',qa_go_bill:'Zapłać',qa_go_sinking_fund:'Wpłać',qa_go_debt:'Spłać',qa_go_income:'Dodaj',qa_type_expense:'Wydatek',qa_type_bill:'Rachunek',qa_type_sinking_fund:'Cel',qa_type_debt:'Dług',qa_type_income:'Przychód',qa_type_it:'wpisz ręcznie',qa_clear:'Wyczyść',qa_backspace:'Usuń ostatnią cyfrę',qa_tap_cat:'Wybierz kategorię',qa_no_cats_expense:'Brak kategorii, możesz przypisać później.',qa_no_cats_bill:'Najpierw dodaj rachunek.',qa_no_cats_sinking_fund:'Najpierw dodaj cel.',qa_no_cats_debt:'Najpierw dodaj dług.',qa_no_cats_income:'Najpierw dodaj kategorię przychodu.',qa_uncat:'Bez kategorii',qa_uncat_chip:'Bez kategorii · przypisz później',qa_add_note:'Dodaj notatkę',qa_again:'Zapisz i dodaj kolejny',qa_after:'Potem: {0} do {1}, około {2} dziennie.',cu_today_cap:'Dziś',cu_yesterday_cap:'Wczoraj',cu_title:'Wkrótce',cu_all:'Wszystkie rachunki',cu_paid:'Zapłacone',cu_today:'dziś',cu_tomorrow:'jutro',cu_yesterday:'wczoraj',cu_in_days:'za {0} dni',cu_days_ago:'{0} dni temu',cu_empty:'Nic nie jest do zapłaty w ciągu {0} dni.',
     dash_no_sinking:'Brak celów oszczędnościowych.',dash_create_one:'Utwórz jeden \u2192',
     help_dash_intro:'Panel zapewnia przegląd finansów w czasie rzeczywistym. Wszystkie liczby aktualizują się automatycznie po dodaniu transakcji.',
     help_dash_hero_h:'Główne statystyki',
@@ -5665,7 +5665,7 @@ function renderBudget() {
   const act=computeActuals(), MOD_META=getModMeta();
   const el=document.getElementById('bview-budget');
   el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('budget')} ${t('tab_budget')}</h2>
-      <div class="section-header-actions">${helpBtn('budget')}<button class="btn btn-primary btn-sm" id="budAddAny" type="button">${t('bud_add_any')}</button></div>
+      <div class="section-header-actions">${viewToggleBtn('budget')}${helpBtn('budget')}<button class="btn btn-primary btn-sm" id="budAddAny" type="button">${t('bud_add_any')}</button></div>
     </div>
     <p class="section-desc">${t('bud_desc')}</p>
     ${budgetSummaryHtml(act)}`+
@@ -5674,6 +5674,7 @@ function renderBudget() {
   el.querySelector('[data-help]')?.addEventListener('click',e=>showHelp(e.currentTarget.dataset.help));
   // Opened without a section, so the form asks which one it belongs to.
   document.getElementById('budAddAny')?.addEventListener('click',()=>openAddBudgetRow(null));
+  wireViewToggle(el,'budget',renderBudget);
   initFieldTips(el);
 }
 
@@ -5862,6 +5863,7 @@ function openAddBudgetRow(type, forcePicker) {
 // thing they sat in.
 const APP_ICONS = {
   envelope:      '<rect x="2.6" y="5" width="18.8" height="14" rx="2.4"/><path d="M3.2 7 12 13l8.8-6"/>',
+  list:          '<path d="M8.6 6.5h12"/><path d="M8.6 12h12"/><path d="M8.6 17.5h12"/><circle cx="4.3" cy="6.5" r="1"/><circle cx="4.3" cy="12" r="1"/><circle cx="4.3" cy="17.5" r="1"/>',
   dashboard:     '<rect x="3.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="13.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="3.2" y="13.4" width="7.6" height="7.2" rx="1.7"/><rect x="13.2" y="13.4" width="7.6" height="7.2" rx="1.7"/>',
   budget:        '<path d="M12 3.2v17.6"/><path d="M16.2 6.6H9.9a2.85 2.85 0 0 0 0 5.7h4.2a2.85 2.85 0 0 1 0 5.7H7.8"/>',
   transactions:  '<path d="M4 7.4h12.6"/><path d="M13.6 4.4 16.9 7.4 13.6 10.4"/><path d="M20 16.6H7.4"/><path d="M10.4 13.6 7.1 16.6 10.4 19.6"/>',
@@ -5890,6 +5892,39 @@ function paintTabIcons(){
     if (svg && el.innerHTML !== svg) el.innerHTML = svg;
   });
 }
+
+// Each section remembers whether it is shown as cards or as a list. The
+// button shows the view it would switch to, so it reads as an offer.
+function viewMode(sec){ return (state.settings.viewModes||{})[sec]==='list'?'list':'cards'; }
+function viewToggleBtn(sec){
+  const toList=viewMode(sec)!=='list';
+  const label=toList?t('view_as_list'):t('view_as_cards');
+  return `<button class="help-icon-btn view-toggle" type="button" data-view-toggle="${sec}" title="${esc(label)}" aria-label="${esc(label)}" aria-pressed="${!toList}">${appIconSvg(toList?'list':'dashboard')}</button>`;
+}
+function wireViewToggle(scope, sec, rerender){
+  scope.querySelector(`[data-view-toggle="${sec}"]`)?.addEventListener('click',()=>{
+    state.settings.viewModes={...(state.settings.viewModes||{}),[sec]:viewMode(sec)==='list'?'cards':'list'};
+    saveState(); rerender();
+  });
+}
+// One row of a list view. Every section's list is built from these, so the
+// columns line up the same way wherever the toggle is flipped.
+function lvRow({ ico, name, sub, bar, barCls, fig, cap, acts, cls }){
+  return `<div class="lv-row${cls?' '+cls:''}">
+    <span class="lv-ico" aria-hidden="true">${ico}</span>
+    <span class="lv-main"><span class="lv-name">${name}</span>${sub?`<span class="lv-sub">${sub}</span>`:''}</span>
+    <span class="lv-bar">${bar==null?'':`<span class="lv-bar-fill${barCls?' '+barCls:''}" style="width:${Math.min(100,Math.max(0,bar))}%"></span>`}</span>
+    <span class="lv-fig">${fig}${cap?`<small>${cap}</small>`:''}</span>
+    <span class="lv-acts">${acts||''}</span>
+  </div>`;
+}
+const LV_SVG=p=>`<svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const LV_EDIT=LV_SVG('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>');
+const LV_DEL=LV_SVG('<path d="M6 6l12 12"/><path d="M18 6 6 18"/>');
+const LV_PLUS=LV_SVG('<path d="M12 5v14"/><path d="M5 12h14"/>');
+// An icon button in a list row. cls carries whatever class the section
+// already binds its handler to.
+const lvBtn=(cls,attrs,label,svg)=>`<button class="lv-act${cls?' '+cls:''}" ${attrs} type="button" title="${esc(label)}" aria-label="${esc(label)}">${svg}</button>`;
 
 function buildModuleHTML(type,meta,act) {
   const rows=state.budgets[type]||[],typeAct=act[type]||{};
@@ -5925,17 +5960,38 @@ function buildModuleHTML(type,meta,act) {
       </div>
     </article>`;
   };
+  // The list keeps what the card leads with, the figure and its bar, and
+  // folds the rest onto one line.
+  const line = row => {
+    const a = typeAct[row.category] || 0, exp = row.expected || 0;
+    const over = !meta.isInc && exp > 0 && a > exp;
+    const head = meta.isInc ? a : exp - a;
+    const day = meta.hasDates ? rowDueDay(row) : 0;
+    const metaTxt = meta.isInc ? tf('env_meta_in', fmt(a), fmt(exp)) : tf('env_meta_out', fmt(a), fmt(exp));
+    const on = `data-id="${row.id}" data-type="${type}"`;
+    return lvRow({
+      cls: over ? 'is-over' : '', ico: budgetIconSvg(type), name: esc(row.category),
+      sub: day ? `${t('dpc_th_due')} ${day} \u00b7 ${metaTxt}` : metaTxt,
+      bar: pct(a, exp), barCls: meta.isInc ? 'is-in' : over ? 'is-over' : '',
+      fig: `${head < 0 ? '\u2212' : ''}${fmt(Math.abs(head))}`,
+      cap: meta.isInc ? (type === 'savings' ? t('env_saved') : t('env_in')) : (over ? t('env_over') : t('env_left')),
+      acts: lvBtn('', `data-env-log="${row.id}" data-type="${type}"`, t('env_log'), LV_PLUS)
+        + lvBtn('mod-edit', on, t('edit'), LV_EDIT)
+        + lvBtn('lv-act--del mod-del', on, t('delete'), LV_DEL)
+    });
+  };
+  const asList = viewMode('budget') === 'list';
   return `<div class="budget-module-section"><div class="module-section-header">
       <h3 class="module-section-title">${appIconSvg(type)} ${meta.title}</h3>
       ${rows.length ? `<span class="module-section-total"><strong id="te-${type}">${fmt(totAct)}</strong> / ${fmt(totExp)}</span>` : ''}
       <button class="btn btn-ghost btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button>
     </div>
-    <div class="env-grid">${rows.map(card).join('')}
+    ${asList ? (rows.length ? `<div class="lv">${rows.map(line).join('')}</div>` : '') : `<div class="env-grid">${rows.map(card).join('')}
       <button class="env-add mod-add-btn" data-type="${type}" type="button" title="${esc(t('bud_add_cat_title'))}">
         <span class="env-add-ico" aria-hidden="true">${appIconSvg('envelope')}</span>
         <span class="env-add-text">${t('bud_add_btn')}</span>
       </button>
-    </div>
+    </div>`}
     </div>`;
 }
 
@@ -7220,7 +7276,7 @@ function renderDebt(){
   const totEscrow=state.debts.reduce((s,d)=>s+(d.type==='mortgage'?(d.escrowMonthly||0):0),0);
   const totExtra=state.debts.reduce((s,d)=>s+(d.targetedExtra||0),0);
   const el=document.getElementById('bview-debt');
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('debt')} ${t('dpc_title')}</h2><div class="section-header-actions">${helpBtn('debt')}<button class="btn btn-primary btn-sm" id="addDebtBtn" type="button">${t('dpc_add_btn')}</button></div></div>
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('debt')} ${t('dpc_title')}</h2><div class="section-header-actions">${viewToggleBtn('debt')}${helpBtn('debt')}<button class="btn btn-primary btn-sm" id="addDebtBtn" type="button">${t('dpc_add_btn')}</button></div></div>
     <p class="section-desc">${t('dpc_desc')}</p>
     <div class="panel debt-config"><div class="panel-inner-sm">
       <div class="debt-config-row">
@@ -7254,6 +7310,17 @@ function renderDebt(){
     </div></div>
     ${state.debts.length===0
       ?`<div class="empty-state"><div class="empty-icon">💳</div><p class="empty-title">${t('dpc_empty_title')}</p><p class="empty-sub">${t('dpc_empty_sub')}</p><button class="btn btn-primary btn-sm empty-cta" id="debtEmptyAdd" type="button">${t('dpc_add_btn')}</button></div>`
+      :viewMode('debt')==='list'
+      ?`<div class="lv">${state.debts.map(d=>{
+        const po=(result?.payoffOrder||[]).find(x=>x.id===d.id);
+        return lvRow({ ico:appIconSvg('debt'), name:esc(d.name||'-'),
+          sub:`${DT[d.type]||esc(d.type)} \u00b7 ${(d.interestRate||0)}% ${t('dpc_apr_word')} \u00b7 ${fmt(d.minimumPayment||0)}${t('dpc_mo_suffix')}`,
+          bar:null, fig:fmt(d.balance),
+          cap: po&&po.paidOffDate&&po.paidOffDate!=='-' ? `${t('dpc_paid_off')} ${po.paidOffDate}` : '',
+          acts: lvBtn('',`data-debt-schedule="${d.id}"`,t('dpc_schedule_btn_title'),appIconSvg('calendar'))
+            + lvBtn('',`data-debt-edit="${d.id}"`,t('edit'),LV_EDIT) + lvBtn('lv-act--del',`data-debt-id="${d.id}"`,t('delete'),LV_DEL) });
+      }).join('')}
+      <div class="lv-row lv-total"><span class="lv-ico"></span><span class="lv-main"><span class="lv-name">${t('dpc_totals')}</span><span class="lv-sub">${fmt(totMin)}${t('dpc_mo_suffix')}</span></span><span class="lv-bar"></span><span class="lv-fig">${fmt(totDebt)}</span><span class="lv-acts"></span></div></div>`
       :`<div class="panel" style="margin-bottom:16px"><div class="module-table-wrap"><table class="module-table debt-table"><thead><tr>
           <th>${t('dpc_th_name')}</th><th class="col-sm-hide">${t('dpc_th_type')}</th><th>${t('dpc_th_balance')}<span class="th-cur"> (${SYM})</span></th>
           <th class="col-sm-hide">${t('dpc_th_apr')}</th><th class="col-sm-hide">${t('dpc_th_min')}</th><th class="col-sm-hide" title="${t('dpc_extra_col_hint')}">${t('dpc_th_extra')}</th><th>${t('automate_th')}</th><th></th>
@@ -7304,6 +7371,7 @@ function renderDebt(){
       </div></div>
     </div>`:''}`;
   document.getElementById('addDebtBtn')?.addEventListener('click',()=>openDebtModal(null));
+  wireViewToggle(el,'debt',renderDebt);
   document.getElementById('debtEmptyAdd')?.addEventListener('click',()=>openDebtModal(null));
   el.querySelectorAll('[data-debt-edit]').forEach(b=>b.addEventListener('click',()=>openDebtModal(b.dataset.debtEdit)));
   el.querySelectorAll('[data-method]').forEach(b=>b.addEventListener('click',()=>{state.debtSettings.method=b.dataset.method;saveState();renderDebt();}));
@@ -7328,10 +7396,21 @@ const FUND_ICONS=['🏖️','🚗','🏠','💒','✈️','🎓','💻','🏥','
 function renderSinking(){
   const totMo=state.sinkingFunds.reduce((t,f)=>{const{requiredMonthly}=calcFund(f);return t+requiredMonthly;},0);
   const el=document.getElementById('bview-goals');
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('sinking')} ${t('tab_sinking')}</h2><div class="section-header-actions">${helpBtn('sinking')}<button class="btn btn-primary btn-sm" id="addFundBtn" type="button">${t('sf_add_btn')}</button></div></div>
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('sinking')} ${t('tab_sinking')}</h2><div class="section-header-actions">${viewToggleBtn('goals')}${helpBtn('sinking')}<button class="btn btn-primary btn-sm" id="addFundBtn" type="button">${t('sf_add_btn')}</button></div></div>
     <p class="section-desc">${t('sf_desc')}</p>
     ${state.sinkingFunds.length===0
       ?`<div class="empty-state"><div class="empty-icon">🏺</div><p class="empty-title">${t('sf_empty_title')}</p><p class="empty-sub">${t('sf_empty_sub')}</p><button class="btn btn-primary btn-sm empty-cta" id="fundEmptyAdd" type="button">${t('sf_add_btn')}</button></div>`
+      :viewMode('goals')==='list'
+      ?`<div class="lv">${state.sinkingFunds.map(f=>{
+        const c=calcFund(f),has=fundHasTarget(f),p=Math.round(c.pctComplete||0),on=`data-fund="${f.id}"`;
+        return lvRow({ ico:`<span class="lv-emoji">${f.icon||'\uD83C\uDFFA'}</span>`, name:esc(f.name),
+          sub: has ? `${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount)}${f.targetDate?` \u00b7 ${formatDateDisplay(f.targetDate)}`:''}` : `${t('sf_saved_so_far')} \u00b7 ${t('sf_open_ended')}`,
+          bar: has ? p : null, barCls: p>=100?'is-in':'',
+          fig: has ? `${p}%` : fmt(f.currentSaved||0),
+          cap: `${fmt(c.requiredMonthly||0)}${t('sf_per_month')}`,
+          acts: lvBtn('sf-add-btn',on,t('sf_add_contribution'),LV_PLUS)+lvBtn('sf-edit-btn',on,t('edit'),LV_EDIT)+lvBtn('lv-act--del sf-del-btn',on,t('delete'),LV_DEL) });
+      }).join('')}</div>
+      <div class="sf-total-row"><span>${t('sf_total_contrib')}</span><strong>${fmt(totMo)}${t('sf_per_month')}</strong></div>`
       :`<div class="sf-grid">${state.sinkingFunds.map(f=>{
         const{monthsLeft,requiredMonthly,pctComplete}=calcFund(f),p=Math.round(pctComplete);
         const barColor=p>=100?'#10b981':p>=60?'#6366f1':'#fb923c';
@@ -7341,19 +7420,23 @@ function renderSinking(){
             <button class="sf-edit-btn btn-icon-tiny" data-fund="${f.id}" title="${t('edit')}" type="button">✏️</button>
             <button class="sf-del-btn btn-icon-tiny del-btn" data-fund="${f.id}" title="${t('delete')}" type="button">×</button>
           </div></div>
-          <div class="sf-name">${esc(f.name)}${p>=100?`<span class="sf-goal-badge">🎉 ${t('sf_goal_reached')}</span>`:''}</div>
-          <div class="sf-amounts"><span class="sf-saved">${fmt(f.currentSaved||0)}</span><span class="sf-divider"> / </span><span class="sf-target">${fmt(f.targetAmount||0)}</span></div>
+          <div class="sf-name">${esc(f.name)}${fundHasTarget(f)&&p>=100?`<span class="sf-goal-badge">🎉 ${t('sf_goal_reached')}</span>`:''}</div>
+          ${fundHasTarget(f)
+            ?`<div class="sf-amounts"><span class="sf-saved">${fmt(f.currentSaved||0)}</span><span class="sf-divider"> / </span><span class="sf-target">${fmt(f.targetAmount||0)}</span></div>
           <div class="prog-bar-wrap" style="margin:10px 0 5px"><div class="prog-bar" style="width:${p}%;background:${barColor}"></div></div>
-          <div class="sf-pct">${p}% ${t('sf_pct_complete')}</div>
+          <div class="sf-pct">${p}% ${t('sf_pct_complete')}</div>`
+            :`<div class="sf-amounts"><span class="sf-saved">${fmt(f.currentSaved||0)}</span></div>
+          <div class="sf-pct">${t('sf_saved_so_far')} \u00b7 ${t('sf_open_ended')}</div>`}
           ${(()=>{if(!f.targetDate)return'';if(p>=100)return`<div class="sf-date sf-complete">${t('sf_target_complete')}</div>`;const td=new Date(f.targetDate+'T00:00:00'),now=new Date();now.setHours(0,0,0,0);const dl=Math.ceil((td-now)/86400000);const cls=dl<0?'sf-date sf-overdue':dl===0?'sf-date sf-today':'sf-date';return`<div class="${cls}">\uD83C\uDFAF ${formatDateDisplay(f.targetDate)}</div>`;})()} 
           <div class="sf-monthly">${t('sf_save_prefix')} ${fmt(requiredMonthly)}${t('sf_per_month')}</div>
-          <div class="sf-months-left">${tf('sf_mo_left_tpl',monthsLeft)}</div>
+          ${fundHasTarget(f)?`<div class="sf-months-left">${tf('sf_mo_left_tpl',monthsLeft)}</div>`:''}
           <div class="sf-auto-row${automationOn()?'':' is-off'}" title="${automationOn()?t('automate_hint'):t('automate_hint_off')}"><span class="sf-auto-label">${t('automate_label')}</span><label class="recurring-toggle"><input type="checkbox" class="sf-auto-cb" data-fund-auto="${f.id}" ${findLinkedTemplate('sinking_fund',f.id)?'checked':''} ${automationOn()?'':'disabled'}><span class="rec-toggle-track"></span></label></div>
         </div></div>`;
       }).join('')}</div>
       <div class="sf-total-row"><span>${t('sf_total_contrib')}</span><strong>${fmt(totMo)}${t('sf_per_month')}</strong></div>`
     }`;
   document.getElementById('addFundBtn')?.addEventListener('click',()=>openFundModal(null));
+  wireViewToggle(el,'goals',renderSinking);
   document.getElementById('fundEmptyAdd')?.addEventListener('click',()=>openFundModal(null));
   el.querySelectorAll('.sf-edit-btn').forEach(b=>b.addEventListener('click',()=>openFundModal(b.dataset.fund)));
   el.querySelectorAll('.sf-del-btn').forEach(b=>b.addEventListener('click',async()=>{if(!await confirmDialog({message:t('confirm_delete_fund'),confirmText:t('delete')}))return;removeLinkedTemplate('sinking_fund',b.dataset.fund);state.sinkingFunds=state.sinkingFunds.filter(f=>f.id!==b.dataset.fund);saveState();renderSinking();}));
@@ -7451,24 +7534,21 @@ function renderCalendar(){
   const firstDow=(new Date(y,m,1).getDay()+6)%7,daysInMo=new Date(y,m+1,0).getDate();
   const evs={};
   const addEv=(day,ev)=>{(evs[day]=evs[day]||[]).push(ev);};
-  for(const b of state.bills||[]){const d=billDueDay(b);if(d&&d<=daysInMo){
+  // Bills and subscriptions are one list now, so each appears once, under its
+  // own name, paid or not by the payments linked to it.
+  for(const b of (state.bills||[]).filter(b=>b.active!==false)){const d=billDueDay(b);if(d&&d<=daysInMo){
     const st=rowPayState(b);
-    addEv(d,{type:'bill',id:b.id,label:b.category,color:'#fb923c',paid:b.paid,part:st==='partial'?rowPaidAmount(b):0,
-             amount:st==='paid'?rowPaidAmount(b):(rowRemaining(b)||(b.expected||0))});
+    addEv(d,{type:'bill',id:b.id,label:b.name||b.category,color:'#fb923c',paid:st==='paid',part:st==='partial'?rowPaidAmount(b):0,
+             amount:st==='paid'?rowPaidAmount(b):(rowRemaining(b)||rowExpected(b))});
   }}
   // Debts and subscriptions keep no paid flag of their own, so they get a Pay
   // button rather than a tick box that could never be unticked.
-  const calAct=computeActuals(), debtAct=calAct.debt||{}, subAct=calAct.subscription||{};
+  const calAct=computeActuals(), debtAct=calAct.debt||{};
   for(const d of state.debts)if(d.dueDay&&d.dueDay>=1&&d.dueDay<=daysInMo){
     const exp=d.minimumPayment||0, done=subOrDebtPaid(debtAct,d.name);
     addEv(d.dueDay,{type:'debt',id:d.id,label:d.name,color:'#a855f7',expected:exp,
       amount:Math.max(0,payRound2(exp-done))||exp,part:done>0&&done<exp?done:0,settled:exp>0&&done>=exp});
   }
-  for(const s of state.bills.filter(s=>s.active!==false))if(s.nextBillingDate){const d=parseInt(s.nextBillingDate.split('-')[2]);if(d>=1&&d<=daysInMo){
-    const exp=monthlySubAmt(s)||0, done=subOrDebtPaid(subAct,s.name);
-    addEv(d,{type:'bill',id:s.id,label:s.name,color:'#fb923c',expected:exp,
-      amount:Math.max(0,payRound2(exp-done))||exp,part:done>0&&done<exp?done:0,settled:exp>0?done>=exp:done>0});
-  }}
   const monthStr=`${y}-${String(m+1).padStart(2,'0')}`;
   // A transaction created by ticking a bill "paid" is the same money as the
   // bill event above (which already shows the ✓ Paid state + real amount) -
@@ -7560,7 +7640,7 @@ function renderCalendar(){
   }
 
   const el=document.getElementById('bview-calendar');
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('calendar')} ${t('cal_title')}</h2>${helpBtn('calendar')}</div>
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('calendar')} ${t('cal_title')}</h2><div class="section-header-actions">${viewToggleBtn('calendar')}${helpBtn('calendar')}</div></div>
     <p class="section-desc">${t('cal_desc')}</p>
     <div class="cal-nav"><button class="btn btn-ghost btn-sm" id="calPrev">${t('cal_prev')}</button><h3 class="cal-month-title">${monthName}</h3><button class="btn btn-ghost btn-sm" id="calNext">${t('cal_next')}</button></div>
     <div class="panel"><div class="cal-grid-wrap"><div class="cal-grid">
@@ -7571,8 +7651,11 @@ function renderCalendar(){
     <div class="cal-legend"><span class="cal-leg-item"><span class="cal-dot" style="background:#fb923c"></span>${t('cal_leg_bill')}</span><span class="cal-leg-item"><span class="cal-dot" style="background:#a855f7"></span>${t('cal_leg_debt')}</span><span class="cal-leg-item"><span class="cal-dot" style="background:#10b981"></span>${t('cal_leg_sub')}</span><span class="cal-leg-item"><span class="cal-dot" style="background:#06b6d4"></span>${t('cal_leg_sinking')}</span><span class="cal-leg-item"><span class="cal-dot" style="background:#8b5cf6"></span>${t('cal_leg_auto')}</span><span class="cal-leg-item"><span class="cal-dot" style="background:#ec4899"></span>${t('cal_leg_goal')}</span><span class="cal-leg-item"><span class="cal-dot" style="background:#6366f1"></span>${t('cal_leg_tx')}</span></div>`;
 
   // Inject selected-day panel and month list as DOM (not template)
-  if(selPanel) el.insertAdjacentHTML('beforeend', selPanel);
+  const calList=viewMode('calendar')==='list';
+  el.classList.toggle('cal-as-list',calList);
+  if(selPanel&&!calList) el.insertAdjacentHTML('beforeend', selPanel);
   el.insertAdjacentHTML('beforeend', monthList);
+  wireViewToggle(el,'calendar',renderCalendar);
 
   el.querySelectorAll('.cal-cell[data-day]').forEach(cell=>{
     cell.addEventListener('click',()=>{
@@ -7719,7 +7802,7 @@ function renderSubscriptions(){
     <div class="section-header">
       <h2 class="section-title">${appIconSvg('bills')} ${t('tab_subscriptions')}</h2>
       <div class="section-header-actions">
-        ${helpBtn('subscriptions')}
+        ${viewToggleBtn('bills')}${helpBtn('subscriptions')}
         <button class="btn btn-primary btn-sm" id="addSubBtn" type="button">${t('sub_add_btn')}</button>
       </div>
     </div>
@@ -7729,6 +7812,24 @@ function renderSubscriptions(){
   // Inject body using DOM to avoid template literal nesting
   if (state.bills.length === 0) {
     el.insertAdjacentHTML('beforeend', listHtml);
+  } else if (viewMode('bills') === 'list') {
+    // Soonest first, each with its date, what it costs and where it stands.
+    const lang = state?.settings?.language || 'en';
+    const rows = state.bills.slice().sort((a, b) => String(a.nextBillingDate || '9').localeCompare(String(b.nextBillingDate || '9')));
+    el.insertAdjacentHTML('beforeend', `<div class="lv">${rows.map(b => {
+      const st = rowPayState(b), paused = b.active === false, due = b.nextBillingDate;
+      const unit = b.frequency === 'annual' ? t('sub_unit_year') : b.frequency === 'quarterly' ? t('sub_unit_quarter') : t('sub_unit_month');
+      const leaf = due
+        ? `<span class="lv-leaf"><b>${parseInt(due.slice(8, 10), 10)}</b><small>${esc(new Date(due + 'T00:00:00').toLocaleString(lang, { month: 'short' }).replace('.', '').toUpperCase())}</small></span>`
+        : appIconSvg('bills');
+      const where = paused ? t('sub_paused') : st === 'paid' ? t('paid') : st === 'partial' ? t('paid_partial') : (due ? cuRelative(due) : '');
+      return lvRow({ cls: paused ? 'is-paused' : st === 'paid' ? 'is-done' : '', ico: leaf,
+        name: `${esc(b.name)}${b.kind === 'subscription' ? `<span class="lv-tag">${esc(t('bill_kind_sub'))}</span>` : ''}`,
+        sub: [esc(subCatLabel(b.category)), esc(where)].filter(Boolean).join(' \u00b7 '), bar: null,
+        fig: fmt(b.amount), cap: `/${unit}`,
+        acts: `${st !== 'paid' && !paused ? `<button class="btn btn-ghost btn-sm sub-pay-btn" data-sub-pay="${b.id}" type="button">${t('pay_btn')}</button>` : ''}`
+          + lvBtn('', `data-sub-edit="${b.id}"`, t('edit'), LV_EDIT) + lvBtn('lv-act--del', `data-sub-del="${b.id}"`, t('delete'), LV_DEL) });
+    }).join('')}</div>`);
   } else {
     const grid = document.createElement('div');
     grid.className = 'sub-layout';
@@ -7746,6 +7847,7 @@ function renderSubscriptions(){
   }
 
   requestAnimationFrame(()=>initDonuts(el));
+  wireViewToggle(el,'bills',renderSubscriptions);
   document.getElementById('addSubBtn')?.addEventListener('click',()=>openSubModal(null));
   document.getElementById('subEmptyAdd')?.addEventListener('click',()=>openSubModal(null));
   // Paying a bill opens the same sheet the calendar and the dashboard use,
