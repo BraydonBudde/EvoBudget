@@ -6313,7 +6313,7 @@ function renderTransactions() {
   // Two ways to get a transaction in, side by side and equally visible: log
   // one now, or set it to repeat. The inline form and the dropdown that used
   // to hold these were two unrelated blocks above the list.
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('transactions')} ${t('tab_transactions')}</h2><div class="section-header-actions">${helpBtn('transactions')}<label class="btn btn-ghost btn-sm csv-label">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label></div></div>
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('transactions')} ${t('tab_transactions')}</h2><div class="section-header-actions">${helpBtn('transactions')}<label class="btn btn-primary btn-sm csv-label">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label></div></div>
     <p class="section-desc">${t('tx_page_desc')}</p>
     <div class="panel tx-ways"><div class="panel-inner-sm"><div class="tx-ways-row">
       <div class="tx-way">
@@ -7007,7 +7007,7 @@ function renderDebt(){
   const totEscrow=state.debts.reduce((s,d)=>s+(d.type==='mortgage'?(d.escrowMonthly||0):0),0);
   const totExtra=state.debts.reduce((s,d)=>s+(d.targetedExtra||0),0);
   const el=document.getElementById('bview-debt');
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('debt')} ${t('dpc_title')}</h2><div class="section-header-actions">${helpBtn('debt')}<button class="btn btn-ghost btn-sm" id="addDebtBtn">${t('dpc_add_btn')}</button></div></div>
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('debt')} ${t('dpc_title')}</h2><div class="section-header-actions">${helpBtn('debt')}<button class="btn btn-primary btn-sm" id="addDebtBtn" type="button">${t('dpc_add_btn')}</button></div></div>
     <p class="section-desc">${t('dpc_desc')}</p>
     <div class="panel debt-config"><div class="panel-inner-sm">
       <div class="debt-config-row">
@@ -7115,7 +7115,7 @@ const FUND_ICONS=['🏖️','🚗','🏠','💒','✈️','🎓','💻','🏥','
 function renderSinking(){
   const totMo=state.sinkingFunds.reduce((t,f)=>{const{requiredMonthly}=calcFund(f);return t+requiredMonthly;},0);
   const el=document.getElementById('bview-goals');
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('sinking')} ${t('tab_sinking')}</h2><div class="section-header-actions">${helpBtn('sinking')}<button class="btn btn-ghost btn-sm" id="addFundBtn">${t('sf_add_btn')}</button></div></div>
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('sinking')} ${t('tab_sinking')}</h2><div class="section-header-actions">${helpBtn('sinking')}<button class="btn btn-primary btn-sm" id="addFundBtn" type="button">${t('sf_add_btn')}</button></div></div>
     <p class="section-desc">${t('sf_desc')}</p>
     ${state.sinkingFunds.length===0
       ?`<div class="empty-state"><div class="empty-icon">🏺</div><p class="empty-title">${t('sf_empty_title')}</p><p class="empty-sub">${t('sf_empty_sub')}</p><button class="btn btn-primary btn-sm empty-cta" id="fundEmptyAdd" type="button">${t('sf_add_btn')}</button></div>`
@@ -7506,7 +7506,7 @@ function renderSubscriptions(){
       <h2 class="section-title">${appIconSvg('bills')} ${t('tab_subscriptions')}</h2>
       <div class="section-header-actions">
         ${helpBtn('subscriptions')}
-        <button class="btn btn-ghost btn-sm" id="addSubBtn">${t('sub_add_btn')}</button>
+        <button class="btn btn-primary btn-sm" id="addSubBtn" type="button">${t('sub_add_btn')}</button>
       </div>
     </div>
     <p class="section-desc">${t('sub_desc')}</p>

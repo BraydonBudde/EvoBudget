@@ -4609,7 +4609,7 @@ function renderModule(type) {
       <h2 class="section-title">${appIconSvg(type)} ${t(meta.titleKey)}</h2>
       <div class="section-header-actions">
         <button class="help-icon-btn" data-help="${type}" type="button" aria-label="${t('help_aria')}">?</button>
-        <button class="btn btn-ghost btn-sm" id="addRowBtn" type="button">${t('mod_add_category')}</button>
+        <button class="btn btn-primary btn-sm" id="addRowBtn" type="button">${t('mod_add_category')}</button>
       </div>
     </div>
     <p class="section-desc">${t(meta.descKey)}</p>
@@ -4779,7 +4779,7 @@ function renderTransactions() {
   el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('transactions')} ${t('tab_transactions')}</h2>
       <div class="section-header-actions">
         <button class="help-icon-btn" data-help="transactions" type="button" aria-label="${t('help_aria')}">?</button>
-        <label class="btn btn-ghost btn-sm csv-label" title="${t('tx_import_csv')}">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label>
+        <label class="btn btn-primary btn-sm csv-label" title="${t('tx_import_csv')}">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label>
       </div></div>
     <div class="panel tx-ways"><div class="panel-inner-sm"><div class="tx-ways-row">
       <div class="tx-way">

@@ -427,17 +427,21 @@ a.btn-back-round { text-decoration: none; }
 /* ── Section header ──────────────────────────────────────────────────── */
 /* Every section opens the same way: a display-sized title with its own
    sentence underneath and whatever it can do on the right. */
+/* Title on the left, the section's help and its one action on the right,
+   on one line at every width. The title gives way first, by shrinking and
+   then truncating, so the action is never pushed onto a line of its own. */
 .section-header {
-  display: flex; align-items: center; gap: 14px;
-  flex-wrap: wrap; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: nowrap; margin-bottom: 8px;
 }
 .section-title {
-  flex: 1 1 280px; min-width: 0;
+  flex: 1 1 auto; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   font-family: var(--font-display);
   font-size: clamp(1.75rem, 2.6vw, 2.35rem);
   font-weight: 800; line-height: 1.14; letter-spacing: -.02em;
 }
-.section-header-actions { margin-left: auto; }
+.section-header-actions { margin-left: auto; flex: 0 0 auto; }
 /* One control height across a section's header row. The help button was 28px
    beside pills of 34, and a glyph inside one of them ("Import CSV") took that
    one to 35, so the row had three heights in it. Everything is pinned to the
@@ -454,8 +458,10 @@ a.btn-back-round { text-decoration: none; }
   line-height: 1.6; margin-bottom: 22px; max-width: 64ch;
 }
 @media (max-width: 560px) {
-  .section-title { font-size: 1.6rem; flex: 1 1 100%; }
-  .section-header-actions { margin-left: 0; }
+  .section-title { font-size: 1.45rem; }
+  .section-header { gap: 8px; }
+  .section-header-actions { gap: 6px; }
+  .section-header-actions > .btn { padding-left: 12px; padding-right: 12px; }
 }
 .btn-help-sm {
   appearance: none; border: 1px solid var(--border-faint);
