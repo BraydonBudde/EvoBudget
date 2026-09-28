@@ -4534,6 +4534,7 @@ function syncModulePaidLinks() {
 // weight and shape on every platform, and could not take the colour of the
 // thing they sat in.
 const APP_ICONS = {
+  envelope:      '<rect x="2.6" y="5" width="18.8" height="14" rx="2.4"/><path d="M3.2 7 12 13l8.8-6"/>',
   dashboard:     '<rect x="3.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="13.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="3.2" y="13.4" width="7.6" height="7.2" rx="1.7"/><rect x="13.2" y="13.4" width="7.6" height="7.2" rx="1.7"/>',
   budget:        '<path d="M12 3.2v17.6"/><path d="M16.2 6.6H9.9a2.85 2.85 0 0 0 0 5.7h4.2a2.85 2.85 0 0 1 0 5.7H7.8"/>',
   transactions:  '<path d="M4 7.4h12.6"/><path d="M13.6 4.4 16.9 7.4 13.6 10.4"/><path d="M20 16.6H7.4"/><path d="M10.4 13.6 7.1 16.6 10.4 19.6"/>',
@@ -4616,12 +4617,12 @@ function renderModule(type) {
     ${rows.length ? `<div class="module-section-header module-section-header--solo">
       <span class="module-section-total"><strong>${fmt(totalAct)}</strong> / ${fmt(totalExp)}</span>
     </div>` : ''}
-    ${rows.length === 0
-      ? `<div class="panel env-empty"><div class="panel-inner-sm">
-          <p class="env-empty-text">${t('mod_add_new_category')}</p>
-          <button class="btn btn-primary btn-sm" id="addRowBtnEmpty" type="button">${t('mod_add_category')}</button>
-        </div></div>`
-      : `<div class="env-grid">${rows.map(r => envCardHtml(r, { actuals, isInc, type, hasDates: meta.hasDates })).join('')}</div>`}
+    <div class="env-grid">${rows.map(r => envCardHtml(r, { actuals, isInc, type, hasDates: meta.hasDates })).join('')}
+      <button class="env-add" id="addRowBtnEmpty" type="button" title="${esc(t('mod_add_new_category'))}">
+        <span class="env-add-ico" aria-hidden="true">${appIconSvg('envelope')}</span>
+        <span class="env-add-text">${t('mod_add_category')}</span>
+      </button>
+    </div>
   `;
 
   const el = document.getElementById(`bview-${type}`);

@@ -5741,6 +5741,7 @@ function openAddBudgetRow(type, forcePicker) {
 // weight and shape on every platform, and could not take the colour of the
 // thing they sat in.
 const APP_ICONS = {
+  envelope:      '<rect x="2.6" y="5" width="18.8" height="14" rx="2.4"/><path d="M3.2 7 12 13l8.8-6"/>',
   dashboard:     '<rect x="3.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="13.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="3.2" y="13.4" width="7.6" height="7.2" rx="1.7"/><rect x="13.2" y="13.4" width="7.6" height="7.2" rx="1.7"/>',
   budget:        '<path d="M12 3.2v17.6"/><path d="M16.2 6.6H9.9a2.85 2.85 0 0 0 0 5.7h4.2a2.85 2.85 0 0 1 0 5.7H7.8"/>',
   transactions:  '<path d="M4 7.4h12.6"/><path d="M13.6 4.4 16.9 7.4 13.6 10.4"/><path d="M20 16.6H7.4"/><path d="M10.4 13.6 7.1 16.6 10.4 19.6"/>',
@@ -5809,12 +5810,12 @@ function buildModuleHTML(type,meta,act) {
       ${rows.length ? `<span class="module-section-total"><strong id="te-${type}">${fmt(totAct)}</strong> / ${fmt(totExp)}</span>` : ''}
       <button class="btn btn-ghost btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button>
     </div>
-    ${rows.length === 0
-      ? `<div class="panel env-empty"><div class="panel-inner-sm">
-          <p class="env-empty-text">${t('bud_add_cat_title')}</p>
-          <button class="btn btn-primary btn-sm mod-add-btn" data-type="${type}" type="button">${t('bud_add_btn')}</button>
-        </div></div>`
-      : `<div class="env-grid">${rows.map(card).join('')}</div>`}
+    <div class="env-grid">${rows.map(card).join('')}
+      <button class="env-add mod-add-btn" data-type="${type}" type="button" title="${esc(t('bud_add_cat_title'))}">
+        <span class="env-add-ico" aria-hidden="true">${appIconSvg('envelope')}</span>
+        <span class="env-add-text">${t('bud_add_btn')}</span>
+      </button>
+    </div>
     </div>`;
 }
 

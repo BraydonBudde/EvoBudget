@@ -2491,9 +2491,40 @@ input[type="number"].expected-input {
   .env-btn--go:hover { color: var(--text-primary); }
 }
 
-.env-empty { margin-bottom: 18px; }
-.env-empty .panel-inner-sm { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.env-empty-text { margin: 0; font-size: 13px; color: var(--text-secondary); }
+/* A blank envelope closes every section: the same footprint as the ones
+   beside it, drawn as an outline so it reads as a space waiting to be
+   filled rather than a card with nothing in it. A section with nothing in
+   it yet shows this on its own, which says what to do better than an
+   empty panel did. */
+.env-add {
+  appearance: none; cursor: pointer; font: inherit; text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; min-height: 176px; padding: 20px;
+  border-radius: var(--radius-md);
+  border: 1.5px dashed var(--border-faint);
+  background: transparent; color: var(--text-faint);
+  transition: color .18s var(--ease), border-color .18s var(--ease),
+              background .18s var(--ease), transform .18s var(--ease);
+}
+.env-add:hover, .env-add:focus-visible {
+  color: var(--grad-indigo); transform: translateY(-2px);
+  border-color: rgba(var(--grad-indigo-rgb), .45);
+  background: rgba(var(--grad-indigo-rgb), .05);
+  outline: none;
+}
+.env-add-ico {
+  width: 46px; height: 46px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px dashed currentColor;
+}
+.env-add-ico .app-ico { width: 21px; height: 21px; }
+.env-add-text { font-size: 13px; font-weight: 700; letter-spacing: .01em; }
+@media (hover: none) {
+  .env-add:hover {
+    color: var(--text-faint); transform: none;
+    border-color: var(--border-faint); background: transparent;
+  }
+}
 
 @media (max-width: 560px) {
   /* One envelope per row, rather than two too narrow to read. */
