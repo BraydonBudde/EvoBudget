@@ -1019,8 +1019,8 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Debt-free',dash_interest_label:'Interest',
     dash_months_label:'Months',dash_method_label:'Method',
     dash_set_balances:'Set balances to see results.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',
-    dash_no_sinking:'No sinking funds.',dash_create_one:'Create one \u2192',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_sinking_fund:'Add to a goal',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_sinking_fund:'Add to goal',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_sinking_fund:'Goal',qa_type_debt:'Debt',qa_type_income:'Income',qa_type_it:'type it instead',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_sinking_fund:'Add a saving goal first.',qa_no_cats_debt:'Add a debt first.',qa_no_cats_income:'Add an income category on the Budget tab first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_title:'Coming up',cu_all:'All bills',cu_paid:'Paid',cu_today:'today',cu_tomorrow:'tomorrow',cu_yesterday:'yesterday',cu_in_days:'in {0} days',cu_days_ago:'{0} days ago',cu_empty:'Nothing due in the next {0} days.',
+    dash_no_sinking:'No saving goals yet.',dash_create_one:'Create one \u2192',
     help_dash_intro:'The Dashboard gives you a real-time financial overview. All numbers update automatically as you log transactions.',
     help_dash_hero_h:'Hero stats row',
     help_dash_hero_p:'The four cards at the top show your period totals: Total Income received, Total Outgoing (expenses, bills, debt & subscriptions), Savings Rate (% of income saved), and your Subscription monthly cost.',
@@ -1597,8 +1597,8 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Schuldenfrei',dash_interest_label:'Zinsen',
     dash_months_label:'Monate',dash_method_label:'Methode',
     dash_set_balances:'Salden eingeben, um Ergebnisse zu sehen.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Bevorstehend ({0} Tage)',dash_nothing_scheduled:'Nichts geplant.',
-    dash_no_sinking:'Keine Sparzielfonds.',dash_create_one:'Einen erstellen \u2192',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Bevorstehend ({0} Tage)',dash_nothing_scheduled:'Nichts geplant.',qa_title_expense:'Ausgabe hinzufügen',qa_title_bill:'Rechnung bezahlen',qa_title_sinking_fund:'Zum Ziel hinzufügen',qa_title_debt:'Schuld bezahlen',qa_title_income:'Einnahme hinzufügen',qa_go_expense:'Ausgabe hinzufügen',qa_go_bill:'Rechnung bezahlen',qa_go_sinking_fund:'Zum Ziel',qa_go_debt:'Schuld bezahlen',qa_go_income:'Einnahme hinzufügen',qa_type_expense:'Ausgabe',qa_type_bill:'Rechnung',qa_type_sinking_fund:'Ziel',qa_type_debt:'Schuld',qa_type_income:'Einnahme',qa_type_it:'lieber eintippen',qa_clear:'Löschen',qa_backspace:'Letzte Ziffer löschen',qa_tap_cat:'Tippe auf eine Kategorie',qa_no_cats_expense:'Noch keine Ausgabenkategorien, du kannst diese später zuordnen.',qa_no_cats_bill:'Lege zuerst eine Rechnung an.',qa_no_cats_sinking_fund:'Lege zuerst ein Sparziel an.',qa_no_cats_debt:'Lege zuerst eine Schuld an.',qa_no_cats_income:'Lege zuerst eine Einnahmekategorie an.',qa_uncat:'Ohne Kategorie',qa_uncat_chip:'Ohne Kategorie · später zuordnen',qa_add_note:'Notiz',qa_again:'Speichern und weitere',qa_after:'Danach: {0} bis {1}, etwa {2} pro Tag.',cu_today_cap:'Heute',cu_yesterday_cap:'Gestern',cu_title:'Demnächst',cu_all:'Alle Rechnungen',cu_paid:'Bezahlt',cu_today:'heute',cu_tomorrow:'morgen',cu_yesterday:'gestern',cu_in_days:'in {0} Tagen',cu_days_ago:'vor {0} Tagen',cu_empty:'In den nächsten {0} Tagen ist nichts fällig.',
+    dash_no_sinking:'Noch keine Sparziele.',dash_create_one:'Einen erstellen \u2192',
     help_dash_intro:'Das Dashboard gibt dir einen Echtzeit-Überblick über deine Finanzen. Alle Zahlen werden automatisch aktualisiert, wenn du Transaktionen erfasst.',
     help_dash_hero_h:'Statistikübersicht',
     help_dash_hero_p:'Die vier Karten oben zeigen deine Periodensummen: Erhaltene Gesamteinnahmen, Gesamtausgaben (Ausgaben, Rechnungen, Schulden & Abonnements), Sparquote (% des gesparten Einkommens) und monatliche Abonnementkosten.',
@@ -2157,8 +2157,8 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Sans dette',dash_interest_label:'Intérêts',
     dash_months_label:'Mois',dash_method_label:'Méthode',
     dash_set_balances:'Entrez les soldes pour voir les résultats.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 À venir ({0} jours)',dash_nothing_scheduled:'Rien de planifié.',
-    dash_no_sinking:'Aucun fonds de prévision.',dash_create_one:'En créer un \u2192',
+    dash_upcoming_tpl:'\uD83D\uDCC5 À venir ({0} jours)',dash_nothing_scheduled:'Rien de planifié.',qa_title_expense:'Ajouter une dépense',qa_title_bill:'Payer une facture',qa_title_sinking_fund:'Alimenter un objectif',qa_title_debt:'Payer une dette',qa_title_income:'Ajouter un revenu',qa_go_expense:'Ajouter',qa_go_bill:'Payer',qa_go_sinking_fund:'Alimenter',qa_go_debt:'Payer',qa_go_income:'Ajouter',qa_type_expense:'Dépense',qa_type_bill:'Facture',qa_type_sinking_fund:'Objectif',qa_type_debt:'Dette',qa_type_income:'Revenu',qa_type_it:'le saisir plutôt',qa_clear:'Effacer',qa_backspace:'Effacer le dernier chiffre',qa_tap_cat:'Touchez une catégorie',qa_no_cats_expense:'Aucune catégorie pour le moment, vous pourrez la classer plus tard.',qa_no_cats_bill:"Ajoutez d'abord une facture.",qa_no_cats_sinking_fund:"Ajoutez d'abord un objectif.",qa_no_cats_debt:"Ajoutez d'abord une dette.",qa_no_cats_income:"Ajoutez d'abord une catégorie de revenu.",qa_uncat:'Sans catégorie',qa_uncat_chip:'Sans catégorie · à classer',qa_add_note:'Ajouter une note',qa_again:'Enregistrer et continuer',qa_after:'Ensuite : {0} jusqu’au {1}, environ {2} par jour.',cu_today_cap:"Aujourd'hui",cu_yesterday_cap:'Hier',cu_title:'À venir',cu_all:'Toutes les factures',cu_paid:'Payé',cu_today:"aujourd'hui",cu_tomorrow:'demain',cu_yesterday:'hier',cu_in_days:'dans {0} jours',cu_days_ago:'il y a {0} jours',cu_empty:'Rien à payer dans les {0} prochains jours.',
+    dash_no_sinking:'Aucun objectif d’épargne.',dash_create_one:'En créer un \u2192',
     help_dash_intro:"Le tableau de bord vous donne un aperçu financier en temps réel. Tous les chiffres se mettent à jour automatiquement lorsque vous enregistrez des transactions.",
     help_dash_hero_h:'Statistiques principales',
     help_dash_hero_p:"Les quatre cartes en haut affichent vos totaux de période : Revenus totaux reçus, Dépenses totales (dépenses, factures, dettes & abonnements), Taux d’épargne (% du revenu épargné) et votre coût mensuel d’abonnement.",
@@ -2717,8 +2717,8 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Sin deuda',dash_interest_label:'Intereses',
     dash_months_label:'Meses',dash_method_label:'Método',
     dash_set_balances:'Introduce los saldos para ver los resultados.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Próximos ({0} días)',dash_nothing_scheduled:'Nada programado.',
-    dash_no_sinking:'No hay fondos de ahorro.',dash_create_one:'Crear uno \u2192',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Próximos ({0} días)',dash_nothing_scheduled:'Nada programado.',qa_title_expense:'Añadir gasto',qa_title_bill:'Pagar factura',qa_title_sinking_fund:'Aportar a una meta',qa_title_debt:'Pagar deuda',qa_title_income:'Añadir ingreso',qa_go_expense:'Añadir gasto',qa_go_bill:'Pagar',qa_go_sinking_fund:'Aportar',qa_go_debt:'Pagar',qa_go_income:'Añadir',qa_type_expense:'Gasto',qa_type_bill:'Factura',qa_type_sinking_fund:'Meta',qa_type_debt:'Deuda',qa_type_income:'Ingreso',qa_type_it:'escribirlo',qa_clear:'Borrar',qa_backspace:'Borrar el último dígito',qa_tap_cat:'Toca una categoría',qa_no_cats_expense:'Aún no hay categorías, puedes clasificarlo después.',qa_no_cats_bill:'Añade primero una factura.',qa_no_cats_sinking_fund:'Añade primero una meta.',qa_no_cats_debt:'Añade primero una deuda.',qa_no_cats_income:'Añade primero una categoría de ingresos.',qa_uncat:'Sin categoría',qa_uncat_chip:'Sin categoría · clasificar luego',qa_add_note:'Añadir nota',qa_again:'Guardar y añadir otro',qa_after:'Después: {0} hasta el {1}, unos {2} al día.',cu_today_cap:'Hoy',cu_yesterday_cap:'Ayer',cu_title:'Próximos',cu_all:'Todas las facturas',cu_paid:'Pagado',cu_today:'hoy',cu_tomorrow:'mañana',cu_yesterday:'ayer',cu_in_days:'en {0} días',cu_days_ago:'hace {0} días',cu_empty:'Nada vence en los próximos {0} días.',
+    dash_no_sinking:'Aún no hay metas de ahorro.',dash_create_one:'Crear uno \u2192',
     help_dash_intro:'El panel te ofrece un resumen financiero en tiempo real. Todos los números se actualizan automáticamente cuando registras transacciones.',
     help_dash_hero_h:'Fila de estadísticas principales',
     help_dash_hero_p:'Las cuatro tarjetas en la parte superior muestran tus totales del período: Ingresos totales recibidos, Gastos totales (gastos, facturas, deudas & suscripciones), Tasa de ahorro (% de ingresos ahorrados) y tu costo mensual de suscripciones.',
@@ -3278,8 +3278,8 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Senza debiti',dash_interest_label:'Interessi',
     dash_months_label:'Mesi',dash_method_label:'Metodo',
     dash_set_balances:'Inserisci i saldi per vedere i risultati.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 In arrivo ({0} giorni)',dash_nothing_scheduled:'Niente in programma.',
-    dash_no_sinking:'Nessun fondo di accantonamento.',dash_create_one:'Creane uno \u2192',
+    dash_upcoming_tpl:'\uD83D\uDCC5 In arrivo ({0} giorni)',dash_nothing_scheduled:'Niente in programma.',qa_title_expense:'Aggiungi spesa',qa_title_bill:'Paga bolletta',qa_title_sinking_fund:'Versa su un obiettivo',qa_title_debt:'Paga debito',qa_title_income:'Aggiungi entrata',qa_go_expense:'Aggiungi spesa',qa_go_bill:'Paga',qa_go_sinking_fund:'Versa',qa_go_debt:'Paga',qa_go_income:'Aggiungi',qa_type_expense:'Spesa',qa_type_bill:'Bolletta',qa_type_sinking_fund:'Obiettivo',qa_type_debt:'Debito',qa_type_income:'Entrata',qa_type_it:'scrivilo',qa_clear:'Cancella',qa_backspace:"Cancella l'ultima cifra",qa_tap_cat:'Tocca una categoria',qa_no_cats_expense:'Nessuna categoria ancora, puoi assegnarla dopo.',qa_no_cats_bill:'Aggiungi prima una bolletta.',qa_no_cats_sinking_fund:'Aggiungi prima un obiettivo.',qa_no_cats_debt:'Aggiungi prima un debito.',qa_no_cats_income:'Aggiungi prima una categoria di entrata.',qa_uncat:'Senza categoria',qa_uncat_chip:'Senza categoria · da sistemare',qa_add_note:'Aggiungi nota',qa_again:'Salva e aggiungi un altro',qa_after:'Dopo: {0} fino al {1}, circa {2} al giorno.',cu_today_cap:'Oggi',cu_yesterday_cap:'Ieri',cu_title:'In arrivo',cu_all:'Tutte le bollette',cu_paid:'Pagato',cu_today:'oggi',cu_tomorrow:'domani',cu_yesterday:'ieri',cu_in_days:'tra {0} giorni',cu_days_ago:'{0} giorni fa',cu_empty:'Niente in scadenza nei prossimi {0} giorni.',
+    dash_no_sinking:'Ancora nessun obiettivo.',dash_create_one:'Creane uno \u2192',
     help_dash_intro:'Il pannello offre una panoramica finanziaria in tempo reale. Tutti i numeri si aggiornano automaticamente quando registri le transazioni.',
     help_dash_hero_h:'Statistiche principali',
     help_dash_hero_p:"Le quattro schede in alto mostrano i totali del periodo: Entrate totali ricevute, Uscite totali (spese, bollette, debiti & abbonamenti), Tasso di risparmio (% del reddito risparmiato) e il costo mensile degli abbonamenti.",
@@ -3838,8 +3838,8 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Wolny od długów',dash_interest_label:'Odsetki',
     dash_months_label:'Miesiące',dash_method_label:'Metoda',
     dash_set_balances:'Wpisz salda, aby zobaczyć wyniki.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Nadchodzące ({0} dni)',dash_nothing_scheduled:'Nic zaplanowanego.',
-    dash_no_sinking:'Brak funduszy celowych.',dash_create_one:'Utwórz jeden \u2192',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Nadchodzące ({0} dni)',dash_nothing_scheduled:'Nic zaplanowanego.',qa_title_expense:'Dodaj wydatek',qa_title_bill:'Zapłać rachunek',qa_title_sinking_fund:'Wpłać na cel',qa_title_debt:'Spłać dług',qa_title_income:'Dodaj przychód',qa_go_expense:'Dodaj wydatek',qa_go_bill:'Zapłać',qa_go_sinking_fund:'Wpłać',qa_go_debt:'Spłać',qa_go_income:'Dodaj',qa_type_expense:'Wydatek',qa_type_bill:'Rachunek',qa_type_sinking_fund:'Cel',qa_type_debt:'Dług',qa_type_income:'Przychód',qa_type_it:'wpisz ręcznie',qa_clear:'Wyczyść',qa_backspace:'Usuń ostatnią cyfrę',qa_tap_cat:'Wybierz kategorię',qa_no_cats_expense:'Brak kategorii, możesz przypisać później.',qa_no_cats_bill:'Najpierw dodaj rachunek.',qa_no_cats_sinking_fund:'Najpierw dodaj cel.',qa_no_cats_debt:'Najpierw dodaj dług.',qa_no_cats_income:'Najpierw dodaj kategorię przychodu.',qa_uncat:'Bez kategorii',qa_uncat_chip:'Bez kategorii · przypisz później',qa_add_note:'Dodaj notatkę',qa_again:'Zapisz i dodaj kolejny',qa_after:'Potem: {0} do {1}, około {2} dziennie.',cu_today_cap:'Dziś',cu_yesterday_cap:'Wczoraj',cu_title:'Wkrótce',cu_all:'Wszystkie rachunki',cu_paid:'Zapłacone',cu_today:'dziś',cu_tomorrow:'jutro',cu_yesterday:'wczoraj',cu_in_days:'za {0} dni',cu_days_ago:'{0} dni temu',cu_empty:'Nic nie jest do zapłaty w ciągu {0} dni.',
+    dash_no_sinking:'Brak celów oszczędnościowych.',dash_create_one:'Utwórz jeden \u2192',
     help_dash_intro:'Panel zapewnia przegląd finansów w czasie rzeczywistym. Wszystkie liczby aktualizują się automatycznie po dodaniu transakcji.',
     help_dash_hero_h:'Główne statystyki',
     help_dash_hero_p:'Cztery karty na górze pokazują sumy okresu: Łączne przychody, Łączne wyjścia (wydatki, rachunki, długi & subskrypcje), Stopa oszczędności (% dochodu zaoszczędzonego) i miesięczny koszt subskrypcji.',
@@ -5058,6 +5058,7 @@ let txSelected=new Set();
 const TX_PAGE_SIZE=25;
 
 function dispatchRender(tab) {
+  rollBills();
   ({dashboard:renderDashboard,budget:renderBudget,transactions:renderTransactions,debt:renderDebt,goals:renderSinking,calendar:renderCalendar,bills:renderSubscriptions,settings:renderSettings}[tab]||renderDashboard)();
 }
 function switchTab(tab) {
@@ -5137,6 +5138,7 @@ function loadSampleData(){
 }
 // ── PRO DASHBOARD ─────────────────────────────────────────────────────
 function renderDashboard() {
+  rollBills();
   // renderDashboardLayout1 is still reachable, but only through Sleek,
   // which calls it and then swaps its heading.
   ({
@@ -5231,6 +5233,56 @@ function sleekDateLine() {
     return new Date().toLocaleDateString((state?.settings?.language) || 'en',
       { weekday: 'long', day: 'numeric', month: 'long' });
   } catch (e) { return ''; }
+}
+
+// What falls due next, and anything already overdue. Bills only: this is
+// the list you settle from. Each row owes what is left of that bill, and its
+// Paid button opens the same sheet as everywhere else, so every payment is a
+// real transaction linked to the bill.
+const CU_WINDOW_DAYS = 30;
+function cuRelative(iso) {
+  const a = new Date(iso + 'T00:00:00'), now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const d = Math.round((a - now) / 86400000);
+  if (d === 0) return t('cu_today');
+  if (d === 1) return t('cu_tomorrow');
+  if (d === -1) return t('cu_yesterday');
+  return d > 0 ? tf('cu_in_days', d) : tf('cu_days_ago', -d);
+}
+function comingUpItems() {
+  const today = toLocalISO(new Date());
+  const end = toLocalISO(new Date(Date.now() + CU_WINDOW_DAYS * 86400000));
+  return (state.bills || [])
+    .filter(b => b.active !== false && b.nextBillingDate && rowPayState(b) !== 'paid')
+    .filter(b => b.nextBillingDate <= end)
+    .map(b => ({ b, due: b.nextBillingDate, overdue: b.nextBillingDate < today,
+                 owe: rowRemaining(b) || rowExpected(b) }))
+    .sort((x, y) => x.due.localeCompare(y.due));
+}
+function comingUpHtml() {
+  const items = comingUpItems().slice(0, 6);
+  const lang = state?.settings?.language || 'en';
+  const mon = iso => new Date(iso + 'T00:00:00').toLocaleString(lang, { month: 'short' }).replace('.', '').toUpperCase();
+  return `<div class="panel coming-up"><div class="panel-inner-sm">
+    <div class="cu-head">
+      <h3 class="cu-title">${t('cu_title')}</h3>
+      <button class="link-btn cu-all" type="button" data-btab="bills">${t('cu_all')}</button>
+    </div>
+    ${items.length ? `<ul class="cu-list">${items.map(({ b, due, overdue, owe }) => `
+      <li class="cu-row${overdue ? ' is-overdue' : ''}">
+        <span class="cu-date"><b>${parseInt(due.slice(8, 10), 10)}</b><small>${esc(mon(due))}</small></span>
+        <span class="cu-info"><span class="cu-name">${esc(b.name)}</span><span class="cu-when">${esc(cuRelative(due))}</span></span>
+        <span class="cu-amt">${fmt(owe)}</span>
+        <button class="cu-pay" type="button" data-cu-pay="${esc(b.id)}">${t('cu_paid')}</button>
+      </li>`).join('')}</ul>`
+      : `<p class="cu-empty">${tf('cu_empty', CU_WINDOW_DAYS)}</p>`}
+  </div></div>`;
+}
+function wireComingUp(scope) {
+  scope.querySelectorAll('[data-cu-pay]').forEach(btn => btn.addEventListener('click', () =>
+    promptPay('bill', btn.dataset.cuPay, () => renderDashboard())));
+  scope.querySelectorAll('.cu-all[data-btab]').forEach(btn => btn.addEventListener('click', () =>
+    switchTab(btn.dataset.btab)));
 }
 
 function renderDashboardLayout3() {
@@ -5343,21 +5395,19 @@ function renderDashboardLayout1() {
     })()}
     <div class="pro-bottom-row">
       <div class="panel pro-card"><div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:12px">💳 ${t('tab_debt')}</div>
+        <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('debt')} ${t('tab_debt')}</div>
         ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>${(()=>{const dp=act.debt||{},paid=state.debts.filter(d=>(dp[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0).length,total=state.debts.filter(d=>d.minimumPayment>0).length;return total>0?`<div style="margin-top:7px;font-size:11px;color:${paid===total?'#10b981':'#fb923c'};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paid} ${t('dash_of')} ${total} ${total===1?t('dash_debts_paid'):t('dash_debts_paid_many')}</div>`:'';})()}`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
       </div></div>
+      ${comingUpHtml()}
       <div class="panel pro-card"><div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:12px">${tf('dash_upcoming_tpl',upcomingDays)}</div>
-        ${upcoming.length===0?`<div class="chart-empty">${t('dash_nothing_scheduled')}</div>`:`<div class="upcoming-list">${upcoming.slice(0,6).map(ev=>{const p=ev.paid;return`<div class="upcoming-item"><span class="up-dot" style="background:${p?'var(--text-faint)':ev.color}"></span><span class="up-label" style="${p?'text-decoration:line-through;color:var(--text-faint)':''}">${esc(ev.label)}</span><span class="up-date" style="${p?'color:var(--text-faint)':''}">${formatDateDisplay(ev.date)}</span><span class="up-amt" style="${p?'color:var(--text-faint)':''}">${fmt(ev.amount)}</span></div>`;}).join('')}</div>`}
-      </div></div>
-      <div class="panel pro-card"><div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:12px">🏺 ${t('tab_sinking')}</div>
-        ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
+        <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('sinking')} ${t('tab_sinking')}</div>
+        ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="goals">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
       </div></div>
     </div>`;
   wirePeriodBar(el);
   wireNlHero(el);
   wireDashLog(el);
+  wireComingUp(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -5485,21 +5535,19 @@ function renderDashboardLayout2() {
 
     <div class="pro-bottom-row" style="margin-top:14px">
       <div class="panel pro-card"><div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:12px">💳 ${t('tab_debt')}</div>
+        <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('debt')} ${t('tab_debt')}</div>
         ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
       </div></div>
+      ${comingUpHtml()}
       <div class="panel pro-card"><div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:12px">${tf('dash_upcoming_tpl',upcomingDays)}</div>
-        ${upcoming.length===0?`<div class="chart-empty">${t('dash_nothing_scheduled')}</div>`:`<div class="upcoming-list">${upcoming.slice(0,6).map(ev=>{const p=ev.paid;return`<div class="upcoming-item"><span class="up-dot" style="background:${p?'var(--text-faint)':ev.color}"></span><span class="up-label" style="${p?'text-decoration:line-through;color:var(--text-faint)':''}">${esc(ev.label)}</span><span class="up-date" style="${p?'color:var(--text-faint)':''}">${formatDateDisplay(ev.date)}</span><span class="up-amt" style="${p?'color:var(--text-faint)':''}">${fmt(ev.amount)}</span></div>`;}).join('')}</div>`}
-      </div></div>
-      <div class="panel pro-card"><div class="panel-inner-sm">
-        <div class="panel-title-sm" style="margin-bottom:12px">🏺 ${t('tab_sinking')}</div>
-        ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="sinking">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
+        <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('sinking')} ${t('tab_sinking')}</div>
+        ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="goals">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
       </div></div>
     </div>`;
   wirePeriodBar(el);
   wireNlHero(el);
   wireDashLog(el);
+  wireComingUp(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     el.querySelectorAll('[data-chart-scope]').forEach(scope => {
@@ -5929,6 +5977,33 @@ function billSettles(row, extra) {
   const exp = rowExpected(row);
   if (exp <= 0) return true;
   return payRound2(rowPaidAmount(row) + extra) >= exp - 0.005;
+}
+function stepBillDate(iso, freq) {
+  const d = new Date(iso + 'T00:00:00');
+  switch (freq) {
+    case 'weekly':    d.setDate(d.getDate() + 7); break;
+    case 'quarterly': d.setMonth(d.getMonth() + 3); break;
+    case 'annual':    d.setFullYear(d.getFullYear() + 1); break;
+    default:          d.setMonth(d.getMonth() + 1);
+  }
+  return toLocalISO(d);
+}
+function rollBills() {
+  const today = toLocalISO(new Date());
+  let changed = false;
+  (state.bills || []).forEach(b => {
+    // Bounded, so a bill with a date years in the past cannot spin forever.
+    for (let i = 0; i < 60; i++) {
+      if (!b.nextBillingDate || b.nextBillingDate >= today) break;
+      if (!rowPayTxIds(b).length || !billSettles(b, 0)) break;
+      b.lastPaidOn = b.nextBillingDate;
+      b.nextBillingDate = stepBillDate(b.nextBillingDate, b.frequency);
+      b.payTxIds = []; b.paid = false;
+      changed = true;
+    }
+  });
+  if (changed) saveState();
+  return changed;
 }
 function setRowPayments(row, ids) {
   row.payTxIds = ids;
@@ -6444,18 +6519,11 @@ function addTransaction(opts){
   trialUse('transaction');
   applySinkingFundDelta(newTx, +1);
   // Issue 13: auto-advance subscription billing date
-  if(type==='subscription'){
-    const sub=state.bills.find(s=>s.name===cat||s.category===cat);
-    if(sub&&sub.nextBillingDate){
-      const d=new Date(sub.nextBillingDate+'T00:00:00');
-      switch(sub.frequency){
-        case'weekly': d.setDate(d.getDate()+7); break;
-        case'quarterly': d.setMonth(d.getMonth()+3); break;
-        case'annual': d.setFullYear(d.getFullYear()+1); break;
-        default: d.setMonth(d.getMonth()+1); // monthly
-      }
-      sub.nextBillingDate=toLocalISO(d);
-    }
+  // A bill paid from the log is linked to that bill, the same as one paid
+  // from its own row, so it shows as paid and moves on when its date passes.
+  if(type==='bill'){
+    const bill=(state.bills||[]).find(b=>b.name===cat);
+    if(bill) setRowPayments(bill,[...rowPayTxIds(bill),newTx.id]);
   }
   saveState();
   if(o.after){ o.after(); return true; }
@@ -6474,67 +6542,212 @@ function addTransaction(opts){
 // once that tab has been opened and would otherwise win getElementById.
 // prefill lets a caller open this already pointed at one category, which is
 // what an envelope's Log button does.
+// Logging money, built entirely inside the app: a keypad for the amount,
+// chips for the category, and the app's own calendar for the date, so it
+// behaves the same on a phone as on a desktop and never hands off to the
+// system keyboard or date wheel unless asked to. The hidden qa* fields are
+// what addTransaction reads, so every rule it enforces (the trial cap,
+// allocation, linking a bill payment, moving a goal's balance) still holds.
+const QA_TYPES = ['expense', 'bill', 'sinking_fund', 'debt', 'income'];
+const QA_DOTS = ['#22c55e', '#f97316', '#3b82f6', '#ec4899', '#eab308', '#8b5cf6', '#14b8a6', '#f43f5e', '#64748b'];
 function openQuickAddTx(prefill){
-  const allocEnabled=!!state.allocation?.enabled;
-  document.getElementById('modalTitle').textContent=t('tx_add_title');
-  document.getElementById('modalBody').innerHTML=`
-    <div class="field"><label class="field-label">${t('tx_date')}</label>${styledDateField('qaDate','qaDateWrap',today())}</div>
-    <div class="field"><label class="field-label">${t('tx_type')}</label><select class="select" id="qaType">
-      <option value="expense" selected>${t('tx_type_expense')}</option>
-      <option value="bill">${t('tx_type_bill')}</option>
-      <option value="sinking_fund">${t('tx_type_sinking_fund')}</option>
-      <option value="debt">${t('tx_type_debt')}</option>
-      <option value="income">${t('tx_type_income')}</option>
-    </select></div>
-    <div class="field"><label class="field-label">${t('tx_category')}</label><select class="select" id="qaCategory"></select></div>
-    ${allocEnabled?`<div class="field" id="qaAllocWrap"><label class="field-label">${t('alloc_label')}</label>
-      <select class="select" id="qaAlloc"><option value="">${t('alloc_optional')}</option>${
-        (state.allocation.buckets||[]).map(b=>`<option value="${b.id}">${esc(getAllocBucketDisplayName(b))}</option>`).join('')
-      }</select></div>`:''}
-    <div class="field"><label class="field-label">${t('tx_amount')} (${SYM})</label>
-      <input class="input" type="number" id="qaAmount" min="0" step="0.01" placeholder="0.00"></div>
-    <div class="field"><label class="field-label">${t('tx_desc_label')}</label>
-      <input class="input" type="text" id="qaDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
-    <div class="tx-error" id="qaError" hidden></div>
-    <div class="edit-tx-actions">
-      <button class="btn btn-primary" id="qaSaveBtn" type="button">${t('tx_add_btn')}</button>
-      <button class="btn btn-ghost btn-sm" id="qaCancelBtn" type="button">${t('cancel')}</button>
-    </div>`;
-  document.getElementById('tutorialOverlay').hidden=false;
+  const allocEnabled = !!state.allocation?.enabled;
+  let type = (prefill && QA_TYPES.includes(prefill.type)) ? prefill.type : 'expense';
+  let buf = '';
+  let cat = (prefill && prefill.category) || '';
+  let alloc = '';
+  const today0 = today();
 
-  const fillQaCats=()=>{
-    const sel=document.getElementById('qaCategory');
-    const cats=getCats(document.getElementById('qaType')?.value);
-    if(sel) sel.innerHTML=cats.length?cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join(''):'<option value="">- set up categories first -</option>';
+  const titleFor = ty => t('qa_title_' + ty);
+  const goFor = ty => t('qa_go_' + ty);
+  const amount = () => { const v = parseFloat(buf); return isNaN(v) ? 0 : v; };
+  const needsAlloc = ty => allocEnabled && (ty === 'expense' || ty === 'bill' || ty === 'debt');
+
+  document.getElementById('modalTitle').textContent = titleFor(type);
+  document.getElementById('modalBody').innerHTML = `<div class="qa">
+    <div class="qa-types" role="radiogroup" aria-label="${esc(t('tx_type'))}">${QA_TYPES.map(ty =>
+      `<button class="qa-type${ty === type ? ' is-on' : ''}" type="button" role="radio" aria-checked="${ty === type}" data-qa-type="${ty}">${esc(t('qa_type_' + ty))}</button>`).join('')}</div>
+    <div class="qa-grid">
+      <section class="qa-pad">
+        <div class="qa-amount" aria-live="polite"><span class="qa-sym">${esc(SYM)}</span><span class="qa-num" id="qaDisplay">0</span></div>
+        <button class="link-btn qa-type-it" id="qaTypeIt" type="button">${t('qa_type_it')}</button>
+        <input class="input qa-typed" id="qaTyped" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" hidden>
+        <div class="qa-quick">${[1, 5, 10, 20].map(v => `<button class="qa-chip qa-plus" type="button" data-qa-plus="${v}">+${esc(SYM)}${v}</button>`).join('')}</div>
+        <div class="qa-keys">${['1','2','3','4','5','6','7','8','9','.','0','back'].map(k =>
+          `<button class="qa-key" type="button" data-qa-key="${k}" aria-label="${k === 'back' ? esc(t('qa_backspace')) : k}">${k === 'back'
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="m16 9-5 5"/><path d="m11 9 5 5"/></svg>' : k}</button>`).join('')}</div>
+        <button class="link-btn qa-clear" id="qaClear" type="button">${t('qa_clear')}</button>
+      </section>
+      <section class="qa-side">
+        <p class="qa-label" id="qaCatLabel"></p>
+        <div class="qa-cats" id="qaCats"></div>
+        <div class="qa-alloc" id="qaAllocWrap" hidden><p class="qa-label">${t('alloc_label')}</p><div class="qa-cats" id="qaAllocChips"></div><input type="hidden" id="qaAlloc" value=""></div>
+        <div class="qa-meta">
+          <button class="qa-chip qa-meta-chip" id="qaDateWrap" type="button"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/></svg><span id="qaDateLabel"></span></button>
+          <input type="date" id="qaDate" value="${today0}" class="qa-hidden-date" tabindex="-1" aria-hidden="true">
+          <button class="qa-chip qa-meta-chip" id="qaNoteChip" type="button"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>${t('qa_add_note')}</button>
+        </div>
+        <input class="input qa-note" type="text" id="qaDesc" maxlength="120" placeholder="${esc(t('tx_desc_ph'))}" hidden>
+        <p class="qa-after" id="qaAfter" hidden></p>
+        <div class="tx-error" id="qaError" hidden></div>
+      </section>
+    </div>
+    <div class="qa-actions">
+      <button class="btn btn-ghost" id="qaCancelBtn" type="button">${t('cancel')}</button>
+      <button class="btn btn-ghost" id="qaAgainBtn" type="button">${t('qa_again')}</button>
+    </div>
+    <button class="btn btn-primary qa-go" id="qaSaveBtn" type="button"></button>
+    <input type="hidden" id="qaType" value="${type}">
+    <input type="hidden" id="qaCategory" value="">
+    <input type="hidden" id="qaAmount" value="">
+  </div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+
+  const $ = id => document.getElementById(id);
+  const hideErr = () => { const e = $('qaError'); if (e) e.hidden = true; };
+
+  // ── The amount ──
+  const paint = () => {
+    const [i, d] = buf.split('.');
+    const whole = (parseInt(i || '0', 10) || 0).toLocaleString('en-US');
+    $('qaDisplay').textContent = buf.includes('.') ? `${whole}.${d || ''}` : whole;
+    $('qaAmount').value = buf;
+    const a = amount();
+    $('qaSaveBtn').textContent = a > 0 ? `${goFor(type)} ${fmt(a)}` : goFor(type);
+    // What is left to spend once this is gone. Only for everyday spending:
+    // a bill or a debt payment is already counted as spoken for, so paying
+    // it leaves this figure where it was.
+    const after = $('qaAfter');
+    if (type === 'expense' && a > 0) {
+      const free = computeSummary(computeActuals()).leftover - nlCommitted().total - a;
+      const left = nlDaysInPeriod().left + 1;
+      after.textContent = tf('qa_after', fmt(free), formatDateShort(state.settings.periodEnd), fmt(Math.max(0, free) / Math.max(1, left)));
+      after.classList.toggle('is-short', free < 0);
+      after.hidden = false;
+    } else after.hidden = true;
   };
-  if(prefill&&prefill.type){
-    const ty=document.getElementById('qaType');
-    if(ty&&[...ty.options].some(o=>o.value===prefill.type)) ty.value=prefill.type;
-  }
-  fillQaCats();
-  if(prefill&&prefill.category){
-    const sel=document.getElementById('qaCategory');
-    if(sel&&[...sel.options].some(o=>o.value===prefill.category)) sel.value=prefill.category;
-  }
-  document.getElementById('qaType')?.addEventListener('change',fillQaCats);
-  bindDateField('qaDate','qaDateWrap');
-  document.getElementById('modalBody')?.addEventListener('input',()=>{
-    const el=document.getElementById('qaError'); if(el) el.hidden=true;
+  const press = k => {
+    hideErr();
+    if (k === 'back') buf = buf.slice(0, -1);
+    else if (k === '.') { if (!buf.includes('.')) buf = (buf || '0') + '.'; }
+    else {
+      if (buf.includes('.') && buf.split('.')[1].length >= 2) return;
+      if (!buf.includes('.') && buf.replace(/^0+/, '').length >= 7) return;
+      buf = (buf === '0') ? k : buf + k;
+    }
+    paint();
+  };
+  document.querySelectorAll('#modalBody [data-qa-key]').forEach(b => b.addEventListener('click', () => {
+    press(b.dataset.qaKey);
+    // Handed back to the page, so Enter saves rather than pressing this key
+    // a second time.
+    b.blur();
+  }));
+  document.querySelectorAll('#modalBody [data-qa-plus]').forEach(b => b.addEventListener('click', () => {
+    hideErr();
+    const v = Math.round((amount() + Number(b.dataset.qaPlus)) * 100) / 100;
+    buf = Number.isInteger(v) ? String(v) : v.toFixed(2);
+    paint(); b.blur();
+  }));
+  $('qaClear').addEventListener('click', () => { buf = ''; paint(); });
+  // Typing it is still offered, for anyone who would rather.
+  $('qaTypeIt').addEventListener('click', () => {
+    const inp = $('qaTyped');
+    inp.hidden = !inp.hidden;
+    if (!inp.hidden) { inp.value = buf; inp.focus(); }
   });
-  setTimeout(()=>document.getElementById('qaAmount')?.focus(),50);
+  $('qaTyped').addEventListener('input', e => {
+    const v = e.target.value.replace(',', '.').replace(/[^0-9.]/g, '');
+    const [i, d] = v.split('.');
+    buf = d !== undefined ? `${i}.${d.slice(0, 2)}` : i;
+    paint();
+  });
+  // A physical keyboard drives the same keypad. The listener lets itself go
+  // once this modal is no longer on screen.
+  const onKey = e => {
+    if (!$('qaDisplay') || $('tutorialOverlay').hidden) { document.removeEventListener('keydown', onKey); return; }
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); press(e.key); }
+    else if (e.key === '.' || e.key === ',') { e.preventDefault(); press('.'); }
+    else if (e.key === 'Backspace') { e.preventDefault(); press('back'); }
+  };
+  document.addEventListener('keydown', onKey);
 
-  document.getElementById('qaSaveBtn')?.addEventListener('click',()=>{
-    addTransaction({prefix:'qa',after:()=>{
-      closeModal();
-      // Whatever tab is open, not always the dashboard: this modal is
-      // reached from the dock too, from anywhere in the app. Settings is the
-      // exception, since a new transaction changes nothing there and a
-      // re-render would wipe out a half-finished field.
-      if (currentTab !== 'settings') dispatchRender(currentTab);
-      showToast(t('toast_tx_added'));
-    }});
+  // ── The category ──
+  const paintCats = () => {
+    const names = getCats(type);
+    $('qaCatLabel').textContent = names.length ? t('qa_tap_cat') : t('qa_no_cats_' + type);
+    const chips = names.map((n, i) =>
+      `<button class="qa-chip qa-cat${n === cat ? ' is-on' : ''}" type="button" data-qa-cat="${esc(n)}"><span class="qa-dot" style="background:${QA_DOTS[i % QA_DOTS.length]}"></span>${esc(n)}</button>`);
+    // Spending that does not fit anywhere yet can still be logged, and
+    // sorted into a category later from the transaction list.
+    if (type === 'expense') chips.push(`<button class="qa-chip qa-cat qa-cat--later${cat === t('qa_uncat') ? ' is-on' : ''}" type="button" data-qa-cat="${esc(t('qa_uncat'))}">${esc(t('qa_uncat_chip'))}</button>`);
+    $('qaCats').innerHTML = chips.join('');
+    if (cat && !names.includes(cat) && cat !== t('qa_uncat')) cat = '';
+    $('qaCategory').value = cat;
+    document.querySelectorAll('#qaCats [data-qa-cat]').forEach(b => b.addEventListener('click', () => {
+      cat = b.dataset.qaCat; $('qaCategory').value = cat; hideErr();
+      document.querySelectorAll('#qaCats .qa-cat').forEach(x => x.classList.toggle('is-on', x === b));
+    }));
+    // Need or want, where the allocation split asks for it.
+    const wrap = $('qaAllocWrap');
+    wrap.hidden = !needsAlloc(type);
+    if (!wrap.hidden) {
+      $('qaAllocChips').innerHTML = (state.allocation.buckets || []).filter(b => b.id !== 'save').map(b =>
+        `<button class="qa-chip qa-bucket${b.id === alloc ? ' is-on' : ''}" type="button" data-qa-alloc="${b.id}"><span class="qa-dot" style="background:${b.color}"></span>${esc(getAllocBucketDisplayName(b))}</button>`).join('');
+      document.querySelectorAll('#qaAllocChips [data-qa-alloc]').forEach(b => b.addEventListener('click', () => {
+        alloc = b.dataset.qaAlloc; $('qaAlloc').value = alloc; hideErr();
+        wrap.querySelector('.field-error-msg')?.remove();
+        document.querySelectorAll('#qaAllocChips .qa-bucket').forEach(x => x.classList.toggle('is-on', x === b));
+      }));
+    }
+    $('qaAlloc').value = needsAlloc(type) ? alloc : '';
+  };
+
+  // ── The type ──
+  document.querySelectorAll('#modalBody [data-qa-type]').forEach(b => b.addEventListener('click', () => {
+    type = b.dataset.qaType; $('qaType').value = type;
+    document.querySelectorAll('#modalBody .qa-type').forEach(x => {
+      const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', on);
+    });
+    document.getElementById('modalTitle').textContent = titleFor(type);
+    cat = ''; hideErr(); paintCats(); paint();
+  }));
+
+  // ── The date and the note ──
+  const paintDate = () => {
+    const v = $('qaDate').value || today0;
+    const y = toLocalISO(new Date(Date.now() - 86400000));
+    $('qaDateLabel').textContent = v === today0 ? t('cu_today_cap') : v === y ? t('cu_yesterday_cap') : formatDateShort(v);
+  };
+  $('qaDateWrap').addEventListener('click', () => openDatePicker($('qaDate'), $('qaDateWrap')));
+  $('qaDate').addEventListener('change', () => { paintDate(); $('qaDateWrap').classList.remove('fk-invalid'); });
+  $('qaNoteChip').addEventListener('click', () => {
+    const n = $('qaDesc'); n.hidden = false; $('qaNoteChip').hidden = true; n.focus();
   });
-  document.getElementById('qaCancelBtn')?.addEventListener('click',closeModal);
+
+  // ── Saving ──
+  const save = again => addTransaction({ prefix: 'qa', after: () => {
+    if (currentTab !== 'settings') dispatchRender(currentTab);
+    showToast(t('toast_tx_added'));
+    if (!again) { closeModal(); return; }
+    // Ready for the next one: same type and day, fresh amount and category.
+    buf = ''; cat = ''; $('qaDesc').value = '';
+    paintCats(); paint();
+  }});
+  $('qaSaveBtn').addEventListener('click', () => save(false));
+  $('qaAgainBtn').addEventListener('click', () => save(true));
+  $('qaCancelBtn').addEventListener('click', closeModal);
+
+  // Every chip and key lets go of focus once tapped, so Enter saves the
+  // entry instead of pressing whatever was tapped last a second time.
+  $('modalBody').addEventListener('click', e => {
+    const hit = e.target.closest('.qa-chip, .qa-type, .qa-key');
+    if (hit) hit.blur();
+  });
+
+  paintCats(); paintDate(); paint();
 }
 
 // The heading button on wide screens, the floating one on narrow. Both open
@@ -7391,6 +7604,7 @@ const SUB_CAT_KEYS={'Entertainment':'sub_cat_entertainment','Productivity':'sub_
 function subCatLabel(cat){const k=SUB_CAT_KEYS[cat||'Other'];return k?t(k):(cat||t('sub_cat_other'));}
 
 function renderSubscriptions(){
+  rollBills();
   const el=document.getElementById('bview-bills');
   const active=state.bills.filter(s=>s.active!==false);
   const totMo=active.reduce((t,s)=>t+monthlySubAmt(s),0);
