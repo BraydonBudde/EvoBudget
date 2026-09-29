@@ -114,7 +114,7 @@ const TRANSLATIONS = {
     sf_currently_saved:'Currently saved',
     tx_search_ph:'Search by description or category\u2026',
     tx_filter_all_types:'All types',tx_filter_all_alloc:'All allocations',
-    tx_add_btn:'Add',tx_add_title:'Add a transaction',tx_amount:'Amount',tx_category:'Category',tx_clear_all:'Clear all',tx_date:'Date',tx_desc_label:'Description',tx_desc_ph:'e.g. Grocery run\u2026',tx_empty:'No transactions yet.',tx_import_csv:'\uD83D\uDCE5 Import CSV',tx_th_amount:'Amount',tx_th_desc:'Description',tx_transaction_many:'transactions',tx_transaction_one:'transaction',tx_type:'Type',tx_type_bill:'Bill',tx_type_debt:'Debt',tx_type_expense:'Expense',tx_type_income:'Income',tx_type_savings:'Savings',tx_empty_sub:'Add your first transaction to get started',
+    tx_add_btn:'Add',tx_add_title:'Add a transaction',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_debt:'Debt',qa_type_income:'Income',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_debt:'Add a debt first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_next_period:'Next period',bp_title:'Budget period',bp_how:'How does your money come in?',bp_r_month:'Calendar month',bp_r_payday:'Monthly on payday',bp_r_w2:'Every 2 weeks',bp_r_w4:'Every 4 weeks',bp_r_w1:'Every week',bp_r_custom:'Pick dates',bp_payday:'Payday',bp_day_n:'day {0}',bp_starts:'Starts {0}',bp_tap_custom:'Tap the first day of the period.',bp_tap_last:'Now tap the last day.',bp_tap_rhythm:'Tap a day to start the period there.',bp_auto:'Move on to the next period by itself',bp_days:'{0} days',bp_day_of:'today is day {0} of {1}',bp_starts_in:'starts in {0} days',bp_over:'already over',bp_left:'{0} days left',bp_daily:'Your planned income of {0} comes to about {1} a day.',bp_now:'Back to today',bp_use:'Use {0}',bp_prev:'Previous period',bp_next:'Next period',bp_moved:'A new budget period has started: {0}',view_as_list:'Show as a list',view_as_cards:'Show as cards',rail_nav:'Navigation',rail_account:'Account',rail_guest:'Your budget',rail_local:'Saved on this device',rail_account_open:'Open settings',badge_bills:'{0} bills overdue or due this week',badge_debt:'{0} debt payments due this week',badge_transactions:'{0} expenses to sort into a category',cal_prev:'\u2190 Prev',cal_next:'Next \u2192',badge_expenses:'{0} categories over budget',qa_title_savings:'Add to savings',qa_go_savings:'Add to savings',qa_type_savings:'Savings',qa_no_cats_savings:'Add a savings category first.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_income:'Add an income category first.',tx_amount:'Amount',tx_category:'Category',tx_clear_all:'Clear all',tx_date:'Date',tx_desc_label:'Description',tx_desc_ph:'e.g. Grocery run\u2026',tx_empty:'No transactions yet.',tx_import_csv:'\uD83D\uDCE5 Import CSV',tx_th_amount:'Amount',tx_th_desc:'Description',tx_transaction_many:'transactions',tx_transaction_one:'transaction',tx_type:'Type',tx_type_bill:'Bill',tx_type_debt:'Debt',tx_type_expense:'Expense',tx_type_income:'Income',tx_type_savings:'Savings',tx_empty_sub:'Add your first transaction to get started',
     tx_sort_date_new:'Newest first',tx_sort_date_old:'Oldest first',
     tx_sort_amt_high:'Highest amount',tx_sort_amt_low:'Lowest amount',
     tx_showing:'Showing {n} of {total}',tx_no_results:'No transactions match your filter.',
@@ -420,7 +420,7 @@ const TRANSLATIONS = {
     sf_currently_saved:'Bisher gespart',
     tx_search_ph:'Nach Beschreibung oder Kategorie suchen\u2026',
     tx_filter_all_types:'Alle Arten',tx_filter_all_alloc:'Alle Zuordnungen',
-    tx_add_btn:'Hinzufügen',tx_add_title:'Transaktion hinzufügen',tx_amount:'Betrag',tx_category:'Kategorie',tx_clear_all:'Alle löschen',tx_date:'Datum',tx_desc_label:'Beschreibung',tx_desc_ph:'z.B. Einkaufen\u2026',tx_empty:'Noch keine Transaktionen.',tx_import_csv:'\uD83D\uDCE5 CSV importieren',tx_th_amount:'Betrag',tx_th_desc:'Beschreibung',tx_transaction_many:'Transaktionen',tx_transaction_one:'Transaktion',tx_type:'Art',tx_type_bill:'Rechnung',tx_type_debt:'Schulden',tx_type_expense:'Ausgaben',tx_type_income:'Einnahmen',tx_type_savings:'Ersparnisse',tx_empty_sub:'F\u00fcge deine erste Transaktion hinzu, um zu beginnen',
+    tx_add_btn:'Hinzufügen',tx_add_title:'Transaktion hinzufügen',qa_title_expense:'Ausgabe hinzufügen',qa_title_bill:'Rechnung bezahlen',qa_title_debt:'Schuld bezahlen',qa_title_income:'Einnahme hinzufügen',qa_go_expense:'Ausgabe hinzufügen',qa_go_bill:'Rechnung bezahlen',qa_go_debt:'Schuld bezahlen',qa_go_income:'Einnahme hinzufügen',qa_type_expense:'Ausgabe',qa_type_bill:'Rechnung',qa_type_debt:'Schuld',qa_type_income:'Einnahme',qa_clear:'Löschen',qa_backspace:'Letzte Ziffer löschen',qa_tap_cat:'Tippe auf eine Kategorie',qa_no_cats_expense:'Noch keine Ausgabenkategorien, du kannst diese später zuordnen.',qa_no_cats_debt:'Lege zuerst eine Schuld an.',qa_uncat:'Ohne Kategorie',qa_uncat_chip:'Ohne Kategorie · später zuordnen',qa_add_note:'Notiz',qa_again:'Speichern und weitere',qa_after:'Danach: {0} bis {1}, etwa {2} pro Tag.',cu_today_cap:'Heute',cu_yesterday_cap:'Gestern',cu_next_period:'Nächste Periode',bp_title:'Budgetzeitraum',bp_how:'Wie kommt dein Geld rein?',bp_r_month:'Kalendermonat',bp_r_payday:'Monatlich ab Zahltag',bp_r_w2:'Alle 2 Wochen',bp_r_w4:'Alle 4 Wochen',bp_r_w1:'Jede Woche',bp_r_custom:'Daten wählen',bp_payday:'Zahltag',bp_day_n:'Tag {0}',bp_starts:'Beginnt am {0}',bp_tap_custom:'Tippe auf den ersten Tag.',bp_tap_last:'Jetzt auf den letzten Tag tippen.',bp_tap_rhythm:'Tippe auf einen Tag, um dort zu beginnen.',bp_auto:'Automatisch zum nächsten Zeitraum wechseln',bp_days:'{0} Tage',bp_day_of:'heute ist Tag {0} von {1}',bp_starts_in:'beginnt in {0} Tagen',bp_over:'bereits vorbei',bp_left:'noch {0} Tage',bp_daily:'Dein geplantes Einkommen von {0} ergibt etwa {1} pro Tag.',bp_now:'Zurück zu heute',bp_use:'{0} verwenden',bp_prev:'Vorheriger Zeitraum',bp_next:'Nächster Zeitraum',bp_moved:'Ein neuer Budgetzeitraum hat begonnen: {0}',view_as_list:'Als Liste anzeigen',view_as_cards:'Als Karten anzeigen',rail_nav:'Navigation',rail_account:'Konto',rail_guest:'Dein Budget',rail_local:'Auf diesem Gerät gespeichert',rail_account_open:'Einstellungen öffnen',badge_bills:'{0} Rechnungen überfällig oder diese Woche fällig',badge_debt:'{0} Schuldenzahlungen diese Woche fällig',badge_transactions:'{0} Ausgaben ohne Kategorie',cal_prev:'← Zurück',cal_next:'Weiter →',badge_expenses:'{0} Kategorien über Budget',qa_title_savings:'Zu Ersparnissen',qa_go_savings:'Zu Ersparnissen',qa_type_savings:'Ersparnis',qa_no_cats_savings:'Lege zuerst eine Sparkategorie an.',qa_no_cats_bill:'Lege zuerst eine Rechnung im Tab Rechnungen an.',qa_no_cats_income:'Lege zuerst eine Einnahmekategorie an.',tx_amount:'Betrag',tx_category:'Kategorie',tx_clear_all:'Alle löschen',tx_date:'Datum',tx_desc_label:'Beschreibung',tx_desc_ph:'z.B. Einkaufen\u2026',tx_empty:'Noch keine Transaktionen.',tx_import_csv:'\uD83D\uDCE5 CSV importieren',tx_th_amount:'Betrag',tx_th_desc:'Beschreibung',tx_transaction_many:'Transaktionen',tx_transaction_one:'Transaktion',tx_type:'Art',tx_type_bill:'Rechnung',tx_type_debt:'Schulden',tx_type_expense:'Ausgaben',tx_type_income:'Einnahmen',tx_type_savings:'Ersparnisse',tx_empty_sub:'F\u00fcge deine erste Transaktion hinzu, um zu beginnen',
     tx_sort_date_new:'Neueste zuerst',tx_sort_date_old:'\u00c4lteste zuerst',
     tx_sort_amt_high:'H\u00f6chster Betrag',tx_sort_amt_low:'Niedrigster Betrag',
     tx_showing:'{n} von {total} angezeigt',tx_no_results:'Keine Transaktionen entsprechen deinem Filter.',
@@ -705,7 +705,7 @@ const TRANSLATIONS = {
     sf_currently_saved:'Actuellement \u00e9pargn\u00e9',
     tx_search_ph:'Rechercher par description ou cat\u00e9gorie\u2026',
     tx_filter_all_types:'Tous les types',tx_filter_all_alloc:'Toutes les r\u00e9partitions',
-    tx_add_btn:'Ajouter',tx_add_title:'Ajouter une transaction',tx_amount:'Montant',tx_category:'Catégorie',tx_clear_all:'Tout effacer',tx_date:'Date',tx_desc_label:'Description',tx_desc_ph:'ex. Courses\u2026',tx_empty:'Aucune transaction encore.',tx_import_csv:'\uD83D\uDCE5 Importer CSV',tx_th_amount:'Montant',tx_th_desc:'Description',tx_transaction_many:'transactions',tx_transaction_one:'transaction',tx_type:'Type',tx_type_bill:'Facture',tx_type_debt:'Dette',tx_type_expense:'Dépense',tx_type_income:'Revenu',tx_type_savings:'Épargne',tx_empty_sub:'Ajoutez votre premi\u00e8re transaction pour commencer',
+    tx_add_btn:'Ajouter',tx_add_title:'Ajouter une transaction',qa_title_expense:'Ajouter une dépense',qa_title_bill:'Payer une facture',qa_title_debt:'Payer une dette',qa_title_income:'Ajouter un revenu',qa_go_expense:'Ajouter',qa_go_bill:'Payer',qa_go_debt:'Payer',qa_go_income:'Ajouter',qa_type_expense:'Dépense',qa_type_bill:'Facture',qa_type_debt:'Dette',qa_type_income:'Revenu',qa_clear:'Effacer',qa_backspace:'Effacer le dernier chiffre',qa_tap_cat:'Touchez une catégorie',qa_no_cats_expense:'Aucune catégorie pour le moment, vous pourrez la classer plus tard.',qa_no_cats_debt:"Ajoutez d'abord une dette.",qa_uncat:'Sans catégorie',qa_uncat_chip:'Sans catégorie · à classer',qa_add_note:'Ajouter une note',qa_again:'Enregistrer et continuer',qa_after:'Ensuite : {0} jusqu’au {1}, environ {2} par jour.',cu_today_cap:"Aujourd'hui",cu_yesterday_cap:'Hier',cu_next_period:'Période suivante',bp_title:'Période budgétaire',bp_how:'Comment votre argent arrive-t-il ?',bp_r_month:'Mois civil',bp_r_payday:'Mensuel dès la paie',bp_r_w2:'Toutes les 2 semaines',bp_r_w4:'Toutes les 4 semaines',bp_r_w1:'Chaque semaine',bp_r_custom:'Choisir les dates',bp_payday:'Jour de paie',bp_day_n:'le {0}',bp_starts:'Commence le {0}',bp_tap_custom:'Touchez le premier jour.',bp_tap_last:'Touchez maintenant le dernier jour.',bp_tap_rhythm:'Touchez un jour pour y faire commencer la période.',bp_auto:'Passer seul à la période suivante',bp_days:'{0} jours',bp_day_of:"aujourd'hui, jour {0} sur {1}",bp_starts_in:'commence dans {0} jours',bp_over:'déjà terminée',bp_left:'{0} jours restants',bp_daily:'Votre revenu prévu de {0} représente environ {1} par jour.',bp_now:"Revenir à aujourd'hui",bp_use:'Utiliser {0}',bp_prev:'Période précédente',bp_next:'Période suivante',bp_moved:'Une nouvelle période a commencé : {0}',view_as_list:'Afficher en liste',view_as_cards:'Afficher en cartes',rail_nav:'Navigation',rail_account:'Compte',rail_guest:'Votre budget',rail_local:'Enregistré sur cet appareil',rail_account_open:'Ouvrir les réglages',badge_bills:'{0} factures en retard ou dues cette semaine',badge_debt:'{0} paiements de dette dus cette semaine',badge_transactions:'{0} dépenses à classer',cal_prev:'← Préc.',cal_next:'Suiv. →',badge_expenses:'{0} catégories en dépassement',qa_title_savings:'Ajouter à l’épargne',qa_go_savings:'Épargner',qa_type_savings:'Épargne',qa_no_cats_savings:'Ajoutez d’abord une catégorie d’épargne.',qa_no_cats_bill:'Ajoutez d’abord une facture dans l’onglet Factures.',qa_no_cats_income:'Ajoutez d’abord une catégorie de revenu.',tx_amount:'Montant',tx_category:'Catégorie',tx_clear_all:'Tout effacer',tx_date:'Date',tx_desc_label:'Description',tx_desc_ph:'ex. Courses\u2026',tx_empty:'Aucune transaction encore.',tx_import_csv:'\uD83D\uDCE5 Importer CSV',tx_th_amount:'Montant',tx_th_desc:'Description',tx_transaction_many:'transactions',tx_transaction_one:'transaction',tx_type:'Type',tx_type_bill:'Facture',tx_type_debt:'Dette',tx_type_expense:'Dépense',tx_type_income:'Revenu',tx_type_savings:'Épargne',tx_empty_sub:'Ajoutez votre premi\u00e8re transaction pour commencer',
     tx_sort_date_new:'Plus r\u00e9cent d\u2019abord',tx_sort_date_old:'Plus ancien d\u2019abord',
     tx_sort_amt_high:'Montant le plus \u00e9lev\u00e9',tx_sort_amt_low:'Montant le moins \u00e9lev\u00e9',
     tx_showing:'{n} sur {total} affich\u00e9(s)',tx_no_results:'Aucune transaction ne correspond \u00e0 votre filtre.',
@@ -990,7 +990,7 @@ const TRANSLATIONS = {
     sf_currently_saved:'Actualmente ahorrado',
     tx_search_ph:'Buscar por descripci\u00f3n o categor\u00eda\u2026',
     tx_filter_all_types:'Todos los tipos',tx_filter_all_alloc:'Todas las distribuciones',
-    tx_add_btn:'Añadir',tx_add_title:'Añadir una transacción',tx_amount:'Importe',tx_category:'Categoría',tx_clear_all:'Borrar todo',tx_date:'Fecha',tx_desc_label:'Descripción',tx_desc_ph:'p.ej. Compra en supermercado\u2026',tx_empty:'Aún no hay transacciones.',tx_import_csv:'\uD83D\uDCE5 Importar CSV',tx_th_amount:'Importe',tx_th_desc:'Descripción',tx_transaction_many:'transacciones',tx_transaction_one:'transacción',tx_type:'Tipo',tx_type_bill:'Factura',tx_type_debt:'Deuda',tx_type_expense:'Gasto',tx_type_income:'Ingreso',tx_type_savings:'Ahorro',tx_empty_sub:'A\u00f1ade tu primera transacci\u00f3n para empezar',
+    tx_add_btn:'Añadir',tx_add_title:'Añadir una transacción',qa_title_expense:'Añadir gasto',qa_title_bill:'Pagar factura',qa_title_debt:'Pagar deuda',qa_title_income:'Añadir ingreso',qa_go_expense:'Añadir gasto',qa_go_bill:'Pagar',qa_go_debt:'Pagar',qa_go_income:'Añadir',qa_type_expense:'Gasto',qa_type_bill:'Factura',qa_type_debt:'Deuda',qa_type_income:'Ingreso',qa_clear:'Borrar',qa_backspace:'Borrar el último dígito',qa_tap_cat:'Toca una categoría',qa_no_cats_expense:'Aún no hay categorías, puedes clasificarlo después.',qa_no_cats_debt:'Añade primero una deuda.',qa_uncat:'Sin categoría',qa_uncat_chip:'Sin categoría · clasificar luego',qa_add_note:'Añadir nota',qa_again:'Guardar y añadir otro',qa_after:'Después: {0} hasta el {1}, unos {2} al día.',cu_today_cap:'Hoy',cu_yesterday_cap:'Ayer',cu_next_period:'Siguiente período',bp_title:'Período del presupuesto',bp_how:'¿Cómo te entra el dinero?',bp_r_month:'Mes natural',bp_r_payday:'Mensual desde el día de cobro',bp_r_w2:'Cada 2 semanas',bp_r_w4:'Cada 4 semanas',bp_r_w1:'Cada semana',bp_r_custom:'Elegir fechas',bp_payday:'Día de cobro',bp_day_n:'día {0}',bp_starts:'Empieza el {0}',bp_tap_custom:'Toca el primer día.',bp_tap_last:'Ahora toca el último día.',bp_tap_rhythm:'Toca un día para empezar ahí el período.',bp_auto:'Pasar solo al siguiente período',bp_days:'{0} días',bp_day_of:'hoy es el día {0} de {1}',bp_starts_in:'empieza en {0} días',bp_over:'ya terminado',bp_left:'quedan {0} días',bp_daily:'Tus ingresos previstos de {0} dan unos {1} al día.',bp_now:'Volver a hoy',bp_use:'Usar {0}',bp_prev:'Período anterior',bp_next:'Período siguiente',bp_moved:'Ha empezado un nuevo período: {0}',view_as_list:'Ver como lista',view_as_cards:'Ver como tarjetas',rail_nav:'Navegación',rail_account:'Cuenta',rail_guest:'Tu presupuesto',rail_local:'Guardado en este dispositivo',rail_account_open:'Abrir ajustes',badge_bills:'{0} facturas vencidas o que vencen esta semana',badge_debt:'{0} pagos de deuda esta semana',badge_transactions:'{0} gastos por clasificar',cal_prev:'← Ant.',cal_next:'Sig. →',badge_expenses:'{0} categorías por encima del presupuesto',qa_title_savings:'Añadir a ahorros',qa_go_savings:'Ahorrar',qa_type_savings:'Ahorro',qa_no_cats_savings:'Añade primero una categoría de ahorro.',qa_no_cats_bill:'Añade primero una factura en la pestaña Facturas.',qa_no_cats_income:'Añade primero una categoría de ingresos.',tx_amount:'Importe',tx_category:'Categoría',tx_clear_all:'Borrar todo',tx_date:'Fecha',tx_desc_label:'Descripción',tx_desc_ph:'p.ej. Compra en supermercado\u2026',tx_empty:'Aún no hay transacciones.',tx_import_csv:'\uD83D\uDCE5 Importar CSV',tx_th_amount:'Importe',tx_th_desc:'Descripción',tx_transaction_many:'transacciones',tx_transaction_one:'transacción',tx_type:'Tipo',tx_type_bill:'Factura',tx_type_debt:'Deuda',tx_type_expense:'Gasto',tx_type_income:'Ingreso',tx_type_savings:'Ahorro',tx_empty_sub:'A\u00f1ade tu primera transacci\u00f3n para empezar',
     tx_sort_date_new:'M\u00e1s reciente primero',tx_sort_date_old:'M\u00e1s antiguo primero',
     tx_sort_amt_high:'Mayor importe',tx_sort_amt_low:'Menor importe',
     tx_showing:'Mostrando {n} de {total}',tx_no_results:'Ninguna transacci\u00f3n coincide con tu filtro.',
@@ -1275,7 +1275,7 @@ const TRANSLATIONS = {
     sf_currently_saved:'Attualmente risparmiato',
     tx_search_ph:'Cerca per descrizione o categoria\u2026',
     tx_filter_all_types:'Tutti i tipi',tx_filter_all_alloc:'Tutte le distribuzioni',
-    tx_add_btn:'Aggiungi',tx_add_title:'Aggiungi una transazione',tx_amount:'Importo',tx_category:'Categoria',tx_clear_all:'Cancella tutto',tx_date:'Data',tx_desc_label:'Descrizione',tx_desc_ph:'es. Spesa al supermercato\u2026',tx_empty:'Nessuna transazione ancora.',tx_import_csv:'\uD83D\uDCE5 Importa CSV',tx_th_amount:'Importo',tx_th_desc:'Descrizione',tx_transaction_many:'transazioni',tx_transaction_one:'transazione',tx_type:'Tipo',tx_type_bill:'Bolletta',tx_type_debt:'Debito',tx_type_expense:'Spesa',tx_type_income:'Entrata',tx_type_savings:'Risparmio',tx_empty_sub:'Aggiungi la tua prima transazione per iniziare',
+    tx_add_btn:'Aggiungi',tx_add_title:'Aggiungi una transazione',qa_title_expense:'Aggiungi spesa',qa_title_bill:'Paga bolletta',qa_title_debt:'Paga debito',qa_title_income:'Aggiungi entrata',qa_go_expense:'Aggiungi spesa',qa_go_bill:'Paga',qa_go_debt:'Paga',qa_go_income:'Aggiungi',qa_type_expense:'Spesa',qa_type_bill:'Bolletta',qa_type_debt:'Debito',qa_type_income:'Entrata',qa_clear:'Cancella',qa_backspace:"Cancella l'ultima cifra",qa_tap_cat:'Tocca una categoria',qa_no_cats_expense:'Nessuna categoria ancora, puoi assegnarla dopo.',qa_no_cats_debt:'Aggiungi prima un debito.',qa_uncat:'Senza categoria',qa_uncat_chip:'Senza categoria · da sistemare',qa_add_note:'Aggiungi nota',qa_again:'Salva e aggiungi un altro',qa_after:'Dopo: {0} fino al {1}, circa {2} al giorno.',cu_today_cap:'Oggi',cu_yesterday_cap:'Ieri',cu_next_period:'Periodo successivo',bp_title:'Periodo del budget',bp_how:'Come ti arrivano i soldi?',bp_r_month:'Mese solare',bp_r_payday:'Mensile dal giorno di paga',bp_r_w2:'Ogni 2 settimane',bp_r_w4:'Ogni 4 settimane',bp_r_w1:'Ogni settimana',bp_r_custom:'Scegli le date',bp_payday:'Giorno di paga',bp_day_n:'giorno {0}',bp_starts:'Inizia il {0}',bp_tap_custom:'Tocca il primo giorno.',bp_tap_last:"Ora tocca l'ultimo giorno.",bp_tap_rhythm:'Tocca un giorno per far iniziare lì il periodo.',bp_auto:'Passa da solo al periodo successivo',bp_days:'{0} giorni',bp_day_of:'oggi è il giorno {0} di {1}',bp_starts_in:'inizia tra {0} giorni',bp_over:'già concluso',bp_left:'{0} giorni rimasti',bp_daily:'Le entrate previste di {0} fanno circa {1} al giorno.',bp_now:'Torna a oggi',bp_use:'Usa {0}',bp_prev:'Periodo precedente',bp_next:'Periodo successivo',bp_moved:'È iniziato un nuovo periodo: {0}',view_as_list:'Mostra come elenco',view_as_cards:'Mostra come schede',rail_nav:'Navigazione',rail_account:'Account',rail_guest:'Il tuo budget',rail_local:'Salvato su questo dispositivo',rail_account_open:'Apri le impostazioni',badge_bills:'{0} bollette scadute o in scadenza questa settimana',badge_debt:'{0} rate di debito questa settimana',badge_transactions:'{0} spese da classificare',cal_prev:'\u2190 Prec.',cal_next:'Succ. \u2192',badge_expenses:'{0} categorie oltre il budget',qa_title_savings:'Aggiungi ai risparmi',qa_go_savings:'Risparmia',qa_type_savings:'Risparmio',qa_no_cats_savings:'Aggiungi prima una categoria di risparmio.',qa_no_cats_bill:'Aggiungi prima una bolletta nella scheda Bollette.',qa_no_cats_income:'Aggiungi prima una categoria di entrata.',tx_amount:'Importo',tx_category:'Categoria',tx_clear_all:'Cancella tutto',tx_date:'Data',tx_desc_label:'Descrizione',tx_desc_ph:'es. Spesa al supermercato\u2026',tx_empty:'Nessuna transazione ancora.',tx_import_csv:'\uD83D\uDCE5 Importa CSV',tx_th_amount:'Importo',tx_th_desc:'Descrizione',tx_transaction_many:'transazioni',tx_transaction_one:'transazione',tx_type:'Tipo',tx_type_bill:'Bolletta',tx_type_debt:'Debito',tx_type_expense:'Spesa',tx_type_income:'Entrata',tx_type_savings:'Risparmio',tx_empty_sub:'Aggiungi la tua prima transazione per iniziare',
     tx_sort_date_new:'Pi\u00f9 recente prima',tx_sort_date_old:'Pi\u00f9 vecchio prima',
     tx_sort_amt_high:'Importo maggiore',tx_sort_amt_low:'Importo minore',
     tx_showing:'Visualizzando {n} di {total}',tx_no_results:'Nessuna transazione corrisponde al tuo filtro.',
@@ -1559,7 +1559,7 @@ const TRANSLATIONS = {
     sf_currently_saved:'Dotychczas zaoszcz\u0119dzono',
     tx_search_ph:'Szukaj po opisie lub kategorii\u2026',
     tx_filter_all_types:'Wszystkie typy',tx_filter_all_alloc:'Wszystkie podzia\u0142y',
-    tx_add_btn:'Dodaj',tx_add_title:'Dodaj transakcję',tx_amount:'Kwota',tx_category:'Kategoria',tx_clear_all:'Wyczyść wszystko',tx_date:'Data',tx_desc_label:'Opis',tx_desc_ph:'np. Zakupy spożywcze\u2026',tx_empty:'Brak transakcji.',tx_import_csv:'\uD83D\uDCE5 Importuj CSV',tx_th_amount:'Kwota',tx_th_desc:'Opis',tx_transaction_many:'transakcji',tx_transaction_one:'transakcja',tx_type:'Typ',tx_type_bill:'Rachunek',tx_type_debt:'Dług',tx_type_expense:'Wydatek',tx_type_income:'Przychód',tx_type_savings:'Oszczędności',tx_empty_sub:'Dodaj pierwsz\u0105 transakcj\u0119, aby rozpocz\u0105\u0107',
+    tx_add_btn:'Dodaj',tx_add_title:'Dodaj transakcję',qa_title_expense:'Dodaj wydatek',qa_title_bill:'Zapłać rachunek',qa_title_debt:'Spłać dług',qa_title_income:'Dodaj przychód',qa_go_expense:'Dodaj wydatek',qa_go_bill:'Zapłać',qa_go_debt:'Spłać',qa_go_income:'Dodaj',qa_type_expense:'Wydatek',qa_type_bill:'Rachunek',qa_type_debt:'Dług',qa_type_income:'Przychód',qa_clear:'Wyczyść',qa_backspace:'Usuń ostatnią cyfrę',qa_tap_cat:'Wybierz kategorię',qa_no_cats_expense:'Brak kategorii, możesz przypisać później.',qa_no_cats_debt:'Najpierw dodaj dług.',qa_uncat:'Bez kategorii',qa_uncat_chip:'Bez kategorii · przypisz później',qa_add_note:'Dodaj notatkę',qa_again:'Zapisz i dodaj kolejny',qa_after:'Potem: {0} do {1}, około {2} dziennie.',cu_today_cap:'Dziś',cu_yesterday_cap:'Wczoraj',cu_next_period:'Następny okres',bp_title:'Okres budżetu',bp_how:'Jak wpływają Twoje pieniądze?',bp_r_month:'Miesiąc kalendarzowy',bp_r_payday:'Co miesiąc od wypłaty',bp_r_w2:'Co 2 tygodnie',bp_r_w4:'Co 4 tygodnie',bp_r_w1:'Co tydzień',bp_r_custom:'Wybierz daty',bp_payday:'Dzień wypłaty',bp_day_n:'dzień {0}',bp_starts:'Zaczyna się {0}',bp_tap_custom:'Stuknij pierwszy dzień.',bp_tap_last:'Teraz stuknij ostatni dzień.',bp_tap_rhythm:'Stuknij dzień, aby tam zacząć okres.',bp_auto:'Przechodź sam do następnego okresu',bp_days:'{0} dni',bp_day_of:'dziś dzień {0} z {1}',bp_starts_in:'zaczyna się za {0} dni',bp_over:'już minął',bp_left:'zostało {0} dni',bp_daily:'Planowany przychód {0} to około {1} dziennie.',bp_now:'Wróć do dziś',bp_use:'Użyj {0}',bp_prev:'Poprzedni okres',bp_next:'Następny okres',bp_moved:'Rozpoczął się nowy okres budżetu: {0}',view_as_list:'Pokaż jako listę',view_as_cards:'Pokaż jako karty',rail_nav:'Nawigacja',rail_account:'Konto',rail_guest:'Twój budżet',rail_local:'Zapisane na tym urządzeniu',rail_account_open:'Otwórz ustawienia',badge_bills:'{0} rachunków zaległych lub do zapłaty w tym tygodniu',badge_debt:'{0} rat długu w tym tygodniu',badge_transactions:'{0} wydatków do przypisania',cal_prev:'← Wstecz',cal_next:'Dalej →',badge_expenses:'{0} kategorii ponad budżet',qa_title_savings:'Dodaj do oszczędności',qa_go_savings:'Odłóż',qa_type_savings:'Oszczędności',qa_no_cats_savings:'Najpierw dodaj kategorię oszczędności.',qa_no_cats_bill:'Najpierw dodaj rachunek w zakładce Rachunki.',qa_no_cats_income:'Najpierw dodaj kategorię przychodu.',tx_amount:'Kwota',tx_category:'Kategoria',tx_clear_all:'Wyczyść wszystko',tx_date:'Data',tx_desc_label:'Opis',tx_desc_ph:'np. Zakupy spożywcze\u2026',tx_empty:'Brak transakcji.',tx_import_csv:'\uD83D\uDCE5 Importuj CSV',tx_th_amount:'Kwota',tx_th_desc:'Opis',tx_transaction_many:'transakcji',tx_transaction_one:'transakcja',tx_type:'Typ',tx_type_bill:'Rachunek',tx_type_debt:'Dług',tx_type_expense:'Wydatek',tx_type_income:'Przychód',tx_type_savings:'Oszczędności',tx_empty_sub:'Dodaj pierwsz\u0105 transakcj\u0119, aby rozpocz\u0105\u0107',
     tx_sort_date_new:'Najnowsze najpierw',tx_sort_date_old:'Najstarsze najpierw',
     tx_sort_amt_high:'Najwy\u017csza kwota',tx_sort_amt_low:'Najni\u017csza kwota',
     tx_showing:'Wy\u015bwietlono {n} z {total}',tx_no_results:'\u017badna transakcja nie odpowiada filtrowi.',
@@ -2792,10 +2792,15 @@ function navRailEl() {
     rail.setAttribute('aria-label', tabs.getAttribute('aria-label') || '');
     rail.innerHTML = '<div class="nav-rail-box">' +
       '<div class="nav-rail-brand"></div>' +
+      '<p class="nav-rail-heading" data-i18n-rail="rail_nav"></p>' +
       '<div class="nav-rail-sections" id="navRailSections"></div>' +
       '<div class="nav-rail-widgets" id="navWidgets"></div>' +
       '<div class="nav-rail-tools"></div>' +
+      '<p class="nav-rail-heading" data-i18n-rail="rail_account"></p>' +
+      '<button class="nav-rail-account" id="navRailAccount" type="button"></button>' +
       '</div>';
+    rail.querySelector('#navRailAccount').addEventListener('click', () =>
+      document.getElementById('settingsNavBtn')?.click());
     // Delegated, so redrawing the sections never re-attaches listeners.
     rail.addEventListener('click', e => {
       const b = e.target.closest('.nav-rail-item');
@@ -2804,6 +2809,86 @@ function navRailEl() {
     shell.insertBefore(rail, shell.firstChild);
   }
   return rail;
+}
+
+// ── Section badges ───────────────────────────────────────────────────────
+// A number beside a section says how many things there want a look: bills
+// overdue or due within a week, debt payments due within a week, budget
+// categories already over, expenses still waiting for a category, and
+// goals whose date has passed short of the target. Red when any of them
+// is already late. Counted from the same helpers the sections use, so a
+// badge can never point at something the section itself does not show.
+const BADGE_SOON_DAYS = 7;
+function navBadgeCounts() {
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const today = toLocalISO(now);
+  const soon = toLocalISO(new Date(now.getTime() + BADGE_SOON_DAYS * 86400000));
+  const start = state.settings.periodStart || today;
+  // A bill or debt row falls due on its day each month. It is late when
+  // this month's day has passed inside the period without it being paid,
+  // and wants a look when the next one comes round within the week.
+  const dueRows = type => {
+    let n = 0, late = false;
+    (state.budgets[type] || []).forEach(r => {
+      if (rowPayState(r) === 'paid') return;
+      const day = rowDueDay(r);
+      if (!day) return;
+      const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const thisMonth = toLocalISO(new Date(now.getFullYear(), now.getMonth(), Math.min(day, last)));
+      if (thisMonth < today && thisMonth >= start) { n++; late = true; return; }
+      const next = nextDueFromDay(day);
+      if (next >= today && next <= soon) n++;
+    });
+    return { n, late };
+  };
+  const out = { bills: dueRows('bills'), debt: dueRows('debt') };
+  let exp = {};
+  try { exp = computeActuals().expenses || {}; } catch (e) { exp = {}; }
+  out.expenses = { n: (state.budgets.expenses || []).filter(r => (r.expected || 0) > 0 && (exp[r.category] || 0) > r.expected).length, late: true };
+  const uncat = new Set(Object.values(TRANSLATIONS).map(x => x && x.qa_uncat).filter(Boolean));
+  out.transactions = { n: (state.transactions || []).filter(tx => tx.type === 'expense' && (!tx.category || uncat.has(tx.category))).length };
+  return out;
+}
+function paintNavBadges() {
+  let counts = {};
+  try { counts = navBadgeCounts(); } catch (e) { return; }
+  document.querySelectorAll('.btab[data-btab]').forEach(btn => {
+    if (!btn.querySelector('.nav-badge')) {
+      const b = document.createElement('b');
+      b.className = 'nav-badge'; b.dataset.badgeFor = btn.dataset.btab; b.hidden = true;
+      btn.appendChild(b);
+    }
+  });
+  document.querySelectorAll('.nav-badge[data-badge-for]').forEach(el => {
+    const c = counts[el.dataset.badgeFor];
+    const k = c && c.n > 0 ? c.n : 0;
+    el.hidden = !k;
+    el.textContent = k > 99 ? '99+' : String(k || '');
+    el.classList.toggle('is-late', !!(c && c.late && k));
+    const label = k ? tf('badge_' + el.dataset.badgeFor, k) : '';
+    if (label) { el.title = label; el.setAttribute('aria-label', label); }
+  });
+}
+let _navBadgeQ = 0;
+function queueNavBadges() {
+  if (_navBadgeQ) return;
+  _navBadgeQ = requestAnimationFrame(() => { _navBadgeQ = 0; paintNavBadges(); });
+}
+// Who this is, read from what sign-in already stored. Nothing here signs
+// anyone in or out; the card opens Settings, where that lives.
+function paintRailAccount(rail) {
+  const box = rail && rail.querySelector('#navRailAccount');
+  if (!box) return;
+  let email = '', mode = '';
+  try { email = typeof syncGetEmail === 'function' ? syncGetEmail('sbp') : ''; } catch (e) {}
+  try { mode = typeof syncGetMode === 'function' ? syncGetMode('sbp') : ''; } catch (e) {}
+  const google = mode === 'google' && !!email;
+  const name = google ? email.split('@')[0] : t('rail_guest');
+  const initial = (name.trim().charAt(0) || '?').toUpperCase();
+  box.innerHTML = `<span class="nra-avatar" aria-hidden="true">${esc(initial)}</span>
+    <span class="nra-text"><span class="nra-name">${esc(name)}</span><span class="nra-sub">${esc(google ? email : t('rail_local'))}</span></span>
+    <span class="nra-go" aria-hidden="true">${appIconSvg('settings') || ''}</span>`;
+  box.title = t('rail_account_open');
 }
 
 function buildNavRail() {
@@ -2824,10 +2909,13 @@ function buildNavRail() {
       const label = txt ? txt.textContent.trim() : full;
       const on = b.classList.contains('is-active');
       return `<button class="nav-rail-item${on ? ' is-active' : ''}"${on ? ' aria-current="true"' : ''} data-btab="${esc(b.dataset.btab)}" type="button" title="${esc(label)}">
-      <span class="nav-rail-icon" aria-hidden="true">${icon}</span><span class="nav-rail-label">${esc(label)}</span>
+      <span class="nav-rail-icon" aria-hidden="true">${icon}</span><span class="nav-rail-label">${esc(label)}</span><b class="nav-badge" data-badge-for="${esc(b.dataset.btab)}" hidden></b>
     </button>`;
     }).join('');
+  rail.querySelectorAll('[data-i18n-rail]').forEach(h => { h.textContent = t(h.dataset.i18nRail); });
+  paintRailAccount(rail);
   railAdopt(rail);
+  queueNavBadges();
   renderNavWidgets();
 }
 
@@ -3523,6 +3611,8 @@ function switchBTab(tab) {
 }
 
 function dispatchRender(tab) {
+  maybeAdvancePeriod();
+  queueNavBadges();
   switch (tab) {
     case 'dashboard':                              renderDashboard();    break;
     case 'transactions':                           renderTransactions(); break;
@@ -3742,6 +3832,7 @@ function loadSampleData() {
   showToast(t('sample_loaded_toast'));
 }
 function renderDashboard() {
+  queueNavBadges();
   // renderDashboardLayout1 is still reachable, but only through Sleek,
   // which calls it and then swaps its heading.
   ({
@@ -4535,6 +4626,7 @@ function syncModulePaidLinks() {
 // thing they sat in.
 const APP_ICONS = {
   envelope:      '<rect x="2.6" y="5" width="18.8" height="14" rx="2.4"/><path d="M3.2 7 12 13l8.8-6"/>',
+  list:          '<path d="M8.6 6.5h12"/><path d="M8.6 12h12"/><path d="M8.6 17.5h12"/><circle cx="4.3" cy="6.5" r="1"/><circle cx="4.3" cy="12" r="1"/><circle cx="4.3" cy="17.5" r="1"/>',
   dashboard:     '<rect x="3.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="13.2" y="3.4" width="7.6" height="7.6" rx="1.7"/><rect x="3.2" y="13.4" width="7.6" height="7.2" rx="1.7"/><rect x="13.2" y="13.4" width="7.6" height="7.2" rx="1.7"/>',
   budget:        '<path d="M12 3.2v17.6"/><path d="M16.2 6.6H9.9a2.85 2.85 0 0 0 0 5.7h4.2a2.85 2.85 0 0 1 0 5.7H7.8"/>',
   transactions:  '<path d="M4 7.4h12.6"/><path d="M13.6 4.4 16.9 7.4 13.6 10.4"/><path d="M20 16.6H7.4"/><path d="M10.4 13.6 7.1 16.6 10.4 19.6"/>',
@@ -4563,6 +4655,39 @@ function paintTabIcons(){
     if (svg && el.innerHTML !== svg) el.innerHTML = svg;
   });
 }
+
+// Each section remembers whether it is shown as cards or as a list. The
+// button shows the view it would switch to, so it reads as an offer.
+function viewMode(sec){ return (state.settings.viewModes||{})[sec]==='list'?'list':'cards'; }
+function viewToggleBtn(sec){
+  const toList=viewMode(sec)!=='list';
+  const label=toList?t('view_as_list'):t('view_as_cards');
+  return `<button class="help-icon-btn view-toggle" type="button" data-view-toggle="${sec}" title="${esc(label)}" aria-label="${esc(label)}" aria-pressed="${!toList}">${appIconSvg(toList?'list':'dashboard')}</button>`;
+}
+function wireViewToggle(scope, sec, rerender){
+  scope.querySelector(`[data-view-toggle="${sec}"]`)?.addEventListener('click',()=>{
+    state.settings.viewModes={...(state.settings.viewModes||{}),[sec]:viewMode(sec)==='list'?'cards':'list'};
+    saveState(); rerender();
+  });
+}
+// One row of a list view. Every section's list is built from these, so the
+// columns line up the same way wherever the toggle is flipped.
+function lvRow({ ico, name, sub, bar, barCls, fig, cap, acts, cls }){
+  return `<div class="lv-row${cls?' '+cls:''}">
+    <span class="lv-ico" aria-hidden="true">${ico}</span>
+    <span class="lv-main"><span class="lv-name">${name}</span>${sub?`<span class="lv-sub">${sub}</span>`:''}</span>
+    <span class="lv-bar">${bar==null?'':`<span class="lv-bar-fill${barCls?' '+barCls:''}" style="width:${Math.min(100,Math.max(0,bar))}%"></span>`}</span>
+    <span class="lv-fig">${fig}${cap?`<small>${cap}</small>`:''}</span>
+    <span class="lv-acts">${acts||''}</span>
+  </div>`;
+}
+const LV_SVG=p=>`<svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const LV_EDIT=LV_SVG('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>');
+const LV_DEL=LV_SVG('<path d="M6 6l12 12"/><path d="M18 6 6 18"/>');
+const LV_PLUS=LV_SVG('<path d="M12 5v14"/><path d="M5 12h14"/>');
+// An icon button in a list row. cls carries whatever class the section
+// already binds its handler to.
+const lvBtn=(cls,attrs,label,svg)=>`<button class="lv-act${cls?' '+cls:''}" ${attrs} type="button" title="${esc(label)}" aria-label="${esc(label)}">${svg}</button>`;
 
 function envCardHtml(row, o) {
   const act = o.actuals[row.category] || 0;
@@ -4593,7 +4718,27 @@ function envCardHtml(row, o) {
   </article>`;
 }
 
+function envLineHtml(row, o) {
+  const act = o.actuals[row.category] || 0;
+  const exp = row.expected || 0;
+  const over = !o.isInc && exp > 0 && act > exp;
+  const head = o.isInc ? act : exp - act;
+  const day = o.hasDates ? rowDueDay(row) : 0;
+  const metaTxt = o.isInc ? tf('env_meta_in', fmt(act), fmt(exp)) : tf('env_meta_out', fmt(act), fmt(exp));
+  return lvRow({
+    cls: over ? 'is-over' : '', ico: budgetIconSvg(o.type), name: esc(row.category),
+    sub: day ? `${t('due_day')} ${day} \u00b7 ${metaTxt}` : metaTxt,
+    bar: pct(act, exp), barCls: o.isInc ? 'is-in' : over ? 'is-over' : '',
+    fig: `${head < 0 ? '\u2212' : ''}${fmt(Math.abs(head))}`,
+    cap: o.isInc ? (o.type === 'savings' ? t('env_saved') : t('env_in')) : (over ? t('env_over') : t('env_left')),
+    acts: lvBtn('', `data-env-log="${row.id}"`, t('env_log'), LV_PLUS)
+      + lvBtn('edit-btn', `data-edit-id="${row.id}"`, t('edit'), LV_EDIT)
+      + lvBtn('lv-act--del del-btn', `data-id="${row.id}"`, t('mod_remove'), LV_DEL)
+  });
+}
+
 function renderModule(type) {
+  queueNavBadges();
   const meta    = MODULE_META[type];
   const rows    = state.budgets[type];
   const actuals = computeActuals()[type];
@@ -4608,7 +4753,7 @@ function renderModule(type) {
     <div class="section-header">
       <h2 class="section-title">${appIconSvg(type)} ${t(meta.titleKey)}</h2>
       <div class="section-header-actions">
-        <button class="help-icon-btn" data-help="${type}" type="button" aria-label="${t('help_aria')}">?</button>
+        ${viewToggleBtn(type)}<button class="help-icon-btn" data-help="${type}" type="button" aria-label="${t('help_aria')}">?</button>
         <button class="btn btn-primary btn-sm" id="addRowBtn" type="button">${t('mod_add_category')}</button>
       </div>
     </div>
@@ -4617,12 +4762,13 @@ function renderModule(type) {
     ${rows.length ? `<div class="module-section-header module-section-header--solo">
       <span class="module-section-total"><strong>${fmt(totalAct)}</strong> / ${fmt(totalExp)}</span>
     </div>` : ''}
-    <div class="env-grid">${rows.map(r => envCardHtml(r, { actuals, isInc, type, hasDates: meta.hasDates })).join('')}
+    ${viewMode(type) === 'list' && rows.length ? `<div class="lv">${rows.map(r => envLineHtml(r, { actuals, isInc, type, hasDates: meta.hasDates })).join('')}</div>`
+    : `<div class="env-grid">${rows.map(r => envCardHtml(r, { actuals, isInc, type, hasDates: meta.hasDates })).join('')}
       <button class="env-add" id="addRowBtnEmpty" type="button" title="${esc(t('mod_add_new_category'))}">
         <span class="env-add-ico" aria-hidden="true">${appIconSvg('envelope')}</span>
         <span class="env-add-text">${t('mod_add_category')}</span>
       </button>
-    </div>
+    </div>`}
   `;
 
   const el = document.getElementById(`bview-${type}`);
@@ -4710,6 +4856,7 @@ function renderModule(type) {
   });
 
   el.querySelector('[data-help]')?.addEventListener('click', e => showHelp(e.currentTarget.dataset.help));
+  wireViewToggle(el, type, () => renderModule(type));
   initFieldTips(el);
 }
 
@@ -4773,6 +4920,7 @@ function renderTxList(){
   document.getElementById('txNextBtn')?.addEventListener('click',()=>{if(txPage<totalPages-1){txPage++;renderTxList();}});
 }
 function renderTransactions() {
+  queueNavBadges();
   const el=document.getElementById('bview-transactions');
   // One way in, given its own card rather than six fields laid across the
   // top of the page: on a phone that form was most of a screen on its own.
@@ -4864,74 +5012,198 @@ function addTransaction(opts) {
   return true;
 }
 
-// ── Quick add, from the dashboard ──────────────────────────────────────
-// Its own id prefix, because the Transactions tab's form stays in the DOM
-// once that tab has been opened and would otherwise win getElementById.
-// prefill lets a caller open this already pointed at one category, which is
-// what an envelope's Log button does.
-function openQuickAddTx(prefill) {
-  document.getElementById('modalTitle').textContent = t('tx_add_title');
-  document.getElementById('modalBody').innerHTML = `
-    <div class="field">
-      <label class="field-label">${t('tx_date')}</label>
-      <div class="date-field-styled" id="qaDateWrap">
-        <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        <span class="date-field-val" id="qaDateDisp">${formatDateDisplay(today())}</span>
-        <input type="date" id="qaDate" value="${today()}">
-      </div>
+// ── Quick add ──────────────────────────────────────────────────────────
+// The same keypad sheet as the ultimate planner: a big amount, quick
+// amounts, category chips, today and a note, and what is left to spend
+// once it is gone. Its own id prefix, because the Transactions tab's form
+// stays in the DOM once that tab has been opened. prefill opens it on one
+// category, which is what an envelope's Log button does.
+const QA_TYPES = ['expense', 'bill', 'savings', 'debt', 'income'];
+const QA_DOTS = ['#22c55e', '#f97316', '#3b82f6', '#ec4899', '#eab308', '#8b5cf6', '#14b8a6', '#f43f5e', '#64748b'];
+function openQuickAddTx(prefill){
+  const allocEnabled = false;
+  let type = (prefill && QA_TYPES.includes(prefill.type)) ? prefill.type : 'expense';
+  let buf = '';
+  let cat = (prefill && prefill.category) || '';
+  let alloc = '';
+  const today0 = today();
+
+  const titleFor = ty => t('qa_title_' + ty);
+  const goFor = ty => t('qa_go_' + ty);
+  const amount = () => { const v = parseFloat(buf); return isNaN(v) ? 0 : v; };
+  const needsAlloc = ty => allocEnabled && (ty === 'expense' || ty === 'bill' || ty === 'debt');
+
+  document.getElementById('modalTitle').textContent = titleFor(type);
+  document.getElementById('modalBody').innerHTML = `<div class="qa">
+    <div class="qa-types" role="radiogroup" aria-label="${esc(t('tx_type'))}">${QA_TYPES.map(ty =>
+      `<button class="qa-type${ty === type ? ' is-on' : ''}" type="button" role="radio" aria-checked="${ty === type}" data-qa-type="${ty}">${esc(t('qa_type_' + ty))}</button>`).join('')}</div>
+    <div class="qa-grid">
+      <section class="qa-pad">
+        <div class="qa-amount" aria-live="polite"><span class="qa-sym">${esc(SYM)}</span><span class="qa-num" id="qaDisplay">0</span></div>
+        <div class="qa-quick">${[1, 5, 10, 20].map(v => `<button class="qa-chip qa-plus" type="button" data-qa-plus="${v}">+${esc(SYM)}${v}</button>`).join('')}</div>
+        <div class="qa-keys">${['1','2','3','4','5','6','7','8','9','.','0','back'].map(k =>
+          `<button class="qa-key" type="button" data-qa-key="${k}" aria-label="${k === 'back' ? esc(t('qa_backspace')) : k}">${k === 'back'
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="m16 9-5 5"/><path d="m11 9 5 5"/></svg>' : k}</button>`).join('')}</div>
+        <button class="link-btn qa-clear" id="qaClear" type="button">${t('qa_clear')}</button>
+      </section>
+      <section class="qa-side">
+        <p class="qa-label" id="qaCatLabel"></p>
+        <div class="qa-cats" id="qaCats"></div>
+        <div class="qa-alloc" id="qaAllocWrap" hidden><div class="qa-cats" id="qaAllocChips"></div><input type="hidden" id="qaAlloc" value=""></div>
+        <div class="qa-meta">
+          <button class="qa-chip qa-meta-chip" id="qaDateWrap" type="button"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/></svg><span id="qaDateLabel"></span></button>
+          <input type="date" id="qaDate" value="${today0}" class="qa-hidden-date" tabindex="-1" aria-hidden="true">
+          <button class="qa-chip qa-meta-chip" id="qaNoteChip" type="button"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>${t('qa_add_note')}</button>
+        </div>
+        <input class="input qa-note" type="text" id="qaDesc" maxlength="120" placeholder="${esc(t('tx_desc_ph'))}" hidden>
+        <p class="qa-after" id="qaAfter" hidden></p>
+        <div class="tx-error" id="qaError" hidden></div>
+      </section>
     </div>
-    <div class="field"><label class="field-label">${t('tx_type')}</label>
-      <select class="select" id="qaType">
-        <option value="expense" selected>${t('tx_type_expense')}</option>
-        <option value="bill">${t('tx_type_bill')}</option>
-        <option value="savings">${t('tx_type_savings')}</option>
-        <option value="debt">${t('tx_type_debt')}</option>
-        <option value="income">${t('tx_type_income')}</option>
-      </select></div>
-    <div class="field"><label class="field-label">${t('tx_category')}</label>
-      <select class="select" id="qaCategory"></select></div>
-    <div class="field"><label class="field-label">${t('tx_amount')} (${SYM})</label>
-      <input class="input" type="number" id="qaAmount" min="0" step="0.01" placeholder="0.00"></div>
-    <div class="field"><label class="field-label">${t('tx_desc_label')}</label>
-      <input class="input" type="text" id="qaDesc" placeholder="${t('tx_desc_ph')}" maxlength="120"></div>
-    <div class="tx-error" id="qaError" hidden></div>
-    <div class="edit-tx-actions">
-      <button class="btn btn-primary" id="qaSaveBtn" type="button">${t('tx_add_btn')}</button>
-      <button class="btn btn-ghost btn-sm" id="qaCancelBtn" type="button">${t('cancel')}</button>
-    </div>`;
+    <div class="qa-actions">
+      <button class="btn btn-ghost" id="qaCancelBtn" type="button">${t('cancel')}</button>
+      <button class="btn btn-ghost" id="qaAgainBtn" type="button">${t('qa_again')}</button>
+    </div>
+    <button class="btn btn-primary qa-go" id="qaSaveBtn" type="button"></button>
+    <input type="hidden" id="qaType" value="${type}">
+    <input type="hidden" id="qaCategory" value="">
+    <input type="hidden" id="qaAmount" value="">
+  </div>`;
   document.getElementById('tutorialOverlay').hidden = false;
 
-  const fillQaCats = () => {
-    const sel = document.getElementById('qaCategory');
-    const cats = getCats(document.getElementById('qaType')?.value);
-    if (sel) sel.innerHTML = cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('')
-      || `<option value="">${t('no_categories')}</option>`;
-  };
-  fillQaCats();
-  document.getElementById('qaType')?.addEventListener('change', fillQaCats);
-  document.getElementById('qaDateWrap')?.addEventListener('click', () => {
-    openDatePicker(document.getElementById('qaDate'), document.getElementById('qaDateWrap'));
-  });
-  document.getElementById('qaDate')?.addEventListener('change', e => {
-    document.getElementById('qaDateDisp').textContent = formatDateDisplay(e.target.value);
-  });
-  document.getElementById('modalBody')?.addEventListener('input', () => {
-    const el = document.getElementById('qaError'); if (el) el.hidden = true;
-  });
-  setTimeout(() => document.getElementById('qaAmount')?.focus(), 50);
+  const $ = id => document.getElementById(id);
+  const hideErr = () => { const e = $('qaError'); if (e) e.hidden = true; };
 
-  document.getElementById('qaSaveBtn')?.addEventListener('click', () => {
-    addTransaction({ prefix: 'qa', after: () => {
-      closeModal();
-      // Whatever tab is open, not always the dashboard: this modal is
-      // reached from the dock too, from anywhere in the app. Settings is the
-      // exception, since a new transaction changes nothing there and a
-      // re-render would wipe out a half-finished field.
-      if (currentBTab !== 'settings') dispatchRender(currentBTab);
-      showToast(t('toast_tx_added'));
-    } });
+  // ── The amount ──
+  const paint = () => {
+    const [i, d] = buf.split('.');
+    const whole = (parseInt(i || '0', 10) || 0).toLocaleString('en-US');
+    $('qaDisplay').textContent = buf.includes('.') ? `${whole}.${d || ''}` : whole;
+    $('qaAmount').value = buf;
+    const a = amount();
+    $('qaSaveBtn').textContent = a > 0 ? `${goFor(type)} ${fmt(a)}` : goFor(type);
+    // What is left to spend once this is gone. Only for everyday spending:
+    // a bill or a debt payment is already counted as spoken for, so paying
+    // it leaves this figure where it was.
+    const after = $('qaAfter');
+    if (type === 'expense' && a > 0) {
+      const free = computeSummary(computeActuals()).leftover - nlCommitted().total - a;
+      const left = nlDaysInPeriod().left + 1;
+      after.textContent = tf('qa_after', fmt(free), formatDateShort(state.settings.periodEnd), fmt(Math.max(0, free) / Math.max(1, left)));
+      after.classList.toggle('is-short', free < 0);
+      after.hidden = false;
+    } else after.hidden = true;
+  };
+  const press = k => {
+    hideErr();
+    if (k === 'back') buf = buf.slice(0, -1);
+    else if (k === '.') { if (!buf.includes('.')) buf = (buf || '0') + '.'; }
+    else {
+      if (buf.includes('.') && buf.split('.')[1].length >= 2) return;
+      if (!buf.includes('.') && buf.replace(/^0+/, '').length >= 7) return;
+      buf = (buf === '0') ? k : buf + k;
+    }
+    paint();
+  };
+  document.querySelectorAll('#modalBody [data-qa-key]').forEach(b => b.addEventListener('click', () => {
+    press(b.dataset.qaKey);
+    // Handed back to the page, so Enter saves rather than pressing this key
+    // a second time.
+    b.blur();
+  }));
+  document.querySelectorAll('#modalBody [data-qa-plus]').forEach(b => b.addEventListener('click', () => {
+    hideErr();
+    const v = Math.round((amount() + Number(b.dataset.qaPlus)) * 100) / 100;
+    buf = Number.isInteger(v) ? String(v) : v.toFixed(2);
+    paint(); b.blur();
+  }));
+  $('qaClear').addEventListener('click', () => { buf = ''; paint(); });
+  // A physical keyboard drives the same keypad. The listener lets itself go
+  // once this modal is no longer on screen.
+  const onKey = e => {
+    if (!$('qaDisplay') || $('tutorialOverlay').hidden) { document.removeEventListener('keydown', onKey); return; }
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); press(e.key); }
+    else if (e.key === '.' || e.key === ',') { e.preventDefault(); press('.'); }
+    else if (e.key === 'Backspace') { e.preventDefault(); press('back'); }
+  };
+  document.addEventListener('keydown', onKey);
+
+  // ── The category ──
+  const paintCats = () => {
+    const names = getCats(type);
+    $('qaCatLabel').textContent = names.length ? t('qa_tap_cat') : t('qa_no_cats_' + type);
+    const chips = names.map((n, i) =>
+      `<button class="qa-chip qa-cat${n === cat ? ' is-on' : ''}" type="button" data-qa-cat="${esc(n)}"><span class="qa-dot" style="background:${QA_DOTS[i % QA_DOTS.length]}"></span>${esc(n)}</button>`);
+    // Spending that does not fit anywhere yet can still be logged, and
+    // sorted into a category later from the transaction list.
+    if (type === 'expense') chips.push(`<button class="qa-chip qa-cat qa-cat--later${cat === t('qa_uncat') ? ' is-on' : ''}" type="button" data-qa-cat="${esc(t('qa_uncat'))}">${esc(t('qa_uncat_chip'))}</button>`);
+    $('qaCats').innerHTML = chips.join('');
+    if (cat && !names.includes(cat) && cat !== t('qa_uncat')) cat = '';
+    $('qaCategory').value = cat;
+    document.querySelectorAll('#qaCats [data-qa-cat]').forEach(b => b.addEventListener('click', () => {
+      cat = b.dataset.qaCat; $('qaCategory').value = cat; hideErr();
+      document.querySelectorAll('#qaCats .qa-cat').forEach(x => x.classList.toggle('is-on', x === b));
+    }));
+    // Need or want, where the allocation split asks for it.
+    const wrap = $('qaAllocWrap');
+    wrap.hidden = !needsAlloc(type);
+    if (!wrap.hidden) {
+      $('qaAllocChips').innerHTML = (state.allocation.buckets || []).filter(b => b.id !== 'save').map(b =>
+        `<button class="qa-chip qa-bucket${b.id === alloc ? ' is-on' : ''}" type="button" data-qa-alloc="${b.id}"><span class="qa-dot" style="background:${b.color}"></span>${esc(getAllocBucketDisplayName(b))}</button>`).join('');
+      document.querySelectorAll('#qaAllocChips [data-qa-alloc]').forEach(b => b.addEventListener('click', () => {
+        alloc = b.dataset.qaAlloc; $('qaAlloc').value = alloc; hideErr();
+        wrap.querySelector('.field-error-msg')?.remove();
+        document.querySelectorAll('#qaAllocChips .qa-bucket').forEach(x => x.classList.toggle('is-on', x === b));
+      }));
+    }
+    $('qaAlloc').value = needsAlloc(type) ? alloc : '';
+  };
+
+  // ── The type ──
+  document.querySelectorAll('#modalBody [data-qa-type]').forEach(b => b.addEventListener('click', () => {
+    type = b.dataset.qaType; $('qaType').value = type;
+    document.querySelectorAll('#modalBody .qa-type').forEach(x => {
+      const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', on);
+    });
+    document.getElementById('modalTitle').textContent = titleFor(type);
+    cat = ''; hideErr(); paintCats(); paint();
+  }));
+
+  // ── The date and the note ──
+  const paintDate = () => {
+    const v = $('qaDate').value || today0;
+    const y = toLocalISO(new Date(Date.now() - 86400000));
+    $('qaDateLabel').textContent = v === today0 ? t('cu_today_cap') : v === y ? t('cu_yesterday_cap') : formatDateShort(v);
+  };
+  $('qaDateWrap').addEventListener('click', () => openDatePicker($('qaDate'), $('qaDateWrap')));
+  $('qaDate').addEventListener('change', () => { paintDate(); $('qaDateWrap').classList.remove('fk-invalid'); });
+  $('qaNoteChip').addEventListener('click', () => {
+    const n = $('qaDesc'); n.hidden = false; $('qaNoteChip').hidden = true; n.focus();
   });
-  document.getElementById('qaCancelBtn')?.addEventListener('click', closeModal);
+
+  // ── Saving ──
+  const save = again => addTransaction({ prefix: 'qa', after: () => {
+    if (currentBTab !== 'settings') dispatchRender(currentBTab);
+    showToast(t('toast_tx_added'));
+    if (!again) { closeModal(); return; }
+    // Ready for the next one: same type and day, fresh amount and category.
+    buf = ''; cat = ''; $('qaDesc').value = '';
+    paintCats(); paint();
+  }});
+  $('qaSaveBtn').addEventListener('click', () => save(false));
+  $('qaAgainBtn').addEventListener('click', () => save(true));
+  $('qaCancelBtn').addEventListener('click', closeModal);
+
+  // Every chip and key lets go of focus once tapped, so Enter saves the
+  // entry instead of pressing whatever was tapped last a second time.
+  $('modalBody').addEventListener('click', e => {
+    const hit = e.target.closest('.qa-chip, .qa-type, .qa-key');
+    if (hit) hit.blur();
+  });
+
+  paintCats(); paintDate(); paint();
 }
 
 // The heading button on wide screens, the floating one on narrow. Both open
@@ -5956,58 +6228,274 @@ function applyBudgetPeriod(start, end, opts) {
   if (!(opts && opts.silent)) showToast(t('toast_period_updated'));
 }
 
-const PERIOD_CHIPS = [['month', 'this_month'], ['last_month', 'last_month']];
+// ══ Budget period ═══════════════════════════════════════════════════════
+// A period follows a rhythm: the calendar month, a month running from one
+// payday to the next, or a run of one, two or four weeks from a start date.
+// Dates picked by hand are a rhythm of their own that never moves on.
+const BP_RHYTHMS = ['month', 'payday', 'w2', 'w4', 'w1', 'custom'];
+const BP_WEEKS = { w1: 7, w2: 14, w4: 28 };
+function bpRhythm() {
+  const r = state.settings.periodRhythm;
+  return r && BP_RHYTHMS.includes(r.kind) ? r : null;
+}
+const bpDate = iso => new Date(iso + 'T00:00:00');
+const bpAdd = (iso, days) => { const d = bpDate(iso); d.setDate(d.getDate() + days); return toLocalISO(d); };
+const bpSpan = (a, b) => Math.round((bpDate(b) - bpDate(a)) / 86400000) + 1;
+// The payday in a given month, pulled back to the month's last day when
+// the month is too short for it.
+function bpPayday(y, m, day) {
+  const last = new Date(y, m + 1, 0).getDate();
+  return new Date(y, m, Math.min(day, last));
+}
+// The period of this rhythm that contains the given date.
+function bpPeriodFor(r, refISO) {
+  const ref = bpDate(refISO);
+  if (!r || r.kind === 'month') {
+    return [toLocalISO(new Date(ref.getFullYear(), ref.getMonth(), 1)),
+            toLocalISO(new Date(ref.getFullYear(), ref.getMonth() + 1, 0))];
+  }
+  if (r.kind === 'payday') {
+    const day = Math.min(31, Math.max(1, r.day || 1));
+    let start = bpPayday(ref.getFullYear(), ref.getMonth(), day);
+    if (start > ref) start = bpPayday(ref.getFullYear(), ref.getMonth() - 1, day);
+    const next = bpPayday(start.getFullYear(), start.getMonth() + 1, day);
+    next.setDate(next.getDate() - 1);
+    return [toLocalISO(start), toLocalISO(next)];
+  }
+  const len = BP_WEEKS[r.kind];
+  if (len) {
+    const anchor = r.anchor || refISO;
+    const k = Math.floor((bpSpan(anchor, refISO) - 1) / len);
+    const start = bpAdd(anchor, k * len);
+    return [start, bpAdd(start, len - 1)];
+  }
+  return null;
+}
+// The rhythm in force, or, before one has been chosen, the one the current
+// dates already follow: a whole calendar month reads as one.
+function bpRhythmNow() {
+  const r = bpRhythm();
+  if (r) return r;
+  const a = state.settings.periodStart, b = state.settings.periodEnd;
+  const m = a ? bpPeriodFor({ kind: 'month' }, a) : null;
+  return m && m[0] === a && m[1] === b ? { kind: 'month' } : { kind: 'custom' };
+}
+// The year is only said when it is not this one, so a range fits a phone.
+function bpEndText(a, b) {
+  const y = String(new Date().getFullYear());
+  return (b.slice(0, 4) !== y || a.slice(0, 4) !== b.slice(0, 4)) ? formatDateDisplay(b) : formatDateShort(b);
+}
+function bpRangeText(a, b) { return `${formatDateShort(a)} \u2013 ${bpEndText(a, b)}`; }
+function bpRhythmLabel(r) { return t('bp_r_' + ((r && r.kind) || 'custom')); }
 
-function periodBarHtml() {
-  const active = activePeriodRange();
-  const field = (id, wrapId, value) => `<div class="date-field-styled" id="${wrapId}">
-      <svg class="date-cal-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      <span class="date-field-val" id="${id}Disp">${formatDateDisplay(value)}</span>
-      <input type="date" id="${id}" value="${value}">
-    </div>`;
-  return `<div class="period-bar">
-    <div class="period-bar-dates">
-      ${field('pbStart', 'pbStartWrap', state.settings.periodStart)}
-      <span class="period-bar-sep" aria-hidden="true">&ndash;</span>
-      ${field('pbEnd', 'pbEndWrap', state.settings.periodEnd)}
-    </div>
-    <div class="period-bar-chips">
-      ${PERIOD_CHIPS.map(([k, label]) =>
-        `<button class="period-chip${active === k ? ' is-active' : ''}" data-range="${k}" type="button">${t(label)}</button>`).join('')}
-    </div>
-  </div>`;
+// A rhythm set to move on by itself starts the next period once the
+// current one is over, as long as the current one is still the one the
+// rhythm made. Dates changed in Settings are left exactly where they were,
+// and so is a past period chosen on purpose: only a period that was current
+// or still to come when it was chosen moves on.
+function maybeAdvancePeriod() {
+  const r = bpRhythm();
+  if (!r || r.kind === 'custom' || r.auto === false) return;
+  const s0 = state.settings.periodStart, e0 = state.settings.periodEnd;
+  const today = toLocalISO(new Date());
+  if (!s0 || !e0 || today <= e0) return;
+  if (r.since && e0 < r.since) return;
+  const mine = bpPeriodFor(r, s0);
+  if (!mine || mine[0] !== s0 || mine[1] !== e0) return;
+  const next = bpPeriodFor(r, today);
+  if (!next) return;
+  state.settings.periodStart = next[0];
+  state.settings.periodEnd = next[1];
+  saveState();
+  try { maybeAutoCarryRollover(); } catch (e) {}
+  setTimeout(() => showToast(tf('bp_moved', bpRangeText(next[0], next[1]))), 600);
 }
 
+// The button that stands in for the old bar: the range, and under it the
+// rhythm and how many days are left.
+function periodBarHtml() {
+  const s0 = state.settings.periodStart, e0 = state.settings.periodEnd;
+  const p = nlDaysInPeriod();
+  const today = toLocalISO(new Date());
+  const when = today < s0 ? tf('bp_starts_in', bpSpan(today, s0) - 1)
+    : today > e0 ? t('bp_over') : tf('bp_left', p.left + 1);
+  return `<button class="period-btn" id="periodBtn" type="button" aria-haspopup="dialog" title="${esc(t('bp_title'))}">
+    <span class="period-btn-ico" aria-hidden="true">${appIconSvg('calendar')}</span>
+    <span class="period-btn-txt"><b>${esc(bpRangeText(s0, e0))}</b><small>${esc(bpRhythmLabel(bpRhythmNow()))} \u00b7 ${esc(when)}</small></span>
+    <svg class="period-btn-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </button>`;
+}
 function wirePeriodBar(scope) {
-  const root = scope || document;
-  root.querySelectorAll('[data-range]').forEach(b => b.addEventListener('click', () => {
-    const [s, e] = periodQuickRanges()[b.dataset.range];
-    applyBudgetPeriod(s, e);
-  }));
+  (scope || document).querySelector('#periodBtn')?.addEventListener('click', openPeriodPicker);
+}
 
-  // Reuses the app's own calendar popup, so these behave exactly as the
-  // date fields in Settings do rather than falling back to the native one.
-  const bind = (wrapId, inputId, isStart) => {
-    const wrap = root.querySelector('#' + wrapId), input = root.querySelector('#' + inputId);
-    if (!wrap || !input) return;
-    wrap.addEventListener('click', () => openDatePicker(input, wrap));
-    input.addEventListener('change', () => {
-      const v = input.value;
-      if (!v) { input.value = isStart ? state.settings.periodStart : state.settings.periodEnd; return; }
-      const start = isStart ? v : state.settings.periodStart;
-      const end   = isStart ? state.settings.periodEnd : v;
-      if (start && end && start > end) {
-        showToast(t('toast_period_error'));
-        input.value = isStart ? state.settings.periodStart : state.settings.periodEnd;
-        const disp = root.querySelector('#' + inputId + 'Disp');
-        if (disp) disp.textContent = formatDateDisplay(input.value);
-        return;
-      }
-      applyBudgetPeriod(start, end);
+function openPeriodPicker() {
+  const today = toLocalISO(new Date());
+  let range = [state.settings.periodStart, state.settings.periodEnd];
+  // What the sheet opens on: the rhythm last chosen, or whatever the
+  // current dates already look like.
+  let r = { ...bpRhythmNow() };
+  if (r.auto === undefined) r.auto = true;
+  let view = bpDate(range[0]);
+  let picking = false;           // dates picked by hand: waiting for the last day
+  const lang = state?.settings?.language || 'en';
+  let monthFmt, dowFmt;
+  try { monthFmt = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }); dowFmt = new Intl.DateTimeFormat(lang, { weekday: 'narrow' }); }
+  catch (e) { monthFmt = new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }); dowFmt = new Intl.DateTimeFormat('en', { weekday: 'narrow' }); }
+  const planned = (state.budgets?.income || []).reduce((t, x) => t + (x.expected || 0), 0);
+
+  document.getElementById('modalTitle').textContent = t('bp_title');
+  document.getElementById('modalBody').innerHTML = `<div class="bp">
+    <div class="bp-hero">
+      <button class="bp-step" type="button" data-bp-step="-1" aria-label="${esc(t('bp_prev'))}" title="${esc(t('bp_prev'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="bp-range" aria-live="polite">
+        <div class="bp-dates"><span id="bpFrom"></span><i aria-hidden="true">\u2192</i><span id="bpTo"></span></div>
+        <div class="bp-meta" id="bpMeta"></div>
+      </div>
+      <button class="bp-step" type="button" data-bp-step="1" aria-label="${esc(t('bp_next'))}" title="${esc(t('bp_next'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+    <div class="bp-grid">
+      <section class="bp-side">
+        <p class="qa-label">${t('bp_how')}</p>
+        <div class="bp-rhythms" role="radiogroup" aria-label="${esc(t('bp_how'))}">${BP_RHYTHMS.map(k =>
+          `<button class="qa-chip bp-rhythm" type="button" role="radio" data-bp-r="${k}">${esc(t('bp_r_' + k))}</button>`).join('')}</div>
+        <div class="bp-opt" id="bpOpt"></div>
+        <label class="bp-auto" id="bpAutoRow"><span class="recurring-toggle"><input type="checkbox" id="bpAuto"><span class="rec-toggle-track"></span></span><span>${t('bp_auto')}</span></label>
+        <p class="bp-note" id="bpNote" hidden></p>
+      </section>
+      <section class="bp-cal">
+        <div class="bp-cal-head">
+          <button class="bp-cal-nav" type="button" data-bp-mon="-1" aria-label="${esc(t('cal_prev'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+          <span class="bp-cal-title" id="bpCalTitle"></span>
+          <button class="bp-cal-nav" type="button" data-bp-mon="1" aria-label="${esc(t('cal_next'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
+        <div class="bp-dow">${[0, 1, 2, 3, 4, 5, 6].map(i => `<span>${esc(dowFmt.format(new Date(2024, 0, 1 + i)))}</span>`).join('')}</div>
+        <div class="bp-days" id="bpDays"></div>
+        <p class="bp-hint" id="bpHint"></p>
+      </section>
+    </div>
+    <div class="qa-actions">
+      <button class="btn btn-ghost" id="bpCancel" type="button">${t('cancel')}</button>
+      <button class="btn btn-ghost" id="bpToday" type="button">${t('bp_now')}</button>
+    </div>
+    <button class="btn btn-primary qa-go" id="bpSaveBtn" type="button"></button>
+  </div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+  const $ = id => document.getElementById(id);
+
+  const paint = () => {
+    const [a, b] = range;
+    $('bpFrom').textContent = formatDateShort(a);
+    $('bpTo').textContent = bpEndText(a, b);
+    const len = bpSpan(a, b);
+    const where = today < a ? tf('bp_starts_in', bpSpan(today, a) - 1)
+      : today > b ? t('bp_over') : tf('bp_day_of', bpSpan(a, today), len);
+    $('bpMeta').textContent = `${tf('bp_days', len)} \u00b7 ${where}`;
+    document.querySelectorAll('[data-bp-r]').forEach(c => {
+      const on = c.dataset.bpR === r.kind;
+      c.classList.toggle('is-on', on); c.setAttribute('aria-checked', on);
     });
+    // The one thing each rhythm needs set, beside the chips.
+    const opt = $('bpOpt');
+    if (r.kind === 'payday') {
+      opt.innerHTML = `<div class="bp-stepper"><span class="qa-label">${t('bp_payday')}</span>
+        <button class="qa-chip" type="button" data-bp-day="-1" aria-label="-">\u2212</button>
+        <b>${tf('bp_day_n', r.day || 1)}</b>
+        <button class="qa-chip" type="button" data-bp-day="1" aria-label="+">+</button></div>`;
+    } else if (BP_WEEKS[r.kind]) {
+      opt.innerHTML = `<p class="bp-sub">${tf('bp_starts', formatDateDisplay(r.anchor || a))}</p>`;
+    } else opt.innerHTML = '';
+    opt.querySelectorAll('[data-bp-day]').forEach(btn => btn.addEventListener('click', () => {
+      r.day = Math.min(31, Math.max(1, (r.day || 1) + Number(btn.dataset.bpDay)));
+      range = bpPeriodFor(r, today >= range[0] && today <= range[1] ? today : range[0]);
+      view = bpDate(range[0]); paint(); btn.blur();
+    }));
+    $('bpAutoRow').hidden = r.kind === 'custom';
+    $('bpAuto').checked = r.auto !== false;
+    $('bpHint').textContent = r.kind === 'custom' ? t(picking ? 'bp_tap_last' : 'bp_tap_custom') : t('bp_tap_rhythm');
+    const note = $('bpNote');
+    if (planned > 0) { note.textContent = tf('bp_daily', fmt(planned), fmt(planned / len)); note.hidden = false; }
+    else note.hidden = true;
+    $('bpSaveBtn').textContent = tf('bp_use', `${formatDateShort(a)} \u2013 ${formatDateShort(b)}`);
+    // The calendar: the chosen range as one band, its ends as solid caps.
+    const y = view.getFullYear(), m = view.getMonth();
+    $('bpCalTitle').textContent = monthFmt.format(view);
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
+    let cells = '';
+    for (let i = 0; i < lead; i++) cells += '<span class="bp-day is-blank"></span>';
+    for (let d = 1; d <= days; d++) {
+      const iso = toLocalISO(new Date(y, m, d));
+      const cls = ['bp-day'];
+      if (iso >= a && iso <= b) cls.push('in-range');
+      if (iso === a) cls.push('is-start');
+      if (iso === b) cls.push('is-end');
+      if (iso === today) cls.push('is-today');
+      cells += `<button type="button" class="${cls.join(' ')}" data-bp-iso="${iso}">${d}</button>`;
+    }
+    $('bpDays').innerHTML = cells;
   };
-  bind('pbStartWrap', 'pbStart', true);
-  bind('pbEndWrap', 'pbEnd', false);
+
+  const setRhythm = k => {
+    const ref = today >= range[0] && today <= range[1] ? today : range[0];
+    r = { ...r, kind: k };
+    picking = false;
+    if (k === 'payday' && !r.day) r.day = bpDate(range[0]).getDate();
+    if (BP_WEEKS[k]) r.anchor = range[0];
+    if (k !== 'custom') range = bpPeriodFor(r, ref);
+    view = bpDate(range[0]);
+    paint();
+  };
+  document.querySelectorAll('[data-bp-r]').forEach(c => c.addEventListener('click', () => { setRhythm(c.dataset.bpR); c.blur(); }));
+  document.querySelectorAll('[data-bp-step]').forEach(btn => btn.addEventListener('click', () => {
+    const dir = Number(btn.dataset.bpStep);
+    if (r.kind === 'custom') {
+      const len = bpSpan(range[0], range[1]);
+      range = [bpAdd(range[0], dir * len), bpAdd(range[1], dir * len)];
+    } else {
+      range = bpPeriodFor(r, dir > 0 ? bpAdd(range[1], 1) : bpAdd(range[0], -1));
+    }
+    view = bpDate(range[0]); paint(); btn.blur();
+  }));
+  document.querySelectorAll('[data-bp-mon]').forEach(btn => btn.addEventListener('click', () => {
+    view = new Date(view.getFullYear(), view.getMonth() + Number(btn.dataset.bpMon), 1); paint(); btn.blur();
+  }));
+  // A tap on a day: with dates picked by hand it sets the first day and
+  // then the last; with a rhythm it starts the period on that day.
+  $('bpDays').addEventListener('click', e => {
+    const d = e.target.closest('[data-bp-iso]');
+    if (!d) return;
+    const iso = d.dataset.bpIso;
+    if (r.kind === 'custom') {
+      if (!picking || iso < range[0]) { range = [iso, iso]; picking = true; }
+      else { range = [range[0], iso]; picking = false; }
+    } else if (r.kind === 'month') {
+      range = bpPeriodFor(r, iso);
+    } else if (r.kind === 'payday') {
+      r.day = bpDate(iso).getDate();
+      range = bpPeriodFor(r, iso);
+    } else {
+      r.anchor = iso;
+      range = bpPeriodFor(r, iso);
+    }
+    const keepView = view;
+    paint();
+    view = keepView;
+  });
+  $('bpAuto').addEventListener('change', e => { r.auto = e.target.checked; });
+  $('bpToday').addEventListener('click', () => {
+    range = r.kind === 'custom'
+      ? (() => { const len = bpSpan(range[0], range[1]); return [today, bpAdd(today, len - 1)]; })()
+      : bpPeriodFor(r, today);
+    picking = false; view = bpDate(range[0]); paint();
+  });
+  $('bpCancel').addEventListener('click', closeModal);
+  $('bpSaveBtn').addEventListener('click', () => {
+    if (!range[0] || !range[1] || range[0] > range[1]) { showToast(t('toast_period_error')); return; }
+    state.settings.periodRhythm = { kind: r.kind, day: r.day || null, anchor: r.anchor || null, auto: r.auto !== false, since: today };
+    closeModal();
+    applyBudgetPeriod(range[0], range[1]);
+  });
+  paint();
 }
 
 // ── Custom themed date picker (replaces native calendar popup) ────────
