@@ -2331,6 +2331,13 @@ input[type="number"].expected-input {
   .module-table td, .module-table .total-row td { padding: 8px 8px; }
   .module-table .prog-cell { min-width: 92px; }
 }
+/* A narrow tablet with the sidebar beside the content has the rail's width
+   less to give, so the transaction table's cells give a little rather than
+   the table scrolling sideways. */
+@media (min-width: 761px) and (max-width: 900px) {
+  :is(html[data-nav="left"], html[data-nav="right"]) .tx-table th { padding-left: 8px; padding-right: 8px; }
+  :is(html[data-nav="left"], html[data-nav="right"]) .tx-table td { padding-left: 7px; padding-right: 7px; }
+}
 /* On a phone the columns that are left still have to fit. Generous cell
    padding and nowrap headings alone were enough to push the table past the
    edge, so both give a little here. */
@@ -2792,6 +2799,9 @@ input[type="number"].expected-input {
 .env-grid {
   display: grid; gap: 14px; margin-bottom: 18px;
   grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+  /* Every row as tall as the tallest, so the blank envelope matches the
+     cards even when it wraps onto a row of its own. */
+  grid-auto-rows: 1fr;
 }
 .env-card {
   position: relative; overflow: hidden; isolation: isolate;
@@ -3634,6 +3644,87 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
   html[data-nav="right"] .tool-shell .budget-tabs { display: flex; }
   html[data-nav="left"]  .tool-shell > .app-scroll,
   html[data-nav="right"] .tool-shell > .app-scroll { padding-top: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   THE FRAMED SHELL
+   ───────────────────────────────────────────────────────────────
+   With the sections down the side, the whole app sits in one large
+   rounded frame. The sidebar is part of the frame itself, not a card
+   floating beside the page, and every section sits in one big rounded
+   stage to its right. Each theme keeps its own colours: the frame is the
+   deepest tone the theme has, the stage a step lighter.
+
+   It starts at 901px. A narrow tablet keeps the open sidebar layout, where
+   the sections have the width they need, and a phone the top bar and
+   dock.
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --frame-bg: color-mix(in srgb, var(--grad-indigo) 24%, #0d0b1f);
+  --stage-bg: #f4f4fa;
+}
+[data-theme="dark"], [data-theme="synthwave"], [data-theme="terminal"] {
+  --frame-bg: color-mix(in srgb, var(--surface-solid) 45%, #000);
+  --stage-bg: color-mix(in srgb, var(--surface-solid) 86%, var(--grad-indigo));
+}
+[data-theme="vintage-ledger"] {
+  --frame-bg: #3b2a1a;
+  --stage-bg: var(--surface-solid);
+}
+@media (min-width: 901px) {
+  html[data-nav="left"]  .app.tool-shell,
+  html[data-nav="left"]  .view.tool-shell.is-active,
+  html[data-nav="right"] .app.tool-shell,
+  html[data-nav="right"] .view.tool-shell.is-active {
+    inset: 14px; min-height: 0; height: auto;
+    max-width: calc(var(--shell-w) + var(--rail-w) + 40px);
+    padding: 12px; gap: 0;
+    border-radius: 32px;
+    background: var(--frame-bg);
+    border: 1px solid rgba(255, 255, 255, .06);
+    box-shadow: 0 40px 90px -40px rgba(0, 0, 0, .55);
+    overflow: hidden;
+  }
+  /* The sidebar lies flat on the frame: no card of its own. */
+  html[data-nav="left"]  .tool-shell > .nav-rail,
+  html[data-nav="right"] .tool-shell > .nav-rail { padding: 10px 10px 10px 8px; }
+  html[data-nav="right"] .tool-shell > .nav-rail { padding: 10px 8px 10px 10px; }
+  html[data-nav="left"]  .nav-rail-box,
+  html[data-nav="right"] .nav-rail-box {
+    background: none; border: 0; box-shadow: none; padding: 10px 6px 6px;
+  }
+  html[data-nav="left"]  .nav-rail-brand,
+  html[data-nav="right"] .nav-rail-brand { border-bottom-color: rgba(255, 255, 255, .08); }
+  /* The stage: one big rounded container that holds every section and
+     does the scrolling. It keeps its edge while scrolled, so the fade the
+     open layout uses at the top is not needed here. */
+  html[data-nav="left"]  .tool-shell > .app-scroll,
+  html[data-nav="right"] .tool-shell > .app-scroll {
+    background: var(--stage-bg);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, .05);
+    padding: 30px 32px 48px;
+    -webkit-mask-image: none; mask-image: none;
+  }
+  /* Where the frame is dark and the theme's own ink is dark (the light
+     themes), the sidebar takes light ink and glassy surfaces, the way the
+     reference does. Dark themes already read light on dark. */
+  :is(html[data-theme="light"], html:not([data-theme]), html[data-theme="vintage-ledger"])[data-nav="left"] .nav-rail,
+  :is(html[data-theme="light"], html:not([data-theme]), html[data-theme="vintage-ledger"])[data-nav="right"] .nav-rail {
+    --text-primary: #f3f1ff;
+    --text-secondary: rgba(243, 241, 255, .72);
+    --text-faint: rgba(243, 241, 255, .46);
+    --surface: rgba(255, 255, 255, .05);
+    --surface-strong: rgba(255, 255, 255, .07);
+    --border-faint: rgba(255, 255, 255, .1);
+    --border-soft: rgba(255, 255, 255, .12);
+    color: var(--text-primary);
+  }
+  :is(html[data-theme="light"], html:not([data-theme]), html[data-theme="vintage-ledger"]) .nav-rail .btn-icon { color: var(--text-secondary); }
+}
+@media (min-width: 901px) and (max-width: 1150px) {
+  html[data-nav="left"]  .tool-shell > .app-scroll,
+  html[data-nav="right"] .tool-shell > .app-scroll { padding: 24px 22px 40px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -4494,13 +4585,17 @@ input[type="date"] { -webkit-appearance: none; appearance: none; }
    before it runs. */
 [data-theme="dark"] .nl-hero:not(.is-negative) .nl-value,
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-value { color: #fff; }
+/* On the light theme the hero sits on a light surface, so the figure takes
+   the page's own dark ink rather than white. */
 [data-theme="light"] .nl-hero:not(.is-negative) .nl-value,
-:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-value { color: #fff; }
+:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-value { color: var(--text-primary); }
 
 [data-theme="dark"] .nl-hero:not(.is-negative) .nl-dec,
 [data-theme="synthwave"] .nl-hero:not(.is-negative) .nl-dec,
 [data-theme="light"] .nl-hero:not(.is-negative) .nl-dec,
 :root:not([data-theme]) .nl-hero:not(.is-negative) .nl-dec { color: #93c5fd; }
+[data-theme="light"] .nl-hero:not(.is-negative) .nl-dec,
+:root:not([data-theme]) .nl-hero:not(.is-negative) .nl-dec { color: var(--grad-indigo); }
 .nl-sub { font-size: 13.5px; color: var(--text-secondary); line-height: 1.55; }
 .nl-sub b { color: var(--text-primary); font-weight: 600; }
 .nl-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }

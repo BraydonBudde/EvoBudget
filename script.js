@@ -2730,7 +2730,9 @@ const NAV_POS_ICONS = {
 
 function getNavPosition() {
   const v = state?.settings?.navPosition;
-  return NAV_POSITIONS.includes(v) ? v : 'top';
+  // The sidebar is the default: the app sits in one frame with the
+  // sections down its left edge. A phone still gets the top bar and dock.
+  return NAV_POSITIONS.includes(v) ? v : 'left';
 }
 
 // A phone has no room for a rail, so below this width the tab bar comes

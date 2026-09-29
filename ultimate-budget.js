@@ -814,8 +814,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Choose from five colour themes - Light, Dark, Synthwave, Vintage, or Terminal. Your preference is remembered across sessions.',
     help_sett_layout_p:'Choose from two Dashboard designs - Classic or Radial Pulse. Each shows the same underlying data with its own charts and arrangement, with more designs coming soon.',
     help_sett_nav_h:'Navigation',
-    help_sett_nav_top:'Top - the classic tab bar across the top of the page (default).',
-    help_sett_nav_side:'Left or Right - the sections become a vertical bar beside your content. A tablet shows icons only; a phone always falls back to the top bar.',
+    help_sett_nav_top:'Top - the classic tab bar across the top of the page.',
+    help_sett_nav_side:'Left (default) or Right - the sections become a vertical bar beside your content. A tablet shows icons only; a phone always falls back to the top bar.',
     help_sett_period_p:'The date range that defines “this budget”. Only transactions within this range count toward actuals. Use the 7 presets (This Month, Last Month, This Week, Last Week, Last 30 Days, This Quarter, This Year) for quick setup.',
     help_sett_rollover_p:"Any unspent money you want to carry forward from your previous period. It's added to your Net Leftover on the dashboard. With Auto-carry enabled, this updates automatically to match what was actually left over whenever you change the budget period - uncheck it to set the amount yourself.",
     // Calendar
@@ -1393,8 +1393,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Wähle aus fünf Farbthemen - Hell, Dunkel, Synthwave, Vintage oder Terminal. Deine Einstellung wird sitzungsübergreifend gespeichert.',
     help_sett_layout_p:'Wähle aus zwei Dashboard-Designs - Klassisch oder Radialer Puls. Jedes zeigt dieselben Daten mit eigenen Diagrammen und eigener Anordnung; weitere Designs folgen bald.',
     help_sett_nav_h:'Navigation',
-    help_sett_nav_top:'Oben - die klassische Tab-Leiste am oberen Rand (Standard).',
-    help_sett_nav_side:'Links oder Rechts - die Abschnitte werden zu einer senkrechten Leiste neben deinem Inhalt. Auf dem Tablet nur Symbole, auf dem Handy immer die obere Leiste.',
+    help_sett_nav_top:'Oben - die klassische Tab-Leiste am oberen Rand.',
+    help_sett_nav_side:'Links (Standard) oder Rechts - die Abschnitte werden zu einer senkrechten Leiste neben deinem Inhalt. Auf dem Tablet nur Symbole, auf dem Handy immer die obere Leiste.',
     help_sett_period_p:'Der Datumsbereich, der „dieses Budget“ definiert. Nur Transaktionen in diesem Bereich zählen zu deinen Istwerten. Nutze die 7 Schnellauswahlen (Diesen Monat, Letzten Monat, Diese Woche, Letzte Woche, Letzte 30 Tage, Dieses Quartal, Dieses Jahr) für eine schnelle Einrichtung.',
     help_sett_rollover_p:'Nicht ausgegebenes Geld, das du aus der vorherigen Periode übertragen möchtest. Es wird zu deinem Nettosaldo im Dashboard hinzugefügt. Ist die automatische Übertragung aktiviert, wird dieser Betrag bei jedem Wechsel des Budgetzeitraums automatisch an das tatsächlich übrige Geld angepasst - deaktiviere sie, um den Betrag selbst festzulegen.',
     cal_title:'Smart-Kalender',
@@ -1953,8 +1953,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Choisissez parmi cinq thèmes de couleur - Clair, Sombre, Synthwave, Vintage ou Terminal. Votre préférence est mémorisée entre les sessions.',
     help_sett_layout_p:"Choisissez parmi deux designs de tableau de bord - Classique ou Pulsation radiale. Chacun affiche les mêmes données avec ses propres graphiques et sa disposition ; d'autres designs arrivent bientôt.",
     help_sett_nav_h:'Navigation',
-    help_sett_nav_top:"Haut - la barre d'onglets classique en haut de la page (par défaut).",
-    help_sett_nav_side:'Gauche ou Droite - les sections deviennent une barre verticale à côté de votre contenu. Sur tablette, icônes seules ; sur téléphone, toujours la barre du haut.',
+    help_sett_nav_top:"Haut - la barre d'onglets classique en haut de la page.",
+    help_sett_nav_side:'Gauche (par défaut) ou Droite - les sections deviennent une barre verticale à côté de votre contenu. Sur tablette, icônes seules ; sur téléphone, toujours la barre du haut.',
     help_sett_period_p:'La plage de dates définit « ce budget ». Seules les transactions dans cette plage comptent dans vos réels. Utilisez les 7 préréglages (Ce mois, Mois préc., Cette semaine, Semaine préc., 30 derniers jours, Ce trimestre, Cette année) pour une configuration rapide.',
     help_sett_rollover_p:"Tout argent non dépensé que vous souhaitez reporter de la période précédente. Il est ajouté à votre solde net sur le tableau de bord. Avec le report automatique activé, ce montant est mis à jour automatiquement pour refléter ce qu'il restait réellement chaque fois que vous changez la période budgétaire - décochez pour le définir vous-même.",
     cal_title:'Calendrier intelligent',
@@ -2513,8 +2513,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Elige entre cinco temas de color - Claro, Oscuro, Synthwave, Vintage o Terminal. Tu preferencia se recuerda entre sesiones.',
     help_sett_layout_p:'Elige entre dos diseños de panel - Clásico o Pulso radial. Cada uno muestra los mismos datos con sus propios gráficos y disposición; más diseños próximamente.',
     help_sett_nav_h:'Navegación',
-    help_sett_nav_top:'Arriba - la clásica barra de pestañas en la parte superior (predeterminado).',
-    help_sett_nav_side:'Izquierda o Derecha - las secciones pasan a una barra vertical junto a tu contenido. En tablet solo iconos; en el móvil siempre vuelve la barra superior.',
+    help_sett_nav_top:'Arriba - la clásica barra de pestañas en la parte superior.',
+    help_sett_nav_side:'Izquierda (predeterminado) o Derecha - las secciones pasan a una barra vertical junto a tu contenido. En tablet solo iconos; en el móvil siempre vuelve la barra superior.',
     help_sett_period_p:'El rango de fechas que define “este presupuesto”. Solo las transacciones en este rango cuentan en tus datos reales. Usa los 7 preajustes (Este mes, Mes pasado, Esta semana, Sem. pasada, Últimos 30 días, Este trimestre, Este año) para configurar rápidamente.',
     help_sett_rollover_p:'Cualquier dinero no gastado que quieras traspasar del período anterior. Se añade a tu saldo neto en el panel. Con el traslado automático activado, este importe se actualiza automáticamente según lo que realmente sobró cada vez que cambias el período de presupuesto - desmárcalo para establecerlo tú mismo.',
     cal_title:'Calendario inteligente',
@@ -3073,8 +3073,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Scegli tra cinque temi di colore - Chiaro, Scuro, Synthwave, Vintage o Terminal. Le tue preferenze vengono ricordate tra le sessioni.',
     help_sett_layout_p:'Scegli tra due design della dashboard - Classico o Impulso radiale. Ognuno mostra gli stessi dati con grafici e disposizione propri; altri design in arrivo.',
     help_sett_nav_h:'Navigazione',
-    help_sett_nav_top:'Alto - la classica barra a schede in cima alla pagina (predefinito).',
-    help_sett_nav_side:'Sinistra o Destra - le sezioni diventano una barra verticale accanto al contenuto. Su tablet solo icone; su telefono torna sempre la barra in alto.',
+    help_sett_nav_top:'Alto - la classica barra a schede in cima alla pagina.',
+    help_sett_nav_side:'Sinistra (predefinito) o Destra - le sezioni diventano una barra verticale accanto al contenuto. Su tablet solo icone; su telefono torna sempre la barra in alto.',
     help_sett_period_p:'L\'intervallo di date che definisce “questo budget”. Solo le transazioni in questo intervallo contano nei valori effettivi. Usa i 7 preset (Questo mese, Mese scorso, Questa settimana, Sett. scorsa, Ultimi 30 giorni, Questo trimestre, Quest’anno) per una configurazione rapida.',
     help_sett_rollover_p:"Qualsiasi denaro non speso che vuoi riportare dal periodo precedente. Viene aggiunto al tuo saldo netto nel pannello. Con il riporto automatico attivo, questo importo viene aggiornato automaticamente in base a quanto è effettivamente avanzato ogni volta che cambi il periodo di budget - deselezionalo per impostarlo manualmente.",
     // Calendario
@@ -3634,8 +3634,8 @@ const TRANSLATIONS = {
     help_sett_appearance_p:'Wybierz spośród pięciu motywów kolorystycznych - Jasny, Ciemny, Synthwave, Vintage lub Terminal. Twoje ustawienie jest zapamiętywane między sesjami.',
     help_sett_layout_p:'Wybierz spośród dwóch projektów pulpitu - Klasyczny lub Puls promienisty. Każdy pokazuje te same dane z własnymi wykresami i układem; więcej projektów wkrótce.',
     help_sett_nav_h:'Nawigacja',
-    help_sett_nav_top:'Góra - klasyczny pasek kart na górze strony (domyślnie).',
-    help_sett_nav_side:'Lewo lub Prawo - sekcje stają się pionowym paskiem obok treści. Na tablecie tylko ikony, a na telefonie zawsze wraca górny pasek.',
+    help_sett_nav_top:'Góra - klasyczny pasek kart na górze strony.',
+    help_sett_nav_side:'Lewo (domyślnie) lub Prawo - sekcje stają się pionowym paskiem obok treści. Na tablecie tylko ikony, a na telefonie zawsze wraca górny pasek.',
     help_sett_period_p:'Zakres dat określający „ten budżet“. Tylko transakcje w tym zakresie liczą się do wartości rzeczywistych. Użyj 7 ustawień (Ten miesiąc, Poprz. miesiąc, Ten tydzień, Poprz. tydzień, Ostatnie 30 dni, Ten kwartał, Ten rok) do szybkiej konfiguracji.',
     help_sett_rollover_p:'Niewydane pieniądze, które chcesz przenieść z poprzedniego okresu. Są dodawane do salda netto na panelu. Gdy automatyczne przenoszenie jest włączone, kwota ta jest aktualizowana automatycznie na podstawie tego, co faktycznie zostało, za każdym razem, gdy zmienisz okres budżetowy - odznacz, aby ustawić ją samodzielnie.',
     cal_title:'Inteligentny Kalendarz',
@@ -4305,7 +4305,9 @@ const NAV_POS_ICONS = {
 
 function getNavPosition() {
   const v = state?.settings?.navPosition;
-  return NAV_POSITIONS.includes(v) ? v : 'top';
+  // The sidebar is the default: the app sits in one frame with the
+  // sections down its left edge. A phone still gets the top bar and dock.
+  return NAV_POSITIONS.includes(v) ? v : 'left';
 }
 
 // A phone has no room for a rail, so below this width the tab bar comes
