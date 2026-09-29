@@ -6552,3 +6552,226 @@ body.penny-drawer-open { overflow: hidden; }
    transaction tables use, info button included. */
 .debt-table .tx-actions { justify-content: flex-end; }
 .total-row td { overflow-wrap: break-word; }
+
+/* ═══════════════════════════════════════════════════════════════
+   POLISH: sizes, sidebar items, colours
+   Placed last so it settles every earlier rule it touches.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── The sidebar: tools are items now, the icon row stands down ───── */
+.nav-rail .nav-rail-tools { display: none; }
+.nav-rail-foot { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-faint); }
+/* Room for every item on a laptop screen; a very short one scrolls the rail. */
+.nav-rail-box { overflow-y: auto; scrollbar-width: none; }
+.nav-rail-box::-webkit-scrollbar { display: none; }
+@media (min-width: 1151px) {
+  .nav-rail-item { padding-top: 4px; padding-bottom: 4px; }
+  .nav-rail-item .nav-rail-icon { width: 32px; height: 32px; flex-basis: 32px; border-radius: 10px; }
+  .nav-rail-sections { gap: 2px; }
+  .nav-rail-heading { margin-top: 10px; margin-bottom: 4px; }
+  .nav-rail-brand { padding-bottom: 12px; }
+}
+/* The Add pill beside each budget section heading, the same height as the
+   controls beside a page title. */
+.module-section-header .mod-add-btn { height: 40px; padding: 0 18px; font-size: 14px; }
+.nav-rail-widgets { flex: 0 0 auto; }
+
+/* Light and Vintage: a sidebar with real presence, still in balance with
+   the page. */
+:root:not([data-theme]), [data-theme="light"] { --frame-bg: color-mix(in srgb, var(--grad-indigo) 22%, #d5d2e8); }
+[data-theme="vintage-ledger"] { --frame-bg: #d2bb92; }
+
+/* Vintage's figure in two dark tones of the sidebar's own hue. */
+[data-theme="vintage-ledger"] .nl-hero:not(.is-negative) .nl-value { color: #4a3419; }
+[data-theme="vintage-ledger"] .nl-hero:not(.is-negative) .nl-dec { color: #9a7440; }
+
+/* ── One height for every control beside a title ─────────────────── */
+.section-header-actions { --hdr-ctl-h: 44px; gap: 10px; }
+.section-header-actions > .btn { font-size: 14.5px; padding-left: 20px; padding-right: 20px; }
+.section-header-actions > .help-icon-btn { font-size: 16px; }
+.section-header-actions > .help-icon-btn .app-ico, .view-toggle .app-ico { width: 19px; height: 19px; }
+html[data-dash="sleek"] { --sleek-ctl-h: 44px; }
+html[data-dash="sleek"] .sleek-actions { gap: 10px; }
+html[data-dash="sleek"] .sleek-actions .dash-log-btn { font-size: 14.5px; padding: 0 22px; }
+html[data-dash="sleek"] .sleek-actions .help-icon-btn { font-size: 16px; }
+.dv-toggle { height: var(--sleek-ctl-h, 44px); padding: 4px; }
+.dv-opt .app-ico { width: 19px; height: 19px; }
+/* The chart's own switch stands as tall as the header controls. */
+.dv-toggle--sm { height: 44px; }
+.dv-toggle--sm .dv-opt .app-ico { width: 18px; height: 18px; }
+
+/* ── The period pill: the dates, centred, with room around them ───── */
+.period-btn { padding: 0 16px 0 5px; gap: 12px; }
+html[data-dash="sleek"] .sleek-actions .period-btn { padding: 0 16px 0 5px; min-width: 220px; }
+@media (max-width: 560px) {
+  html[data-dash="sleek"] .sleek-actions .period-btn { min-width: 0; flex: 1 1 auto; padding-right: 10px; }
+  .period-btn-txt b { font-size: 14px; }
+}
+.period-btn-txt { flex: 1 1 auto; padding: 0 8px; }
+.period-btn-txt b { font-size: 15px; }
+
+/* ── The greeting is the dashboard's title ────────────────────────── */
+.sleek-greeting.section-title {
+  font-size: clamp(2.3rem, 4.1vw, 4.2rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.02;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* The controls stay on the greeting's line; the greeting gives way first. */
+.sleek-head-top { flex-wrap: nowrap; }
+.sleek-hello { flex: 1 1 auto; min-width: 0; }
+.sleek-actions { flex: 0 0 auto; }
+@media (max-width: 900px) {
+  .sleek-head-top { flex-wrap: wrap; }
+  .sleek-hello { flex-basis: 100%; }
+  .sleek-actions { flex: 1 1 100%; }
+}
+.sleek-greeting.section-title .app-ico { width: .7em; height: .7em; vertical-align: -.02em; }
+.sleek-eyebrow { font-size: 14px; margin-bottom: 6px; }
+.sleek-head-top { align-items: center; }
+
+/* ── Descriptions run the width they have ─────────────────────────── */
+.section-desc { max-width: none; font-size: 15.5px; }
+
+/* ── The blocks under Free to spend share the width evenly ────────── */
+.nl-meta { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; }
+.nl-pill { min-width: 0; padding: 11px 14px; }
+.nl-pill span { font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nl-pill strong { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nl-pill--today { background: rgba(16, 185, 129, .08); border-color: rgba(16, 185, 129, .25); }
+.nl-pill--today strong { color: #10b981; }
+@media (max-width: 560px) {
+  .nl-meta { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nl-pill span { white-space: normal; }
+}
+
+/* ── Readability: the whole app a step up ─────────────────────────── */
+.btab { font-size: 14px; }
+.nav-rail-item { font-size: 15px; }
+.panel-title-sm { font-size: 16px; }
+.ov-title { font-size: 1.3rem; }
+.nl-label { font-size: 11.5px; }
+.nl-sub { font-size: 15px; }
+.nl-track-cap { font-size: 12px; }
+.cu-name { font-size: 16px; }
+.cu-when { font-size: 13.5px; }
+.cu-amt { font-size: 16px; }
+.nl-hero--cu .cu-name { font-size: 15.5px; }
+.nl-hero--cu .cu-when { font-size: 13px; }
+.nl-hero--cu .cu-amt { font-size: 15.5px; }
+.nl-hero--cu .cu-pay, .cu-pay { font-size: 13.5px; }
+.flow-label { font-size: 14.5px; }
+.flow-amounts { font-size: 13.5px; }
+.dleg-label { font-size: 13px; }
+.lv-name { font-size: 15.5px; }
+.lv-sub { font-size: 13.5px; }
+.lv-fig { font-size: 16px; }
+.lv-fig small { font-size: 12.5px; }
+.ra-name { font-size: 15.5px; }
+.ra-meta { font-size: 13.5px; }
+.ra-amt { font-size: 16px; }
+.psf-k { font-size: 11.5px; }
+.psf-tile em { font-size: 13px; }
+.psf-legend { font-size: 13.5px; }
+.gp-name { font-size: 15px; }
+.gp-sub { font-size: 13.5px; }
+.rf-t { font-size: 15px; }
+.rf-d { font-size: 13.5px; }
+.nt-title { font-size: 15.5px; }
+.nt-detail { font-size: 13.5px; }
+.st-k { font-size: 11.5px; }
+.st-kpi em, .st-legend, .st-cat-top { font-size: 13.5px; }
+.tx-table { font-size: 14px; }
+.tx-table th { font-size: 11px; }
+.env-name { font-size: 1.25rem; }
+.env-meta, .env-sub { font-size: 13px; }
+.env-cap { font-size: 11px; }
+.sub-name { font-size: 15.5px; }
+.sub-meta { font-size: 12px; }
+.field-label { font-size: 11.5px; }
+.btn { font-size: 15px; }
+.btn-sm { font-size: 14px; }
+.input, .select { font-size: 15px; }
+.settings-desc { font-size: 14.5px; }
+.module-section-title { font-size: 1.25rem; }
+@media (max-width: 560px) {
+  .sleek-greeting.section-title { font-size: 2.3rem; }
+  .section-desc { font-size: 14.5px; }
+}
+
+/* ── Layout width: the whole window unless the fixed column is chosen ── */
+html[data-width="full"] .tool-shell,
+html[data-width="full"][data-nav] .app.tool-shell,
+html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SETTINGS
+   Titled groups of cards, two to a row where there is room.
+   ═══════════════════════════════════════════════════════════════ */
+.settings-grid { display: flex; flex-direction: column; gap: 30px; }
+.stg-title {
+  display: flex; align-items: center; gap: 14px; margin: 0 0 14px;
+  font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint);
+}
+.stg-title::after { content: ""; flex: 1; height: 1px; background: var(--border-faint); }
+.stg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 430px), 1fr)); gap: 16px; align-items: start; }
+.stg-card { margin: 0 !important; border-radius: 22px; transition: border-color .2s var(--ease), transform .2s var(--ease); }
+.stg-card:hover { border-color: rgba(var(--grad-indigo-rgb), .3); }
+.stg-card > .panel-inner { padding: 22px 24px; }
+.stg-card .settings-card-title {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 12px;
+  font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: -.01em; color: var(--text-primary);
+}
+.sct-ico {
+  width: 38px; height: 38px; flex: 0 0 38px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;
+  color: var(--grad-indigo); background: rgba(var(--grad-indigo-rgb), .12); border: 1px solid rgba(var(--grad-indigo-rgb), .18);
+}
+.sct-ico .app-ico { width: 19px; height: 19px; }
+.stg-card .settings-desc { margin: 0 0 14px; line-height: 1.55; color: var(--text-secondary); }
+.stg-card .field { margin-bottom: 14px; }
+.stg-card .field:last-child { margin-bottom: 0; }
+.stg-card .field-label { letter-spacing: .06em; color: var(--text-secondary); }
+.stg-card .input, .stg-card .select, .stg-card .date-field-styled { border-radius: 14px; min-height: 46px; }
+.stg-card .layout-pill { flex-wrap: wrap; }
+.stg-card .btn { border-radius: var(--radius-pill); }
+.stg-card--danger { border-color: rgba(244, 63, 94, .35); background-image: linear-gradient(160deg, rgba(244, 63, 94, .07), transparent 60%); }
+.stg-card--danger .sct-ico { color: #f43f5e; background: rgba(244, 63, 94, .12); border-color: rgba(244, 63, 94, .25); }
+.stg-switch { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--text-primary); cursor: pointer; }
+
+/* ═══════════════════════════════════════════════════════════════
+   HELP
+   A wider sheet with a clear rhythm: an intro, headed sections with an
+   accent rule, numbered steps as markers, and tips as a callout.
+   ═══════════════════════════════════════════════════════════════ */
+.modal:has(> .modal-body > .hs) { max-width: 760px; width: calc(100% - 32px); }
+.modal:has(> .modal-body > .hs) .modal-title { font-size: 1.6rem; }
+.hs { font-size: 15.5px; line-height: 1.65; color: var(--text-secondary); }
+.hs > p:first-child { font-size: 16.5px; color: var(--text-primary); margin: 0 0 6px; }
+.hs p { margin: 0 0 12px; }
+.hs h4 {
+  display: flex; align-items: center; gap: 10px;
+  margin: 24px 0 10px !important; font-size: 13px !important; font-weight: 800 !important;
+  letter-spacing: .09em; text-transform: uppercase; color: var(--text-primary);
+}
+.hs h4::before { content: ""; width: 4px; height: 16px; border-radius: 2px; background: linear-gradient(180deg, var(--grad-indigo), var(--grad-purple)); }
+.hs strong { color: var(--text-primary); }
+.hs ol { list-style: none; counter-reset: hs; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.hs ol > li {
+  counter-increment: hs; position: relative; padding: 12px 14px 12px 52px; border-radius: 14px;
+  background: var(--surface-strong); border: 1px solid var(--border-faint); color: var(--text-primary);
+}
+.hs ol > li::before {
+  content: counter(hs); position: absolute; left: 14px; top: 11px; width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 800; color: #fff;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+.hs ul { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.hs ul > li { position: relative; padding: 8px 12px 8px 30px; border-radius: 12px; background: rgba(var(--grad-indigo-rgb), .05); }
+.hs ul > li::before { content: ""; position: absolute; left: 13px; top: 17px; width: 6px; height: 6px; border-radius: 50%; background: var(--grad-indigo); }
+.hs p:has(> em:only-child), .hs p:last-child:has(em) {
+  margin-top: 18px; padding: 12px 16px; border-radius: 14px; font-style: normal;
+  background: rgba(245, 158, 11, .08); border: 1px solid rgba(245, 158, 11, .25); color: var(--text-primary);
+}
+.hs em { font-style: normal; }
+@media (max-width: 560px) {
+  .hs { font-size: 15px; }
+  .hs ol > li { padding-left: 46px; }
+}
