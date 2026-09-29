@@ -694,14 +694,23 @@ function getUpcomingEvents(days, act) {
       const exp=d.minimumPayment||0, done=subOrDebtPaid(debtAct,d.name);
       push(d.dueDay,d.name,'debt',Math.max(0,payRound2(exp-done)),'#a855f7',exp>0&&done>=exp,d.id,done,exp);
     }
-  // A bill owes whatever is left of it. What has gone in is the payments
-  // linked to it, so a part-paid bill shows the remainder and says so.
+  // A bill falls due on its own date and then once per cycle after it, so
+  // an annual bill is due once a year rather than on the same day every
+  // month. Its first date carries what has been paid towards it and owes
+  // the rest; later dates are owed in full. A date already gone is overdue
+  // rather than upcoming, and nlCommitted adds those on purpose.
+  const billToday=toLocalISO(now), billEnd=toLocalISO(end);
   for(const b of (state.bills||[]).filter(x=>x.active!==false)){
-    const dd=billDueDay(b);
-    if(!dd) continue;
+    if(!b.nextBillingDate) continue;
     const exp=rowExpected(b), done=rowPaidAmount(b);
-    push(dd,b.name,'bill',Math.max(0,payRound2(exp-done))||exp,'#fb923c',
-         exp>0&&done>=exp,b.id,done,exp);
+    let iso=b.nextBillingDate;
+    for(let i=0;i<60&&iso<=billEnd;i++){
+      const paidSoFar=i===0?done:0;
+      if(iso>=billToday) events.push({date:iso,label:b.name,type:'bill',
+        amount:Math.max(0,payRound2(exp-paidSoFar))||exp,color:'#fb923c',
+        paid:exp>0&&paidSoFar>=exp,srcId:b.id,paidSoFar,expected:exp});
+      iso=stepBillDate(iso,b.frequency);
+    }
   }
   // Scheduled automatic transactions (manual + sinking-fund contributions)
   if(state.settings?.automationEnabled!==false){
@@ -1022,16 +1031,16 @@ const TRANSLATIONS = {
     dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',view_as_list:'Show as a list',view_as_cards:'Show as cards',sf_saved_so_far:'saved so far',sf_open_ended:'no target',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_sinking_fund:'Add to a goal',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_sinking_fund:'Add to goal',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_sinking_fund:'Goal',qa_type_debt:'Debt',qa_type_income:'Income',qa_type_it:'type it instead',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_sinking_fund:'Add a saving goal first.',qa_no_cats_debt:'Add a debt first.',qa_no_cats_income:'Add an income category on the Budget tab first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_title:'Coming up',cu_all:'All bills',cu_paid:'Paid',cu_today:'today',cu_tomorrow:'tomorrow',cu_yesterday:'yesterday',cu_in_days:'in {0} days',cu_days_ago:'{0} days ago',cu_empty:'Nothing due in the next {0} days.',
     dash_no_sinking:'No saving goals yet.',dash_create_one:'Create one \u2192',
     help_dash_intro:'The Dashboard gives you a real-time financial overview. All numbers update automatically as you log transactions.',
-    help_dash_hero_h:'Hero stats row',
-    help_dash_hero_p:'The four cards at the top show your period totals: Total Income received, Total Outgoing (expenses, bills, debt & subscriptions), Savings Rate (% of income saved), and your Subscription monthly cost.',
-    help_dash_leftover_h:'Net Leftover',
-    help_dash_leftover_p:"Money remaining after all spending and savings. Green = you're ahead. Red = you've overspent your budget.",
+    help_dash_hero_h:'Free to spend and Coming up',
+    help_dash_hero_p:'The big figure is what you can still spend this period: what has come in, less what has gone out, less everything still owed before the period ends. Beside it, Coming up lists the next five payments still owed this period, overdue bills first. Press Pay on any of them to log it.',
+    help_dash_leftover_h:'Colours',
+    help_dash_leftover_p:'White means you are on track. Red means what you still owe is more than you have left.',
     help_dash_cashflow_h:'Cash Flow chart',
     help_dash_cashflow_p:'Each row shows Expected (grey bar) vs Actual (coloured bar) for Income, Expenses, Bills and Savings. A red Expenses bar means you went over budget.',
     help_dash_donut_h:'Donut charts',
     help_dash_donut_p:'Hover or tap a segment to see the label and percentage. These show where your money comes from and where it goes.',
     help_dash_bottom_h:'Bottom panels',
-    help_dash_bottom_p:'Quick snapshots of your Debt Payoff progress, upcoming bills/subscriptions in the next 30 days, and Sinking Fund goals.',
+    help_dash_bottom_p:'Quick snapshots of your Debt Payoff progress and your Saving Goals.',
     help_dash_tip:'\uD83D\uDCA1 Click the date badge at the top to change your budget period.',
     tx_type_debt:'Debt',
     dash_debt_payments:'Debt',
@@ -1600,16 +1609,16 @@ const TRANSLATIONS = {
     dash_upcoming_tpl:'\uD83D\uDCC5 Bevorstehend ({0} Tage)',dash_nothing_scheduled:'Nichts geplant.',view_as_list:'Als Liste anzeigen',view_as_cards:'Als Karten anzeigen',sf_saved_so_far:'bisher gespart',sf_open_ended:'ohne Ziel',qa_title_expense:'Ausgabe hinzufügen',qa_title_bill:'Rechnung bezahlen',qa_title_sinking_fund:'Zum Ziel hinzufügen',qa_title_debt:'Schuld bezahlen',qa_title_income:'Einnahme hinzufügen',qa_go_expense:'Ausgabe hinzufügen',qa_go_bill:'Rechnung bezahlen',qa_go_sinking_fund:'Zum Ziel',qa_go_debt:'Schuld bezahlen',qa_go_income:'Einnahme hinzufügen',qa_type_expense:'Ausgabe',qa_type_bill:'Rechnung',qa_type_sinking_fund:'Ziel',qa_type_debt:'Schuld',qa_type_income:'Einnahme',qa_type_it:'lieber eintippen',qa_clear:'Löschen',qa_backspace:'Letzte Ziffer löschen',qa_tap_cat:'Tippe auf eine Kategorie',qa_no_cats_expense:'Noch keine Ausgabenkategorien, du kannst diese später zuordnen.',qa_no_cats_bill:'Lege zuerst eine Rechnung an.',qa_no_cats_sinking_fund:'Lege zuerst ein Sparziel an.',qa_no_cats_debt:'Lege zuerst eine Schuld an.',qa_no_cats_income:'Lege zuerst eine Einnahmekategorie an.',qa_uncat:'Ohne Kategorie',qa_uncat_chip:'Ohne Kategorie · später zuordnen',qa_add_note:'Notiz',qa_again:'Speichern und weitere',qa_after:'Danach: {0} bis {1}, etwa {2} pro Tag.',cu_today_cap:'Heute',cu_yesterday_cap:'Gestern',cu_title:'Demnächst',cu_all:'Alle Rechnungen',cu_paid:'Bezahlt',cu_today:'heute',cu_tomorrow:'morgen',cu_yesterday:'gestern',cu_in_days:'in {0} Tagen',cu_days_ago:'vor {0} Tagen',cu_empty:'In den nächsten {0} Tagen ist nichts fällig.',
     dash_no_sinking:'Noch keine Sparziele.',dash_create_one:'Einen erstellen \u2192',
     help_dash_intro:'Das Dashboard gibt dir einen Echtzeit-Überblick über deine Finanzen. Alle Zahlen werden automatisch aktualisiert, wenn du Transaktionen erfasst.',
-    help_dash_hero_h:'Statistikübersicht',
-    help_dash_hero_p:'Die vier Karten oben zeigen deine Periodensummen: Erhaltene Gesamteinnahmen, Gesamtausgaben (Ausgaben, Rechnungen, Schulden & Abonnements), Sparquote (% des gesparten Einkommens) und monatliche Abonnementkosten.',
-    help_dash_leftover_h:'Nettosaldo',
-    help_dash_leftover_p:'Verbleibendes Geld nach allen Ausgaben und Ersparnissen. Grün = du liegst im Plan. Rot = du hast dein Budget überschritten.',
+    help_dash_hero_h:'Frei verfügbar und Demnächst',
+    help_dash_hero_p:'Die große Zahl ist, was du in dieser Periode noch ausgeben kannst: Eingänge minus Ausgaben minus alles, was bis Periodenende noch fällig ist. Daneben zeigt Demnächst die nächsten fünf offenen Zahlungen dieser Periode, überfällige Rechnungen zuerst. Tippe auf Zahlen, um eine davon zu erfassen.',
+    help_dash_leftover_h:'Farben',
+    help_dash_leftover_p:'Weiß heißt, du liegst im Plan. Rot heißt, was noch fällig ist, übersteigt das, was dir bleibt.',
     help_dash_cashflow_h:'Cashflow-Diagramm',
     help_dash_cashflow_p:'Jede Zeile zeigt Geplant (grauer Balken) vs. Tatsächlich (farbiger Balken) für Einnahmen, Ausgaben, Rechnungen und Ersparnisse. Ein roter Balken bedeutet, dass du das Budget überschritten hast.',
     help_dash_donut_h:'Donut-Diagramme',
     help_dash_donut_p:'Bewege die Maus über ein Segment oder tippe darauf, um Beschriftung und Prozentsatz zu sehen. Sie zeigen, woher dein Geld kommt und wohin es geht.',
     help_dash_bottom_h:'Untere Panels',
-    help_dash_bottom_p:'Schnellübersichten über deinen Schuldenabbau, bevorstehende Rechnungen/Abonnements in den nächsten 30 Tagen und Sparzielfonds-Ziele.',
+    help_dash_bottom_p:'Schnellübersichten über deinen Schuldenabbau und deine Sparziele.',
     help_dash_tip:'\uD83D\uDCA1 Klicke auf das Datums-Badge oben, um deinen Budgetzeitraum zu ändern.',
     tx_type_debt:'Schulden',
     dash_debt_payments:'Schulden',
@@ -2160,16 +2169,16 @@ const TRANSLATIONS = {
     dash_upcoming_tpl:'\uD83D\uDCC5 À venir ({0} jours)',dash_nothing_scheduled:'Rien de planifié.',view_as_list:'Afficher en liste',view_as_cards:'Afficher en cartes',sf_saved_so_far:'épargné à ce jour',sf_open_ended:'sans objectif chiffré',qa_title_expense:'Ajouter une dépense',qa_title_bill:'Payer une facture',qa_title_sinking_fund:'Alimenter un objectif',qa_title_debt:'Payer une dette',qa_title_income:'Ajouter un revenu',qa_go_expense:'Ajouter',qa_go_bill:'Payer',qa_go_sinking_fund:'Alimenter',qa_go_debt:'Payer',qa_go_income:'Ajouter',qa_type_expense:'Dépense',qa_type_bill:'Facture',qa_type_sinking_fund:'Objectif',qa_type_debt:'Dette',qa_type_income:'Revenu',qa_type_it:'le saisir plutôt',qa_clear:'Effacer',qa_backspace:'Effacer le dernier chiffre',qa_tap_cat:'Touchez une catégorie',qa_no_cats_expense:'Aucune catégorie pour le moment, vous pourrez la classer plus tard.',qa_no_cats_bill:"Ajoutez d'abord une facture.",qa_no_cats_sinking_fund:"Ajoutez d'abord un objectif.",qa_no_cats_debt:"Ajoutez d'abord une dette.",qa_no_cats_income:"Ajoutez d'abord une catégorie de revenu.",qa_uncat:'Sans catégorie',qa_uncat_chip:'Sans catégorie · à classer',qa_add_note:'Ajouter une note',qa_again:'Enregistrer et continuer',qa_after:'Ensuite : {0} jusqu’au {1}, environ {2} par jour.',cu_today_cap:"Aujourd'hui",cu_yesterday_cap:'Hier',cu_title:'À venir',cu_all:'Toutes les factures',cu_paid:'Payé',cu_today:"aujourd'hui",cu_tomorrow:'demain',cu_yesterday:'hier',cu_in_days:'dans {0} jours',cu_days_ago:'il y a {0} jours',cu_empty:'Rien à payer dans les {0} prochains jours.',
     dash_no_sinking:'Aucun objectif d’épargne.',dash_create_one:'En créer un \u2192',
     help_dash_intro:"Le tableau de bord vous donne un aperçu financier en temps réel. Tous les chiffres se mettent à jour automatiquement lorsque vous enregistrez des transactions.",
-    help_dash_hero_h:'Statistiques principales',
-    help_dash_hero_p:"Les quatre cartes en haut affichent vos totaux de période : Revenus totaux reçus, Dépenses totales (dépenses, factures, dettes & abonnements), Taux d’épargne (% du revenu épargné) et votre coût mensuel d’abonnement.",
-    help_dash_leftover_h:'Solde net',
-    help_dash_leftover_p:"Argent restant après toutes les dépenses et l'épargne. Vert = vous êtes en avance. Rouge = vous avez dépassé votre budget.",
+    help_dash_hero_h:'Libre à dépenser et À venir',
+    help_dash_hero_p:"Le grand montant est ce que vous pouvez encore dépenser sur la période : ce qui est entré, moins ce qui est sorti, moins tout ce qui reste dû avant la fin de la période. À côté, À venir liste les cinq prochains paiements encore dus, les factures en retard d'abord. Appuyez sur Payer pour en enregistrer un.",
+    help_dash_leftover_h:'Couleurs',
+    help_dash_leftover_p:"Blanc : vous êtes dans les clous. Rouge : ce qui reste dû dépasse ce qu'il vous reste.",
     help_dash_cashflow_h:'Graphique des flux de trésorerie',
     help_dash_cashflow_p:'Chaque ligne montre le Prévu (barre grise) vs le Réel (barre colorée) pour les Revenus, Dépenses, Factures et Épargne. Une barre rouge signifie dépassement du budget.',
     help_dash_donut_h:'Graphiques en anneau',
     help_dash_donut_p:"Survolez ou appuyez sur un segment pour voir le libellé et le pourcentage. Ces graphiques montrent d'où vient votre argent et où il va.",
     help_dash_bottom_h:'Panneaux inférieurs',
-    help_dash_bottom_p:'Aperçus rapides de votre remboursement de dettes, des factures/abonnements à venir dans les 30 prochains jours et de vos objectifs de fonds de prévision.',
+    help_dash_bottom_p:"Aperçus rapides de votre remboursement de dettes et de vos objectifs d'épargne.",
     help_dash_tip:'\uD83D\uDCA1 Cliquez sur le badge de date en haut pour modifier votre période budgétaire.',
     tx_type_debt:'Dette',
     dash_debt_payments:'Dettes',
@@ -2720,16 +2729,16 @@ const TRANSLATIONS = {
     dash_upcoming_tpl:'\uD83D\uDCC5 Próximos ({0} días)',dash_nothing_scheduled:'Nada programado.',view_as_list:'Ver como lista',view_as_cards:'Ver como tarjetas',sf_saved_so_far:'ahorrado hasta ahora',sf_open_ended:'sin objetivo',qa_title_expense:'Añadir gasto',qa_title_bill:'Pagar factura',qa_title_sinking_fund:'Aportar a una meta',qa_title_debt:'Pagar deuda',qa_title_income:'Añadir ingreso',qa_go_expense:'Añadir gasto',qa_go_bill:'Pagar',qa_go_sinking_fund:'Aportar',qa_go_debt:'Pagar',qa_go_income:'Añadir',qa_type_expense:'Gasto',qa_type_bill:'Factura',qa_type_sinking_fund:'Meta',qa_type_debt:'Deuda',qa_type_income:'Ingreso',qa_type_it:'escribirlo',qa_clear:'Borrar',qa_backspace:'Borrar el último dígito',qa_tap_cat:'Toca una categoría',qa_no_cats_expense:'Aún no hay categorías, puedes clasificarlo después.',qa_no_cats_bill:'Añade primero una factura.',qa_no_cats_sinking_fund:'Añade primero una meta.',qa_no_cats_debt:'Añade primero una deuda.',qa_no_cats_income:'Añade primero una categoría de ingresos.',qa_uncat:'Sin categoría',qa_uncat_chip:'Sin categoría · clasificar luego',qa_add_note:'Añadir nota',qa_again:'Guardar y añadir otro',qa_after:'Después: {0} hasta el {1}, unos {2} al día.',cu_today_cap:'Hoy',cu_yesterday_cap:'Ayer',cu_title:'Próximos',cu_all:'Todas las facturas',cu_paid:'Pagado',cu_today:'hoy',cu_tomorrow:'mañana',cu_yesterday:'ayer',cu_in_days:'en {0} días',cu_days_ago:'hace {0} días',cu_empty:'Nada vence en los próximos {0} días.',
     dash_no_sinking:'Aún no hay metas de ahorro.',dash_create_one:'Crear uno \u2192',
     help_dash_intro:'El panel te ofrece un resumen financiero en tiempo real. Todos los números se actualizan automáticamente cuando registras transacciones.',
-    help_dash_hero_h:'Fila de estadísticas principales',
-    help_dash_hero_p:'Las cuatro tarjetas en la parte superior muestran tus totales del período: Ingresos totales recibidos, Gastos totales (gastos, facturas, deudas & suscripciones), Tasa de ahorro (% de ingresos ahorrados) y tu costo mensual de suscripciones.',
-    help_dash_leftover_h:'Saldo neto',
-    help_dash_leftover_p:'Dinero restante después de todos los gastos y el ahorro. Verde = estás por delante. Rojo = has excedido tu presupuesto.',
+    help_dash_hero_h:'Libre para gastar y Próximos',
+    help_dash_hero_p:'La cifra grande es lo que aún puedes gastar en este período: lo que ha entrado, menos lo que ha salido, menos todo lo que queda por pagar antes de que termine. Al lado, Próximos muestra los cinco siguientes pagos pendientes del período, primero las facturas vencidas. Pulsa Pagar en cualquiera para registrarlo.',
+    help_dash_leftover_h:'Colores',
+    help_dash_leftover_p:'Blanco significa que vas bien. Rojo significa que lo que aún debes supera lo que te queda.',
     help_dash_cashflow_h:'Gráfico de flujo de caja',
     help_dash_cashflow_p:'Cada fila muestra lo Previsto (barra gris) vs lo Real (barra de color) para Ingresos, Gastos, Facturas y Ahorros. Una barra roja de Gastos significa que has superado el presupuesto.',
     help_dash_donut_h:'Gráficos de anillo',
     help_dash_donut_p:"Pasa el ratón o toca un segmento para ver la etiqueta y el porcentaje. Muestran de dónde viene tu dinero y adónde va.",
     help_dash_bottom_h:'Paneles inferiores',
-    help_dash_bottom_p:'Instantáneas rápidas de tu progreso en el pago de deudas, facturas/suscripciones próximas en los 30 días siguientes y objetivos de fondos de ahorro.',
+    help_dash_bottom_p:'Instantáneas rápidas de tu progreso en el pago de deudas y de tus objetivos de ahorro.',
     help_dash_tip:'\uD83D\uDCA1 Haz clic en el distintivo de fecha en la parte superior para cambiar tu período presupuestario.',
     tx_type_debt:'Deuda',
     dash_debt_payments:'Deudas',
@@ -3281,16 +3290,16 @@ const TRANSLATIONS = {
     dash_upcoming_tpl:'\uD83D\uDCC5 In arrivo ({0} giorni)',dash_nothing_scheduled:'Niente in programma.',view_as_list:'Mostra come elenco',view_as_cards:'Mostra come schede',sf_saved_so_far:'risparmiato finora',sf_open_ended:'senza obiettivo',qa_title_expense:'Aggiungi spesa',qa_title_bill:'Paga bolletta',qa_title_sinking_fund:'Versa su un obiettivo',qa_title_debt:'Paga debito',qa_title_income:'Aggiungi entrata',qa_go_expense:'Aggiungi spesa',qa_go_bill:'Paga',qa_go_sinking_fund:'Versa',qa_go_debt:'Paga',qa_go_income:'Aggiungi',qa_type_expense:'Spesa',qa_type_bill:'Bolletta',qa_type_sinking_fund:'Obiettivo',qa_type_debt:'Debito',qa_type_income:'Entrata',qa_type_it:'scrivilo',qa_clear:'Cancella',qa_backspace:"Cancella l'ultima cifra",qa_tap_cat:'Tocca una categoria',qa_no_cats_expense:'Nessuna categoria ancora, puoi assegnarla dopo.',qa_no_cats_bill:'Aggiungi prima una bolletta.',qa_no_cats_sinking_fund:'Aggiungi prima un obiettivo.',qa_no_cats_debt:'Aggiungi prima un debito.',qa_no_cats_income:'Aggiungi prima una categoria di entrata.',qa_uncat:'Senza categoria',qa_uncat_chip:'Senza categoria · da sistemare',qa_add_note:'Aggiungi nota',qa_again:'Salva e aggiungi un altro',qa_after:'Dopo: {0} fino al {1}, circa {2} al giorno.',cu_today_cap:'Oggi',cu_yesterday_cap:'Ieri',cu_title:'In arrivo',cu_all:'Tutte le bollette',cu_paid:'Pagato',cu_today:'oggi',cu_tomorrow:'domani',cu_yesterday:'ieri',cu_in_days:'tra {0} giorni',cu_days_ago:'{0} giorni fa',cu_empty:'Niente in scadenza nei prossimi {0} giorni.',
     dash_no_sinking:'Ancora nessun obiettivo.',dash_create_one:'Creane uno \u2192',
     help_dash_intro:'Il pannello offre una panoramica finanziaria in tempo reale. Tutti i numeri si aggiornano automaticamente quando registri le transazioni.',
-    help_dash_hero_h:'Statistiche principali',
-    help_dash_hero_p:"Le quattro schede in alto mostrano i totali del periodo: Entrate totali ricevute, Uscite totali (spese, bollette, debiti & abbonamenti), Tasso di risparmio (% del reddito risparmiato) e il costo mensile degli abbonamenti.",
-    help_dash_leftover_h:'Saldo netto',
-    help_dash_leftover_p:'Denaro rimanente dopo tutte le spese e i risparmi. Verde = sei in attivo. Rosso = hai superato il budget.',
+    help_dash_hero_h:'Libero di spendere e In arrivo',
+    help_dash_hero_p:'La cifra grande è quanto puoi ancora spendere in questo periodo: ciò che è entrato, meno ciò che è uscito, meno tutto ciò che resta da pagare prima della fine del periodo. Accanto, In arrivo elenca i prossimi cinque pagamenti ancora dovuti, prima le bollette scadute. Premi Paga su una voce per registrarla.',
+    help_dash_leftover_h:'Colori',
+    help_dash_leftover_p:'Bianco significa che sei in linea. Rosso significa che ciò che devi ancora pagare supera ciò che ti resta.',
     help_dash_cashflow_h:'Grafico del flusso di cassa',
     help_dash_cashflow_p:"Ogni riga mostra il Previsto (barra grigia) vs l'Effettivo (barra colorata) per Entrate, Spese, Bollette e Risparmi. Una barra rossa delle Spese indica che hai superato il budget.",
     help_dash_donut_h:'Grafici a ciambella',
     help_dash_donut_p:"Passa il cursore su un segmento o toccalo per vedere l'etichetta e la percentuale. Mostrano da dove viene il tuo denaro e dove va.",
     help_dash_bottom_h:'Pannelli inferiori',
-    help_dash_bottom_p:"Istantanee rapide del progresso nel rimborso dei debiti, bollette/abbonamenti in arrivo nei prossimi 30 giorni e obiettivi dei fondi di accantonamento.",
+    help_dash_bottom_p:'Istantanee rapide del rimborso dei debiti e dei tuoi obiettivi di risparmio.',
     help_dash_tip:'\uD83D\uDCA1 Clicca sul badge della data in alto per cambiare il periodo del budget.',
     tx_type_debt:'Debito',
     dash_debt_payments:'Debiti',
@@ -3841,16 +3850,16 @@ const TRANSLATIONS = {
     dash_upcoming_tpl:'\uD83D\uDCC5 Nadchodzące ({0} dni)',dash_nothing_scheduled:'Nic zaplanowanego.',view_as_list:'Pokaż jako listę',view_as_cards:'Pokaż jako karty',sf_saved_so_far:'zaoszczędzono dotąd',sf_open_ended:'bez celu',qa_title_expense:'Dodaj wydatek',qa_title_bill:'Zapłać rachunek',qa_title_sinking_fund:'Wpłać na cel',qa_title_debt:'Spłać dług',qa_title_income:'Dodaj przychód',qa_go_expense:'Dodaj wydatek',qa_go_bill:'Zapłać',qa_go_sinking_fund:'Wpłać',qa_go_debt:'Spłać',qa_go_income:'Dodaj',qa_type_expense:'Wydatek',qa_type_bill:'Rachunek',qa_type_sinking_fund:'Cel',qa_type_debt:'Dług',qa_type_income:'Przychód',qa_type_it:'wpisz ręcznie',qa_clear:'Wyczyść',qa_backspace:'Usuń ostatnią cyfrę',qa_tap_cat:'Wybierz kategorię',qa_no_cats_expense:'Brak kategorii, możesz przypisać później.',qa_no_cats_bill:'Najpierw dodaj rachunek.',qa_no_cats_sinking_fund:'Najpierw dodaj cel.',qa_no_cats_debt:'Najpierw dodaj dług.',qa_no_cats_income:'Najpierw dodaj kategorię przychodu.',qa_uncat:'Bez kategorii',qa_uncat_chip:'Bez kategorii · przypisz później',qa_add_note:'Dodaj notatkę',qa_again:'Zapisz i dodaj kolejny',qa_after:'Potem: {0} do {1}, około {2} dziennie.',cu_today_cap:'Dziś',cu_yesterday_cap:'Wczoraj',cu_title:'Wkrótce',cu_all:'Wszystkie rachunki',cu_paid:'Zapłacone',cu_today:'dziś',cu_tomorrow:'jutro',cu_yesterday:'wczoraj',cu_in_days:'za {0} dni',cu_days_ago:'{0} dni temu',cu_empty:'Nic nie jest do zapłaty w ciągu {0} dni.',
     dash_no_sinking:'Brak celów oszczędnościowych.',dash_create_one:'Utwórz jeden \u2192',
     help_dash_intro:'Panel zapewnia przegląd finansów w czasie rzeczywistym. Wszystkie liczby aktualizują się automatycznie po dodaniu transakcji.',
-    help_dash_hero_h:'Główne statystyki',
-    help_dash_hero_p:'Cztery karty na górze pokazują sumy okresu: Łączne przychody, Łączne wyjścia (wydatki, rachunki, długi & subskrypcje), Stopa oszczędności (% dochodu zaoszczędzonego) i miesięczny koszt subskrypcji.',
-    help_dash_leftover_h:'Saldo netto',
-    help_dash_leftover_p:'Pieniądze pozostałe po wszystkich wydatkach i oszczędnościach. Zielony = jesteś na plusie. Czerwony = przekroczyłeś budżet.',
+    help_dash_hero_h:'Wolne środki i Wkrótce',
+    help_dash_hero_p:'Duża kwota to to, co możesz jeszcze wydać w tym okresie: wpływy minus wydatki minus wszystko, co trzeba jeszcze zapłacić przed końcem okresu. Obok sekcja Wkrótce pokazuje pięć najbliższych płatności w tym okresie, najpierw zaległe rachunki. Naciśnij Zapłać, aby zapisać płatność.',
+    help_dash_leftover_h:'Kolory',
+    help_dash_leftover_p:'Biały oznacza, że wszystko idzie zgodnie z planem. Czerwony oznacza, że do zapłaty zostało więcej, niż masz.',
     help_dash_cashflow_h:'Wykres przepływu gotówki',
     help_dash_cashflow_p:'Każdy wiersz pokazuje Planowane (szary pasek) vs Rzeczywiste (kolorowy pasek) dla Przychodów, Wydatków, Rachunków i Oszczędności. Czerwony pasek Wydatków oznacza przekroczenie budżetu.',
     help_dash_donut_h:'Wykresy pierścieniowe',
     help_dash_donut_p:'Najedź kursorem lub dotknij segmentu, aby zobaczyć etykietę i procent. Pokazują skąd pochodzą Twoje pieniądze i gdzie trafiają.',
     help_dash_bottom_h:'Dolne panele',
-    help_dash_bottom_p:'Szybkie podsumowania postępu spłaty długów, nadchodzących rachunków/subskrypcji w ciągu 30 dni i celów funduszy celowych.',
+    help_dash_bottom_p:'Szybkie podsumowania spłaty długów i Twoich celów oszczędnościowych.',
     help_dash_tip:'\uD83D\uDCA1 Kliknij znacznik daty u góry, aby zmienić okres budżetowy.',
     tx_type_debt:'Dług',
     dash_debt_payments:'Długi',
@@ -5235,11 +5244,14 @@ function sleekDateLine() {
   } catch (e) { return ''; }
 }
 
-// What falls due next, and anything already overdue. Bills only: this is
-// the list you settle from. Each row owes what is left of that bill, and its
-// Paid button opens the same sheet as everywhere else, so every payment is a
-// real transaction linked to the bill.
-const CU_WINDOW_DAYS = 30;
+// What is still owed this period, soonest first, with anything overdue at
+// the top. It reads the same list Free to spend subtracts, so the figure
+// and the rows beside it can never disagree. Five rows at most, and bills
+// take the places first: an unpaid bill is the thing this list is for, so
+// a run of smaller scheduled items cannot push one out of view. Every Pay
+// opens the same sheet as everywhere else, so each payment is a real
+// transaction linked to what it paid.
+const CU_LIMIT = 5;
 function cuRelative(iso) {
   const a = new Date(iso + 'T00:00:00'), now = new Date();
   now.setHours(0, 0, 0, 0);
@@ -5249,38 +5261,42 @@ function cuRelative(iso) {
   if (d === -1) return t('cu_yesterday');
   return d > 0 ? tf('cu_in_days', d) : tf('cu_days_ago', -d);
 }
-function comingUpItems() {
+function comingUpItems(committed) {
   const today = toLocalISO(new Date());
-  const end = toLocalISO(new Date(Date.now() + CU_WINDOW_DAYS * 86400000));
-  return (state.bills || [])
-    .filter(b => b.active !== false && b.nextBillingDate && rowPayState(b) !== 'paid')
-    .filter(b => b.nextBillingDate <= end)
-    .map(b => ({ b, due: b.nextBillingDate, overdue: b.nextBillingDate < today,
-                 owe: rowRemaining(b) || rowExpected(b) }))
-    .sort((x, y) => x.due.localeCompare(y.due));
+  const all = (committed || nlCommitted()).items
+    .filter(i => i.id && PAYABLE_KINDS.has(i.type))
+    .map(i => ({ ...i, overdue: i.date < today }));
+  const rank = i => i.overdue ? 0 : i.type === 'bill' ? 1 : 2;
+  return all.slice()
+    .sort((a, b) => rank(a) - rank(b) || String(a.date).localeCompare(String(b.date)))
+    .slice(0, CU_LIMIT)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
 }
-function comingUpHtml() {
-  const items = comingUpItems().slice(0, 6);
+function comingUpHtml(committed) {
+  const items = comingUpItems(committed);
   const lang = state?.settings?.language || 'en';
   const mon = iso => new Date(iso + 'T00:00:00').toLocaleString(lang, { month: 'short' }).replace('.', '').toUpperCase();
-  return `<div class="panel coming-up"><div class="panel-inner-sm">
+  return `<section class="coming-up">
     <div class="cu-head">
       <h3 class="cu-title">${t('cu_title')}</h3>
       <button class="link-btn cu-all" type="button" data-btab="bills">${t('cu_all')}</button>
     </div>
-    ${items.length ? `<ul class="cu-list">${items.map(({ b, due, overdue, owe }) => `
-      <li class="cu-row${overdue ? ' is-overdue' : ''}">
-        <span class="cu-date"><b>${parseInt(due.slice(8, 10), 10)}</b><small>${esc(mon(due))}</small></span>
-        <span class="cu-info"><span class="cu-name">${esc(b.name)}</span><span class="cu-when">${esc(cuRelative(due))}</span></span>
-        <span class="cu-amt">${fmt(owe)}</span>
-        <button class="cu-pay" type="button" data-cu-pay="${esc(b.id)}">${t('cu_paid')}</button>
+    ${items.length ? `<ul class="cu-list">${items.map(i => `
+      <li class="cu-row${i.overdue ? ' is-overdue' : ''}">
+        <span class="cu-date"><b>${parseInt(i.date.slice(8, 10), 10)}</b><small>${esc(mon(i.date))}</small></span>
+        <span class="cu-info">
+          <span class="cu-name"><span class="cu-name-txt">${esc(i.label)}</span>${AUTO_KINDS.has(i.type) ? `<i class="nl-auto" title="${esc(t('auto_badge_title'))}">${t('auto_badge')}</i>` : ''}</span>
+          <span class="cu-when">${esc(cuRelative(i.date))}${i.paidSoFar > 0 ? ` \u00b7 ${esc(tf('nl_partial_of', fmt(i.paidSoFar), fmt(i.expected)))}` : ''}</span>
+        </span>
+        <span class="cu-amt">${fmt(i.amount)}</span>
+        <button class="cu-pay" type="button" data-cu-type="${esc(i.type)}" data-cu-pay="${esc(i.id)}" data-cu-date="${esc(i.occDate || i.date)}">${t('pay_btn')}</button>
       </li>`).join('')}</ul>`
-      : `<p class="cu-empty">${tf('cu_empty', CU_WINDOW_DAYS)}</p>`}
-  </div></div>`;
+      : `<p class="cu-empty">${t('nl_nothing_due')}</p>`}
+  </section>`;
 }
 function wireComingUp(scope) {
   scope.querySelectorAll('[data-cu-pay]').forEach(btn => btn.addEventListener('click', () =>
-    promptPay('bill', btn.dataset.cuPay, () => renderDashboard())));
+    promptPay(btn.dataset.cuType || 'bill', btn.dataset.cuPay, () => renderDashboard(), btn.dataset.cuDate)));
   scope.querySelectorAll('.cu-all[data-btab]').forEach(btn => btn.addEventListener('click', () =>
     switchTab(btn.dataset.btab)));
 }
@@ -5398,7 +5414,6 @@ function renderDashboardLayout1() {
         <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('debt')} ${t('tab_debt')}</div>
         ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>${(()=>{const dp=act.debt||{},paid=state.debts.filter(d=>(dp[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0).length,total=state.debts.filter(d=>d.minimumPayment>0).length;return total>0?`<div style="margin-top:7px;font-size:11px;color:${paid===total?'#10b981':'#fb923c'};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paid} ${t('dash_of')} ${total} ${total===1?t('dash_debts_paid'):t('dash_debts_paid_many')}</div>`:'';})()}`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
       </div></div>
-      ${comingUpHtml()}
       <div class="panel pro-card"><div class="panel-inner-sm">
         <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('sinking')} ${t('tab_sinking')}</div>
         ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="goals">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
@@ -5538,7 +5553,6 @@ function renderDashboardLayout2() {
         <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('debt')} ${t('tab_debt')}</div>
         ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
       </div></div>
-      ${comingUpHtml()}
       <div class="panel pro-card"><div class="panel-inner-sm">
         <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('sinking')} ${t('tab_sinking')}</div>
         ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="goals">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
@@ -8900,11 +8914,22 @@ function nlCommitted() {
   const end = state.settings.periodEnd || '';
   let events = [];
   try { events = getUpcomingEvents(Math.max(0, p.left), computeActuals()) || []; } catch (e) { events = []; }
-  const items = events
+  // A bill whose date has passed unpaid has not stopped being owed. It is
+  // not upcoming, so the event list leaves it out; it is added here, so it
+  // comes off what is free to spend and heads the Coming up list.
+  const today = toLocalISO(new Date());
+  const overdue = (state.bills || [])
+    .filter(b => b.active !== false && b.nextBillingDate && b.nextBillingDate < today && rowPayState(b) !== 'paid')
+    .map(b => { const exp = rowExpected(b), done = rowPaidAmount(b);
+      return { label: b.name, date: b.nextBillingDate, amount: Math.max(0, payRound2(exp - done)) || exp,
+               type: 'bill', id: b.id, occDate: b.nextBillingDate, paidSoFar: done, expected: exp }; })
+    .filter(i => i.amount > 0);
+  const items = overdue.concat(events
     .filter(ev => !ev.paid && (Number(ev.amount) || 0) > 0 && (!end || ev.date <= end))
     .map(ev => ({ label: ev.label, date: ev.date, amount: Number(ev.amount) || 0,
                   type: ev.type, id: ev.srcId, occDate: ev.occDate || ev.date,
-                  paidSoFar: ev.paidSoFar || 0, expected: ev.expected || 0 }));
+                  paidSoFar: ev.paidSoFar || 0, expected: ev.expected || 0 })))
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
   return { total: items.reduce((s, i) => s + i.amount, 0), items: items };
 }
 
@@ -9036,16 +9061,20 @@ function nlHeroHtml(leftover, opts) {
       : ''
   ].join('');
 
-  return `<div class="panel nl-hero${neg ? ' is-negative' : ''}">
+  // The figure sizes itself to the room it has: its length goes to the
+  // stylesheet, which fits it to the column instead of letting a long
+  // amount run off a phone screen.
+  const figLen = fmt(Math.abs(free)).length + (neg ? 1 : 0);
+  return `<div class="panel nl-hero nl-hero--cu${neg ? ' is-negative' : ''}">
     <div class="nl-left">
       <div class="nl-label">${t('nl_free_to_spend')}</div>
-      <div class="nl-value leftover-value" data-nl-value="${free}">${neg ? '\u2212' : ''}${nlAmountHtml(free)}</div>
+      <div class="nl-value leftover-value" style="--nl-len:${figLen}" data-nl-value="${free}">${neg ? '\u2212' : ''}${nlAmountHtml(free)}</div>
       ${sub ? `<div class="nl-sub">${sub}</div>` : ''}
       <div class="nl-meta">${pills}</div>
       <div class="nl-track"><i style="width:${p.pct}%"></i></div>
       <div class="nl-track-cap">${tf('nl_day_of', p.dayOf, p.total)}</div>
     </div>
-    <div class="nl-right">${nlYoursPanelHtml(leftover, c)}</div>
+    <div class="nl-right">${comingUpHtml(c)}</div>
   </div>`;
 }
 

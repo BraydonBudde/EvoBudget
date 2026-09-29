@@ -2094,7 +2094,7 @@ input[type="number"].expected-input {
 .pro-stat-sub   { font-size: 11px; color: var(--text-faint); }
 
 /* Pro bottom row */
-.pro-bottom-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.pro-bottom-row { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
 .pro-card .panel-inner-sm { padding: 18px 20px; }
 
 /* Debt teaser on dashboard */
@@ -2419,7 +2419,6 @@ input[type="number"].expected-input {
 /* ── Coming up ─────────────────────────────────────────────────────────
    A calendar leaf for the date, the name with how far off it is, what is
    owed, and one button to settle it. Overdue rows outline their date. */
-.coming-up .panel-inner-sm { padding: 18px 18px 8px; }
 .pro-card .panel-title-sm .app-ico { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; color: var(--grad-indigo); }
 .cu-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
 .cu-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; margin: 0; }
@@ -2441,7 +2440,8 @@ input[type="number"].expected-input {
 .cu-row.is-overdue .cu-date { border-color: #f59e0b; }
 .cu-row.is-overdue .cu-date small, .cu-row.is-overdue .cu-when { color: #f59e0b; }
 .cu-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.cu-name { font-weight: 700; font-size: 15px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cu-name { display: flex; align-items: center; gap: 6px; min-width: 0; font-weight: 700; font-size: 15px; color: var(--text-primary); }
+.cu-name-txt { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cu-when { font-size: 12.5px; color: var(--text-secondary); }
 .cu-amt { font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; color: var(--text-primary); }
 .cu-pay {
@@ -2540,6 +2540,45 @@ input[type="number"].expected-input {
   .lv-bar { grid-area: bar; align-self: center; }
   .lv-acts { grid-area: acts; }
   .lv-act { width: 30px; height: 30px; }
+}
+
+/* Coming up inside the dashboard hero, where Net Leftover and Still to pay
+   used to be. It sits on a quiet inset card so the list reads as its own
+   thing, while the hero's wash carries through behind both halves. */
+.nl-hero--cu .nl-right { padding: 18px 18px 18px 4px; justify-content: stretch; }
+.nl-hero--cu .coming-up {
+  height: 100%; padding: 16px 18px 6px; border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  border: 1px solid var(--border-faint);
+}
+.nl-hero--cu .cu-head { margin-bottom: 4px; }
+.nl-hero--cu .cu-title { font-size: 1.1rem; }
+.nl-hero--cu .cu-row { grid-template-columns: 42px minmax(0, 1fr) auto auto; gap: 12px; padding: 10px 0; }
+.nl-hero--cu .cu-date { width: 42px; height: 42px; border-radius: 11px; }
+.nl-hero--cu .cu-date b { font-size: 1.05rem; }
+.nl-hero--cu .cu-date small { font-size: 8.5px; }
+.nl-hero--cu .cu-name { font-size: 14px; }
+.nl-hero--cu .cu-when { font-size: 12px; }
+.nl-hero--cu .cu-amt { font-size: 14.5px; }
+.nl-hero--cu .cu-pay { padding: 6px 15px; font-size: 12.5px; }
+.nl-hero--cu .cu-empty { margin: 14px 0 12px; }
+/* Free to spend at twice its old size. The figure fits itself to its
+   column: the render passes its length in characters, and the size is the
+   column's width shared out across them, capped at double the old maximum.
+   A wide screen gets the full doubling; a phone gets as large as fits. */
+.nl-hero--cu .nl-left { container-type: inline-size; }
+.nl-hero--cu .nl-value {
+  font-size: clamp(2.6rem, calc(165cqi / var(--nl-len, 9)), 7.4rem);
+  letter-spacing: -.035em; line-height: .9; margin: 14px 0 12px; white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .nl-hero--cu .nl-right { padding: 0 14px 14px; }
+}
+@media (max-width: 400px) {
+  .nl-hero--cu .coming-up { padding: 12px 12px 4px; }
+  .nl-hero--cu .cu-row { grid-template-columns: 38px minmax(0, 1fr) auto auto; gap: 9px; }
+  .nl-hero--cu .cu-date { width: 38px; height: 38px; }
+  .nl-hero--cu .cu-pay { padding: 5px 11px; }
 }
 
 /* ── The budget at a glance ────────────────────────────────────────────
