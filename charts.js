@@ -256,13 +256,35 @@ function formatSpendTooltipHtml(point, opts) {
 // and data-driven instead of a decorative random preview. Dots are wired
 // through wireChartHover() like every other chart's marks; the line/area
 // draw-in itself is handled separately by animateSpendLineIn() below.
+// A smooth line through the same points that never swings past them: a
+// monotone cubic (Fritsch-Carlson), so a quiet day between two busy ones
+// never dips below zero the way a plain spline would.
+function smoothLinePath(coords) {
+  const n = coords.length;
+  if (n < 3) return 'M' + coords.map(c => c[0].toFixed(1) + ',' + c[1].toFixed(1)).join(' L');
+  const dx = [], m = [], tg = [];
+  for (let i = 0; i < n - 1; i++) { dx[i] = coords[i + 1][0] - coords[i][0]; m[i] = dx[i] ? (coords[i + 1][1] - coords[i][1]) / dx[i] : 0; }
+  tg[0] = m[0]; tg[n - 1] = m[n - 2];
+  for (let i = 1; i < n - 1; i++) tg[i] = m[i - 1] * m[i] <= 0 ? 0 : (m[i - 1] + m[i]) / 2;
+  for (let i = 0; i < n - 1; i++) {
+    if (m[i] === 0) { tg[i] = 0; tg[i + 1] = 0; continue; }
+    const a = tg[i] / m[i], b = tg[i + 1] / m[i], q = a * a + b * b;
+    if (q > 9) { const k = 3 / Math.sqrt(q); tg[i] = k * a * m[i]; tg[i + 1] = k * b * m[i]; }
+  }
+  let d = 'M' + coords[0][0].toFixed(1) + ',' + coords[0][1].toFixed(1);
+  for (let i = 0; i < n - 1; i++) {
+    const [x0, y0] = coords[i], [x1, y1] = coords[i + 1], h = dx[i] / 3;
+    d += ` C${(x0 + h).toFixed(1)},${(y0 + tg[i] * h).toFixed(1)} ${(x1 - h).toFixed(1)},${(y1 - tg[i + 1] * h).toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}`;
+  }
+  return d;
+}
 function svgSpendLine(points, opts) {
   opts = opts || {};
   const w = opts.w || 900, h = opts.h || 140, pad = 10;
   const max = Math.max.apply(null, points.map(p => p.value).concat(1));
   const stepX = points.length > 1 ? (w - pad * 2) / (points.length - 1) : 0;
   const coords = points.map((p, i) => [pad + i * stepX, pad + (1 - p.value / max) * (h - pad * 2)]);
-  const pathD = 'M' + coords.map(c => c[0].toFixed(1) + ',' + c[1].toFixed(1)).join(' L');
+  const pathD = opts.curve ? smoothLinePath(coords) : 'M' + coords.map(c => c[0].toFixed(1) + ',' + c[1].toFixed(1)).join(' L');
   const last = coords[coords.length - 1], first = coords[0];
   const areaD = pathD + ` L${last[0].toFixed(1)},${(h - pad).toFixed(1)} L${first[0].toFixed(1)},${(h - pad).toFixed(1)} Z`;
   // Dots are absolutely-positioned HTML elements layered over the SVG,
@@ -336,6 +358,24 @@ function positionChartTooltip(tip, evt) {
   tip.style.left = left + 'px';
   tip.style.top = top + 'px';
 }
+let _tipRelease = null;
+function holdChartTip(hide, marks) {
+  if (_tipRelease) _tipRelease(false);
+  let timer = 0;
+  const release = (run) => {
+    clearTimeout(timer);
+    document.removeEventListener('scroll', onScroll, true);
+    document.removeEventListener('touchstart', onTouch, true);
+    if (_tipRelease === release) _tipRelease = null;
+    if (run !== false) hide();
+  };
+  const onScroll = () => release();
+  const onTouch = e => { if (!marks.includes(e.target)) release(); };
+  timer = setTimeout(() => release(), 5000);
+  document.addEventListener('scroll', onScroll, true);
+  document.addEventListener('touchstart', onTouch, true);
+  _tipRelease = release;
+}
 function wireChartHover(scope, markSelector, opts) {
   opts = opts || {};
   if (!scope) return;
@@ -379,7 +419,9 @@ function wireChartHover(scope, markSelector, opts) {
     mark.addEventListener('mousemove', e => positionChartTooltip(tip, e));
     mark.addEventListener('mouseleave', hide);
     mark.addEventListener('touchstart', e => { e.preventDefault(); show(mark, e.touches[0]); }, { passive: false });
-    mark.addEventListener('touchend', () => setTimeout(hide, 1600));
+    // On a touch screen the tip stays up long enough to read: five seconds,
+    // or until the page scrolls or something other than a mark is touched.
+    mark.addEventListener('touchend', () => holdChartTip(hide, marks));
     mark.addEventListener('focus', e => show(mark, e));
     mark.addEventListener('blur', hide);
   });

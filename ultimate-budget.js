@@ -1028,7 +1028,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Debt-free',dash_interest_label:'Interest',
     dash_months_label:'Months',dash_method_label:'Method',
     dash_set_balances:'Set balances to see results.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',view_as_list:'Show as a list',view_as_cards:'Show as cards',sf_saved_so_far:'saved so far',sf_open_ended:'no target',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_sinking_fund:'Add to a goal',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_sinking_fund:'Add to goal',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_sinking_fund:'Goal',qa_type_debt:'Debt',qa_type_income:'Income',qa_type_it:'type it instead',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_sinking_fund:'Add a saving goal first.',qa_no_cats_debt:'Add a debt first.',qa_no_cats_income:'Add an income category on the Budget tab first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_title:'Coming up',cu_all:'All bills',cu_paid:'Paid',cu_today:'today',cu_tomorrow:'tomorrow',cu_yesterday:'yesterday',cu_in_days:'in {0} days',cu_days_ago:'{0} days ago',cu_empty:'Nothing due in the next {0} days.',cu_next_period:'Next period',nt_title:'Notifications',nt_desc:'Everything that wants a look, and what to do about it.',nt_group_late:'Needs attention now',nt_group_soon:'Due this week',nt_group_todo:'To tidy up',nt_empty_title:"You're all caught up",nt_empty_sub:'Nothing is overdue, due this week, over budget or waiting to be sorted.',nt_bill_late:'{0} was due {1}',nt_bill_soon:'{0} due {1}',nt_debt_soon:'{0} minimum payment due {1}',nt_over:'{0} over its {1} budget',nt_uncat_title:'{0} expenses to sort',nt_uncat_one:'1 expense to sort',nt_uncat_detail:'Logged to sort later. Give each one a category so your budget adds up.',nt_goal_late:'Its date has passed with {0} still to save',nt_act_review:'Review',nt_act_sort:'Sort them',nt_act_edit_goal:'Edit goal',nt_open:'Open {0}',nt_tag_overdue:'Overdue',nt_tag_soon:'Due soon',nt_tag_over:'Over budget',nt_tag_pastdate:'Past date',nt_tag_todo:'To do',tab_notifications:'Notifications',bp_title:'Budget period',bp_how:'How does your money come in?',bp_r_month:'Calendar month',bp_r_payday:'Monthly on payday',bp_r_w2:'Every 2 weeks',bp_r_w4:'Every 4 weeks',bp_r_w1:'Every week',bp_r_custom:'Pick dates',bp_payday:'Payday',bp_day_n:'day {0}',bp_starts:'Starts {0}',bp_tap_custom:'Tap the first day of the period.',bp_tap_last:'Now tap the last day.',bp_tap_rhythm:'Tap a day to start the period there.',bp_auto:'Move on to the next period by itself',bp_days:'{0} days',bp_day_of:'today is day {0} of {1}',bp_starts_in:'starts in {0} days',bp_over:'already over',bp_left:'{0} days left',bp_daily:'Your planned income of {0} comes to about {1} a day.',bp_now:'Back to today',bp_use:'Use {0}',bp_prev:'Previous period',bp_next:'Next period',bp_moved:'A new budget period has started: {0}',rail_nav:'Navigation',rail_account:'Account',rail_guest:'Your budget',rail_local:'Saved on this device',rail_account_open:'Open settings',badge_bills:'{0} bills overdue or due this week',badge_debt:'{0} debt payments due this week',badge_budget:'{0} categories over budget',badge_transactions:'{0} expenses to sort into a category',badge_goals:'{0} goals past their date',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',view_as_list:'Show as a list',view_as_cards:'Show as cards',sf_saved_so_far:'saved so far',sf_open_ended:'no target',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_sinking_fund:'Add to a goal',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_sinking_fund:'Add to goal',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_sinking_fund:'Goal',qa_type_debt:'Debt',qa_type_income:'Income',qa_type_it:'type it instead',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_sinking_fund:'Add a saving goal first.',qa_no_cats_debt:'Add a debt first.',qa_no_cats_income:'Add an income category on the Budget tab first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_title:'Coming up',cu_all:'All bills',cu_paid:'Paid',cu_today:'today',cu_tomorrow:'tomorrow',cu_yesterday:'yesterday',cu_in_days:'in {0} days',cu_days_ago:'{0} days ago',cu_empty:'Nothing due in the next {0} days.',cu_next_period:'Next period',close:'Close',dv_label:'Dashboard view',dv_overview:'Overview',dv_stats:'Statistics',dash_line_style:'Line style',dash_line_line:'Straight lines',dash_line_curve:'Curved lines',dash_other:'Other',psf_title:'This period so far',psf_in:'In',psf_out:'Out',psf_kept:'Kept',psf_still:'{0} still expected',psf_all_in:'All expected income is in',psf_bills_part:'{0} of it bills',psf_kept_pct:'{0}% of what came in',psf_where:'Where the money went',gp_title:'Goal progress',gp_all:'All goals',gp_done:'Done',gp_late:'Past date',gp_by:'by {0}',gp_of:'{0} of {1}',gp_saved:'{0} saved',gp_sum_of:'of {0} across your goals ({1}%)',ra_title:'Recent activity',ra_all:'All activity',ra_deleted:'Deleted {0} ({1})',ra_undo:'Undo',ra_more:'More',ra_empty:'Nothing logged yet.',ra_restored:'Put back',ra_amount:'Amount',ra_note:'Note',ra_again:'Log again',rf_pace:'Spending faster than planned',rf_pace_d:'On pace for {0} of everyday spending, {1} over plan.',rf_act_budget:'Review budget',rf_short:'Payments due are more than what is left',rf_short_d:'{0} still to pay with {1} left this period.',rf_act_coming:'See what is due',rf_overdue:'{0} bills are overdue',rf_overdue_one:'1 bill is overdue',rf_act_pay:'Pay now',rf_over:'{0} categories are over budget',rf_over_one:'1 category is over budget',rf_income:'Less income than expected',rf_income_d:'Only {0} of the {1} you expect has come in.',rf_act_log:'Log income',rf_nosave:'Nothing put toward your goals yet',rf_nosave_d:'Your goals need about {0} a month.',rf_act_goals:'Open goals',rf_apr:'{0} charges {1}% and gets only its minimum',rf_apr_d:'Anything extra on it saves the most interest.',rf_act_debt:'Open debt',rf_rise:'{0} went up by {1}',rf_rise_d:'It was {0} and is now {1}.',rf_act_bills:'Open bills',rf_subs:'Subscriptions weigh heavy',rf_subs_d:'{0} a month is {1}% of your expected income.',rf_big:'A large one-off expense: {0}',rf_big_d:'{0} on {1}.',rf_act_view:'View it',rf_loose:'Unsorted spending is piling up',rf_loose_d:'{0} this period has no category yet.',rf_thin:'Keeping very little of what came in',rf_thin_d:'Only {0}% of this period’s income is left after spending.',rf_one:'Red flag',rf_many:'Red flags',rf_clear:'All clear',rf_checked:'{0} checks run on this period',rf_restore:'Show {0} set aside',rf_dismiss:'Set aside for this period',rf_none:'Nothing looks wrong this period. Nice work.',st_pace:'Spending against plan',st_spent:'Spent',st_plan:'Plan',st_proj:'At this pace',st_months:'Last six months',st_week:'By day of the week',st_cats:'Categories against budget',st_rate:'Kept of income',st_rate_d:'{0} kept this period',st_avg:'Average a day',st_avg_d:'over {0} days so far',st_projected:'By the end of the period',st_projected_d:'against {0} planned',st_top:'Largest share',st_top_d:'{0}, {1}% of spending',nt_title:'Notifications',nt_desc:'Everything that wants a look, and what to do about it.',nt_group_late:'Needs attention now',nt_group_soon:'Due this week',nt_group_todo:'To tidy up',nt_empty_title:"You're all caught up",nt_empty_sub:'Nothing is overdue, due this week, over budget or waiting to be sorted.',nt_bill_late:'{0} was due {1}',nt_bill_soon:'{0} due {1}',nt_debt_soon:'{0} minimum payment due {1}',nt_over:'{0} over its {1} budget',nt_uncat_title:'{0} expenses to sort',nt_uncat_one:'1 expense to sort',nt_uncat_detail:'Logged to sort later. Give each one a category so your budget adds up.',nt_goal_late:'Its date has passed with {0} still to save',nt_act_review:'Review',nt_act_sort:'Sort them',nt_act_edit_goal:'Edit goal',nt_open:'Open {0}',nt_tag_overdue:'Overdue',nt_tag_soon:'Due soon',nt_tag_over:'Over budget',nt_tag_pastdate:'Past date',nt_tag_todo:'To do',tab_notifications:'Notifications',bp_title:'Budget period',bp_how:'How does your money come in?',bp_r_month:'Calendar month',bp_r_payday:'Monthly on payday',bp_r_w2:'Every 2 weeks',bp_r_w4:'Every 4 weeks',bp_r_w1:'Every week',bp_r_custom:'Pick dates',bp_payday:'Payday',bp_day_n:'day {0}',bp_starts:'Starts {0}',bp_tap_custom:'Tap the first day of the period.',bp_tap_last:'Now tap the last day.',bp_tap_rhythm:'Tap a day to start the period there.',bp_auto:'Move on to the next period by itself',bp_days:'{0} days',bp_day_of:'today is day {0} of {1}',bp_starts_in:'starts in {0} days',bp_over:'already over',bp_left:'{0} days left',bp_daily:'Your planned income of {0} comes to about {1} a day.',bp_now:'Back to today',bp_use:'Use {0}',bp_prev:'Previous period',bp_next:'Next period',bp_moved:'A new budget period has started: {0}',rail_nav:'Navigation',rail_account:'Account',rail_guest:'Your budget',rail_local:'Saved on this device',rail_account_open:'Open settings',badge_bills:'{0} bills overdue or due this week',badge_debt:'{0} debt payments due this week',badge_budget:'{0} categories over budget',badge_transactions:'{0} expenses to sort into a category',badge_goals:'{0} goals past their date',
     dash_no_sinking:'No saving goals yet.',dash_create_one:'Create one \u2192',
     help_dash_intro:'The Dashboard gives you a real-time financial overview. All numbers update automatically as you log transactions.',
     help_dash_hero_h:'Free to spend and Coming up',
@@ -1606,7 +1606,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Schuldenfrei',dash_interest_label:'Zinsen',
     dash_months_label:'Monate',dash_method_label:'Methode',
     dash_set_balances:'Salden eingeben, um Ergebnisse zu sehen.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Bevorstehend ({0} Tage)',dash_nothing_scheduled:'Nichts geplant.',view_as_list:'Als Liste anzeigen',view_as_cards:'Als Karten anzeigen',sf_saved_so_far:'bisher gespart',sf_open_ended:'ohne Ziel',qa_title_expense:'Ausgabe hinzufügen',qa_title_bill:'Rechnung bezahlen',qa_title_sinking_fund:'Zum Ziel hinzufügen',qa_title_debt:'Schuld bezahlen',qa_title_income:'Einnahme hinzufügen',qa_go_expense:'Ausgabe hinzufügen',qa_go_bill:'Rechnung bezahlen',qa_go_sinking_fund:'Zum Ziel',qa_go_debt:'Schuld bezahlen',qa_go_income:'Einnahme hinzufügen',qa_type_expense:'Ausgabe',qa_type_bill:'Rechnung',qa_type_sinking_fund:'Ziel',qa_type_debt:'Schuld',qa_type_income:'Einnahme',qa_type_it:'lieber eintippen',qa_clear:'Löschen',qa_backspace:'Letzte Ziffer löschen',qa_tap_cat:'Tippe auf eine Kategorie',qa_no_cats_expense:'Noch keine Ausgabenkategorien, du kannst diese später zuordnen.',qa_no_cats_bill:'Lege zuerst eine Rechnung an.',qa_no_cats_sinking_fund:'Lege zuerst ein Sparziel an.',qa_no_cats_debt:'Lege zuerst eine Schuld an.',qa_no_cats_income:'Lege zuerst eine Einnahmekategorie an.',qa_uncat:'Ohne Kategorie',qa_uncat_chip:'Ohne Kategorie · später zuordnen',qa_add_note:'Notiz',qa_again:'Speichern und weitere',qa_after:'Danach: {0} bis {1}, etwa {2} pro Tag.',cu_today_cap:'Heute',cu_yesterday_cap:'Gestern',cu_title:'Demnächst',cu_all:'Alle Rechnungen',cu_paid:'Bezahlt',cu_today:'heute',cu_tomorrow:'morgen',cu_yesterday:'gestern',cu_in_days:'in {0} Tagen',cu_days_ago:'vor {0} Tagen',cu_empty:'In den nächsten {0} Tagen ist nichts fällig.',cu_next_period:'Nächste Periode',nt_title:'Benachrichtigungen',nt_desc:'Alles, was einen Blick braucht, und was zu tun ist.',nt_group_late:'Braucht jetzt Aufmerksamkeit',nt_group_soon:'Diese Woche fällig',nt_group_todo:'Aufzuräumen',nt_empty_title:'Alles erledigt',nt_empty_sub:'Nichts ist überfällig, diese Woche fällig, über Budget oder wartet auf eine Kategorie.',nt_bill_late:'{0} war {1} fällig',nt_bill_soon:'{0} fällig {1}',nt_debt_soon:'{0} Mindestzahlung fällig {1}',nt_over:'{0} über dem Budget von {1}',nt_uncat_title:'{0} Ausgaben zuzuordnen',nt_uncat_one:'1 Ausgabe zuzuordnen',nt_uncat_detail:'Zum späteren Zuordnen erfasst. Gib jeder eine Kategorie, damit dein Budget stimmt.',nt_goal_late:'Das Datum ist vorbei, es fehlen noch {0}',nt_act_review:'Ansehen',nt_act_sort:'Zuordnen',nt_act_edit_goal:'Ziel bearbeiten',nt_open:'{0} öffnen',nt_tag_overdue:'Überfällig',nt_tag_soon:'Bald fällig',nt_tag_over:'Über Budget',nt_tag_pastdate:'Datum vorbei',nt_tag_todo:'Offen',tab_notifications:'Benachrichtigungen',bp_title:'Budgetzeitraum',bp_how:'Wie kommt dein Geld rein?',bp_r_month:'Kalendermonat',bp_r_payday:'Monatlich ab Zahltag',bp_r_w2:'Alle 2 Wochen',bp_r_w4:'Alle 4 Wochen',bp_r_w1:'Jede Woche',bp_r_custom:'Daten wählen',bp_payday:'Zahltag',bp_day_n:'Tag {0}',bp_starts:'Beginnt am {0}',bp_tap_custom:'Tippe auf den ersten Tag.',bp_tap_last:'Jetzt auf den letzten Tag tippen.',bp_tap_rhythm:'Tippe auf einen Tag, um dort zu beginnen.',bp_auto:'Automatisch zum nächsten Zeitraum wechseln',bp_days:'{0} Tage',bp_day_of:'heute ist Tag {0} von {1}',bp_starts_in:'beginnt in {0} Tagen',bp_over:'bereits vorbei',bp_left:'noch {0} Tage',bp_daily:'Dein geplantes Einkommen von {0} ergibt etwa {1} pro Tag.',bp_now:'Zurück zu heute',bp_use:'{0} verwenden',bp_prev:'Vorheriger Zeitraum',bp_next:'Nächster Zeitraum',bp_moved:'Ein neuer Budgetzeitraum hat begonnen: {0}',rail_nav:'Navigation',rail_account:'Konto',rail_guest:'Dein Budget',rail_local:'Auf diesem Gerät gespeichert',rail_account_open:'Einstellungen öffnen',badge_bills:'{0} Rechnungen überfällig oder diese Woche fällig',badge_debt:'{0} Schuldenzahlungen diese Woche fällig',badge_budget:'{0} Kategorien über Budget',badge_transactions:'{0} Ausgaben ohne Kategorie',badge_goals:'{0} Ziele über ihrem Datum',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Bevorstehend ({0} Tage)',dash_nothing_scheduled:'Nichts geplant.',view_as_list:'Als Liste anzeigen',view_as_cards:'Als Karten anzeigen',sf_saved_so_far:'bisher gespart',sf_open_ended:'ohne Ziel',qa_title_expense:'Ausgabe hinzufügen',qa_title_bill:'Rechnung bezahlen',qa_title_sinking_fund:'Zum Ziel hinzufügen',qa_title_debt:'Schuld bezahlen',qa_title_income:'Einnahme hinzufügen',qa_go_expense:'Ausgabe hinzufügen',qa_go_bill:'Rechnung bezahlen',qa_go_sinking_fund:'Zum Ziel',qa_go_debt:'Schuld bezahlen',qa_go_income:'Einnahme hinzufügen',qa_type_expense:'Ausgabe',qa_type_bill:'Rechnung',qa_type_sinking_fund:'Ziel',qa_type_debt:'Schuld',qa_type_income:'Einnahme',qa_type_it:'lieber eintippen',qa_clear:'Löschen',qa_backspace:'Letzte Ziffer löschen',qa_tap_cat:'Tippe auf eine Kategorie',qa_no_cats_expense:'Noch keine Ausgabenkategorien, du kannst diese später zuordnen.',qa_no_cats_bill:'Lege zuerst eine Rechnung an.',qa_no_cats_sinking_fund:'Lege zuerst ein Sparziel an.',qa_no_cats_debt:'Lege zuerst eine Schuld an.',qa_no_cats_income:'Lege zuerst eine Einnahmekategorie an.',qa_uncat:'Ohne Kategorie',qa_uncat_chip:'Ohne Kategorie · später zuordnen',qa_add_note:'Notiz',qa_again:'Speichern und weitere',qa_after:'Danach: {0} bis {1}, etwa {2} pro Tag.',cu_today_cap:'Heute',cu_yesterday_cap:'Gestern',cu_title:'Demnächst',cu_all:'Alle Rechnungen',cu_paid:'Bezahlt',cu_today:'heute',cu_tomorrow:'morgen',cu_yesterday:'gestern',cu_in_days:'in {0} Tagen',cu_days_ago:'vor {0} Tagen',cu_empty:'In den nächsten {0} Tagen ist nichts fällig.',cu_next_period:'Nächste Periode',close:'Schließen',dv_label:'Dashboard-Ansicht',dv_overview:'Übersicht',dv_stats:'Statistik',dash_line_style:'Linienart',dash_line_line:'Gerade Linien',dash_line_curve:'Geschwungene Linien',dash_other:'Sonstiges',psf_title:'Dieser Zeitraum bisher',psf_in:'Ein',psf_out:'Aus',psf_kept:'Behalten',psf_still:'noch {0} erwartet',psf_all_in:'Alle erwarteten Einnahmen sind da',psf_bills_part:'davon {0} Rechnungen',psf_kept_pct:'{0}% der Einnahmen',psf_where:'Wohin das Geld ging',gp_title:'Fortschritt der Ziele',gp_all:'Alle Ziele',gp_done:'Erreicht',gp_late:'Datum vorbei',gp_by:'bis {0}',gp_of:'{0} von {1}',gp_saved:'{0} gespart',gp_sum_of:'von {0} über alle Ziele ({1}%)',ra_title:'Letzte Aktivität',ra_all:'Alle Aktivitäten',ra_deleted:'{0} gelöscht ({1})',ra_undo:'Rückgängig',ra_more:'Mehr',ra_empty:'Noch nichts erfasst.',ra_restored:'Wiederhergestellt',ra_amount:'Betrag',ra_note:'Notiz',ra_again:'Erneut erfassen',rf_pace:'Du gibst schneller aus als geplant',rf_pace_d:'Auf Kurs für {0} Alltagsausgaben, {1} über Plan.',rf_act_budget:'Budget ansehen',rf_short:'Fällige Zahlungen übersteigen den Rest',rf_short_d:'Noch {0} zu zahlen, {1} übrig in diesem Zeitraum.',rf_act_coming:'Fälliges ansehen',rf_overdue:'{0} Rechnungen sind überfällig',rf_overdue_one:'1 Rechnung ist überfällig',rf_act_pay:'Jetzt zahlen',rf_over:'{0} Kategorien über Budget',rf_over_one:'1 Kategorie über Budget',rf_income:'Weniger Einnahmen als erwartet',rf_income_d:'Erst {0} von erwarteten {1} sind eingegangen.',rf_act_log:'Einnahme erfassen',rf_nosave:'Noch nichts für deine Ziele zurückgelegt',rf_nosave_d:'Deine Ziele brauchen etwa {0} im Monat.',rf_act_goals:'Ziele öffnen',rf_apr:'{0} kostet {1}% und bekommt nur die Mindestrate',rf_apr_d:'Jeder Extrabetrag dort spart die meisten Zinsen.',rf_act_debt:'Schulden öffnen',rf_rise:'{0} ist um {1} teurer geworden',rf_rise_d:'Vorher {0}, jetzt {1}.',rf_act_bills:'Rechnungen öffnen',rf_subs:'Abos wiegen schwer',rf_subs_d:'{0} im Monat sind {1}% deiner erwarteten Einnahmen.',rf_big:'Eine große Einzelausgabe: {0}',rf_big_d:'{0} am {1}.',rf_act_view:'Ansehen',rf_loose:'Unsortierte Ausgaben häufen sich',rf_loose_d:'{0} in diesem Zeitraum ohne Kategorie.',rf_thin:'Du behältst sehr wenig',rf_thin_d:'Nur {0}% der Einnahmen bleiben nach den Ausgaben.',rf_one:'Warnsignal',rf_many:'Warnsignale',rf_clear:'Alles in Ordnung',rf_checked:'{0} Prüfungen für diesen Zeitraum',rf_restore:'{0} ausgeblendete zeigen',rf_dismiss:'Für diesen Zeitraum ausblenden',rf_none:'Nichts Auffälliges in diesem Zeitraum. Gut gemacht.',st_pace:'Ausgaben gegen Plan',st_spent:'Ausgegeben',st_plan:'Plan',st_proj:'Bei diesem Tempo',st_months:'Letzte sechs Monate',st_week:'Nach Wochentag',st_cats:'Kategorien gegen Budget',st_rate:'Behalten vom Einkommen',st_rate_d:'{0} behalten in diesem Zeitraum',st_avg:'Durchschnitt pro Tag',st_avg_d:'über bisher {0} Tage',st_projected:'Bis Zeitraumende',st_projected_d:'gegenüber {0} geplant',st_top:'Größter Anteil',st_top_d:'{0}, {1}% der Ausgaben',nt_title:'Benachrichtigungen',nt_desc:'Alles, was einen Blick braucht, und was zu tun ist.',nt_group_late:'Braucht jetzt Aufmerksamkeit',nt_group_soon:'Diese Woche fällig',nt_group_todo:'Aufzuräumen',nt_empty_title:'Alles erledigt',nt_empty_sub:'Nichts ist überfällig, diese Woche fällig, über Budget oder wartet auf eine Kategorie.',nt_bill_late:'{0} war {1} fällig',nt_bill_soon:'{0} fällig {1}',nt_debt_soon:'{0} Mindestzahlung fällig {1}',nt_over:'{0} über dem Budget von {1}',nt_uncat_title:'{0} Ausgaben zuzuordnen',nt_uncat_one:'1 Ausgabe zuzuordnen',nt_uncat_detail:'Zum späteren Zuordnen erfasst. Gib jeder eine Kategorie, damit dein Budget stimmt.',nt_goal_late:'Das Datum ist vorbei, es fehlen noch {0}',nt_act_review:'Ansehen',nt_act_sort:'Zuordnen',nt_act_edit_goal:'Ziel bearbeiten',nt_open:'{0} öffnen',nt_tag_overdue:'Überfällig',nt_tag_soon:'Bald fällig',nt_tag_over:'Über Budget',nt_tag_pastdate:'Datum vorbei',nt_tag_todo:'Offen',tab_notifications:'Benachrichtigungen',bp_title:'Budgetzeitraum',bp_how:'Wie kommt dein Geld rein?',bp_r_month:'Kalendermonat',bp_r_payday:'Monatlich ab Zahltag',bp_r_w2:'Alle 2 Wochen',bp_r_w4:'Alle 4 Wochen',bp_r_w1:'Jede Woche',bp_r_custom:'Daten wählen',bp_payday:'Zahltag',bp_day_n:'Tag {0}',bp_starts:'Beginnt am {0}',bp_tap_custom:'Tippe auf den ersten Tag.',bp_tap_last:'Jetzt auf den letzten Tag tippen.',bp_tap_rhythm:'Tippe auf einen Tag, um dort zu beginnen.',bp_auto:'Automatisch zum nächsten Zeitraum wechseln',bp_days:'{0} Tage',bp_day_of:'heute ist Tag {0} von {1}',bp_starts_in:'beginnt in {0} Tagen',bp_over:'bereits vorbei',bp_left:'noch {0} Tage',bp_daily:'Dein geplantes Einkommen von {0} ergibt etwa {1} pro Tag.',bp_now:'Zurück zu heute',bp_use:'{0} verwenden',bp_prev:'Vorheriger Zeitraum',bp_next:'Nächster Zeitraum',bp_moved:'Ein neuer Budgetzeitraum hat begonnen: {0}',rail_nav:'Navigation',rail_account:'Konto',rail_guest:'Dein Budget',rail_local:'Auf diesem Gerät gespeichert',rail_account_open:'Einstellungen öffnen',badge_bills:'{0} Rechnungen überfällig oder diese Woche fällig',badge_debt:'{0} Schuldenzahlungen diese Woche fällig',badge_budget:'{0} Kategorien über Budget',badge_transactions:'{0} Ausgaben ohne Kategorie',badge_goals:'{0} Ziele über ihrem Datum',
     dash_no_sinking:'Noch keine Sparziele.',dash_create_one:'Einen erstellen \u2192',
     help_dash_intro:'Das Dashboard gibt dir einen Echtzeit-Überblick über deine Finanzen. Alle Zahlen werden automatisch aktualisiert, wenn du Transaktionen erfasst.',
     help_dash_hero_h:'Frei verfügbar und Demnächst',
@@ -2166,7 +2166,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Sans dette',dash_interest_label:'Intérêts',
     dash_months_label:'Mois',dash_method_label:'Méthode',
     dash_set_balances:'Entrez les soldes pour voir les résultats.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 À venir ({0} jours)',dash_nothing_scheduled:'Rien de planifié.',view_as_list:'Afficher en liste',view_as_cards:'Afficher en cartes',sf_saved_so_far:'épargné à ce jour',sf_open_ended:'sans objectif chiffré',qa_title_expense:'Ajouter une dépense',qa_title_bill:'Payer une facture',qa_title_sinking_fund:'Alimenter un objectif',qa_title_debt:'Payer une dette',qa_title_income:'Ajouter un revenu',qa_go_expense:'Ajouter',qa_go_bill:'Payer',qa_go_sinking_fund:'Alimenter',qa_go_debt:'Payer',qa_go_income:'Ajouter',qa_type_expense:'Dépense',qa_type_bill:'Facture',qa_type_sinking_fund:'Objectif',qa_type_debt:'Dette',qa_type_income:'Revenu',qa_type_it:'le saisir plutôt',qa_clear:'Effacer',qa_backspace:'Effacer le dernier chiffre',qa_tap_cat:'Touchez une catégorie',qa_no_cats_expense:'Aucune catégorie pour le moment, vous pourrez la classer plus tard.',qa_no_cats_bill:"Ajoutez d'abord une facture.",qa_no_cats_sinking_fund:"Ajoutez d'abord un objectif.",qa_no_cats_debt:"Ajoutez d'abord une dette.",qa_no_cats_income:"Ajoutez d'abord une catégorie de revenu.",qa_uncat:'Sans catégorie',qa_uncat_chip:'Sans catégorie · à classer',qa_add_note:'Ajouter une note',qa_again:'Enregistrer et continuer',qa_after:'Ensuite : {0} jusqu’au {1}, environ {2} par jour.',cu_today_cap:"Aujourd'hui",cu_yesterday_cap:'Hier',cu_title:'À venir',cu_all:'Toutes les factures',cu_paid:'Payé',cu_today:"aujourd'hui",cu_tomorrow:'demain',cu_yesterday:'hier',cu_in_days:'dans {0} jours',cu_days_ago:'il y a {0} jours',cu_empty:'Rien à payer dans les {0} prochains jours.',cu_next_period:'Période suivante',nt_title:'Notifications',nt_desc:'Tout ce qui mérite un coup d’œil, et quoi faire.',nt_group_late:'À traiter maintenant',nt_group_soon:'Dû cette semaine',nt_group_todo:'À ranger',nt_empty_title:'Tout est à jour',nt_empty_sub:'Rien en retard, rien dû cette semaine, aucun dépassement ni dépense à classer.',nt_bill_late:'{0} était dû {1}',nt_bill_soon:'{0} dû {1}',nt_debt_soon:'{0} de paiement minimum dû {1}',nt_over:'{0} au-delà du budget de {1}',nt_uncat_title:'{0} dépenses à classer',nt_uncat_one:'1 dépense à classer',nt_uncat_detail:'Saisies pour plus tard. Donnez une catégorie à chacune pour que le budget tombe juste.',nt_goal_late:'La date est passée, il reste {0} à épargner',nt_act_review:'Voir',nt_act_sort:'Les classer',nt_act_edit_goal:'Modifier l’objectif',nt_open:'Ouvrir {0}',nt_tag_overdue:'En retard',nt_tag_soon:'Bientôt dû',nt_tag_over:'Dépassement',nt_tag_pastdate:'Date passée',nt_tag_todo:'À faire',tab_notifications:'Notifications',bp_title:'Période budgétaire',bp_how:'Comment votre argent arrive-t-il ?',bp_r_month:'Mois civil',bp_r_payday:'Mensuel dès la paie',bp_r_w2:'Toutes les 2 semaines',bp_r_w4:'Toutes les 4 semaines',bp_r_w1:'Chaque semaine',bp_r_custom:'Choisir les dates',bp_payday:'Jour de paie',bp_day_n:'le {0}',bp_starts:'Commence le {0}',bp_tap_custom:'Touchez le premier jour.',bp_tap_last:'Touchez maintenant le dernier jour.',bp_tap_rhythm:'Touchez un jour pour y faire commencer la période.',bp_auto:'Passer seul à la période suivante',bp_days:'{0} jours',bp_day_of:"aujourd'hui, jour {0} sur {1}",bp_starts_in:'commence dans {0} jours',bp_over:'déjà terminée',bp_left:'{0} jours restants',bp_daily:'Votre revenu prévu de {0} représente environ {1} par jour.',bp_now:"Revenir à aujourd'hui",bp_use:'Utiliser {0}',bp_prev:'Période précédente',bp_next:'Période suivante',bp_moved:'Une nouvelle période a commencé : {0}',rail_nav:'Navigation',rail_account:'Compte',rail_guest:'Votre budget',rail_local:'Enregistré sur cet appareil',rail_account_open:'Ouvrir les réglages',badge_bills:'{0} factures en retard ou dues cette semaine',badge_debt:'{0} paiements de dette dus cette semaine',badge_budget:'{0} catégories en dépassement',badge_transactions:'{0} dépenses à classer',badge_goals:'{0} objectifs ont dépassé leur date',
+    dash_upcoming_tpl:'\uD83D\uDCC5 À venir ({0} jours)',dash_nothing_scheduled:'Rien de planifié.',view_as_list:'Afficher en liste',view_as_cards:'Afficher en cartes',sf_saved_so_far:'épargné à ce jour',sf_open_ended:'sans objectif chiffré',qa_title_expense:'Ajouter une dépense',qa_title_bill:'Payer une facture',qa_title_sinking_fund:'Alimenter un objectif',qa_title_debt:'Payer une dette',qa_title_income:'Ajouter un revenu',qa_go_expense:'Ajouter',qa_go_bill:'Payer',qa_go_sinking_fund:'Alimenter',qa_go_debt:'Payer',qa_go_income:'Ajouter',qa_type_expense:'Dépense',qa_type_bill:'Facture',qa_type_sinking_fund:'Objectif',qa_type_debt:'Dette',qa_type_income:'Revenu',qa_type_it:'le saisir plutôt',qa_clear:'Effacer',qa_backspace:'Effacer le dernier chiffre',qa_tap_cat:'Touchez une catégorie',qa_no_cats_expense:'Aucune catégorie pour le moment, vous pourrez la classer plus tard.',qa_no_cats_bill:"Ajoutez d'abord une facture.",qa_no_cats_sinking_fund:"Ajoutez d'abord un objectif.",qa_no_cats_debt:"Ajoutez d'abord une dette.",qa_no_cats_income:"Ajoutez d'abord une catégorie de revenu.",qa_uncat:'Sans catégorie',qa_uncat_chip:'Sans catégorie · à classer',qa_add_note:'Ajouter une note',qa_again:'Enregistrer et continuer',qa_after:'Ensuite : {0} jusqu’au {1}, environ {2} par jour.',cu_today_cap:"Aujourd'hui",cu_yesterday_cap:'Hier',cu_title:'À venir',cu_all:'Toutes les factures',cu_paid:'Payé',cu_today:"aujourd'hui",cu_tomorrow:'demain',cu_yesterday:'hier',cu_in_days:'dans {0} jours',cu_days_ago:'il y a {0} jours',cu_empty:'Rien à payer dans les {0} prochains jours.',cu_next_period:'Période suivante',close:'Fermer',dv_label:'Vue du tableau de bord',dv_overview:'Aperçu',dv_stats:'Statistiques',dash_line_style:'Style de ligne',dash_line_line:'Lignes droites',dash_line_curve:'Lignes courbes',dash_other:'Autre',psf_title:'Cette période jusqu’ici',psf_in:'Entrées',psf_out:'Sorties',psf_kept:'Gardé',psf_still:'encore {0} attendus',psf_all_in:'Tous les revenus attendus sont là',psf_bills_part:'dont {0} de factures',psf_kept_pct:'{0}% de ce qui est entré',psf_where:'Où est passé l’argent',gp_title:'Progression des objectifs',gp_all:'Tous les objectifs',gp_done:'Atteint',gp_late:'Date passée',gp_by:'d’ici le {0}',gp_of:'{0} sur {1}',gp_saved:'{0} épargnés',gp_sum_of:'sur {0} pour tous vos objectifs ({1}%)',ra_title:'Activité récente',ra_all:'Toute l’activité',ra_deleted:'{0} supprimé ({1})',ra_undo:'Annuler',ra_more:'Plus',ra_empty:'Rien de saisi pour le moment.',ra_restored:'Remis',ra_amount:'Montant',ra_note:'Note',ra_again:'Saisir à nouveau',rf_pace:'Vous dépensez plus vite que prévu',rf_pace_d:'En route vers {0} de dépenses courantes, {1} au-delà du prévu.',rf_act_budget:'Voir le budget',rf_short:'Les paiements dus dépassent ce qu’il reste',rf_short_d:'Encore {0} à payer avec {1} restant sur la période.',rf_act_coming:'Voir ce qui est dû',rf_overdue:'{0} factures sont en retard',rf_overdue_one:'1 facture est en retard',rf_act_pay:'Payer maintenant',rf_over:'{0} catégories dépassent le budget',rf_over_one:'1 catégorie dépasse le budget',rf_income:'Moins de revenus que prévu',rf_income_d:'Seulement {0} sur les {1} attendus sont arrivés.',rf_act_log:'Saisir un revenu',rf_nosave:'Rien mis de côté pour vos objectifs',rf_nosave_d:'Vos objectifs demandent environ {0} par mois.',rf_act_goals:'Voir les objectifs',rf_apr:'{0} coûte {1}% et ne reçoit que le minimum',rf_apr_d:'Tout versement en plus y économise le plus d’intérêts.',rf_act_debt:'Voir les dettes',rf_rise:'{0} a augmenté de {1}',rf_rise_d:'Avant {0}, maintenant {1}.',rf_act_bills:'Voir les factures',rf_subs:'Les abonnements pèsent lourd',rf_subs_d:'{0} par mois, soit {1}% de vos revenus attendus.',rf_big:'Une grosse dépense ponctuelle : {0}',rf_big_d:'{0} le {1}.',rf_act_view:'Voir',rf_loose:'Les dépenses non classées s’accumulent',rf_loose_d:'{0} sans catégorie sur cette période.',rf_thin:'Vous gardez très peu',rf_thin_d:'Seulement {0}% des revenus restent après les dépenses.',rf_one:'Signal d’alerte',rf_many:'Signaux d’alerte',rf_clear:'Tout va bien',rf_checked:'{0} vérifications sur cette période',rf_restore:'Afficher les {0} masqués',rf_dismiss:'Masquer pour cette période',rf_none:'Rien d’anormal sur cette période. Bravo.',st_pace:'Dépenses face au plan',st_spent:'Dépensé',st_plan:'Prévu',st_proj:'À ce rythme',st_months:'Six derniers mois',st_week:'Par jour de la semaine',st_cats:'Catégories face au budget',st_rate:'Gardé sur les revenus',st_rate_d:'{0} gardés sur la période',st_avg:'Moyenne par jour',st_avg_d:'sur {0} jours jusqu’ici',st_projected:'À la fin de la période',st_projected_d:'pour {0} prévus',st_top:'Plus grosse part',st_top_d:'{0}, {1}% des dépenses',nt_title:'Notifications',nt_desc:'Tout ce qui mérite un coup d’œil, et quoi faire.',nt_group_late:'À traiter maintenant',nt_group_soon:'Dû cette semaine',nt_group_todo:'À ranger',nt_empty_title:'Tout est à jour',nt_empty_sub:'Rien en retard, rien dû cette semaine, aucun dépassement ni dépense à classer.',nt_bill_late:'{0} était dû {1}',nt_bill_soon:'{0} dû {1}',nt_debt_soon:'{0} de paiement minimum dû {1}',nt_over:'{0} au-delà du budget de {1}',nt_uncat_title:'{0} dépenses à classer',nt_uncat_one:'1 dépense à classer',nt_uncat_detail:'Saisies pour plus tard. Donnez une catégorie à chacune pour que le budget tombe juste.',nt_goal_late:'La date est passée, il reste {0} à épargner',nt_act_review:'Voir',nt_act_sort:'Les classer',nt_act_edit_goal:'Modifier l’objectif',nt_open:'Ouvrir {0}',nt_tag_overdue:'En retard',nt_tag_soon:'Bientôt dû',nt_tag_over:'Dépassement',nt_tag_pastdate:'Date passée',nt_tag_todo:'À faire',tab_notifications:'Notifications',bp_title:'Période budgétaire',bp_how:'Comment votre argent arrive-t-il ?',bp_r_month:'Mois civil',bp_r_payday:'Mensuel dès la paie',bp_r_w2:'Toutes les 2 semaines',bp_r_w4:'Toutes les 4 semaines',bp_r_w1:'Chaque semaine',bp_r_custom:'Choisir les dates',bp_payday:'Jour de paie',bp_day_n:'le {0}',bp_starts:'Commence le {0}',bp_tap_custom:'Touchez le premier jour.',bp_tap_last:'Touchez maintenant le dernier jour.',bp_tap_rhythm:'Touchez un jour pour y faire commencer la période.',bp_auto:'Passer seul à la période suivante',bp_days:'{0} jours',bp_day_of:"aujourd'hui, jour {0} sur {1}",bp_starts_in:'commence dans {0} jours',bp_over:'déjà terminée',bp_left:'{0} jours restants',bp_daily:'Votre revenu prévu de {0} représente environ {1} par jour.',bp_now:"Revenir à aujourd'hui",bp_use:'Utiliser {0}',bp_prev:'Période précédente',bp_next:'Période suivante',bp_moved:'Une nouvelle période a commencé : {0}',rail_nav:'Navigation',rail_account:'Compte',rail_guest:'Votre budget',rail_local:'Enregistré sur cet appareil',rail_account_open:'Ouvrir les réglages',badge_bills:'{0} factures en retard ou dues cette semaine',badge_debt:'{0} paiements de dette dus cette semaine',badge_budget:'{0} catégories en dépassement',badge_transactions:'{0} dépenses à classer',badge_goals:'{0} objectifs ont dépassé leur date',
     dash_no_sinking:'Aucun objectif d’épargne.',dash_create_one:'En créer un \u2192',
     help_dash_intro:"Le tableau de bord vous donne un aperçu financier en temps réel. Tous les chiffres se mettent à jour automatiquement lorsque vous enregistrez des transactions.",
     help_dash_hero_h:'Libre à dépenser et À venir',
@@ -2726,7 +2726,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Sin deuda',dash_interest_label:'Intereses',
     dash_months_label:'Meses',dash_method_label:'Método',
     dash_set_balances:'Introduce los saldos para ver los resultados.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Próximos ({0} días)',dash_nothing_scheduled:'Nada programado.',view_as_list:'Ver como lista',view_as_cards:'Ver como tarjetas',sf_saved_so_far:'ahorrado hasta ahora',sf_open_ended:'sin objetivo',qa_title_expense:'Añadir gasto',qa_title_bill:'Pagar factura',qa_title_sinking_fund:'Aportar a una meta',qa_title_debt:'Pagar deuda',qa_title_income:'Añadir ingreso',qa_go_expense:'Añadir gasto',qa_go_bill:'Pagar',qa_go_sinking_fund:'Aportar',qa_go_debt:'Pagar',qa_go_income:'Añadir',qa_type_expense:'Gasto',qa_type_bill:'Factura',qa_type_sinking_fund:'Meta',qa_type_debt:'Deuda',qa_type_income:'Ingreso',qa_type_it:'escribirlo',qa_clear:'Borrar',qa_backspace:'Borrar el último dígito',qa_tap_cat:'Toca una categoría',qa_no_cats_expense:'Aún no hay categorías, puedes clasificarlo después.',qa_no_cats_bill:'Añade primero una factura.',qa_no_cats_sinking_fund:'Añade primero una meta.',qa_no_cats_debt:'Añade primero una deuda.',qa_no_cats_income:'Añade primero una categoría de ingresos.',qa_uncat:'Sin categoría',qa_uncat_chip:'Sin categoría · clasificar luego',qa_add_note:'Añadir nota',qa_again:'Guardar y añadir otro',qa_after:'Después: {0} hasta el {1}, unos {2} al día.',cu_today_cap:'Hoy',cu_yesterday_cap:'Ayer',cu_title:'Próximos',cu_all:'Todas las facturas',cu_paid:'Pagado',cu_today:'hoy',cu_tomorrow:'mañana',cu_yesterday:'ayer',cu_in_days:'en {0} días',cu_days_ago:'hace {0} días',cu_empty:'Nada vence en los próximos {0} días.',cu_next_period:'Siguiente período',nt_title:'Notificaciones',nt_desc:'Todo lo que merece un vistazo, y qué hacer.',nt_group_late:'Requiere atención ahora',nt_group_soon:'Vence esta semana',nt_group_todo:'Por ordenar',nt_empty_title:'Todo al día',nt_empty_sub:'Nada vencido, nada para esta semana, nada por encima del presupuesto ni por clasificar.',nt_bill_late:'{0} venció {1}',nt_bill_soon:'{0} vence {1}',nt_debt_soon:'{0} de pago mínimo vence {1}',nt_over:'{0} por encima de su presupuesto de {1}',nt_uncat_title:'{0} gastos por clasificar',nt_uncat_one:'1 gasto por clasificar',nt_uncat_detail:'Registrados para clasificar luego. Dale una categoría a cada uno para que el presupuesto cuadre.',nt_goal_late:'Su fecha pasó y faltan {0}',nt_act_review:'Revisar',nt_act_sort:'Clasificar',nt_act_edit_goal:'Editar meta',nt_open:'Abrir {0}',nt_tag_overdue:'Vencido',nt_tag_soon:'Vence pronto',nt_tag_over:'Excedido',nt_tag_pastdate:'Fecha pasada',nt_tag_todo:'Pendiente',tab_notifications:'Notificaciones',bp_title:'Período del presupuesto',bp_how:'¿Cómo te entra el dinero?',bp_r_month:'Mes natural',bp_r_payday:'Mensual desde el día de cobro',bp_r_w2:'Cada 2 semanas',bp_r_w4:'Cada 4 semanas',bp_r_w1:'Cada semana',bp_r_custom:'Elegir fechas',bp_payday:'Día de cobro',bp_day_n:'día {0}',bp_starts:'Empieza el {0}',bp_tap_custom:'Toca el primer día.',bp_tap_last:'Ahora toca el último día.',bp_tap_rhythm:'Toca un día para empezar ahí el período.',bp_auto:'Pasar solo al siguiente período',bp_days:'{0} días',bp_day_of:'hoy es el día {0} de {1}',bp_starts_in:'empieza en {0} días',bp_over:'ya terminado',bp_left:'quedan {0} días',bp_daily:'Tus ingresos previstos de {0} dan unos {1} al día.',bp_now:'Volver a hoy',bp_use:'Usar {0}',bp_prev:'Período anterior',bp_next:'Período siguiente',bp_moved:'Ha empezado un nuevo período: {0}',rail_nav:'Navegación',rail_account:'Cuenta',rail_guest:'Tu presupuesto',rail_local:'Guardado en este dispositivo',rail_account_open:'Abrir ajustes',badge_bills:'{0} facturas vencidas o que vencen esta semana',badge_debt:'{0} pagos de deuda esta semana',badge_budget:'{0} categorías por encima del presupuesto',badge_transactions:'{0} gastos por clasificar',badge_goals:'{0} metas han pasado su fecha',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Próximos ({0} días)',dash_nothing_scheduled:'Nada programado.',view_as_list:'Ver como lista',view_as_cards:'Ver como tarjetas',sf_saved_so_far:'ahorrado hasta ahora',sf_open_ended:'sin objetivo',qa_title_expense:'Añadir gasto',qa_title_bill:'Pagar factura',qa_title_sinking_fund:'Aportar a una meta',qa_title_debt:'Pagar deuda',qa_title_income:'Añadir ingreso',qa_go_expense:'Añadir gasto',qa_go_bill:'Pagar',qa_go_sinking_fund:'Aportar',qa_go_debt:'Pagar',qa_go_income:'Añadir',qa_type_expense:'Gasto',qa_type_bill:'Factura',qa_type_sinking_fund:'Meta',qa_type_debt:'Deuda',qa_type_income:'Ingreso',qa_type_it:'escribirlo',qa_clear:'Borrar',qa_backspace:'Borrar el último dígito',qa_tap_cat:'Toca una categoría',qa_no_cats_expense:'Aún no hay categorías, puedes clasificarlo después.',qa_no_cats_bill:'Añade primero una factura.',qa_no_cats_sinking_fund:'Añade primero una meta.',qa_no_cats_debt:'Añade primero una deuda.',qa_no_cats_income:'Añade primero una categoría de ingresos.',qa_uncat:'Sin categoría',qa_uncat_chip:'Sin categoría · clasificar luego',qa_add_note:'Añadir nota',qa_again:'Guardar y añadir otro',qa_after:'Después: {0} hasta el {1}, unos {2} al día.',cu_today_cap:'Hoy',cu_yesterday_cap:'Ayer',cu_title:'Próximos',cu_all:'Todas las facturas',cu_paid:'Pagado',cu_today:'hoy',cu_tomorrow:'mañana',cu_yesterday:'ayer',cu_in_days:'en {0} días',cu_days_ago:'hace {0} días',cu_empty:'Nada vence en los próximos {0} días.',cu_next_period:'Siguiente período',close:'Cerrar',dv_label:'Vista del panel',dv_overview:'Resumen',dv_stats:'Estadísticas',dash_line_style:'Estilo de línea',dash_line_line:'Líneas rectas',dash_line_curve:'Líneas curvas',dash_other:'Otros',psf_title:'Este período hasta ahora',psf_in:'Entra',psf_out:'Sale',psf_kept:'Guardado',psf_still:'faltan {0} por llegar',psf_all_in:'Han llegado todos los ingresos previstos',psf_bills_part:'{0} en facturas',psf_kept_pct:'{0}% de lo que entró',psf_where:'A dónde fue el dinero',gp_title:'Progreso de metas',gp_all:'Todas las metas',gp_done:'Lograda',gp_late:'Fecha pasada',gp_by:'para el {0}',gp_of:'{0} de {1}',gp_saved:'{0} ahorrado',gp_sum_of:'de {0} entre tus metas ({1}%)',ra_title:'Actividad reciente',ra_all:'Toda la actividad',ra_deleted:'{0} eliminado ({1})',ra_undo:'Deshacer',ra_more:'Más',ra_empty:'Aún no hay nada registrado.',ra_restored:'Restaurado',ra_amount:'Importe',ra_note:'Nota',ra_again:'Registrar de nuevo',rf_pace:'Gastas más rápido de lo previsto',rf_pace_d:'Vas camino de {0} en gastos diarios, {1} por encima del plan.',rf_act_budget:'Ver presupuesto',rf_short:'Los pagos pendientes superan lo que queda',rf_short_d:'Quedan {0} por pagar y {1} disponibles este período.',rf_act_coming:'Ver lo que vence',rf_overdue:'{0} facturas están vencidas',rf_overdue_one:'1 factura está vencida',rf_act_pay:'Pagar ahora',rf_over:'{0} categorías superan el presupuesto',rf_over_one:'1 categoría supera el presupuesto',rf_income:'Menos ingresos de lo previsto',rf_income_d:'Solo han llegado {0} de los {1} previstos.',rf_act_log:'Registrar ingreso',rf_nosave:'Nada destinado aún a tus metas',rf_nosave_d:'Tus metas necesitan unos {0} al mes.',rf_act_goals:'Ver metas',rf_apr:'{0} cobra un {1}% y solo recibe el mínimo',rf_apr_d:'Cualquier extra ahí ahorra más intereses.',rf_act_debt:'Ver deudas',rf_rise:'{0} subió {1}',rf_rise_d:'Antes {0}, ahora {1}.',rf_act_bills:'Ver facturas',rf_subs:'Las suscripciones pesan mucho',rf_subs_d:'{0} al mes es el {1}% de tus ingresos previstos.',rf_big:'Un gasto puntual grande: {0}',rf_big_d:'{0} el {1}.',rf_act_view:'Verlo',rf_loose:'Se acumulan gastos sin clasificar',rf_loose_d:'{0} este período sin categoría.',rf_thin:'Guardas muy poco de lo que entra',rf_thin_d:'Solo queda el {0}% de los ingresos tras los gastos.',rf_one:'Señal de alerta',rf_many:'Señales de alerta',rf_clear:'Todo en orden',rf_checked:'{0} comprobaciones en este período',rf_restore:'Mostrar {0} apartadas',rf_dismiss:'Apartar este período',rf_none:'Nada fuera de lo normal este período. Buen trabajo.',st_pace:'Gasto frente al plan',st_spent:'Gastado',st_plan:'Plan',st_proj:'A este ritmo',st_months:'Últimos seis meses',st_week:'Por día de la semana',st_cats:'Categorías frente al presupuesto',st_rate:'Guardado de los ingresos',st_rate_d:'{0} guardados este período',st_avg:'Media diaria',st_avg_d:'en {0} días hasta ahora',st_projected:'Al final del período',st_projected_d:'frente a {0} previstos',st_top:'Mayor peso',st_top_d:'{0}, {1}% del gasto',nt_title:'Notificaciones',nt_desc:'Todo lo que merece un vistazo, y qué hacer.',nt_group_late:'Requiere atención ahora',nt_group_soon:'Vence esta semana',nt_group_todo:'Por ordenar',nt_empty_title:'Todo al día',nt_empty_sub:'Nada vencido, nada para esta semana, nada por encima del presupuesto ni por clasificar.',nt_bill_late:'{0} venció {1}',nt_bill_soon:'{0} vence {1}',nt_debt_soon:'{0} de pago mínimo vence {1}',nt_over:'{0} por encima de su presupuesto de {1}',nt_uncat_title:'{0} gastos por clasificar',nt_uncat_one:'1 gasto por clasificar',nt_uncat_detail:'Registrados para clasificar luego. Dale una categoría a cada uno para que el presupuesto cuadre.',nt_goal_late:'Su fecha pasó y faltan {0}',nt_act_review:'Revisar',nt_act_sort:'Clasificar',nt_act_edit_goal:'Editar meta',nt_open:'Abrir {0}',nt_tag_overdue:'Vencido',nt_tag_soon:'Vence pronto',nt_tag_over:'Excedido',nt_tag_pastdate:'Fecha pasada',nt_tag_todo:'Pendiente',tab_notifications:'Notificaciones',bp_title:'Período del presupuesto',bp_how:'¿Cómo te entra el dinero?',bp_r_month:'Mes natural',bp_r_payday:'Mensual desde el día de cobro',bp_r_w2:'Cada 2 semanas',bp_r_w4:'Cada 4 semanas',bp_r_w1:'Cada semana',bp_r_custom:'Elegir fechas',bp_payday:'Día de cobro',bp_day_n:'día {0}',bp_starts:'Empieza el {0}',bp_tap_custom:'Toca el primer día.',bp_tap_last:'Ahora toca el último día.',bp_tap_rhythm:'Toca un día para empezar ahí el período.',bp_auto:'Pasar solo al siguiente período',bp_days:'{0} días',bp_day_of:'hoy es el día {0} de {1}',bp_starts_in:'empieza en {0} días',bp_over:'ya terminado',bp_left:'quedan {0} días',bp_daily:'Tus ingresos previstos de {0} dan unos {1} al día.',bp_now:'Volver a hoy',bp_use:'Usar {0}',bp_prev:'Período anterior',bp_next:'Período siguiente',bp_moved:'Ha empezado un nuevo período: {0}',rail_nav:'Navegación',rail_account:'Cuenta',rail_guest:'Tu presupuesto',rail_local:'Guardado en este dispositivo',rail_account_open:'Abrir ajustes',badge_bills:'{0} facturas vencidas o que vencen esta semana',badge_debt:'{0} pagos de deuda esta semana',badge_budget:'{0} categorías por encima del presupuesto',badge_transactions:'{0} gastos por clasificar',badge_goals:'{0} metas han pasado su fecha',
     dash_no_sinking:'Aún no hay metas de ahorro.',dash_create_one:'Crear uno \u2192',
     help_dash_intro:'El panel te ofrece un resumen financiero en tiempo real. Todos los números se actualizan automáticamente cuando registras transacciones.',
     help_dash_hero_h:'Libre para gastar y Próximos',
@@ -3287,7 +3287,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Senza debiti',dash_interest_label:'Interessi',
     dash_months_label:'Mesi',dash_method_label:'Metodo',
     dash_set_balances:'Inserisci i saldi per vedere i risultati.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 In arrivo ({0} giorni)',dash_nothing_scheduled:'Niente in programma.',view_as_list:'Mostra come elenco',view_as_cards:'Mostra come schede',sf_saved_so_far:'risparmiato finora',sf_open_ended:'senza obiettivo',qa_title_expense:'Aggiungi spesa',qa_title_bill:'Paga bolletta',qa_title_sinking_fund:'Versa su un obiettivo',qa_title_debt:'Paga debito',qa_title_income:'Aggiungi entrata',qa_go_expense:'Aggiungi spesa',qa_go_bill:'Paga',qa_go_sinking_fund:'Versa',qa_go_debt:'Paga',qa_go_income:'Aggiungi',qa_type_expense:'Spesa',qa_type_bill:'Bolletta',qa_type_sinking_fund:'Obiettivo',qa_type_debt:'Debito',qa_type_income:'Entrata',qa_type_it:'scrivilo',qa_clear:'Cancella',qa_backspace:"Cancella l'ultima cifra",qa_tap_cat:'Tocca una categoria',qa_no_cats_expense:'Nessuna categoria ancora, puoi assegnarla dopo.',qa_no_cats_bill:'Aggiungi prima una bolletta.',qa_no_cats_sinking_fund:'Aggiungi prima un obiettivo.',qa_no_cats_debt:'Aggiungi prima un debito.',qa_no_cats_income:'Aggiungi prima una categoria di entrata.',qa_uncat:'Senza categoria',qa_uncat_chip:'Senza categoria · da sistemare',qa_add_note:'Aggiungi nota',qa_again:'Salva e aggiungi un altro',qa_after:'Dopo: {0} fino al {1}, circa {2} al giorno.',cu_today_cap:'Oggi',cu_yesterday_cap:'Ieri',cu_title:'In arrivo',cu_all:'Tutte le bollette',cu_paid:'Pagato',cu_today:'oggi',cu_tomorrow:'domani',cu_yesterday:'ieri',cu_in_days:'tra {0} giorni',cu_days_ago:'{0} giorni fa',cu_empty:'Niente in scadenza nei prossimi {0} giorni.',cu_next_period:'Periodo successivo',nt_title:'Notifiche',nt_desc:'Tutto ciò che merita uno sguardo, e cosa fare.',nt_group_late:'Da sistemare ora',nt_group_soon:'In scadenza questa settimana',nt_group_todo:'Da riordinare',nt_empty_title:'Tutto in ordine',nt_empty_sub:'Niente scaduto, in scadenza questa settimana, oltre il budget o da classificare.',nt_bill_late:'{0} era in scadenza {1}',nt_bill_soon:'{0} in scadenza {1}',nt_debt_soon:'{0} di rata minima in scadenza {1}',nt_over:'{0} oltre il budget di {1}',nt_uncat_title:'{0} spese da classificare',nt_uncat_one:'1 spesa da classificare',nt_uncat_detail:'Registrate per dopo. Dai a ciascuna una categoria perché il budget torni.',nt_goal_late:'La data è passata, mancano {0}',nt_act_review:'Controlla',nt_act_sort:'Classifica',nt_act_edit_goal:'Modifica obiettivo',nt_open:'Apri {0}',nt_tag_overdue:'Scaduto',nt_tag_soon:'In scadenza',nt_tag_over:'Oltre il budget',nt_tag_pastdate:'Data passata',nt_tag_todo:'Da fare',tab_notifications:'Notifiche',bp_title:'Periodo del budget',bp_how:'Come ti arrivano i soldi?',bp_r_month:'Mese solare',bp_r_payday:'Mensile dal giorno di paga',bp_r_w2:'Ogni 2 settimane',bp_r_w4:'Ogni 4 settimane',bp_r_w1:'Ogni settimana',bp_r_custom:'Scegli le date',bp_payday:'Giorno di paga',bp_day_n:'giorno {0}',bp_starts:'Inizia il {0}',bp_tap_custom:'Tocca il primo giorno.',bp_tap_last:"Ora tocca l'ultimo giorno.",bp_tap_rhythm:'Tocca un giorno per far iniziare lì il periodo.',bp_auto:'Passa da solo al periodo successivo',bp_days:'{0} giorni',bp_day_of:'oggi è il giorno {0} di {1}',bp_starts_in:'inizia tra {0} giorni',bp_over:'già concluso',bp_left:'{0} giorni rimasti',bp_daily:'Le entrate previste di {0} fanno circa {1} al giorno.',bp_now:'Torna a oggi',bp_use:'Usa {0}',bp_prev:'Periodo precedente',bp_next:'Periodo successivo',bp_moved:'È iniziato un nuovo periodo: {0}',rail_nav:'Navigazione',rail_account:'Account',rail_guest:'Il tuo budget',rail_local:'Salvato su questo dispositivo',rail_account_open:'Apri le impostazioni',badge_bills:'{0} bollette scadute o in scadenza questa settimana',badge_debt:'{0} rate di debito questa settimana',badge_budget:'{0} categorie oltre il budget',badge_transactions:'{0} spese da classificare',badge_goals:'{0} obiettivi oltre la data',
+    dash_upcoming_tpl:'\uD83D\uDCC5 In arrivo ({0} giorni)',dash_nothing_scheduled:'Niente in programma.',view_as_list:'Mostra come elenco',view_as_cards:'Mostra come schede',sf_saved_so_far:'risparmiato finora',sf_open_ended:'senza obiettivo',qa_title_expense:'Aggiungi spesa',qa_title_bill:'Paga bolletta',qa_title_sinking_fund:'Versa su un obiettivo',qa_title_debt:'Paga debito',qa_title_income:'Aggiungi entrata',qa_go_expense:'Aggiungi spesa',qa_go_bill:'Paga',qa_go_sinking_fund:'Versa',qa_go_debt:'Paga',qa_go_income:'Aggiungi',qa_type_expense:'Spesa',qa_type_bill:'Bolletta',qa_type_sinking_fund:'Obiettivo',qa_type_debt:'Debito',qa_type_income:'Entrata',qa_type_it:'scrivilo',qa_clear:'Cancella',qa_backspace:"Cancella l'ultima cifra",qa_tap_cat:'Tocca una categoria',qa_no_cats_expense:'Nessuna categoria ancora, puoi assegnarla dopo.',qa_no_cats_bill:'Aggiungi prima una bolletta.',qa_no_cats_sinking_fund:'Aggiungi prima un obiettivo.',qa_no_cats_debt:'Aggiungi prima un debito.',qa_no_cats_income:'Aggiungi prima una categoria di entrata.',qa_uncat:'Senza categoria',qa_uncat_chip:'Senza categoria · da sistemare',qa_add_note:'Aggiungi nota',qa_again:'Salva e aggiungi un altro',qa_after:'Dopo: {0} fino al {1}, circa {2} al giorno.',cu_today_cap:'Oggi',cu_yesterday_cap:'Ieri',cu_title:'In arrivo',cu_all:'Tutte le bollette',cu_paid:'Pagato',cu_today:'oggi',cu_tomorrow:'domani',cu_yesterday:'ieri',cu_in_days:'tra {0} giorni',cu_days_ago:'{0} giorni fa',cu_empty:'Niente in scadenza nei prossimi {0} giorni.',cu_next_period:'Periodo successivo',close:'Chiudi',dv_label:'Vista della dashboard',dv_overview:'Panoramica',dv_stats:'Statistiche',dash_line_style:'Stile della linea',dash_line_line:'Linee dritte',dash_line_curve:'Linee curve',dash_other:'Altro',psf_title:'Questo periodo finora',psf_in:'Entrate',psf_out:'Uscite',psf_kept:'Tenuto',psf_still:'ancora {0} attesi',psf_all_in:'Tutte le entrate attese sono arrivate',psf_bills_part:'di cui {0} bollette',psf_kept_pct:'{0}% di quanto entrato',psf_where:'Dove sono andati i soldi',gp_title:'Avanzamento obiettivi',gp_all:'Tutti gli obiettivi',gp_done:'Raggiunto',gp_late:'Data passata',gp_by:'entro il {0}',gp_of:'{0} di {1}',gp_saved:'{0} risparmiati',gp_sum_of:'su {0} tra tutti gli obiettivi ({1}%)',ra_title:'Attività recente',ra_all:'Tutta l’attività',ra_deleted:'{0} eliminato ({1})',ra_undo:'Annulla',ra_more:'Altro',ra_empty:'Ancora niente registrato.',ra_restored:'Ripristinato',ra_amount:'Importo',ra_note:'Nota',ra_again:'Registra di nuovo',rf_pace:'Stai spendendo più in fretta del previsto',rf_pace_d:'Verso {0} di spese quotidiane, {1} oltre il piano.',rf_act_budget:'Vedi budget',rf_short:'I pagamenti dovuti superano quanto resta',rf_short_d:'Ancora {0} da pagare con {1} rimasti nel periodo.',rf_act_coming:'Vedi cosa scade',rf_overdue:'{0} bollette sono scadute',rf_overdue_one:'1 bolletta è scaduta',rf_act_pay:'Paga ora',rf_over:'{0} categorie oltre il budget',rf_over_one:'1 categoria oltre il budget',rf_income:'Meno entrate del previsto',rf_income_d:'Sono arrivati solo {0} dei {1} previsti.',rf_act_log:'Registra entrata',rf_nosave:'Niente messo da parte per gli obiettivi',rf_nosave_d:'I tuoi obiettivi chiedono circa {0} al mese.',rf_act_goals:'Apri obiettivi',rf_apr:'{0} costa il {1}% e riceve solo il minimo',rf_apr_d:'Ogni extra lì fa risparmiare più interessi.',rf_act_debt:'Apri debiti',rf_rise:'{0} è aumentato di {1}',rf_rise_d:'Prima {0}, ora {1}.',rf_act_bills:'Apri bollette',rf_subs:'Gli abbonamenti pesano',rf_subs_d:'{0} al mese sono il {1}% delle entrate previste.',rf_big:'Una grossa spesa singola: {0}',rf_big_d:'{0} il {1}.',rf_act_view:'Vedi',rf_loose:'Le spese non classificate si accumulano',rf_loose_d:'{0} in questo periodo senza categoria.',rf_thin:'Tieni molto poco di quanto entra',rf_thin_d:'Resta solo il {0}% delle entrate dopo le spese.',rf_one:'Segnale d’allarme',rf_many:'Segnali d’allarme',rf_clear:'Tutto a posto',rf_checked:'{0} controlli su questo periodo',rf_restore:'Mostra {0} messi da parte',rf_dismiss:'Metti da parte per questo periodo',rf_none:'Niente di strano in questo periodo. Ottimo.',st_pace:'Spese rispetto al piano',st_spent:'Speso',st_plan:'Piano',st_proj:'A questo ritmo',st_months:'Ultimi sei mesi',st_week:'Per giorno della settimana',st_cats:'Categorie rispetto al budget',st_rate:'Tenuto delle entrate',st_rate_d:'{0} tenuti in questo periodo',st_avg:'Media al giorno',st_avg_d:'su {0} giorni finora',st_projected:'A fine periodo',st_projected_d:'rispetto a {0} previsti',st_top:'Quota maggiore',st_top_d:'{0}, {1}% delle spese',nt_title:'Notifiche',nt_desc:'Tutto ciò che merita uno sguardo, e cosa fare.',nt_group_late:'Da sistemare ora',nt_group_soon:'In scadenza questa settimana',nt_group_todo:'Da riordinare',nt_empty_title:'Tutto in ordine',nt_empty_sub:'Niente scaduto, in scadenza questa settimana, oltre il budget o da classificare.',nt_bill_late:'{0} era in scadenza {1}',nt_bill_soon:'{0} in scadenza {1}',nt_debt_soon:'{0} di rata minima in scadenza {1}',nt_over:'{0} oltre il budget di {1}',nt_uncat_title:'{0} spese da classificare',nt_uncat_one:'1 spesa da classificare',nt_uncat_detail:'Registrate per dopo. Dai a ciascuna una categoria perché il budget torni.',nt_goal_late:'La data è passata, mancano {0}',nt_act_review:'Controlla',nt_act_sort:'Classifica',nt_act_edit_goal:'Modifica obiettivo',nt_open:'Apri {0}',nt_tag_overdue:'Scaduto',nt_tag_soon:'In scadenza',nt_tag_over:'Oltre il budget',nt_tag_pastdate:'Data passata',nt_tag_todo:'Da fare',tab_notifications:'Notifiche',bp_title:'Periodo del budget',bp_how:'Come ti arrivano i soldi?',bp_r_month:'Mese solare',bp_r_payday:'Mensile dal giorno di paga',bp_r_w2:'Ogni 2 settimane',bp_r_w4:'Ogni 4 settimane',bp_r_w1:'Ogni settimana',bp_r_custom:'Scegli le date',bp_payday:'Giorno di paga',bp_day_n:'giorno {0}',bp_starts:'Inizia il {0}',bp_tap_custom:'Tocca il primo giorno.',bp_tap_last:"Ora tocca l'ultimo giorno.",bp_tap_rhythm:'Tocca un giorno per far iniziare lì il periodo.',bp_auto:'Passa da solo al periodo successivo',bp_days:'{0} giorni',bp_day_of:'oggi è il giorno {0} di {1}',bp_starts_in:'inizia tra {0} giorni',bp_over:'già concluso',bp_left:'{0} giorni rimasti',bp_daily:'Le entrate previste di {0} fanno circa {1} al giorno.',bp_now:'Torna a oggi',bp_use:'Usa {0}',bp_prev:'Periodo precedente',bp_next:'Periodo successivo',bp_moved:'È iniziato un nuovo periodo: {0}',rail_nav:'Navigazione',rail_account:'Account',rail_guest:'Il tuo budget',rail_local:'Salvato su questo dispositivo',rail_account_open:'Apri le impostazioni',badge_bills:'{0} bollette scadute o in scadenza questa settimana',badge_debt:'{0} rate di debito questa settimana',badge_budget:'{0} categorie oltre il budget',badge_transactions:'{0} spese da classificare',badge_goals:'{0} obiettivi oltre la data',
     dash_no_sinking:'Ancora nessun obiettivo.',dash_create_one:'Creane uno \u2192',
     help_dash_intro:'Il pannello offre una panoramica finanziaria in tempo reale. Tutti i numeri si aggiornano automaticamente quando registri le transazioni.',
     help_dash_hero_h:'Libero di spendere e In arrivo',
@@ -3847,7 +3847,7 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Wolny od długów',dash_interest_label:'Odsetki',
     dash_months_label:'Miesiące',dash_method_label:'Metoda',
     dash_set_balances:'Wpisz salda, aby zobaczyć wyniki.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Nadchodzące ({0} dni)',dash_nothing_scheduled:'Nic zaplanowanego.',view_as_list:'Pokaż jako listę',view_as_cards:'Pokaż jako karty',sf_saved_so_far:'zaoszczędzono dotąd',sf_open_ended:'bez celu',qa_title_expense:'Dodaj wydatek',qa_title_bill:'Zapłać rachunek',qa_title_sinking_fund:'Wpłać na cel',qa_title_debt:'Spłać dług',qa_title_income:'Dodaj przychód',qa_go_expense:'Dodaj wydatek',qa_go_bill:'Zapłać',qa_go_sinking_fund:'Wpłać',qa_go_debt:'Spłać',qa_go_income:'Dodaj',qa_type_expense:'Wydatek',qa_type_bill:'Rachunek',qa_type_sinking_fund:'Cel',qa_type_debt:'Dług',qa_type_income:'Przychód',qa_type_it:'wpisz ręcznie',qa_clear:'Wyczyść',qa_backspace:'Usuń ostatnią cyfrę',qa_tap_cat:'Wybierz kategorię',qa_no_cats_expense:'Brak kategorii, możesz przypisać później.',qa_no_cats_bill:'Najpierw dodaj rachunek.',qa_no_cats_sinking_fund:'Najpierw dodaj cel.',qa_no_cats_debt:'Najpierw dodaj dług.',qa_no_cats_income:'Najpierw dodaj kategorię przychodu.',qa_uncat:'Bez kategorii',qa_uncat_chip:'Bez kategorii · przypisz później',qa_add_note:'Dodaj notatkę',qa_again:'Zapisz i dodaj kolejny',qa_after:'Potem: {0} do {1}, około {2} dziennie.',cu_today_cap:'Dziś',cu_yesterday_cap:'Wczoraj',cu_title:'Wkrótce',cu_all:'Wszystkie rachunki',cu_paid:'Zapłacone',cu_today:'dziś',cu_tomorrow:'jutro',cu_yesterday:'wczoraj',cu_in_days:'za {0} dni',cu_days_ago:'{0} dni temu',cu_empty:'Nic nie jest do zapłaty w ciągu {0} dni.',cu_next_period:'Następny okres',nt_title:'Powiadomienia',nt_desc:'Wszystko, co warto sprawdzić, i co z tym zrobić.',nt_group_late:'Wymaga uwagi teraz',nt_group_soon:'Do zapłaty w tym tygodniu',nt_group_todo:'Do uporządkowania',nt_empty_title:'Wszystko na bieżąco',nt_empty_sub:'Nic zaległego, nic w tym tygodniu, nic ponad budżet ani do przypisania.',nt_bill_late:'{0} było do zapłaty {1}',nt_bill_soon:'{0} do zapłaty {1}',nt_debt_soon:'{0} minimalnej raty do zapłaty {1}',nt_over:'{0} ponad budżet {1}',nt_uncat_title:'{0} wydatków do przypisania',nt_uncat_one:'1 wydatek do przypisania',nt_uncat_detail:'Zapisane na później. Przypisz każdemu kategorię, żeby budżet się zgadzał.',nt_goal_late:'Termin minął, brakuje {0}',nt_act_review:'Sprawdź',nt_act_sort:'Przypisz',nt_act_edit_goal:'Edytuj cel',nt_open:'Otwórz {0}',nt_tag_overdue:'Zaległe',nt_tag_soon:'Wkrótce',nt_tag_over:'Ponad budżet',nt_tag_pastdate:'Po terminie',nt_tag_todo:'Do zrobienia',tab_notifications:'Powiadomienia',bp_title:'Okres budżetu',bp_how:'Jak wpływają Twoje pieniądze?',bp_r_month:'Miesiąc kalendarzowy',bp_r_payday:'Co miesiąc od wypłaty',bp_r_w2:'Co 2 tygodnie',bp_r_w4:'Co 4 tygodnie',bp_r_w1:'Co tydzień',bp_r_custom:'Wybierz daty',bp_payday:'Dzień wypłaty',bp_day_n:'dzień {0}',bp_starts:'Zaczyna się {0}',bp_tap_custom:'Stuknij pierwszy dzień.',bp_tap_last:'Teraz stuknij ostatni dzień.',bp_tap_rhythm:'Stuknij dzień, aby tam zacząć okres.',bp_auto:'Przechodź sam do następnego okresu',bp_days:'{0} dni',bp_day_of:'dziś dzień {0} z {1}',bp_starts_in:'zaczyna się za {0} dni',bp_over:'już minął',bp_left:'zostało {0} dni',bp_daily:'Planowany przychód {0} to około {1} dziennie.',bp_now:'Wróć do dziś',bp_use:'Użyj {0}',bp_prev:'Poprzedni okres',bp_next:'Następny okres',bp_moved:'Rozpoczął się nowy okres budżetu: {0}',rail_nav:'Nawigacja',rail_account:'Konto',rail_guest:'Twój budżet',rail_local:'Zapisane na tym urządzeniu',rail_account_open:'Otwórz ustawienia',badge_bills:'{0} rachunków zaległych lub do zapłaty w tym tygodniu',badge_debt:'{0} rat długu w tym tygodniu',badge_budget:'{0} kategorii ponad budżet',badge_transactions:'{0} wydatków do przypisania',badge_goals:'{0} celów po terminie',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Nadchodzące ({0} dni)',dash_nothing_scheduled:'Nic zaplanowanego.',view_as_list:'Pokaż jako listę',view_as_cards:'Pokaż jako karty',sf_saved_so_far:'zaoszczędzono dotąd',sf_open_ended:'bez celu',qa_title_expense:'Dodaj wydatek',qa_title_bill:'Zapłać rachunek',qa_title_sinking_fund:'Wpłać na cel',qa_title_debt:'Spłać dług',qa_title_income:'Dodaj przychód',qa_go_expense:'Dodaj wydatek',qa_go_bill:'Zapłać',qa_go_sinking_fund:'Wpłać',qa_go_debt:'Spłać',qa_go_income:'Dodaj',qa_type_expense:'Wydatek',qa_type_bill:'Rachunek',qa_type_sinking_fund:'Cel',qa_type_debt:'Dług',qa_type_income:'Przychód',qa_type_it:'wpisz ręcznie',qa_clear:'Wyczyść',qa_backspace:'Usuń ostatnią cyfrę',qa_tap_cat:'Wybierz kategorię',qa_no_cats_expense:'Brak kategorii, możesz przypisać później.',qa_no_cats_bill:'Najpierw dodaj rachunek.',qa_no_cats_sinking_fund:'Najpierw dodaj cel.',qa_no_cats_debt:'Najpierw dodaj dług.',qa_no_cats_income:'Najpierw dodaj kategorię przychodu.',qa_uncat:'Bez kategorii',qa_uncat_chip:'Bez kategorii · przypisz później',qa_add_note:'Dodaj notatkę',qa_again:'Zapisz i dodaj kolejny',qa_after:'Potem: {0} do {1}, około {2} dziennie.',cu_today_cap:'Dziś',cu_yesterday_cap:'Wczoraj',cu_title:'Wkrótce',cu_all:'Wszystkie rachunki',cu_paid:'Zapłacone',cu_today:'dziś',cu_tomorrow:'jutro',cu_yesterday:'wczoraj',cu_in_days:'za {0} dni',cu_days_ago:'{0} dni temu',cu_empty:'Nic nie jest do zapłaty w ciągu {0} dni.',cu_next_period:'Następny okres',close:'Zamknij',dv_label:'Widok pulpitu',dv_overview:'Przegląd',dv_stats:'Statystyki',dash_line_style:'Styl linii',dash_line_line:'Proste linie',dash_line_curve:'Zaokrąglone linie',dash_other:'Inne',psf_title:'Ten okres do tej pory',psf_in:'Wpływy',psf_out:'Wydatki',psf_kept:'Zostało',psf_still:'jeszcze {0} oczekiwane',psf_all_in:'Wszystkie oczekiwane wpływy są',psf_bills_part:'w tym {0} rachunków',psf_kept_pct:'{0}% tego, co wpłynęło',psf_where:'Na co poszły pieniądze',gp_title:'Postęp celów',gp_all:'Wszystkie cele',gp_done:'Osiągnięty',gp_late:'Po terminie',gp_by:'do {0}',gp_of:'{0} z {1}',gp_saved:'Odłożono {0}',gp_sum_of:'z {0} we wszystkich celach ({1}%)',ra_title:'Ostatnia aktywność',ra_all:'Cała aktywność',ra_deleted:'Usunięto {0} ({1})',ra_undo:'Cofnij',ra_more:'Więcej',ra_empty:'Nic jeszcze nie zapisano.',ra_restored:'Przywrócono',ra_amount:'Kwota',ra_note:'Notatka',ra_again:'Zapisz ponownie',rf_pace:'Wydajesz szybciej niż planowałeś',rf_pace_d:'W tym tempie {0} na codzienne wydatki, {1} ponad plan.',rf_act_budget:'Zobacz budżet',rf_short:'Płatności do zrobienia przekraczają resztę',rf_short_d:'Jeszcze {0} do zapłaty, a zostało {1} w tym okresie.',rf_act_coming:'Zobacz, co jest do zapłaty',rf_overdue:'{0} rachunków jest zaległych',rf_overdue_one:'1 rachunek jest zaległy',rf_act_pay:'Zapłać teraz',rf_over:'{0} kategorii ponad budżet',rf_over_one:'1 kategoria ponad budżet',rf_income:'Mniej wpływów niż oczekiwano',rf_income_d:'Wpłynęło tylko {0} z oczekiwanych {1}.',rf_act_log:'Zapisz wpływ',rf_nosave:'Nic jeszcze nie odłożono na cele',rf_nosave_d:'Twoje cele potrzebują około {0} miesięcznie.',rf_act_goals:'Otwórz cele',rf_apr:'{0} kosztuje {1}% i dostaje tylko minimum',rf_apr_d:'Każda nadpłata tam oszczędza najwięcej odsetek.',rf_act_debt:'Otwórz długi',rf_rise:'{0} podrożał o {1}',rf_rise_d:'Było {0}, jest {1}.',rf_act_bills:'Otwórz rachunki',rf_subs:'Subskrypcje dużo ważą',rf_subs_d:'{0} miesięcznie to {1}% oczekiwanych wpływów.',rf_big:'Duży jednorazowy wydatek: {0}',rf_big_d:'{0}, {1}.',rf_act_view:'Zobacz',rf_loose:'Rośnie kwota bez kategorii',rf_loose_d:'{0} w tym okresie bez kategorii.',rf_thin:'Zostaje bardzo mało',rf_thin_d:'Po wydatkach zostaje tylko {0}% wpływów.',rf_one:'Sygnał ostrzegawczy',rf_many:'Sygnały ostrzegawcze',rf_clear:'Wszystko w porządku',rf_checked:'{0} sprawdzeń w tym okresie',rf_restore:'Pokaż odłożone ({0})',rf_dismiss:'Odłóż na ten okres',rf_none:'Nic niepokojącego w tym okresie. Dobra robota.',st_pace:'Wydatki wobec planu',st_spent:'Wydano',st_plan:'Plan',st_proj:'W tym tempie',st_months:'Ostatnie sześć miesięcy',st_week:'Według dnia tygodnia',st_cats:'Kategorie wobec budżetu',st_rate:'Zostaje z wpływów',st_rate_d:'Zostało {0} w tym okresie',st_avg:'Średnio dziennie',st_avg_d:'przez dotychczasowe {0} dni',st_projected:'Na koniec okresu',st_projected_d:'wobec planu {0}',st_top:'Największy udział',st_top_d:'{0}, {1}% wydatków',nt_title:'Powiadomienia',nt_desc:'Wszystko, co warto sprawdzić, i co z tym zrobić.',nt_group_late:'Wymaga uwagi teraz',nt_group_soon:'Do zapłaty w tym tygodniu',nt_group_todo:'Do uporządkowania',nt_empty_title:'Wszystko na bieżąco',nt_empty_sub:'Nic zaległego, nic w tym tygodniu, nic ponad budżet ani do przypisania.',nt_bill_late:'{0} było do zapłaty {1}',nt_bill_soon:'{0} do zapłaty {1}',nt_debt_soon:'{0} minimalnej raty do zapłaty {1}',nt_over:'{0} ponad budżet {1}',nt_uncat_title:'{0} wydatków do przypisania',nt_uncat_one:'1 wydatek do przypisania',nt_uncat_detail:'Zapisane na później. Przypisz każdemu kategorię, żeby budżet się zgadzał.',nt_goal_late:'Termin minął, brakuje {0}',nt_act_review:'Sprawdź',nt_act_sort:'Przypisz',nt_act_edit_goal:'Edytuj cel',nt_open:'Otwórz {0}',nt_tag_overdue:'Zaległe',nt_tag_soon:'Wkrótce',nt_tag_over:'Ponad budżet',nt_tag_pastdate:'Po terminie',nt_tag_todo:'Do zrobienia',tab_notifications:'Powiadomienia',bp_title:'Okres budżetu',bp_how:'Jak wpływają Twoje pieniądze?',bp_r_month:'Miesiąc kalendarzowy',bp_r_payday:'Co miesiąc od wypłaty',bp_r_w2:'Co 2 tygodnie',bp_r_w4:'Co 4 tygodnie',bp_r_w1:'Co tydzień',bp_r_custom:'Wybierz daty',bp_payday:'Dzień wypłaty',bp_day_n:'dzień {0}',bp_starts:'Zaczyna się {0}',bp_tap_custom:'Stuknij pierwszy dzień.',bp_tap_last:'Teraz stuknij ostatni dzień.',bp_tap_rhythm:'Stuknij dzień, aby tam zacząć okres.',bp_auto:'Przechodź sam do następnego okresu',bp_days:'{0} dni',bp_day_of:'dziś dzień {0} z {1}',bp_starts_in:'zaczyna się za {0} dni',bp_over:'już minął',bp_left:'zostało {0} dni',bp_daily:'Planowany przychód {0} to około {1} dziennie.',bp_now:'Wróć do dziś',bp_use:'Użyj {0}',bp_prev:'Poprzedni okres',bp_next:'Następny okres',bp_moved:'Rozpoczął się nowy okres budżetu: {0}',rail_nav:'Nawigacja',rail_account:'Konto',rail_guest:'Twój budżet',rail_local:'Zapisane na tym urządzeniu',rail_account_open:'Otwórz ustawienia',badge_bills:'{0} rachunków zaległych lub do zapłaty w tym tygodniu',badge_debt:'{0} rat długu w tym tygodniu',badge_budget:'{0} kategorii ponad budżet',badge_transactions:'{0} wydatków do przypisania',badge_goals:'{0} celów po terminie',
     dash_no_sinking:'Brak celów oszczędnościowych.',dash_create_one:'Utwórz jeden \u2192',
     help_dash_intro:'Panel zapewnia przegląd finansów w czasie rzeczywistym. Wszystkie liczby aktualizują się automatycznie po dodaniu transakcji.',
     help_dash_hero_h:'Wolne środki i Wkrótce',
@@ -5583,6 +5583,417 @@ let _dashQuiet = false;
 function dashQuietNext() { _dashQuiet = true; }
 function takeDashQuiet() { const q = _dashQuiet; _dashQuiet = false; return q; }
 
+// ══ Dashboard: Overview and Statistics ═══════════════════════════════════
+// Two views of the same period, switched from the header. Overview is the
+// day to day: what is free, what is due, how the spending runs, what came
+// in and went out, where the goals stand, the latest activity, and anything
+// that looks wrong. Statistics is the long look: pace, trends and shares.
+function dashView() { return state.settings.dashView === 'stats' ? 'stats' : 'overview'; }
+const DV_ICONS = {
+  overview: '<rect x="3.5" y="3.5" width="7" height="9" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="5" rx="1.8"/><rect x="13.5" y="11.5" width="7" height="9" rx="1.8"/><rect x="3.5" y="15.5" width="7" height="5" rx="1.8"/>',
+  stats: '<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/>'
+};
+function dashViewToggleHtml() {
+  const v = dashView();
+  return `<div class="dv-toggle" role="radiogroup" aria-label="${esc(t('dv_label'))}">${['overview', 'stats'].map(k =>
+    `<button class="dv-opt${v === k ? ' is-on' : ''}" type="button" role="radio" aria-checked="${v === k}" data-dash-view="${k}" title="${esc(t('dv_' + k))}" aria-label="${esc(t('dv_' + k))}"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${DV_ICONS[k]}</svg></button>`).join('')}</div>`;
+}
+
+// ── Daily spend, straight or curved ──────────────────────────────────────
+function spendPanelHtml(points) {
+  const total = points.reduce((s, p) => s + p.value, 0);
+  const curve = state.settings.spendCurve === true;
+  const ico = { line: '<path d="M3 17 9 9l5 5 7-9"/>', curve: '<path d="M3 17c3-7 5-8 7-6s3 5 5 4 4-6 6-9"/>' };
+  return `<div class="panel spend-line-panel"><div class="panel-inner-sm">
+    <div class="panel-titlebar"><span class="panel-title-sm">${t('dash_daily_spend')}</span>
+      <div class="dv-toggle dv-toggle--sm" role="radiogroup" aria-label="${esc(t('dash_line_style'))}">${[['line', false], ['curve', true]].map(([k, on]) =>
+        `<button class="dv-opt${curve === on ? ' is-on' : ''}" type="button" role="radio" aria-checked="${curve === on}" data-spend-curve="${on ? 1 : 0}" title="${esc(t('dash_line_' + k))}" aria-label="${esc(t('dash_line_' + k))}"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ico[k]}</svg></button>`).join('')}</div>
+    </div>
+    ${total > 0 ? svgSpendLine(points, { w: 900, h: 150, curve }) + `<div class="spend-line-caption"><span class="spend-line-num">${fmt(total)}</span><span class="spend-line-label">${t('dash_daily_spend_caption')}</span></div>`
+      : `<div class="chart-empty">${t('dash_no_spending')}</div>`}
+  </div></div>`;
+}
+
+// ── This period so far ───────────────────────────────────────────────────
+// In, out and kept, then where the out went as one bar. Savings moved to a
+// goal is kept money, so it is not counted as out.
+function periodSoFarHtml(sum, spendSegs) {
+  const inn = sum.totalIncome, out = sum.totalOut, kept = inn - out;
+  const planned = (state.budgets.income || []).reduce((t, r) => t + (r.expected || 0), 0);
+  const still = Math.max(0, planned - inn);
+  const billsPart = sum.totalBills + sum.totalSubscriptions;
+  const keptPct = inn > 0 ? Math.round(kept / inn * 100) : 0;
+  const tot = spendSegs.reduce((s, x) => s + x.value, 0);
+  const top = spendSegs.slice(0, 6);
+  const rest = spendSegs.slice(6).reduce((s, x) => s + x.value, 0);
+  const segs = rest > 0 ? top.concat([{ label: t('dash_other'), value: rest, color: '#94a3b8' }]) : top;
+  return `<div class="panel psf"><div class="panel-inner-sm">
+    <div class="psf-head"><h3 class="ov-title">${t('psf_title')}</h3><span class="psf-range">${esc(formatDateShort(state.settings.periodStart))} – ${esc(formatDateShort(state.settings.periodEnd))}</span></div>
+    <div class="psf-tiles">
+      <div class="psf-tile psf-tile--in"><span class="psf-k">${t('psf_in')}</span><strong>${fmt(inn)}</strong><em>${still > 0 ? tf('psf_still', fmt(still)) : planned > 0 ? t('psf_all_in') : '&nbsp;'}</em></div>
+      <div class="psf-tile psf-tile--out"><span class="psf-k">${t('psf_out')}</span><strong>${fmt(out)}</strong><em>${billsPart > 0 ? tf('psf_bills_part', fmt(billsPart)) : '&nbsp;'}</em></div>
+      <div class="psf-tile psf-tile--kept${kept < 0 ? ' is-neg' : ''}"><span class="psf-k">${t('psf_kept')}</span><strong>${kept < 0 ? '−' : ''}${fmt(Math.abs(kept))}</strong><em>${inn > 0 ? tf('psf_kept_pct', keptPct) : '&nbsp;'}</em></div>
+    </div>
+    ${tot > 0 ? `<div class="psf-bar" role="img" aria-label="${esc(t('psf_where'))}">${segs.map(x =>
+      `<span style="flex:${x.value};background:${x.color}" title="${esc(x.label)} ${esc(fmt(x.value))}"></span>`).join('')}</div>
+    <div class="psf-legend">${segs.map(x => `<span><i style="background:${x.color}"></i>${esc(x.label)} <b>${fmt(x.value)}</b></span>`).join('')}</div>`
+      : `<p class="ov-empty">${t('dash_no_spending')}</p>`}
+  </div></div>`;
+}
+
+// ── Goal progress ────────────────────────────────────────────────────────
+function goalRingSvg(p, color) {
+  const r = 19, c = 2 * Math.PI * r, d = Math.max(0, Math.min(100, p)) / 100 * c;
+  return `<svg class="gp-ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="${r}" fill="none" stroke="currentColor" stroke-opacity=".14" stroke-width="5"/>
+    <circle cx="24" cy="24" r="${r}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${d.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 24 24)"/></svg>`;
+}
+function goalProgressHtml() {
+  const goals = (state.sinkingFunds || []).slice();
+  const targeted = goals.filter(fundHasTarget);
+  const saved = targeted.reduce((s, f) => s + (f.currentSaved || 0), 0);
+  const target = targeted.reduce((s, f) => s + (f.targetAmount || 0), 0);
+  const allPct = target > 0 ? Math.min(100, Math.round(saved / target * 100)) : 0;
+  const today = toLocalISO(new Date());
+  // Nearest date first; open-ended goals after the ones with a date.
+  goals.sort((a, b) => String(a.targetDate || '9').localeCompare(String(b.targetDate || '9')));
+  const row = f => {
+    const has = fundHasTarget(f), c = calcFund(f), p = Math.round(c.pctComplete || 0);
+    const done = has && (f.currentSaved || 0) >= f.targetAmount;
+    const late = has && !done && f.targetDate && f.targetDate < today;
+    const color = done ? '#10b981' : late ? '#f43f5e' : 'var(--grad-indigo)';
+    const status = done ? `<i class="gp-chip gp-chip--done">${t('gp_done')}</i>`
+      : late ? `<i class="gp-chip gp-chip--late">${t('gp_late')}</i>`
+      : has && f.targetDate ? `<i class="gp-chip">${tf('gp_by', formatDateShort(f.targetDate))}</i>` : `<i class="gp-chip gp-chip--open">${t('sf_open_ended')}</i>`;
+    return `<button class="gp-row" type="button" data-btab="goals">
+      <span class="gp-ringwrap" style="color:${color}">${goalRingSvg(has ? p : 100, has ? color : 'var(--grad-purple)')}<b>${has ? p + '%' : ''}</b></span>
+      <span class="gp-main"><span class="gp-name">${esc(f.icon && f.icon.length <= 4 ? f.icon + ' ' : '')}${esc(f.name)}${status}</span>
+        <span class="gp-sub">${has ? tf('gp_of', fmt(f.currentSaved || 0), fmt(f.targetAmount)) : tf('gp_saved', fmt(f.currentSaved || 0))}${!done && c.requiredMonthly > 0 ? ` · ${fmt(c.requiredMonthly)}${t('sf_per_month')}` : ''}</span></span>
+    </button>`;
+  };
+  return `<div class="panel gp"><div class="panel-inner-sm">
+    <div class="psf-head"><h3 class="ov-title">${t('gp_title')}</h3><button class="link-btn cu-all" type="button" data-btab="goals">${t('gp_all')}</button></div>
+    ${goals.length ? `${target > 0 ? `<div class="gp-sum"><div class="gp-sum-top"><strong>${fmt(saved)}</strong><span>${tf('gp_sum_of', fmt(target), allPct)}</span></div>
+      <div class="gp-sum-bar"><i style="width:${allPct}%"></i></div></div>` : ''}
+      <div class="gp-list">${goals.slice(0, 4).map(row).join('')}</div>`
+      : `<div class="ov-emptybox"><p class="ov-empty">${t('dash_no_sinking')}</p><button class="btn btn-primary btn-sm" type="button" data-btab="goals">${t('dash_create_one')}</button></div>`}
+  </div></div>`;
+}
+
+// ── Recent activity ──────────────────────────────────────────────────────
+const RA_ICON = { expense: 'expenses', bill: 'bills', income: 'income', sinking_fund: 'sinking', savings: 'savings', debt: 'debt', subscription: 'bills' };
+const RA_TINT = { expense: '#ec4899', bill: '#fb923c', income: '#10b981', sinking_fund: '#06b6d4', savings: '#3b82f6', debt: '#a855f7', subscription: '#fb923c' };
+let _raUndo = null;
+function recentTxs(n) {
+  return (state.transactions || []).map((tx, i) => ({ tx, i }))
+    .sort((a, b) => String(b.tx.date).localeCompare(String(a.tx.date)) || b.i - a.i)
+    .slice(0, n).map(x => x.tx);
+}
+function recentActivityHtml() {
+  const rows = recentTxs(5);
+  const undo = _raUndo && _raUndo.until > Date.now() ? _raUndo : null;
+  const PEN = '<svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>';
+  const DOTS = '<svg class="app-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></svg>';
+  return `<div class="panel ra"><div class="panel-inner-sm">
+    <div class="psf-head"><h3 class="ov-title">${t('ra_title')}</h3><button class="link-btn cu-all" type="button" data-btab="transactions">${t('ra_all')}</button></div>
+    ${undo ? `<div class="ra-undo" role="status"><span>${esc(tf('ra_deleted', undo.tx.description || undo.tx.category, fmt(undo.tx.amount)))}</span><button class="btn btn-ghost btn-sm" type="button" id="raUndoBtn">${t('ra_undo')}</button></div>` : ''}
+    ${rows.length ? `<div class="ra-list">${rows.map(tx => {
+      const inc = tx.type === 'income';
+      const tint = RA_TINT[tx.type] || 'var(--grad-indigo)';
+      return `<div class="ra-row">
+        <span class="ra-ico" style="color:${tint};background:color-mix(in srgb, ${tint} 14%, transparent)" aria-hidden="true">${appIconSvg(RA_ICON[tx.type] || 'transactions')}</span>
+        <span class="ra-main"><span class="ra-name">${esc(tx.description || tx.category)}</span>
+          <span class="ra-meta">${esc(formatDateShort(tx.date))} · ${esc(tx.category)} · ${esc(txTypeLabel(tx.type))}</span></span>
+        <span class="ra-amt${inc ? ' is-in' : ''}">${inc ? '+' : ''}${fmt(tx.amount)}</span>
+        <span class="ra-acts">
+          <button class="lv-act ra-edit" type="button" data-ra-edit="${esc(tx.id)}" title="${esc(t('edit'))}" aria-label="${esc(t('edit'))}">${PEN}</button>
+          <button class="lv-act" type="button" data-ra-menu="${esc(tx.id)}" title="${esc(t('ra_more'))}" aria-label="${esc(t('ra_more'))}">${DOTS}</button>
+        </span>
+      </div>`; }).join('')}</div>`
+      : `<div class="ov-emptybox"><p class="ov-empty">${t('ra_empty')}</p><button class="btn btn-primary btn-sm" type="button" data-ra-add>${t('tx_add_btn')}</button></div>`}
+  </div></div>`;
+}
+// Editing from the dashboard: the editor is the transaction list's own, and
+// once it closes the dashboard is drawn again with whatever changed.
+function raEdit(id) {
+  openEditTx(id);
+  const ov = document.getElementById('tutorialOverlay');
+  const mo = new MutationObserver(() => {
+    if (!ov.hidden) return;
+    mo.disconnect();
+    if (currentTab === 'dashboard') { dashQuietNext(); renderDashboard(); }
+  });
+  mo.observe(ov, { attributes: true, attributeFilter: ['hidden'] });
+}
+// Deleting keeps the transaction for a few seconds so it can be put back
+// exactly as it was, bill link and goal balance included.
+function raDelete(id) {
+  const i = state.transactions.findIndex(x => x.id === id);
+  if (i < 0) return;
+  const tx = state.transactions[i];
+  const bill = (state.bills || []).find(b => rowPayTxIds(b).includes(tx.id));
+  applySinkingFundDelta(tx, -1);
+  state.transactions.splice(i, 1);
+  syncBillPaidLinks();
+  saveState();
+  _raUndo = { tx, i, billId: bill ? bill.id : null, until: Date.now() + 6000 };
+  dashQuietNext(); renderDashboard();
+  setTimeout(() => { if (_raUndo && _raUndo.until <= Date.now()) { _raUndo = null; document.querySelector('#bview-dashboard .ra-undo')?.remove(); } }, 6100);
+}
+function raUndo() {
+  const u = _raUndo;
+  if (!u) return;
+  _raUndo = null;
+  state.transactions.splice(Math.min(u.i, state.transactions.length), 0, u.tx);
+  applySinkingFundDelta(u.tx, +1);
+  const bill = u.billId && (state.bills || []).find(b => b.id === u.billId);
+  if (bill) setRowPayments(bill, [...rowPayTxIds(bill), u.tx.id]);
+  saveState();
+  dashQuietNext(); renderDashboard();
+  showToast(t('ra_restored'));
+}
+function openTxSheet(id) {
+  const tx = state.transactions.find(x => x.id === id);
+  if (!tx) return;
+  const kv = [[t('ra_amount'), `${tx.type === 'income' ? '+' : ''}${fmt(tx.amount)}`], [t('tx_date'), formatDateDisplay(tx.date)],
+    [t('tx_category'), tx.category], [t('tx_type'), txTypeLabel(tx.type)]];
+  if (tx.description) kv.push([t('ra_note'), tx.description]);
+  const I = p => `<svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+  document.getElementById('modalTitle').textContent = tx.description || tx.category;
+  document.getElementById('modalBody').innerHTML = `<div class="txs">
+    <dl class="txs-kv">${kv.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+    <div class="txs-acts">
+      <button class="txs-btn" type="button" data-txs="edit">${I('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>')}${t('edit')}</button>
+      <button class="txs-btn" type="button" data-txs="again">${I('<path d="M12 5v14"/><path d="M5 12h14"/>')}${t('ra_again')}</button>
+      <button class="txs-btn txs-btn--del" type="button" data-txs="del">${I('<path d="M5 7h14"/><path d="M9 7V5h6v2"/><path d="M7 7l1 13h8l1-13"/>')}${t('delete')}</button>
+    </div>
+    <div class="txs-foot"><button class="btn btn-ghost" type="button" data-txs="close">${t('close')}</button></div>
+  </div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+  document.querySelectorAll('#modalBody [data-txs]').forEach(b => b.addEventListener('click', () => {
+    const a = b.dataset.txs;
+    if (a === 'close') return closeModal();
+    if (a === 'edit') { closeModal(); return raEdit(id); }
+    if (a === 'again') { closeModal(); return openQuickAddTx({ type: tx.type, category: tx.category, amount: tx.amount, description: tx.description }); }
+    if (a === 'del') { closeModal(); return raDelete(id); }
+  }));
+}
+
+// ── Red flags ────────────────────────────────────────────────────────────
+// A dozen checks over the period, each saying what looks wrong and what to
+// do about it. A flag can be set aside for the rest of the period.
+const RF_CHECKS = 12;
+function computeRedFlags(ctx) {
+  const { act, sum } = ctx;
+  const p = nlDaysInPeriod(), f = p.total > 0 ? p.dayOf / p.total : 0;
+  const today = toLocalISO(new Date());
+  const planInc = (state.budgets.income || []).reduce((t, r) => t + (r.expected || 0), 0);
+  const planExp = (state.budgets.expenses || []).reduce((t, r) => t + (r.expected || 0), 0);
+  const flags = [];
+  const add = (id, sev, title, detail, label, run) => flags.push({ id, sev, title, detail, act: label ? { label, run } : null });
+  // 1. Spending pace.
+  if (planExp > 0 && f > 0.15 && sum.totalExpenses > 0) {
+    const projected = sum.totalExpenses / f;
+    if (projected > planExp * 1.1) add('pace', projected > planExp * 1.3 ? 'high' : 'med', t('rf_pace'),
+      tf('rf_pace_d', fmt(projected), fmt(projected - planExp)), t('rf_act_budget'), () => switchTab('budget'));
+  }
+  // 2. Committed beyond what is left.
+  const c = nlCommitted();
+  if (sum.leftover - c.total < 0) add('short', 'high', t('rf_short'), tf('rf_short_d', fmt(c.total), fmt(Math.max(0, sum.leftover))), t('rf_act_coming'), () => switchTab('notifications'));
+  // 3. Overdue bills.
+  const overdue = (state.bills || []).filter(b => b.active !== false && b.nextBillingDate && b.nextBillingDate < today && rowPayState(b) !== 'paid');
+  if (overdue.length) add('overdue', 'high', tf(overdue.length === 1 ? 'rf_overdue_one' : 'rf_overdue', overdue.length),
+    overdue.map(b => b.name).slice(0, 3).join(', '), t('rf_act_pay'), () => switchTab('notifications'));
+  // 4. Categories over budget.
+  const overCats = (state.budgets.expenses || []).filter(r => (r.expected || 0) > 0 && (act.expenses[r.category] || 0) > r.expected);
+  if (overCats.length) add('over', 'med', tf(overCats.length === 1 ? 'rf_over_one' : 'rf_over', overCats.length),
+    overCats.map(r => r.category).slice(0, 3).join(', '), t('rf_act_budget'), () => switchTab('budget'));
+  // 5. Income running short late in the period.
+  if (planInc > 0 && f > 0.6 && sum.totalIncome < planInc * 0.8) add('income', 'med', t('rf_income'),
+    tf('rf_income_d', fmt(sum.totalIncome), fmt(planInc)), t('rf_act_log'), () => openQuickAddTx({ type: 'income' }));
+  // 6. Nothing put toward goals past the half-way mark.
+  const needMo = (state.sinkingFunds || []).reduce((s, g) => s + (calcFund(g).requiredMonthly || 0), 0);
+  if (needMo > 0 && f > 0.5 && sum.totalSavings === 0) add('nosave', 'med', t('rf_nosave'), tf('rf_nosave_d', fmt(needMo)), t('rf_act_goals'), () => switchTab('goals'));
+  // 7. Expensive debt on minimums only.
+  const hot = (state.debts || []).filter(d => (d.balance || 0) > 0 && (d.interestRate || 0) >= 20 && !(d.targetedExtra > 0));
+  if (hot.length && !((state.debtSettings || {}).extraPayment > 0)) add('apr', 'med', tf('rf_apr', hot[0].name, hot[0].interestRate),
+    t('rf_apr_d'), t('rf_act_debt'), () => switchTab('debt'));
+  // 8. A subscription that went up recently.
+  const cutoff = toLocalISO(new Date(Date.now() - 90 * 86400000));
+  const rises = (state.bills || []).filter(b => { const h = b.priceHistory || []; const l = h[h.length - 1]; return l && l.to > l.from && (l.date || '') >= cutoff; });
+  if (rises.length) { const b = rises[0], l = b.priceHistory[b.priceHistory.length - 1];
+    add('rise', 'med', tf('rf_rise', b.name, fmt(l.to - l.from)), tf('rf_rise_d', fmt(l.from), fmt(l.to)), t('rf_act_bills'), () => switchTab('bills')); }
+  // 9. Subscriptions heavy against income.
+  const subMo = totalSubMonthly();
+  if (planInc > 0 && subMo > planInc * 0.1) add('subs', 'med', t('rf_subs'), tf('rf_subs_d', fmt(subMo), Math.round(subMo / planInc * 100)), t('rf_act_bills'), () => switchTab('bills'));
+  // 10. One large expense this period.
+  const big = (state.transactions || []).filter(x => x.type === 'expense' && x.date >= state.settings.periodStart && x.date <= state.settings.periodEnd
+    && planInc > 0 && x.amount > planInc * 0.2).sort((a, b) => b.amount - a.amount)[0];
+  if (big) add('big', 'med', tf('rf_big', fmt(big.amount)), tf('rf_big_d', big.description || big.category, formatDateShort(big.date)), t('rf_act_view'), () => openTxSheet(big.id));
+  // 11. Unsorted spending piling up.
+  const uncat = new Set(Object.values(TRANSLATIONS).map(x => x && x.qa_uncat).filter(Boolean));
+  const loose = (state.transactions || []).filter(x => x.type === 'expense' && uncat.has(x.category) && x.date >= state.settings.periodStart && x.date <= state.settings.periodEnd)
+    .reduce((s, x) => s + x.amount, 0);
+  if (loose > 0 && sum.totalExpenses > 0 && loose > sum.totalExpenses * 0.1) add('loose', 'med', t('rf_loose'), tf('rf_loose_d', fmt(loose)), t('nt_act_sort'), () => switchTab('transactions'));
+  // 12. Keeping little of what came in.
+  if (sum.totalIncome > 0 && f > 0.5 && (sum.totalIncome - sum.totalOut) < sum.totalIncome * 0.1) add('thin', 'high', t('rf_thin'),
+    tf('rf_thin_d', Math.max(0, Math.round((sum.totalIncome - sum.totalOut) / sum.totalIncome * 100))), t('rf_act_budget'), () => switchTab('budget'));
+  const dis = state.settings.flagDismiss || {};
+  const live = flags.filter(x => dis[x.id] !== state.settings.periodStart);
+  return { live, dismissed: flags.length - live.length };
+}
+function redFlagsHtml(rf) {
+  const n = rf.live.length;
+  const order = { high: 0, med: 1 };
+  const list = rf.live.slice().sort((a, b) => order[a.sev] - order[b.sev]);
+  return `<div class="panel rf${n ? '' : ' is-clear'}"><div class="rf-inner">
+    <div class="rf-count">
+      <div class="rf-dial">${n ? `<strong>${n}</strong>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>`}</div>
+      <div class="rf-count-txt"><h3 class="ov-title">${n ? (n === 1 ? t('rf_one') : t('rf_many')) : t('rf_clear')}</h3>
+        <p>${tf('rf_checked', RF_CHECKS)}</p>
+        ${rf.dismissed ? `<button class="link-btn rf-restore" type="button" data-rf-restore>${tf('rf_restore', rf.dismissed)}</button>` : ''}</div>
+    </div>
+    <ol class="rf-list">${list.length ? list.map((x, i) => `<li class="rf-item rf-item--${x.sev}">
+      <span class="rf-num">${i + 1}</span>
+      <span class="rf-main"><span class="rf-t">${esc(x.title)}</span><span class="rf-d">${esc(x.detail)}</span></span>
+      <span class="rf-acts">${x.act ? `<button class="btn btn-ghost btn-sm" type="button" data-rf-act="${x.id}">${esc(x.act.label)}</button>` : ''}
+        <button class="lv-act" type="button" data-rf-dismiss="${x.id}" title="${esc(t('rf_dismiss'))}" aria-label="${esc(t('rf_dismiss'))}"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg></button></span>
+    </li>`).join('') : `<li class="rf-none">${t('rf_none')}</li>`}</ol>
+  </div></div>`;
+}
+
+// ── Statistics ───────────────────────────────────────────────────────────
+function stKpi(label, value, sub, tone) {
+  return `<div class="st-kpi${tone ? ' st-kpi--' + tone : ''}"><span class="st-k">${label}</span><strong>${value}</strong><em>${sub || '&nbsp;'}</em></div>`;
+}
+// Spend added up day by day, against a steady line to the plan and a dashed
+// run on from today at the pace so far.
+function stPaceChart(points, plan) {
+  const w = 900, h = 190, pad = 14;
+  const n = points.length;
+  if (!n) return `<div class="chart-empty">${t('dash_no_spending')}</div>`;
+  const p = nlDaysInPeriod();
+  // Money moved to a goal is kept, not spent, as everywhere else here.
+  const spent = x => (x.items || []).filter(i => i.type !== 'sinking_fund' && i.type !== 'savings').reduce((t, i) => t + i.amount, 0);
+  let run = 0;
+  const cum = points.map(x => (run += spent(x)));
+  const upto = Math.min(n, p.dayOf);
+  const avg = upto > 0 ? cum[upto - 1] / upto : 0;
+  const proj = avg * n;
+  const top = Math.max(plan, proj, cum[n - 1], 1) * 1.08;
+  const X = i => pad + (n > 1 ? i / (n - 1) : 0) * (w - pad * 2);
+  const Y = v => h - pad - v / top * (h - pad * 2);
+  const actual = cum.slice(0, upto).map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' L');
+  const area = upto ? `M${X(0).toFixed(1)},${Y(0).toFixed(1)} L${actual} L${X(upto - 1).toFixed(1)},${Y(0).toFixed(1)} Z` : '';
+  return `<div class="st-chart-wrap"><svg class="st-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(t('st_pace'))}">
+    <defs><linearGradient id="stPaceFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--grad-indigo);stop-opacity:.32"/><stop offset="100%" style="stop-color:var(--grad-indigo);stop-opacity:0"/></linearGradient></defs>
+    ${[0.25, 0.5, 0.75].map(g => `<line x1="${pad}" x2="${w - pad}" y1="${(pad + g * (h - pad * 2)).toFixed(1)}" y2="${(pad + g * (h - pad * 2)).toFixed(1)}" class="st-grid"/>`).join('')}
+    ${plan > 0 ? `<path d="M${X(0)},${Y(0)} L${X(n - 1)},${Y(plan)}" class="st-plan" vector-effect="non-scaling-stroke"/>` : ''}
+    ${area ? `<path d="${area}" fill="url(#stPaceFill)"/><path d="M${actual}" class="st-actual" vector-effect="non-scaling-stroke"/>` : ''}
+    ${upto && upto < n ? `<path d="M${X(upto - 1)},${Y(cum[upto - 1])} L${X(n - 1)},${Y(proj)}" class="st-proj" vector-effect="non-scaling-stroke"/>` : ''}
+  </svg></div>
+  <div class="st-legend"><span><i class="st-sw st-sw--actual"></i>${t('st_spent')} ${fmt(upto ? cum[upto - 1] : 0)}</span>${plan > 0 ? `<span><i class="st-sw st-sw--plan"></i>${t('st_plan')} ${fmt(plan)}</span>` : ''}<span><i class="st-sw st-sw--proj"></i>${t('st_proj')} ${fmt(proj)}</span></div>`;
+}
+// Six calendar months of what came in against what went out.
+function stMonthsChart() {
+  const now = new Date(), lang = state?.settings?.language || 'en';
+  const months = [];
+  for (let k = 5; k >= 0; k--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - k, 1);
+    months.push({ key: toLocalISO(d).slice(0, 7), label: d.toLocaleString(lang, { month: 'short' }).replace('.', ''), inn: 0, out: 0 });
+  }
+  const idx = Object.fromEntries(months.map((m, i) => [m.key, i]));
+  (state.transactions || []).forEach(x => {
+    const i = idx[String(x.date).slice(0, 7)];
+    if (i === undefined) return;
+    if (x.type === 'income') months[i].inn += x.amount;
+    else if (x.type !== 'sinking_fund' && x.type !== 'savings') months[i].out += x.amount;
+  });
+  const top = Math.max(1, ...months.map(m => Math.max(m.inn, m.out)));
+  return `<div class="st-bars">${months.map(m => `<div class="st-bar-col" title="${esc(m.label)}: ${esc(t('psf_in'))} ${esc(fmt(m.inn))}, ${esc(t('psf_out'))} ${esc(fmt(m.out))}">
+      <div class="st-bar-pair"><span class="st-bar st-bar--in" style="height:${(m.inn / top * 100).toFixed(1)}%"></span><span class="st-bar st-bar--out" style="height:${(m.out / top * 100).toFixed(1)}%"></span></div>
+      <span class="st-bar-lbl">${esc(m.label)}</span></div>`).join('')}</div>
+    <div class="st-legend"><span><i class="st-sw st-sw--in"></i>${t('psf_in')}</span><span><i class="st-sw st-sw--out"></i>${t('psf_out')}</span></div>`;
+}
+// Which days of the week the money goes, over the last 90 days.
+function stWeekdayChart() {
+  const from = toLocalISO(new Date(Date.now() - 90 * 86400000));
+  const tot = [0, 0, 0, 0, 0, 0, 0];
+  (state.transactions || []).forEach(x => {
+    if (x.type === 'income' || x.type === 'sinking_fund' || x.type === 'savings' || x.date < from) return;
+    tot[(new Date(x.date + 'T00:00:00').getDay() + 6) % 7] += x.amount;
+  });
+  const top = Math.max(1, ...tot), max = tot.indexOf(Math.max(...tot));
+  const lang = state?.settings?.language || 'en';
+  let f; try { f = new Intl.DateTimeFormat(lang, { weekday: 'short' }); } catch (e) { f = new Intl.DateTimeFormat('en', { weekday: 'short' }); }
+  return `<div class="st-bars st-bars--week">${tot.map((v, i) => `<div class="st-bar-col" title="${esc(f.format(new Date(2024, 0, 1 + i)))}: ${esc(fmt(v))}">
+    <div class="st-bar-pair"><span class="st-bar st-bar--wk${i === max && v > 0 ? ' is-max' : ''}" style="height:${(v / top * 100).toFixed(1)}%"></span></div>
+    <span class="st-bar-lbl">${esc(f.format(new Date(2024, 0, 1 + i)))}</span></div>`).join('')}</div>`;
+}
+// Each everyday category against its budget, the budget as a tick.
+function stCategoryChart(act) {
+  const rows = (state.budgets.expenses || []).map(r => ({ name: r.category, plan: r.expected || 0, spent: act.expenses[r.category] || 0 }))
+    .filter(r => r.plan > 0 || r.spent > 0).sort((a, b) => Math.max(b.plan, b.spent) - Math.max(a.plan, a.spent)).slice(0, 8);
+  if (!rows.length) return `<div class="chart-empty">${t('dash_no_spending')}</div>`;
+  const top = Math.max(1, ...rows.map(r => Math.max(r.plan, r.spent)));
+  return `<div class="st-cats">${rows.map(r => {
+    const over = r.plan > 0 && r.spent > r.plan;
+    return `<div class="st-cat"><div class="st-cat-top"><span>${esc(r.name)}</span><b class="${over ? 'is-over' : ''}">${fmt(r.spent)}<small> / ${fmt(r.plan)}</small></b></div>
+      <div class="st-cat-track"><i class="${over ? 'is-over' : ''}" style="width:${(r.spent / top * 100).toFixed(1)}%"></i>${r.plan > 0 ? `<em style="left:${(r.plan / top * 100).toFixed(1)}%"></em>` : ''}</div></div>`;
+  }).join('')}</div>`;
+}
+function dashStatsHtml(o) {
+  const { act, sum, spendPoints, expOut, spendSegs, cashGridHtml, bottomRowHtml, allocHtml } = o;
+  const p = nlDaysInPeriod();
+  const elapsed = Math.max(1, Math.min(p.total, p.dayOf));
+  const avg = sum.totalOut / elapsed;
+  const proj = avg * p.total;
+  const kept = sum.totalIncome - sum.totalOut;
+  const rate = sum.totalIncome > 0 ? Math.round(kept / sum.totalIncome * 100) : 0;
+  const topCat = spendSegs[0];
+  return `<div class="st-kpis">
+      ${stKpi(t('st_rate'), `${rate}%`, tf('st_rate_d', fmt(Math.max(0, kept))), rate >= 20 ? 'good' : rate < 0 ? 'bad' : '')}
+      ${stKpi(t('st_avg'), fmt(avg), tf('st_avg_d', elapsed))}
+      ${stKpi(t('st_projected'), fmt(proj), expOut > 0 ? tf('st_projected_d', fmt(expOut)) : '', expOut > 0 && proj > expOut ? 'bad' : 'good')}
+      ${stKpi(t('st_top'), topCat ? esc(topCat.label) : '–', topCat ? tf('st_top_d', fmt(topCat.value), sum.totalOut > 0 ? Math.round(topCat.value / sum.totalOut * 100) : 0) : '')}
+    </div>
+    <div class="panel st-panel"><div class="panel-inner-sm"><div class="panel-titlebar"><span class="panel-title-sm">${t('st_pace')}</span></div>${stPaceChart(spendPoints, expOut)}</div></div>
+    <div class="st-row">
+      <div class="panel st-panel"><div class="panel-inner-sm"><div class="panel-titlebar"><span class="panel-title-sm">${t('st_months')}</span></div>${stMonthsChart()}</div></div>
+      <div class="panel st-panel"><div class="panel-inner-sm"><div class="panel-titlebar"><span class="panel-title-sm">${t('st_week')}</span></div>${stWeekdayChart()}</div></div>
+    </div>
+    <div class="panel st-panel"><div class="panel-inner-sm"><div class="panel-titlebar"><span class="panel-title-sm">${t('st_cats')}</span></div>${stCategoryChart(act)}</div></div>
+    ${cashGridHtml}
+    ${allocHtml}
+    ${bottomRowHtml}`;
+}
+
+// ── Wiring for both views ────────────────────────────────────────────────
+function wireDashViews(el, rf) {
+  el.querySelectorAll('[data-dash-view]').forEach(b => b.addEventListener('click', () => {
+    if (dashView() === b.dataset.dashView) return;
+    state.settings.dashView = b.dataset.dashView; saveState(); renderDashboard();
+  }));
+  el.querySelectorAll('[data-spend-curve]').forEach(b => b.addEventListener('click', () => {
+    state.settings.spendCurve = b.dataset.spendCurve === '1'; saveState(); dashQuietNext(); renderDashboard();
+  }));
+  el.querySelectorAll('[data-ra-menu]').forEach(b => b.addEventListener('click', () => openTxSheet(b.dataset.raMenu)));
+  el.querySelectorAll('[data-ra-edit]').forEach(b => b.addEventListener('click', () => raEdit(b.dataset.raEdit)));
+  el.querySelector('[data-ra-add]')?.addEventListener('click', () => openQuickAddTx());
+  el.querySelector('#raUndoBtn')?.addEventListener('click', raUndo);
+  el.querySelectorAll('[data-rf-act]').forEach(b => b.addEventListener('click', () => {
+    const x = rf && rf.live.find(f => f.id === b.dataset.rfAct);
+    if (x && x.act) x.act.run();
+  }));
+  el.querySelectorAll('[data-rf-dismiss]').forEach(b => b.addEventListener('click', () => {
+    state.settings.flagDismiss = { ...(state.settings.flagDismiss || {}), [b.dataset.rfDismiss]: state.settings.periodStart };
+    saveState(); dashQuietNext(); renderDashboard();
+  }));
+  el.querySelector('[data-rf-restore]')?.addEventListener('click', () => {
+    state.settings.flagDismiss = {}; saveState(); dashQuietNext(); renderDashboard();
+  });
+}
+
+
 function renderDashboardLayout3() {
   // Classic first: every card, already wired, with its own listeners intact.
   renderDashboardLayout1();
@@ -5652,17 +6063,7 @@ function renderDashboardLayout1() {
 
   const el=document.getElementById('bview-dashboard');
   const isCurrentRender=markRenderGen(el);
-  el.innerHTML=`
-    <div class="section-header section-header--period">
-      <h2 class="section-title">${appIconSvg('dashboard')} ${t('tab_dashboard')}</h2>
-      ${periodBarHtml()}
-      ${dashLogControlsHtml()}
-      ${helpBtn('dashboard')}
-    </div>
-    ${dashFabHtml()}
-    ${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
-    </div>
-    <div class="dashboard-grid" style="margin-bottom:16px">
+  const cashGridHtml=`    <div class="dashboard-grid" style="margin-bottom:16px">
       <div class="panel cash-flow-panel"><div class="panel-inner-sm">
         <div class="panel-titlebar"><span class="panel-title-sm">${t('dash_cash_flow')}</span><div class="flow-legend"><span class="legend-item"><span class="legend-dot" style="background:rgba(30,27,46,.22)"></span>${t('dash_expected_legend')}</span><span class="legend-item"><span class="legend-dot" style="background:#6366f1"></span>${t('dash_actual_legend')}</span></div></div>
         <div class="flow-table">${flowRows.map(row=>{const pct=row.exp>0?(row.act/row.exp*100):(row.act>0?100:0),aw=Math.min(100,pct).toFixed(1),over=!row.isInc&&row.act>row.exp&&row.exp>0;return`<div class="flow-row"><div class="flow-row-top"><span class="flow-label">${esc(row.label)}</span><span class="flow-amounts"><span style="color:${over?'#f43f5e':row.color}">${fmt(row.act)}</span><span class="flow-amt--exp"> / ${fmt(row.exp)}</span></span></div><div class="flow-bars"><div class="flow-bar-wrap"><div class="flow-bar" style="width:${aw}%;background:${over?'#f43f5e':row.color}"></div></div></div></div>`;}).join('')}</div>
@@ -5671,9 +6072,8 @@ function renderDashboardLayout1() {
         <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_income_sources')}</div>${incSegs.length===0?`<div class="chart-empty">${t('dash_no_income')}</div>`:`<div class="donut-block">${svgDonut(incSegs.map(s=>({...s,pct:incTot>0?s.value/incTot*100:0})),110,16)}<div class="donut-legend">${incSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(incTot>0?s.value/incTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
         <div class="panel chart-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:14px">${t('dash_spending_breakdown')}</div>${spendSegs.length===0?`<div class="chart-empty">${t('dash_no_spending')}</div>`:`<div class="donut-block">${svgDonut(spendSegs.map(s=>({...s,pct:spTot>0?s.value/spTot*100:0})).slice(0,50),110,16)}<div class="donut-legend">${spendSegs.slice(0,5).map((s,idx)=>`<div class="dleg-row" data-idx="${idx}"><span class="dleg-swatch" style="background:${s.color}"></span><span class="dleg-label">${esc(s.label)}</span><span class="dleg-pct">${(spTot>0?s.value/spTot*100:0).toFixed(0)}%</span></div>`).join('')}</div></div>`}</div></div>
       </div>
-    </div>
-    <div class="panel spend-line-panel"><div class="panel-inner-sm"><div class="panel-title-sm" style="margin-bottom:10px">${t('dash_daily_spend')}</div>${spendLineTotal>0?svgSpendLine(spendPoints,{w:900,h:140})+`<div class="spend-line-caption"><span class="spend-line-num">${fmt(spendLineTotal)}</span><span class="spend-line-label">${t('dash_daily_spend_caption')}</span></div>`:`<div class="chart-empty">${t('dash_no_spending')}</div>`}</div></div>
-    ${(()=>{
+    </div>`;
+  const allocHtml=(()=>{
       if (!state.allocation?.enabled) return '';
       const {totals, untagged} = computeAllocation();
       const income = sum.totalIncome > 0 ? sum.totalIncome : expInc;
@@ -5691,8 +6091,8 @@ function renderDashboardLayout1() {
       }).join('');
       const untaggedLine = untagged > 0 ? `<div class="alloc-untagged">⚠ ${fmt(untagged)} ${t('alloc_untagged_desc')}</div>` : '';
       return `<div class="panel alloc-panel"><div class="panel-inner-sm"><div class="alloc-header"><span class="panel-title-sm">${t('alloc_title')}</span><span class="alloc-income-base">${t('alloc_based_on')} ${fmt(income)} ${t('alloc_income_period')}</span></div><div class="alloc-grid">${cards}</div>${untaggedLine}</div></div>`;
-    })()}
-    <div class="pro-bottom-row">
+    })();
+  const bottomRowHtml=`    <div class="pro-bottom-row">
       <div class="panel pro-card"><div class="panel-inner-sm">
         <div class="panel-title-sm" style="margin-bottom:12px">${appIconSvg('debt')} ${t('tab_debt')}</div>
         ${state.debts.length===0?`<div class="chart-empty">${t('dash_no_debts')}<br><button class="link-btn" data-btab="debt">${t('dash_set_up')}</button></div>`:result?`<div class="debt-teaser"><div class="dt-item"><span class="dt-label">${t('dash_debt_free_label')}</span><span class="dt-value">${formatDateDisplay(result.debtFreeDate)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_interest_label')}</span><span class="dt-value" style="color:#f43f5e">${fmt(result.totalInterest)}</span></div><div class="dt-item"><span class="dt-label">${t('dash_months_label')}</span><span class="dt-value">${result.months}</span></div><div class="dt-item"><span class="dt-label">${t('dash_method_label')}</span><span class="dt-value">${state.debtSettings.method==='snowball'?'⛄ Snowball':'🌊 Avalanche'}</span></div></div>${(()=>{const dp=act.debt||{},paid=state.debts.filter(d=>(dp[d.name]||0)>=(d.minimumPayment||0)&&d.minimumPayment>0).length,total=state.debts.filter(d=>d.minimumPayment>0).length;return total>0?`<div style="margin-top:7px;font-size:11px;color:${paid===total?'#10b981':'#fb923c'};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${paid} ${t('dash_of')} ${total} ${total===1?t('dash_debts_paid'):t('dash_debts_paid_many')}</div>`:'';})()}`:`<div class="chart-empty">${t('dash_set_balances')}</div>`}
@@ -5702,6 +6102,25 @@ function renderDashboardLayout1() {
         ${state.sinkingFunds.length===0?`<div class="chart-empty">${t('dash_no_sinking')}<br><button class="link-btn" data-btab="goals">${t('dash_create_one')}</button></div>`:`<div class="sf-snap">${state.sinkingFunds.slice(0,4).map(f=>{const p=f.targetAmount>0?Math.min(100,Math.round((f.currentSaved||0)/f.targetAmount*100)):0;return`<div class="sf-snap-item"><div class="sf-snap-header"><span>${esc(f.icon||'🏺')} ${esc(f.name)}</span><span class="sf-snap-pct">${p}%</span></div><div class="prog-bar-wrap"><div class="prog-bar prog-bar--income" style="width:${p}%"></div></div><div style="font-size:11px;color:var(--text-faint);margin-top:2px;display:flex;justify-content:space-between">${fmt(f.currentSaved||0)} / ${fmt(f.targetAmount||0)}</div></div>`;}).join('')}</div>`}
       </div></div>
     </div>`;
+  const view=dashView();
+  const rf=view==='overview'?computeRedFlags({act,sum}):null;
+  el.innerHTML=`
+    <div class="section-header section-header--period">
+      <h2 class="section-title">${appIconSvg('dashboard')} ${t('tab_dashboard')}</h2>
+      ${periodBarHtml()}
+      ${dashLogControlsHtml()}
+      ${dashViewToggleHtml()}
+      ${helpBtn('dashboard')}
+    </div>
+    ${dashFabHtml()}
+    ${view==='stats'
+      ? dashStatsHtml({act,sum,spendPoints,expOut,spendSegs,cashGridHtml,bottomRowHtml,allocHtml})
+      : `${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
+    ${spendPanelHtml(spendPoints)}
+    <div class="ov-grid"><div class="ov-col">${periodSoFarHtml(sum, spendSegs)}${goalProgressHtml()}</div>${recentActivityHtml()}</div>
+    ${allocHtml}
+    ${redFlagsHtml(rf)}`}`;
+  wireDashViews(el, rf);
   wirePeriodBar(el);
   wireNlHero(el);
   wireDashLog(el);
@@ -6910,7 +7329,8 @@ const QA_DOTS = ['#22c55e', '#f97316', '#3b82f6', '#ec4899', '#eab308', '#8b5cf6
 function openQuickAddTx(prefill){
   const allocEnabled = !!state.allocation?.enabled;
   let type = (prefill && QA_TYPES.includes(prefill.type)) ? prefill.type : 'expense';
-  let buf = '';
+  // "Log again" opens it on an earlier entry's amount and note.
+  let buf = (prefill && Number(prefill.amount) > 0) ? String(Math.round(Number(prefill.amount) * 100) / 100) : '';
   let cat = (prefill && prefill.category) || '';
   let alloc = '';
   const today0 = today();
@@ -7090,6 +7510,9 @@ function openQuickAddTx(prefill){
     if (hit) hit.blur();
   });
 
+  if (prefill && prefill.description) {
+    $('qaDesc').value = prefill.description; $('qaDesc').hidden = false; $('qaNoteChip').hidden = true;
+  }
   paintCats(); paintDate(); paint();
 }
 
