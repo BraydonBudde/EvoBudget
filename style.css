@@ -2433,7 +2433,7 @@ input[type="number"].expected-input {
   background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
 }
 .period-btn-ico .app-ico { width: 17px; height: 17px; }
-.period-btn-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; line-height: 1.15; }
+.period-btn-txt { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1px; min-width: 0; flex: 1 1 auto; line-height: 1.15; }
 .period-btn-txt b { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .period-btn-txt small { font-size: 11px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .period-btn-chev { width: 16px; height: 16px; flex: 0 0 16px; color: var(--text-faint); }
@@ -2686,20 +2686,20 @@ input[type="number"].expected-input {
 .cu-row.is-later .cu-date { opacity: .75; }
 /* After a payment: the paid row takes a tick, slides off to the right and
    folds shut, so the rows under it close the gap on their own. */
-.cu-row.cu-leave {
+.cu-row.cu-leave, .nt-row.cu-leave {
   overflow: hidden; border-radius: 12px; margin: 0 -8px; padding-left: 8px; padding-right: 8px;
   background: rgba(16, 185, 129, .12);
   transition: opacity .26s ease .22s, transform .26s ease .22s,
               height .3s cubic-bezier(.4, 0, .2, 1) .42s, padding .3s cubic-bezier(.4, 0, .2, 1) .42s,
               background .3s ease .42s, border-color .2s ease .42s;
 }
-.cu-row.cu-leave .cu-pay {
+.cu-row.cu-leave .cu-pay, .nt-row.cu-leave .cu-pay {
   width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
   border-radius: 50%; border-color: #10b981; background: #10b981; color: #fff;
   animation: cuTick .28s cubic-bezier(.34, 1.56, .64, 1) both;
 }
-.cu-row.cu-leave .cu-pay svg { width: 17px; height: 17px; }
-.cu-row.cu-leave.is-going {
+.cu-row.cu-leave .cu-pay svg, .nt-row.cu-leave .cu-pay svg { width: 17px; height: 17px; }
+.cu-row.cu-leave.is-going, .nt-row.cu-leave.is-going {
   opacity: 0; transform: translateX(28px); height: 0 !important;
   padding-top: 0; padding-bottom: 0; border-top-color: transparent; background: transparent;
 }
@@ -3218,7 +3218,7 @@ input[type="number"].expected-input {
    Nothing here applies without a [data-nav] of "left" or "right"
    on <html>, so the default top layout is untouched by all of it.
    ═══════════════════════════════════════════════════════════════ */
-:root { --rail-w: 268px; }
+:root { --rail-w: 348px; }
 
 .nav-rail { display: none; }
 
@@ -3525,8 +3525,8 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
    rose when something in it is already late. */
 .nav-badge {
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 18px; height: 18px; padding: 0 5px; margin-left: 7px;
-  border-radius: 9px; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 1;
+  width: 20px; height: 20px; min-width: 20px; padding: 0; margin-left: 7px; flex: 0 0 20px;
+  border-radius: 50%; letter-spacing: -.02em; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 1;
   font-variant-numeric: tabular-nums; color: #fff;
   background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
   box-shadow: 0 2px 6px -1px rgba(var(--grad-indigo-rgb), .45);
@@ -3540,9 +3540,89 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
 @media (max-width: 760px) {
   .budget-tabs .btab .nav-badge {
     position: absolute; top: 1px; right: calc(50% - 19px); margin: 0;
-    min-width: 15px; height: 15px; padding: 0 4px; font-size: 9px; border-radius: 8px;
+    width: 16px; height: 16px; min-width: 16px; flex-basis: 16px; padding: 0; font-size: 9px; border-radius: 50%;
     box-shadow: 0 0 0 2px var(--surface-strong);
   }
+}
+
+/* The wider sidebar gives each item a little more room to breathe. */
+@media (min-width: 1151px) {
+  .nav-rail-box { padding-left: 14px; padding-right: 14px; }
+  .nav-rail-brand .wordmark { font-size: 16.5px; }
+  .nav-rail-item { gap: 14px; padding: 8px 12px 8px 8px; font-size: 14.5px; border-radius: 14px; }
+  .nav-rail-item .nav-rail-icon { width: 38px; height: 38px; flex: 0 0 38px; border-radius: 12px; }
+  .nav-rail-item .nav-rail-icon .app-ico { width: 19px; height: 19px; }
+  .nav-rail-heading { font-size: 10.5px; margin-left: 10px; }
+  .nav-rail-account { padding: 11px 12px; }
+}
+/* Two digits and more still sit in the circle, a size down. */
+.nav-badge.is-wide { font-size: 9px; }
+
+/* Notifications and Settings sit under the sections as items of their
+   own, set apart by a hairline. Settings no longer needs its tool button. */
+.nav-rail-extra { margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--border-faint); }
+.nav-rail-tools #settingsNavBtn { display: none; }
+
+/* The bell in the top bar and the dock carries the total. */
+.notif-nav-btn { position: relative; }
+.notif-nav-btn .nav-badge {
+  position: absolute; top: -4px; right: -4px; margin: 0;
+  width: 17px; height: 17px; min-width: 17px; flex-basis: 17px; font-size: 9.5px;
+  box-shadow: 0 0 0 2px var(--surface-strong);
+}
+
+/* ══ The Notifications page ═══════════════════════════════════════ */
+.nt-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 22px; }
+.nt-sum {
+  display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border-radius: 18px;
+  background: var(--surface); border: 1px solid var(--border-soft);
+}
+.nt-sum strong { font-family: var(--font-display); font-size: 1.9rem; font-weight: 800; line-height: 1; }
+.nt-sum span { font-size: 12.5px; color: var(--text-secondary); }
+.nt-sum--late strong { color: #f43f5e; }
+.nt-sum--soon strong { color: #f59e0b; }
+.nt-sum--todo strong { color: var(--grad-indigo); }
+.nt-group { margin-bottom: 20px; }
+.nt-group-title {
+  margin: 0 0 10px 4px; font-size: 11px; font-weight: 800; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.nt-row {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 14px;
+  padding: 12px 0; border-top: 1px solid var(--border-faint);
+}
+.nt-row:first-child { border-top: none; }
+.nt-ico {
+  width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  background: rgba(var(--grad-indigo-rgb), .1); color: var(--grad-indigo);
+}
+.nt-ico .app-ico { width: 20px; height: 20px; }
+.nt-row--late .nt-ico { background: rgba(244, 63, 94, .12); color: #f43f5e; }
+.nt-row--soon .nt-ico { background: rgba(245, 158, 11, .12); color: #f59e0b; }
+.nt-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.nt-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14.5px; color: var(--text-primary); min-width: 0; }
+.nt-detail { font-size: 12.5px; color: var(--text-secondary); }
+.nt-tag {
+  font-style: normal; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;
+  color: var(--grad-indigo); background: rgba(var(--grad-indigo-rgb), .12);
+}
+.nt-tag--overdue, .nt-tag--over, .nt-tag--pastdate { color: #f43f5e; background: rgba(244, 63, 94, .12); }
+.nt-tag--soon { color: #d97706; background: rgba(245, 158, 11, .14); }
+.nt-acts { display: flex; align-items: center; gap: 6px; }
+.nt-empty { text-align: center; padding: 56px 20px; }
+.nt-empty-ico {
+  width: 64px; height: 64px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; background: linear-gradient(135deg, #10b981, #06b6d4); box-shadow: 0 10px 30px -10px rgba(16, 185, 129, .6);
+}
+.nt-empty-ico svg { width: 30px; height: 30px; }
+.nt-empty-title { margin: 16px 0 4px; font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; }
+.nt-empty-sub { margin: 0; color: var(--text-secondary); font-size: 14px; }
+@media (max-width: 560px) {
+  .nt-row { grid-template-columns: 36px minmax(0, 1fr); }
+  .nt-acts { grid-column: 2; }
+  .nt-sum { padding: 12px; }
+  .nt-sum strong { font-size: 1.5rem; }
 }
 
 /* ══ The side rail, laid out like a proper sidebar ═════════════════
@@ -3602,7 +3682,7 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
 
 /* ── Tablet: no room for labels or widgets, plenty for an icon rail ── */
 @media (max-width: 1150px) {
-  :root { --rail-w: 76px; }
+  :root { --rail-w: 99px; }
   .nav-rail { padding: 16px 9px; }
   .nav-rail-box { padding: 12px 8px; gap: 11px; }
   .nav-rail-brand { justify-content: center; padding: 2px 0; }
@@ -3621,7 +3701,7 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
   .nav-rail-item { padding: 4px 0; }
   .nav-rail-item .nav-badge {
     position: absolute; top: -2px; right: 4px; margin: 0;
-    min-width: 15px; height: 15px; padding: 0 4px; font-size: 9px; border-radius: 8px;
+    width: 16px; height: 16px; min-width: 16px; flex-basis: 16px; padding: 0; font-size: 9px; border-radius: 50%;
   }
   .nav-rail-account { justify-content: center; padding: 6px 0; background: none; border-color: transparent; }
 }
@@ -3660,15 +3740,15 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
    dock.
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --frame-bg: color-mix(in srgb, var(--grad-indigo) 24%, #0d0b1f);
-  --stage-bg: #f4f4fa;
+  --frame-bg: color-mix(in srgb, var(--grad-indigo) 12%, #e9e8f3);
+  --stage-bg: #f8f8fc;
 }
 [data-theme="dark"], [data-theme="synthwave"], [data-theme="terminal"] {
-  --frame-bg: color-mix(in srgb, var(--surface-solid) 45%, #000);
-  --stage-bg: color-mix(in srgb, var(--surface-solid) 86%, var(--grad-indigo));
+  --frame-bg: color-mix(in srgb, var(--surface-solid) 84%, #000);
+  --stage-bg: color-mix(in srgb, var(--surface-solid) 88%, var(--grad-indigo));
 }
 [data-theme="vintage-ledger"] {
-  --frame-bg: #3b2a1a;
+  --frame-bg: #eadcc2;
   --stage-bg: var(--surface-solid);
 }
 @media (min-width: 901px) {
@@ -3681,8 +3761,8 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
     padding: 12px; gap: 0;
     border-radius: 32px;
     background: var(--frame-bg);
-    border: 1px solid rgba(255, 255, 255, .06);
-    box-shadow: 0 40px 90px -40px rgba(0, 0, 0, .55);
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 40px 90px -46px rgba(0, 0, 0, .4);
     overflow: hidden;
   }
   /* The sidebar lies flat on the frame: no card of its own. */
@@ -3694,7 +3774,7 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
     background: none; border: 0; box-shadow: none; padding: 10px 6px 6px;
   }
   html[data-nav="left"]  .nav-rail-brand,
-  html[data-nav="right"] .nav-rail-brand { border-bottom-color: rgba(255, 255, 255, .08); }
+  html[data-nav="right"] .nav-rail-brand { border-bottom-color: var(--border-faint); }
   /* The stage: one big rounded container that holds every section and
      does the scrolling. It keeps its edge while scrolled, so the fade the
      open layout uses at the top is not needed here. */
@@ -3702,25 +3782,11 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
   html[data-nav="right"] .tool-shell > .app-scroll {
     background: var(--stage-bg);
     border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, .05);
+    border: 1px solid var(--border-faint);
+    box-shadow: 0 10px 40px -24px rgba(var(--grad-indigo-rgb), .35);
     padding: 30px 32px 48px;
     -webkit-mask-image: none; mask-image: none;
   }
-  /* Where the frame is dark and the theme's own ink is dark (the light
-     themes), the sidebar takes light ink and glassy surfaces, the way the
-     reference does. Dark themes already read light on dark. */
-  :is(html[data-theme="light"], html:not([data-theme]), html[data-theme="vintage-ledger"])[data-nav="left"] .nav-rail,
-  :is(html[data-theme="light"], html:not([data-theme]), html[data-theme="vintage-ledger"])[data-nav="right"] .nav-rail {
-    --text-primary: #f3f1ff;
-    --text-secondary: rgba(243, 241, 255, .72);
-    --text-faint: rgba(243, 241, 255, .46);
-    --surface: rgba(255, 255, 255, .05);
-    --surface-strong: rgba(255, 255, 255, .07);
-    --border-faint: rgba(255, 255, 255, .1);
-    --border-soft: rgba(255, 255, 255, .12);
-    color: var(--text-primary);
-  }
-  :is(html[data-theme="light"], html:not([data-theme]), html[data-theme="vintage-ledger"]) .nav-rail .btn-icon { color: var(--text-secondary); }
 }
 @media (min-width: 901px) and (max-width: 1150px) {
   html[data-nav="left"]  .tool-shell > .app-scroll,

@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261130" />
+  <link rel="stylesheet" href="style.css?v=20261131" />
   <script>
     // Runs synchronously before any content is parsed, so everything below
     // paints exactly once, in the right theme and on the right view. Without
@@ -386,6 +386,10 @@
               <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/>
             </svg>
           </button>
+          <button class="btn-icon notif-nav-btn" id="notifNavBtn" type="button" aria-label="Notifications" title="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 16.4v-5.1a5.8 5.8 0 0 1 11.6 0v5.1l1.6 2.1H4.6z"/><path d="M10 20.6a2.1 2.1 0 0 0 4 0"/></svg>
+            <b class="nav-badge" data-badge-for="__total" hidden></b>
+          </button>
           <button class="btn-icon" id="settingsNavBtn" type="button" aria-label="Settings">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
@@ -416,6 +420,7 @@
       <div class="bview" id="bview-debt" role="tabpanel"></div>
       <div class="bview" id="bview-savings" role="tabpanel"></div>
       <div class="bview" id="bview-settings" role="tabpanel"></div>
+      <div class="bview" id="bview-notifications" role="tabpanel"></div>
       </div>
 
     </div>
@@ -443,9 +448,9 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer onload="if(typeof syncPrewarmTokenClient==='function')syncPrewarmTokenClient();"></script>
-  <script src="sync.js?v=20261130"></script>
-  <script src="charts.js?v=20261130"></script>
-  <script src="analytics.js?v=20261130"></script>
-  <script src="script.js?v=20261130"></script>
+  <script src="sync.js?v=20261131"></script>
+  <script src="charts.js?v=20261131"></script>
+  <script src="analytics.js?v=20261131"></script>
+  <script src="script.js?v=20261131"></script>
 </body>
 </html>
