@@ -2368,8 +2368,6 @@ input[type="number"].expected-input {
 .qa-amount { display: flex; align-items: baseline; justify-content: center; gap: 4px; min-height: 64px; }
 .qa-sym { font-size: 1.5rem; font-weight: 700; color: var(--text-secondary); }
 .qa-num { font-family: var(--font-display); font-size: 3rem; font-weight: 800; line-height: 1; letter-spacing: -.02em; color: var(--text-primary); font-variant-numeric: tabular-nums; }
-.qa-type-it { font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; }
-.qa-typed { max-width: 220px; text-align: center; font-size: 18px; font-weight: 700; }
 .qa-quick, .qa-cats, .qa-meta { display: flex; flex-wrap: wrap; gap: 8px; }
 .qa-quick { justify-content: center; }
 .qa-chip {
@@ -2409,6 +2407,117 @@ input[type="number"].expected-input {
 .qa-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
 .qa-actions .btn { height: 44px; justify-content: center; }
 .qa-go { width: 100%; height: 50px; font-size: 15px; justify-content: center; }
+
+/* ══ Budget period ═══════════════════════════════════════════════
+   The one button in the dashboard header, and the sheet it opens. The
+   sheet shares the keypad's parts: its chips, its labels, its footer. */
+.period-btn {
+  appearance: none; display: inline-flex; align-items: center; gap: 10px; min-width: 0;
+  height: 46px; padding: 0 14px 0 6px; border-radius: var(--radius-pill); cursor: pointer;
+  font-family: inherit; color: var(--text-primary); text-align: left;
+  background: var(--surface-strong); border: 1px solid var(--border-faint); box-shadow: var(--shadow-card);
+  transition: border-color .18s var(--ease), transform .18s var(--ease);
+}
+.period-btn:hover { border-color: rgba(var(--grad-indigo-rgb), .5); }
+.period-btn:active { transform: scale(.98); }
+.period-btn-ico {
+  width: 34px; height: 34px; flex: 0 0 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center; color: #fff;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+.period-btn-ico .app-ico { width: 17px; height: 17px; }
+.period-btn-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; line-height: 1.15; }
+.period-btn-txt b { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.period-btn-txt small { font-size: 11px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.period-btn-chev { width: 16px; height: 16px; flex: 0 0 16px; color: var(--text-faint); }
+
+.modal:has(> .modal-body > .bp) { max-width: 820px; width: calc(100% - 32px); }
+.bp { display: flex; flex-direction: column; gap: 18px; }
+.bp-hero {
+  display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 10px;
+  padding: 16px 12px; border-radius: 20px;
+  background: radial-gradient(120% 140% at 0% 0%, rgba(var(--grad-indigo-rgb), .16), transparent 60%), rgba(var(--grad-indigo-rgb), .05);
+  border: 1px solid var(--border-faint);
+}
+.bp-step {
+  appearance: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface-strong); border: 1px solid var(--border-faint); color: var(--text-primary);
+  transition: border-color .15s var(--ease), color .15s var(--ease);
+}
+.bp-step:hover { border-color: var(--grad-indigo); color: var(--grad-indigo); }
+.bp-step svg { width: 20px; height: 20px; }
+.bp-range { text-align: center; min-width: 0; }
+.bp-dates {
+  display: flex; align-items: baseline; justify-content: center; gap: 12px; flex-wrap: wrap;
+  font-family: var(--font-display); font-weight: 800; font-size: clamp(1.4rem, 4.2vw, 2.1rem); letter-spacing: -.02em;
+}
+.bp-dates i { font-style: normal; color: var(--grad-indigo); font-size: .8em; }
+.bp-dates span { white-space: nowrap; }
+.bp-meta { margin-top: 4px; font-size: 13px; color: var(--text-secondary); }
+.bp-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.bp-side { display: flex; flex-direction: column; gap: 12px; }
+.bp-rhythms { display: flex; flex-wrap: wrap; gap: 8px; }
+.bp-opt:empty { display: none; }
+.bp-stepper { display: flex; align-items: center; gap: 10px; }
+.bp-stepper .qa-label { margin-right: 4px; }
+.bp-stepper .qa-chip { width: 38px; justify-content: center; padding: 0; font-size: 17px; }
+.bp-stepper b { min-width: 64px; text-align: center; font-size: 15px; }
+.bp-sub { margin: 0; font-size: 13px; color: var(--text-secondary); }
+.bp-auto { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+.bp-auto[hidden] { display: none; }
+.bp-note {
+  margin: 2px 0 0; padding: 10px 12px; border-radius: 12px; font-size: 13px; line-height: 1.45;
+  color: #10b981; background: rgba(16, 185, 129, .08); border: 1px solid rgba(16, 185, 129, .2);
+}
+.bp-cal { padding: 12px; border-radius: 18px; background: var(--surface-strong); border: 1px solid var(--border-faint); }
+.bp-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.bp-cal-title { font-weight: 700; font-size: 14px; text-transform: capitalize; }
+.bp-cal-nav {
+  appearance: none; width: 32px; height: 32px; border-radius: 10px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid transparent; color: var(--text-secondary);
+}
+.bp-cal-nav:hover { border-color: var(--border-faint); color: var(--text-primary); }
+.bp-cal-nav svg { width: 17px; height: 17px; }
+.bp-dow, .bp-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.bp-dow span { text-align: center; font-size: 11px; font-weight: 700; color: var(--text-faint); padding: 4px 0 6px; text-transform: uppercase; }
+.bp-days { row-gap: 3px; }
+.bp-day {
+  appearance: none; height: 38px; border: 0; background: transparent; cursor: pointer;
+  font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--text-primary);
+  font-variant-numeric: tabular-nums; position: relative;
+}
+.bp-day.is-blank { cursor: default; }
+.bp-day:not(.is-blank):not(.in-range):hover { background: rgba(var(--grad-indigo-rgb), .1); border-radius: 10px; }
+.bp-day.in-range { background: rgba(var(--grad-indigo-rgb), .16); }
+.bp-day.is-start, .bp-day.is-end {
+  color: #fff; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+  box-shadow: 0 4px 12px -3px rgba(var(--grad-indigo-rgb), .6); z-index: 1;
+}
+.bp-day.is-start { border-radius: 12px 0 0 12px; }
+.bp-day.is-end { border-radius: 0 12px 12px 0; }
+.bp-day.is-start.is-end { border-radius: 12px; }
+.bp-day.is-today::after {
+  content: ""; position: absolute; left: 50%; bottom: 5px; width: 4px; height: 4px; margin-left: -2px;
+  border-radius: 50%; background: currentColor;
+}
+.bp-hint { margin: 8px 2px 0; font-size: 12px; color: var(--text-faint); text-align: center; }
+@media (max-width: 700px) {
+  .bp-grid { grid-template-columns: 1fr; }
+  /* The dates take the whole first line; the arrows flank the day count. */
+  .bp-hero {
+    grid-template-columns: 38px minmax(0, 1fr) 38px; row-gap: 8px; padding: 14px 10px;
+    grid-template-areas: "dates dates dates" "prev meta next";
+  }
+  .bp-range { display: contents; }
+  .bp-dates { grid-area: dates; font-size: 1.5rem; gap: 8px; }
+  .bp-meta { grid-area: meta; margin: 0; align-self: center; text-align: center; font-size: 12px; }
+  .bp-step[data-bp-step="-1"] { grid-area: prev; }
+  .bp-step[data-bp-step="1"] { grid-area: next; }
+  .bp-step { width: 38px; height: 38px; }
+  .bp-day { height: 36px; }
+}
 @media (hover: none) { .qa-chip:hover { border-color: var(--border-faint); } .qa-chip.is-on:hover { border-color: var(--grad-indigo); } }
 @media (max-width: 700px) {
   .qa-grid { grid-template-columns: 1fr; gap: 16px; }
@@ -2562,6 +2671,42 @@ input[type="number"].expected-input {
 .nl-hero--cu .cu-amt { font-size: 14.5px; }
 .nl-hero--cu .cu-pay { padding: 6px 15px; font-size: 12.5px; }
 .nl-hero--cu .cu-empty { margin: 14px 0 12px; }
+/* The rows that run on past this period sit under a quiet divider. */
+.cu-sep { list-style: none; display: flex; align-items: center; gap: 10px; padding: 10px 0 2px; border-top: 1px solid var(--border-faint); }
+.cu-sep span { font-size: 9.5px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--text-faint); white-space: nowrap; }
+.cu-sep::after { content: ""; flex: 1; height: 1px; background: var(--border-faint); }
+.cu-sep + .cu-row { border-top: none; }
+.cu-row.is-later .cu-date { opacity: .75; }
+/* After a payment: the paid row takes a tick, slides off to the right and
+   folds shut, so the rows under it close the gap on their own. */
+.cu-row.cu-leave {
+  overflow: hidden; border-radius: 12px; margin: 0 -8px; padding-left: 8px; padding-right: 8px;
+  background: rgba(16, 185, 129, .12);
+  transition: opacity .26s ease .22s, transform .26s ease .22s,
+              height .3s cubic-bezier(.4, 0, .2, 1) .42s, padding .3s cubic-bezier(.4, 0, .2, 1) .42s,
+              background .3s ease .42s, border-color .2s ease .42s;
+}
+.cu-row.cu-leave .cu-pay {
+  width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; border-color: #10b981; background: #10b981; color: #fff;
+  animation: cuTick .28s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+.cu-row.cu-leave .cu-pay svg { width: 17px; height: 17px; }
+.cu-row.cu-leave.is-going {
+  opacity: 0; transform: translateX(28px); height: 0 !important;
+  padding-top: 0; padding-bottom: 0; border-top-color: transparent; background: transparent;
+}
+@keyframes cuTick { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+/* Whatever moves up into the list arrives once the gap has closed. */
+.cu-row.cu-enter { animation: cuEnter .38s cubic-bezier(.2, .8, .2, 1) .6s both; }
+@keyframes cuEnter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+/* A part payment keeps the row and pulses the amount still owed. */
+.cu-row.cu-updated .cu-amt { animation: cuPulse .7s ease .15s both; }
+@keyframes cuPulse { 0% { color: #10b981; transform: scale(1.1); } 100% { color: var(--text-primary); transform: none; } }
+.cu-amt { display: inline-block; }
+@media (prefers-reduced-motion: reduce) {
+  .cu-row.cu-leave, .cu-row.cu-enter, .cu-row.cu-updated .cu-amt { animation: none; transition: none; }
+}
 /* Free to spend at twice its old size. The figure fits itself to its
    column: the render passes its length in characters, and the size is the
    column's width shared out across them, capped at double the old maximum.
@@ -3365,6 +3510,86 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
 }
 .nw-mg-empty, .nw-mg-note { margin: 6px 2px; font-size: 12.5px; color: var(--text-faint); }
 
+/* ══ Section badges ═════════════════════════════════════════════
+   A count beside a section with something waiting. Accent by default,
+   rose when something in it is already late. */
+.nav-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; margin-left: 7px;
+  border-radius: 9px; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 1;
+  font-variant-numeric: tabular-nums; color: #fff;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+  box-shadow: 0 2px 6px -1px rgba(var(--grad-indigo-rgb), .45);
+  animation: badgeIn .3s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+.nav-badge[hidden] { display: none; }
+.nav-badge.is-late { background: #f43f5e; box-shadow: 0 2px 6px -1px rgba(244, 63, 94, .5); }
+.btab.is-active .nav-badge { background: #fff; color: var(--grad-indigo); box-shadow: none; }
+.btab.is-active .nav-badge.is-late { color: #f43f5e; }
+@keyframes badgeIn { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (max-width: 760px) {
+  .budget-tabs .btab .nav-badge {
+    position: absolute; top: 1px; right: calc(50% - 19px); margin: 0;
+    min-width: 15px; height: 15px; padding: 0 4px; font-size: 9px; border-radius: 8px;
+    box-shadow: 0 0 0 2px var(--surface-strong);
+  }
+}
+
+/* ══ The side rail, laid out like a proper sidebar ═════════════════
+   Brand, a Navigation heading, the sections with their icons set in
+   chips, the widgets, the tools, and the account at the foot. The box
+   takes a wash of the theme's accent so it reads as its own column. */
+.nav-rail-box {
+  gap: 4px; padding: 18px 14px 14px;
+  background-image: linear-gradient(180deg, rgba(var(--grad-indigo-rgb), .16), rgba(var(--grad-indigo-rgb), .03) 55%, rgba(var(--grad-indigo-rgb), .08));
+}
+.nav-rail-brand { padding: 2px 6px 14px; margin-bottom: 4px; border-bottom: 1px solid var(--border-faint); }
+.nav-rail-heading {
+  margin: 12px 8px 6px; font-size: 10px; font-weight: 800; letter-spacing: .11em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.nav-rail-sections { gap: 4px; }
+.nav-rail-item {
+  position: relative; gap: 12px; padding: 6px 10px 6px 6px; border-radius: 13px;
+  font-size: 13.5px; overflow: visible;
+}
+.nav-rail-item .nav-rail-icon {
+  width: 34px; height: 34px; border-radius: 11px; flex: 0 0 34px;
+  background: rgba(var(--grad-indigo-rgb), .1); color: var(--grad-indigo);
+  transition: background .2s var(--ease), color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.nav-rail-item:hover:not(.is-active) { background: rgba(var(--grad-indigo-rgb), .07); border-color: transparent; }
+.nav-rail-item.is-active {
+  background: rgba(var(--grad-indigo-rgb), .16); color: var(--text-primary);
+  border-color: rgba(var(--grad-indigo-rgb), .28); box-shadow: none;
+}
+.nav-rail-item.is-active .nav-rail-icon {
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple)); color: #fff;
+  box-shadow: 0 4px 12px -2px rgba(var(--grad-indigo-rgb), .5);
+}
+.nav-rail-item .nav-rail-label { flex: 1; min-width: 0; }
+.nav-rail-item .nav-badge { margin-left: auto; }
+.nav-rail-widgets { margin-top: 10px; }
+.nav-rail-tools { margin-top: 6px; }
+.nav-rail-account {
+  appearance: none; display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 9px 10px; border-radius: 14px; cursor: pointer; font-family: inherit; text-align: left;
+  background: rgba(var(--grad-indigo-rgb), .08); border: 1px solid var(--border-faint); color: var(--text-primary);
+  transition: border-color .18s var(--ease), background .18s var(--ease);
+}
+.nav-rail-account:hover { border-color: rgba(var(--grad-indigo-rgb), .4); background: rgba(var(--grad-indigo-rgb), .12); }
+.nra-avatar {
+  width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 15px; color: #fff;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+}
+.nra-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.nra-name { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nra-sub { font-size: 11.5px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nra-go { color: var(--text-faint); display: inline-flex; }
+.nra-go .app-ico { width: 16px; height: 16px; }
+
 /* ── Tablet: no room for labels or widgets, plenty for an icon rail ── */
 @media (max-width: 1150px) {
   :root { --rail-w: 76px; }
@@ -3382,6 +3607,13 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
   /* The widgets need their labels and inputs to be worth anything. */
   .nav-rail-widgets { display: none; }
   .nav-rail-tools { flex-direction: column; gap: 6px; }
+  .nav-rail-heading, .nra-text, .nra-go { display: none; }
+  .nav-rail-item { padding: 4px 0; }
+  .nav-rail-item .nav-badge {
+    position: absolute; top: -2px; right: 4px; margin: 0;
+    min-width: 15px; height: 15px; padding: 0 4px; font-size: 9px; border-radius: 8px;
+  }
+  .nav-rail-account { justify-content: center; padding: 6px 0; background: none; border-color: transparent; }
 }
 
 /* ── Phone: the rail cannot earn its width, so the tab bar returns ── */
@@ -3516,6 +3748,12 @@ html[data-dash="sleek"] .sleek-actions .dash-log-btn {
 }
 html[data-dash="sleek"] .sleek-actions .help-icon-btn {
   width: var(--sleek-ctl-h); height: var(--sleek-ctl-h); font-size: 14px;
+}
+/* The period button stands the same height as its neighbours. */
+html[data-dash="sleek"] .sleek-actions .period-btn { height: var(--sleek-ctl-h); padding-left: 4px; }
+html[data-dash="sleek"] .sleek-actions .period-btn-ico { width: 30px; height: 30px; flex-basis: 30px; }
+@media (max-width: 900px) {
+  html[data-dash="sleek"] .sleek-actions .period-btn { flex: 1 1 auto; min-width: 0; }
 }
 
 /* ── Narrow ──────────────────────────────────────────────────── */
