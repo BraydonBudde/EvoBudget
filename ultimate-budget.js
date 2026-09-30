@@ -4550,6 +4550,26 @@ function renderNotifications() {
   el.querySelectorAll('[data-nt-go]').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.ntGo)));
 }
 
+
+// ── Motion that answers an action ────────────────────────────────────────
+// Re-adding a class restarts its animation even if it just ran.
+function ddPulse(node, cls, ms) {
+  if (!node) return;
+  node.classList.remove(cls); void node.offsetWidth; node.classList.add(cls);
+  setTimeout(() => node.classList.remove(cls), ms || 1500);
+}
+function ddReduced() { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } }
+// Dashboard motion also follows the Dashboard Animations setting.
+function ddDashOff() { return ddReduced() || state.settings.dashboardAnimations === false; }
+// A figure counts from where it was to where it is now.
+function ddCount(node, from, to, render, ms) {
+  if (!node) return;
+  const t0 = performance.now(), dur = ms || 850, ease = x => 1 - Math.pow(1 - x, 3);
+  const step = now => { const k = Math.min(1, (now - t0) / dur); node.innerHTML = render(from + (to - from) * ease(k)); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+const DD_TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+
 function paintNavBadges() {
   let counts = {};
   try { counts = navBadgeCounts(); } catch (e) { return; }
@@ -4564,7 +4584,9 @@ function paintNavBadges() {
     const c = counts[el.dataset.badgeFor];
     const k = c && c.n > 0 ? c.n : 0;
     el.hidden = !k;
+    const was = el.textContent;
     el.textContent = k > 99 ? '99+' : String(k || '');
+    if (k && was && was !== el.textContent && !ddReduced()) ddPulse(el, 'dd-badge', 700);
     el.classList.toggle('is-wide', k > 9);
     el.classList.toggle('is-late', !!(c && c.late && k));
     const label = k ? tf('badge_' + el.dataset.badgeFor, k) : '';
@@ -5305,6 +5327,7 @@ function dispatchRender(tab) {
   ({dashboard:renderDashboard,budget:renderBudget,transactions:renderTransactions,debt:renderDebt,goals:renderSinking,calendar:renderCalendar,bills:renderSubscriptions,settings:renderSettings,notifications:renderNotifications}[tab]||renderDashboard)();
 }
 function switchTab(tab) {
+  if (tab === 'dashboard') _dashEntering = true;
   currentTab=tab;
   trackEvent('tab_viewed', { tab });
   // Both navigations are kept in step. Only one is ever on screen, but the
@@ -5382,6 +5405,12 @@ function loadSampleData(){
 // ── PRO DASHBOARD ─────────────────────────────────────────────────────
 function renderDashboard() {
   queueNavBadges();
+  const dashEl = document.getElementById('bview-dashboard');
+  const afterAction = !_dashEntering && currentTab === 'dashboard' && !!dashEl && dashEl.childElementCount > 0;
+  _dashEntering = false;
+  const prevSnap = afterAction ? dashSnapshot(dashEl) : null;
+  if (afterAction) dashQuietNext();
+  requestAnimationFrame(() => { if (prevSnap) animateDashDiff(dashEl, prevSnap); else animateStatsIn(dashEl); });
   rollBills();
   // renderDashboardLayout1 is still reachable, but only through Sleek,
   // which calls it and then swaps its heading.
@@ -5675,9 +5704,9 @@ function periodSoFarHtml(sum, spendSegs) {
   return `<div class="panel psf"><div class="panel-inner-sm">
     <div class="psf-head"><h3 class="ov-title">${t('psf_title')}</h3><span class="psf-range">${esc(formatDateShort(state.settings.periodStart))} – ${esc(formatDateShort(state.settings.periodEnd))}</span></div>
     <div class="psf-tiles">
-      <div class="psf-tile psf-tile--in"><span class="psf-k">${t('psf_in')}</span><strong>${fmt(inn)}</strong><em>${still > 0 ? tf('psf_still', fmt(still)) : planned > 0 ? t('psf_all_in') : '&nbsp;'}</em></div>
-      <div class="psf-tile psf-tile--out"><span class="psf-k">${t('psf_out')}</span><strong>${fmt(out)}</strong><em>${billsPart > 0 ? tf('psf_bills_part', fmt(billsPart)) : '&nbsp;'}</em></div>
-      <div class="psf-tile psf-tile--kept${kept < 0 ? ' is-neg' : ''}"><span class="psf-k">${t('psf_kept')}</span><strong>${kept < 0 ? '−' : ''}${fmt(Math.abs(kept))}</strong><em>${inn > 0 ? tf('psf_kept_pct', keptPct) : '&nbsp;'}</em></div>
+      <div class="psf-tile psf-tile--in"><span class="psf-k">${t('psf_in')}</span><strong data-v="${inn}">${fmt(inn)}</strong><em>${still > 0 ? tf('psf_still', fmt(still)) : planned > 0 ? t('psf_all_in') : '&nbsp;'}</em></div>
+      <div class="psf-tile psf-tile--out"><span class="psf-k">${t('psf_out')}</span><strong data-v="${out}">${fmt(out)}</strong><em>${billsPart > 0 ? tf('psf_bills_part', fmt(billsPart)) : '&nbsp;'}</em></div>
+      <div class="psf-tile psf-tile--kept${kept < 0 ? ' is-neg' : ''}"><span class="psf-k">${t('psf_kept')}</span><strong data-v="${kept}">${kept < 0 ? '−' : ''}${fmt(Math.abs(kept))}</strong><em>${inn > 0 ? tf('psf_kept_pct', keptPct) : '&nbsp;'}</em></div>
     </div>
     ${tot > 0 ? `<div class="psf-bar" role="img" aria-label="${esc(t('psf_where'))}">${segs.map(x =>
       `<span style="flex:${x.value};background:${x.color}" title="${esc(x.label)} ${esc(fmt(x.value))}"></span>`).join('')}</div>
@@ -5709,7 +5738,7 @@ function goalProgressHtml() {
     const status = done ? `<i class="gp-chip gp-chip--done">${t('gp_done')}</i>`
       : late ? `<i class="gp-chip gp-chip--late">${t('gp_late')}</i>`
       : has && f.targetDate ? `<i class="gp-chip">${tf('gp_by', formatDateShort(f.targetDate))}</i>` : `<i class="gp-chip gp-chip--open">${t('sf_open_ended')}</i>`;
-    return `<button class="gp-row" type="button" data-btab="goals">
+    return `<button class="gp-row" type="button" data-btab="goals" data-gp-id="${esc(f.id)}" data-pct="${has ? p : 100}">
       <span class="gp-ringwrap" style="color:${color}">${goalRingSvg(has ? p : 100, has ? color : 'var(--grad-purple)')}<b>${has ? p + '%' : ''}</b></span>
       <span class="gp-main"><span class="gp-name">${esc(f.icon && f.icon.length <= 4 ? f.icon + ' ' : '')}${esc(f.name)}${status}</span>
         <span class="gp-sub">${has ? tf('gp_of', fmt(f.currentSaved || 0), fmt(f.targetAmount)) : tf('gp_saved', fmt(f.currentSaved || 0))}${!done && c.requiredMonthly > 0 ? ` · ${fmt(c.requiredMonthly)}${t('sf_per_month')}` : ''}</span></span>
@@ -5744,7 +5773,7 @@ function recentActivityHtml() {
     ${rows.length ? `<div class="ra-list">${rows.map(tx => {
       const inc = tx.type === 'income';
       const tint = RA_TINT[tx.type] || 'var(--grad-indigo)';
-      return `<div class="ra-row">
+      return `<div class="ra-row" data-ra-id="${esc(tx.id)}">
         <span class="ra-ico" style="color:${tint};background:color-mix(in srgb, ${tint} 14%, transparent)" aria-hidden="true">${appIconSvg(RA_ICON[tx.type] || 'transactions')}</span>
         <span class="ra-main"><span class="ra-name">${esc(tx.description || tx.category)}</span>
           <span class="ra-meta">${esc(formatDateShort(tx.date))} · ${esc(tx.category)} · ${esc(txTypeLabel(tx.type))}</span></span>
@@ -6069,7 +6098,7 @@ function redFlagsHtml(rf) {
       ${rf.dismissed ? `<button class="link-btn rf-restore" type="button" data-rf-restore>${tf('rf_restore', rf.dismissed)}</button>` : ''}
     </div></div>
     <div class="panel rf-listcard"><div class="rf-card-inner">
-      <ol class="rf-list">${listed.length ? listed.map((x, i) => `<li class="rf-item rf-item--${x.sev}">
+      <ol class="rf-list">${listed.length ? listed.map((x, i) => `<li class="rf-item rf-item--${x.sev}" data-rf-id="${esc(x.id)}">
         <span class="rf-num">${i + 1}</span>
         <span class="rf-main"><span class="rf-t">${esc(x.title)}</span><span class="rf-d">${esc(x.detail)}</span></span>
         <span class="rf-acts">${x.act ? `<button class="btn btn-ghost btn-sm" type="button" data-rf-act="${x.id}">${esc(x.act.label)}</button>` : ''}
@@ -6189,10 +6218,11 @@ function dashStatsHtml(o) {
 function wireDashViews(el, rf) {
   el.querySelectorAll('[data-dash-view]').forEach(b => b.addEventListener('click', () => {
     if (dashView() === b.dataset.dashView) return;
-    state.settings.dashView = b.dataset.dashView; saveState(); renderDashboard();
+    state.settings.dashView = b.dataset.dashView; saveState(); _dashEntering = true; renderDashboard();
   }));
   el.querySelectorAll('[data-spend-curve]').forEach(b => b.addEventListener('click', () => {
     state.settings.spendCurve = b.dataset.spendCurve === '1'; saveState(); dashQuietNext(); renderDashboard();
+    if (!ddDashOff()) ddPulse(document.querySelector('#bview-dashboard .spend-line-path'), 'dd-draw', 1400);
   }));
   el.querySelectorAll('[data-ra-menu]').forEach(b => b.addEventListener('click', () => openTxSheet(b.dataset.raMenu)));
   el.querySelectorAll('[data-ra-edit]').forEach(b => b.addEventListener('click', () => raEdit(b.dataset.raEdit)));
@@ -6211,6 +6241,84 @@ function wireDashViews(el, rf) {
   });
 }
 
+
+
+// ── The dashboard after an action ────────────────────────────────────────
+// Switching to the dashboard plays its entrance. Any redraw while it is
+// already on screen is the result of something just done, so it redraws
+// quietly and animates only what that changed.
+let _dashEntering = true;
+function dashSnapshot(el) {
+  if (!el || !el.childElementCount) return null;
+  const today = toLocalISO(new Date());
+  const v = el.querySelector('.leftover-value');
+  const dot = el.querySelector(`.spend-line-dot[data-label="${today}"]`);
+  return {
+    free: v ? parseFloat(v.dataset.nlValue) : null,
+    nums: [...el.querySelectorAll('.psf-tile strong[data-v], .nl-pill strong[data-v]')].map(x => parseFloat(x.dataset.v)),
+    ra: [...el.querySelectorAll('.ra-row[data-ra-id]')].map(x => x.dataset.raId),
+    gp: Object.fromEntries([...el.querySelectorAll('.gp-row[data-gp-id]')].map(x => [x.dataset.gpId, parseFloat(x.dataset.pct)])),
+    rf: [...el.querySelectorAll('.rf-item[data-rf-id]')].map(x => x.dataset.rfId),
+    today: dot ? parseFloat(dot.dataset.val) : null
+  };
+}
+function animateDashDiff(el, prev) {
+  if (!prev || !el || ddDashOff()) return;
+  const moved = (a, b) => a != null && b != null && Math.abs(a - b) > 0.004;
+  // Free to spend counts to its new value and glows the way it went.
+  const v = el.querySelector('.leftover-value');
+  const free = v ? parseFloat(v.dataset.nlValue) : null;
+  if (moved(prev.free, free)) {
+    ddCount(v, prev.free, free, x => (x < 0 ? '\u2212' : '') + nlAmountHtml(Math.abs(x)), 950);
+    ddPulse(v, free > prev.free ? 'dd-up' : 'dd-down', 1400);
+  }
+  // In, out, kept and today's figures.
+  [...el.querySelectorAll('.psf-tile strong[data-v], .nl-pill strong[data-v]')].forEach((node, i) => {
+    const a = prev.nums[i], b = parseFloat(node.dataset.v);
+    if (!moved(a, b)) return;
+    ddCount(node, a, b, x => (x < 0 ? '\u2212' : '') + fmt(Math.abs(x)), 800);
+    ddPulse(node.closest('.psf-tile, .nl-pill'), 'dd-tile', 1200);
+  });
+  // A new transaction slides into Recent activity.
+  el.querySelectorAll('.ra-row[data-ra-id]').forEach(r => { if (!prev.ra.includes(r.dataset.raId)) ddPulse(r, 'dd-new', 1400); });
+  // A goal's ring sweeps from where it was to where it is.
+  el.querySelectorAll('.gp-row[data-gp-id]').forEach(r => {
+    const a = prev.gp[r.dataset.gpId], b = parseFloat(r.dataset.pct);
+    if (a == null || Math.abs(a - b) < 0.05) return;
+    const arc = r.querySelectorAll('.gp-ring circle')[1];
+    if (arc) {
+      const c = 2 * Math.PI * 19, to = arc.getAttribute('stroke-dasharray');
+      arc.style.transition = 'none'; arc.style.strokeDasharray = `${(Math.max(0, Math.min(100, a)) / 100 * c).toFixed(1)} ${c.toFixed(1)}`;
+      void arc.getBoundingClientRect();
+      requestAnimationFrame(() => { arc.style.transition = 'stroke-dasharray .95s cubic-bezier(.2,.8,.2,1)'; arc.style.strokeDasharray = to; });
+    }
+    const label = r.querySelector('.gp-ringwrap b');
+    if (label && label.textContent) ddCount(label, a, b, x => Math.round(x) + '%', 950);
+    ddPulse(r, 'dd-tile', 1200);
+  });
+  // Red flags: the count pops when it changes, a new flag slides in.
+  const cur = [...el.querySelectorAll('.rf-item[data-rf-id]')].map(x => x.dataset.rfId);
+  if (cur.length !== prev.rf.length) ddPulse(el.querySelector('.rf-big strong'), 'dd-pop', 700);
+  el.querySelectorAll('.rf-item[data-rf-id]').forEach(r => { if (!prev.rf.includes(r.dataset.rfId)) ddPulse(r, 'dd-new', 1400); });
+  // Today's point on the chart pings when today's spending moved.
+  const today = toLocalISO(new Date());
+  const dot = el.querySelector(`.spend-line-dot[data-label="${today}"]`);
+  if (dot && moved(prev.today, parseFloat(dot.dataset.val))) ddPulse(dot, 'dd-ping', 2400);
+}
+// The statistics view draws itself in: bars grow, the pace line draws.
+function animateStatsIn(el) {
+  if (ddDashOff() || !el.querySelector('.st-kpis')) return;
+  const grow = [...el.querySelectorAll('.st-bar')], widen = [...el.querySelectorAll('.st-cat-track i')];
+  const hs = grow.map(b => b.style.height), ws = widen.map(b => b.style.width);
+  grow.forEach(b => { b.style.transition = 'none'; b.style.height = '0%'; });
+  widen.forEach(b => { b.style.transition = 'none'; b.style.width = '0%'; });
+  void el.offsetWidth;
+  requestAnimationFrame(() => {
+    grow.forEach((b, i) => { b.style.transition = `height .7s cubic-bezier(.2,.8,.2,1) ${Math.min(i * 30, 360)}ms`; b.style.height = hs[i]; });
+    widen.forEach((b, i) => { b.style.transition = `width .8s cubic-bezier(.2,.8,.2,1) ${Math.min(i * 50, 400)}ms`; b.style.width = ws[i]; });
+  });
+  el.querySelectorAll('.st-actual, .st-proj, .st-plan').forEach(pth => ddPulse(pth, 'dd-draw', 1400));
+}
 
 function renderDashboardLayout3() {
   // Classic first: every card, already wired, with its own listeners intact.
@@ -7751,9 +7859,14 @@ function openQuickAddTx(prefill){
 
   // ── Saving ──
   const save = again => addTransaction({ prefix: 'qa', after: () => {
-    if (currentTab !== 'settings') dispatchRender(currentTab);
     showToast(t('toast_tx_added'));
-    if (!again) { closeModal(); return; }
+    if (!again) {
+      const go = $('qaSaveBtn');
+      go.disabled = true; go.classList.add('is-done'); go.innerHTML = DD_TICK;
+      setTimeout(() => { closeModal(); if (currentTab !== 'settings') dispatchRender(currentTab); }, ddReduced() ? 0 : 460);
+      return;
+    }
+    if (currentTab !== 'settings') dispatchRender(currentTab);
     // Ready for the next one: same type and day, fresh amount and category.
     buf = ''; cat = ''; $('qaDesc').value = '';
     paintCats(); paint();
@@ -10103,8 +10216,8 @@ function nlHeroHtml(leftover, opts) {
   const spentToday = nlSpentToday();
   const freeToday = p.left >= 0 && free > 0 ? Math.max(0, (free + spentToday) / (p.left + 1) - spentToday) : 0;
   const pills = [
-    `<div class="nl-pill nl-pill--today"><span>${t('nl_free_today')}</span><strong>${fmt(freeToday)}</strong></div>`,
-    `<div class="nl-pill"><span>${t('nl_spent_today')}</span><strong>${fmt(spentToday)}</strong></div>`,
+    `<div class="nl-pill nl-pill--today"><span>${t('nl_free_today')}</span><strong data-v="${freeToday}">${fmt(freeToday)}</strong></div>`,
+    `<div class="nl-pill"><span>${t('nl_spent_today')}</span><strong data-v="${spentToday}">${fmt(spentToday)}</strong></div>`,
     `<div class="nl-pill"><span>${t('nl_income_kept')}</span><strong>${kept}%</strong></div>`,
     o.subsMonthly
       ? `<div class="nl-pill"><span>${t('dash_subscriptions')}</span><strong>${fmt(o.subsMonthly * 12)}${t('dash_per_year')}</strong></div>`

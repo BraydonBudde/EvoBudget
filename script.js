@@ -2968,6 +2968,24 @@ function renderNotifications() {
   el.querySelectorAll('[data-nt-go]').forEach(btn => btn.addEventListener('click', () => switchBTab(btn.dataset.ntGo)));
 }
 
+
+// ── Motion that answers an action ────────────────────────────────────────
+// Re-adding a class restarts its animation even if it just ran.
+function ddPulse(node, cls, ms) {
+  if (!node) return;
+  node.classList.remove(cls); void node.offsetWidth; node.classList.add(cls);
+  setTimeout(() => node.classList.remove(cls), ms || 1500);
+}
+function ddReduced() { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } }
+// A figure counts from where it was to where it is now.
+function ddCount(node, from, to, render, ms) {
+  if (!node) return;
+  const t0 = performance.now(), dur = ms || 850, ease = x => 1 - Math.pow(1 - x, 3);
+  const step = now => { const k = Math.min(1, (now - t0) / dur); node.innerHTML = render(from + (to - from) * ease(k)); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+const DD_TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+
 function paintNavBadges() {
   let counts = {};
   try { counts = navBadgeCounts(); } catch (e) { return; }
@@ -2982,7 +3000,9 @@ function paintNavBadges() {
     const c = counts[el.dataset.badgeFor];
     const k = c && c.n > 0 ? c.n : 0;
     el.hidden = !k;
+    const was = el.textContent;
     el.textContent = k > 99 ? '99+' : String(k || '');
+    if (k && was && was !== el.textContent && !ddReduced()) ddPulse(el, 'dd-badge', 700);
     el.classList.toggle('is-wide', k > 9);
     el.classList.toggle('is-late', !!(c && c.late && k));
     const label = k ? tf('badge_' + el.dataset.badgeFor, k) : '';
@@ -5345,9 +5365,14 @@ function openQuickAddTx(prefill){
 
   // ── Saving ──
   const save = again => addTransaction({ prefix: 'qa', after: () => {
-    if (currentBTab !== 'settings') dispatchRender(currentBTab);
     showToast(t('toast_tx_added'));
-    if (!again) { closeModal(); return; }
+    if (!again) {
+      const go = $('qaSaveBtn');
+      go.disabled = true; go.classList.add('is-done'); go.innerHTML = DD_TICK;
+      setTimeout(() => { closeModal(); if (currentBTab !== 'settings') dispatchRender(currentBTab); }, ddReduced() ? 0 : 460);
+      return;
+    }
+    if (currentBTab !== 'settings') dispatchRender(currentBTab);
     // Ready for the next one: same type and day, fresh amount and category.
     buf = ''; cat = ''; $('qaDesc').value = '';
     paintCats(); paint();

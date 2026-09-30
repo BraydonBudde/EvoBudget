@@ -6775,3 +6775,59 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
   .hs { font-size: 15px; }
   .hs ol > li { padding-left: 46px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTION THAT ANSWERS AN ACTION
+   Short, and only on what changed: a figure glows the way it moved, a
+   tile or row lights up, a count pops, today's point pings.
+   ═══════════════════════════════════════════════════════════════ */
+.nl-value.dd-up   { animation: ddGlowUp 1.4s ease; }
+.nl-value.dd-down { animation: ddGlowDown 1.4s ease; }
+@keyframes ddGlowUp {
+  0%   { text-shadow: none; transform: none; }
+  25%  { text-shadow: 0 0 28px rgba(16, 185, 129, .75); transform: scale(1.02); }
+  100% { text-shadow: none; transform: none; }
+}
+@keyframes ddGlowDown {
+  0%   { text-shadow: none; transform: none; }
+  25%  { text-shadow: 0 0 28px rgba(244, 63, 94, .7); transform: scale(.985); }
+  100% { text-shadow: none; transform: none; }
+}
+.dd-tile { animation: ddTile 1.2s ease; }
+@keyframes ddTile {
+  0%   { box-shadow: 0 0 0 0 rgba(var(--grad-indigo-rgb), 0); }
+  30%  { box-shadow: 0 0 0 3px rgba(var(--grad-indigo-rgb), .55), 0 10px 26px -12px rgba(var(--grad-indigo-rgb), .7); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--grad-indigo-rgb), 0); }
+}
+.dd-new { animation: ddNew 1.4s cubic-bezier(.2, .8, .2, 1); }
+@keyframes ddNew {
+  0%   { opacity: 0; transform: translateY(-12px) scale(.98); box-shadow: 0 0 0 0 rgba(var(--grad-indigo-rgb), 0); }
+  30%  { opacity: 1; transform: none; box-shadow: 0 0 0 2px rgba(var(--grad-indigo-rgb), .6), 0 12px 30px -14px rgba(var(--grad-indigo-rgb), .8); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--grad-indigo-rgb), 0); }
+}
+.dd-pop { display: inline-block; animation: ddPop .7s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes ddPop { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
+.nav-badge.dd-badge { animation: ddPop .7s cubic-bezier(.34, 1.56, .64, 1); }
+.spend-line-dot.dd-ping { animation: ddPing 1.2s ease-out 2; z-index: 2; }
+@keyframes ddPing {
+  0%   { box-shadow: 0 0 0 0 rgba(236, 72, 153, .8); transform: scale(1.7); }
+  100% { box-shadow: 0 0 0 16px rgba(236, 72, 153, 0); transform: scale(1); }
+}
+.spend-line-path.dd-draw, .st-actual.dd-draw, .st-proj.dd-draw, .st-plan.dd-draw { animation: ddDraw 1.1s cubic-bezier(.4, 0, .2, 1); }
+@keyframes ddDraw { from { stroke-dasharray: 1 1; stroke-dashoffset: 1; } to { stroke-dasharray: 1 1; stroke-dashoffset: 0; } }
+/* The keypad's Save turns into a tick with a burst before the sheet closes. */
+.qa-go.is-done {
+  background: linear-gradient(135deg, #10b981, #06b6d4) !important; color: #fff; position: relative; overflow: visible;
+  animation: ddDone .46s ease;
+}
+.qa-go.is-done svg { width: 30px; height: 30px; animation: ddTickIn .35s cubic-bezier(.34, 1.56, .64, 1); }
+.qa-go.is-done::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  animation: ddBurst .5s ease-out forwards;
+}
+@keyframes ddDone { 0% { transform: scale(1); } 40% { transform: scale(.97); } 100% { transform: scale(1); } }
+@keyframes ddTickIn { from { transform: scale(.7) rotate(-20deg); } to { transform: none; } }
+@keyframes ddBurst { from { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); } to { box-shadow: 0 0 0 18px rgba(16, 185, 129, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .dd-up, .dd-down, .dd-tile, .dd-new, .dd-pop, .dd-badge, .dd-ping, .dd-draw, .qa-go.is-done, .qa-go.is-done svg, .qa-go.is-done::after { animation: none !important; }
+}
