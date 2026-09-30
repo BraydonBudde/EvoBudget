@@ -678,11 +678,18 @@ function getUpcomingEvents(days, act) {
   const debtAct=act?.debt||{}, subAct=act?.subscription||{};
   // srcId is what a Pay button needs to reopen the right thing. Scheduled
   // automations have no source to pay, so they carry none.
+  const now0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const pEnd=state.settings?.periodEnd||'';
   const push=(day,label,type,amount,color,paid,srcId,paidSoFar,expected)=>{
     for(let mo=0;mo<=2;mo++){
-      const d=new Date(now.getFullYear(),now.getMonth()+mo,day);
-      if(d>=now&&d<=end) events.push({date:toLocalISO(d),label,type,amount,color,paid:!!paid,srcId,
-                                      paidSoFar:paidSoFar||0,expected:expected||0});
+      const last=new Date(now.getFullYear(),now.getMonth()+mo+1,0).getDate();
+      const d=new Date(now.getFullYear(),now.getMonth()+mo,Math.min(day,last));
+      if(d<now0||d>end) continue;
+      const iso=toLocalISO(d), inPeriod=!pEnd||iso<=pEnd;
+      // What was paid this period settles this period's date, not next month's.
+      events.push(inPeriod
+        ? {date:iso,label,type,amount,color,paid:!!paid,srcId,paidSoFar:paidSoFar||0,expected:expected||0}
+        : {date:iso,label,type,amount:expected||amount,color,paid:false,srcId,paidSoFar:0,expected:expected||0});
     }
   };
 
@@ -5530,7 +5537,9 @@ function comingUpItems(committed) {
   all.slice().sort((a, b) => rank(a) - rank(b) || String(a.date).localeCompare(String(b.date)))
     .forEach(i => {
       const src = `${i.type}:${i.id}`;
-      if (picked.length >= CU_LIMIT || (i.later && shown.has(src))) return;
+      // Each bill, debt or automation once, at its earliest date: a weekly
+      // bill would otherwise fill the list on its own.
+      if (picked.length >= CU_LIMIT || shown.has(src)) return;
       picked.push(i); shown.add(src);
     });
   return picked
@@ -5766,7 +5775,8 @@ function raDelete(id) {
   const i = state.transactions.findIndex(x => x.id === id);
   if (i < 0) return;
   const tx = state.transactions[i];
-  const bill = (state.bills || []).find(b => rowPayTxIds(b).includes(tx.id));
+  // The bill it paid, whether it paid the current cycle or one already rolled on.
+  const bill = (state.bills || []).find(b => rowPayTxIds(b).includes(tx.id) || (b.paidCycles || []).some(c => c.ids.includes(tx.id)));
   applySinkingFundDelta(tx, -1);
   state.transactions.splice(i, 1);
   syncBillPaidLinks();
@@ -6963,6 +6973,10 @@ function rowRemaining(row) {
   return Math.max(0, payRound2(rowExpected(row) - rowPaidAmount(row)));
 }
 function rowPayState(row) {
+  if (Array.isArray(row.payTxIds)) {
+    if (row.payTxIds.length && billSettles(row, 0)) return 'paid';
+    return rowPaidAmount(row) > 0 ? 'partial' : 'unpaid';
+  }
   if (row.paid) return 'paid';
   return rowPaidAmount(row) > 0 ? 'partial' : 'unpaid';
 }
@@ -6984,12 +6998,13 @@ function stepBillDate(iso, freq) {
 }
 function rollBills() {
   const today = toLocalISO(new Date());
-  let changed = false;
+  let changed = syncBillPaidLinks();
   (state.bills || []).forEach(b => {
     // Bounded, so a bill with a date years in the past cannot spin forever.
     for (let i = 0; i < 60; i++) {
       if (!b.nextBillingDate || b.nextBillingDate >= today) break;
       if (!rowPayTxIds(b).length || !billSettles(b, 0)) break;
+      b.paidCycles = (b.paidCycles || []).concat([{ due: b.nextBillingDate, ids: rowPayTxIds(b).slice(), amount: rowExpected(b) }]).slice(-24);
       b.lastPaidOn = b.nextBillingDate;
       b.nextBillingDate = stepBillDate(b.nextBillingDate, b.frequency);
       b.payTxIds = []; b.paid = false;
@@ -7063,7 +7078,7 @@ function removeTargetPayment(tg, txId, onDone) {
   if (tx) applySinkingFundDelta(tx, -1);
   state.transactions = state.transactions.filter(t => t.id !== txId);
   if (tg.row) setRowPayments(tg.row, rowPayTxIds(tg.row).filter(id => id !== txId));
-  else syncBillPaidLinks();
+  syncBillPaidLinks();
   saveState();
   onDone();
   showToast(t('toast_payment_removed'));
@@ -7176,15 +7191,31 @@ function promptPay(kind, id, onDone, occDate) {
 // of the several delete paths (single delete, bulk delete, clear all, edit-modal
 // delete) - a bill linked to a since-deleted transaction can't stay marked paid.
 function syncBillPaidLinks() {
-  const liveIds = new Set(state.transactions.map(tx => tx.id));
+  const byId = new Map(state.transactions.map(tx => [tx.id, tx]));
+  // A payment belongs to a bill while it is still a bill payment under that
+  // bill's name. Deleted, retyped or moved to another name, it lets go.
+  const valid = (b, id) => { const tx = byId.get(id); return !!tx && tx.type === 'bill' && tx.category === b.name; };
   let changed = false;
   (state.bills || []).forEach(b => {
-    const ids = rowPayTxIds(b);
-    if (!ids.length) return;
-    const live = ids.filter(id => liveIds.has(id));
-    if (live.length === ids.length && Array.isArray(b.payTxIds)) return;
-    setRowPayments(b, live);
-    changed = true;
+    const ids = rowPayTxIds(b), live = ids.filter(id => valid(b, id));
+    if (live.length !== ids.length || !Array.isArray(b.payTxIds)) { setRowPayments(b, live); changed = true; }
+    else { const p = live.length > 0 && billSettles(b, 0); if (!!b.paid !== p) { b.paid = p; changed = true; } }
+    // A cycle that was settled and rolled on, whose payments no longer
+    // cover it, is owed again: the bill steps back to that cycle, and any
+    // later payment is counted toward it first.
+    const cyc = b.paidCycles || [];
+    for (let i = 0; i < cyc.length; i++) {
+      const c = cyc[i], cl = c.ids.filter(id => valid(b, id));
+      const sum = payRound2(cl.reduce((t, id) => t + (Number(byId.get(id).amount) || 0), 0));
+      if (cl.length === c.ids.length && sum >= (c.amount || 0) - 0.005) continue;
+      const later = cyc.slice(i + 1).flatMap(x => x.ids).concat(rowPayTxIds(b)).filter(id => valid(b, id));
+      b.nextBillingDate = c.due;
+      b.lastPaidOn = i > 0 ? cyc[i - 1].due : null;
+      b.paidCycles = cyc.slice(0, i);
+      setRowPayments(b, cl.concat(later));
+      changed = true;
+      break;
+    }
   });
   return changed;
 }
@@ -7439,6 +7470,7 @@ function renderTransactions() {
   document.getElementById('txSort')?.addEventListener('change',e=>{txFilter.sort=e.target.value;txPage=0;renderTxList();});
   document.getElementById('clearAllBtn2')?.addEventListener('click',async()=>{
     if(!await confirmDialog({message:t('confirm_delete_all_tx'),confirmText:t('delete')}))return;
+    state.transactions.forEach(tx=>applySinkingFundDelta(tx,-1));
     state.transactions=[];txSelected.clear();syncBillPaidLinks();saveState();renderTransactions();
   });
   document.getElementById('addRecurringBtn')?.addEventListener('click',()=>openRecurringModal(null));
@@ -7450,6 +7482,14 @@ function openAddTxFromList(){
   openQuickAddTx();
 }
 // Adjust a sinking fund's currentSaved when a sinking_fund tx is added (+1) or removed (-1)
+// Transactions and automations file by name, so a rename carries them with
+// it. Without this a renamed bill, goal or debt loses its history: its
+// payments stop counting toward it and it reads as unpaid.
+function renameTxCategory(txType, oldName, newName) {
+  if (!oldName || oldName === newName) return;
+  (state.transactions || []).forEach(tx => { if (tx.type === txType && tx.category === oldName) tx.category = newName; });
+  (state.recurringTemplates || []).forEach(r => { if (r.type === txType && r.category === oldName) r.category = newName; });
+}
 function applySinkingFundDelta(tx, sign) {
   if (tx?.type !== 'sinking_fund') return;
   const fund = (state.sinkingFunds||[]).find(f => f.name === tx.category);
@@ -7829,6 +7869,12 @@ function openEditTx(txId){
       const updated={...state.transactions[idx],id:txId,date,type,category:cat,amount,description:desc,allocation:allocRequired?(alloc||null):null};
       state.transactions[idx]=updated;
       applySinkingFundDelta(updated, +1); // apply new
+      if(updated.type==='bill'){
+        const bill=(state.bills||[]).find(b=>b.name===updated.category);
+        const owned=bill&&(rowPayTxIds(bill).includes(txId)||(bill.paidCycles||[]).some(c=>c.ids.includes(txId)));
+        if(bill&&!owned) setRowPayments(bill,[...rowPayTxIds(bill),txId]);
+      }
+      syncBillPaidLinks();
     }
     saveState(); closeModal(); renderTxList(); showToast(t('toast_tx_updated'));
   });
@@ -8140,7 +8186,7 @@ function openDebtModal(debtId){
       armFixedMonths:isArm?armFixedYears*12:undefined,
       armAdjustedRate:isArm?armRate:undefined};
     if(isNew){did=uid();debtObj={id:did,...fields};state.debts.push(debtObj);trialUse('debts');trackEvent('feature_used',{feature:'debt_added'});}
-    else{did=debtId;debtObj=state.debts.find(x=>x.id===debtId);if(debtObj){Object.assign(debtObj,fields);Object.keys(fields).forEach(k=>{if(fields[k]===undefined)delete debtObj[k];});}}
+    else{did=debtId;debtObj=state.debts.find(x=>x.id===debtId);if(debtObj){renameTxCategory('debt',debtObj.name,fields.name);Object.assign(debtObj,fields);Object.keys(fields).forEach(k=>{if(fields[k]===undefined)delete debtObj[k];});}}
     if(automationOn()&&debtObj){if(auto)upsertLinkedTemplate('debt',did,{type:'debt',category:name||'Debt',label:(name||'Debt')+' '+t('automate_payment_word'),amount:totalMonthlyDebtCost(debtObj),frequency:'monthly',nextDue:nextDueFromDay(dueDay)});else removeLinkedTemplate('debt',did);}
     saveState();closeModal();renderDebt();showToast(t(isNew?'toast_debt_added':'toast_debt_updated'));
   });
@@ -8446,7 +8492,7 @@ function openFundModal(fundId){
     if(errEl)errEl.hidden=true;
     let fid,fundObj;
     if(isNew){fid=uid();fundObj={id:fid,name,icon:selIcon,targetAmount:target,currentSaved:saved,targetDate:date,billingDay:auto?billingDay:null,monthlyContribution:parseFloat(document.getElementById('fundMonthly')?.value)||0};state.sinkingFunds.push(fundObj);trialUse('sinkingFunds');trackEvent('feature_used',{feature:'sinking_fund_created'});}
-    else{fid=fundId;fundObj=state.sinkingFunds.find(sf=>sf.id===fundId);if(fundObj){fundObj.monthlyContribution=parseFloat(document.getElementById('fundMonthly')?.value)||0;fundObj.name=name;fundObj.icon=selIcon;fundObj.targetAmount=target;fundObj.currentSaved=saved;fundObj.targetDate=date;if(auto)fundObj.billingDay=billingDay;}}
+    else{fid=fundId;fundObj=state.sinkingFunds.find(sf=>sf.id===fundId);if(fundObj){fundObj.monthlyContribution=parseFloat(document.getElementById('fundMonthly')?.value)||0;renameTxCategory('sinking_fund',fundObj.name,name);fundObj.name=name;fundObj.icon=selIcon;fundObj.targetAmount=target;fundObj.currentSaved=saved;fundObj.targetDate=date;if(auto)fundObj.billingDay=billingDay;}}
     if(automationOn()&&fundObj){if(auto){const amt=Math.round((calcFund(fundObj).requiredMonthly||0)*100)/100;upsertLinkedTemplate('sinking_fund',fid,{type:'sinking_fund',category:name,label:name,amount:amt,frequency:'monthly',nextDue:nextDueFromDay(billingDay)});}else removeLinkedTemplate('sinking_fund',fid);}
     saveState();closeModal();renderSinking();showToast(t(isNew?'toast_fund_created':'toast_fund_updated'));
   });
@@ -8851,7 +8897,7 @@ function openSubModal(subId){
     const billKind=document.getElementById('subKind')?.value==='subscription'?'subscription':'bill';
     let sid;
     if(isNew){sid=uid();state.bills.push({id:sid,name,amount,frequency:freq,category:cat,nextBillingDate:date,active:true,allocation:alloc,kind:billKind,payTxIds:[]});trialUse('subscriptions');trackEvent('feature_used',{feature:'subscription_added'});}
-    else{sid=subId;const s=state.bills.find(s=>s.id===subId);if(s){if(amount!==s.amount)(s.priceHistory=s.priceHistory||[]).push({date:today(),from:s.amount,to:amount});s.name=name;s.amount=amount;s.frequency=freq;s.category=cat;s.nextBillingDate=date;s.allocation=alloc;s.kind=billKind;}}
+    else{sid=subId;const s=state.bills.find(s=>s.id===subId);if(s){if(amount!==s.amount)(s.priceHistory=s.priceHistory||[]).push({date:today(),from:s.amount,to:amount});renameTxCategory('bill',s.name,name);if(date!==s.nextBillingDate)s.paidCycles=[];s.name=name;s.amount=amount;s.frequency=freq;s.category=cat;s.nextBillingDate=date;s.allocation=alloc;s.kind=billKind;}}
     if(automationOn()){if(auto)upsertLinkedTemplate('bill',sid,{type:'bill',category:cat||'Bills',label:name,amount,frequency:freq,nextDue:date||today(),allocation:alloc});else removeLinkedTemplate('bill',sid);}
     saveState();closeModal();renderSubscriptions();showToast(t(isNew?'toast_sub_added':'toast_sub_updated'));
   });
@@ -9894,12 +9940,37 @@ function nlCommitted() {
   // not upcoming, so the event list leaves it out; it is added here, so it
   // comes off what is free to spend and heads the Coming up list.
   const today = toLocalISO(new Date());
-  const overdue = (state.bills || [])
-    .filter(b => b.active !== false && b.nextBillingDate && b.nextBillingDate < today && rowPayState(b) !== 'paid')
-    .map(b => { const exp = rowExpected(b), done = rowPaidAmount(b);
-      return { label: b.name, date: b.nextBillingDate, amount: Math.max(0, payRound2(exp - done)) || exp,
-               type: 'bill', id: b.id, occDate: b.nextBillingDate, paidSoFar: done, expected: exp }; })
-    .filter(i => i.amount > 0);
+  // A bill several cycles behind owes each missed cycle that fell inside
+  // this period, not just the oldest one.
+  const pStart = state.settings.periodStart || '';
+  const overdue = [];
+  (state.bills || []).filter(b => b.active !== false && b.nextBillingDate && b.nextBillingDate < today).forEach(b => {
+    const exp = rowExpected(b), done = rowPaidAmount(b);
+    let d = b.nextBillingDate;
+    // Nothing dated after the period's end belongs to it, overdue or not.
+    for (let i = 0; i < 400 && d < today && (!end || d <= end); i++) {
+      if (i === 0) {
+        const amt = rowPayState(b) === 'paid' ? 0 : (Math.max(0, payRound2(exp - done)) || exp);
+        if (amt > 0) overdue.push({ label: b.name, date: d, amount: amt, type: 'bill', id: b.id, occDate: d, paidSoFar: done, expected: exp });
+      } else if ((!pStart || d >= pStart) && exp > 0) {
+        overdue.push({ label: b.name, date: d, amount: exp, type: 'bill', id: b.id, occDate: d, paidSoFar: 0, expected: exp });
+      }
+      d = stepBillDate(d, b.frequency);
+    }
+  });
+  const start = state.settings.periodStart || '';
+  let debtAct = {};
+  try { debtAct = computeActuals().debt || {}; } catch (e) { debtAct = {}; }
+  const now = new Date();
+  (state.debts || []).forEach(d => {
+    const day = parseInt(d.dueDay, 10), min = Number(d.minimumPayment) || 0;
+    if (!(day >= 1) || !(min > 0)) return;
+    const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const due = toLocalISO(new Date(now.getFullYear(), now.getMonth(), Math.min(day, last)));
+    const paid = payRound2(Number(debtAct[d.name]) || 0);
+    if (due < today && (!start || due >= start) && (!end || due <= end) && paid < min - 0.005)
+      overdue.push({ label: d.name, date: due, amount: payRound2(min - paid), type: 'debt', id: d.id, occDate: due, paidSoFar: paid, expected: min });
+  });
   const items = overdue.concat(events
     .filter(ev => !ev.paid && (Number(ev.amount) || 0) > 0 && (!end || ev.date <= end))
     .map(ev => ({ label: ev.label, date: ev.date, amount: Number(ev.amount) || 0,

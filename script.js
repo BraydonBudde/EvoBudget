@@ -4608,11 +4608,15 @@ function rowPayTxIds(row) {
   if (Array.isArray(row.payTxIds)) return row.payTxIds;
   return row.paidTxId ? [row.paidTxId] : [];
 }
+// A bill or debt row falls due every month, so last month's payment does
+// not settle this one: only payments dated inside the current period count.
 function rowPayments(row) {
   const ids = rowPayTxIds(row);
   if (!ids.length) return [];
+  const a = state.settings.periodStart || '', b = state.settings.periodEnd || '';
   const byId = new Map(state.transactions.map(tx => [tx.id, tx]));
-  return ids.map(id => byId.get(id)).filter(Boolean).sort((a, b) => a.date.localeCompare(b.date));
+  return ids.map(id => byId.get(id)).filter(tx => tx && (!a || tx.date >= a) && (!b || tx.date <= b))
+    .sort((x, y) => x.date.localeCompare(y.date));
 }
 function rowPaidAmount(row) {
   return payRound2(rowPayments(row).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0));
@@ -4623,6 +4627,10 @@ function rowRemaining(row) {
   return Math.max(0, payRound2((Number(row.expected) || 0) - rowPaidAmount(row)));
 }
 function rowPayState(row) {
+  if (Array.isArray(row.payTxIds)) {
+    if (rowPayments(row).length && rowSettles(row, 0)) return 'paid';
+    return rowPaidAmount(row) > 0 ? 'partial' : 'unpaid';
+  }
   if (row.paid) return 'paid';
   return rowPaidAmount(row) > 0 ? 'partial' : 'unpaid';
 }
@@ -4636,7 +4644,7 @@ function payRound2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
 function setRowPayments(row, ids) {
   row.payTxIds = ids;
   delete row.paidTxId;
-  row.paid = ids.length > 0 && rowSettles(row, 0);
+  row.paid = rowPayments(row).length > 0 && rowSettles(row, 0);
 }
 // Drops one payment: the transaction goes, and the row falls back to partial
 // or unpaid on its own.
@@ -4645,6 +4653,7 @@ function removeRowPayment(type, rowId, txId, onDone) {
   if (!row) return;
   state.transactions = state.transactions.filter(tx => tx.id !== txId);
   setRowPayments(row, rowPayTxIds(row).filter(id => id !== txId));
+  syncModulePaidLinks();
   saveState();
   onDone();
   showToast(t('toast_payment_removed'));
@@ -4743,16 +4752,15 @@ function promptMarkModulePaid(type, rowId, onDone) {
 // any of the delete paths (single delete, edit-modal delete, clear all) - a row
 // linked to a since-deleted transaction can't stay marked paid.
 function syncModulePaidLinks() {
-  const liveIds = new Set(state.transactions.map(tx => tx.id));
+  const byId = new Map(state.transactions.map(tx => [tx.id, tx]));
   let changed = false;
   ['bills', 'debt'].forEach(type => {
     (state.budgets[type] || []).forEach(row => {
       const ids = rowPayTxIds(row);
-      if (!ids.length) return;
-      const live = ids.filter(id => liveIds.has(id));
-      if (live.length === ids.length && Array.isArray(row.payTxIds)) return;
-      setRowPayments(row, live);
-      changed = true;
+      const live = ids.filter(id => { const tx = byId.get(id); return !!tx && tx.type === TX_TYPE_FOR_MODULE[type] && tx.category === row.category; });
+      if (live.length !== ids.length || (ids.length && !Array.isArray(row.payTxIds))) { setRowPayments(row, live); changed = true; return; }
+      const p = rowPayments(row).length > 0 && rowSettles(row, 0);
+      if (!!row.paid !== p) { row.paid = p; changed = true; }
     });
   });
   return changed;
@@ -5459,7 +5467,13 @@ function openEditTx(txId) {
     const idx = state.transactions.findIndex(t => t.id === txId);
     // Spread the existing record rather than rebuilding it, so anything the
     // form doesn't show (a recurring-template link, for one) survives an edit.
-    if (idx !== -1) state.transactions[idx] = { ...state.transactions[idx], id: txId, date, type, category: cat, amount, description: desc };
+    if (idx !== -1) {
+      state.transactions[idx] = { ...state.transactions[idx], id: txId, date, type, category: cat, amount, description: desc };
+      const modType = type === 'bill' ? 'bills' : type === 'debt' ? 'debt' : null;
+      const row = modType && (state.budgets[modType] || []).find(r => r.category === cat);
+      if (row && !rowPayTxIds(row).includes(txId)) setRowPayments(row, [...rowPayTxIds(row), txId]);
+      syncModulePaidLinks();
+    }
     saveState(); closeModal(); renderTxList();
     showToast(t('toast_tx_updated'));
   });
@@ -6252,14 +6266,20 @@ function nlCommitted() {
   const items = [];
   ['bills', 'debt'].forEach(type => {
     (state.budgets[type] || []).forEach(r => {
-      if (r.paid) return;
+      if (rowPayState(r) === 'paid') return;
       const day = rowDueDay(r);
       if (!day) return;
       // The next time this day comes round. It used to compare a stored
       // date against today, so a row whose date had passed was dropped for
       // good instead of coming round again next period.
-      const due = nextDueFromDay(day);
-      if (due < today) return;
+      // This month's date, if it has passed inside the period unpaid, is
+      // still owed; otherwise the next time the day comes round.
+      const now0 = new Date(); now0.setHours(0, 0, 0, 0);
+      const last = new Date(now0.getFullYear(), now0.getMonth() + 1, 0).getDate();
+      const thisMonth = toLocalISO(new Date(now0.getFullYear(), now0.getMonth(), Math.min(day, last)));
+      const start = state.settings.periodStart || '';
+      const due = thisMonth < today && (!start || thisMonth >= start) ? thisMonth : nextDueFromDay(day);
+      if (due < today && !(start && due >= start)) return;
       if (end && due > end) return;
       // A part-paid row commits only what is left of it.
       const amt = rowRemaining(r);
