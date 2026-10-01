@@ -6879,3 +6879,68 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 @media (prefers-reduced-motion: reduce) {
   .dd-up, .dd-down, .dd-tile, .dd-new, .dd-pop, .dd-badge, .dd-ping, .dd-draw, .qa-go.is-done, .qa-go.is-done svg, .qa-go.is-done::after { animation: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   POP-UPS: one field to a row, never a scrolling box of their own,
+   and more room on a desktop. A pop-up taller than the screen lets the
+   dimmed backdrop scroll instead, so the form is always read whole.
+   ═══════════════════════════════════════════════════════════════ */
+.modal .field-grid { grid-template-columns: 1fr; gap: 0; }
+.modal-overlay { overflow-y: auto; align-items: flex-start; overscroll-behavior: contain; }
+.modal { max-height: none; overflow: visible; margin: auto; flex-shrink: 0; }
+@media (min-width: 768px) {
+  .modal { max-width: 640px; padding: 44px 48px; }
+  .modal-title { font-size: 21px; }
+  .modal:has(> .modal-body > .qa), .modal:has(> .modal-body > .bp) { max-width: 920px; }
+  .modal:has(> .modal-body > .hs) { max-width: 860px; }
+  .modal.compare-modal { max-width: 920px; width: min(920px, 92vw); }
+}
+
+/* ── Heads-ups: the ? beside each, and the help it opens ── */
+.rf-help { font-weight: 800; font-size: 14px; color: var(--text-secondary); }
+.rf-item--high .rf-help:hover { color: #f43f5e; }
+.rf-item--med .rf-help:hover { color: #f59e0b; }
+.rfh-detail { margin: 0 0 18px; padding: 12px 14px; border-radius: 12px; font-size: 14px; color: var(--text-primary);
+  background: rgba(245, 158, 11, .08); border: 1px solid rgba(245, 158, 11, .25); }
+.rfh--high .rfh-detail { background: rgba(244, 63, 94, .08); border-color: rgba(244, 63, 94, .28); }
+.rfh-h { margin: 0 0 6px; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
+.rfh-p { margin: 0 0 18px; font-size: 15px; line-height: 1.6; color: var(--text-primary); }
+.rfh-steps { margin: 0 0 22px; padding: 0; list-style: none; counter-reset: rfh; display: flex; flex-direction: column; gap: 10px; }
+.rfh-steps li { counter-increment: rfh; position: relative; padding-left: 36px; font-size: 15px; line-height: 1.55; color: var(--text-primary); margin: 0; }
+.rfh-steps li::before { content: counter(rfh); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple)); }
+
+/* ── The phone menu: everything the sidebar offers, above the dock ── */
+.nav-dock-menu { position: relative; }
+.nav-dock-menu svg { width: 21px; height: 21px; }
+.nav-dock-menu.is-on { color: var(--grad-indigo); }
+.nav-dock-menu .nav-badge { position: absolute; top: 4px; right: 4px; }
+.nav-menu-scrim { position: fixed; inset: 0; z-index: 88; background: rgba(10, 6, 24, .38); opacity: 0; transition: opacity .18s ease; }
+.nav-menu-scrim.is-in { opacity: 1; }
+.nav-menu {
+  position: fixed; left: 12px; right: 12px; z-index: 89;
+  bottom: calc(70px + 10px + env(safe-area-inset-bottom, 0px) + 10px);
+  max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain;
+  padding: 10px; border-radius: 22px;
+  background: var(--surface-solid); border: 1px solid var(--border-faint);
+  box-shadow: 0 24px 60px -18px rgba(10, 6, 24, .6);
+  opacity: 0; transform: translateY(14px) scale(.98); transform-origin: bottom right;
+  transition: opacity .18s ease, transform .22s cubic-bezier(.2, .8, .2, 1);
+}
+.nav-menu.is-in { opacity: 1; transform: none; }
+.nav-menu-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.nav-menu-group + .nav-menu-group { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-faint); }
+.nav-menu-item {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  min-height: 74px; padding: 10px 4px; border-radius: 14px; border: 1px solid transparent; background: transparent;
+  color: var(--text-secondary); font: inherit; font-size: 12.5px; font-weight: 600; text-align: center; line-height: 1.2; cursor: pointer;
+}
+.nav-menu-item:active, .nav-menu-item:hover { background: var(--surface-strong); color: var(--text-primary); }
+.nav-menu-item.is-active { color: var(--text-primary); background: rgba(var(--grad-indigo-rgb), .14); border-color: rgba(var(--grad-indigo-rgb), .35); }
+.nav-menu-ico { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--surface-strong); }
+.nav-menu-item.is-active .nav-menu-ico { background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple)); color: #fff; }
+.nav-menu-ico svg { width: 20px; height: 20px; }
+.nav-menu-label { overflow-wrap: anywhere; }
+.nav-menu-item .nav-badge { position: absolute; top: 6px; right: calc(50% - 28px); }
+@media (prefers-reduced-motion: reduce) { .nav-menu, .nav-menu-scrim { transition: none; } }
+

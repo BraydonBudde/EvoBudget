@@ -76,7 +76,7 @@ const TRANSLATIONS = {
     // Tabs
     tab_dashboard:'Dashboard', tab_budget:'Budget', tab_transactions:'Transactions',
     tab_income:'Income', tab_expenses:'Expenses', tab_bills:'Bills',
-    tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',
+    tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',nav_menu:'Menu',
     tab_debt_payoff:'Debt Payoff', tab_sinking:'Savings Goals',
     tab_calendar:'Calendar', tab_subscriptions:'Subscriptions',
     // Dashboard stats
@@ -384,7 +384,7 @@ const TRANSLATIONS = {
     lang_name:'Deutsch',
     tab_dashboard:'Dashboard',tab_budget:'Budget',tab_transactions:'Transaktionen',
     tab_income:'Einnahmen',tab_expenses:'Ausgaben',tab_bills:'Rechnungen',
-    tab_debt:'Schulden',tab_savings:'Ersparnisse',tab_settings:'Einstellungen',
+    tab_debt:'Schulden',tab_savings:'Ersparnisse',tab_settings:'Einstellungen',nav_menu:'Menü',
     tab_debt_payoff:'Schuldenabbau',tab_sinking:'Sparziele',
     tab_calendar:'Kalender',tab_subscriptions:'Abonnements',
     total_income:'Gesamteinnahmen',expenses_bills:'Ausgaben & Rechnungen',
@@ -669,7 +669,7 @@ const TRANSLATIONS = {
     lang_name:'Français',
     tab_dashboard:'Tableau de bord',tab_budget:'Budget',tab_transactions:'Transactions',
     tab_income:'Revenus',tab_expenses:'Dépenses',tab_bills:'Factures',
-    tab_debt:'Dettes',tab_savings:'Épargne',tab_settings:'Paramètres',
+    tab_debt:'Dettes',tab_savings:'Épargne',tab_settings:'Paramètres',nav_menu:'Menu',
     tab_debt_payoff:'Remboursement',tab_sinking:'Objectifs d\'épargne',
     tab_calendar:'Calendrier',tab_subscriptions:'Abonnements',
     total_income:'Revenus totaux',expenses_bills:'Dépenses & Factures',
@@ -954,7 +954,7 @@ const TRANSLATIONS = {
     lang_name:'Español',
     tab_dashboard:'Panel',tab_budget:'Presupuesto',tab_transactions:'Transacciones',
     tab_income:'Ingresos',tab_expenses:'Gastos',tab_bills:'Facturas',
-    tab_debt:'Deudas',tab_savings:'Ahorros',tab_settings:'Ajustes',
+    tab_debt:'Deudas',tab_savings:'Ahorros',tab_settings:'Ajustes',nav_menu:'Menú',
     tab_debt_payoff:'Pago de deudas',tab_sinking:'Metas de ahorro',
     tab_calendar:'Calendario',tab_subscriptions:'Suscripciones',
     total_income:'Ingresos totales',expenses_bills:'Gastos y facturas',
@@ -1239,7 +1239,7 @@ const TRANSLATIONS = {
     lang_name:'Italiano',
     tab_dashboard:'Dashboard',tab_budget:'Budget',tab_transactions:'Transazioni',
     tab_income:'Entrate',tab_expenses:'Spese',tab_bills:'Bollette',
-    tab_debt:'Debiti',tab_savings:'Risparmi',tab_settings:'Impostazioni',
+    tab_debt:'Debiti',tab_savings:'Risparmi',tab_settings:'Impostazioni',nav_menu:'Menu',
     tab_debt_payoff:'Estinzione debiti',tab_sinking:'Obiettivi di risparmio',
     tab_calendar:'Calendario',tab_subscriptions:'Abbonamenti',
     total_income:'Entrate totali',expenses_bills:'Spese e bollette',
@@ -1523,7 +1523,7 @@ const TRANSLATIONS = {
     lang_name:'Polski',
     tab_dashboard:'Panel',tab_budget:'Budżet',tab_transactions:'Transakcje',
     tab_income:'Przychody',tab_expenses:'Wydatki',tab_bills:'Rachunki',
-    tab_debt:'Długi',tab_savings:'Oszczędności',tab_settings:'Ustawienia',
+    tab_debt:'Długi',tab_savings:'Oszczędności',tab_settings:'Ustawienia',nav_menu:'Menu',
     tab_debt_payoff:'Spłata długów',tab_sinking:'Cele oszczędnościowe',
     tab_calendar:'Kalendarz',tab_subscriptions:'Subskrypcje',
     total_income:'Łączne przychody',expenses_bills:'Wydatki i rachunki',
@@ -3225,7 +3225,84 @@ function buildNavDock() {
     if (el && el.parentNode !== into) into.appendChild(el);
   });
   place(['backToHub', 'guideNavBtn'], left);
-  place(['pennyNavBtn', 'notifNavBtn', 'settingsNavBtn'], right);
+  place(['settingsNavBtn'], right);
+  // The menu holds everything else, in the sidebar's order. The assistant
+  // and notification buttons wait out of sight in the dock so that their
+  // own listeners still run when the menu presses them, and notifications
+  // is remembered too so it goes home when the dock is taken away.
+  if (_railHome && !_railHome.notifNavBtn) {
+    const n = document.getElementById('notifNavBtn');
+    if (n) _railHome.notifNavBtn = { parent: n.parentNode, next: n.nextSibling };
+  }
+  let stash = dock.querySelector('#navDockStash');
+  if (!stash) { stash = document.createElement('div'); stash.id = 'navDockStash'; stash.hidden = true; dock.appendChild(stash); }
+  place(['pennyNavBtn', 'notifNavBtn'], stash);
+  let menuBtn = dock.querySelector('#navDockMenu');
+  if (!menuBtn) {
+    menuBtn = document.createElement('button');
+    menuBtn.type = 'button'; menuBtn.id = 'navDockMenu'; menuBtn.className = 'btn-icon nav-dock-menu';
+    menuBtn.setAttribute('aria-haspopup', 'menu'); menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><b class="nav-badge" data-badge-for="__total" hidden></b>`;
+    menuBtn.addEventListener('click', () => navMenuOpen() ? navMenuClose() : navMenuShow());
+  }
+  menuBtn.title = t('nav_menu'); menuBtn.setAttribute('aria-label', t('nav_menu'));
+  right.appendChild(menuBtn);
+  queueNavBadges();
+}
+
+// ── The phone menu ───────────────────────────────────────────────────
+// Every place the sidebar offers, in the sidebar's order: the sections as
+// the tab bar lists them, then notifications, the assistant and settings,
+// then the guide and home. A sheet above the dock; picking anything, a tap
+// outside it or Escape puts it away.
+function navMenuOpen() { return !!document.getElementById('navMenu'); }
+function navMenuGroups() {
+  const tabs = document.getElementById('budgetTabs');
+  const sections = tabs ? [...tabs.querySelectorAll('.btab[data-btab]')].map(b => ({
+    tab: b.dataset.btab, ico: b.querySelector('.btab-ico')?.dataset.ico || b.dataset.btab,
+    label: (b.querySelector('.btab-txt') || b).textContent.trim(), badge: b.dataset.btab })) : [];
+  const extra = [{ tab: 'notifications', ico: 'bell', label: t('nt_title'), badge: '__total' },
+    document.getElementById('pennyNavBtn') ? { act: 'pennyNavBtn', ico: 'assistant', label: t('rail_assistant') } : null,
+    { tab: 'settings', ico: 'settings', label: t('tab_settings') }].filter(Boolean);
+  const foot = [{ act: 'guideNavBtn', ico: 'guide', label: t('rail_guide') }, { act: 'backToHub', ico: 'home', label: t('rail_home') }];
+  return [sections, extra, foot];
+}
+function navMenuShow() {
+  navMenuClose();
+  const shell = document.querySelector(SHELL_SEL);
+  if (!shell) return;
+  const cur = typeof currentBTab !== 'undefined' ? currentBTab : '';
+  const item = x => `<button class="nav-menu-item${x.tab && x.tab === cur ? ' is-active' : ''}" type="button" role="menuitem" ${x.act ? `data-menu-act="${x.act}"` : `data-btab="${esc(x.tab)}"`}${x.tab && x.tab === cur ? ' aria-current="true"' : ''}>
+      <span class="nav-menu-ico" aria-hidden="true">${appIconSvg(x.ico)}</span><span class="nav-menu-label">${esc(x.label)}</span>${x.badge ? `<b class="nav-badge" data-badge-for="${x.badge}" hidden></b>` : ''}
+    </button>`;
+  const scrim = document.createElement('div');
+  scrim.className = 'nav-menu-scrim'; scrim.id = 'navMenuScrim';
+  const menu = document.createElement('div');
+  menu.className = 'nav-menu'; menu.id = 'navMenu';
+  menu.setAttribute('role', 'menu'); menu.setAttribute('aria-label', t('nav_menu'));
+  menu.innerHTML = navMenuGroups().filter(g => g.length).map(g => `<div class="nav-menu-group">${g.map(item).join('')}</div>`).join('');
+  shell.appendChild(scrim); shell.appendChild(menu);
+  scrim.addEventListener('click', navMenuClose);
+  menu.addEventListener('click', e => {
+    const b = e.target.closest('.nav-menu-item');
+    if (!b) return;
+    navMenuClose();
+    if (b.dataset.menuAct) document.getElementById(b.dataset.menuAct)?.click();
+    else if (b.dataset.btab) switchBTab(b.dataset.btab);
+  });
+  document.addEventListener('keydown', navMenuKey);
+  document.getElementById('navDockMenu')?.setAttribute('aria-expanded', 'true');
+  document.getElementById('navDockMenu')?.classList.add('is-on');
+  queueNavBadges();
+  requestAnimationFrame(() => { menu.classList.add('is-in'); scrim.classList.add('is-in'); menu.querySelector('.nav-menu-item')?.focus({ preventScroll: true }); });
+}
+function navMenuKey(e) { if (e.key === 'Escape') { navMenuClose(); document.getElementById('navDockMenu')?.focus(); } }
+function navMenuClose() {
+  document.getElementById('navMenu')?.remove();
+  document.getElementById('navMenuScrim')?.remove();
+  document.removeEventListener('keydown', navMenuKey);
+  const b = document.getElementById('navDockMenu');
+  if (b) { b.setAttribute('aria-expanded', 'false'); b.classList.remove('is-on'); }
 }
 
 // Hands the buttons back before the dock is taken away, or they would go
@@ -3233,6 +3310,7 @@ function buildNavDock() {
 function navDockRemove() {
   const dock = document.getElementById('navDock');
   if (!dock) return;
+  navMenuClose();
   railRelease();
   dock.remove();
 }
