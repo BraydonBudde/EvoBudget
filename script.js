@@ -6426,10 +6426,14 @@ function nlDaysInPeriod() {
 // and is excluded here too. The list is per app because each one defines its
 // outgoings differently - only UBP treats subscriptions as a separate type.
 const NL_SPEND_TYPES = ['expense', 'bill', 'debt'];
+// Today's everyday spending. Bill and debt payments are left out: what is
+// due was already set aside, so paying it does not touch what is free, and
+// counting it here would wipe out today's allowance on the day the rent
+// goes, which is exactly when it has not changed.
 function nlSpentToday() {
   const today = toLocalISO(new Date());
   return (state.transactions || []).reduce(
-    (s, tx) => (tx.date === today && NL_SPEND_TYPES.indexOf(tx.type) !== -1) ? s + (Number(tx.amount) || 0) : s, 0);
+    (s, tx) => (tx.date === today && tx.type === 'expense') ? s + (Number(tx.amount) || 0) : s, 0);
 }
 
 // rows: [op, label, amount, colour][] - each app supplies the components its

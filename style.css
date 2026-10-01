@@ -6987,3 +6987,24 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 [data-theme="vintage-ledger"] .toast-act:hover { background: #8b5e34; color: #faf3e3; }
 /* Clear of the dock on a phone. */
 @media (max-width: 760px) { #toast { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } }
+
+/* ── A payment settling into Free to spend ── */
+.pay-fly { position: fixed; z-index: 1500; left: 0; top: 0; pointer-events: none; white-space: nowrap;
+  padding: 6px 13px; border-radius: 999px; font-family: var(--font-display); font-size: 15px; font-weight: 800;
+  color: var(--text-primary); background: var(--surface-solid); border: 1px solid rgba(var(--grad-indigo-rgb), .55);
+  box-shadow: 0 12px 28px -10px rgba(var(--grad-indigo-rgb), .65); will-change: transform, opacity; }
+.nl-value.dd-settle { animation: ddSettle .9s cubic-bezier(.34, 1.56, .64, 1); transform-origin: left center; }
+@keyframes ddSettle { 0% { transform: none; } 22% { transform: scale(.975); } 58% { transform: scale(1.012); } 100% { transform: none; } }
+.nl-settle-ring { position: absolute; pointer-events: none; border-radius: 22px; border: 2px solid #10b981;
+  animation: ddSettleRing .95s ease-out forwards; }
+@keyframes ddSettleRing { 0% { opacity: .9; transform: scale(.94); } 100% { opacity: 0; transform: scale(1.12); } }
+.nl-settle-tick { position: absolute; width: 34px; height: 34px; border-radius: 50%; pointer-events: none;
+  display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, #10b981, #06b6d4);
+  box-shadow: 0 8px 20px -6px rgba(16, 185, 129, .7); animation: ddTickIn .45s cubic-bezier(.34, 1.56, .64, 1); transition: opacity .35s, transform .35s; }
+.nl-settle-tick svg { width: 19px; height: 19px; }
+.nl-settle-tick.is-out { opacity: 0; transform: scale(.6); }
+.nl-sub.is-settle-cap { color: #10b981; font-weight: 600; animation: ddCapIn .35s ease; }
+.nl-sub.is-settle-cap.is-settle-out { opacity: 0; transition: opacity .3s; }
+@keyframes ddCapIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .nl-value.dd-settle, .nl-settle-ring, .nl-settle-tick, .nl-sub.is-settle-cap { animation: none; } }
+
