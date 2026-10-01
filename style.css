@@ -1432,15 +1432,34 @@ input[type="number"].expected-input {
 /* ═══════════════════════════════════════════════════════════════
    TOAST
 ═══════════════════════════════════════════════════════════════ */
+/* The toast wears the theme it appears in: its surface, its ink, its
+   border and its type, with a mark of the accent on the left. */
 #toast {
   position: fixed; bottom: 28px; left: 50%;
   transform: translateX(-50%) translateY(70px);
-  background: var(--text-primary); color: #fff;
-  padding: 11px 22px; border-radius: var(--radius-pill);
-  font-size: 13px; font-weight: 600; z-index: 2000;
+  display: flex; align-items: center; gap: 14px;
+  max-width: calc(100vw - 32px); box-sizing: border-box;
+  background: var(--surface-solid); color: var(--text-primary);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-pop, 0 14px 36px -10px rgba(20, 12, 40, .35));
+  padding: 11px 18px 11px 14px; border-radius: var(--radius-pill);
+  font-family: var(--font-body, inherit); font-size: 13.5px; font-weight: 600; z-index: 2000;
   transition: transform .3s var(--ease), opacity .3s;
-  opacity: 0; pointer-events: none; white-space: nowrap;
+  opacity: 0; pointer-events: none;
 }
+#toast::before {
+  content: ""; flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple));
+  box-shadow: 0 0 0 3px rgba(var(--grad-indigo-rgb), .18);
+}
+.toast-msg { min-width: 0; overflow-wrap: anywhere; }
+.toast-act {
+  flex: 0 0 auto; margin: -4px -6px -4px 4px; padding: 6px 14px; border-radius: var(--radius-pill);
+  border: 1px solid rgba(var(--grad-indigo-rgb), .45); background: rgba(var(--grad-indigo-rgb), .12);
+  color: var(--grad-indigo); font: inherit; font-weight: 800; cursor: pointer;
+}
+.toast-act:hover, .toast-act:focus-visible { background: var(--grad-indigo); color: #fff; border-color: transparent; outline: none; }
+#toast.has-act { pointer-events: auto; }
 #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1645,7 +1664,6 @@ input[type="number"].expected-input {
 [data-theme="dark"] .theme-opt:not(.is-active):hover { background: rgba(var(--grad-indigo-rgb),.10); }
 
 /* Dark toast */
-[data-theme="dark"] #toast { background: var(--text-primary); color: #0e0820; }
 
 /* ── Dark mode btab hover ─────────────────────────────────────────── */
 [data-theme="dark"] .btab:hover:not(.is-active) {
@@ -1758,7 +1776,6 @@ input[type="number"].expected-input {
 [data-theme="synthwave"] .modal-body code { background: rgba(var(--grad-indigo-rgb),.12); }
 [data-theme="synthwave"] .btn-back:hover { background: rgba(36,8,54,.98); }
 [data-theme="synthwave"] .theme-opt:not(.is-active):hover { background: rgba(var(--grad-indigo-rgb),.10); }
-[data-theme="synthwave"] #toast { background: var(--text-primary); color: #1a0530; }
 [data-theme="synthwave"] .btab:hover:not(.is-active) {
   background: rgba(var(--grad-indigo-rgb),.12);
   color: var(--text-primary);
@@ -1965,7 +1982,6 @@ input[type="number"].expected-input {
 [data-theme="terminal"] .modal-body code { background: rgba(var(--grad-indigo-rgb),.12); }
 [data-theme="terminal"] .btn-back:hover { background: rgba(20,20,20,.98); }
 [data-theme="terminal"] .theme-opt:not(.is-active):hover { background: rgba(var(--grad-indigo-rgb),.10); }
-[data-theme="terminal"] #toast { background: var(--text-primary); color: #0a0a0a; }
 [data-theme="terminal"] .btab:hover:not(.is-active) {
   background: rgba(var(--grad-indigo-rgb),.12);
   color: var(--text-primary);
@@ -6948,3 +6964,26 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 .nt-help { font-weight: 800; font-size: 14px; color: var(--text-secondary); }
 .nt-row--late .nt-help:hover { color: #f43f5e; }
 .nt-row--soon .nt-help:hover, .nt-row--todo .nt-help:hover { color: #f59e0b; }
+
+/* ── Toasts, theme by theme ── */
+[data-theme="light"] #toast { border-color: rgba(30, 27, 46, .10); box-shadow: 0 14px 36px -12px rgba(30, 27, 46, .30); }
+[data-theme="dark"] #toast { background: var(--surface-strong); border-color: rgba(var(--grad-indigo-rgb), .28);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, .7), 0 0 0 1px rgba(var(--grad-indigo-rgb), .06); backdrop-filter: blur(14px); }
+[data-theme="synthwave"] #toast { background: #1a0530; border-color: #ff2e97;
+  box-shadow: 0 0 0 1px rgba(255, 46, 151, .45), 0 0 26px rgba(255, 46, 151, .45), 0 0 52px rgba(0, 217, 255, .18);
+  text-shadow: 0 0 8px rgba(253, 240, 255, .35); letter-spacing: .02em; }
+[data-theme="synthwave"] #toast::before { background: #00d9ff; box-shadow: 0 0 10px #00d9ff, 0 0 0 3px rgba(0, 217, 255, .2); }
+[data-theme="synthwave"] .toast-act { color: #00d9ff; border-color: rgba(0, 217, 255, .6); background: rgba(0, 217, 255, .1); text-shadow: 0 0 6px rgba(0, 217, 255, .6); }
+[data-theme="synthwave"] .toast-act:hover { background: #00d9ff; color: #1a0530; text-shadow: none; }
+[data-theme="terminal"] #toast { background: #050f08; color: #4ade80; border: 1px solid #22c55e; border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(74, 222, 128, .15), 0 0 18px rgba(74, 222, 128, .2); text-transform: lowercase; }
+[data-theme="terminal"] #toast::before { content: ">"; width: auto; height: auto; flex: 0 0 auto; border-radius: 0; background: none; box-shadow: none; color: #86efac; font-weight: 800; }
+[data-theme="terminal"] .toast-act { border-radius: 2px; color: #050f08; background: #4ade80; border-color: #4ade80; text-transform: uppercase; letter-spacing: .06em; }
+[data-theme="terminal"] .toast-act:hover { background: #86efac; color: #050f08; }
+[data-theme="vintage-ledger"] #toast { background: #faf3e3; color: #3b2a1a; border: 1px solid rgba(139, 94, 52, .45); border-radius: 6px;
+  box-shadow: 0 10px 26px -10px rgba(107, 68, 35, .45), inset 0 0 0 3px #faf3e3, inset 0 0 0 4px rgba(139, 94, 52, .25); }
+[data-theme="vintage-ledger"] #toast::before { background: #8b5e34; box-shadow: none; border-radius: 1px; transform: rotate(45deg); width: 7px; height: 7px; flex-basis: 7px; }
+[data-theme="vintage-ledger"] .toast-act { border-radius: 4px; color: #8b5e34; border-color: rgba(139, 94, 52, .55); background: transparent; font-family: var(--font-display); font-style: italic; }
+[data-theme="vintage-ledger"] .toast-act:hover { background: #8b5e34; color: #faf3e3; }
+/* Clear of the dock on a phone. */
+@media (max-width: 760px) { #toast { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } }

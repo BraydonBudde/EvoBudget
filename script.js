@@ -76,7 +76,7 @@ const TRANSLATIONS = {
     // Tabs
     tab_dashboard:'Dashboard', tab_budget:'Budget', tab_transactions:'Transactions',
     tab_income:'Income', tab_expenses:'Expenses', tab_bills:'Bills',
-    tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',nth_what:'What this means',nth_fix:'How to fix it',nth_aria:'What is this and how do I fix it?',nth_close:'Got it',nth_bill_late_w:'This bill\'s due date has passed and it has not been paid yet.',nth_bill_late_f:'If you have paid it, tap Pay and log it with the date it went out | If not, pay it as soon as you can to avoid late fees | If the amount or date has changed, update the bill so future reminders are right',nth_bill_soon_w:'This bill is due within the next week.',nth_bill_soon_f:'Make sure the money is there before the due date | Tap Pay once it has left your account | If you pay it another way, still log it here so your figures stay right',nth_debt_late_w:'This debt\'s minimum payment date has passed and the full minimum has not been logged.',nth_debt_late_f:'If you paid it, tap Pay and log it with the date it left your account | If not, pay at least the minimum straight away: a missed minimum can bring fees and hurt your credit | Check the debt\'s due day is right',nth_debt_soon_w:'This debt\'s minimum payment is due within the next week.',nth_debt_soon_f:'Make sure the minimum is covered before the due date | Tap Pay once it has gone out | Paying more than the minimum clears the debt sooner',nth_over_w:'You have spent more in this category than you planned for this period.',nth_over_f:'Tap Review to see the category | Hold back on it until the period ends | If the amount was unrealistic, raise it and lower another so your plan still adds up',nth_uncat_w:'These expenses were logged to sort later and have no category, so your budget cannot count them properly.',nth_uncat_f:'Tap Sort them to see them | Give each one a category | Your budget updates straight away',nav_menu:'Menu',
+    tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',toast_undo_btn:'Undo',toast_undone:'Undone',nth_what:'What this means',nth_fix:'How to fix it',nth_aria:'What is this and how do I fix it?',nth_close:'Got it',nth_bill_late_w:'This bill\'s due date has passed and it has not been paid yet.',nth_bill_late_f:'If you have paid it, tap Pay and log it with the date it went out | If not, pay it as soon as you can to avoid late fees | If the amount or date has changed, update the bill so future reminders are right',nth_bill_soon_w:'This bill is due within the next week.',nth_bill_soon_f:'Make sure the money is there before the due date | Tap Pay once it has left your account | If you pay it another way, still log it here so your figures stay right',nth_debt_late_w:'This debt\'s minimum payment date has passed and the full minimum has not been logged.',nth_debt_late_f:'If you paid it, tap Pay and log it with the date it left your account | If not, pay at least the minimum straight away: a missed minimum can bring fees and hurt your credit | Check the debt\'s due day is right',nth_debt_soon_w:'This debt\'s minimum payment is due within the next week.',nth_debt_soon_f:'Make sure the minimum is covered before the due date | Tap Pay once it has gone out | Paying more than the minimum clears the debt sooner',nth_over_w:'You have spent more in this category than you planned for this period.',nth_over_f:'Tap Review to see the category | Hold back on it until the period ends | If the amount was unrealistic, raise it and lower another so your plan still adds up',nth_uncat_w:'These expenses were logged to sort later and have no category, so your budget cannot count them properly.',nth_uncat_f:'Tap Sort them to see them | Give each one a category | Your budget updates straight away',nav_menu:'Menu',
     tab_debt_payoff:'Debt Payoff', tab_sinking:'Savings Goals',
     tab_calendar:'Calendar', tab_subscriptions:'Subscriptions',
     // Dashboard stats
@@ -94,7 +94,7 @@ const TRANSLATIONS = {
     toast_period_updated:'Period updated \u2713',toast_period_error:'End date must be after start date',
     toast_currency_updated:'Currency updated \u2713',toast_imported:'Imported {0} \u2713',
     toast_fund_created:'Goal created ✓',toast_fund_updated:'Goal updated ✓',
-    toast_fund_contrib:'Added {amt} to {name} \u2713',
+    toast_fund_contrib:'Added {0} to {1} \u2713',
     toast_sub_added:'Subscription added \u2713',toast_sub_updated:'Subscription updated \u2713',
     toast_alloc_enabled:'Allocation enabled \u2713',toast_alloc_disabled:'Allocation disabled',
     toast_lang_updated:'Language updated \u2713',toast_export:'Exported \u2713',
@@ -120,7 +120,7 @@ const TRANSLATIONS = {
     tx_showing:'Showing {n} of {total}',tx_no_results:'No transactions match your filter.',
     alloc_add_bucket:'+ Add bucket',alloc_remove_btn:'Remove',
     alloc_min_buckets:'Minimum 2 buckets required',
-    alloc_auto_tag:'Auto-tagged \u2192 {name}',
+    alloc_auto_tag:'Auto-tagged \u2192 {1}',
     tx_prev:'\u2190 Prev',tx_next:'Next \u2192',tx_page_of:'Page {n} of {total}',
     debt_due_day_note:'Days 29-31 won\u2019t show in shorter months',
     sub_advanced:'Billing date advanced to {date}',
@@ -384,7 +384,7 @@ const TRANSLATIONS = {
     lang_name:'Deutsch',
     tab_dashboard:'Dashboard',tab_budget:'Budget',tab_transactions:'Transaktionen',
     tab_income:'Einnahmen',tab_expenses:'Ausgaben',tab_bills:'Rechnungen',
-    tab_debt:'Schulden',tab_savings:'Ersparnisse',tab_settings:'Einstellungen',nth_what:'Was das bedeutet',nth_fix:'So behebst du es',nth_aria:'Was ist das und wie behebe ich es?',nth_close:'Verstanden',nth_bill_late_w:'Das Fälligkeitsdatum dieser Rechnung ist vorbei und sie ist noch nicht bezahlt.',nth_bill_late_f:'Hast du sie bezahlt, tippe auf Zahlen und trage sie mit dem Abbuchungsdatum ein | Wenn nicht, zahle sie so bald wie möglich, um Mahngebühren zu vermeiden | Haben sich Betrag oder Datum geändert, passe die Rechnung an, damit künftige Erinnerungen stimmen',nth_bill_soon_w:'Diese Rechnung ist innerhalb der nächsten Woche fällig.',nth_bill_soon_f:'Sorg dafür, dass das Geld vor dem Fälligkeitsdatum da ist | Tippe auf Zahlen, sobald es abgebucht ist | Zahlst du sie anders, trage sie trotzdem hier ein, damit deine Zahlen stimmen',nth_debt_late_w:'Der Termin der Mindestrate dieser Schuld ist vorbei und die volle Rate wurde nicht erfasst.',nth_debt_late_f:'Hast du gezahlt, tippe auf Zahlen und trage es mit dem Abbuchungsdatum ein | Wenn nicht, zahle sofort mindestens die Mindestrate: Eine verpasste Rate kann Gebühren kosten und deiner Bonität schaden | Prüfe, ob der Fälligkeitstag stimmt',nth_debt_soon_w:'Die Mindestrate dieser Schuld ist innerhalb der nächsten Woche fällig.',nth_debt_soon_f:'Sorg dafür, dass die Mindestrate vor dem Termin gedeckt ist | Tippe auf Zahlen, sobald sie abgebucht ist | Mehr als die Mindestrate zu zahlen tilgt die Schuld schneller',nth_over_w:'Du hast in dieser Kategorie mehr ausgegeben als für diesen Zeitraum geplant.',nth_over_f:'Tippe auf Ansehen, um die Kategorie zu sehen | Halte dich dort bis zum Ende des Zeitraums zurück | War der Betrag unrealistisch, erhöhe ihn und senke einen anderen, damit der Plan aufgeht',nth_uncat_w:'Diese Ausgaben wurden zum späteren Sortieren erfasst und haben keine Kategorie, dein Budget kann sie also nicht richtig zählen.',nth_uncat_f:'Tippe auf Zuordnen, um sie zu sehen | Gib jeder eine Kategorie | Dein Budget aktualisiert sich sofort',nav_menu:'Menü',
+    tab_debt:'Schulden',tab_savings:'Ersparnisse',tab_settings:'Einstellungen',toast_undo_btn:'Rückgängig',toast_undone:'Rückgängig gemacht',nth_what:'Was das bedeutet',nth_fix:'So behebst du es',nth_aria:'Was ist das und wie behebe ich es?',nth_close:'Verstanden',nth_bill_late_w:'Das Fälligkeitsdatum dieser Rechnung ist vorbei und sie ist noch nicht bezahlt.',nth_bill_late_f:'Hast du sie bezahlt, tippe auf Zahlen und trage sie mit dem Abbuchungsdatum ein | Wenn nicht, zahle sie so bald wie möglich, um Mahngebühren zu vermeiden | Haben sich Betrag oder Datum geändert, passe die Rechnung an, damit künftige Erinnerungen stimmen',nth_bill_soon_w:'Diese Rechnung ist innerhalb der nächsten Woche fällig.',nth_bill_soon_f:'Sorg dafür, dass das Geld vor dem Fälligkeitsdatum da ist | Tippe auf Zahlen, sobald es abgebucht ist | Zahlst du sie anders, trage sie trotzdem hier ein, damit deine Zahlen stimmen',nth_debt_late_w:'Der Termin der Mindestrate dieser Schuld ist vorbei und die volle Rate wurde nicht erfasst.',nth_debt_late_f:'Hast du gezahlt, tippe auf Zahlen und trage es mit dem Abbuchungsdatum ein | Wenn nicht, zahle sofort mindestens die Mindestrate: Eine verpasste Rate kann Gebühren kosten und deiner Bonität schaden | Prüfe, ob der Fälligkeitstag stimmt',nth_debt_soon_w:'Die Mindestrate dieser Schuld ist innerhalb der nächsten Woche fällig.',nth_debt_soon_f:'Sorg dafür, dass die Mindestrate vor dem Termin gedeckt ist | Tippe auf Zahlen, sobald sie abgebucht ist | Mehr als die Mindestrate zu zahlen tilgt die Schuld schneller',nth_over_w:'Du hast in dieser Kategorie mehr ausgegeben als für diesen Zeitraum geplant.',nth_over_f:'Tippe auf Ansehen, um die Kategorie zu sehen | Halte dich dort bis zum Ende des Zeitraums zurück | War der Betrag unrealistisch, erhöhe ihn und senke einen anderen, damit der Plan aufgeht',nth_uncat_w:'Diese Ausgaben wurden zum späteren Sortieren erfasst und haben keine Kategorie, dein Budget kann sie also nicht richtig zählen.',nth_uncat_f:'Tippe auf Zuordnen, um sie zu sehen | Gib jeder eine Kategorie | Dein Budget aktualisiert sich sofort',nav_menu:'Menü',
     tab_debt_payoff:'Schuldenabbau',tab_sinking:'Sparziele',
     tab_calendar:'Kalender',tab_subscriptions:'Abonnements',
     total_income:'Gesamteinnahmen',expenses_bills:'Ausgaben & Rechnungen',
@@ -400,7 +400,7 @@ const TRANSLATIONS = {
     toast_period_updated:'Zeitraum aktualisiert \u2713',toast_period_error:'Enddatum muss nach dem Startdatum liegen',
     toast_currency_updated:'W\u00e4hrung aktualisiert \u2713',toast_imported:'{0} importiert \u2713',
     toast_fund_created:'Ziel erstellt ✓',toast_fund_updated:'Ziel aktualisiert ✓',
-    toast_fund_contrib:'{amt} zu {name} hinzugef\u00fcgt \u2713',
+    toast_fund_contrib:'{0} zu {1} hinzugef\u00fcgt \u2713',
     toast_sub_added:'Abonnement hinzugef\u00fcgt \u2713',toast_sub_updated:'Abonnement aktualisiert \u2713',
     toast_alloc_enabled:'Aufteilung aktiviert \u2713',toast_alloc_disabled:'Aufteilung deaktiviert',
     toast_lang_updated:'Sprache aktualisiert \u2713',toast_export:'Exportiert \u2713',
@@ -426,7 +426,7 @@ const TRANSLATIONS = {
     tx_showing:'{n} von {total} angezeigt',tx_no_results:'Keine Transaktionen entsprechen deinem Filter.',
     alloc_add_bucket:'+ Kategorie hinzuf\u00fcgen',alloc_remove_btn:'Entfernen',
     alloc_min_buckets:'Mindestens 2 Kategorien erforderlich',
-    alloc_auto_tag:'Automatisch markiert \u2192 {name}',
+    alloc_auto_tag:'Automatisch markiert \u2192 {1}',
     tx_prev:'\u2190 Zur\u00fcck',tx_next:'Weiter \u2192',tx_page_of:'Seite {n} von {total}',
     debt_due_day_note:'Tage 29-31 erscheinen nicht in k\u00fcrzeren Monaten',
     sub_advanced:'Abrechnungsdatum vorger\u00fcckt auf {date}',
@@ -669,7 +669,7 @@ const TRANSLATIONS = {
     lang_name:'Français',
     tab_dashboard:'Tableau de bord',tab_budget:'Budget',tab_transactions:'Transactions',
     tab_income:'Revenus',tab_expenses:'Dépenses',tab_bills:'Factures',
-    tab_debt:'Dettes',tab_savings:'Épargne',tab_settings:'Paramètres',nth_what:'Ce que cela signifie',nth_fix:'Comment corriger',nth_aria:'Qu\'est-ce que c\'est et comment corriger ?',nth_close:'Compris',nth_bill_late_w:'La date d\'échéance de cette facture est passée et elle n\'est pas encore payée.',nth_bill_late_f:'Si vous l\'avez réglée, touchez Payer et saisissez-la à la date du prélèvement | Sinon, payez-la au plus vite pour éviter des frais de retard | Si le montant ou la date a changé, mettez la facture à jour pour des rappels justes',nth_bill_soon_w:'Cette facture arrive à échéance dans la semaine.',nth_bill_soon_f:'Assurez-vous que l\'argent est là avant l\'échéance | Touchez Payer une fois le prélèvement passé | Si vous la réglez autrement, saisissez-la quand même ici pour garder des chiffres justes',nth_debt_late_w:'La date du paiement minimum de cette dette est passée et le minimum complet n\'a pas été saisi.',nth_debt_late_f:'Si vous avez payé, touchez Payer et saisissez-le à la date du prélèvement | Sinon, payez au moins le minimum tout de suite : un minimum manqué peut coûter des frais et nuire à votre crédit | Vérifiez le jour d\'échéance de la dette',nth_debt_soon_w:'Le paiement minimum de cette dette arrive dans la semaine.',nth_debt_soon_f:'Assurez-vous que le minimum est couvert avant l\'échéance | Touchez Payer une fois le prélèvement passé | Payer plus que le minimum solde la dette plus vite',nth_over_w:'Vous avez dépensé plus que prévu dans cette catégorie sur cette période.',nth_over_f:'Touchez Voir pour afficher la catégorie | Freinez-la jusqu\'à la fin de la période | Si le montant était irréaliste, augmentez-le et réduisez-en un autre pour garder le plan équilibré',nth_uncat_w:'Ces dépenses ont été saisies pour plus tard et n\'ont pas de catégorie : votre budget ne peut pas les compter correctement.',nth_uncat_f:'Touchez Les classer pour les voir | Attribuez une catégorie à chacune | Votre budget se met à jour aussitôt',nav_menu:'Menu',
+    tab_debt:'Dettes',tab_savings:'Épargne',tab_settings:'Paramètres',toast_undo_btn:'Annuler',toast_undone:'Annulé',nth_what:'Ce que cela signifie',nth_fix:'Comment corriger',nth_aria:'Qu\'est-ce que c\'est et comment corriger ?',nth_close:'Compris',nth_bill_late_w:'La date d\'échéance de cette facture est passée et elle n\'est pas encore payée.',nth_bill_late_f:'Si vous l\'avez réglée, touchez Payer et saisissez-la à la date du prélèvement | Sinon, payez-la au plus vite pour éviter des frais de retard | Si le montant ou la date a changé, mettez la facture à jour pour des rappels justes',nth_bill_soon_w:'Cette facture arrive à échéance dans la semaine.',nth_bill_soon_f:'Assurez-vous que l\'argent est là avant l\'échéance | Touchez Payer une fois le prélèvement passé | Si vous la réglez autrement, saisissez-la quand même ici pour garder des chiffres justes',nth_debt_late_w:'La date du paiement minimum de cette dette est passée et le minimum complet n\'a pas été saisi.',nth_debt_late_f:'Si vous avez payé, touchez Payer et saisissez-le à la date du prélèvement | Sinon, payez au moins le minimum tout de suite : un minimum manqué peut coûter des frais et nuire à votre crédit | Vérifiez le jour d\'échéance de la dette',nth_debt_soon_w:'Le paiement minimum de cette dette arrive dans la semaine.',nth_debt_soon_f:'Assurez-vous que le minimum est couvert avant l\'échéance | Touchez Payer une fois le prélèvement passé | Payer plus que le minimum solde la dette plus vite',nth_over_w:'Vous avez dépensé plus que prévu dans cette catégorie sur cette période.',nth_over_f:'Touchez Voir pour afficher la catégorie | Freinez-la jusqu\'à la fin de la période | Si le montant était irréaliste, augmentez-le et réduisez-en un autre pour garder le plan équilibré',nth_uncat_w:'Ces dépenses ont été saisies pour plus tard et n\'ont pas de catégorie : votre budget ne peut pas les compter correctement.',nth_uncat_f:'Touchez Les classer pour les voir | Attribuez une catégorie à chacune | Votre budget se met à jour aussitôt',nav_menu:'Menu',
     tab_debt_payoff:'Remboursement',tab_sinking:'Objectifs d\'épargne',
     tab_calendar:'Calendrier',tab_subscriptions:'Abonnements',
     total_income:'Revenus totaux',expenses_bills:'Dépenses & Factures',
@@ -685,7 +685,7 @@ const TRANSLATIONS = {
     toast_period_updated:'P\u00e9riode mise \u00e0 jour \u2713',toast_period_error:'La date de fin doit \u00eatre apr\u00e8s la date de d\u00e9but',
     toast_currency_updated:'Devise mise \u00e0 jour \u2713',toast_imported:'{0} import\u00e9(s) \u2713',
     toast_fund_created:'Objectif créé ✓',toast_fund_updated:'Objectif mis à jour ✓',
-    toast_fund_contrib:'{amt} ajout\u00e9 \u00e0 {name} \u2713',
+    toast_fund_contrib:'{0} ajout\u00e9 \u00e0 {1} \u2713',
     toast_sub_added:'Abonnement ajout\u00e9 \u2713',toast_sub_updated:'Abonnement mis \u00e0 jour \u2713',
     toast_alloc_enabled:'R\u00e9partition activ\u00e9e \u2713',toast_alloc_disabled:'R\u00e9partition d\u00e9sactiv\u00e9e',
     toast_lang_updated:'Langue mise \u00e0 jour \u2713',toast_export:'Export\u00e9 \u2713',
@@ -711,7 +711,7 @@ const TRANSLATIONS = {
     tx_showing:'{n} sur {total} affich\u00e9(s)',tx_no_results:'Aucune transaction ne correspond \u00e0 votre filtre.',
     alloc_add_bucket:'+ Ajouter un segment',alloc_remove_btn:'Supprimer',
     alloc_min_buckets:'Au moins 2 segments requis',
-    alloc_auto_tag:'Tag automatique \u2192 {name}',
+    alloc_auto_tag:'Tag automatique \u2192 {1}',
     tx_prev:'\u2190 Pr\u00e9c.',tx_next:'Suiv. \u2192',tx_page_of:'Page {n} sur {total}',
     debt_due_day_note:'Les jours 29-31 n\u2019apparaissent pas dans les mois courts',
     sub_advanced:'Date de facturation avanc\u00e9e au {date}',
@@ -954,7 +954,7 @@ const TRANSLATIONS = {
     lang_name:'Español',
     tab_dashboard:'Panel',tab_budget:'Presupuesto',tab_transactions:'Transacciones',
     tab_income:'Ingresos',tab_expenses:'Gastos',tab_bills:'Facturas',
-    tab_debt:'Deudas',tab_savings:'Ahorros',tab_settings:'Ajustes',nth_what:'Qué significa',nth_fix:'Cómo arreglarlo',nth_aria:'¿Qué es y cómo lo arreglo?',nth_close:'Entendido',nth_bill_late_w:'Ha pasado la fecha de esta factura y aún no está pagada.',nth_bill_late_f:'Si la pagaste, toca Pagar y regístrala con la fecha en que salió | Si no, págala cuanto antes para evitar recargos | Si el importe o la fecha cambiaron, actualiza la factura para que los avisos sean correctos',nth_bill_soon_w:'Esta factura vence en la próxima semana.',nth_bill_soon_f:'Asegúrate de tener el dinero antes de la fecha | Toca Pagar cuando haya salido de tu cuenta | Si la pagas de otra forma, regístrala igualmente aquí para que tus cifras cuadren',nth_debt_late_w:'Ha pasado la fecha del pago mínimo de esta deuda y no se ha registrado el mínimo completo.',nth_debt_late_f:'Si lo pagaste, toca Pagar y regístralo con la fecha en que salió | Si no, paga al menos el mínimo ya: un mínimo impagado puede traer recargos y dañar tu historial | Comprueba que el día de pago es correcto',nth_debt_soon_w:'El pago mínimo de esta deuda vence en la próxima semana.',nth_debt_soon_f:'Asegúrate de cubrir el mínimo antes de la fecha | Toca Pagar cuando haya salido | Pagar más del mínimo liquida la deuda antes',nth_over_w:'Has gastado en esta categoría más de lo planeado para este período.',nth_over_f:'Toca Revisar para ver la categoría | Frénala hasta que acabe el período | Si el importe no era realista, súbelo y baja otro para que el plan cuadre',nth_uncat_w:'Estos gastos se registraron para ordenarlos más tarde y no tienen categoría, así que tu presupuesto no puede contarlos bien.',nth_uncat_f:'Toca Clasificar para verlos | Dale una categoría a cada uno | Tu presupuesto se actualiza al momento',nav_menu:'Menú',
+    tab_debt:'Deudas',tab_savings:'Ahorros',tab_settings:'Ajustes',toast_undo_btn:'Deshacer',toast_undone:'Deshecho',nth_what:'Qué significa',nth_fix:'Cómo arreglarlo',nth_aria:'¿Qué es y cómo lo arreglo?',nth_close:'Entendido',nth_bill_late_w:'Ha pasado la fecha de esta factura y aún no está pagada.',nth_bill_late_f:'Si la pagaste, toca Pagar y regístrala con la fecha en que salió | Si no, págala cuanto antes para evitar recargos | Si el importe o la fecha cambiaron, actualiza la factura para que los avisos sean correctos',nth_bill_soon_w:'Esta factura vence en la próxima semana.',nth_bill_soon_f:'Asegúrate de tener el dinero antes de la fecha | Toca Pagar cuando haya salido de tu cuenta | Si la pagas de otra forma, regístrala igualmente aquí para que tus cifras cuadren',nth_debt_late_w:'Ha pasado la fecha del pago mínimo de esta deuda y no se ha registrado el mínimo completo.',nth_debt_late_f:'Si lo pagaste, toca Pagar y regístralo con la fecha en que salió | Si no, paga al menos el mínimo ya: un mínimo impagado puede traer recargos y dañar tu historial | Comprueba que el día de pago es correcto',nth_debt_soon_w:'El pago mínimo de esta deuda vence en la próxima semana.',nth_debt_soon_f:'Asegúrate de cubrir el mínimo antes de la fecha | Toca Pagar cuando haya salido | Pagar más del mínimo liquida la deuda antes',nth_over_w:'Has gastado en esta categoría más de lo planeado para este período.',nth_over_f:'Toca Revisar para ver la categoría | Frénala hasta que acabe el período | Si el importe no era realista, súbelo y baja otro para que el plan cuadre',nth_uncat_w:'Estos gastos se registraron para ordenarlos más tarde y no tienen categoría, así que tu presupuesto no puede contarlos bien.',nth_uncat_f:'Toca Clasificar para verlos | Dale una categoría a cada uno | Tu presupuesto se actualiza al momento',nav_menu:'Menú',
     tab_debt_payoff:'Pago de deudas',tab_sinking:'Metas de ahorro',
     tab_calendar:'Calendario',tab_subscriptions:'Suscripciones',
     total_income:'Ingresos totales',expenses_bills:'Gastos y facturas',
@@ -970,7 +970,7 @@ const TRANSLATIONS = {
     toast_period_updated:'Per\u00edodo actualizado \u2713',toast_period_error:'La fecha de fin debe ser posterior a la fecha de inicio',
     toast_currency_updated:'Moneda actualizada \u2713',toast_imported:'{0} importado(s) \u2713',
     toast_fund_created:'Meta creada ✓',toast_fund_updated:'Meta actualizada ✓',
-    toast_fund_contrib:'{amt} a\u00f1adido a {name} \u2713',
+    toast_fund_contrib:'{0} a\u00f1adido a {1} \u2713',
     toast_sub_added:'Suscripci\u00f3n a\u00f1adida \u2713',toast_sub_updated:'Suscripci\u00f3n actualizada \u2713',
     toast_alloc_enabled:'Distribuci\u00f3n activada \u2713',toast_alloc_disabled:'Distribuci\u00f3n desactivada',
     toast_lang_updated:'Idioma actualizado \u2713',toast_export:'Exportado \u2713',
@@ -996,7 +996,7 @@ const TRANSLATIONS = {
     tx_showing:'Mostrando {n} de {total}',tx_no_results:'Ninguna transacci\u00f3n coincide con tu filtro.',
     alloc_add_bucket:'+ A\u00f1adir segmento',alloc_remove_btn:'Eliminar',
     alloc_min_buckets:'Se requieren al menos 2 segmentos',
-    alloc_auto_tag:'Etiquetado autom\u00e1tico \u2192 {name}',
+    alloc_auto_tag:'Etiquetado autom\u00e1tico \u2192 {1}',
     tx_prev:'\u2190 Ant.',tx_next:'Sig. \u2192',tx_page_of:'P\u00e1gina {n} de {total}',
     debt_due_day_note:'Los d\u00edas 29-31 no aparecen en meses cortos',
     sub_advanced:'Fecha de facturaci\u00f3n avanzada al {date}',
@@ -1239,7 +1239,7 @@ const TRANSLATIONS = {
     lang_name:'Italiano',
     tab_dashboard:'Dashboard',tab_budget:'Budget',tab_transactions:'Transazioni',
     tab_income:'Entrate',tab_expenses:'Spese',tab_bills:'Bollette',
-    tab_debt:'Debiti',tab_savings:'Risparmi',tab_settings:'Impostazioni',nth_what:'Cosa significa',nth_fix:'Come sistemarlo',nth_aria:'Cos’è e come lo sistemo?',nth_close:'Capito',nth_bill_late_w:'La scadenza di questa bolletta è passata e non è ancora pagata.',nth_bill_late_f:'Se l\'hai pagata, tocca Paga e registrala con la data in cui è uscita | Altrimenti pagala appena puoi per evitare more | Se importo o data sono cambiati, aggiorna la bolletta perché i promemoria siano giusti',nth_bill_soon_w:'Questa bolletta scade entro la prossima settimana.',nth_bill_soon_f:'Assicurati che i soldi ci siano prima della scadenza | Tocca Paga quando è uscita dal conto | Se la paghi in un altro modo, registrala comunque qui perché i numeri tornino',nth_debt_late_w:'La data della rata minima di questo debito è passata e la rata completa non è stata registrata.',nth_debt_late_f:'Se l\'hai pagata, tocca Paga e registrala con la data in cui è uscita | Altrimenti paga subito almeno il minimo: una rata saltata può costare penali e danneggiare il tuo credito | Controlla che il giorno di scadenza sia giusto',nth_debt_soon_w:'La rata minima di questo debito scade entro la prossima settimana.',nth_debt_soon_f:'Assicurati che il minimo sia coperto prima della scadenza | Tocca Paga quando è uscita | Pagare più del minimo estingue prima il debito',nth_over_w:'Hai speso in questa categoria più di quanto previsto per questo periodo.',nth_over_f:'Tocca Controlla per vedere la categoria | Frena fino alla fine del periodo | Se l\'importo non era realistico, alzalo e abbassane un altro perché il piano torni',nth_uncat_w:'Queste spese sono state registrate per dopo e non hanno categoria, quindi il budget non può contarle bene.',nth_uncat_f:'Tocca Classifica per vederle | Assegna una categoria a ognuna | Il budget si aggiorna subito',nav_menu:'Menu',
+    tab_debt:'Debiti',tab_savings:'Risparmi',tab_settings:'Impostazioni',toast_undo_btn:'Annulla',toast_undone:'Annullato',nth_what:'Cosa significa',nth_fix:'Come sistemarlo',nth_aria:'Cos’è e come lo sistemo?',nth_close:'Capito',nth_bill_late_w:'La scadenza di questa bolletta è passata e non è ancora pagata.',nth_bill_late_f:'Se l\'hai pagata, tocca Paga e registrala con la data in cui è uscita | Altrimenti pagala appena puoi per evitare more | Se importo o data sono cambiati, aggiorna la bolletta perché i promemoria siano giusti',nth_bill_soon_w:'Questa bolletta scade entro la prossima settimana.',nth_bill_soon_f:'Assicurati che i soldi ci siano prima della scadenza | Tocca Paga quando è uscita dal conto | Se la paghi in un altro modo, registrala comunque qui perché i numeri tornino',nth_debt_late_w:'La data della rata minima di questo debito è passata e la rata completa non è stata registrata.',nth_debt_late_f:'Se l\'hai pagata, tocca Paga e registrala con la data in cui è uscita | Altrimenti paga subito almeno il minimo: una rata saltata può costare penali e danneggiare il tuo credito | Controlla che il giorno di scadenza sia giusto',nth_debt_soon_w:'La rata minima di questo debito scade entro la prossima settimana.',nth_debt_soon_f:'Assicurati che il minimo sia coperto prima della scadenza | Tocca Paga quando è uscita | Pagare più del minimo estingue prima il debito',nth_over_w:'Hai speso in questa categoria più di quanto previsto per questo periodo.',nth_over_f:'Tocca Controlla per vedere la categoria | Frena fino alla fine del periodo | Se l\'importo non era realistico, alzalo e abbassane un altro perché il piano torni',nth_uncat_w:'Queste spese sono state registrate per dopo e non hanno categoria, quindi il budget non può contarle bene.',nth_uncat_f:'Tocca Classifica per vederle | Assegna una categoria a ognuna | Il budget si aggiorna subito',nav_menu:'Menu',
     tab_debt_payoff:'Estinzione debiti',tab_sinking:'Obiettivi di risparmio',
     tab_calendar:'Calendario',tab_subscriptions:'Abbonamenti',
     total_income:'Entrate totali',expenses_bills:'Spese e bollette',
@@ -1255,7 +1255,7 @@ const TRANSLATIONS = {
     toast_period_updated:'Periodo aggiornato \u2713',toast_period_error:'La data di fine deve essere successiva alla data di inizio',
     toast_currency_updated:'Valuta aggiornata \u2713',toast_imported:'{0} importato/i \u2713',
     toast_fund_created:'Obiettivo creato ✓',toast_fund_updated:'Obiettivo aggiornato ✓',
-    toast_fund_contrib:'{amt} aggiunto a {name} \u2713',
+    toast_fund_contrib:'{0} aggiunto a {1} \u2713',
     toast_sub_added:'Abbonamento aggiunto \u2713',toast_sub_updated:'Abbonamento aggiornato \u2713',
     toast_alloc_enabled:'Distribuzione attivata \u2713',toast_alloc_disabled:'Distribuzione disattivata',
     toast_lang_updated:'Lingua aggiornata \u2713',toast_export:'Esportato \u2713',
@@ -1281,7 +1281,7 @@ const TRANSLATIONS = {
     tx_showing:'Visualizzando {n} di {total}',tx_no_results:'Nessuna transazione corrisponde al tuo filtro.',
     alloc_add_bucket:'+ Aggiungi segmento',alloc_remove_btn:'Rimuovi',
     alloc_min_buckets:'Sono necessari almeno 2 segmenti',
-    alloc_auto_tag:'Taggato automaticamente \u2192 {name}',
+    alloc_auto_tag:'Taggato automaticamente \u2192 {1}',
     tx_prev:'\u2190 Prec.',tx_next:'Succ. \u2192',tx_page_of:'Pagina {n} di {total}',
     debt_due_day_note:'I giorni 29-31 non appaiono nei mesi pi\u00f9 corti',
     sub_advanced:'Data di fatturazione avanzata al {date}',
@@ -1523,7 +1523,7 @@ const TRANSLATIONS = {
     lang_name:'Polski',
     tab_dashboard:'Panel',tab_budget:'Budżet',tab_transactions:'Transakcje',
     tab_income:'Przychody',tab_expenses:'Wydatki',tab_bills:'Rachunki',
-    tab_debt:'Długi',tab_savings:'Oszczędności',tab_settings:'Ustawienia',nth_what:'Co to oznacza',nth_fix:'Jak to naprawić',nth_aria:'Co to jest i jak to naprawić?',nth_close:'Rozumiem',nth_bill_late_w:'Termin tego rachunku minął, a nie jest jeszcze opłacony.',nth_bill_late_f:'Jeśli go opłaciłeś, dotknij Zapłać i zapisz z datą, kiedy wyszedł | Jeśli nie, zapłać jak najszybciej, by uniknąć opłat za zwłokę | Jeśli kwota lub termin się zmieniły, zaktualizuj rachunek, żeby przypomnienia były trafne',nth_bill_soon_w:'Ten rachunek przypada w ciągu najbliższego tygodnia.',nth_bill_soon_f:'Upewnij się, że pieniądze będą przed terminem | Dotknij Zapłać, gdy zejdą z konta | Jeśli płacisz inaczej, i tak zapisz go tutaj, żeby liczby się zgadzały',nth_debt_late_w:'Termin minimalnej raty tego długu minął, a pełna rata nie została zapisana.',nth_debt_late_f:'Jeśli zapłaciłeś, dotknij Zapłać i zapisz ją z datą, kiedy zeszła z konta | Jeśli nie, od razu zapłać przynajmniej minimum: pominięta rata to opłaty i gorsza historia kredytowa | Sprawdź, czy dzień spłaty jest poprawny',nth_debt_soon_w:'Minimalna rata tego długu przypada w ciągu najbliższego tygodnia.',nth_debt_soon_f:'Upewnij się, że minimum będzie pokryte przed terminem | Dotknij Zapłać, gdy zejdzie z konta | Płacenie ponad minimum szybciej spłaca dług',nth_over_w:'W tej kategorii wydałeś więcej, niż zaplanowałeś na ten okres.',nth_over_f:'Dotknij Sprawdź, by zobaczyć kategorię | Ogranicz ją do końca okresu | Jeśli kwota była nierealna, podnieś ją i obniż inną, żeby plan się bilansował',nth_uncat_w:'Te wydatki zapisano do posortowania później i nie mają kategorii, więc budżet nie liczy ich poprawnie.',nth_uncat_f:'Dotknij Przypisz, by je zobaczyć | Nadaj każdemu kategorię | Budżet zaktualizuje się od razu',nav_menu:'Menu',
+    tab_debt:'Długi',tab_savings:'Oszczędności',tab_settings:'Ustawienia',toast_undo_btn:'Cofnij',toast_undone:'Cofnięto',nth_what:'Co to oznacza',nth_fix:'Jak to naprawić',nth_aria:'Co to jest i jak to naprawić?',nth_close:'Rozumiem',nth_bill_late_w:'Termin tego rachunku minął, a nie jest jeszcze opłacony.',nth_bill_late_f:'Jeśli go opłaciłeś, dotknij Zapłać i zapisz z datą, kiedy wyszedł | Jeśli nie, zapłać jak najszybciej, by uniknąć opłat za zwłokę | Jeśli kwota lub termin się zmieniły, zaktualizuj rachunek, żeby przypomnienia były trafne',nth_bill_soon_w:'Ten rachunek przypada w ciągu najbliższego tygodnia.',nth_bill_soon_f:'Upewnij się, że pieniądze będą przed terminem | Dotknij Zapłać, gdy zejdą z konta | Jeśli płacisz inaczej, i tak zapisz go tutaj, żeby liczby się zgadzały',nth_debt_late_w:'Termin minimalnej raty tego długu minął, a pełna rata nie została zapisana.',nth_debt_late_f:'Jeśli zapłaciłeś, dotknij Zapłać i zapisz ją z datą, kiedy zeszła z konta | Jeśli nie, od razu zapłać przynajmniej minimum: pominięta rata to opłaty i gorsza historia kredytowa | Sprawdź, czy dzień spłaty jest poprawny',nth_debt_soon_w:'Minimalna rata tego długu przypada w ciągu najbliższego tygodnia.',nth_debt_soon_f:'Upewnij się, że minimum będzie pokryte przed terminem | Dotknij Zapłać, gdy zejdzie z konta | Płacenie ponad minimum szybciej spłaca dług',nth_over_w:'W tej kategorii wydałeś więcej, niż zaplanowałeś na ten okres.',nth_over_f:'Dotknij Sprawdź, by zobaczyć kategorię | Ogranicz ją do końca okresu | Jeśli kwota była nierealna, podnieś ją i obniż inną, żeby plan się bilansował',nth_uncat_w:'Te wydatki zapisano do posortowania później i nie mają kategorii, więc budżet nie liczy ich poprawnie.',nth_uncat_f:'Dotknij Przypisz, by je zobaczyć | Nadaj każdemu kategorię | Budżet zaktualizuje się od razu',nav_menu:'Menu',
     tab_debt_payoff:'Spłata długów',tab_sinking:'Cele oszczędnościowe',
     tab_calendar:'Kalendarz',tab_subscriptions:'Subskrypcje',
     total_income:'Łączne przychody',expenses_bills:'Wydatki i rachunki',
@@ -1539,7 +1539,7 @@ const TRANSLATIONS = {
     toast_period_updated:'Okres zaktualizowany \u2713',toast_period_error:'Data ko\u0144cowa musi by\u0107 po dacie pocz\u0105tkowej',
     toast_currency_updated:'Waluta zaktualizowana \u2713',toast_imported:'Zaimportowano {0} \u2713',
     toast_fund_created:'Cel utworzony ✓',toast_fund_updated:'Cel zaktualizowany ✓',
-    toast_fund_contrib:'Dodano {amt} do {name} \u2713',
+    toast_fund_contrib:'Dodano {0} do {1} \u2713',
     toast_sub_added:'Subskrypcja dodana \u2713',toast_sub_updated:'Subskrypcja zaktualizowana \u2713',
     toast_alloc_enabled:'Podzia\u0142 w\u0142\u0105czony \u2713',toast_alloc_disabled:'Podzia\u0142 wy\u0142\u0105czony',
     toast_lang_updated:'J\u0119zyk zaktualizowany \u2713',toast_export:'Wyeksportowano \u2713',
@@ -1565,7 +1565,7 @@ const TRANSLATIONS = {
     tx_showing:'Wy\u015bwietlono {n} z {total}',tx_no_results:'\u017badna transakcja nie odpowiada filtrowi.',
     alloc_add_bucket:'+ Dodaj segment',alloc_remove_btn:'Usu\u0144',
     alloc_min_buckets:'Wymagane co najmniej 2 segmenty',
-    alloc_auto_tag:'Automatycznie oznaczono \u2192 {name}',
+    alloc_auto_tag:'Automatycznie oznaczono \u2192 {1}',
     tx_prev:'\u2190 Poprz.',tx_next:'Nast. \u2192',tx_page_of:'Strona {n} z {total}',
     debt_due_day_note:'Dni 29-31 nie pojawiaj\u0105 si\u0119 w kr\u00f3tszych miesi\u0105cach',
     sub_advanced:'Data rozliczenia przeniesiona na {date}',
@@ -3690,7 +3690,7 @@ function wireNavWidgets(host) {
   initFieldTips(host);
   host.querySelector('#wqsLog')?.addEventListener('click', () => {
     addTransaction({ prefix: 'wqs', after: () => {
-      showToast(t('toast_tx_added'));
+      showUndoToast(t('toast_tx_added'));
       if (currentBTab === 'dashboard') renderDashboard();
       renderNavWidgets();
     } });
@@ -4901,13 +4901,13 @@ function promptMarkModulePaid(type, rowId, onDone) {
     }
     const date = document.getElementById('modPaidDate')?.value || today();
     const tx = { id: uid(), date, type: TX_TYPE_FOR_MODULE[type], category: row.category, amount: amt, description: '' };
-    state.transactions.push(tx);
+    state.transactions.push(tx); noteAdded(tx);
     trialUse('transaction');
     setRowPayments(row, rowPayTxIds(row).concat(tx.id));
     saveState();
     document.getElementById('tutorialOverlay').hidden = true;
     onDone();
-    showToast(t('toast_mod_paid'));
+    showUndoToast(t('toast_mod_paid'));
   });
   document.getElementById('modPaidCancelBtn')?.addEventListener('click', () => { document.getElementById('tutorialOverlay').hidden = true; });
 }
@@ -5326,14 +5326,15 @@ function addTransaction(opts) {
     return false;
   }
   if (errEl) errEl.hidden = true;
-  state.transactions.push({ id: uid(), date, type, category: cat, amount, description: desc });
+  const newTx = { id: uid(), date, type, category: cat, amount, description: desc };
+  state.transactions.push(newTx); noteAdded(newTx);
   trialUse('transaction');
   saveState();
   if (o.after) { o.after(); return true; }
   id('Amount').value = '';
   id('Desc').value   = '';
   renderTxList();
-  showToast(t('toast_tx_added'));
+  showUndoToast(t('toast_tx_added'));
   return true;
 }
 
@@ -5510,7 +5511,7 @@ function openQuickAddTx(prefill){
 
   // ── Saving ──
   const save = again => addTransaction({ prefix: 'qa', after: () => {
-    showToast(t('toast_tx_added'));
+    showUndoToast(t('toast_tx_added'));
     if (!again) {
       const go = $('qaSaveBtn');
       go.disabled = true; go.classList.add('is-done'); go.innerHTML = DD_TICK;
@@ -5664,6 +5665,7 @@ function handleCSV(e) {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
+    const pre = new Set(state.transactions.map(x => x.id));
     const lines = ev.target.result.split('\n').filter(l => l.trim());
     const TYPES = new Set(['income','expense','bill','debt','savings']);
     let imported = 0, skipped = 0, limitHit = false;
@@ -5680,8 +5682,9 @@ function handleCSV(e) {
     }
     saveState(); renderTxList();
     e.target.value = '';
-    if (limitHit) { if (imported > 0) showToast(tf('toast_imported',imported)); showUpgradeModal({ reason: 'transaction' }); return; }
-    if (imported > 0) showToast(tf('toast_imported',imported));
+    if (imported > 0) _justAdded = state.transactions.filter(x => !pre.has(x.id)).map(x => x.id);
+    if (limitHit) { if (imported > 0) showUndoToast(tf('toast_imported',imported)); showUpgradeModal({ reason: 'transaction' }); return; }
+    if (imported > 0) showUndoToast(tf('toast_imported',imported));
     else alertDialog(t('csv_error_msg'), '\uD83D\uDCC4');
     e.target.value = '';
   };
@@ -6274,13 +6277,45 @@ function closeGuide() {
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────
-function showToast(msg) {
+// A toast can carry one button. With one it stays a little longer and
+// takes clicks; without, it is the plain notice it always was.
+function showToast(msg, opts) {
   let t = document.getElementById('toast');
   if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); document.body.appendChild(t); }
-  t.textContent = msg;
+  t.innerHTML = '';
+  const m = document.createElement('span'); m.className = 'toast-msg'; m.textContent = msg; t.appendChild(m);
+  const act = opts && opts.action;
+  if (act) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'toast-act'; b.textContent = act.label;
+    b.addEventListener('click', () => { clearTimeout(t._timer); t.classList.remove('show', 'has-act'); act.run(); });
+    t.appendChild(b);
+  }
+  t.classList.toggle('has-act', !!act);
   t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2800);
+  t._timer = setTimeout(() => t.classList.remove('show', 'has-act'), act ? 6000 : 2800);
+}
+// Every way of adding a transaction notes what it added, and the toast that
+// follows offers to take exactly that back.
+let _justAdded = [];
+function noteAdded(tx) { if (tx && tx.id) _justAdded.push(tx.id); }
+function showUndoToast(msg) {
+  const ids = _justAdded.slice(); _justAdded = [];
+  if (!ids.length) { showToast(msg); return; }
+  showToast(msg, { action: { label: t('toast_undo_btn'), run: () => undoAddedTx(ids) } });
+}
+// Takes back what was just added, the same way deleting it would: a bill
+// or debt row it paid is owed again.
+function undoAddedTx(ids) {
+  const set = new Set(ids);
+  if (!state.transactions.some(tx => set.has(tx.id))) return;
+  state.transactions = state.transactions.filter(tx => !set.has(tx.id));
+  try { syncModulePaidLinks(); } catch (e) {}
+  saveState();
+  dispatchRender(currentBTab);
+  try { renderNavWidgets(); } catch (e) {}
+  showToast(t('toast_undone'));
 }
 
 // ── In-app dialog (replaces native confirm / alert) ───────────────────
