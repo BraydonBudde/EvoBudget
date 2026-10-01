@@ -2440,6 +2440,10 @@ input[type="number"].expected-input {
 
 .modal:has(> .modal-body > .bp) { max-width: 820px; width: calc(100% - 32px); }
 .bp { display: flex; flex-direction: column; gap: 18px; }
+/* Cancel and Use share one line, half each. */
+.bp-actions { grid-template-columns: 1fr 1fr; }
+.bp-actions .btn { height: 50px; min-width: 0; padding: 0 12px; }
+.bp-actions .qa-go { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; line-height: 50px; text-align: center; }
 .bp-hero {
   display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 10px;
   padding: 16px 12px; border-radius: 20px;
