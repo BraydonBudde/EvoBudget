@@ -719,7 +719,7 @@ function animateCountUp(el, target, render, dur, isCurrent, asHtml) {
     if (isCurrent && !isCurrent()) return; // a newer render has since taken over this element
     const p = Math.min(1, (now - startTime) / dur);
     const eased = 1 - Math.pow(1 - p, 3);
-    const put = v => { if (asHtml) el.innerHTML = render(v); else el.textContent = render(v); };
+    const put = v => { if (asHtml) el.innerHTML = render(v); else el.textContent = render(v); fitIfFigure(el); };
     put(target * eased);
     if (p < 1) requestAnimationFrame(tick);
     else put(target); // exact final value, no float drift
@@ -743,3 +743,39 @@ function animateDashboardEntrance(container, countUps) {
   (countUps || []).forEach(c => { if (c && c.el) animateCountUp(c.el, c.target, c.render || fmt, undefined, isCurrent, c.html); });
 }
 
+// ── Free to spend always fits its card ──────────────────────────────────
+// The stylesheet sizes the figure by sharing its column's width across its
+// characters, which assumes a typical width per character. Some themes'
+// typefaces run wider (Synthwave's Orbitron, Terminal's monospace), so the
+// figure is measured once drawn and, if it is wider than its column, scaled
+// down to fit. It is measured again whenever the window changes size, a
+// typeface finishes loading, the theme changes, or the hero is redrawn.
+function fitNlOne(v) {
+  if (!v) return;
+  v.style.fontSize = '';
+  const room = v.clientWidth, need = v.scrollWidth;
+  if (room > 0 && need > room + 1) {
+    const fs = parseFloat(getComputedStyle(v).fontSize);
+    v.style.fontSize = Math.max(12, Math.floor(fs * room / need * 0.98)) + 'px';
+  }
+}
+function fitNlFigures(root) { (root || document).querySelectorAll('.nl-hero .nl-value').forEach(fitNlOne); }
+// While a figure counts, the amounts it passes through can be longer than
+// where it ends, so it is fitted on every frame of the count as well.
+function fitIfFigure(el) { if (el && el.classList && el.classList.contains('nl-value')) fitNlOne(el); }
+(function wireNlFit() {
+  let queued = 0;
+  const run = () => { if (queued) return; queued = requestAnimationFrame(() => { queued = 0; fitNlFigures(); }); };
+  const start = () => {
+    window.addEventListener('resize', run);
+    try { document.fonts.ready.then(run); document.fonts.addEventListener('loadingdone', run); } catch (e) {}
+    new MutationObserver(run).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    new MutationObserver(ms => {
+      for (const m of ms) for (const n of m.addedNodes) {
+        if (n.nodeType === 1 && (n.matches('.nl-hero, .nl-value') || n.querySelector('.nl-hero'))) { run(); return; }
+      }
+    }).observe(document.body, { childList: true, subtree: true });
+    run();
+  };
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();

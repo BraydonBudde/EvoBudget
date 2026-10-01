@@ -273,7 +273,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Pick your <strong>Currency</strong> so every amount in the app displays the way you expect.',
     guide_settings_step2:'Choose your <strong>Budget Period</strong> (like monthly or biweekly) to match how you actually get paid and pay bills.',
     guide_settings_step3:"Enter a <strong>Rollover</strong> amount if you want unspent money from last period to carry into this one's Net Leftover.",
-    guide_settings_step4:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), a <strong>Dashboard Layout</strong> (2 designs to choose from, with more on the way), and your <strong>Language</strong> from the list.',
+    guide_settings_step4:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), and your <strong>Language</strong> from the list.',
     guide_settings_step5:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
     guide_settings_connect1:'Your Currency and Budget Period choices shape how every other page in the app displays and calculates numbers.',
     guide_settings_connect2:'The Rollover amount you set here flows directly into the Net Leftover shown on your Dashboard.',
@@ -576,7 +576,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Wähle deine <strong>Währung</strong>, damit jeder Betrag in der App so angezeigt wird, wie du es erwartest.',
     guide_settings_step2:'Wähle deinen <strong>Budgetzeitraum</strong> (etwa monatlich oder zweiwöchentlich) passend dazu, wie du tatsächlich bezahlt wirst und Rechnungen begleichst.',
     guide_settings_step3:'Trage einen <strong>Übertrag</strong>-Betrag ein, wenn nicht ausgegebenes Geld aus der letzten Periode in den Nettoüberschuss dieser Periode einfließen soll.',
-    guide_settings_step4:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage oder Terminal), ein <strong>Dashboard-Layout</strong> (2 Designs zur Auswahl, weitere folgen bald) und deine <strong>Sprache</strong> aus der Liste.',
+    guide_settings_step4:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage oder Terminal) und deine <strong>Sprache</strong> aus der Liste.',
     guide_settings_step5:'Nutze <strong>Daten exportieren</strong>, um alles zu sichern, oder <strong>Daten zurücksetzen</strong>, wenn du jemals ganz neu anfangen möchtest.',
     guide_settings_connect1:'Deine Wahl von Währung und Budgetzeitraum bestimmt, wie jede andere Seite in der App Zahlen anzeigt und berechnet.',
     guide_settings_connect2:'Der hier festgelegte Übertrag-Betrag fließt direkt in den im Dashboard angezeigten Nettoüberschuss ein.',
@@ -861,7 +861,7 @@ const TRANSLATIONS = {
     guide_settings_step1:"Choisissez votre <strong>Devise</strong> pour que chaque montant s'affiche comme vous l'attendez.",
     guide_settings_step2:"Choisissez votre <strong>Période budgétaire</strong> (mensuelle, aux deux semaines...) pour correspondre à votre rythme réel de paiement et de factures.",
     guide_settings_step3:"Saisissez un montant de <strong>Report</strong> si vous voulez que l'argent non dépensé de la période précédente se répercute sur le Solde net de celle-ci.",
-    guide_settings_step4:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Vintage ou Terminal), une <strong>Disposition du tableau de bord</strong> (2 designs au choix, d'autres à venir), et votre <strong>Langue</strong> dans la liste.",
+    guide_settings_step4:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Vintage ou Terminal), et votre <strong>Langue</strong> dans la liste.",
     guide_settings_step5:"Utilisez <strong>Exporter les données</strong> pour tout sauvegarder, ou <strong>Réinitialiser les données</strong> si vous voulez repartir complètement à zéro.",
     guide_settings_connect1:"Vos choix de Devise et de Période budgétaire déterminent comment chaque autre page de l'application affiche et calcule les chiffres.",
     guide_settings_connect2:"Le montant de Report défini ici se répercute directement sur le Solde net affiché sur votre tableau de bord.",
@@ -1146,7 +1146,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Elige tu <strong>Moneda</strong> para que cada importe en la app se muestre como esperas.',
     guide_settings_step2:'Elige tu <strong>Período de presupuesto</strong> (mensual, quincenal, etc.) para que coincida con cómo realmente cobras y pagas.',
     guide_settings_step3:'Ingresa un importe de <strong>Saldo anterior</strong> si quieres que el dinero no gastado del último período pase al Sobrante neto de este.',
-    guide_settings_step4:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Vintage o Terminal), un <strong>Diseño del panel</strong> (2 diseños a elegir, más próximamente), y tu <strong>Idioma</strong> de la lista.',
+    guide_settings_step4:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Vintage o Terminal), y tu <strong>Idioma</strong> de la lista.',
     guide_settings_step5:'Usa <strong>Exportar datos</strong> para respaldar todo, o <strong>Restablecer datos</strong> si alguna vez quieres empezar completamente de cero.',
     guide_settings_connect1:'Tus elecciones de Moneda y Período de presupuesto determinan cómo cada otra página de la app muestra y calcula los números.',
     guide_settings_connect2:'El importe de Saldo anterior que fijas aquí pasa directamente al Sobrante neto que se muestra en tu Panel.',
@@ -1431,7 +1431,7 @@ const TRANSLATIONS = {
     guide_settings_step1:"Scegli la tua <strong>Valuta</strong> così ogni importo nell'app viene mostrato come ti aspetti.",
     guide_settings_step2:"Scegli il tuo <strong>Periodo di budget</strong> (mensile, quindicinale, ecc.) per adattarlo a come vieni pagato e paghi davvero.",
     guide_settings_step3:"Inserisci un importo di <strong>Riporto</strong> se vuoi che i soldi non spesi del periodo precedente confluiscano nell'Avanzo netto di questo.",
-    guide_settings_step4:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Vintage o Terminal), un <strong>Layout della dashboard</strong> (2 design tra cui scegliere, altri in arrivo), e la tua <strong>Lingua</strong> dall'elenco.",
+    guide_settings_step4:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Vintage o Terminal), e la tua <strong>Lingua</strong> dall'elenco.",
     guide_settings_step5:"Usa <strong>Esporta dati</strong> per fare un backup di tutto, o <strong>Ripristina dati</strong> se vuoi mai ricominciare completamente da zero.",
     guide_settings_connect1:"Le tue scelte di Valuta e Periodo di budget determinano come ogni altra pagina dell'app mostra e calcola i numeri.",
     guide_settings_connect2:"L'importo di Riporto impostato qui confluisce direttamente nell'Avanzo netto mostrato nella tua Dashboard.",
@@ -1715,7 +1715,7 @@ const TRANSLATIONS = {
     guide_settings_step1:'Wybierz swoją <strong>Walutę</strong>, aby każda kwota w aplikacji wyświetlała się tak, jak oczekujesz.',
     guide_settings_step2:'Wybierz swój <strong>Okres budżetowy</strong> (na przykład miesięczny lub dwutygodniowy), aby pasował do tego, jak faktycznie otrzymujesz wypłatę i płacisz rachunki.',
     guide_settings_step3:'Wpisz kwotę <strong>Przeniesienia</strong>, jeśli chcesz, aby niewydane pieniądze z ostatniego okresu przeszły do Salda netto bieżącego okresu.',
-    guide_settings_step4:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Vintage lub Terminal), <strong>Układ pulpitu</strong> (2 projekty do wyboru, więcej wkrótce) i swój <strong>Język</strong> z listy.',
+    guide_settings_step4:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Vintage lub Terminal) i swój <strong>Język</strong> z listy.',
     guide_settings_step5:'Użyj <strong>Eksportuj dane</strong>, aby zrobić kopię zapasową wszystkiego, lub <strong>Zresetuj dane</strong>, jeśli kiedykolwiek zechcesz zacząć zupełnie od nowa.',
     guide_settings_connect1:'Twój wybór Waluty i Okresu budżetowego określa, jak każda inna strona aplikacji wyświetla i oblicza liczby.',
     guide_settings_connect2:'Kwota Przeniesienia ustawiona tutaj trafia bezpośrednio do Salda netto pokazanego na twoim Pulpicie.',
@@ -3048,7 +3048,7 @@ function ddReduced() { try { return window.matchMedia('(prefers-reduced-motion: 
 function ddCount(node, from, to, render, ms) {
   if (!node) return;
   const t0 = performance.now(), dur = ms || 850, ease = x => 1 - Math.pow(1 - x, 3);
-  const step = now => { const k = Math.min(1, (now - t0) / dur); node.innerHTML = render(from + (to - from) * ease(k)); if (k < 1) requestAnimationFrame(step); };
+  const step = now => { const k = Math.min(1, (now - t0) / dur); node.innerHTML = render(from + (to - from) * ease(k)); if (typeof fitIfFigure === 'function') fitIfFigure(node); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
 const DD_TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
@@ -4164,7 +4164,9 @@ const SLEEK_LAYOUT = 3;
 // Sleek first, and Classic no longer among them. Classic is not deleted:
 // Sleek renders it and then replaces its heading, so it is still the thing
 // doing the work - it just stopped being a choice of its own.
-const DASH_LAYOUTS = [SLEEK_LAYOUT, 2];
+// Radial Pulse was a placeholder and is gone, so this is the one layout and
+// Settings no longer offers a choice. A saved Radial Pulse moves across.
+const DASH_LAYOUTS = [SLEEK_LAYOUT];
 
 function getDashLayout() {
   const v = state?.settings?.dashboardLayout;
@@ -4968,7 +4970,8 @@ const APP_ICONS = {
   subscriptions: '<path d="M20.4 11.2a8.4 8.4 0 0 0-14.4-5.3L3.2 8.6"/><path d="M3.6 12.8a8.4 8.4 0 0 0 14.4 5.3l2.8-2.7"/><path d="M3.2 4.6v4h4"/><path d="M20.8 19.4v-4h-4"/>',
   sinking:       '<circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="4.3"/><circle cx="12" cy="12" r="0.9"/>',
   calendar:      '<rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/>',
-  settings:      '<path d="M3.6 7.2h9.2"/><path d="M18.4 7.2h2"/><circle cx="15.6" cy="7.2" r="2.2"/><path d="M3.6 16.8h2"/><path d="M11.2 16.8h9.2"/><circle cx="8.4" cy="16.8" r="2.2"/>',
+  // The same gear the top bar and the phone dock draw, so Settings looks the same everywhere.
+  settings:      '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
   income:        '<path d="M12 3.4v9.4"/><path d="M8.2 9 12 12.8 15.8 9"/><path d="M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3"/>',
   expenses:      '<path d="M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6"/><circle cx="9.6" cy="19.6" r="1.3"/><circle cx="17.4" cy="19.6" r="1.3"/>',
   bills:         '<path d="M6 3.2h8l4 4v13.6H6z"/><path d="M14 3.2v4h4"/><path d="M9.2 12.2h5.6"/><path d="M9.2 16.2h5.6"/>',
@@ -5841,7 +5844,6 @@ function renderSettings() {
                  value="${state.rollover || ''}" placeholder="0.00"></div>
       </div></div>
       ${navPositionCardHtml()}
-      ${dashboardLayoutCardHtml()}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌙 ${t('appearance')}</div>
         <p class="settings-desc">${t('appearance_desc')}</p>
@@ -6146,7 +6148,6 @@ const HELP = {
   <li><strong>${t('budget_period')}</strong> - ${t('help_sett_period_li')}</li>
   <li><strong>${t('rollover')}</strong> - ${t('help_sett_rollover_li')}</li>
   <li><strong>${t('appearance')}</strong> - ${t('help_sett_theme_li')}</li>
-  <li><strong>${t('dashboard_layout')}</strong> - ${t('help_sett_layout_li')}</li>
 </ul>`
   }
 };

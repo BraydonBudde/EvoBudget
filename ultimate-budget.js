@@ -1185,7 +1185,7 @@ const TRANSLATIONS = {
     guide_settings_big:'Settings is where the app adapts to you - currency, budgeting period, rollover, appearance, language, and how your data is stored and backed up.',
     guide_settings_step1:'Pick your <strong>Currency</strong> and <strong>Budget Period</strong> so the app matches how you actually get paid and spend.',
     guide_settings_step2:'Turn on <strong>Rollover</strong> if you want unspent money to carry into the next period.',
-    guide_settings_step3:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), a <strong>Dashboard Layout</strong> (2 designs to choose from, with more on the way), and your <strong>Language</strong> from the list.',
+    guide_settings_step3:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), and your <strong>Language</strong> from the list.',
     guide_settings_step4:'Set up <strong>Allocation Buckets</strong> if you want to budget by percentage (like 50% needs, 30% wants, 20% savings) instead of fixed category amounts.',
     guide_settings_step5:'Choose how your data is stored under <strong>Data & Sync</strong> - locally on this device, or synced with Google Drive so it follows you across devices.',
     guide_settings_step6:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
@@ -1763,7 +1763,7 @@ const TRANSLATIONS = {
     guide_settings_big:'In den Einstellungen passt sich die App an dich an - Währung, Budgetzeitraum, Übertrag, Erscheinungsbild, Sprache und wie deine Daten gespeichert und gesichert werden.',
     guide_settings_step1:'Wähle deine <strong>Währung</strong> und deinen <strong>Budgetzeitraum</strong>, damit die App zu deinem tatsächlichen Zahlungs- und Ausgabenrhythmus passt.',
     guide_settings_step2:'Schalte <strong>Übertrag</strong> ein, wenn nicht ausgegebenes Geld in den nächsten Zeitraum übernommen werden soll.',
-    guide_settings_step3:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage oder Terminal), ein <strong>Dashboard-Layout</strong> (2 Designs zur Auswahl, weitere folgen bald) und deine <strong>Sprache</strong> aus der Liste.',
+    guide_settings_step3:'Wähle ein <strong>Erscheinungsbild</strong>-Thema (Hell, Dunkel, Synthwave, Vintage oder Terminal) und deine <strong>Sprache</strong> aus der Liste.',
     guide_settings_step4:'Richte <strong>Budget-Buckets</strong> ein, wenn du lieber prozentual budgetieren möchtest (etwa 50 % Bedürfnisse, 30 % Wünsche, 20 % Sparen) statt mit festen Kategoriebeträgen.',
     guide_settings_step5:'Wähle unter <strong>Daten & Sync</strong>, wie deine Daten gespeichert werden - lokal auf diesem Gerät oder mit Google Drive synchronisiert, sodass sie dir auf andere Geräte folgen.',
     guide_settings_step6:'Nutze <strong>Daten exportieren</strong>, um alles zu sichern, oder <strong>Daten zurücksetzen</strong>, wenn du jemals ganz neu anfangen möchtest.',
@@ -2323,7 +2323,7 @@ const TRANSLATIONS = {
     guide_settings_big:"Les Paramètres, c'est là où l'application s'adapte à vous - devise, période budgétaire, report, apparence, langue, et la façon dont vos données sont stockées et sauvegardées.",
     guide_settings_step1:"Choisissez votre <strong>Devise</strong> et votre <strong>Période budgétaire</strong> pour que l'application corresponde à votre rythme réel de paiement et de dépenses.",
     guide_settings_step2:'Activez <strong>Report</strong> si vous voulez que l\'argent non dépensé passe à la période suivante.',
-    guide_settings_step3:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Vintage ou Terminal), une <strong>Disposition du tableau de bord</strong> (2 designs au choix, d'autres à venir), et votre <strong>Langue</strong> dans la liste.",
+    guide_settings_step3:"Choisissez un thème d'<strong>Apparence</strong> (Clair, Sombre, Synthwave, Vintage ou Terminal), et votre <strong>Langue</strong> dans la liste.",
     guide_settings_step4:"Configurez les <strong>Enveloppes budgétaires</strong> si vous préférez budgétiser par pourcentage (comme 50 % besoins, 30 % envies, 20 % épargne) plutôt qu'avec des montants de catégorie fixes.",
     guide_settings_step5:"Choisissez comment vos données sont stockées sous <strong>Données et synchronisation</strong> - localement sur cet appareil, ou synchronisées avec Google Drive pour qu'elles vous suivent sur d'autres appareils.",
     guide_settings_step6:"Utilisez <strong>Exporter les données</strong> pour tout sauvegarder, ou <strong>Réinitialiser les données</strong> si vous voulez repartir complètement à zéro.",
@@ -2883,7 +2883,7 @@ const TRANSLATIONS = {
     guide_settings_big:'Ajustes es donde la app se adapta a ti - moneda, período de presupuesto, saldo anterior, apariencia, idioma y cómo se guardan y respaldan tus datos.',
     guide_settings_step1:'Elige tu <strong>Moneda</strong> y tu <strong>Período de presupuesto</strong> para que la app coincida con tu ritmo real de pago y gasto.',
     guide_settings_step2:'Activa <strong>Saldo anterior</strong> si quieres que el dinero no gastado pase al siguiente período.',
-    guide_settings_step3:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Vintage o Terminal), un <strong>Diseño del panel</strong> (2 diseños a elegir, más próximamente), y tu <strong>Idioma</strong> de la lista.',
+    guide_settings_step3:'Elige un tema de <strong>Apariencia</strong> (Claro, Oscuro, Synthwave, Vintage o Terminal), y tu <strong>Idioma</strong> de la lista.',
     guide_settings_step4:'Configura la <strong>Distribución por porcentajes</strong> si prefieres presupuestar por porcentaje (como 50% necesidades, 30% deseos, 20% ahorro) en lugar de importes fijos por categoría.',
     guide_settings_step5:'Elige cómo se guardan tus datos en <strong>Datos y sincronización</strong> - localmente en este dispositivo, o sincronizados con Google Drive para que te sigan a otros dispositivos.',
     guide_settings_step6:'Usa <strong>Exportar datos</strong> para respaldar todo, o <strong>Restablecer datos</strong> si alguna vez quieres empezar completamente de cero.',
@@ -3444,7 +3444,7 @@ const TRANSLATIONS = {
     guide_settings_big:"Le Impostazioni sono dove l'app si adatta a te - valuta, periodo di budget, riporto, aspetto, lingua e come vengono salvati e sottoposti a backup i tuoi dati.",
     guide_settings_step1:"Scegli la tua <strong>Valuta</strong> e il tuo <strong>Periodo di budget</strong> così l'app corrisponde al tuo reale ritmo di pagamento e spesa.",
     guide_settings_step2:'Attiva <strong>Riporto</strong> se vuoi che il denaro non speso passi al periodo successivo.',
-    guide_settings_step3:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Vintage o Terminal), un <strong>Layout della dashboard</strong> (2 design tra cui scegliere, altri in arrivo), e la tua <strong>Lingua</strong> dall'elenco.",
+    guide_settings_step3:"Scegli un tema d'<strong>Aspetto</strong> (Chiaro, Scuro, Synthwave, Vintage o Terminal), e la tua <strong>Lingua</strong> dall'elenco.",
     guide_settings_step4:"Configura le <strong>Distribuzioni percentuali</strong> se preferisci fare budget per percentuale (come 50% bisogni, 30% desideri, 20% risparmio) invece di importi fissi per categoria.",
     guide_settings_step5:"Scegli come vengono salvati i tuoi dati in <strong>Dati e sincronizzazione</strong> - localmente su questo dispositivo, o sincronizzati con Google Drive così ti seguono su altri dispositivi.",
     guide_settings_step6:"Usa <strong>Esporta dati</strong> per fare un backup di tutto, o <strong>Ripristina dati</strong> se vuoi mai ricominciare completamente da zero.",
@@ -4004,7 +4004,7 @@ const TRANSLATIONS = {
     guide_settings_big:'Ustawienia to miejsce, w którym aplikacja dostosowuje się do ciebie - waluta, okres budżetowy, przeniesienie, wygląd, język oraz sposób zapisywania i tworzenia kopii zapasowych twoich danych.',
     guide_settings_step1:'Wybierz swoją <strong>Walutę</strong> i <strong>Okres budżetowy</strong>, aby aplikacja pasowała do twojego rzeczywistego rytmu płatności i wydatków.',
     guide_settings_step2:'Włącz <strong>Przeniesienie</strong>, jeśli chcesz, aby niewydane pieniądze przechodziły na kolejny okres.',
-    guide_settings_step3:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Vintage lub Terminal), <strong>Układ pulpitu</strong> (2 projekty do wyboru, więcej wkrótce) i swój <strong>Język</strong> z listy.',
+    guide_settings_step3:'Wybierz motyw <strong>Wyglądu</strong> (Jasny, Ciemny, Synthwave, Vintage lub Terminal) i swój <strong>Język</strong> z listy.',
     guide_settings_step4:'Skonfiguruj <strong>Podział procentowy budżetu</strong>, jeśli wolisz budżetować procentowo (na przykład 50% potrzeby, 30% zachcianki, 20% oszczędności) zamiast stałych kwot dla kategorii.',
     guide_settings_step5:'Wybierz, jak przechowywane są twoje dane w <strong>Danych i synchronizacji</strong> - lokalnie na tym urządzeniu lub zsynchronizowane z Google Drive, aby podążały za tobą na inne urządzenia.',
     guide_settings_step6:'Użyj <strong>Eksportuj dane</strong>, aby zrobić kopię zapasową wszystkiego, lub <strong>Zresetuj dane</strong>, jeśli kiedykolwiek zechcesz zacząć zupełnie od nowa.',
@@ -4507,7 +4507,7 @@ function ddDashOff() { return ddReduced() || state.settings.dashboardAnimations 
 function ddCount(node, from, to, render, ms) {
   if (!node) return;
   const t0 = performance.now(), dur = ms || 850, ease = x => 1 - Math.pow(1 - x, 3);
-  const step = now => { const k = Math.min(1, (now - t0) / dur); node.innerHTML = render(from + (to - from) * ease(k)); if (k < 1) requestAnimationFrame(step); };
+  const step = now => { const k = Math.min(1, (now - t0) / dur); node.innerHTML = render(from + (to - from) * ease(k)); if (typeof fitIfFigure === 'function') fitIfFigure(node); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
 const DD_TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
@@ -5458,7 +5458,9 @@ const SLEEK_LAYOUT = 3;
 // Sleek first, and Classic no longer among them. Classic is not deleted:
 // Sleek renders it and then replaces its heading, so it is still the thing
 // doing the work - it just stopped being a choice of its own.
-const DASH_LAYOUTS = [SLEEK_LAYOUT, 2];
+// Radial Pulse was a placeholder and is gone, so this is the one layout and
+// Settings no longer offers a choice. A saved Radial Pulse moves across.
+const DASH_LAYOUTS = [SLEEK_LAYOUT];
 
 function getDashLayout() {
   const v = state?.settings?.dashboardLayout;
@@ -7045,7 +7047,8 @@ const APP_ICONS = {
   subscriptions: '<path d="M20.4 11.2a8.4 8.4 0 0 0-14.4-5.3L3.2 8.6"/><path d="M3.6 12.8a8.4 8.4 0 0 0 14.4 5.3l2.8-2.7"/><path d="M3.2 4.6v4h4"/><path d="M20.8 19.4v-4h-4"/>',
   sinking:       '<circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="4.3"/><circle cx="12" cy="12" r="0.9"/>',
   calendar:      '<rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/>',
-  settings:      '<path d="M3.6 7.2h9.2"/><path d="M18.4 7.2h2"/><circle cx="15.6" cy="7.2" r="2.2"/><path d="M3.6 16.8h2"/><path d="M11.2 16.8h9.2"/><circle cx="8.4" cy="16.8" r="2.2"/>',
+  // The same gear the top bar and the phone dock draw, so Settings looks the same everywhere.
+  settings:      '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
   income:        '<path d="M12 3.4v9.4"/><path d="M8.2 9 12 12.8 15.8 9"/><path d="M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3"/>',
   expenses:      '<path d="M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6"/><circle cx="9.6" cy="19.6" r="1.3"/><circle cx="17.4" cy="19.6" r="1.3"/>',
   bills:         '<path d="M6 3.2h8l4 4v13.6H6z"/><path d="M14 3.2v4h4"/><path d="M9.2 12.2h5.6"/><path d="M9.2 16.2h5.6"/>',
@@ -9026,7 +9029,6 @@ function renderSettings(){
       </div></div>
       ${pennySettingsCardHtml()}
       ${navPositionCardHtml()}
-      ${dashboardLayoutCardHtml()}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🌙 ${t('appearance')}</div>
         <p class="settings-desc">${t('appearance_desc')}</p>
@@ -9536,8 +9538,6 @@ const HELP={
 <p>${t('help_sett_currency_p')}</p>
 <h4 style="margin:14px 0 6px;font-size:14px">${t('appearance')}</h4>
 <p>${t('help_sett_appearance_p')}</p>
-<h4 style="margin:14px 0 6px;font-size:14px">${t('dashboard_layout')}</h4>
-<p>${t('help_sett_layout_p')}</p>
 <h4 style="margin:14px 0 6px;font-size:14px">${t('help_sett_nav_h')}</h4>
 <p><strong>${t('help_sett_nav_top')}</strong><br><strong>${t('help_sett_nav_side')}</strong></p>
 <h4 style="margin:14px 0 6px;font-size:14px">${t('budget_period')}</h4>
