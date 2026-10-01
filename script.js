@@ -76,7 +76,7 @@ const TRANSLATIONS = {
     // Tabs
     tab_dashboard:'Dashboard', tab_budget:'Budget', tab_transactions:'Transactions',
     tab_income:'Income', tab_expenses:'Expenses', tab_bills:'Bills',
-    tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',nav_menu:'Menu',
+    tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',nth_what:'What this means',nth_fix:'How to fix it',nth_aria:'What is this and how do I fix it?',nth_close:'Got it',nth_bill_late_w:'This bill\'s due date has passed and it has not been paid yet.',nth_bill_late_f:'If you have paid it, tap Pay and log it with the date it went out | If not, pay it as soon as you can to avoid late fees | If the amount or date has changed, update the bill so future reminders are right',nth_bill_soon_w:'This bill is due within the next week.',nth_bill_soon_f:'Make sure the money is there before the due date | Tap Pay once it has left your account | If you pay it another way, still log it here so your figures stay right',nth_debt_late_w:'This debt\'s minimum payment date has passed and the full minimum has not been logged.',nth_debt_late_f:'If you paid it, tap Pay and log it with the date it left your account | If not, pay at least the minimum straight away: a missed minimum can bring fees and hurt your credit | Check the debt\'s due day is right',nth_debt_soon_w:'This debt\'s minimum payment is due within the next week.',nth_debt_soon_f:'Make sure the minimum is covered before the due date | Tap Pay once it has gone out | Paying more than the minimum clears the debt sooner',nth_over_w:'You have spent more in this category than you planned for this period.',nth_over_f:'Tap Review to see the category | Hold back on it until the period ends | If the amount was unrealistic, raise it and lower another so your plan still adds up',nth_uncat_w:'These expenses were logged to sort later and have no category, so your budget cannot count them properly.',nth_uncat_f:'Tap Sort them to see them | Give each one a category | Your budget updates straight away',nav_menu:'Menu',
     tab_debt_payoff:'Debt Payoff', tab_sinking:'Savings Goals',
     tab_calendar:'Calendar', tab_subscriptions:'Subscriptions',
     // Dashboard stats
@@ -384,7 +384,7 @@ const TRANSLATIONS = {
     lang_name:'Deutsch',
     tab_dashboard:'Dashboard',tab_budget:'Budget',tab_transactions:'Transaktionen',
     tab_income:'Einnahmen',tab_expenses:'Ausgaben',tab_bills:'Rechnungen',
-    tab_debt:'Schulden',tab_savings:'Ersparnisse',tab_settings:'Einstellungen',nav_menu:'Menü',
+    tab_debt:'Schulden',tab_savings:'Ersparnisse',tab_settings:'Einstellungen',nth_what:'Was das bedeutet',nth_fix:'So behebst du es',nth_aria:'Was ist das und wie behebe ich es?',nth_close:'Verstanden',nth_bill_late_w:'Das Fälligkeitsdatum dieser Rechnung ist vorbei und sie ist noch nicht bezahlt.',nth_bill_late_f:'Hast du sie bezahlt, tippe auf Zahlen und trage sie mit dem Abbuchungsdatum ein | Wenn nicht, zahle sie so bald wie möglich, um Mahngebühren zu vermeiden | Haben sich Betrag oder Datum geändert, passe die Rechnung an, damit künftige Erinnerungen stimmen',nth_bill_soon_w:'Diese Rechnung ist innerhalb der nächsten Woche fällig.',nth_bill_soon_f:'Sorg dafür, dass das Geld vor dem Fälligkeitsdatum da ist | Tippe auf Zahlen, sobald es abgebucht ist | Zahlst du sie anders, trage sie trotzdem hier ein, damit deine Zahlen stimmen',nth_debt_late_w:'Der Termin der Mindestrate dieser Schuld ist vorbei und die volle Rate wurde nicht erfasst.',nth_debt_late_f:'Hast du gezahlt, tippe auf Zahlen und trage es mit dem Abbuchungsdatum ein | Wenn nicht, zahle sofort mindestens die Mindestrate: Eine verpasste Rate kann Gebühren kosten und deiner Bonität schaden | Prüfe, ob der Fälligkeitstag stimmt',nth_debt_soon_w:'Die Mindestrate dieser Schuld ist innerhalb der nächsten Woche fällig.',nth_debt_soon_f:'Sorg dafür, dass die Mindestrate vor dem Termin gedeckt ist | Tippe auf Zahlen, sobald sie abgebucht ist | Mehr als die Mindestrate zu zahlen tilgt die Schuld schneller',nth_over_w:'Du hast in dieser Kategorie mehr ausgegeben als für diesen Zeitraum geplant.',nth_over_f:'Tippe auf Ansehen, um die Kategorie zu sehen | Halte dich dort bis zum Ende des Zeitraums zurück | War der Betrag unrealistisch, erhöhe ihn und senke einen anderen, damit der Plan aufgeht',nth_uncat_w:'Diese Ausgaben wurden zum späteren Sortieren erfasst und haben keine Kategorie, dein Budget kann sie also nicht richtig zählen.',nth_uncat_f:'Tippe auf Zuordnen, um sie zu sehen | Gib jeder eine Kategorie | Dein Budget aktualisiert sich sofort',nav_menu:'Menü',
     tab_debt_payoff:'Schuldenabbau',tab_sinking:'Sparziele',
     tab_calendar:'Kalender',tab_subscriptions:'Abonnements',
     total_income:'Gesamteinnahmen',expenses_bills:'Ausgaben & Rechnungen',
@@ -669,7 +669,7 @@ const TRANSLATIONS = {
     lang_name:'Français',
     tab_dashboard:'Tableau de bord',tab_budget:'Budget',tab_transactions:'Transactions',
     tab_income:'Revenus',tab_expenses:'Dépenses',tab_bills:'Factures',
-    tab_debt:'Dettes',tab_savings:'Épargne',tab_settings:'Paramètres',nav_menu:'Menu',
+    tab_debt:'Dettes',tab_savings:'Épargne',tab_settings:'Paramètres',nth_what:'Ce que cela signifie',nth_fix:'Comment corriger',nth_aria:'Qu\'est-ce que c\'est et comment corriger ?',nth_close:'Compris',nth_bill_late_w:'La date d\'échéance de cette facture est passée et elle n\'est pas encore payée.',nth_bill_late_f:'Si vous l\'avez réglée, touchez Payer et saisissez-la à la date du prélèvement | Sinon, payez-la au plus vite pour éviter des frais de retard | Si le montant ou la date a changé, mettez la facture à jour pour des rappels justes',nth_bill_soon_w:'Cette facture arrive à échéance dans la semaine.',nth_bill_soon_f:'Assurez-vous que l\'argent est là avant l\'échéance | Touchez Payer une fois le prélèvement passé | Si vous la réglez autrement, saisissez-la quand même ici pour garder des chiffres justes',nth_debt_late_w:'La date du paiement minimum de cette dette est passée et le minimum complet n\'a pas été saisi.',nth_debt_late_f:'Si vous avez payé, touchez Payer et saisissez-le à la date du prélèvement | Sinon, payez au moins le minimum tout de suite : un minimum manqué peut coûter des frais et nuire à votre crédit | Vérifiez le jour d\'échéance de la dette',nth_debt_soon_w:'Le paiement minimum de cette dette arrive dans la semaine.',nth_debt_soon_f:'Assurez-vous que le minimum est couvert avant l\'échéance | Touchez Payer une fois le prélèvement passé | Payer plus que le minimum solde la dette plus vite',nth_over_w:'Vous avez dépensé plus que prévu dans cette catégorie sur cette période.',nth_over_f:'Touchez Voir pour afficher la catégorie | Freinez-la jusqu\'à la fin de la période | Si le montant était irréaliste, augmentez-le et réduisez-en un autre pour garder le plan équilibré',nth_uncat_w:'Ces dépenses ont été saisies pour plus tard et n\'ont pas de catégorie : votre budget ne peut pas les compter correctement.',nth_uncat_f:'Touchez Les classer pour les voir | Attribuez une catégorie à chacune | Votre budget se met à jour aussitôt',nav_menu:'Menu',
     tab_debt_payoff:'Remboursement',tab_sinking:'Objectifs d\'épargne',
     tab_calendar:'Calendrier',tab_subscriptions:'Abonnements',
     total_income:'Revenus totaux',expenses_bills:'Dépenses & Factures',
@@ -954,7 +954,7 @@ const TRANSLATIONS = {
     lang_name:'Español',
     tab_dashboard:'Panel',tab_budget:'Presupuesto',tab_transactions:'Transacciones',
     tab_income:'Ingresos',tab_expenses:'Gastos',tab_bills:'Facturas',
-    tab_debt:'Deudas',tab_savings:'Ahorros',tab_settings:'Ajustes',nav_menu:'Menú',
+    tab_debt:'Deudas',tab_savings:'Ahorros',tab_settings:'Ajustes',nth_what:'Qué significa',nth_fix:'Cómo arreglarlo',nth_aria:'¿Qué es y cómo lo arreglo?',nth_close:'Entendido',nth_bill_late_w:'Ha pasado la fecha de esta factura y aún no está pagada.',nth_bill_late_f:'Si la pagaste, toca Pagar y regístrala con la fecha en que salió | Si no, págala cuanto antes para evitar recargos | Si el importe o la fecha cambiaron, actualiza la factura para que los avisos sean correctos',nth_bill_soon_w:'Esta factura vence en la próxima semana.',nth_bill_soon_f:'Asegúrate de tener el dinero antes de la fecha | Toca Pagar cuando haya salido de tu cuenta | Si la pagas de otra forma, regístrala igualmente aquí para que tus cifras cuadren',nth_debt_late_w:'Ha pasado la fecha del pago mínimo de esta deuda y no se ha registrado el mínimo completo.',nth_debt_late_f:'Si lo pagaste, toca Pagar y regístralo con la fecha en que salió | Si no, paga al menos el mínimo ya: un mínimo impagado puede traer recargos y dañar tu historial | Comprueba que el día de pago es correcto',nth_debt_soon_w:'El pago mínimo de esta deuda vence en la próxima semana.',nth_debt_soon_f:'Asegúrate de cubrir el mínimo antes de la fecha | Toca Pagar cuando haya salido | Pagar más del mínimo liquida la deuda antes',nth_over_w:'Has gastado en esta categoría más de lo planeado para este período.',nth_over_f:'Toca Revisar para ver la categoría | Frénala hasta que acabe el período | Si el importe no era realista, súbelo y baja otro para que el plan cuadre',nth_uncat_w:'Estos gastos se registraron para ordenarlos más tarde y no tienen categoría, así que tu presupuesto no puede contarlos bien.',nth_uncat_f:'Toca Clasificar para verlos | Dale una categoría a cada uno | Tu presupuesto se actualiza al momento',nav_menu:'Menú',
     tab_debt_payoff:'Pago de deudas',tab_sinking:'Metas de ahorro',
     tab_calendar:'Calendario',tab_subscriptions:'Suscripciones',
     total_income:'Ingresos totales',expenses_bills:'Gastos y facturas',
@@ -1239,7 +1239,7 @@ const TRANSLATIONS = {
     lang_name:'Italiano',
     tab_dashboard:'Dashboard',tab_budget:'Budget',tab_transactions:'Transazioni',
     tab_income:'Entrate',tab_expenses:'Spese',tab_bills:'Bollette',
-    tab_debt:'Debiti',tab_savings:'Risparmi',tab_settings:'Impostazioni',nav_menu:'Menu',
+    tab_debt:'Debiti',tab_savings:'Risparmi',tab_settings:'Impostazioni',nth_what:'Cosa significa',nth_fix:'Come sistemarlo',nth_aria:'Cos’è e come lo sistemo?',nth_close:'Capito',nth_bill_late_w:'La scadenza di questa bolletta è passata e non è ancora pagata.',nth_bill_late_f:'Se l\'hai pagata, tocca Paga e registrala con la data in cui è uscita | Altrimenti pagala appena puoi per evitare more | Se importo o data sono cambiati, aggiorna la bolletta perché i promemoria siano giusti',nth_bill_soon_w:'Questa bolletta scade entro la prossima settimana.',nth_bill_soon_f:'Assicurati che i soldi ci siano prima della scadenza | Tocca Paga quando è uscita dal conto | Se la paghi in un altro modo, registrala comunque qui perché i numeri tornino',nth_debt_late_w:'La data della rata minima di questo debito è passata e la rata completa non è stata registrata.',nth_debt_late_f:'Se l\'hai pagata, tocca Paga e registrala con la data in cui è uscita | Altrimenti paga subito almeno il minimo: una rata saltata può costare penali e danneggiare il tuo credito | Controlla che il giorno di scadenza sia giusto',nth_debt_soon_w:'La rata minima di questo debito scade entro la prossima settimana.',nth_debt_soon_f:'Assicurati che il minimo sia coperto prima della scadenza | Tocca Paga quando è uscita | Pagare più del minimo estingue prima il debito',nth_over_w:'Hai speso in questa categoria più di quanto previsto per questo periodo.',nth_over_f:'Tocca Controlla per vedere la categoria | Frena fino alla fine del periodo | Se l\'importo non era realistico, alzalo e abbassane un altro perché il piano torni',nth_uncat_w:'Queste spese sono state registrate per dopo e non hanno categoria, quindi il budget non può contarle bene.',nth_uncat_f:'Tocca Classifica per vederle | Assegna una categoria a ognuna | Il budget si aggiorna subito',nav_menu:'Menu',
     tab_debt_payoff:'Estinzione debiti',tab_sinking:'Obiettivi di risparmio',
     tab_calendar:'Calendario',tab_subscriptions:'Abbonamenti',
     total_income:'Entrate totali',expenses_bills:'Spese e bollette',
@@ -1523,7 +1523,7 @@ const TRANSLATIONS = {
     lang_name:'Polski',
     tab_dashboard:'Panel',tab_budget:'Budżet',tab_transactions:'Transakcje',
     tab_income:'Przychody',tab_expenses:'Wydatki',tab_bills:'Rachunki',
-    tab_debt:'Długi',tab_savings:'Oszczędności',tab_settings:'Ustawienia',nav_menu:'Menu',
+    tab_debt:'Długi',tab_savings:'Oszczędności',tab_settings:'Ustawienia',nth_what:'Co to oznacza',nth_fix:'Jak to naprawić',nth_aria:'Co to jest i jak to naprawić?',nth_close:'Rozumiem',nth_bill_late_w:'Termin tego rachunku minął, a nie jest jeszcze opłacony.',nth_bill_late_f:'Jeśli go opłaciłeś, dotknij Zapłać i zapisz z datą, kiedy wyszedł | Jeśli nie, zapłać jak najszybciej, by uniknąć opłat za zwłokę | Jeśli kwota lub termin się zmieniły, zaktualizuj rachunek, żeby przypomnienia były trafne',nth_bill_soon_w:'Ten rachunek przypada w ciągu najbliższego tygodnia.',nth_bill_soon_f:'Upewnij się, że pieniądze będą przed terminem | Dotknij Zapłać, gdy zejdą z konta | Jeśli płacisz inaczej, i tak zapisz go tutaj, żeby liczby się zgadzały',nth_debt_late_w:'Termin minimalnej raty tego długu minął, a pełna rata nie została zapisana.',nth_debt_late_f:'Jeśli zapłaciłeś, dotknij Zapłać i zapisz ją z datą, kiedy zeszła z konta | Jeśli nie, od razu zapłać przynajmniej minimum: pominięta rata to opłaty i gorsza historia kredytowa | Sprawdź, czy dzień spłaty jest poprawny',nth_debt_soon_w:'Minimalna rata tego długu przypada w ciągu najbliższego tygodnia.',nth_debt_soon_f:'Upewnij się, że minimum będzie pokryte przed terminem | Dotknij Zapłać, gdy zejdzie z konta | Płacenie ponad minimum szybciej spłaca dług',nth_over_w:'W tej kategorii wydałeś więcej, niż zaplanowałeś na ten okres.',nth_over_f:'Dotknij Sprawdź, by zobaczyć kategorię | Ogranicz ją do końca okresu | Jeśli kwota była nierealna, podnieś ją i obniż inną, żeby plan się bilansował',nth_uncat_w:'Te wydatki zapisano do posortowania później i nie mają kategorii, więc budżet nie liczy ich poprawnie.',nth_uncat_f:'Dotknij Przypisz, by je zobaczyć | Nadaj każdemu kategorię | Budżet zaktualizuje się od razu',nav_menu:'Menu',
     tab_debt_payoff:'Spłata długów',tab_sinking:'Cele oszczędnościowe',
     tab_calendar:'Kalendarz',tab_subscriptions:'Subskrypcje',
     total_income:'Łączne przychody',expenses_bills:'Wydatki i rachunki',
@@ -2856,7 +2856,7 @@ function collectNotifications() {
     const next = late ? lateOn : nextDueFromDay(day);
     if (!late && !(next >= today && next <= soon)) return;
     const owe = rowRemaining(r) || Number(r.expected) || 0;
-    out.push({ id: type + ':' + r.id, section: type, level: late ? 'late' : 'soon', tag: late ? 'overdue' : 'soon', date: next,
+    out.push({ id: type + ':' + r.id, kind: (type === 'debt' ? 'debt' : 'bill') + (late ? '_late' : '_soon'), flash: [type, rfIds('data-row-id', [r.id])], section: type, level: late ? 'late' : 'soon', tag: late ? 'overdue' : 'soon', date: next,
       title: r.category, detail: tf(late ? 'nt_bill_late' : (type === 'debt' ? 'nt_debt_soon' : 'nt_bill_soon'), fmt(owe), cuRelative(next)),
       act: { label: t('pay_btn'), run: done => promptMarkModulePaid(type, r.id, done) } });
   }));
@@ -2864,15 +2864,16 @@ function collectNotifications() {
   try { exp = computeActuals().expenses || {}; } catch (e) { exp = {}; }
   (state.budgets.expenses || []).forEach(r => {
     const a = exp[r.category] || 0;
-    if ((r.expected || 0) > 0 && a > r.expected) out.push({ id: 'over:' + r.id, section: 'expenses', level: 'late', tag: 'over',
+    if ((r.expected || 0) > 0 && a > r.expected) out.push({ id: 'over:' + r.id, kind: 'over', flash: ['expenses', rfIds('data-row-id', [r.id])], section: 'expenses', level: 'late', tag: 'over',
       title: r.category, detail: tf('nt_over', fmt(a - r.expected), fmt(r.expected)),
-      act: { label: t('nt_act_review'), run: () => switchBTab('expenses') } });
+      act: { label: t('nt_act_review'), run: () => goAndFlash('expenses', rfIds('data-row-id', [r.id])) } });
   });
   const uncat = new Set(Object.values(TRANSLATIONS).map(x => x && x.qa_uncat).filter(Boolean));
   const loose = (state.transactions || []).filter(tx => tx.type === 'expense' && (!tx.category || uncat.has(tx.category)));
-  if (loose.length) out.push({ id: 'uncat', section: 'transactions', level: 'todo', tag: 'todo', count: loose.length,
+  const looseSel = rfIds('data-tx-row', loose.map(x => x.id));
+  if (loose.length) out.push({ id: 'uncat', kind: 'uncat', flash: ['transactions', looseSel], section: 'transactions', level: 'todo', tag: 'todo', count: loose.length,
     title: loose.length === 1 ? t('nt_uncat_one') : tf('nt_uncat_title', loose.length), detail: t('nt_uncat_detail'),
-    act: { label: t('nt_act_sort'), run: () => switchBTab('transactions') } });
+    act: { label: t('nt_act_sort'), run: () => goAndFlash('transactions', looseSel) } });
   return out;
 }
 // The badges are counted from the same list, so a number beside a section
@@ -2947,7 +2948,8 @@ function renderNotifications() {
           <span class="nt-acts">
             <button class="btn btn-primary btn-sm nt-act" type="button" data-nt-act="${esc(i.id)}">${esc(i.act.label)}</button>
             <button class="btn btn-ghost btn-sm nt-ignore" type="button" data-nt-ignore="${esc(i.id)}">${t('nt_ignore')}</button>
-            <button class="lv-act nt-go" type="button" data-nt-go="${esc(i.section)}" title="${esc(tf('nt_open', t('tab_' + i.section) || i.section))}" aria-label="${esc(tf('nt_open', t('tab_' + i.section) || i.section))}"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+            <button class="lv-act nt-help" type="button" data-nt-help="${esc(i.id)}" title="${esc(t('nth_aria'))}" aria-label="${esc(t('nth_aria'))}">?</button>
+            <button class="lv-act nt-go" type="button" data-nt-go="${esc(i.section)}" data-nt-id="${esc(i.id)}" title="${esc(tf('nt_open', t('tab_' + i.section) || i.section))}" aria-label="${esc(tf('nt_open', t('tab_' + i.section) || i.section))}"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
           </span>
         </div>`).join('')}</div></section>`;
     }).join('')}`
@@ -2957,6 +2959,10 @@ function renderNotifications() {
     const it = items.find(i => i.id === btn.dataset.ntAct);
     // Paid from here, the row leaves the way a paid row leaves Coming up.
     if (it) it.act.run(() => { const prev = ntSnapshot(el); renderNotifications(); ntAnimateAfterPay(el, prev); });
+  }));
+  el.querySelectorAll('[data-nt-help]').forEach(btn => btn.addEventListener('click', () => {
+    const it = items.find(i => i.id === btn.dataset.ntHelp);
+    if (it) openNtHelp(it, () => it.act.run(() => { const prev = ntSnapshot(el); renderNotifications(); ntAnimateAfterPay(el, prev); }));
   }));
   el.querySelectorAll('[data-nt-ignore]').forEach(btn => btn.addEventListener('click', () => {
     const it = items.find(i => i.id === btn.dataset.ntIgnore);
@@ -2969,8 +2975,65 @@ function renderNotifications() {
   el.querySelector('[data-nt-unignore]')?.addEventListener('click', () => {
     state.settings.ntIgnore = {}; saveState(); renderNotifications();
   });
-  el.querySelectorAll('[data-nt-go]').forEach(btn => btn.addEventListener('click', () => switchBTab(btn.dataset.ntGo)));
+  // The arrow goes to the very thing, lit up the way an action does.
+  el.querySelectorAll('[data-nt-go]').forEach(btn => btn.addEventListener('click', () => {
+    const it = items.find(i => i.id === btn.dataset.ntId);
+    if (it && it.flash) goAndFlash(it.flash[0], it.flash[1]); else switchBTab(btn.dataset.ntGo);
+  }));
 }
+// What a notification means and how to deal with it, in a pop-up of its
+// own; its action sits at the foot and does exactly what the row's does.
+function openNtHelp(it, onAct) {
+  const steps = String(t('nth_' + it.kind + '_f')).split(' | ').filter(Boolean);
+  document.getElementById('modalTitle').textContent = it.title;
+  document.getElementById('modalBody').innerHTML = `<div class="rfh rfh--${it.level === 'late' ? 'high' : 'med'}">
+    ${it.detail ? `<p class="rfh-detail">${esc(it.detail)}</p>` : ''}
+    <h4 class="rfh-h">${t('nth_what')}</h4>
+    <p class="rfh-p">${esc(t('nth_' + it.kind + '_w'))}</p>
+    <h4 class="rfh-h">${t('nth_fix')}</h4>
+    <ol class="rfh-steps">${steps.map(st => `<li>${esc(st)}</li>`).join('')}</ol>
+    <div class="edit-tx-actions">
+      <button class="btn btn-primary" type="button" id="nthAct">${esc(it.act.label)}</button>
+      <button class="btn btn-ghost btn-sm" type="button" id="nthClose">${t('nth_close')}</button>
+    </div></div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+  document.getElementById('nthClose')?.addEventListener('click', closeModal);
+  document.getElementById('nthAct')?.addEventListener('click', () => { closeModal(); onAct(); });
+}
+// Goes to a section and lights up the thing that needs a look, the same
+// ring the Ultimate planner's heads-ups use.
+const rfIds = (attr, ids) => ids.map(id => `[${attr}="${String(id).replace(/"/g, '')}"]`).join(', ');
+// A transaction the highlight is after may sit behind a search or on a later
+// page of the list. Clear the filters and turn the pages until it shows.
+function flashFindTx(root, sel) {
+  txFilter.search = ''; txFilter.type = ''; if ('alloc' in txFilter) txFilter.alloc = '';
+  txPage = 0; renderTransactions();
+  const pages = Math.max(1, Math.ceil((state.transactions || []).length / TX_PAGE_SIZE));
+  for (let pg = 0; pg < pages; pg++) {
+    if (pg) { txPage = pg; renderTxList(); }
+    const found = [...root.querySelectorAll(sel)];
+    if (found.length) return found;
+  }
+  txPage = 0; renderTxList();
+  return [];
+}
+function goAndFlash(tab, sel) {
+  switchBTab(tab);
+  setTimeout(() => {
+    const root = document.getElementById('bview-' + tab);
+    if (!root) return;
+    let els = sel ? [...root.querySelectorAll(sel)] : [];
+    if (sel && !els.length && tab === 'transactions') els = flashFindTx(root, sel);
+    if (!els.length) els = [root.querySelector('.section-header')].filter(Boolean);
+    if (!els.length) return;
+    els[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    els.forEach(el => {
+      el.classList.remove('is-flash'); void el.offsetWidth; el.classList.add('is-flash');
+      setTimeout(() => el.classList.remove('is-flash'), 3400);
+    });
+  }, 160);
+}
+
 
 
 // ── Motion that answers an action ────────────────────────────────────────
@@ -4934,8 +4997,8 @@ function wireViewToggle(scope, sec, rerender){
 }
 // One row of a list view. Every section's list is built from these, so the
 // columns line up the same way wherever the toggle is flipped.
-function lvRow({ ico, name, sub, bar, barCls, fig, cap, acts, cls }){
-  return `<div class="lv-row${cls?' '+cls:''}">
+function lvRow({ ico, name, sub, bar, barCls, fig, cap, acts, cls, attrs }){
+  return `<div class="lv-row${cls?' '+cls:''}"${attrs?' '+attrs:''}>
     <span class="lv-ico" aria-hidden="true">${ico}</span>
     <span class="lv-main"><span class="lv-name">${name}</span>${sub?`<span class="lv-sub">${sub}</span>`:''}</span>
     <span class="lv-bar">${bar==null?'':`<span class="lv-bar-fill${barCls?' '+barCls:''}" style="width:${Math.min(100,Math.max(0,bar))}%"></span>`}</span>
@@ -4961,7 +5024,7 @@ function envCardHtml(row, o) {
     ? (o.type === 'savings' ? t('env_saved') : t('env_in'))
     : (over ? t('env_over') : t('env_left'));
   const day = o.hasDates ? rowDueDay(row) : 0;
-  return `<article class="env-card${over ? ' is-over' : ''}${o.isInc ? ' env-card--in' : ''}">
+  return `<article class="env-card${over ? ' is-over' : ''}${o.isInc ? ' env-card--in' : ''}" data-row-id="${esc(row.id)}">
     <span class="env-flap" aria-hidden="true"></span>
     <span class="env-icon" aria-hidden="true">
       ${budgetIconSvg(o.type)}
@@ -4987,7 +5050,7 @@ function envLineHtml(row, o) {
   const head = o.isInc ? act : exp - act;
   const day = o.hasDates ? rowDueDay(row) : 0;
   const metaTxt = o.isInc ? tf('env_meta_in', fmt(act), fmt(exp)) : tf('env_meta_out', fmt(act), fmt(exp));
-  return lvRow({
+  return lvRow({ attrs: `data-row-id="${esc(row.id)}"`,
     cls: over ? 'is-over' : '', ico: budgetIconSvg(o.type), name: esc(row.category),
     sub: day ? `${t('due_day')} ${day} \u00b7 ${metaTxt}` : metaTxt,
     bar: pct(act, exp), barCls: o.isInc ? 'is-in' : over ? 'is-over' : '',
@@ -5167,7 +5230,7 @@ function renderTxList(){
           <th>${t('tx_date')}</th><th class="col-sm-hide">${t('tx_type')}</th><th>${t('tx_category')}</th>
           <th>${t('tx_th_amount')}</th><th class="col-sm-hide">${t('tx_th_desc')}</th><th></th>
         </tr></thead><tbody>
-        ${paged.map(tx=>`<tr class="tx-row">
+        ${paged.map(tx=>`<tr class="tx-row" data-tx-row="${esc(tx.id)}">
           <td class="tx-date">${formatDateDisplay(tx.date)}</td>
           <td class="col-sm-hide"><span class="tx-pill tx-pill--${tx.type}">${esc(txTypeLabel(tx.type))}</span></td>
           <td class="tx-cat">${esc(tx.category)}</td>

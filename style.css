@@ -6944,3 +6944,7 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 .nav-menu-item .nav-badge { position: absolute; top: 6px; right: calc(50% - 28px); }
 @media (prefers-reduced-motion: reduce) { .nav-menu, .nav-menu-scrim { transition: none; } }
 
+/* ── Notifications: the ? beside each row ── */
+.nt-help { font-weight: 800; font-size: 14px; color: var(--text-secondary); }
+.nt-row--late .nt-help:hover { color: #f43f5e; }
+.nt-row--soon .nt-help:hover, .nt-row--todo .nt-help:hover { color: #f59e0b; }
