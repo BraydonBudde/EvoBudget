@@ -6275,7 +6275,7 @@ function wireDashViews(el, rf) {
   }));
   el.querySelectorAll('[data-spend-curve]').forEach(b => b.addEventListener('click', () => {
     state.settings.spendCurve = b.dataset.spendCurve === '1'; saveState(); dashQuietNext(); renderDashboard();
-    if (!ddDashOff()) ddPulse(document.querySelector('#bview-dashboard .spend-line-path'), 'dd-draw', 1400);
+    if (!ddDashOff()) spendRise(document.querySelector('#bview-dashboard .spend-line-wrap'));
   }));
   el.querySelectorAll('[data-ra-menu]').forEach(b => b.addEventListener('click', () => openTxSheet(b.dataset.raMenu)));
   el.querySelectorAll('[data-ra-edit]').forEach(b => b.addEventListener('click', () => raEdit(b.dataset.raEdit)));

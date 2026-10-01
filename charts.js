@@ -295,7 +295,8 @@ function svgSpendLine(points, opts) {
   // that distortion entirely, so they stay perfectly round at any width.
   const dots = coords.map((c, i) => `<span class="spend-line-dot" data-idx="${i}" data-label="${esc(points[i].label || '')}" data-val="${points[i].value || 0}"
       style="left:${(c[0] / w * 100).toFixed(2)}%;top:${c[1].toFixed(1)}px" tabindex="0" role="img" aria-label="${esc(points[i].label || '')}: ${esc(fmt(points[i].value || 0))}"></span>`).join('');
-  return `<div class="spend-line-wrap" style="height:${h}px">
+  const target = JSON.stringify(coords.map(c => [+c[0].toFixed(1), +c[1].toFixed(1)]));
+  return `<div class="spend-line-wrap" style="height:${h}px" data-pts="${target}" data-curve="${opts.curve ? 1 : 0}" data-base="${h - pad}">
     <svg class="spend-line-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
       <path class="spend-line-area" d="${areaD}" fill="url(#spendLineFill)"/>
       <path class="spend-line-path" d="${pathD}" fill="none" stroke="url(#spendLineStroke)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" vector-effect="non-scaling-stroke"/>
@@ -654,32 +655,55 @@ function animatePieIn(container, isCurrent) {
 // draws in only after the rest of the dashboard's entrance has settled,
 // instead of competing with the cards/bars/arcs for attention.
 function animateSpendLineIn(container, isCurrent) {
-  if (!container) return;
-  const path = container.querySelector('.spend-line-path');
-  if (!path) return;
-  const area = container.querySelector('.spend-line-area');
-  const dots = Array.from(container.querySelectorAll('.spend-line-dot'));
-  path.style.transition = 'none';
-  path.style.strokeDashoffset = '1';
-  if (area) { area.style.transition = 'none'; area.style.opacity = '0'; }
-  dots.forEach(d => { d.style.transition = 'none'; d.style.opacity = '0'; d.style.transform = 'scale(0)'; });
-  void container.offsetWidth;
-  setTimeout(() => {
-    if (!isCurrent()) return;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      if (!isCurrent()) return;
-      path.style.transition = '';
-      path.style.strokeDashoffset = '0';
-      if (area) { area.style.transition = ''; area.style.opacity = '1'; }
-      dots.forEach((d, i) => {
-        d.style.transitionDelay = Math.min(i * 25, 500) + 'ms';
-        d.style.transition = '';
-        d.style.opacity = '1';
-        d.style.transform = 'scale(1)';
-      });
-      setTimeout(() => { if (isCurrent()) dots.forEach(d => { d.style.transitionDelay = ''; }); }, dots.length * 25 + DASH_ANIM_DUR + 200);
-    }));
-  }, DASH_ANIM_DUR + 150);
+  const wrap = container && container.querySelector('.spend-line-wrap');
+  if (!wrap) return;
+  spendRise(wrap, { delay: DASH_ANIM_DUR + 150, isCurrent });
+}
+// Every point grows from the baseline to its value, a little after the one
+// before it, and the line and the shading under it are drawn around the
+// points as they go, so the three move as one. Shared by the dashboard's
+// entrance and by switching between straight and curved lines.
+function spendRise(wrap, opts) {
+  opts = opts || {};
+  if (!wrap) return;
+  let pts;
+  try { pts = JSON.parse(wrap.dataset.pts || '[]'); } catch (e) { return; }
+  const path = wrap.querySelector('.spend-line-path'), area = wrap.querySelector('.spend-line-area');
+  if (!path || !pts.length) return;
+  const dots = Array.from(wrap.querySelectorAll('.spend-line-dot'));
+  const curve = wrap.dataset.curve === '1', base = parseFloat(wrap.dataset.base) || 0;
+  const n = pts.length, dur = 900, spread = Math.min(450, n * 16);
+  const ease = x => 1 - Math.pow(1 - x, 4);
+  const lineOf = c => curve ? smoothLinePath(c) : 'M' + c.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L');
+  const draw = c => {
+    const d = lineOf(c);
+    path.setAttribute('d', d);
+    if (area) area.setAttribute('d', d + ` L${c[n - 1][0].toFixed(1)},${base.toFixed(1)} L${c[0][0].toFixed(1)},${base.toFixed(1)} Z`);
+  };
+  const at = k => pts.map((p, i) => {
+    const local = Math.max(0, Math.min(1, (k - (n > 1 ? i / (n - 1) : 0) * spread) / dur));
+    return [p[0], base + (p[1] - base) * ease(local), local];
+  });
+  // Start flat on the baseline, with the dots waiting there unseen.
+  path.style.transition = 'none'; path.style.strokeDashoffset = '0';
+  if (area) { area.style.transition = 'none'; area.style.opacity = '1'; }
+  dots.forEach(d => { d.style.transition = 'opacity .25s ease'; d.style.transform = ''; d.style.opacity = '0'; d.style.top = base.toFixed(1) + 'px'; });
+  draw(at(0));
+  const t0 = performance.now() + (opts.delay || 0), total = dur + spread;
+  const step = now => {
+    if (!wrap.isConnected || (opts.isCurrent && !opts.isCurrent())) return;
+    const k = Math.max(0, now - t0);
+    const c = at(k);
+    draw(c);
+    dots.forEach((d, i) => { d.style.top = c[i][1].toFixed(1) + 'px'; if (c[i][2] > 0) d.style.opacity = '1'; });
+    if (k < total) requestAnimationFrame(step);
+    else {
+      draw(pts);
+      dots.forEach((d, i) => { d.style.top = pts[i][1].toFixed(1) + 'px'; d.style.opacity = ''; d.style.transition = ''; });
+      path.style.transition = ''; if (area) area.style.transition = '';
+    }
+  };
+  requestAnimationFrame(step);
 }
 
 // Counts a single numeric text value up from 0 (or from its own negative
