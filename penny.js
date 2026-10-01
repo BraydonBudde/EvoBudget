@@ -320,7 +320,7 @@ function pennyWireSettingsCard() {
 function pennyBuildSystemInstruction() {
   return { parts: [{ text:
     "You are Ezzo, a friendly budgeting assistant built into the Ultimate Budget Planner app. " +
-    "You ONLY answer questions about the user's own budgeting data (income, expenses, bills, savings, debts, subscriptions, sinking funds, transactions, overall budget health) using the tools provided. " +
+    "You ONLY answer questions about the user's own budgeting data (income, expenses, bills, savings, debts, subscriptions, savings goals, transactions, overall budget health) using the tools provided. " +
     "You must call one of the provided functions to fetch real data before stating any dollar amount, percentage, or count - never invent or estimate numbers yourself. " +
     "If asked about anything unrelated to the user's own budget in this app (general knowledge, other people's finances, coding help, current events, etc.), politely decline and redirect to a budgeting question. " +
     "Keep every answer under about 60 words for a typical question. If the user explicitly asks for more detail, a deeper explanation, or a comparison, you may write up to about 500 words. " +
@@ -353,7 +353,7 @@ function pennyToolDeclarations() {
         parameters: { type: 'object', properties: {} } },
       { name: 'get_subscriptions', description: "Returns the user's active subscriptions and monthly/annual totals.",
         parameters: { type: 'object', properties: {} } },
-      { name: 'get_sinking_funds', description: "Returns the user's sinking funds with progress toward each target.",
+      { name: 'get_sinking_funds', description: "Returns the user's savings goals with progress toward each target.",
         parameters: { type: 'object', properties: {} } },
       { name: 'render_chart', description: 'Displays a chart of previously-fetched data in the chat. Only call after a data-retrieval function in this same turn; pass back its dataRef.',
         parameters: { type: 'object', properties: {

@@ -449,7 +449,7 @@ function automateRow(checked){
 // Type label/color for the Daily Spend hover tooltip's per-transaction
 // breakdown - the SAME colors as the Cash Flow rows/rings elsewhere on
 // this dashboard, so a category reads as the same category everywhere.
-// Sinking funds share Savings' color/computeActuals section - they're a
+// Savings goals share Savings' color/computeActuals section - they're a
 // form of savings, not a separate concept.
 function spendTypeLabel(type) {
   return { expense: t('bud_section_expenses'), bill: t('bud_section_bills'), debt: t('dash_debt_payments'), savings: t('bud_section_savings'), subscription: t('dash_subscriptions'), sinking_fund: t('tab_sinking') }[type] || type;
@@ -623,7 +623,7 @@ function runDebtPayoff() {
   };
 }
 
-// ── Sinking Fund Calculations ─────────────────────────────────────────
+// ── Savings Goal Calculations ─────────────────────────────────────────
 // A goal may have no target: an emergency fund is money put aside with
 // nothing in particular to reach. Everything that divides by a target has
 // to hold its nerve when there isn't one, rather than show a 0% bar and a
@@ -670,6 +670,32 @@ function autoOccurrencePayments(tmplId, occDate) {
 function autoOccurrencePaid(tmplId, occDate) {
   return payRound2(autoOccurrencePayments(tmplId, occDate)
     .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0));
+}
+
+// A debt's monthly due dates up to yesterday that fall in this period, each
+// with what it still owes. The period's payments settle the earliest dates
+// first, so a minimum missed last month is still owed after the month turns,
+// and whatever is left over is what counts towards the next date.
+function debtOverdueDates(d, debtAct) {
+  const day = parseInt(d.dueDay, 10), min = Number(d.minimumPayment) || 0;
+  let left = subOrDebtPaid(debtAct || {}, d.name);
+  if (!(day >= 1) || !(min > 0)) return { dates: [], left };
+  const now = new Date();
+  const yday = toLocalISO(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1));
+  const pStart = state.settings.periodStart || toLocalISO(new Date(now.getFullYear(), now.getMonth(), 1));
+  const pEnd = state.settings.periodEnd || '';
+  const to = pEnd && pEnd < yday ? pEnd : yday;
+  const dates = [];
+  const from = new Date(pStart + 'T00:00:00');
+  for (let k = 0; k < 400; k++) {
+    const y = from.getFullYear(), m = from.getMonth() + k;
+    const due = toLocalISO(new Date(y, m, Math.min(day, new Date(y, m + 1, 0).getDate())));
+    if (due > to) break;
+    if (due < pStart) continue;
+    const cover = Math.min(min, left); left = payRound2(left - cover);
+    if (min - cover > 0.005) dates.push({ date: due, owe: payRound2(min - cover), paid: cover, min });
+  }
+  return { dates, left };
 }
 
 function getUpcomingEvents(days, act) {
@@ -759,7 +785,7 @@ const TRANSLATIONS = {
     tab_dashboard:'Dashboard', tab_budget:'Budget', tab_transactions:'Transactions',
     tab_income:'Income', tab_expenses:'Expenses', tab_bills:'Bills',
     tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',
-    tab_debt_payoff:'Debt Payoff', tab_sinking:'Saving Goals',
+    tab_debt_payoff:'Debt Payoff', tab_sinking:'Savings Goals',
     tab_calendar:'Calendar', tab_subscriptions:'Bills',
     // Dashboard stats
     total_income:'Total Income', expenses_bills:'Expenses & Bills',
@@ -809,7 +835,7 @@ const TRANSLATIONS = {
     add_category:'+ Add category', no_transactions:'No transactions yet.',
     // Upgrade
     upgrade_title:'Ready for the pro experience?',
-    upgrade_desc:'Unlock Debt Payoff Calculator, Sinking Funds Tracker, Smart Calendar & Subscription Tracker.',
+    upgrade_desc:'Unlock Debt Payoff Calculator, Savings Goals, Smart Calendar & Subscription Tracker.',
     upgrade_now:'Upgrade Now →',
     // Calendar days
     mon:'Mon',tue:'Tue',wed:'Wed',thu:'Thu',fri:'Fri',sat:'Sat',sun:'Sun',
@@ -834,7 +860,7 @@ const TRANSLATIONS = {
     cal_no_events_month:'No events this month.',
     cal_no_events_sub:'Add bills, debts, or subscriptions to see them here.',
     cal_event_one:'event',cal_event_many:'events',cal_clear:'Clear \u00d7',
-    cal_leg_bill:'Bill',cal_leg_debt:'Debt',cal_leg_sub:'Subscription',cal_leg_tx:'Transaction',cal_leg_sinking:'Sinking fund',cal_leg_goal:'Goal date',cal_leg_auto:'Automatic',
+    cal_leg_bill:'Bill',cal_leg_debt:'Debt',cal_leg_sub:'Subscription',cal_leg_tx:'Transaction',cal_leg_sinking:'Savings goal',cal_leg_goal:'Goal date',cal_leg_auto:'Automatic',
     cal_paid:'\u2713 Paid',cal_unpaid:'Unpaid',cal_mark_paid:'Mark paid',
     help_cal_intro:'The Smart Calendar pulls together all your financial commitments in one monthly view - updated automatically as you add data.',
     help_cal_ev_types_h:'Event types',
@@ -846,27 +872,27 @@ const TRANSLATIONS = {
     help_cal_nav_p:'Use \u2190 Prev and Next \u2192 to move between months. Click any day to see its events highlighted in a panel below the calendar. Click the same day again or \u201cClear \u00d7\u201d to deselect.',
     help_cal_paid_h:'Marking bills paid',help_cal_paid_p:'Click a day to expand its events. Any unpaid bill shows a "Mark paid" checkbox right there - check it to log the actual amount you paid as a transaction, no need to switch to the Budget tab.',help_cal_tip:'\uD83D\uDCA1 Set due dates on bills and debts to get the most out of the calendar.',
     sf_add_btn:'+ Add goal',
-    sf_desc:"A sinking fund lets you save gradually for a big future expense - no nasty surprises. Set a goal amount and date, and we'll tell you exactly how much to save each month.",
-    sf_empty_title:'No saving goals yet.',
+    sf_desc:'A savings goal lets you save gradually for something bigger, so there are no nasty surprises. Set an amount and a date, and we\'ll work out exactly how much to save each month.',
+    sf_empty_title:'No savings goals yet.',
     sf_empty_sub:'Great for: holidays, car repairs, weddings, new tech, annual bills.',
     sf_pct_complete:'complete',
     sf_save_prefix:'Save',sf_per_month:'/month',
     sf_mo_left_tpl:'{0} months left',
     sf_total_contrib:'Total monthly contributions needed:',
-    sf_modal_new:'\uD83C\uDFFA New Sinking Fund',sf_modal_edit:'\u270F\uFE0F Edit Fund',
-    sf_fund_name_label:'Fund name',sf_fund_name_ph:'e.g. Holiday Fund',
+    sf_modal_new:'🏺 New Savings Goal',sf_modal_edit:'✏️ Edit Savings Goal',
+    sf_fund_name_label:'Goal name',sf_fund_name_ph:'e.g. Summer holiday',
     sf_icon_label:'Icon',sf_target_amount_label:'Target amount',sf_monthly_label:'Monthly contribution',sf_monthly_hint:'What goes in each month. Leave the target blank for an open ended goal.',
     sf_currently_saved_label:'Currently saved',sf_target_date_label:'Target date',
     sf_fund_name_hint:'A short name for what you\'re saving toward, like "Summer Holiday" or "New Laptop".',
-    sf_icon_hint:'Pick an icon to help this fund stand out at a glance.',
+    sf_icon_hint:'Pick an icon to help this goal stand out at a glance.',
     sf_target_amount_hint:'The total amount you need to reach this goal.',
     sf_currently_saved_hint:"How much you've already put aside for this goal, if anything.",
     sf_target_date_hint:'When you want to reach your goal by - used to work out how much to save each month.',
-    sf_create_btn:'Create fund',
-    help_sf_intro:'A sinking fund is money you set aside in advance for a big planned expense - no nasty surprises when the bill arrives.',
+    sf_create_btn:'Create goal',
+    help_sf_intro:'A savings goal is money you set aside ahead of time for something planned, so there are no nasty surprises when the bill arrives.',
     help_sf_how_to_h:'How to use it',
-    help_sf_step1:'Click + Add fund',
-    help_sf_step2:'Name your fund (e.g. "Summer Holiday"), pick an icon',
+    help_sf_step1:'Click + Add goal',
+    help_sf_step2:'Name your goal (e.g. "Summer Holiday"), pick an icon',
     help_sf_step3:'Set a target amount (how much you need total)',
     help_sf_step4:'Set a target date (when you need the money)',
     help_sf_step5:"Enter how much you've already saved toward it",
@@ -977,7 +1003,7 @@ const TRANSLATIONS = {
     help_tx_intro:'Every money movement goes here. Your Budget actuals and Dashboard update automatically each time you add one.',
     help_tx_adding_h:'Adding a transaction',
     help_tx_step1:'Pick a Date - click the date field to open the calendar picker',
-    help_tx_step2:'Choose a Type: Income, Expense, Bill, Savings, Debt, Subscription, or Sinking Fund',
+    help_tx_step2:'Choose a Type: Income, Expense, Bill, Savings, Debt, Subscription, or Savings Goal',
     help_tx_step3:'Select the matching Category (set up in the Budget tab)',
     help_tx_step4:'Enter the Amount and an optional description',
     help_tx_step5:'Hit Add',
@@ -986,7 +1012,7 @@ const TRANSLATIONS = {
     help_tx_csv_h:'CSV import',
     help_tx_csv_p1:'Import a spreadsheet export using the format: Date,Type,Category,Amount,Description (header row required).',
     help_tx_csv_p2:'Dates should be in YYYY-MM-DD format. Type must be one of: income, expense, bill, savings, debt, subscription, sinking_fund.',
-    bud_desc:'Set an expected amount for every income and expense category, then track what actually comes in and goes out. Bills and saving goals have tabs of their own.',
+    bud_desc:'Set an expected amount for every income and expense category, then track what actually comes in and goes out. Bills and savings goals have tabs of their own.',
     bud_section_income:'Income',bud_section_expenses:'Expenses',
     bud_section_bills:'Bills',bud_section_savings:'Savings',
     bud_th_category:'Category',bud_th_expected:'Expected',
@@ -1006,7 +1032,7 @@ const TRANSLATIONS = {
     bud_add_cat_btn:'Add',bud_due_date_label:'Due date',
     bud_cat_name_hint:'A short name for this category, like "Rent" or "Groceries".',
     bud_due_date_hint:'When this is due each period. Shows on the Smart Calendar.',
-    help_bud_intro:"The Budget tab is where you plan what comes in and what you spend. Set expected amounts for each category and the actuals fill in from your Transactions. Bills and saving goals are planned on their own tabs.",
+    help_bud_intro:"The Budget tab is where you plan what comes in and what you spend. Set expected amounts for each category and the actuals fill in from your Transactions. Bills and savings goals are planned on their own tabs.",
     help_bud_how_h:'How it works',
     help_bud_step1:'Click an Expected field and type your budget amount',
     help_bud_step2:'Log transactions in the Transactions tab',
@@ -1035,8 +1061,8 @@ const TRANSLATIONS = {
     dash_debt_free_label:'Debt-free',dash_interest_label:'Interest',
     dash_months_label:'Months',dash_method_label:'Method',
     dash_set_balances:'Set balances to see results.',
-    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',view_as_list:'Show as a list',view_as_cards:'Show as cards',sf_saved_so_far:'saved so far',sf_open_ended:'no target',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_sinking_fund:'Add to a goal',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_sinking_fund:'Add to goal',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_sinking_fund:'Goal',qa_type_debt:'Debt',qa_type_income:'Income',qa_type_it:'type it instead',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_sinking_fund:'Add a saving goal first.',qa_no_cats_debt:'Add a debt first.',qa_no_cats_income:'Add an income category on the Budget tab first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_title:'Coming up',cu_all:'All bills',cu_paid:'Paid',cu_today:'today',cu_tomorrow:'tomorrow',cu_yesterday:'yesterday',cu_in_days:'in {0} days',cu_days_ago:'{0} days ago',cu_empty:'Nothing due in the next {0} days.',cu_next_period:'Next period',stg_general:'General',stg_budget:'Budget and periods',stg_look:'Look and feel',stg_assist:'Assistant and automation',stg_data:'Your data',stg_more:'More',set_width_title:'Layout width',set_width_desc:'Use the whole width of the window, or keep the app in a fixed column in the middle.',set_width_full:'Use the full width of the window',rail_assistant:'Budget Assistant',rail_guide:'Guide',rail_home:'Home',nl_free_today:'Free to spend today',rf_runout:'You could run short before the period ends',rf_runout_d:'At your usual {0} a day you would need {1}, with {2} free.',rf_noplan:'{0} has spending but nothing planned',rf_noplan_d:'{0} spent with no amount set.',rf_act_edit:'Fix it',rf_unplanned:'Spending outside your budget ({0})',rf_unplanned_d:'{0} in categories with no budget line: {1}.',rf_act_tx:'Show them',rf_unlinked_bill:'Bill payments that match no bill ({0})',rf_unlinked_bill_d:'Logged under {0}, which is not one of your bills.',rf_unlinked_debt:'Debt payments that match no debt ({0})',rf_unlinked_debt_d:'Logged under {0}, which is not one of your debts.',rf_unlinked_goal:'Goal contributions that match no goal ({0})',rf_unlinked_goal_d:'Logged under {0}, which is not one of your goals.',rf_unlinked_inc:'Income outside your budget ({0})',rf_unlinked_inc_d:'Logged under {0}, which has no income line.',rf_untagged:'Transactions with no Need, Want or Save tag ({0})',rf_untagged_d:'{0} this period is left out of your split.',rf_alloc_save:'Saving is behind its share',rf_alloc_d:'{0}% of income against a {1}% target.',rf_alloc_over:'{0} is over its share',rf_plan:'Your plan spends more than you expect to earn',rf_plan_d:'Planned outgoings of {0} against {1} of expected income.',rf_noincome:'No income logged yet this period',rf_noincome_d:'You expect {0}. Log it when it lands.',rf_goal_track:'{0} needs more each month',rf_goal_track_d:'{0} a month to reach it by {1}, and {2} is planned.',rf_goal_late:'{0} passed its date short of the target',rf_goal_late_d:'{0} still to save.',rf_interest:'{0}: the minimum does not cover the interest',rf_interest_d:'Interest is about {0} a month against a {1} minimum.',rf_missed:'{0}: minimum payment not made yet',rf_missed_d:'Due on day {0}, {1} of {2} paid so far.',rf_billjump:'{0} cost more than usual',rf_billjump_d:'Paid {0} against the usual {1}.',rf_nodate:'{0} has no due date',rf_nodate_d:'Without one it cannot be tracked or show up as due.',rf_act_setdate:'Set a date',rf_spike:'Spending is running above last period',rf_spike_d:'On pace for {0} against {1} last period.',rf_trend:'{0} is up on your usual',rf_trend_d:'{0} this period against about {1} a month.',rf_dupe:'Possible duplicate: {0}',rf_dupe_d:'{0} logged twice on {1}.',rf_future:'Transactions dated in the future ({0})',rf_future_d:'Check the dates. The first is {0}.',rf_ended:'Your budget period has ended',rf_ended_d:'It ended on {0}. Start the next one so your figures stay current.',rf_act_period:'Choose period',rf_one_open:'flag to look at',rf_many_open:'flags to look at',rf_urgent:'Urgent',rf_worth:'Worth a look',nt_ignore:'Ignore',nt_ignored_show:'Show {0} ignored',nt_ignored_toast:'Ignored. It no longer counts toward your badges.',close:'Close',dv_label:'Dashboard view',dv_overview:'Overview',dv_stats:'Statistics',dash_line_style:'Line style',dash_line_line:'Straight lines',dash_line_curve:'Curved lines',dash_other:'Other',psf_title:'This period so far',psf_in:'In',psf_out:'Out',psf_kept:'Kept',psf_still:'{0} still expected',psf_all_in:'All expected income is in',psf_bills_part:'{0} of it bills',psf_kept_pct:'{0}% of what came in',psf_where:'Where the money went',gp_title:'Goal progress',gp_all:'All goals',gp_done:'Done',gp_late:'Past date',gp_by:'by {0}',gp_of:'{0} of {1}',gp_saved:'{0} saved',gp_sum_of:'of {0} across your goals ({1}%)',ra_title:'Recent activity',ra_all:'All activity',ra_deleted:'Deleted {0} ({1})',ra_undo:'Undo',ra_more:'More',ra_empty:'Nothing logged yet.',ra_restored:'Put back',ra_amount:'Amount',ra_note:'Note',ra_again:'Log again',rf_pace:'Spending faster than planned',rf_pace_d:'On pace for {0} of everyday spending, {1} over plan.',rf_act_budget:'Review budget',rf_short:'Payments due are more than what is left',rf_short_d:'{0} still to pay with {1} left this period.',rf_act_coming:'See what is due',rf_overdue:'{0} bills are overdue',rf_overdue_one:'1 bill is overdue',rf_act_pay:'Pay now',rf_over:'{0} categories are over budget',rf_over_one:'1 category is over budget',rf_income:'Less income than expected',rf_income_d:'Only {0} of the {1} you expect has come in.',rf_act_log:'Log income',rf_nosave:'Nothing put toward your goals yet',rf_nosave_d:'Your goals need about {0} a month.',rf_act_goals:'Open goals',rf_apr:'{0} charges {1}% and gets only its minimum',rf_apr_d:'Anything extra on it saves the most interest.',rf_act_debt:'Open debt',rf_rise:'{0} went up by {1}',rf_rise_d:'It was {0} and is now {1}.',rf_act_bills:'Open bills',rf_subs:'Subscriptions weigh heavy',rf_subs_d:'{0} a month is {1}% of your expected income.',rf_big:'A large one-off expense: {0}',rf_big_d:'{0} on {1}.',rf_act_view:'View it',rf_loose:'Unsorted spending is piling up',rf_loose_d:'{0} this period has no category yet.',rf_thin:'Keeping very little of what came in',rf_thin_d:'Only {0}% of this period’s income is left after spending.',rf_one:'Red flag',rf_many:'Red flags',rf_clear:'All clear',rf_checked:'{0} checks run on this period',rf_restore:'Show {0} set aside',rf_dismiss:'Set aside for this period',rf_none:'Nothing looks wrong this period. Nice work.',st_pace:'Spending against plan',st_spent:'Spent',st_plan:'Plan',st_proj:'At this pace',st_months:'Last six months',st_week:'By day of the week',st_cats:'Categories against budget',st_rate:'Kept of income',st_rate_d:'{0} kept this period',st_avg:'Average a day',st_avg_d:'over {0} days so far',st_projected:'By the end of the period',st_projected_d:'against {0} planned',st_top:'Largest share',st_top_d:'{0}, {1}% of spending',nt_title:'Notifications',nt_desc:'Everything that wants a look, and what to do about it.',nt_group_late:'Needs attention now',nt_group_soon:'Due this week',nt_group_todo:'To tidy up',nt_empty_title:"You're all caught up",nt_empty_sub:'Nothing is overdue, due this week, over budget or waiting to be sorted.',nt_bill_late:'{0} was due {1}',nt_bill_soon:'{0} due {1}',nt_debt_soon:'{0} minimum payment due {1}',nt_over:'{0} over its {1} budget',nt_uncat_title:'{0} expenses to sort',nt_uncat_one:'1 expense to sort',nt_uncat_detail:'Logged to sort later. Give each one a category so your budget adds up.',nt_goal_late:'Its date has passed with {0} still to save',nt_act_review:'Review',nt_act_sort:'Sort them',nt_act_edit_goal:'Edit goal',nt_open:'Open {0}',nt_tag_overdue:'Overdue',nt_tag_soon:'Due soon',nt_tag_over:'Over budget',nt_tag_pastdate:'Past date',nt_tag_todo:'To do',tab_notifications:'Notifications',bp_title:'Budget period',bp_how:'Quick pick',bp_r_month:'Calendar month',bp_r_payday:'Monthly',bp_r_w2:'Every 2 weeks',bp_r_w4:'Every 4 weeks',bp_r_w1:'Every week',bp_r_custom:'Custom',bp_payday:'Starts on',bp_day_n:'day {0}',bp_starts:'Starts {0}',bp_tap_custom:'Tap the first day of the period.',bp_tap_last:'Now tap the last day.',bp_tap_rhythm:'Tap a day to start the period there.',bp_auto:'Move on to the next period by itself',bp_days:'{0} days',bp_day_of:'today is day {0} of {1}',bp_starts_in:'starts in {0} days',bp_over:'already over',bp_left:'{0} days left',bp_daily:'Your planned income of {0} comes to about {1} a day.',bp_now:'Back to today',bp_use:'Use {0}',bp_prev:'Previous period',bp_next:'Next period',bp_moved:'A new budget period has started: {0}',rail_nav:'Navigation',rail_account:'Account',rail_guest:'Your budget',rail_local:'Saved on this device',rail_account_open:'Open settings',badge_bills:'{0} bills overdue or due this week',badge_debt:'{0} debt payments due this week',badge_budget:'{0} categories over budget',badge_transactions:'{0} expenses to sort into a category',badge_goals:'{0} goals past their date',
-    dash_no_sinking:'No saving goals yet.',dash_create_one:'Create one \u2192',
+    dash_upcoming_tpl:'\uD83D\uDCC5 Upcoming ({0} days)',dash_nothing_scheduled:'Nothing scheduled.',view_as_list:'Show as a list',view_as_cards:'Show as cards',sf_saved_so_far:'saved so far',sf_open_ended:'no target',qa_title_expense:'Add expense',qa_title_bill:'Pay a bill',qa_title_sinking_fund:'Add to a goal',qa_title_debt:'Pay a debt',qa_title_income:'Add income',qa_go_expense:'Add expense',qa_go_bill:'Pay bill',qa_go_sinking_fund:'Add to goal',qa_go_debt:'Pay debt',qa_go_income:'Add income',qa_type_expense:'Expense',qa_type_bill:'Bill',qa_type_sinking_fund:'Goal',qa_type_debt:'Debt',qa_type_income:'Income',qa_type_it:'type it instead',qa_clear:'Clear',qa_backspace:'Delete last digit',qa_tap_cat:'Tap a category to add it',qa_no_cats_expense:'No expense categories yet, but you can sort this one later.',qa_no_cats_bill:'Add a bill on the Bills tab first.',qa_no_cats_sinking_fund:'Add a savings goal first.',qa_no_cats_debt:'Add a debt first.',qa_no_cats_income:'Add an income category on the Budget tab first.',qa_uncat:'Uncategorized',qa_uncat_chip:'Uncategorized · sort later',qa_add_note:'Add note',qa_again:'Save and add another',qa_after:'After this: {0} until {1}, about {2} a day.',cu_today_cap:'Today',cu_yesterday_cap:'Yesterday',cu_title:'Coming up',cu_all:'All bills',cu_paid:'Paid',cu_today:'today',cu_tomorrow:'tomorrow',cu_yesterday:'yesterday',cu_in_days:'in {0} days',cu_days_ago:'{0} days ago',cu_empty:'Nothing due in the next {0} days.',cu_next_period:'Next period',stg_general:'General',stg_budget:'Budget and periods',stg_look:'Look and feel',stg_assist:'Assistant and automation',stg_data:'Your data',stg_more:'More',set_width_title:'Layout width',set_width_desc:'Use the whole width of the window, or keep the app in a fixed column in the middle.',set_width_full:'Use the full width of the window',rail_assistant:'Budget Assistant',rail_guide:'Guide',rail_home:'Home',nl_free_today:'Free to spend today',rf_runout:'You could run short before the period ends',rf_runout_d:'At your usual {0} a day you would need {1}, with {2} free.',rf_noplan:'{0} has spending but nothing planned',rf_noplan_d:'{0} spent with no amount set.',rf_act_edit:'Fix it',rf_unplanned:'Spending outside your budget ({0})',rf_unplanned_d:'{0} in categories with no budget line: {1}.',rf_act_tx:'Show them',rf_unlinked_bill:'Bill payments that match no bill ({0})',rf_unlinked_bill_d:'Logged under {0}, which is not one of your bills.',rf_unlinked_debt:'Debt payments that match no debt ({0})',rf_unlinked_debt_d:'Logged under {0}, which is not one of your debts.',rf_unlinked_goal:'Goal contributions that match no goal ({0})',rf_unlinked_goal_d:'Logged under {0}, which is not one of your goals.',rf_unlinked_inc:'Income outside your budget ({0})',rf_unlinked_inc_d:'Logged under {0}, which has no income line.',rf_untagged:'Transactions with no Need, Want or Save tag ({0})',rf_untagged_d:'{0} this period is left out of your split.',rf_alloc_save:'Saving is behind its share',rf_alloc_d:'{0}% of income against a {1}% target.',rf_alloc_over:'{0} is over its share',rf_plan:'Your plan spends more than you expect to earn',rf_plan_d:'Planned outgoings of {0} against {1} of expected income.',rf_noincome:'No income logged yet this period',rf_noincome_d:'You expect {0}. Log it when it lands.',rf_goal_track:'{0} needs more each month',rf_goal_track_d:'{0} a month to reach it by {1}, and {2} is planned.',rf_goal_late:'{0} passed its date short of the target',rf_goal_late_d:'{0} still to save.',rf_interest:'{0}: the minimum does not cover the interest',rf_interest_d:'Interest is about {0} a month against a {1} minimum.',rf_missed:'{0}: minimum payment not made yet',rf_missed_d:'Due on day {0}, {1} of {2} paid so far.',rf_billjump:'{0} cost more than usual',rf_billjump_d:'Paid {0} against the usual {1}.',rf_nodate:'{0} has no due date',rf_nodate_d:'Without one it cannot be tracked or show up as due.',rf_act_setdate:'Set a date',rf_spike:'Spending is running above last period',rf_spike_d:'On pace for {0} against {1} last period.',rf_trend:'{0} is up on your usual',rf_trend_d:'{0} this period against about {1} a month.',rf_dupe:'Possible duplicate: {0}',rf_dupe_d:'{0} logged twice on {1}.',rf_future:'Transactions dated in the future ({0})',rf_future_d:'Check the dates. The first is {0}.',rf_ended:'Your budget period has ended',rf_ended_d:'It ended on {0}. Start the next one so your figures stay current.',rf_act_period:'Choose period',rf_one_open:'flag to look at',rf_many_open:'flags to look at',rf_urgent:'Urgent',rf_worth:'Worth a look',nt_ignore:'Ignore',nt_ignored_show:'Show {0} ignored',nt_ignored_toast:'Ignored. It no longer counts toward your badges.',close:'Close',dv_label:'Dashboard view',dv_overview:'Overview',dv_stats:'Statistics',dash_line_style:'Line style',dash_line_line:'Straight lines',dash_line_curve:'Curved lines',dash_other:'Other',psf_title:'This period so far',psf_in:'In',psf_out:'Out',psf_kept:'Kept',psf_still:'{0} still expected',psf_all_in:'All expected income is in',psf_bills_part:'{0} of it bills',psf_kept_pct:'{0}% of what came in',psf_where:'Where the money went',gp_title:'Goal progress',gp_all:'All goals',gp_done:'Done',gp_late:'Past date',gp_by:'by {0}',gp_of:'{0} of {1}',gp_saved:'{0} saved',gp_sum_of:'of {0} across your goals ({1}%)',ra_title:'Recent activity',ra_all:'All activity',ra_deleted:'Deleted {0} ({1})',ra_undo:'Undo',ra_more:'More',ra_empty:'Nothing logged yet.',ra_restored:'Put back',ra_amount:'Amount',ra_note:'Note',ra_again:'Log again',rf_pace:'Spending faster than planned',rf_pace_d:'On pace for {0} of everyday spending, {1} over plan.',rf_act_budget:'Review budget',rf_short:'Payments due are more than what is left',rf_short_d:'{0} still to pay with {1} left this period.',rf_act_coming:'See what is due',rf_overdue:'{0} bills are overdue',rf_overdue_one:'1 bill is overdue',rf_act_pay:'Pay now',rf_over:'{0} categories are over budget',rf_over_one:'1 category is over budget',rf_income:'Less income than expected',rf_income_d:'Only {0} of the {1} you expect has come in.',rf_act_log:'Log income',rf_nosave:'Nothing put toward your goals yet',rf_nosave_d:'Your goals need about {0} a month.',rf_act_goals:'Open goals',rf_apr:'{0} charges {1}% and gets only its minimum',rf_apr_d:'Anything extra on it saves the most interest.',rf_act_debt:'Open debt',rf_rise:'{0} went up by {1}',rf_rise_d:'It was {0} and is now {1}.',rf_act_bills:'Open bills',rf_subs:'Subscriptions weigh heavy',rf_subs_d:'{0} a month is {1}% of your expected income.',rf_big:'A large one-off expense: {0}',rf_big_d:'{0} on {1}.',rf_act_view:'View it',rf_loose:'Unsorted spending is piling up',rf_loose_d:'{0} this period has no category yet.',rf_thin:'Keeping very little of what came in',rf_thin_d:'Only {0}% of this period’s income is left after spending.',rf_one:'Red flag',rf_many:'Red flags',rf_clear:'All clear',rf_checked:'{0} checks run on this period',rf_restore:'Show {0} set aside',rf_dismiss:'Set aside for this period',rf_none:'Nothing looks wrong this period. Nice work.',st_pace:'Spending against plan',st_spent:'Spent',st_plan:'Plan',st_proj:'At this pace',st_months:'Last six months',st_week:'By day of the week',st_cats:'Categories against budget',st_rate:'Kept of income',st_rate_d:'{0} kept this period',st_avg:'Average a day',st_avg_d:'over {0} days so far',st_projected:'By the end of the period',st_projected_d:'against {0} planned',st_top:'Largest share',st_top_d:'{0}, {1}% of spending',nt_title:'Notifications',nt_desc:'Everything that wants a look, and what to do about it.',nt_group_late:'Needs attention now',nt_group_soon:'Due this week',nt_group_todo:'To tidy up',nt_empty_title:"You're all caught up",nt_empty_sub:'Nothing is overdue, due this week, over budget or waiting to be sorted.',nt_bill_late:'{0} was due {1}',nt_bill_soon:'{0} due {1}',nt_debt_soon:'{0} minimum payment due {1}',nt_over:'{0} over its {1} budget',nt_uncat_title:'{0} expenses to sort',nt_uncat_one:'1 expense to sort',nt_uncat_detail:'Logged to sort later. Give each one a category so your budget adds up.',nt_goal_late:'Its date has passed with {0} still to save',nt_act_review:'Review',nt_act_sort:'Sort them',nt_act_edit_goal:'Edit goal',nt_open:'Open {0}',nt_tag_overdue:'Overdue',nt_tag_soon:'Due soon',nt_tag_over:'Over budget',nt_tag_pastdate:'Past date',nt_tag_todo:'To do',tab_notifications:'Notifications',bp_title:'Budget period',bp_how:'Quick pick',bp_r_month:'Calendar month',bp_r_payday:'Monthly',bp_r_w2:'Every 2 weeks',bp_r_w4:'Every 4 weeks',bp_r_w1:'Every week',bp_r_custom:'Custom',bp_payday:'Starts on',bp_day_n:'day {0}',bp_starts:'Starts {0}',bp_tap_custom:'Tap the first day of the period.',bp_tap_last:'Now tap the last day.',bp_tap_rhythm:'Tap a day to start the period there.',bp_auto:'Move on to the next period by itself',bp_days:'{0} days',bp_day_of:'today is day {0} of {1}',bp_starts_in:'starts in {0} days',bp_over:'already over',bp_left:'{0} days left',bp_daily:'Your planned income of {0} comes to about {1} a day.',bp_now:'Back to today',bp_use:'Use {0}',bp_prev:'Previous period',bp_next:'Next period',bp_moved:'A new budget period has started: {0}',rail_nav:'Navigation',rail_account:'Account',rail_guest:'Your budget',rail_local:'Saved on this device',rail_account_open:'Open settings',badge_bills:'{0} bills overdue or due this week',badge_debt:'{0} debt payments due this week',badge_budget:'{0} categories over budget',badge_transactions:'{0} expenses to sort into a category',badge_goals:'{0} goals past their date',
+    dash_no_sinking:'No savings goals yet.',dash_create_one:'Create one \u2192',
     help_dash_intro:'The Dashboard gives you a real-time financial overview. All numbers update automatically as you log transactions.',
     help_dash_hero_h:'Free to spend and Coming up',
     help_dash_hero_p:'The big figure is what you can still spend this period: what has come in, less what has gone out, less everything still owed before the period ends. Beside it, Coming up lists the next five payments still owed this period, overdue bills first. Press Pay on any of them to log it.',
@@ -1047,7 +1073,7 @@ const TRANSLATIONS = {
     help_dash_donut_h:'Donut charts',
     help_dash_donut_p:'Hover or tap a segment to see the label and percentage. These show where your money comes from and where it goes.',
     help_dash_bottom_h:'Bottom panels',
-    help_dash_bottom_p:'Quick snapshots of your Debt Payoff progress and your Saving Goals.',
+    help_dash_bottom_p:'Quick snapshots of your Debt Payoff progress and your Savings Goals.',
     help_dash_tip:'\uD83D\uDCA1 Click the date badge at the top to change your budget period.',
     tx_type_debt:'Debt',
     dash_debt_payments:'Debt',
@@ -1070,7 +1096,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transaction added \u2713',toast_tx_updated:'Updated \u2713',toast_tx_deleted:'Deleted',
     toast_period_updated:'Period updated \u2713',toast_period_error:'End date must be after start date',
     toast_currency_updated:'Currency updated \u2713',toast_imported:'Imported {0} \u2713',
-    toast_fund_created:'Fund created \u2713',toast_fund_updated:'Fund updated \u2713',
+    toast_fund_created:'Goal created ✓',toast_fund_updated:'Goal updated ✓',
     toast_fund_contrib:'Added {amt} to {name} \u2713',
     toast_sub_added:'Subscription added \u2713',toast_sub_updated:'Subscription updated \u2713',
     toast_alloc_enabled:'Allocation enabled \u2713',toast_alloc_disabled:'Allocation disabled',
@@ -1079,7 +1105,7 @@ const TRANSLATIONS = {
     confirm_remove_cat:'Remove this category?',bud_edit_title:'\u270f\ufe0f Edit Category',bud_name_required:'Give the category a name.',bud_name_taken:'Another category in this section already uses that name.',bud_expected_invalid:'Enter an expected amount of 0 or more.',bud_due_day_invalid:'Enter a due day between 1 and 31, or leave it blank.',confirm_delete_all_tx:'Delete ALL transactions? This cannot be undone.',
     confirm_remove_cat_with_tx:'{0} existing transaction(s) use this category. They will keep it as a label, but it will no longer be tracked in your budget. Delete anyway?',
     confirm_delete_tx:'Delete this transaction?',confirm_remove_debt:'Remove this debt?',
-    confirm_delete_fund:'Delete this fund?',confirm_remove_sub:'Remove this subscription?',
+    confirm_delete_fund:'Delete this goal?',confirm_remove_sub:'Remove this subscription?',
     confirm_reset_1:'Are you sure? All data will be permanently deleted.',
     confirm_reset_2:'Last chance - this cannot be undone. Continue?',
     sett_upcoming_title:'📅 Upcoming Window',sett_upcoming_desc:"Choose how many days ahead the Dashboard's Upcoming list looks.",sett_upcoming_label:'Days ahead',
@@ -1103,8 +1129,8 @@ const TRANSLATIONS = {
     recurring_freq:'Frequency',freq_daily:'Daily',freq_weekly:'Weekly',
     freq_monthly:'Monthly',freq_quarterly:'Quarterly',freq_annual:'Annual',
     recurring_next_due:'Next Due',recurring_generated:'Automated {0} new transactions',
-    recurring_remove:'Remove rule',recurring_paused:'Paused',recurring_active:'Active',recurring_saved:'Automatic transaction saved ✓',dpc_add_debt_title:'Add debt',dpc_edit_debt_title:'Edit debt',debt_due_day_modal_hint:'The day of the month this payment is due',toast_debt_added:'Debt added',toast_debt_updated:'Debt updated',sf_billing_day_label:'Due day',sf_billing_day_hint:'The day each month the contribution is logged automatically',sf_error_required:'Please fill in all required fields',bill_paid_modal_title:'Mark bill paid',bill_paid_amount_label:'Amount paid',bill_paid_amount_hint:"How much you actually paid - this gets logged as a transaction so your spending history stays accurate, even if it's different from your budgeted amount.",bill_paid_save_btn:'Log payment',bill_paid_budgeted_hint:'Budgeted: {0}',toast_bill_marked_paid:'Payment logged',sub_active:'Active',sub_paused:'Paused',sub_desc:"Track every recurring payment and understand your true annual cost. Pause subscriptions you're not using to keep costs in check.",sub_add_btn:'+ Add bill',sub_add_title:'Add bill',sub_edit_title:'Edit bill',sub_empty_title:'No bills yet.',sub_empty_sub:'Add your recurring payments - Netflix, Spotify, gym memberships, etc.',sub_sum_monthly:'Monthly total',sub_sum_annual:'Annual total',sub_by_category:'By category',sub_per_month:'/month',sub_next_label:'Next',sub_name_label:'Name',bill_kind_label:'Type',bill_kind_bill:'Bill',bill_kind_sub:'Subscription',sub_name_ph:'e.g. Netflix',sub_amount_label:'Amount',sub_freq_label:'Billing frequency',sub_freq_monthly:'Monthly',sub_freq_annual:'Annual',sub_freq_quarterly:'Quarterly',sub_freq_weekly:'Weekly',sub_unit_month:'month',sub_unit_year:'year',sub_unit_quarter:'quarter',sub_cat_label:'Category',sub_date_label:'Due date',sub_name_hint:'The service or provider this payment is for, like "Netflix" or "Gym Membership".',sub_amount_hint:"How much you're charged each billing cycle.",sub_freq_hint:'How often this subscription bills you.',sub_cat_hint:'Groups this subscription for the category breakdown chart.',sub_date_hint:'The next date this subscription will charge you. Shows on the Smart Calendar.',alloc_label_hint:'Tag this as a Need, Want, or Save so it counts toward your allocation buckets.',sub_cat_entertainment:'Entertainment',sub_cat_productivity:'Productivity',sub_cat_health:'Health & Fitness',sub_cat_food:'Food & Drink',sub_cat_cloud:'Cloud Storage',sub_cat_finance:'Finance',sub_cat_education:'Education',sub_cat_gaming:'Gaming',sub_cat_news:'News & Media',sub_cat_other:'Other',help_sub_intro:"Track every recurring payment and understand your true monthly and annual cost. Subscriptions that quietly drain your account are easy to miss - this keeps them visible.",help_sub_how_h:'Adding a subscription',help_sub_step1:'Click + Add subscription',help_sub_step2:'Enter the name, amount, and billing frequency (monthly, annual, quarterly, weekly)',help_sub_step3:'Pick a category to group similar subscriptions',help_sub_step4:'Set the next billing date - it will appear on the Smart Calendar',help_sub_monthly_h:'Monthly equivalent',help_sub_monthly_p:'Annual and quarterly subscriptions are converted to a monthly cost so you can see your true monthly spend at a glance.',help_sub_pause_h:'Pausing subscriptions',help_sub_pause_p:"Switch the Active toggle off on any subscription you're not currently using. It won't count toward your totals until you switch it back on.",help_sub_price_h:'Price history',help_sub_price_p:"When you change a subscription's price, it's logged automatically. A small ↑ or ↓ next to the amount shows the most recent change - hover it to see the full history.",help_sub_chart_h:'Category chart',help_sub_chart_p:'The donut chart shows how your subscription spending breaks down by category - hover a segment to see the details.',help_sub_tip:"💡 Turn on Automate for a subscription so it's added to your transactions automatically each billing cycle.",automate_auto_pay:'Auto-pay',sf_auto_contribute:'Auto-contribute',sf_auto_need_amount:'Add a target amount and date first',sf_auto_set:'Monthly contribution set to {0}',automate_label:'Automate',automate_hint:'Adds it to your transactions automatically on schedule',automate_hint_off:'Turn on Automation in Settings to use this',automate_th:'Autopay',automate_need_amount:'Set a minimum payment first',automate_payment_word:'payment',automate_linked:'Linked automatic transaction',sf_contribution_label:'Monthly contribution',sf_contribution_hint:'Logged automatically each month to grow this fund',sett_automation_h:'Automation',sett_automation_desc:'Master switch for automatic transactions. When off, no scheduled transactions are generated and the Automate options are disabled.',sett_automation_toggle:'Automatic transactions',sett_automation_hint:'Applies to the Transactions tab, subscriptions, funds and debts',
-    tx_type_sinking_fund:'Saving goal',
+    recurring_remove:'Remove rule',recurring_paused:'Paused',recurring_active:'Active',recurring_saved:'Automatic transaction saved ✓',dpc_add_debt_title:'Add debt',dpc_edit_debt_title:'Edit debt',debt_due_day_modal_hint:'The day of the month this payment is due',toast_debt_added:'Debt added',toast_debt_updated:'Debt updated',sf_billing_day_label:'Due day',sf_billing_day_hint:'The day each month the contribution is logged automatically',sf_error_required:'Please fill in all required fields',bill_paid_modal_title:'Mark bill paid',bill_paid_amount_label:'Amount paid',bill_paid_amount_hint:"How much you actually paid - this gets logged as a transaction so your spending history stays accurate, even if it's different from your budgeted amount.",bill_paid_save_btn:'Log payment',bill_paid_budgeted_hint:'Budgeted: {0}',toast_bill_marked_paid:'Payment logged',sub_active:'Active',sub_paused:'Paused',sub_desc:"Track every recurring payment and understand your true annual cost. Pause subscriptions you're not using to keep costs in check.",sub_add_btn:'+ Add bill',sub_add_title:'Add bill',sub_edit_title:'Edit bill',sub_empty_title:'No bills yet.',sub_empty_sub:'Add your recurring payments - Netflix, Spotify, gym memberships, etc.',sub_sum_monthly:'Monthly total',sub_sum_annual:'Annual total',sub_by_category:'By category',sub_per_month:'/month',sub_next_label:'Next',sub_name_label:'Name',bill_kind_label:'Type',bill_kind_bill:'Bill',bill_kind_sub:'Subscription',sub_name_ph:'e.g. Netflix',sub_amount_label:'Amount',sub_freq_label:'Billing frequency',sub_freq_monthly:'Monthly',sub_freq_annual:'Annual',sub_freq_quarterly:'Quarterly',sub_freq_weekly:'Weekly',sub_unit_month:'month',sub_unit_year:'year',sub_unit_quarter:'quarter',sub_cat_label:'Category',sub_date_label:'Due date',sub_name_hint:'The service or provider this payment is for, like "Netflix" or "Gym Membership".',sub_amount_hint:"How much you're charged each billing cycle.",sub_freq_hint:'How often this subscription bills you.',sub_cat_hint:'Groups this subscription for the category breakdown chart.',sub_date_hint:'The next date this subscription will charge you. Shows on the Smart Calendar.',alloc_label_hint:'Tag this as a Need, Want, or Save so it counts toward your allocation buckets.',sub_cat_entertainment:'Entertainment',sub_cat_productivity:'Productivity',sub_cat_health:'Health & Fitness',sub_cat_food:'Food & Drink',sub_cat_cloud:'Cloud Storage',sub_cat_finance:'Finance',sub_cat_education:'Education',sub_cat_gaming:'Gaming',sub_cat_news:'News & Media',sub_cat_other:'Other',help_sub_intro:"Track every recurring payment and understand your true monthly and annual cost. Subscriptions that quietly drain your account are easy to miss - this keeps them visible.",help_sub_how_h:'Adding a subscription',help_sub_step1:'Click + Add subscription',help_sub_step2:'Enter the name, amount, and billing frequency (monthly, annual, quarterly, weekly)',help_sub_step3:'Pick a category to group similar subscriptions',help_sub_step4:'Set the next billing date - it will appear on the Smart Calendar',help_sub_monthly_h:'Monthly equivalent',help_sub_monthly_p:'Annual and quarterly subscriptions are converted to a monthly cost so you can see your true monthly spend at a glance.',help_sub_pause_h:'Pausing subscriptions',help_sub_pause_p:"Switch the Active toggle off on any subscription you're not currently using. It won't count toward your totals until you switch it back on.",help_sub_price_h:'Price history',help_sub_price_p:"When you change a subscription's price, it's logged automatically. A small ↑ or ↓ next to the amount shows the most recent change - hover it to see the full history.",help_sub_chart_h:'Category chart',help_sub_chart_p:'The donut chart shows how your subscription spending breaks down by category - hover a segment to see the details.',help_sub_tip:"💡 Turn on Automate for a subscription so it's added to your transactions automatically each billing cycle.",automate_auto_pay:'Auto-pay',sf_auto_contribute:'Auto-contribute',sf_auto_need_amount:'Add a target amount and date first',sf_auto_set:'Monthly contribution set to {0}',automate_label:'Automate',automate_hint:'Adds it to your transactions automatically on schedule',automate_hint_off:'Turn on Automation in Settings to use this',automate_th:'Autopay',automate_need_amount:'Set a minimum payment first',automate_payment_word:'payment',automate_linked:'Linked automatic transaction',sf_contribution_label:'Monthly contribution',sf_contribution_hint:'Logged automatically each month to grow this goal',sett_automation_h:'Automation',sett_automation_desc:'Master switch for automatic transactions. When off, no scheduled transactions are generated and the Automate options are disabled.',sett_automation_toggle:'Automatic transactions',sett_automation_hint:'Applies to the Transactions tab, subscriptions, savings goals and debts',
+    tx_type_sinking_fund:'Savings goal',
     help_dash_alloc_h:'Budget Allocation panel',
     help_dash_alloc_what_h:'What it is',
     help_dash_alloc_what_p:'Tracks your spending against customisable target percentages of your income. The classic 50/30/20 rule splits income into Needs (essentials: rent, food, utilities), Wants (lifestyle: dining, streaming, hobbies) and Savings (wealth-building and debt payoff). You can set any split you like - the percentages just need to total 100%.',
@@ -1185,8 +1211,8 @@ const TRANSLATIONS = {
     guide_dashboard_big:"The Dashboard is your command center - everything important about your money lives on this one screen, from your bottom line to what's coming up this week.",
     guide_dashboard_step1:'Check the summary cards at the top for your <strong>Total Income</strong>, <strong>Total Outgoing</strong>, <strong>Savings Rate</strong>, and <strong>Net Leftover</strong>.',
     guide_dashboard_step2:'Scroll to the <strong>Upcoming</strong> list to see everything due in the next 7 days - bills, debt payments, and subscriptions all in one place.',
-    guide_dashboard_step3:'Check your <strong>Debt Payoff</strong> and <strong>Sinking Funds</strong> snapshots to see progress toward your bigger goals at a glance.',
-    guide_dashboard_connect1:"Every number here is pulled live from Transactions, Budget, Debt Payoff, Sinking Funds, and Subscriptions - there's nothing to calculate by hand.",
+    guide_dashboard_step3:'Check your <strong>Debt Payoff</strong> and <strong>Savings Goals</strong> snapshots to see progress toward your bigger goals at a glance.',
+    guide_dashboard_connect1:"Every number here is pulled live from Transactions, Budget, Debt Payoff, Savings Goals, and Subscriptions - there's nothing to calculate by hand.",
     guide_dashboard_connect2:'The Net Leftover figure includes your <strong>Rollover</strong> setting, so unspent money from last period can carry forward automatically.',
     guide_dashboard_connect3:"If something looks off, it's almost always worth checking the page it came from - the Dashboard is a mirror, not a source.",
     guide_dashboard_tip:"Set aside 30 seconds each morning to scan the Dashboard - it's the fastest way to catch a bill or debt payment before it's overdue.",guide_dashboard_usecase_h:'See it in action',guide_dashboard_usecase_p:"<p><strong>Maria</strong> opens Ezzo Budget on payday. She glances at the Dashboard and sees her Net Leftover this period is $420 - enough to add a bit extra to her emergency fund.</p><p>The Cash Flow panel shows she's already over budget on Dining, so she skips ordering takeout that night instead of finding out at the end of the month.</p>",
@@ -1224,15 +1250,15 @@ const TRANSLATIONS = {
     guide_debt_connect2:'Your Dashboard shows a snapshot of this payoff plan so you always know where you stand without opening this page.',
     guide_debt_connect3:'Paying more than the minimum here - even a little - is usually the single biggest lever you have to shorten your payoff timeline.',
     guide_debt_tip:'Try switching between Snowball and Avalanche to compare - Snowball feels more motivating early on, but Avalanche usually saves more money overall.',guide_debt_usecase_h:'See it in action',guide_debt_usecase_p:'<p><strong>Sam</strong> has three debts: a credit card, a car loan, and a small personal loan. He enters all three, picks Avalanche so the highest-interest card gets paid off first, and sees his real payoff date and total interest right away.</p><p>When he gets a work bonus, he types it into that one card\'s <strong>Extra/mo</strong> field instead of the shared extra-payment pool, so the bonus goes exactly where he wants it - then opens the ℹ️ schedule to see month-by-month exactly how much faster he\'ll be debt-free.</p>',
-    guide_sinking_title:'Saving Goals',
-    guide_sinking_big:"A saving goal is money set aside for something. Give it a target and a date and it works out what you need to put in each month. Leave the target blank and it is simply a pot you add to, which is what an emergency fund really is.",
-    guide_sinking_step1:'Create a fund and give it a <strong>Target Amount</strong> and, if you like, a target date.',
+    guide_sinking_title:'Savings Goals',
+    guide_sinking_big:"A savings goal is money set aside for something. Give it a target and a date and it works out what you need to put in each month. Leave the target blank and it is simply a pot you add to, which is what an emergency fund really is.",
+    guide_sinking_step1:'Create a goal and give it a <strong>Target Amount</strong> and, if you like, a target date.',
     guide_sinking_step2:'Add contributions whenever you set money aside for it, and watch the <strong>progress bar</strong> fill in.',
-    guide_sinking_step3:"Once a fund reaches its target, you're ready for that expense without touching your regular budget.",
-    guide_sinking_connect1:"Sinking funds are separate from your regular Savings category - they're for specific, planned goals rather than general saving.",
-    guide_sinking_connect2:"Your Dashboard shows a snapshot of all your funds' progress in one place.",
-    guide_sinking_connect3:'Contributing to a fund regularly, even a small amount, is what turns a big expense into something that never derails your budget.',
-    guide_sinking_tip:"Break big goals into round monthly numbers - it's much easier to commit to $50 a month than to 'save up for a vacation eventually.'",guide_sinking_usecase_h:'See it in action',guide_sinking_usecase_p:'<p><strong>Elena</strong> is planning a $1,200 vacation for next July. She creates a Sinking Fund with that target amount and date, and Ezzo Budget tells her she needs to save $150/month to get there.</p><p>She turns on <strong>Automate</strong> so that amount is logged as a contribution every month without her needing to remember.</p>',
+    guide_sinking_step3:"Once a goal reaches its target, you're ready for that expense without touching your regular budget.",
+    guide_sinking_connect1:'Savings goals are kept apart from your everyday budget categories - they\'re for specific, planned things rather than general spending.',
+    guide_sinking_connect2:"Your Dashboard shows a snapshot of all your goals' progress in one place.",
+    guide_sinking_connect3:'Contributing to a goal regularly, even a small amount, is what turns a big expense into something that never derails your budget.',
+    guide_sinking_tip:"Break big goals into round monthly numbers - it's much easier to commit to $50 a month than to 'save up for a vacation eventually.'",guide_sinking_usecase_h:'See it in action',guide_sinking_usecase_p:'<p><strong>Elena</strong> is planning a $1,200 vacation for next July. She creates a Savings Goal with that target amount and date, and Ezzo Budget tells her she needs to save $150/month to get there.</p><p>She turns on <strong>Automate</strong> so that amount is logged as a contribution every month without her needing to remember.</p>',
     guide_subscriptions_title:'Bills',
     guide_subscriptions_big:"Every payment that comes round on a schedule lives here: rent, utilities, insurance and the subscriptions that quietly pile up. Mark one as a subscription and it is still a bill, just labelled so you can see what those add up to on their own.",
     guide_subscriptions_step1:'Add each subscription along with its cost and how often it bills (monthly, yearly, etc.).',
@@ -1257,9 +1283,9 @@ const TRANSLATIONS = {
     guide_rollover_step2:'Turn it on so any leftover amount from the previous period carries into the new one automatically.',
     guide_rollover_step3:"Check your Dashboard's Net Leftover - it will now include that carried-forward amount.",
     guide_rollover_connect1:"Rollover works directly off your Net Leftover from the previous period - the better you stick to your budget, the more it has to carry forward.",
-    guide_rollover_connect2:'This is different from Sinking Funds, which are for planned future goals - Rollover is just about not losing track of money you already have.',
+    guide_rollover_connect2:'This is different from Savings Goals, which are for planned future spending - Rollover is just about not losing track of money you already have.',
     guide_rollover_connect3:"A string of good months compounds nicely here, since each period's leftover adds to the next.",
-    guide_rollover_tip:"If a big rollover amount is burning a hole in your pocket, consider moving some of it into a Sinking Fund so it's earmarked for something specific.",guide_rollover_usecase_h:'See it in action',guide_rollover_usecase_p:"<p>At the end of June, <strong>Noor</strong> has $180 left over after covering everything. Because <strong>Auto-carry</strong> is turned on, the moment she moves her budget period into July, that $180 automatically shows up as her rollover amount - added straight to her Net Leftover, instead of her having to calculate and re-type it herself.</p>",
+    guide_rollover_tip:"If a big rollover amount is burning a hole in your pocket, consider moving some of it into a Savings Goal so it's earmarked for something specific.",guide_rollover_usecase_h:'See it in action',guide_rollover_usecase_p:"<p>At the end of June, <strong>Noor</strong> has $180 left over after covering everything. Because <strong>Auto-carry</strong> is turned on, the moment she moves her budget period into July, that $180 automatically shows up as her rollover amount - added straight to her Net Leftover, instead of her having to calculate and re-type it herself.</p>",
     guide_automation_title:'Automation',
     guide_automation_big:'Automation takes the recurring rules you set up in Transactions and posts them for you automatically, so your regular bills, paychecks, and subscriptions show up right on schedule without you lifting a finger.',
     guide_automation_step1:'Open <strong>Settings</strong> and find the <strong>Automation</strong> card.',
@@ -1276,7 +1302,7 @@ const TRANSLATIONS = {
     guide_penny_step3:"Ask a question in your own words, like 'what's my biggest spending category this month?', or tap one of the quick-question buttons to get started.",
     guide_penny_step4:"Toggle her voice reply on or off with the speaker icon if you'd rather listen than read.",
     guide_penny_connect1:'Ezzo can only see your budget data to answer questions - she can never add, edit, or delete anything for you.',
-    guide_penny_connect2:"She pulls straight from Dashboard, Transactions, Debt Payoff, Subscriptions, and Sinking Funds, so her answers always match what you'd see on those pages yourself.",
+    guide_penny_connect2:"She pulls straight from Dashboard, Transactions, Debt Payoff, Subscriptions, and Savings Goals, so her answers always match what you'd see on those pages yourself.",
     guide_penny_connect3:"Your API key is encrypted and stored only on your own device - it's never sent anywhere except directly to Google when you ask Ezzo a question.",
     guide_penny_tip:"Start with one of the quick-question buttons the first time - it's the fastest way to see what she can do before asking your own questions.",guide_penny_usecase_h:'See it in action',guide_penny_usecase_p:'<p>Whenever <strong>Diane</strong> isn\'t sure where her money went this month, she opens Ezzo and asks "why is my spending higher than usual this month?"</p><p>Ezzo looks at her actual transactions and gives her a plain-language answer - pointing out, say, that Dining spending doubled - instead of her having to dig through the Transactions list herself.</p>',
     guide_settings_title:'Settings',
@@ -1294,7 +1320,7 @@ const TRANSLATIONS = {
     upg_chip_tx:'{0} / {0} free transactions used',
     upg_chip_recurring:'{0} / {0} free automatic transactions used',
     upg_chip_subs:'{0} / {0} free subscription used',
-    upg_chip_sinking:'{0} / {0} free sinking fund used',
+    upg_chip_sinking:'{0} / {0} free savings goal used',
     upg_chip_debts:'{0} / {0} free debt used',
     upg_chip_cat:'{0} / {0} free {1} categories used',
     upg_chip_limit:'Free trial limit reached',
@@ -1304,7 +1330,7 @@ const TRANSLATIONS = {
     upg_sub:"You're at the free trial limit. Upgrade once to remove every cap. No subscription, ever.",
     upg_feat_unlimited_tx_html:'<strong>Unlimited</strong> transactions &amp; automatic transactions',
     upg_feat_unlimited_cat_html:'<strong>Unlimited</strong> budget categories in every section',
-    upg_feat_unlimited_other_html:'<strong>Unlimited</strong> debts, subscriptions &amp; sinking funds',
+    upg_feat_unlimited_other_html:'<strong>Unlimited</strong> debts, subscriptions &amp; savings goals',
     upg_feat_onetime:'One-time payment · free updates for life',
     upg_price_tag:'one-time',upg_price_note:'No subscription',
     upg_cta_ubp:'Unlock Ultimate for {0}',
@@ -1326,7 +1352,7 @@ const TRANSLATIONS = {
     onb_tips_sub:'A few more things worth knowing:',
     onb_tip1_h:'Guide button',onb_tip1_b:'Tap the ? icon on any tab for detailed help on that section.',
     onb_tip2_h:'Fill in the rest',onb_tip2_b:"Don't forget Expenses, Bills & Savings - the same way you just did Income.",
-    onb_tip3_h:'Pro tools',onb_tip3_b:'Explore the Debt Payoff calculator, Sinking Funds, Subscriptions and the Smart Calendar.',
+    onb_tip3_h:'Pro tools',onb_tip3_b:'Explore the Debt Payoff calculator, Savings Goals, Subscriptions and the Smart Calendar.',
     onb_tip4_h:'Sync across devices',nav_dock_aria:'Quick actions',onb_tip4_b:'Turn on Google Sync in Settings to access your budget from any device.',
     onb_finish_btn:'Start budgeting →',
     sync_card_title:'☁️ Data &amp; Sync',sync_card_desc:'Choose how your data is stored and kept up to date across devices.',
@@ -1389,7 +1415,7 @@ const TRANSLATIONS = {
     description:'Beschreibung',date:'Datum',type:'Typ',
     add_category:'+ Kategorie hinzufügen',no_transactions:'Noch keine Transaktionen.',
     upgrade_title:'Bereit für das Pro-Erlebnis?',
-    upgrade_desc:'Schuldenabbau-Rechner, Rücklagenplaner, Smart-Kalender und Abonnement-Tracker freischalten.',
+    upgrade_desc:'Schuldenabbau-Rechner, Sparziele, Smart-Kalender und Abonnement-Tracker freischalten.',
     upgrade_now:'Jetzt upgraden →',
     mon:'Mo',tue:'Di',wed:'Mi',thu:'Do',fri:'Fr',sat:'Sa',sun:'So',
     quick_presets:'Schnellauswahl:',select_currency:'Währung auswählen',select_language:'Sprache auswählen',
@@ -1412,7 +1438,7 @@ const TRANSLATIONS = {
     cal_no_events_month:'Keine Ereignisse in diesem Monat.',
     cal_no_events_sub:'Füge Rechnungen, Schulden oder Abonnements hinzu, um sie hier zu sehen.',
     cal_event_one:'Ereignis',cal_event_many:'Ereignisse',cal_clear:'Schließen ×',
-    cal_leg_bill:'Rechnung',cal_leg_debt:'Schulden',cal_leg_sub:'Abonnement',cal_leg_tx:'Transaktion',cal_leg_sinking:'Rücklage',cal_leg_goal:'Zieldatum',cal_leg_auto:'Automatisch',
+    cal_leg_bill:'Rechnung',cal_leg_debt:'Schulden',cal_leg_sub:'Abonnement',cal_leg_tx:'Transaktion',cal_leg_sinking:'Sparziel',cal_leg_goal:'Zieldatum',cal_leg_auto:'Automatisch',
     cal_paid:'✓ Bezahlt',cal_unpaid:'Unbezahlt',cal_mark_paid:'Als bezahlt markieren',
     help_cal_intro:'Der Smart-Kalender fasst alle deine finanziellen Verpflichtungen in einer monatlichen Ansicht zusammen - wird automatisch aktualisiert, wenn du Daten hinzufügst.',
     help_cal_ev_types_h:'Ereignistypen',
@@ -1424,27 +1450,27 @@ const TRANSLATIONS = {
     help_cal_nav_p:'Nutze ← Zurück und Weiter →, um zwischen Monaten zu wechseln. Klicke auf einen Tag, um Ereignisse darunter anzuzeigen. Klicke erneut oder auf „Schließen ×" zum Aufheben.',
     help_cal_paid_h:'Rechnungen als bezahlt markieren',help_cal_paid_p:'Klicke auf einen Tag, um seine Ereignisse aufzuklappen. Jede unbezahlte Rechnung zeigt dort direkt ein Kästchen „Als bezahlt markieren" - aktiviere es, um den tatsächlich gezahlten Betrag als Transaktion zu erfassen, ohne zum Tab Budget wechseln zu müssen.',help_cal_tip:'💡 Setze Fälligkeitsdaten für Rechnungen und Schulden, um den Kalender optimal zu nutzen.',
     sf_add_btn:'+ Ziel hinzufügen',
-    sf_desc:'Ein Sparzielfonds ermöglicht dir, schrittweise für eine große zukünftige Ausgabe zu sparen - keine bösen Überraschungen. Lege Zielbetrag und Datum fest, und wir sagen dir genau, wie viel du monatlich sparen musst.',
+    sf_desc:'Ein Sparziel ermöglicht dir, schrittweise für eine große zukünftige Ausgabe zu sparen - keine bösen Überraschungen. Lege Zielbetrag und Datum fest, und wir sagen dir genau, wie viel du monatlich sparen musst.',
     sf_empty_title:'Noch keine Sparziele.',
     sf_empty_sub:'Ideal für: Urlaub, Autoreparaturen, Hochzeiten, neue Technik, Jahresrechnungen.',
     sf_pct_complete:'erreicht',
     sf_save_prefix:'Sparen',sf_per_month:'/Monat',
     sf_mo_left_tpl:'{0} Monate übrig',
     sf_total_contrib:'Gesamt benötigte monatliche Beiträge:',
-    sf_modal_new:'🏺 Neuer Sparzielfonds',sf_modal_edit:'✏️ Fonds bearbeiten',
-    sf_fund_name_label:'Fondsname',sf_fund_name_ph:'z.B. Urlaubsfonds',
+    sf_modal_new:'🏺 Neues Sparziel',sf_modal_edit:'✏️ Sparziel bearbeiten',
+    sf_fund_name_label:'Name des Ziels',sf_fund_name_ph:'z.B. Sommerurlaub',
     sf_icon_label:'Symbol',sf_target_amount_label:'Zielbetrag',sf_monthly_label:'Monatlicher Beitrag',sf_monthly_hint:'Was jeden Monat hineingeht. Lass das Ziel leer für ein offenes Ziel.',
     sf_currently_saved_label:'Bereits gespart',sf_target_date_label:'Zieldatum',
     sf_fund_name_hint:'Ein kurzer Name für dein Sparziel, z.B. "Sommerurlaub" oder "Neuer Laptop".',
-    sf_icon_hint:'Wähle ein Symbol, damit dieser Fonds auf einen Blick auffällt.',
+    sf_icon_hint:'Wähle ein Symbol, damit dieses Ziel auf einen Blick auffällt.',
     sf_target_amount_hint:'Der Gesamtbetrag, den du für dieses Ziel brauchst.',
     sf_currently_saved_hint:'Wie viel du für dieses Ziel bereits zurückgelegt hast, falls überhaupt.',
     sf_target_date_hint:'Bis wann du dein Ziel erreichen möchtest - wird genutzt, um zu berechnen, wie viel du monatlich sparen musst.',
-    sf_create_btn:'Fonds erstellen',
-    help_sf_intro:'Ein Sparzielfonds ist Geld, das du im Voraus für eine große geplante Ausgabe zurücklegst - keine bösen Überraschungen, wenn die Rechnung kommt.',
+    sf_create_btn:'Ziel erstellen',
+    help_sf_intro:'Ein Sparziel ist Geld, das du im Voraus für eine große geplante Ausgabe zurücklegst - keine bösen Überraschungen, wenn die Rechnung kommt.',
     help_sf_how_to_h:'So verwendest du ihn',
-    help_sf_step1:'Klicke auf + Fonds hinzufügen',
-    help_sf_step2:'Benenne deinen Fonds (z.B. „Sommerurlaub"), wähle ein Symbol',
+    help_sf_step1:'Klicke auf + Ziel hinzufügen',
+    help_sf_step2:'Benenne dein Ziel (z.B. „Sommerurlaub"), wähle ein Symbol',
     help_sf_step3:'Lege einen Zielbetrag fest (wie viel du insgesamt benötigst)',
     help_sf_step4:'Lege ein Zieldatum fest (wann du das Geld benötigst)',
     help_sf_step5:'Gib ein, wie viel du bereits darauf gespart hast',
@@ -1648,7 +1674,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transaktion hinzugef\u00fcgt \u2713',toast_tx_updated:'Aktualisiert \u2713',toast_tx_deleted:'Gel\u00f6scht',
     toast_period_updated:'Zeitraum aktualisiert \u2713',toast_period_error:'Enddatum muss nach dem Startdatum liegen',
     toast_currency_updated:'W\u00e4hrung aktualisiert \u2713',toast_imported:'{0} importiert \u2713',
-    toast_fund_created:'Fonds erstellt \u2713',toast_fund_updated:'Fonds aktualisiert \u2713',
+    toast_fund_created:'Ziel erstellt ✓',toast_fund_updated:'Ziel aktualisiert ✓',
     toast_fund_contrib:'{amt} zu {name} hinzugef\u00fcgt \u2713',
     toast_sub_added:'Abonnement hinzugef\u00fcgt \u2713',toast_sub_updated:'Abonnement aktualisiert \u2713',
     toast_alloc_enabled:'Aufteilung aktiviert \u2713',toast_alloc_disabled:'Aufteilung deaktiviert',
@@ -1657,7 +1683,7 @@ const TRANSLATIONS = {
     confirm_remove_cat:'Diese Kategorie entfernen?',bud_edit_title:'\u270f\ufe0f Kategorie bearbeiten',bud_name_required:'Gib der Kategorie einen Namen.',bud_name_taken:'Eine andere Kategorie in diesem Bereich verwendet diesen Namen bereits.',bud_expected_invalid:'Gib einen erwarteten Betrag von 0 oder mehr ein.',bud_due_day_invalid:'Gib einen Fälligkeitstag zwischen 1 und 31 ein oder lass das Feld leer.',confirm_delete_all_tx:'ALLE Transaktionen l\u00f6schen? Das kann nicht r\u00fcckg\u00e4ngig gemacht werden.',
     confirm_remove_cat_with_tx:'{0} bestehende Transaktion(en) verwenden diese Kategorie. Sie behalten sie als Bezeichnung, wird aber nicht mehr in deinem Budget erfasst. Trotzdem l\u00f6schen?',
     confirm_delete_tx:'Diese Transaktion l\u00f6schen?',confirm_remove_debt:'Diese Schuld entfernen?',
-    confirm_delete_fund:'Diesen Fonds l\u00f6schen?',confirm_remove_sub:'Dieses Abonnement entfernen?',
+    confirm_delete_fund:'Dieses Ziel löschen?',confirm_remove_sub:'Dieses Abonnement entfernen?',
     confirm_reset_1:'Bist du sicher? Alle Daten werden dauerhaft gel\u00f6scht.',
     confirm_reset_2:'Letzte Chance - das kann nicht r\u00fcckg\u00e4ngig gemacht werden. Fortfahren?',
     sett_upcoming_title:'📅 Bevorstehendes Fenster',sett_upcoming_desc:'Wähle, wie viele Tage im Voraus die Übersicht Bevorstehend im Dashboard anzeigt.',sett_upcoming_label:'Tage im Voraus',
@@ -1681,7 +1707,7 @@ const TRANSLATIONS = {
     recurring_freq:'H\u00e4ufigkeit',freq_daily:'T\u00e4glich',freq_weekly:'W\u00f6chentlich',
     freq_monthly:'Monatlich',freq_quarterly:'Viertelj\u00e4hrlich',freq_annual:'J\u00e4hrlich',
     recurring_next_due:'N\u00e4chst f\u00e4llig',recurring_generated:'{0} neue Transaktionen automatisch hinzugefügt',
-    recurring_remove:'Regel entfernen',recurring_paused:'Pausiert',recurring_active:'Aktiv',recurring_saved:'Automatische Transaktion gespeichert ✓',dpc_add_debt_title:'Schuld hinzufügen',dpc_edit_debt_title:'Schuld bearbeiten',debt_due_day_modal_hint:'Der Tag im Monat, an dem diese Zahlung fällig ist',toast_debt_added:'Schuld hinzugefügt',toast_debt_updated:'Schuld aktualisiert',sf_billing_day_label:'Fälligkeitstag',sf_billing_day_hint:'Der Tag im Monat, an dem der Beitrag automatisch gebucht wird',sf_error_required:'Bitte fülle alle Pflichtfelder aus',bill_paid_modal_title:'Rechnung als bezahlt markieren',bill_paid_amount_label:'Bezahlter Betrag',bill_paid_amount_hint:'Wie viel du tatsächlich bezahlt hast - wird als Transaktion erfasst, damit deine Ausgabenhistorie stimmt, auch wenn es vom budgetierten Betrag abweicht.',bill_paid_save_btn:'Zahlung erfassen',bill_paid_budgeted_hint:'Budgetiert: {0}',toast_bill_marked_paid:'Zahlung erfasst',sub_active:'Aktiv',sub_paused:'Pausiert',sub_desc:'Behalte jede wiederkehrende Zahlung im Blick und verstehe deine tatsächlichen Jahreskosten. Pausiere Abos, die du nicht nutzt, um die Kosten im Griff zu behalten.',sub_add_btn:'+ Rechnung hinzufügen',sub_add_title:'Rechnung hinzufügen',sub_edit_title:'Rechnung bearbeiten',sub_empty_title:'Noch keine Rechnungen.',sub_empty_sub:'Füge deine wiederkehrenden Zahlungen hinzu - Netflix, Spotify, Fitnessstudio usw.',sub_sum_monthly:'Monatlich gesamt',sub_sum_annual:'Jährlich gesamt',sub_by_category:'Nach Kategorie',sub_per_month:'/Monat',sub_next_label:'Nächste',sub_name_label:'Name',bill_kind_label:'Art',bill_kind_bill:'Rechnung',bill_kind_sub:'Abo',sub_name_ph:'z.B. Netflix',sub_amount_label:'Betrag',sub_freq_label:'Abrechnungsintervall',sub_freq_monthly:'Monatlich',sub_freq_annual:'Jährlich',sub_freq_quarterly:'Vierteljährlich',sub_freq_weekly:'Wöchentlich',sub_unit_month:'Monat',sub_unit_year:'Jahr',sub_unit_quarter:'Quartal',sub_cat_label:'Kategorie',sub_date_label:'Fälligkeitsdatum',sub_name_hint:'Der Dienst oder Anbieter, für den diese Zahlung ist, z.B. "Netflix" oder "Fitnessstudio-Mitgliedschaft".',sub_amount_hint:'Wie viel dir bei jedem Abrechnungszyklus berechnet wird.',sub_freq_hint:'Wie oft dieses Abo abgerechnet wird.',sub_cat_hint:'Gruppiert dieses Abo für das Kategorie-Diagramm.',sub_date_hint:'Das nächste Datum, an dem dieses Abo abgerechnet wird. Erscheint im intelligenten Kalender.',alloc_label_hint:'Markiere dies als Need, Want oder Save, damit es zu deinen Zuordnungs-Buckets zählt.',sub_cat_entertainment:'Unterhaltung',sub_cat_productivity:'Produktivität',sub_cat_health:'Gesundheit & Fitness',sub_cat_food:'Essen & Trinken',sub_cat_cloud:'Cloud-Speicher',sub_cat_finance:'Finanzen',sub_cat_education:'Bildung',sub_cat_gaming:'Gaming',sub_cat_news:'Nachrichten & Medien',sub_cat_other:'Sonstiges',help_sub_intro:'Behalte jede wiederkehrende Zahlung im Blick und verstehe deine tatsächlichen monatlichen und jährlichen Kosten. Abos, die unbemerkt dein Konto belasten, gehen leicht unter - so bleiben sie sichtbar.',help_sub_how_h:'Ein Abo hinzufügen',help_sub_step1:'Klicke auf + Abo hinzufügen',help_sub_step2:'Gib Name, Betrag und Abrechnungsintervall ein (monatlich, jährlich, vierteljährlich, wöchentlich)',help_sub_step3:'Wähle eine Kategorie, um ähnliche Abos zu gruppieren',help_sub_step4:'Lege das nächste Abrechnungsdatum fest - es erscheint im intelligenten Kalender',help_sub_monthly_h:'Monatliches Äquivalent',help_sub_monthly_p:'Jährliche und vierteljährliche Abos werden in monatliche Kosten umgerechnet, damit du deine tatsächlichen monatlichen Ausgaben auf einen Blick siehst.',help_sub_pause_h:'Abos pausieren',help_sub_pause_p:'Schalte den Aktiv-Schalter bei einem Abo aus, das du gerade nicht nutzt. Es zählt dann nicht mehr zu deinen Summen, bis du ihn wieder einschaltest.',help_sub_price_h:'Preisverlauf',help_sub_price_p:'Wenn du den Preis eines Abos änderst, wird das automatisch protokolliert. Ein kleines ↑ oder ↓ neben dem Betrag zeigt die letzte Änderung - fahre darüber, um den vollständigen Verlauf zu sehen.',help_sub_chart_h:'Kategorie-Diagramm',help_sub_chart_p:'Das Kreisdiagramm zeigt, wie sich deine Abo-Ausgaben auf Kategorien verteilen - fahre über ein Segment für Details.',help_sub_tip:'💡 Aktiviere „Automatisieren“ bei einem Abo, damit es bei jedem Abrechnungszyklus automatisch zu deinen Transaktionen hinzugefügt wird.',automate_auto_pay:'Auto-Zahlung',sf_auto_contribute:'Auto-Beitrag',sf_auto_need_amount:'Füge zuerst Zielbetrag und Datum hinzu',sf_auto_set:'Monatlicher Beitrag: {0}',automate_label:'Automatisieren',automate_hint:'Fügt es planmäßig automatisch zu deinen Transaktionen hinzu',automate_hint_off:'Aktiviere die Automatisierung in den Einstellungen',automate_th:'Auto-Zahlung',automate_need_amount:'Lege zuerst eine Mindestzahlung fest',automate_payment_word:'Zahlung',automate_linked:'Verknüpfte automatische Transaktion',sf_contribution_label:'Monatlicher Beitrag',sf_contribution_hint:'Wird monatlich automatisch gebucht, um diesen Fonds zu erhöhen',sett_automation_h:'Automatisierung',sett_automation_desc:'Hauptschalter für automatische Transaktionen. Wenn aus, werden keine geplanten Transaktionen erstellt und die Automatisierungs-Optionen sind deaktiviert.',sett_automation_toggle:'Automatische Transaktionen',sett_automation_hint:'Gilt für Transaktionen, Abos, Fonds und Schulden',
+    recurring_remove:'Regel entfernen',recurring_paused:'Pausiert',recurring_active:'Aktiv',recurring_saved:'Automatische Transaktion gespeichert ✓',dpc_add_debt_title:'Schuld hinzufügen',dpc_edit_debt_title:'Schuld bearbeiten',debt_due_day_modal_hint:'Der Tag im Monat, an dem diese Zahlung fällig ist',toast_debt_added:'Schuld hinzugefügt',toast_debt_updated:'Schuld aktualisiert',sf_billing_day_label:'Fälligkeitstag',sf_billing_day_hint:'Der Tag im Monat, an dem der Beitrag automatisch gebucht wird',sf_error_required:'Bitte fülle alle Pflichtfelder aus',bill_paid_modal_title:'Rechnung als bezahlt markieren',bill_paid_amount_label:'Bezahlter Betrag',bill_paid_amount_hint:'Wie viel du tatsächlich bezahlt hast - wird als Transaktion erfasst, damit deine Ausgabenhistorie stimmt, auch wenn es vom budgetierten Betrag abweicht.',bill_paid_save_btn:'Zahlung erfassen',bill_paid_budgeted_hint:'Budgetiert: {0}',toast_bill_marked_paid:'Zahlung erfasst',sub_active:'Aktiv',sub_paused:'Pausiert',sub_desc:'Behalte jede wiederkehrende Zahlung im Blick und verstehe deine tatsächlichen Jahreskosten. Pausiere Abos, die du nicht nutzt, um die Kosten im Griff zu behalten.',sub_add_btn:'+ Rechnung hinzufügen',sub_add_title:'Rechnung hinzufügen',sub_edit_title:'Rechnung bearbeiten',sub_empty_title:'Noch keine Rechnungen.',sub_empty_sub:'Füge deine wiederkehrenden Zahlungen hinzu - Netflix, Spotify, Fitnessstudio usw.',sub_sum_monthly:'Monatlich gesamt',sub_sum_annual:'Jährlich gesamt',sub_by_category:'Nach Kategorie',sub_per_month:'/Monat',sub_next_label:'Nächste',sub_name_label:'Name',bill_kind_label:'Art',bill_kind_bill:'Rechnung',bill_kind_sub:'Abo',sub_name_ph:'z.B. Netflix',sub_amount_label:'Betrag',sub_freq_label:'Abrechnungsintervall',sub_freq_monthly:'Monatlich',sub_freq_annual:'Jährlich',sub_freq_quarterly:'Vierteljährlich',sub_freq_weekly:'Wöchentlich',sub_unit_month:'Monat',sub_unit_year:'Jahr',sub_unit_quarter:'Quartal',sub_cat_label:'Kategorie',sub_date_label:'Fälligkeitsdatum',sub_name_hint:'Der Dienst oder Anbieter, für den diese Zahlung ist, z.B. "Netflix" oder "Fitnessstudio-Mitgliedschaft".',sub_amount_hint:'Wie viel dir bei jedem Abrechnungszyklus berechnet wird.',sub_freq_hint:'Wie oft dieses Abo abgerechnet wird.',sub_cat_hint:'Gruppiert dieses Abo für das Kategorie-Diagramm.',sub_date_hint:'Das nächste Datum, an dem dieses Abo abgerechnet wird. Erscheint im intelligenten Kalender.',alloc_label_hint:'Markiere dies als Need, Want oder Save, damit es zu deinen Zuordnungs-Buckets zählt.',sub_cat_entertainment:'Unterhaltung',sub_cat_productivity:'Produktivität',sub_cat_health:'Gesundheit & Fitness',sub_cat_food:'Essen & Trinken',sub_cat_cloud:'Cloud-Speicher',sub_cat_finance:'Finanzen',sub_cat_education:'Bildung',sub_cat_gaming:'Gaming',sub_cat_news:'Nachrichten & Medien',sub_cat_other:'Sonstiges',help_sub_intro:'Behalte jede wiederkehrende Zahlung im Blick und verstehe deine tatsächlichen monatlichen und jährlichen Kosten. Abos, die unbemerkt dein Konto belasten, gehen leicht unter - so bleiben sie sichtbar.',help_sub_how_h:'Ein Abo hinzufügen',help_sub_step1:'Klicke auf + Abo hinzufügen',help_sub_step2:'Gib Name, Betrag und Abrechnungsintervall ein (monatlich, jährlich, vierteljährlich, wöchentlich)',help_sub_step3:'Wähle eine Kategorie, um ähnliche Abos zu gruppieren',help_sub_step4:'Lege das nächste Abrechnungsdatum fest - es erscheint im intelligenten Kalender',help_sub_monthly_h:'Monatliches Äquivalent',help_sub_monthly_p:'Jährliche und vierteljährliche Abos werden in monatliche Kosten umgerechnet, damit du deine tatsächlichen monatlichen Ausgaben auf einen Blick siehst.',help_sub_pause_h:'Abos pausieren',help_sub_pause_p:'Schalte den Aktiv-Schalter bei einem Abo aus, das du gerade nicht nutzt. Es zählt dann nicht mehr zu deinen Summen, bis du ihn wieder einschaltest.',help_sub_price_h:'Preisverlauf',help_sub_price_p:'Wenn du den Preis eines Abos änderst, wird das automatisch protokolliert. Ein kleines ↑ oder ↓ neben dem Betrag zeigt die letzte Änderung - fahre darüber, um den vollständigen Verlauf zu sehen.',help_sub_chart_h:'Kategorie-Diagramm',help_sub_chart_p:'Das Kreisdiagramm zeigt, wie sich deine Abo-Ausgaben auf Kategorien verteilen - fahre über ein Segment für Details.',help_sub_tip:'💡 Aktiviere „Automatisieren“ bei einem Abo, damit es bei jedem Abrechnungszyklus automatisch zu deinen Transaktionen hinzugefügt wird.',automate_auto_pay:'Auto-Zahlung',sf_auto_contribute:'Auto-Beitrag',sf_auto_need_amount:'Füge zuerst Zielbetrag und Datum hinzu',sf_auto_set:'Monatlicher Beitrag: {0}',automate_label:'Automatisieren',automate_hint:'Fügt es planmäßig automatisch zu deinen Transaktionen hinzu',automate_hint_off:'Aktiviere die Automatisierung in den Einstellungen',automate_th:'Auto-Zahlung',automate_need_amount:'Lege zuerst eine Mindestzahlung fest',automate_payment_word:'Zahlung',automate_linked:'Verknüpfte automatische Transaktion',sf_contribution_label:'Monatlicher Beitrag',sf_contribution_hint:'Wird monatlich automatisch gebucht, um dieses Ziel zu füllen',sett_automation_h:'Automatisierung',sett_automation_desc:'Hauptschalter für automatische Transaktionen. Wenn aus, werden keine geplanten Transaktionen erstellt und die Automatisierungs-Optionen sind deaktiviert.',sett_automation_toggle:'Automatische Transaktionen',sett_automation_hint:'Gilt für Transaktionen, Abos, Sparziele und Schulden',
     tx_type_sinking_fund:'Sparziel',
     help_dash_alloc_h:'Budget-Aufteilungs-Panel',
     help_dash_alloc_what_h:'Was es ist',
@@ -1763,8 +1789,8 @@ const TRANSLATIONS = {
     guide_dashboard_big:'Das Dashboard ist deine Kommandozentrale - alles Wichtige rund um dein Geld findet sich auf diesem einen Bildschirm, vom Endergebnis bis zu dem, was diese Woche ansteht.',
     guide_dashboard_step1:'Wirf einen Blick auf die Übersichtskarten oben für dein <strong>Gesamteinkommen</strong>, deine <strong>Gesamtausgaben</strong>, deine <strong>Sparquote</strong> und deinen <strong>Nettoüberschuss</strong>.',
     guide_dashboard_step2:'Schau in die Liste <strong>Demnächst</strong>, um alles zu sehen, was in den nächsten 7 Tagen fällig wird - Rechnungen, Schuldenzahlungen und Abos an einem Ort.',
-    guide_dashboard_step3:'Prüfe deine Übersichten zu <strong>Schuldentilgung</strong> und <strong>Rücklagen</strong>, um den Fortschritt bei deinen größeren Zielen auf einen Blick zu sehen.',
-    guide_dashboard_connect1:'Jede Zahl hier stammt live aus Transaktionen, Budget, Schuldentilgung, Rücklagen und Abos - es gibt nichts von Hand zu berechnen.',
+    guide_dashboard_step3:'Prüfe deine Übersichten zu <strong>Schuldentilgung</strong> und <strong>Sparzielen</strong>, um den Fortschritt bei deinen größeren Zielen auf einen Blick zu sehen.',
+    guide_dashboard_connect1:'Jede Zahl hier stammt live aus Transaktionen, Budget, Schuldentilgung, Sparzielen und Abos - es gibt nichts von Hand zu berechnen.',
     guide_dashboard_connect2:'Der Nettoüberschuss enthält deine <strong>Übertrag</strong>-Einstellung, sodass nicht ausgegebenes Geld aus der letzten Periode automatisch übertragen werden kann.',
     guide_dashboard_connect3:'Wenn etwas nicht stimmt, lohnt sich fast immer ein Blick auf die Seite, von der die Zahl stammt - das Dashboard ist ein Spiegel, keine Quelle.',
     guide_dashboard_tip:'Nimm dir jeden Morgen 30 Sekunden Zeit für einen Blick aufs Dashboard - so entdeckst du eine Rechnung oder Schuldenzahlung, bevor sie überfällig wird.',guide_dashboard_usecase_h:'So sieht das in der Praxis aus',guide_dashboard_usecase_p:'<p><strong>Maria</strong> öffnet Ezzo Budget am Zahltag. Sie wirft einen Blick aufs Dashboard und sieht, dass ihr Nettosaldo für diese Periode 420 € beträgt - genug, um etwas mehr in ihren Notgroschen zu legen.</p><p>Das Cashflow-Panel zeigt, dass sie beim Essengehen bereits über dem Budget liegt, also verzichtet sie an diesem Abend auf Essen zum Mitnehmen, statt es erst am Monatsende zu bemerken.</p>',
@@ -1803,14 +1829,14 @@ const TRANSLATIONS = {
     guide_debt_connect3:'Mehr als die Mindestzahlung zu leisten - selbst ein wenig mehr - ist meist der größte Hebel, um deine Tilgungszeit zu verkürzen.',
     guide_debt_tip:'Wechsle testweise zwischen Schneeball und Lawine - Schneeball motiviert anfangs mehr, Lawine spart insgesamt meist mehr Geld.',guide_debt_usecase_h:'So sieht das in der Praxis aus',guide_debt_usecase_p:'<p><strong>Sam</strong> hat drei Schulden: eine Kreditkarte, einen Autokredit und einen kleinen Privatkredit. Er trägt alle drei ein, wählt Lawine, damit die Karte mit dem höchsten Zinssatz zuerst abbezahlt wird, und sieht sofort sein tatsächliches Tilgungsdatum und die Gesamtzinsen.</p><p>Als er einen Bonus von der Arbeit bekommt, trägt er ihn im Feld <strong>Extra/Mon.</strong> genau dieser Karte ein statt im gemeinsamen Extra-Zahlungs-Pool, damit der Bonus genau dorthin fließt, wo er ihn haben will - dann öffnet er den ℹ️-Zeitplan, um monatsgenau zu sehen, wie viel schneller er schuldenfrei sein wird.</p>',
     guide_sinking_title:'Sparziele',
-    guide_sinking_big:'Eine Rücklage ist Geld, das du Stück für Stück für etwas Bestimmtes zurücklegst, von dem du weißt, dass es kommt - einen Urlaub, einen neuen Laptop, Geschenke -, damit es nie zum Notfall wird, wenn die Rechnung tatsächlich eintrifft.',
-    guide_sinking_step1:'Erstelle eine Rücklage und gib ihr einen <strong>Zielbetrag</strong> und, wenn du magst, ein Zieldatum.',
+    guide_sinking_big:'Ein Sparziel ist Geld, das du Stück für Stück für etwas Bestimmtes zurücklegst, von dem du weißt, dass es kommt - einen Urlaub, einen neuen Laptop, Geschenke -, damit es nie zum Notfall wird, wenn die Rechnung tatsächlich eintrifft.',
+    guide_sinking_step1:'Erstelle ein Sparziel und gib ihm einen <strong>Zielbetrag</strong> und, wenn du magst, ein Zieldatum.',
     guide_sinking_step2:'Trage Einzahlungen ein, sobald du Geld dafür zurücklegst, und beobachte, wie sich der <strong>Fortschrittsbalken</strong> füllt.',
-    guide_sinking_step3:'Sobald eine Rücklage ihr Ziel erreicht, bist du für diese Ausgabe bereit, ohne dein reguläres Budget anzurühren.',
-    guide_sinking_connect1:'Rücklagen sind von deiner regulären Ersparnisse-Kategorie getrennt - sie sind für konkrete, geplante Ziele gedacht statt für allgemeines Sparen.',
-    guide_sinking_connect2:'Dein Dashboard zeigt eine Momentaufnahme des Fortschritts aller deiner Rücklagen an einem Ort.',
-    guide_sinking_connect3:'Regelmäßig in eine Rücklage einzuzahlen, selbst ein kleiner Betrag, macht aus einer großen Ausgabe etwas, das dein Budget nie aus der Bahn wirft.',
-    guide_sinking_tip:'Teile große Ziele in runde Monatsbeträge auf - es ist viel leichter, sich auf 50 € im Monat festzulegen, als "irgendwann für den Urlaub zu sparen."',guide_sinking_usecase_h:'So sieht das in der Praxis aus',guide_sinking_usecase_p:'<p><strong>Elena</strong> plant einen 1.200-€-Urlaub für nächsten Juli. Sie erstellt eine Rücklage mit diesem Zielbetrag und Datum, und Ezzo Budget sagt ihr, dass sie 150 €/Monat sparen muss, um das zu erreichen.</p><p>Sie schaltet <strong>Automatisieren</strong> ein, damit dieser Betrag jeden Monat automatisch als Einzahlung erfasst wird, ohne dass sie daran denken muss.</p>',
+    guide_sinking_step3:'Sobald ein Sparziel seinen Betrag erreicht, bist du für diese Ausgabe bereit, ohne dein reguläres Budget anzurühren.',
+    guide_sinking_connect1:'Sparziele sind von deiner regulären Ersparnisse-Kategorie getrennt - sie sind für konkrete, geplante Ziele gedacht statt für allgemeines Sparen.',
+    guide_sinking_connect2:'Dein Dashboard zeigt eine Momentaufnahme des Fortschritts aller deiner Sparziele an einem Ort.',
+    guide_sinking_connect3:'Regelmäßig in ein Sparziel einzuzahlen, selbst ein kleiner Betrag, macht aus einer großen Ausgabe etwas, das dein Budget nie aus der Bahn wirft.',
+    guide_sinking_tip:'Teile große Ziele in runde Monatsbeträge auf - es ist viel leichter, sich auf 50 € im Monat festzulegen, als "irgendwann für den Urlaub zu sparen."',guide_sinking_usecase_h:'So sieht das in der Praxis aus',guide_sinking_usecase_p:'<p><strong>Elena</strong> plant einen 1.200-€-Urlaub für nächsten Juli. Sie erstellt ein Sparziel mit diesem Zielbetrag und Datum, und Ezzo Budget sagt ihr, dass sie 150 €/Monat sparen muss, um das zu erreichen.</p><p>Sie schaltet <strong>Automatisieren</strong> ein, damit dieser Betrag jeden Monat automatisch als Einzahlung erfasst wird, ohne dass sie daran denken muss.</p>',
     guide_subscriptions_title:'Rechnungen',
     guide_subscriptions_big:'Abos häufen sich gerne still und leise an - diese Seite listet jeden wiederkehrenden Dienst, den du bezahlst, an einem Ort, damit nichts unbemerkt weiter abgebucht wird.',
     guide_subscriptions_step1:'Füge jedes Abo mit seinen Kosten und seinem Abrechnungsintervall (monatlich, jährlich usw.) hinzu.',
@@ -1835,9 +1861,9 @@ const TRANSLATIONS = {
     guide_rollover_step2:'Schalte ihn ein, damit jeder Restbetrag aus der vorherigen Periode automatisch in die neue übertragen wird.',
     guide_rollover_step3:'Prüfe den Nettoüberschuss auf deinem Dashboard - er enthält jetzt diesen übertragenen Betrag.',
     guide_rollover_connect1:'Übertrag arbeitet direkt mit deinem Nettoüberschuss aus der vorherigen Periode - je besser du dein Budget einhältst, desto mehr hat er zu übertragen.',
-    guide_rollover_connect2:'Das unterscheidet sich von Rücklagen, die für geplante zukünftige Ziele gedacht sind - beim Übertrag geht es nur darum, Geld, das du bereits hast, nicht aus den Augen zu verlieren.',
+    guide_rollover_connect2:'Das unterscheidet sich von Sparzielen, die für geplante zukünftige Ziele gedacht sind - beim Übertrag geht es nur darum, Geld, das du bereits hast, nicht aus den Augen zu verlieren.',
     guide_rollover_connect3:'Eine Reihe guter Monate summiert sich hier schön auf, da der Überschuss jeder Periode zur nächsten hinzukommt.',
-    guide_rollover_tip:'Wenn ein großer Übertrag-Betrag in der Tasche brennt, überlege, einen Teil davon in eine Rücklage zu verschieben, damit er für etwas Bestimmtes reserviert ist.',guide_rollover_usecase_h:'So sieht das in der Praxis aus',guide_rollover_usecase_p:'<p>Ende Juni hat <strong>Noor</strong> 180 € übrig, nachdem sie alles bezahlt hat. Da <strong>Automatische Übertragung</strong> aktiviert ist, erscheinen diese 180 € automatisch als ihr Übertrag, sobald sie ihren Budgetzeitraum in den Juli verschiebt - direkt zu ihrem Nettosaldo hinzugefügt, statt dass sie es selbst berechnen und neu eingeben muss.</p>',
+    guide_rollover_tip:'Wenn ein großer Übertrag-Betrag in der Tasche brennt, überlege, einen Teil davon in ein Sparziel zu verschieben, damit er für etwas Bestimmtes reserviert ist.',guide_rollover_usecase_h:'So sieht das in der Praxis aus',guide_rollover_usecase_p:'<p>Ende Juni hat <strong>Noor</strong> 180 € übrig, nachdem sie alles bezahlt hat. Da <strong>Automatische Übertragung</strong> aktiviert ist, erscheinen diese 180 € automatisch als ihr Übertrag, sobald sie ihren Budgetzeitraum in den Juli verschiebt - direkt zu ihrem Nettosaldo hinzugefügt, statt dass sie es selbst berechnen und neu eingeben muss.</p>',
     guide_automation_title:'Automatisierung',
     guide_automation_big:'Automatisierung nimmt die wiederkehrenden Regeln, die du bei Transaktionen eingerichtet hast, und bucht sie automatisch für dich, damit deine regelmäßigen Rechnungen, Gehälter und Abos genau planmäßig erscheinen, ohne dass du etwas tun musst.',
     guide_automation_step1:'Öffne die <strong>Einstellungen</strong> und finde die Karte <strong>Automatisierung</strong>.',
@@ -1854,7 +1880,7 @@ const TRANSLATIONS = {
     guide_penny_step3:'Stell eine Frage in deinen eigenen Worten, etwa "Was ist meine größte Ausgabenkategorie diesen Monat?", oder tippe auf eine der Schnellfragen-Schaltflächen, um loszulegen.',
     guide_penny_step4:'Schalte ihre Sprachantwort über das Lautsprecher-Symbol ein oder aus, wenn du lieber zuhören statt lesen möchtest.',
     guide_penny_connect1:'Ezzo kann deine Budgetdaten nur lesen, um Fragen zu beantworten - sie kann nie etwas für dich hinzufügen, ändern oder löschen.',
-    guide_penny_connect2:'Sie greift direkt auf Dashboard, Transaktionen, Schuldentilgung, Abos und Rücklagen zu, sodass ihre Antworten immer dem entsprechen, was du auf diesen Seiten selbst sehen würdest.',
+    guide_penny_connect2:'Sie greift direkt auf Dashboard, Transaktionen, Schuldentilgung, Abos und Sparziele zu, sodass ihre Antworten immer dem entsprechen, was du auf diesen Seiten selbst sehen würdest.',
     guide_penny_connect3:'Dein API-Schlüssel wird verschlüsselt und nur auf deinem eigenen Gerät gespeichert - er wird nirgendwohin gesendet außer direkt an Google, wenn du Ezzo eine Frage stellst.',
     guide_penny_tip:'Starte beim ersten Mal mit einer der Schnellfragen-Schaltflächen - so siehst du am schnellsten, was sie kann, bevor du eigene Fragen stellst.',guide_penny_usecase_h:'So sieht das in der Praxis aus',guide_penny_usecase_p:'<p>Immer wenn <strong>Diane</strong> nicht sicher ist, wofür sie diesen Monat Geld ausgegeben hat, öffnet sie Ezzo und fragt: "Warum sind meine Ausgaben diesen Monat höher als sonst?"</p><p>Ezzo schaut sich ihre tatsächlichen Transaktionen an und gibt ihr eine verständliche Antwort - zum Beispiel, dass sich die Ausgaben fürs Essengehen verdoppelt haben - statt dass sie selbst die Transaktionsliste durchsuchen muss.</p>',
     guide_settings_title:'Einstellungen',
@@ -1872,7 +1898,7 @@ const TRANSLATIONS = {
     upg_chip_tx:'{0} / {0} kostenlose Transaktionen genutzt',
     upg_chip_recurring:'{0} / {0} kostenlose automatische Transaktionen genutzt',
     upg_chip_subs:'{0} / {0} kostenloses Abo genutzt',
-    upg_chip_sinking:'{0} / {0} kostenloser Sparzielfonds genutzt',
+    upg_chip_sinking:'{0} / {0} kostenloses Sparziel genutzt',
     upg_chip_debts:'{0} / {0} kostenlose Schuld genutzt',
     upg_chip_cat:'{0} / {0} kostenlose {1}-Kategorien genutzt',
     upg_chip_limit:'Kostenlose Testphase erreicht',
@@ -1882,7 +1908,7 @@ const TRANSLATIONS = {
     upg_sub:'Du hast das kostenlose Testlimit erreicht. Einmal upgraden, um jede Grenze aufzuheben. Kein Abo, nie.',
     upg_feat_unlimited_tx_html:'<strong>Unbegrenzte</strong> Transaktionen &amp; automatische Transaktionen',
     upg_feat_unlimited_cat_html:'<strong>Unbegrenzte</strong> Budgetkategorien in jedem Bereich',
-    upg_feat_unlimited_other_html:'<strong>Unbegrenzte</strong> Schulden, Abos &amp; Sparzielfonds',
+    upg_feat_unlimited_other_html:'<strong>Unbegrenzte</strong> Schulden, Abos &amp; Sparziele',
     upg_feat_onetime:'Einmalzahlung · kostenlose Updates fürs Leben',
     upg_price_tag:'einmalig',upg_price_note:'Kein Abo',
     upg_cta_ubp:'Ultimate freischalten für {0}',
@@ -1949,7 +1975,7 @@ const TRANSLATIONS = {
     description:'Description',date:'Date',type:'Type',
     add_category:'+ Ajouter une catégorie',no_transactions:'Aucune transaction.',
     upgrade_title:"Prêt pour l'expérience pro ?",
-    upgrade_desc:'Débloquez le calculateur de remboursement, les provisions, le calendrier intelligent et le suivi des abonnements.',
+    upgrade_desc:'Débloquez le calculateur de remboursement, les objectifs d\'épargne, le calendrier intelligent et le suivi des abonnements.',
     upgrade_now:'Mettre à niveau →',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Jeu',fri:'Ven',sat:'Sam',sun:'Dim',
     quick_presets:'Raccourcis :',select_currency:'Sélectionnez votre devise',select_language:'Sélectionner la langue',
@@ -1972,7 +1998,7 @@ const TRANSLATIONS = {
     cal_no_events_month:'Aucun événement ce mois-ci.',
     cal_no_events_sub:'Ajoutez des factures, dettes ou abonnements pour les voir ici.',
     cal_event_one:'événement',cal_event_many:'événements',cal_clear:'Effacer ×',
-    cal_leg_bill:'Facture',cal_leg_debt:'Dette',cal_leg_sub:'Abonnement',cal_leg_tx:'Transaction',cal_leg_sinking:"Fonds d'épargne",cal_leg_goal:"Date d'objectif",cal_leg_auto:'Automatique',
+    cal_leg_bill:'Facture',cal_leg_debt:'Dette',cal_leg_sub:'Abonnement',cal_leg_tx:'Transaction',cal_leg_sinking:'Objectif d\'épargne',cal_leg_goal:"Date d'objectif",cal_leg_auto:'Automatique',
     cal_paid:'✓ Payé',cal_unpaid:'Non payé',cal_mark_paid:'Marquer comme payé',
     help_cal_intro:"Le Calendrier intelligent regroupe tous vos engagements financiers en une vue mensuelle - mis à jour automatiquement à mesure que vous ajoutez des données.",
     help_cal_ev_types_h:"Types d'événements",
@@ -1984,27 +2010,27 @@ const TRANSLATIONS = {
     help_cal_nav_p:'Utilisez ← Préc. et Suiv. → pour naviguer entre les mois. Cliquez sur un jour pour voir ses événements. Cliquez de nouveau ou sur « Effacer × » pour désélectionner.',
     help_cal_paid_h:'Marquer les factures comme payées',help_cal_paid_p:'Cliquez sur un jour pour développer ses événements. Toute facture impayée y affiche directement une case « Marquer comme payé » - cochez-la pour enregistrer le montant réellement payé comme transaction, inutile de passer par l’onglet Budget.',help_cal_tip:"💡 Définissez des dates d'échéance sur les factures et dettes pour profiter au maximum du calendrier.",
     sf_add_btn:'+ Ajouter un objectif',
-    sf_desc:"Un fonds de prévision vous permet d'épargner progressivement pour une grande dépense future - sans mauvaises surprises. Fixez un objectif et une date, et nous vous dirons exactement combien épargner chaque mois.",
+    sf_desc:"Un objectif d'épargne vous permet d'épargner progressivement pour une grande dépense future - sans mauvaises surprises. Fixez un objectif et une date, et nous vous dirons exactement combien épargner chaque mois.",
     sf_empty_title:'Aucun objectif d’épargne.',
     sf_empty_sub:'Idéal pour : vacances, réparations auto, mariages, nouvelles technologies, factures annuelles.',
     sf_pct_complete:'atteint',
     sf_save_prefix:'Épargner',sf_per_month:'/mois',
     sf_mo_left_tpl:'{0} mois restants',
     sf_total_contrib:'Total des contributions mensuelles nécessaires :',
-    sf_modal_new:'🏺 Nouveau fonds de prévision',sf_modal_edit:'✏️ Modifier le fonds',
-    sf_fund_name_label:'Nom du fonds',sf_fund_name_ph:'ex. Fonds vacances',
+    sf_modal_new:'🏺 Nouvel objectif d\'épargne',sf_modal_edit:'✏️ Modifier l\'objectif',
+    sf_fund_name_label:'Nom de l\'objectif',sf_fund_name_ph:'ex. Vacances d\'été',
     sf_icon_label:'Icône',sf_target_amount_label:'Montant cible',sf_monthly_label:'Contribution mensuelle',sf_monthly_hint:"Ce qui entre chaque mois. Laissez l'objectif vide pour un objectif ouvert.",
     sf_currently_saved_label:'Déjà épargné',sf_target_date_label:'Date cible',
     sf_fund_name_hint:"Un nom court pour ce que vous économisez, comme « Vacances d'été » ou « Nouvel ordinateur ».",
-    sf_icon_hint:"Choisissez une icône pour repérer ce fonds en un coup d'œil.",
+    sf_icon_hint:'Choisissez une icône pour repérer cet objectif en un coup d\'œil.',
     sf_target_amount_hint:'Le montant total dont vous avez besoin pour atteindre cet objectif.',
     sf_currently_saved_hint:'Le montant que vous avez déjà mis de côté pour cet objectif, le cas échéant.',
     sf_target_date_hint:'La date à laquelle vous voulez atteindre votre objectif - utilisée pour calculer combien épargner chaque mois.',
-    sf_create_btn:'Créer le fonds',
-    help_sf_intro:"Un fonds de prévision est de l'argent mis de côté à l'avance pour une grande dépense planifiée - sans mauvaises surprises à l'arrivée de la facture.",
+    sf_create_btn:'Créer l\'objectif',
+    help_sf_intro:"Un objectif d'épargne est de l'argent mis de côté à l'avance pour une grande dépense planifiée - sans mauvaises surprises à l'arrivée de la facture.",
     help_sf_how_to_h:"Comment l'utiliser",
-    help_sf_step1:'Cliquez sur + Ajouter un fonds',
-    help_sf_step2:"Nommez votre fonds (ex. \u00ab\u00a0Vacances d'\u00e9t\u00e9\u00a0\u00bb), choisissez une ic\u00f4ne",
+    help_sf_step1:'Cliquez sur + Ajouter un objectif',
+    help_sf_step2:"Nommez votre objectif (ex. \u00ab\u00a0Vacances d'\u00e9t\u00e9\u00a0\u00bb), choisissez une ic\u00f4ne",
     help_sf_step3:'Fixez un montant cible (combien vous avez besoin au total)',
     help_sf_step4:"Fixez une date cible (quand vous avez besoin de l'argent)",
     help_sf_step5:'Indiquez combien vous avez déjà épargné',
@@ -2115,7 +2141,7 @@ const TRANSLATIONS = {
     help_tx_intro:"Chaque mouvement d'argent va ici. Vos montants réels du budget et le tableau de bord se mettent à jour automatiquement à chaque ajout.",
     help_tx_adding_h:'Ajouter une transaction',
     help_tx_step1:'Choisissez une Date - cliquez sur le champ de date pour ouvrir le calendrier',
-    help_tx_step2:'Choisissez un type : Revenu, Dépense, Facture, Épargne, Dette, Abonnement ou Fonds projet',
+    help_tx_step2:'Choisissez un type : Revenu, Dépense, Facture, Épargne, Dette, Abonnement ou Objectif d\'épargne',
     help_tx_step3:"Sélectionnez la Catégorie correspondante (configurée dans l'onglet Budget)",
     help_tx_step4:'Entrez le Montant et une description optionnelle',
     help_tx_step5:'Cliquez sur Ajouter',
@@ -2208,7 +2234,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transaction ajout\u00e9e \u2713',toast_tx_updated:'Mis \u00e0 jour \u2713',toast_tx_deleted:'Supprim\u00e9',
     toast_period_updated:'P\u00e9riode mise \u00e0 jour \u2713',toast_period_error:'La date de fin doit \u00eatre apr\u00e8s la date de d\u00e9but',
     toast_currency_updated:'Devise mise \u00e0 jour \u2713',toast_imported:'{0} import\u00e9(s) \u2713',
-    toast_fund_created:'Fonds cr\u00e9\u00e9 \u2713',toast_fund_updated:'Fonds mis \u00e0 jour \u2713',
+    toast_fund_created:'Objectif créé ✓',toast_fund_updated:'Objectif mis à jour ✓',
     toast_fund_contrib:'{amt} ajout\u00e9 \u00e0 {name} \u2713',
     toast_sub_added:'Abonnement ajout\u00e9 \u2713',toast_sub_updated:'Abonnement mis \u00e0 jour \u2713',
     toast_alloc_enabled:'R\u00e9partition activ\u00e9e \u2713',toast_alloc_disabled:'R\u00e9partition d\u00e9sactiv\u00e9e',
@@ -2217,7 +2243,7 @@ const TRANSLATIONS = {
     confirm_remove_cat:'Supprimer cette cat\u00e9gorie ?',bud_edit_title:'\u270f\ufe0f Modifier la cat\u00e9gorie',bud_name_required:'Donnez un nom \u00e0 la cat\u00e9gorie.',bud_name_taken:'Une autre cat\u00e9gorie de cette section porte d\u00e9j\u00e0 ce nom.',bud_expected_invalid:'Saisissez un montant pr\u00e9vu de 0 ou plus.',bud_due_day_invalid:'Saisissez un jour d\'échéance entre 1 et 31, ou laissez le champ vide.',confirm_delete_all_tx:'Supprimer TOUTES les transactions ? Cela est irr\u00e9versible.',
     confirm_remove_cat_with_tx:'{0} transaction(s) existante(s) utilisent cette cat\u00e9gorie. Elles la conserveront comme \u00e9tiquette, mais elle ne sera plus suivie dans votre budget. Supprimer quand m\u00eame ?',
     confirm_delete_tx:'Supprimer cette transaction ?',confirm_remove_debt:'Supprimer cette dette ?',
-    confirm_delete_fund:'Supprimer ce fonds ?',confirm_remove_sub:'Supprimer cet abonnement ?',
+    confirm_delete_fund:'Supprimer cet objectif ?',confirm_remove_sub:'Supprimer cet abonnement ?',
     confirm_reset_1:'\u00cates-vous s\u00fbr ? Toutes les donn\u00e9es seront d\u00e9finitivement supprim\u00e9es.',
     confirm_reset_2:'Derni\u00e8re chance - c\u2019est irr\u00e9versible. Continuer ?',
     sett_upcoming_title:'📅 Fenêtre à venir',sett_upcoming_desc:"Choisissez combien de jours à l'avance la liste À venir du tableau de bord doit afficher.",sett_upcoming_label:"Jours à l'avance",
@@ -2241,7 +2267,7 @@ const TRANSLATIONS = {
     recurring_freq:'Fr\u00e9quence',freq_daily:'Quotidien',freq_weekly:'Hebdomadaire',
     freq_monthly:'Mensuel',freq_quarterly:'Trimestriel',freq_annual:'Annuel',
     recurring_next_due:'Prochaine \u00e9ch\u00e9ance',recurring_generated:'{0} nouvelles transactions automatisées ajoutées',
-    recurring_remove:'Supprimer la r\u00e8gle',recurring_paused:'En pause',recurring_active:'Actif',recurring_saved:'Transaction automatique enregistrée ✓',dpc_add_debt_title:'Ajouter une dette',dpc_edit_debt_title:'Modifier la dette',debt_due_day_modal_hint:'Le jour du mois où ce paiement est dû',toast_debt_added:'Dette ajoutée',toast_debt_updated:'Dette mise à jour',sf_billing_day_label:"Jour d'échéance",sf_billing_day_hint:'Le jour du mois où la contribution est enregistrée automatiquement',sf_error_required:'Veuillez remplir tous les champs obligatoires',bill_paid_modal_title:'Marquer la facture comme payée',bill_paid_amount_label:'Montant payé',bill_paid_amount_hint:"Le montant que vous avez réellement payé - il sera enregistré comme transaction afin que votre historique reste exact, même s'il diffère du montant budgété.",bill_paid_save_btn:'Enregistrer le paiement',bill_paid_budgeted_hint:'Budgété : {0}',toast_bill_marked_paid:'Paiement enregistré',sub_active:'Actif',sub_paused:'En pause',sub_desc:"Suivez chaque paiement récurrent et comprenez votre coût annuel réel. Mettez en pause les abonnements que vous n'utilisez pas pour maîtriser vos dépenses.",sub_add_btn:'+ Ajouter une facture',sub_add_title:'Ajouter une facture',sub_edit_title:'Modifier la facture',sub_empty_title:'Aucune facture.',sub_empty_sub:'Ajoutez vos paiements récurrents - Netflix, Spotify, abonnement de sport, etc.',sub_sum_monthly:'Total mensuel',sub_sum_annual:'Total annuel',sub_by_category:'Par catégorie',sub_per_month:'/mois',sub_next_label:'Prochain',sub_name_label:'Nom',bill_kind_label:'Type',bill_kind_bill:'Facture',bill_kind_sub:'Abonnement',sub_name_ph:'ex. Netflix',sub_amount_label:'Montant',sub_freq_label:'Fréquence de facturation',sub_freq_monthly:'Mensuelle',sub_freq_annual:'Annuelle',sub_freq_quarterly:'Trimestrielle',sub_freq_weekly:'Hebdomadaire',sub_unit_month:'mois',sub_unit_year:'an',sub_unit_quarter:'trimestre',sub_cat_label:'Catégorie',sub_date_label:"Date d'échéance",sub_name_hint:'Le service ou fournisseur concerné par ce paiement, comme « Netflix » ou « Abonnement salle de sport ».',sub_amount_hint:'Le montant facturé à chaque cycle de facturation.',sub_freq_hint:'La fréquence à laquelle cet abonnement vous facture.',sub_cat_hint:'Regroupe cet abonnement pour le graphique par catégorie.',sub_date_hint:'La prochaine date à laquelle cet abonnement vous facturera. Apparaît dans le calendrier intelligent.',alloc_label_hint:"Étiquetez ceci comme Besoin, Envie ou Épargne pour qu'il compte dans vos catégories de répartition.",sub_cat_entertainment:'Divertissement',sub_cat_productivity:'Productivité',sub_cat_health:'Santé & Fitness',sub_cat_food:'Alimentation',sub_cat_cloud:'Stockage cloud',sub_cat_finance:'Finance',sub_cat_education:'Éducation',sub_cat_gaming:'Jeux vidéo',sub_cat_news:'Actualités & Médias',sub_cat_other:'Autre',help_sub_intro:"Suivez chaque paiement récurrent et comprenez votre coût mensuel et annuel réel. Les abonnements qui grignotent votre compte discrètement sont faciles à manquer - ceci les garde visibles.",help_sub_how_h:'Ajouter un abonnement',help_sub_step1:'Cliquez sur + Ajouter un abonnement',help_sub_step2:'Saisissez le nom, le montant et la fréquence de facturation (mensuelle, annuelle, trimestrielle, hebdomadaire)',help_sub_step3:'Choisissez une catégorie pour regrouper les abonnements similaires',help_sub_step4:"Définissez la prochaine date de facturation - elle apparaîtra dans le calendrier intelligent",help_sub_monthly_h:'Équivalent mensuel',help_sub_monthly_p:"Les abonnements annuels et trimestriels sont convertis en coût mensuel afin que vous puissiez voir vos dépenses mensuelles réelles en un coup d'œil.",help_sub_pause_h:'Mettre en pause un abonnement',help_sub_pause_p:"Désactivez le bouton Actif d'un abonnement que vous n'utilisez plus actuellement. Il ne comptera plus dans vos totaux tant que vous ne le réactivez pas.",help_sub_price_h:'Historique des prix',help_sub_price_p:"Quand vous modifiez le prix d'un abonnement, c'est enregistré automatiquement. Une petite flèche ↑ ou ↓ à côté du montant indique le dernier changement - survolez-la pour voir l'historique complet.",help_sub_chart_h:'Graphique par catégorie',help_sub_chart_p:'Le graphique en anneau montre la répartition de vos dépenses d\'abonnement par catégorie - survolez un segment pour voir les détails.',help_sub_tip:"💡 Activez « Automatiser » sur un abonnement pour qu'il soit ajouté automatiquement à vos transactions à chaque cycle de facturation.",automate_auto_pay:'Paiement auto',sf_auto_contribute:'Contribution auto',sf_auto_need_amount:"Ajoutez d'abord un montant et une date cibles",sf_auto_set:'Contribution mensuelle : {0}',automate_label:'Automatiser',automate_hint:"L'ajoute automatiquement à vos transactions selon le calendrier",automate_hint_off:"Activez l'automatisation dans les Paramètres pour l'utiliser",automate_th:'Paiement auto',automate_need_amount:"Définissez d'abord un paiement minimum",automate_payment_word:'paiement',automate_linked:'Transaction automatique liée',sf_contribution_label:'Contribution mensuelle',sf_contribution_hint:'Enregistrée automatiquement chaque mois pour alimenter ce fonds',sett_automation_h:'Automatisation',sett_automation_desc:"Interrupteur principal des transactions automatiques. Désactivé, aucune transaction planifiée n'est générée et les options d'automatisation sont désactivées.",sett_automation_toggle:'Transactions automatiques',sett_automation_hint:"S'applique aux transactions, abonnements, fonds et dettes",
+    recurring_remove:'Supprimer la r\u00e8gle',recurring_paused:'En pause',recurring_active:'Actif',recurring_saved:'Transaction automatique enregistrée ✓',dpc_add_debt_title:'Ajouter une dette',dpc_edit_debt_title:'Modifier la dette',debt_due_day_modal_hint:'Le jour du mois où ce paiement est dû',toast_debt_added:'Dette ajoutée',toast_debt_updated:'Dette mise à jour',sf_billing_day_label:"Jour d'échéance",sf_billing_day_hint:'Le jour du mois où la contribution est enregistrée automatiquement',sf_error_required:'Veuillez remplir tous les champs obligatoires',bill_paid_modal_title:'Marquer la facture comme payée',bill_paid_amount_label:'Montant payé',bill_paid_amount_hint:"Le montant que vous avez réellement payé - il sera enregistré comme transaction afin que votre historique reste exact, même s'il diffère du montant budgété.",bill_paid_save_btn:'Enregistrer le paiement',bill_paid_budgeted_hint:'Budgété : {0}',toast_bill_marked_paid:'Paiement enregistré',sub_active:'Actif',sub_paused:'En pause',sub_desc:"Suivez chaque paiement récurrent et comprenez votre coût annuel réel. Mettez en pause les abonnements que vous n'utilisez pas pour maîtriser vos dépenses.",sub_add_btn:'+ Ajouter une facture',sub_add_title:'Ajouter une facture',sub_edit_title:'Modifier la facture',sub_empty_title:'Aucune facture.',sub_empty_sub:'Ajoutez vos paiements récurrents - Netflix, Spotify, abonnement de sport, etc.',sub_sum_monthly:'Total mensuel',sub_sum_annual:'Total annuel',sub_by_category:'Par catégorie',sub_per_month:'/mois',sub_next_label:'Prochain',sub_name_label:'Nom',bill_kind_label:'Type',bill_kind_bill:'Facture',bill_kind_sub:'Abonnement',sub_name_ph:'ex. Netflix',sub_amount_label:'Montant',sub_freq_label:'Fréquence de facturation',sub_freq_monthly:'Mensuelle',sub_freq_annual:'Annuelle',sub_freq_quarterly:'Trimestrielle',sub_freq_weekly:'Hebdomadaire',sub_unit_month:'mois',sub_unit_year:'an',sub_unit_quarter:'trimestre',sub_cat_label:'Catégorie',sub_date_label:"Date d'échéance",sub_name_hint:'Le service ou fournisseur concerné par ce paiement, comme « Netflix » ou « Abonnement salle de sport ».',sub_amount_hint:'Le montant facturé à chaque cycle de facturation.',sub_freq_hint:'La fréquence à laquelle cet abonnement vous facture.',sub_cat_hint:'Regroupe cet abonnement pour le graphique par catégorie.',sub_date_hint:'La prochaine date à laquelle cet abonnement vous facturera. Apparaît dans le calendrier intelligent.',alloc_label_hint:"Étiquetez ceci comme Besoin, Envie ou Épargne pour qu'il compte dans vos catégories de répartition.",sub_cat_entertainment:'Divertissement',sub_cat_productivity:'Productivité',sub_cat_health:'Santé & Fitness',sub_cat_food:'Alimentation',sub_cat_cloud:'Stockage cloud',sub_cat_finance:'Finance',sub_cat_education:'Éducation',sub_cat_gaming:'Jeux vidéo',sub_cat_news:'Actualités & Médias',sub_cat_other:'Autre',help_sub_intro:"Suivez chaque paiement récurrent et comprenez votre coût mensuel et annuel réel. Les abonnements qui grignotent votre compte discrètement sont faciles à manquer - ceci les garde visibles.",help_sub_how_h:'Ajouter un abonnement',help_sub_step1:'Cliquez sur + Ajouter un abonnement',help_sub_step2:'Saisissez le nom, le montant et la fréquence de facturation (mensuelle, annuelle, trimestrielle, hebdomadaire)',help_sub_step3:'Choisissez une catégorie pour regrouper les abonnements similaires',help_sub_step4:"Définissez la prochaine date de facturation - elle apparaîtra dans le calendrier intelligent",help_sub_monthly_h:'Équivalent mensuel',help_sub_monthly_p:"Les abonnements annuels et trimestriels sont convertis en coût mensuel afin que vous puissiez voir vos dépenses mensuelles réelles en un coup d'œil.",help_sub_pause_h:'Mettre en pause un abonnement',help_sub_pause_p:"Désactivez le bouton Actif d'un abonnement que vous n'utilisez plus actuellement. Il ne comptera plus dans vos totaux tant que vous ne le réactivez pas.",help_sub_price_h:'Historique des prix',help_sub_price_p:"Quand vous modifiez le prix d'un abonnement, c'est enregistré automatiquement. Une petite flèche ↑ ou ↓ à côté du montant indique le dernier changement - survolez-la pour voir l'historique complet.",help_sub_chart_h:'Graphique par catégorie',help_sub_chart_p:'Le graphique en anneau montre la répartition de vos dépenses d\'abonnement par catégorie - survolez un segment pour voir les détails.',help_sub_tip:"💡 Activez « Automatiser » sur un abonnement pour qu'il soit ajouté automatiquement à vos transactions à chaque cycle de facturation.",automate_auto_pay:'Paiement auto',sf_auto_contribute:'Contribution auto',sf_auto_need_amount:"Ajoutez d'abord un montant et une date cibles",sf_auto_set:'Contribution mensuelle : {0}',automate_label:'Automatiser',automate_hint:"L'ajoute automatiquement à vos transactions selon le calendrier",automate_hint_off:"Activez l'automatisation dans les Paramètres pour l'utiliser",automate_th:'Paiement auto',automate_need_amount:"Définissez d'abord un paiement minimum",automate_payment_word:'paiement',automate_linked:'Transaction automatique liée',sf_contribution_label:'Contribution mensuelle',sf_contribution_hint:'Enregistrée automatiquement chaque mois pour alimenter cet objectif',sett_automation_h:'Automatisation',sett_automation_desc:"Interrupteur principal des transactions automatiques. Désactivé, aucune transaction planifiée n'est générée et les options d'automatisation sont désactivées.",sett_automation_toggle:'Transactions automatiques',sett_automation_hint:"S'applique aux transactions, abonnements, objectifs d'épargne et dettes",
     tx_type_sinking_fund:'Objectif d’épargne',
     help_dash_alloc_h:'Panneau de répartition budgétaire',
     help_dash_alloc_what_h:'Ce que c\'est',
@@ -2432,7 +2458,7 @@ const TRANSLATIONS = {
     upg_chip_tx:'{0} / {0} transactions gratuites utilisées',
     upg_chip_recurring:'{0} / {0} transactions automatiques gratuites utilisées',
     upg_chip_subs:'{0} / {0} abonnement gratuit utilisé',
-    upg_chip_sinking:'{0} / {0} provision gratuite utilisée',
+    upg_chip_sinking:'{0} / {0} objectif d\'épargne gratuit utilisé',
     upg_chip_debts:'{0} / {0} dette gratuite utilisée',
     upg_chip_cat:'{0} / {0} catégories {1} gratuites utilisées',
     upg_chip_limit:'Limite d’essai gratuit atteinte',
@@ -2442,7 +2468,7 @@ const TRANSLATIONS = {
     upg_sub:"Vous avez atteint la limite d'essai gratuit. Mettez à niveau une fois pour lever tous les plafonds. Jamais d'abonnement.",
     upg_feat_unlimited_tx_html:'Transactions &amp; transactions automatiques <strong>illimitées</strong>',
     upg_feat_unlimited_cat_html:'Catégories de budget <strong>illimitées</strong> dans chaque section',
-    upg_feat_unlimited_other_html:'Dettes, abonnements &amp; provisions <strong>illimités</strong>',
+    upg_feat_unlimited_other_html:'Dettes, abonnements &amp; objectifs d\'épargne <strong>illimités</strong>',
     upg_feat_onetime:'Paiement unique · mises à jour gratuites à vie',
     upg_price_tag:'unique',upg_price_note:'Sans abonnement',
     upg_cta_ubp:'Débloquer Ultimate pour {0}',
@@ -2509,7 +2535,7 @@ const TRANSLATIONS = {
     description:'Descripción',date:'Fecha',type:'Tipo',
     add_category:'+ Añadir categoría',no_transactions:'Sin transacciones aún.',
     upgrade_title:'¿Listo para la experiencia pro?',
-    upgrade_desc:'Desbloquea el calculador de pago de deudas, fondos de ahorro, calendario inteligente y seguimiento de suscripciones.',
+    upgrade_desc:'Desbloquea el calculador de pago de deudas, metas de ahorro, calendario inteligente y seguimiento de suscripciones.',
     upgrade_now:'Actualizar ahora →',
     mon:'Lun',tue:'Mar',wed:'Mié',thu:'Jue',fri:'Vie',sat:'Sáb',sun:'Dom',
     quick_presets:'Accesos rápidos:',select_currency:'Selecciona tu moneda',select_language:'Seleccionar idioma',
@@ -2532,7 +2558,7 @@ const TRANSLATIONS = {
     cal_no_events_month:'No hay eventos este mes.',
     cal_no_events_sub:'Añade facturas, deudas o suscripciones para verlas aquí.',
     cal_event_one:'evento',cal_event_many:'eventos',cal_clear:'Borrar ×',
-    cal_leg_bill:'Factura',cal_leg_debt:'Deuda',cal_leg_sub:'Suscripción',cal_leg_tx:'Transacción',cal_leg_sinking:'Fondo de reserva',cal_leg_goal:'Fecha objetivo',cal_leg_auto:'Automático',
+    cal_leg_bill:'Factura',cal_leg_debt:'Deuda',cal_leg_sub:'Suscripción',cal_leg_tx:'Transacción',cal_leg_sinking:'Meta de ahorro',cal_leg_goal:'Fecha objetivo',cal_leg_auto:'Automático',
     cal_paid:'✓ Pagado',cal_unpaid:'No pagado',cal_mark_paid:'Marcar como pagado',
     help_cal_intro:'El Calendario inteligente reúne todos tus compromisos financieros en una vista mensual - actualizado automáticamente a medida que añades datos.',
     help_cal_ev_types_h:'Tipos de eventos',
@@ -2544,27 +2570,27 @@ const TRANSLATIONS = {
     help_cal_nav_p:'Usa ← Ant. y Sig. → para moverte entre meses. Haz clic en cualquier día para ver sus eventos. Haz clic de nuevo o en «Borrar ×» para deseleccionar.',
     help_cal_paid_h:'Marcar facturas como pagadas',help_cal_paid_p:'Haz clic en un día para desplegar sus eventos. Cualquier factura sin pagar muestra ahí mismo una casilla «Marcar como pagado» - actívala para registrar el importe que realmente pagaste como transacción, sin necesidad de ir a la pestaña Presupuesto.',help_cal_tip:'💡 Establece fechas de vencimiento en facturas y deudas para aprovechar al máximo el calendario.',
     sf_add_btn:'+ Añadir meta',
-    sf_desc:'Un fondo de ahorro te permite ahorrar gradualmente para un gran gasto futuro - sin sorpresas desagradables. Establece un objetivo y una fecha, y te diremos exactamente cuánto ahorrar cada mes.',
+    sf_desc:'Una meta de ahorro te permite ahorrar gradualmente para un gran gasto futuro - sin sorpresas desagradables. Establece un objetivo y una fecha, y te diremos exactamente cuánto ahorrar cada mes.',
     sf_empty_title:'Aún no hay metas de ahorro.',
     sf_empty_sub:'Perfecto para: vacaciones, reparaciones de coche, bodas, nueva tecnología, facturas anuales.',
     sf_pct_complete:'completado',
     sf_save_prefix:'Ahorrar',sf_per_month:'/mes',
     sf_mo_left_tpl:'{0} meses restantes',
     sf_total_contrib:'Total de contribuciones mensuales necesarias:',
-    sf_modal_new:'🏺 Nuevo fondo de ahorro',sf_modal_edit:'✏️ Editar fondo',
-    sf_fund_name_label:'Nombre del fondo',sf_fund_name_ph:'p.ej. Fondo vacaciones',
+    sf_modal_new:'🏺 Nueva meta de ahorro',sf_modal_edit:'✏️ Editar meta',
+    sf_fund_name_label:'Nombre de la meta',sf_fund_name_ph:'p.ej. Vacaciones de verano',
     sf_icon_label:'Icono',sf_target_amount_label:'Importe objetivo',sf_monthly_label:'Aportación mensual',sf_monthly_hint:'Lo que entra cada mes. Deja el objetivo vacío para una meta abierta.',
     sf_currently_saved_label:'Ya ahorrado',sf_target_date_label:'Fecha objetivo',
     sf_fund_name_hint:'Un nombre corto para lo que estás ahorrando, como "Vacaciones de verano" o "Portátil nuevo".',
-    sf_icon_hint:'Elige un icono para que este fondo destaque de un vistazo.',
+    sf_icon_hint:'Elige un icono para que esta meta destaque de un vistazo.',
     sf_target_amount_hint:'El monto total que necesitas para alcanzar esta meta.',
     sf_currently_saved_hint:'Cuánto ya has apartado para esta meta, si algo.',
     sf_target_date_hint:'Para cuándo quieres alcanzar tu meta - se usa para calcular cuánto ahorrar cada mes.',
-    sf_create_btn:'Crear fondo',
-    help_sf_intro:'Un fondo de ahorro es dinero que apartas con antelación para un gran gasto planificado - sin sorpresas desagradables cuando llega la factura.',
+    sf_create_btn:'Crear meta',
+    help_sf_intro:'Una meta de ahorro es dinero que apartas con antelación para un gran gasto planificado - sin sorpresas desagradables cuando llega la factura.',
     help_sf_how_to_h:'Cómo usarlo',
-    help_sf_step1:'Haz clic en + Añadir fondo',
-    help_sf_step2:'Nombra tu fondo (p.ej. "Vacaciones de verano"), elige un icono',
+    help_sf_step1:'Haz clic en + Añadir meta',
+    help_sf_step2:'Nombra tu meta (p.ej. "Vacaciones de verano"), elige un icono',
     help_sf_step3:'Establece un importe objetivo (cuánto necesitas en total)',
     help_sf_step4:'Establece una fecha objetivo (cuándo necesitas el dinero)',
     help_sf_step5:'Indica cuánto has ahorrado ya',
@@ -2675,7 +2701,7 @@ const TRANSLATIONS = {
     help_tx_intro:'Cada movimiento de dinero va aquí. Tus importes reales del presupuesto y el panel se actualizan automáticamente cada vez que añades uno.',
     help_tx_adding_h:'Añadir una transacción',
     help_tx_step1:'Elige una Fecha - haz clic en el campo de fecha para abrir el calendario',
-    help_tx_step2:'Elige un tipo: Ingreso, Gasto, Factura, Ahorro, Deuda o Suscripción o Fondo objetivo',
+    help_tx_step2:'Elige un tipo: Ingreso, Gasto, Factura, Ahorro, Deuda o Suscripción o Meta de ahorro',
     help_tx_step3:'Selecciona la Categoría correspondiente (configurada en la pestaña Presupuesto)',
     help_tx_step4:'Introduce el Importe y una descripción opcional',
     help_tx_step5:'Haz clic en Añadir',
@@ -2768,7 +2794,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transacci\u00f3n a\u00f1adida \u2713',toast_tx_updated:'Actualizado \u2713',toast_tx_deleted:'Eliminado',
     toast_period_updated:'Per\u00edodo actualizado \u2713',toast_period_error:'La fecha de fin debe ser posterior a la fecha de inicio',
     toast_currency_updated:'Moneda actualizada \u2713',toast_imported:'{0} importado(s) \u2713',
-    toast_fund_created:'Fondo creado \u2713',toast_fund_updated:'Fondo actualizado \u2713',
+    toast_fund_created:'Meta creada ✓',toast_fund_updated:'Meta actualizada ✓',
     toast_fund_contrib:'{amt} a\u00f1adido a {name} \u2713',
     toast_sub_added:'Suscripci\u00f3n a\u00f1adida \u2713',toast_sub_updated:'Suscripci\u00f3n actualizada \u2713',
     toast_alloc_enabled:'Distribuci\u00f3n activada \u2713',toast_alloc_disabled:'Distribuci\u00f3n desactivada',
@@ -2777,7 +2803,7 @@ const TRANSLATIONS = {
     confirm_remove_cat:'\u00bfEliminar esta categor\u00eda?',bud_edit_title:'\u270f\ufe0f Editar categor\u00eda',bud_name_required:'Ponle un nombre a la categor\u00eda.',bud_name_taken:'Otra categor\u00eda de esta secci\u00f3n ya usa ese nombre.',bud_expected_invalid:'Introduce un importe previsto de 0 o m\u00e1s.',bud_due_day_invalid:'Introduce un día de vencimiento entre 1 y 31, o déjalo en blanco.',confirm_delete_all_tx:'\u00bfEliminar TODAS las transacciones? Esto no se puede deshacer.',
     confirm_remove_cat_with_tx:'{0} transacci\u00f3n(es) existente(s) usan esta categor\u00eda. La conservar\u00e1n como etiqueta, pero ya no se har\u00e1 seguimiento en tu presupuesto. \u00bfEliminar de todos modos?',
     confirm_delete_tx:'\u00bfEliminar esta transacci\u00f3n?',confirm_remove_debt:'\u00bfEliminar esta deuda?',
-    confirm_delete_fund:'\u00bfEliminar este fondo?',confirm_remove_sub:'\u00bfEliminar esta suscripci\u00f3n?',
+    confirm_delete_fund:'¿Eliminar esta meta?',confirm_remove_sub:'\u00bfEliminar esta suscripci\u00f3n?',
     confirm_reset_1:'\u00bfEst\u00e1s seguro? Todos los datos se eliminar\u00e1n permanentemente.',
     confirm_reset_2:'\u00daltima oportunidad - no se puede deshacer. \u00bfContinuar?',
     sett_upcoming_title:'📅 Ventana de próximos',sett_upcoming_desc:'Elige con cuántos días de antelación se muestra la lista Próximos del panel.',sett_upcoming_label:'Días de antelación',
@@ -2801,7 +2827,7 @@ const TRANSLATIONS = {
     recurring_freq:'Frecuencia',freq_daily:'Diario',freq_weekly:'Semanal',
     freq_monthly:'Mensual',freq_quarterly:'Trimestral',freq_annual:'Anual',
     recurring_next_due:'Pr\u00f3ximo vencimiento',recurring_generated:'{0} nuevas transacciones automatizadas',
-    recurring_remove:'Eliminar regla',recurring_paused:'En pausa',recurring_active:'Activo',recurring_saved:'Transacción automática guardada ✓',dpc_add_debt_title:'Añadir deuda',dpc_edit_debt_title:'Editar deuda',debt_due_day_modal_hint:'El día del mes en que vence este pago',toast_debt_added:'Deuda añadida',toast_debt_updated:'Deuda actualizada',sf_billing_day_label:'Día de vencimiento',sf_billing_day_hint:'El día del mes en que se registra la contribución automáticamente',sf_error_required:'Por favor, completa todos los campos obligatorios',bill_paid_modal_title:'Marcar factura como pagada',bill_paid_amount_label:'Importe pagado',bill_paid_amount_hint:'Cuánto pagaste realmente - se registrará como transacción para que tu historial de gastos sea exacto, aunque sea distinto del importe presupuestado.',bill_paid_save_btn:'Registrar pago',bill_paid_budgeted_hint:'Presupuestado: {0}',toast_bill_marked_paid:'Pago registrado',sub_active:'Activo',sub_paused:'Pausado',sub_desc:'Controla cada pago recurrente y comprende tu coste anual real. Pausa las suscripciones que no uses para mantener los gastos bajo control.',sub_add_btn:'+ Añadir factura',sub_add_title:'Añadir factura',sub_edit_title:'Editar factura',sub_empty_title:'Aún no hay facturas.',sub_empty_sub:'Añade tus pagos recurrentes - Netflix, Spotify, el gimnasio, etc.',sub_sum_monthly:'Total mensual',sub_sum_annual:'Total anual',sub_by_category:'Por categoría',sub_per_month:'/mes',sub_next_label:'Próximo',sub_name_label:'Nombre',bill_kind_label:'Tipo',bill_kind_bill:'Factura',bill_kind_sub:'Suscripción',sub_name_ph:'ej. Netflix',sub_amount_label:'Importe',sub_freq_label:'Frecuencia de facturación',sub_freq_monthly:'Mensual',sub_freq_annual:'Anual',sub_freq_quarterly:'Trimestral',sub_freq_weekly:'Semanal',sub_unit_month:'mes',sub_unit_year:'año',sub_unit_quarter:'trimestre',sub_cat_label:'Categoría',sub_date_label:'Fecha de vencimiento',sub_name_hint:'El servicio o proveedor de este pago, como "Netflix" o "Membresía del gimnasio".',sub_amount_hint:'Cuánto te cobran en cada ciclo de facturación.',sub_freq_hint:'Con qué frecuencia te cobra esta suscripción.',sub_cat_hint:'Agrupa esta suscripción para el gráfico de categorías.',sub_date_hint:'La próxima fecha en que esta suscripción te cobrará. Aparece en el calendario inteligente.',alloc_label_hint:'Etiqueta esto como Necesidad, Deseo o Ahorro para que cuente en tus categorías de distribución.',sub_cat_entertainment:'Entretenimiento',sub_cat_productivity:'Productividad',sub_cat_health:'Salud y ejercicio',sub_cat_food:'Comida y bebida',sub_cat_cloud:'Almacenamiento en la nube',sub_cat_finance:'Finanzas',sub_cat_education:'Educación',sub_cat_gaming:'Videojuegos',sub_cat_news:'Noticias y medios',sub_cat_other:'Otro',help_sub_intro:'Controla cada pago recurrente y comprende tu coste mensual y anual real. Las suscripciones que consumen tu cuenta en silencio son fáciles de pasar por alto - esto las mantiene visibles.',help_sub_how_h:'Añadir una suscripción',help_sub_step1:'Haz clic en + Añadir suscripción',help_sub_step2:'Introduce el nombre, el importe y la frecuencia de facturación (mensual, anual, trimestral, semanal)',help_sub_step3:'Elige una categoría para agrupar suscripciones similares',help_sub_step4:'Define la próxima fecha de facturación - aparecerá en el calendario inteligente',help_sub_monthly_h:'Equivalente mensual',help_sub_monthly_p:'Las suscripciones anuales y trimestrales se convierten a un coste mensual para que veas tu gasto mensual real de un vistazo.',help_sub_pause_h:'Pausar suscripciones',help_sub_pause_p:'Desactiva el interruptor Activo de cualquier suscripción que no estés usando. No contará en tus totales hasta que vuelvas a activarlo.',help_sub_price_h:'Historial de precios',help_sub_price_p:'Cuando cambias el precio de una suscripción, queda registrado automáticamente. Una pequeña ↑ o ↓ junto al importe muestra el cambio más reciente - pasa el cursor para ver el historial completo.',help_sub_chart_h:'Gráfico por categoría',help_sub_chart_p:'El gráfico circular muestra cómo se reparte tu gasto en suscripciones por categoría - pasa el cursor sobre un segmento para ver los detalles.',help_sub_tip:'💡 Activa «Automatizar» en una suscripción para que se añada automáticamente a tus transacciones en cada ciclo de facturación.',automate_auto_pay:'Pago auto',sf_auto_contribute:'Auto-contribución',sf_auto_need_amount:'Primero añade un importe y fecha objetivo',sf_auto_set:'Contribución mensual: {0}',automate_label:'Automatizar',automate_hint:'Lo añade a tus transacciones automáticamente según el calendario',automate_hint_off:'Activa la Automatización en Ajustes para usarlo',automate_th:'Pago auto',automate_need_amount:'Primero establece un pago mínimo',automate_payment_word:'pago',automate_linked:'Transacción automática vinculada',sf_contribution_label:'Contribución mensual',sf_contribution_hint:'Se registra automáticamente cada mes para aumentar este fondo',sett_automation_h:'Automatización',sett_automation_desc:'Interruptor principal de las transacciones automáticas. Si está apagado, no se generan transacciones programadas y las opciones de automatización se desactivan.',sett_automation_toggle:'Transacciones automáticas',sett_automation_hint:'Se aplica a transacciones, suscripciones, fondos y deudas',
+    recurring_remove:'Eliminar regla',recurring_paused:'En pausa',recurring_active:'Activo',recurring_saved:'Transacción automática guardada ✓',dpc_add_debt_title:'Añadir deuda',dpc_edit_debt_title:'Editar deuda',debt_due_day_modal_hint:'El día del mes en que vence este pago',toast_debt_added:'Deuda añadida',toast_debt_updated:'Deuda actualizada',sf_billing_day_label:'Día de vencimiento',sf_billing_day_hint:'El día del mes en que se registra la contribución automáticamente',sf_error_required:'Por favor, completa todos los campos obligatorios',bill_paid_modal_title:'Marcar factura como pagada',bill_paid_amount_label:'Importe pagado',bill_paid_amount_hint:'Cuánto pagaste realmente - se registrará como transacción para que tu historial de gastos sea exacto, aunque sea distinto del importe presupuestado.',bill_paid_save_btn:'Registrar pago',bill_paid_budgeted_hint:'Presupuestado: {0}',toast_bill_marked_paid:'Pago registrado',sub_active:'Activo',sub_paused:'Pausado',sub_desc:'Controla cada pago recurrente y comprende tu coste anual real. Pausa las suscripciones que no uses para mantener los gastos bajo control.',sub_add_btn:'+ Añadir factura',sub_add_title:'Añadir factura',sub_edit_title:'Editar factura',sub_empty_title:'Aún no hay facturas.',sub_empty_sub:'Añade tus pagos recurrentes - Netflix, Spotify, el gimnasio, etc.',sub_sum_monthly:'Total mensual',sub_sum_annual:'Total anual',sub_by_category:'Por categoría',sub_per_month:'/mes',sub_next_label:'Próximo',sub_name_label:'Nombre',bill_kind_label:'Tipo',bill_kind_bill:'Factura',bill_kind_sub:'Suscripción',sub_name_ph:'ej. Netflix',sub_amount_label:'Importe',sub_freq_label:'Frecuencia de facturación',sub_freq_monthly:'Mensual',sub_freq_annual:'Anual',sub_freq_quarterly:'Trimestral',sub_freq_weekly:'Semanal',sub_unit_month:'mes',sub_unit_year:'año',sub_unit_quarter:'trimestre',sub_cat_label:'Categoría',sub_date_label:'Fecha de vencimiento',sub_name_hint:'El servicio o proveedor de este pago, como "Netflix" o "Membresía del gimnasio".',sub_amount_hint:'Cuánto te cobran en cada ciclo de facturación.',sub_freq_hint:'Con qué frecuencia te cobra esta suscripción.',sub_cat_hint:'Agrupa esta suscripción para el gráfico de categorías.',sub_date_hint:'La próxima fecha en que esta suscripción te cobrará. Aparece en el calendario inteligente.',alloc_label_hint:'Etiqueta esto como Necesidad, Deseo o Ahorro para que cuente en tus categorías de distribución.',sub_cat_entertainment:'Entretenimiento',sub_cat_productivity:'Productividad',sub_cat_health:'Salud y ejercicio',sub_cat_food:'Comida y bebida',sub_cat_cloud:'Almacenamiento en la nube',sub_cat_finance:'Finanzas',sub_cat_education:'Educación',sub_cat_gaming:'Videojuegos',sub_cat_news:'Noticias y medios',sub_cat_other:'Otro',help_sub_intro:'Controla cada pago recurrente y comprende tu coste mensual y anual real. Las suscripciones que consumen tu cuenta en silencio son fáciles de pasar por alto - esto las mantiene visibles.',help_sub_how_h:'Añadir una suscripción',help_sub_step1:'Haz clic en + Añadir suscripción',help_sub_step2:'Introduce el nombre, el importe y la frecuencia de facturación (mensual, anual, trimestral, semanal)',help_sub_step3:'Elige una categoría para agrupar suscripciones similares',help_sub_step4:'Define la próxima fecha de facturación - aparecerá en el calendario inteligente',help_sub_monthly_h:'Equivalente mensual',help_sub_monthly_p:'Las suscripciones anuales y trimestrales se convierten a un coste mensual para que veas tu gasto mensual real de un vistazo.',help_sub_pause_h:'Pausar suscripciones',help_sub_pause_p:'Desactiva el interruptor Activo de cualquier suscripción que no estés usando. No contará en tus totales hasta que vuelvas a activarlo.',help_sub_price_h:'Historial de precios',help_sub_price_p:'Cuando cambias el precio de una suscripción, queda registrado automáticamente. Una pequeña ↑ o ↓ junto al importe muestra el cambio más reciente - pasa el cursor para ver el historial completo.',help_sub_chart_h:'Gráfico por categoría',help_sub_chart_p:'El gráfico circular muestra cómo se reparte tu gasto en suscripciones por categoría - pasa el cursor sobre un segmento para ver los detalles.',help_sub_tip:'💡 Activa «Automatizar» en una suscripción para que se añada automáticamente a tus transacciones en cada ciclo de facturación.',automate_auto_pay:'Pago auto',sf_auto_contribute:'Auto-contribución',sf_auto_need_amount:'Primero añade un importe y fecha objetivo',sf_auto_set:'Contribución mensual: {0}',automate_label:'Automatizar',automate_hint:'Lo añade a tus transacciones automáticamente según el calendario',automate_hint_off:'Activa la Automatización en Ajustes para usarlo',automate_th:'Pago auto',automate_need_amount:'Primero establece un pago mínimo',automate_payment_word:'pago',automate_linked:'Transacción automática vinculada',sf_contribution_label:'Contribución mensual',sf_contribution_hint:'Se registra automáticamente cada mes para hacer crecer esta meta',sett_automation_h:'Automatización',sett_automation_desc:'Interruptor principal de las transacciones automáticas. Si está apagado, no se generan transacciones programadas y las opciones de automatización se desactivan.',sett_automation_toggle:'Transacciones automáticas',sett_automation_hint:'Se aplica a transacciones, suscripciones, metas de ahorro y deudas',
     tx_type_sinking_fund:'Meta de ahorro',
     help_dash_alloc_h:'Panel de distribución presupuestaria',
     help_dash_alloc_what_h:'Qué es',
@@ -2883,8 +2909,8 @@ const TRANSLATIONS = {
     guide_dashboard_big:'El Panel es tu centro de control - todo lo importante sobre tu dinero vive en esta única pantalla, desde tu resultado final hasta lo que se avecina esta semana.',
     guide_dashboard_step1:'Revisa las tarjetas de resumen arriba para tu <strong>Ingreso total</strong>, tu <strong>Gasto total</strong>, tu <strong>Tasa de ahorro</strong> y tu <strong>Sobrante neto</strong>.',
     guide_dashboard_step2:'Consulta la lista <strong>Próximamente</strong> para ver todo lo que vence en los próximos 7 días - facturas, pagos de deudas y suscripciones, todo en un solo lugar.',
-    guide_dashboard_step3:'Revisa tus resúmenes de <strong>Pago de deudas</strong> y <strong>Fondos de reserva</strong> para ver de un vistazo el progreso hacia tus metas más grandes.',
-    guide_dashboard_connect1:'Cada cifra aquí proviene en vivo de Transacciones, Presupuesto, Pago de deudas, Fondos de reserva y Suscripciones - no hay nada que calcular a mano.',
+    guide_dashboard_step3:'Revisa tus resúmenes de <strong>Pago de deudas</strong> y <strong>Metas de ahorro</strong> para ver de un vistazo el progreso hacia tus metas más grandes.',
+    guide_dashboard_connect1:'Cada cifra aquí proviene en vivo de Transacciones, Presupuesto, Pago de deudas, Metas de ahorro y Suscripciones - no hay nada que calcular a mano.',
     guide_dashboard_connect2:'El Sobrante neto incluye tu ajuste de <strong>Saldo anterior</strong>, así que el dinero no gastado del período previo puede pasar automáticamente.',
     guide_dashboard_connect3:'Si algo no cuadra, casi siempre vale la pena revisar la página de origen - el Panel es un espejo, no una fuente.',
     guide_dashboard_tip:'Dedica 30 segundos cada mañana a repasar el Panel - es la forma más rápida de detectar una factura o pago de deuda antes de que se retrase.',guide_dashboard_usecase_h:'Así se usa en la práctica',guide_dashboard_usecase_p:'<p><strong>Maria</strong> abre Ezzo Budget el día de pago. Echa un vistazo al Panel y ve que su saldo neto de este período es de 420 € - suficiente para añadir un poco más a su fondo de emergencia.</p><p>El panel de Flujo de caja muestra que ya se ha pasado del presupuesto en Restaurantes, así que esa noche no pide comida para llevar en lugar de descubrirlo a fin de mes.</p>',
@@ -2923,14 +2949,14 @@ const TRANSLATIONS = {
     guide_debt_connect3:'Pagar más del mínimo aquí - incluso un poco más - suele ser la mejor palanca para acortar tu calendario de pago.',
     guide_debt_tip:'Prueba a alternar entre Bola de nieve y Avalancha para comparar - Bola de nieve motiva más al principio, pero Avalancha suele ahorrar más dinero en total.',guide_debt_usecase_h:'Así se usa en la práctica',guide_debt_usecase_p:'<p><strong>Sam</strong> tiene tres deudas: una tarjeta de crédito, un préstamo de coche y un pequeño préstamo personal. Las añade las tres, elige Avalancha para que la tarjeta con mayor interés se pague primero, y ve enseguida su fecha real de liquidación y el interés total.</p><p>Cuando recibe una bonificación del trabajo, la escribe en el campo <strong>Extra/mes</strong> de esa tarjeta en concreto en lugar del fondo común de pagos extra, para que la bonificación vaya exactamente donde él quiere - luego abre el calendario ℹ️ para ver mes a mes cuánto antes quedará libre de deudas.</p>',
     guide_sinking_title:'Metas de ahorro',
-    guide_sinking_big:'Un fondo de reserva es dinero que apartas poco a poco para algo específico que sabes que se acerca - unas vacaciones, una laptop nueva, regalos - así nunca se convierte en una emergencia cuando el gasto realmente llega.',
-    guide_sinking_step1:'Crea un fondo y dale un <strong>Importe objetivo</strong> y, si quieres, una fecha objetivo.',
+    guide_sinking_big:'Una meta de ahorro es dinero que apartas poco a poco para algo específico que sabes que se acerca - unas vacaciones, una laptop nueva, regalos - así nunca se convierte en una emergencia cuando el gasto realmente llega.',
+    guide_sinking_step1:'Crea una meta y dale un <strong>Importe objetivo</strong> y, si quieres, una fecha objetivo.',
     guide_sinking_step2:'Agrega aportes cada vez que apartes dinero para él, y observa cómo se llena la <strong>barra de progreso</strong>.',
-    guide_sinking_step3:'Una vez que un fondo alcanza su objetivo, estás listo para ese gasto sin tocar tu presupuesto habitual.',
-    guide_sinking_connect1:'Los fondos de reserva son distintos de tu categoría de Ahorros habitual - sirven para metas específicas y planeadas en lugar de un ahorro general.',
-    guide_sinking_connect2:'Tu Panel muestra un resumen del progreso de todos tus fondos en un solo lugar.',
-    guide_sinking_connect3:'Aportar a un fondo con regularidad, incluso un importe pequeño, convierte un gasto grande en algo que nunca descarrila tu presupuesto.',
-    guide_sinking_tip:'Divide las metas grandes en importes mensuales redondos - es mucho más fácil comprometerse a 50 € al mes que a "ahorrar para unas vacaciones algún día".',guide_sinking_usecase_h:'Así se usa en la práctica',guide_sinking_usecase_p:'<p><strong>Elena</strong> está planeando unas vacaciones de 1.200 € para julio del año que viene. Crea un Fondo de reserva con ese importe y fecha objetivo, y Ezzo Budget le dice que necesita ahorrar 150 €/mes para lograrlo.</p><p>Activa <strong>Automatizar</strong> para que ese importe se registre como contribución cada mes sin que tenga que acordarse.</p>',
+    guide_sinking_step3:'Una vez que una meta alcanza su objetivo, estás listo para ese gasto sin tocar tu presupuesto habitual.',
+    guide_sinking_connect1:'Las metas de ahorro son distintas de tu categoría de Ahorros habitual - sirven para metas específicas y planeadas en lugar de un ahorro general.',
+    guide_sinking_connect2:'Tu Panel muestra un resumen del progreso de todas tus metas en un solo lugar.',
+    guide_sinking_connect3:'Aportar a una meta con regularidad, incluso un importe pequeño, convierte un gasto grande en algo que nunca descarrila tu presupuesto.',
+    guide_sinking_tip:'Divide las metas grandes en importes mensuales redondos - es mucho más fácil comprometerse a 50 € al mes que a "ahorrar para unas vacaciones algún día".',guide_sinking_usecase_h:'Así se usa en la práctica',guide_sinking_usecase_p:'<p><strong>Elena</strong> está planeando unas vacaciones de 1.200 € para julio del año que viene. Crea una Meta de ahorro con ese importe y fecha objetivo, y Ezzo Budget le dice que necesita ahorrar 150 €/mes para lograrlo.</p><p>Activa <strong>Automatizar</strong> para que ese importe se registre como contribución cada mes sin que tenga que acordarse.</p>',
     guide_subscriptions_title:'Facturas',
     guide_subscriptions_big:'Las suscripciones tienden a acumularse silenciosamente - esta página lista cada servicio recurrente que pagas en un solo lugar, para que nada te siga cobrando sin que lo sepas.',
     guide_subscriptions_step1:'Agrega cada suscripción junto con su costo y frecuencia de facturación (mensual, anual, etc.).',
@@ -2955,9 +2981,9 @@ const TRANSLATIONS = {
     guide_rollover_step2:'Actívalo para que cualquier importe sobrante del período previo pase automáticamente al nuevo.',
     guide_rollover_step3:'Revisa el Sobrante neto de tu Panel - ahora incluirá ese importe traspasado.',
     guide_rollover_connect1:'El Saldo anterior funciona directamente con tu Sobrante neto del período previo - cuanto mejor sigas tu presupuesto, más tendrá para traspasar.',
-    guide_rollover_connect2:'Esto es distinto de los Fondos de reserva, que sirven para metas futuras planeadas - el Saldo anterior solo se trata de no perder de vista el dinero que ya tienes.',
+    guide_rollover_connect2:'Esto es distinto de las Metas de ahorro, que sirven para metas futuras planeadas - el Saldo anterior solo se trata de no perder de vista el dinero que ya tienes.',
     guide_rollover_connect3:'Una racha de buenos meses se acumula bien aquí, ya que el sobrante de cada período se suma al siguiente.',
-    guide_rollover_tip:'Si un importe grande de saldo anterior te quema en el bolsillo, considera mover parte de él a un Fondo de reserva para que quede destinado a algo específico.',guide_rollover_usecase_h:'Así se usa en la práctica',guide_rollover_usecase_p:'<p>A finales de junio, a <strong>Noor</strong> le quedan 180 € tras cubrir todo. Como el <strong>Traslado automático</strong> está activado, en cuanto mueve su período de presupuesto a julio, esos 180 € aparecen automáticamente como su saldo anterior - sumados directamente a su saldo neto, en lugar de tener que calcularlo y volver a escribirlo ella misma.</p>',
+    guide_rollover_tip:'Si un importe grande de saldo anterior te quema en el bolsillo, considera mover parte de él a una Meta de ahorro para que quede destinado a algo específico.',guide_rollover_usecase_h:'Así se usa en la práctica',guide_rollover_usecase_p:'<p>A finales de junio, a <strong>Noor</strong> le quedan 180 € tras cubrir todo. Como el <strong>Traslado automático</strong> está activado, en cuanto mueve su período de presupuesto a julio, esos 180 € aparecen automáticamente como su saldo anterior - sumados directamente a su saldo neto, en lugar de tener que calcularlo y volver a escribirlo ella misma.</p>',
     guide_automation_title:'Automatización',
     guide_automation_big:'Automatización toma las reglas recurrentes que configuraste en Transacciones y las registra automáticamente por ti, para que tus facturas, sueldos y suscripciones habituales aparezcan justo a tiempo sin que muevas un dedo.',
     guide_automation_step1:'Abre <strong>Ajustes</strong> y busca la tarjeta de <strong>Automatización</strong>.',
@@ -2974,7 +3000,7 @@ const TRANSLATIONS = {
     guide_penny_step3:'Haz una pregunta con tus propias palabras, como "¿cuál es mi mayor categoría de gasto este mes?", o toca uno de los botones de pregunta rápida para empezar.',
     guide_penny_step4:'Activa o desactiva su respuesta por voz con el ícono de altavoz si prefieres escuchar en vez de leer.',
     guide_penny_connect1:'Ezzo solo puede leer tus datos de presupuesto para responder preguntas - nunca puede agregar, editar ni eliminar nada por ti.',
-    guide_penny_connect2:'Consulta directamente el Panel, Transacciones, Pago de deudas, Suscripciones y Fondos de reserva, así que sus respuestas siempre coinciden con lo que verías tú mismo en esas páginas.',
+    guide_penny_connect2:'Consulta directamente el Panel, Transacciones, Pago de deudas, Suscripciones y Metas de ahorro, así que sus respuestas siempre coinciden con lo que verías tú mismo en esas páginas.',
     guide_penny_connect3:'Tu clave de API se cifra y se guarda solo en tu propio dispositivo - nunca se envía a ningún lado excepto directamente a Google cuando le haces una pregunta a Ezzo.',
     guide_penny_tip:'Empieza con uno de los botones de pregunta rápida la primera vez - es la forma más rápida de ver lo que puede hacer antes de hacer tus propias preguntas.',guide_penny_usecase_h:'Así se usa en la práctica',guide_penny_usecase_p:'<p>Cada vez que <strong>Diane</strong> no está segura de en qué se le fue el dinero este mes, abre Ezzo y pregunta "¿por qué mi gasto es más alto de lo normal este mes?"</p><p>Ezzo examina sus transacciones reales y le da una respuesta en lenguaje sencillo - señalando, por ejemplo, que el gasto en Restaurantes se ha duplicado - en lugar de tener que revisar ella misma la lista de transacciones.</p>',
     guide_settings_title:'Ajustes',
@@ -2992,7 +3018,7 @@ const TRANSLATIONS = {
     upg_chip_tx:'{0} / {0} transacciones gratuitas usadas',
     upg_chip_recurring:'{0} / {0} transacciones automáticas gratuitas usadas',
     upg_chip_subs:'{0} / {0} suscripción gratuita usada',
-    upg_chip_sinking:'{0} / {0} fondo de ahorro gratuito usado',
+    upg_chip_sinking:'{0} / {0} meta de ahorro gratuita usada',
     upg_chip_debts:'{0} / {0} deuda gratuita usada',
     upg_chip_cat:'{0} / {0} categorías de {1} gratuitas usadas',
     upg_chip_limit:'Límite de prueba gratuita alcanzado',
@@ -3002,7 +3028,7 @@ const TRANSLATIONS = {
     upg_sub:'Has alcanzado el límite de la prueba gratuita. Actualiza una vez para eliminar todos los límites. Nunca una suscripción.',
     upg_feat_unlimited_tx_html:'Transacciones &amp; transacciones automáticas <strong>ilimitadas</strong>',
     upg_feat_unlimited_cat_html:'Categorías de presupuesto <strong>ilimitadas</strong> en cada sección',
-    upg_feat_unlimited_other_html:'Deudas, suscripciones &amp; fondos de ahorro <strong>ilimitados</strong>',
+    upg_feat_unlimited_other_html:'Deudas, suscripciones &amp; metas de ahorro <strong>ilimitadas</strong>',
     upg_feat_onetime:'Pago único · actualizaciones gratuitas de por vida',
     upg_price_tag:'pago único',upg_price_note:'Sin suscripción',
     upg_cta_ubp:'Desbloquear Ultimate por {0}',
@@ -3069,7 +3095,7 @@ const TRANSLATIONS = {
     description:'Descrizione',date:'Data',type:'Tipo',
     add_category:'+ Aggiungi categoria',no_transactions:'Nessuna transazione.',
     upgrade_title:"Pronto per l'esperienza pro?",
-    upgrade_desc:'Sblocca il calcolatore di estinzione debiti, accantonamenti, calendario intelligente e monitoraggio abbonamenti.',
+    upgrade_desc:'Sblocca il calcolatore di estinzione debiti, obiettivi di risparmio, calendario intelligente e monitoraggio abbonamenti.',
     upgrade_now:'Aggiorna ora →',
     mon:'Lun',tue:'Mar',wed:'Mer',thu:'Gio',fri:'Ven',sat:'Sab',sun:'Dom',
     quick_presets:'Selezione rapida:',select_currency:'Seleziona la tua valuta',select_language:'Seleziona lingua',
@@ -3093,7 +3119,7 @@ const TRANSLATIONS = {
     cal_no_events_month:'Nessun evento questo mese.',
     cal_no_events_sub:'Aggiungi bollette, debiti o abbonamenti per vederli qui.',
     cal_event_one:'evento',cal_event_many:'eventi',cal_clear:'Cancella \u00d7',
-    cal_leg_bill:'Bolletta',cal_leg_debt:'Debito',cal_leg_sub:'Abbonamento',cal_leg_tx:'Transazione',cal_leg_sinking:'Fondo accantonamento',cal_leg_goal:'Data obiettivo',cal_leg_auto:'Automatico',
+    cal_leg_bill:'Bolletta',cal_leg_debt:'Debito',cal_leg_sub:'Abbonamento',cal_leg_tx:'Transazione',cal_leg_sinking:'Obiettivo di risparmio',cal_leg_goal:'Data obiettivo',cal_leg_auto:'Automatico',
     cal_paid:'\u2713 Pagato',cal_unpaid:'Non pagato',cal_mark_paid:'Segna come pagato',
     help_cal_intro:'Il Calendario intelligente raccoglie tutti i tuoi impegni finanziari in una vista mensile - aggiornato automaticamente man mano che aggiungi dati.',
     help_cal_ev_types_h:'Tipi di eventi',
@@ -3105,27 +3131,27 @@ const TRANSLATIONS = {
     help_cal_nav_p:'Usa \u2190 Prec. e Succ. \u2192 per spostarti tra i mesi. Clicca su qualsiasi giorno per vedere i suoi eventi. Clicca di nuovo o su \u00abCancella \u00d7\u00bb per deselezionare.',
     help_cal_paid_h:'Segnare le bollette come pagate',help_cal_paid_p:'Clicca su un giorno per espandere i suoi eventi. Ogni bolletta non pagata mostra l\u00EC una casella "Segna come pagato" - selezionala per registrare l\'importo effettivamente pagato come transazione, senza dover passare alla scheda Budget.',help_cal_tip:'\uD83D\uDCA1 Imposta date di scadenza su bollette e debiti per sfruttare al massimo il calendario.',
     sf_add_btn:'+ Aggiungi obiettivo',
-    sf_desc:"Un fondo di accantonamento ti permette di risparmiare gradualmente per una grande spesa futura - nessuna sorpresa spiacevole. Imposta un obiettivo e una data, e ti diremo esattamente quanto risparmiare ogni mese.",
+    sf_desc:"Un obiettivo di risparmio ti permette di risparmiare gradualmente per una grande spesa futura - nessuna sorpresa spiacevole. Imposta un obiettivo e una data, e ti diremo esattamente quanto risparmiare ogni mese.",
     sf_empty_title:'Ancora nessun obiettivo.',
     sf_empty_sub:'Ottimo per: vacanze, riparazioni auto, matrimoni, nuova tecnologia, bollette annuali.',
     sf_pct_complete:'completato',
     sf_save_prefix:'Risparmiare',sf_per_month:'/mese',
     sf_mo_left_tpl:'{0} mesi rimasti',
     sf_total_contrib:'Contributi mensili totali necessari:',
-    sf_modal_new:'🏺 Nuovo fondo di accantonamento',sf_modal_edit:'✏️ Modifica fondo',
-    sf_fund_name_label:'Nome del fondo',sf_fund_name_ph:'es. Fondo vacanze',
+    sf_modal_new:'🏺 Nuovo obiettivo di risparmio',sf_modal_edit:'✏️ Modifica obiettivo',
+    sf_fund_name_label:'Nome dell\'obiettivo',sf_fund_name_ph:'es. Vacanze estive',
     sf_icon_label:'Icona',sf_target_amount_label:'Importo obiettivo',sf_monthly_label:'Contributo mensile',sf_monthly_hint:'Quanto entra ogni mese. Lascia vuoto l’obiettivo per una meta aperta.',
     sf_currently_saved_label:'Già risparmiato',sf_target_date_label:'Data obiettivo',
     sf_fund_name_hint:'Un nome breve per ciò che stai risparmiando, come "Vacanze estive" o "Nuovo laptop".',
-    sf_icon_hint:"Scegli un'icona per far risaltare questo fondo a colpo d'occhio.",
+    sf_icon_hint:'Scegli un\'icona per far risaltare questo obiettivo a colpo d\'occhio.',
     sf_target_amount_hint:"L'importo totale di cui hai bisogno per raggiungere questo obiettivo.",
     sf_currently_saved_hint:'Quanto hai già messo da parte per questo obiettivo, se presente.',
     sf_target_date_hint:'Entro quando vuoi raggiungere il tuo obiettivo - usato per calcolare quanto risparmiare ogni mese.',
-    sf_create_btn:'Crea fondo',
-    help_sf_intro:"Un fondo di accantonamento è denaro messo da parte in anticipo per una grande spesa pianificata - nessuna sorpresa spiacevole all'arrivo della bolletta.",
+    sf_create_btn:'Crea obiettivo',
+    help_sf_intro:"Un obiettivo di risparmio è denaro messo da parte in anticipo per una grande spesa pianificata - nessuna sorpresa spiacevole all'arrivo della bolletta.",
     help_sf_how_to_h:'Come usarlo',
-    help_sf_step1:'Clicca su + Aggiungi fondo',
-    help_sf_step2:'Dai un nome al tuo fondo (es. "Vacanze estive"), scegli un\'icona',
+    help_sf_step1:'Clicca su + Aggiungi obiettivo',
+    help_sf_step2:'Dai un nome al tuo obiettivo (es. "Vacanze estive"), scegli un\'icona',
     help_sf_step3:'Imposta un importo obiettivo (quanto ti serve in totale)',
     help_sf_step4:'Imposta una data obiettivo (quando hai bisogno dei soldi)',
     help_sf_step5:'Inserisci quanto hai già risparmiato',
@@ -3236,7 +3262,7 @@ const TRANSLATIONS = {
     help_tx_intro:"Ogni movimento di denaro va qui. I tuoi importi effettivi del budget e il pannello si aggiornano automaticamente ogni volta che ne aggiungi uno.",
     help_tx_adding_h:'Aggiungere una transazione',
     help_tx_step1:'Scegli una Data - clicca sul campo data per aprire il calendario',
-    help_tx_step2:'Scegli un tipo: Entrata, Spesa, Bolletta, Risparmio, Debito, Abbonamento o Fondo dedicato',
+    help_tx_step2:'Scegli un tipo: Entrata, Spesa, Bolletta, Risparmio, Debito, Abbonamento o Obiettivo di risparmio',
     help_tx_step3:'Seleziona la Categoria corrispondente (configurata nella scheda Budget)',
     help_tx_step4:"Inserisci l'Importo e una descrizione opzionale",
     help_tx_step5:'Clicca su Aggiungi',
@@ -3329,7 +3355,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transazione aggiunta \u2713',toast_tx_updated:'Aggiornato \u2713',toast_tx_deleted:'Eliminato',
     toast_period_updated:'Periodo aggiornato \u2713',toast_period_error:'La data di fine deve essere successiva alla data di inizio',
     toast_currency_updated:'Valuta aggiornata \u2713',toast_imported:'{0} importato/i \u2713',
-    toast_fund_created:'Fondo creato \u2713',toast_fund_updated:'Fondo aggiornato \u2713',
+    toast_fund_created:'Obiettivo creato ✓',toast_fund_updated:'Obiettivo aggiornato ✓',
     toast_fund_contrib:'{amt} aggiunto a {name} \u2713',
     toast_sub_added:'Abbonamento aggiunto \u2713',toast_sub_updated:'Abbonamento aggiornato \u2713',
     toast_alloc_enabled:'Distribuzione attivata \u2713',toast_alloc_disabled:'Distribuzione disattivata',
@@ -3338,7 +3364,7 @@ const TRANSLATIONS = {
     confirm_remove_cat:'Rimuovere questa categoria?',bud_edit_title:'\u270f\ufe0f Modifica categoria',bud_name_required:'Assegna un nome alla categoria.',bud_name_taken:'Un\u2019altra categoria di questa sezione usa gi\u00e0 questo nome.',bud_expected_invalid:'Inserisci un importo previsto pari o superiore a 0.',bud_due_day_invalid:'Inserisci un giorno di scadenza tra 1 e 31, oppure lascia vuoto.',confirm_delete_all_tx:'Eliminare TUTTE le transazioni? Questa azione \u00e8 irreversibile.',
     confirm_remove_cat_with_tx:'{0} transazione/i esistente/i usa/usano questa categoria. La manterranno come etichetta, ma non sar\u00e0 pi\u00f9 monitorata nel tuo budget. Eliminare comunque?',
     confirm_delete_tx:'Eliminare questa transazione?',confirm_remove_debt:'Rimuovere questo debito?',
-    confirm_delete_fund:'Eliminare questo fondo?',confirm_remove_sub:'Rimuovere questo abbonamento?',
+    confirm_delete_fund:'Eliminare questo obiettivo?',confirm_remove_sub:'Rimuovere questo abbonamento?',
     confirm_reset_1:'Sei sicuro? Tutti i dati verranno eliminati definitivamente.',
     confirm_reset_2:'Ultima possibilit\u00e0 - non \u00e8 reversibile. Continuare?',
     sett_upcoming_title:'📅 Finestra in arrivo',sett_upcoming_desc:'Scegli con quanti giorni di anticipo la lista In arrivo della dashboard deve mostrare gli eventi.',sett_upcoming_label:'Giorni di anticipo',
@@ -3362,7 +3388,7 @@ const TRANSLATIONS = {
     recurring_freq:'Frequenza',freq_daily:'Giornaliero',freq_weekly:'Settimanale',
     freq_monthly:'Mensile',freq_quarterly:'Trimestrale',freq_annual:'Annuale',
     recurring_next_due:'Prossima scadenza',recurring_generated:'{0} nuove transazioni automatizzate',
-    recurring_remove:'Rimuovi regola',recurring_paused:'In pausa',recurring_active:'Attivo',recurring_saved:'Transazione automatica salvata ✓',dpc_add_debt_title:'Aggiungi debito',dpc_edit_debt_title:'Modifica debito',debt_due_day_modal_hint:'Il giorno del mese in cui è dovuto questo pagamento',toast_debt_added:'Debito aggiunto',toast_debt_updated:'Debito aggiornato',sf_billing_day_label:'Giorno di scadenza',sf_billing_day_hint:'Il giorno del mese in cui il contributo viene registrato automaticamente',sf_error_required:'Compila tutti i campi obbligatori',bill_paid_modal_title:'Segna bolletta come pagata',bill_paid_amount_label:'Importo pagato',bill_paid_amount_hint:"Quanto hai effettivamente pagato - viene registrato come transazione così la tua cronologia di spesa resta accurata, anche se diverso dall'importo previsto.",bill_paid_save_btn:'Registra pagamento',bill_paid_budgeted_hint:'Preventivato: {0}',toast_bill_marked_paid:'Pagamento registrato',sub_active:'Attivo',sub_paused:'In pausa',sub_desc:'Tieni traccia di ogni pagamento ricorrente e scopri il tuo costo annuale reale. Metti in pausa gli abbonamenti che non usi per tenere sotto controllo le spese.',sub_add_btn:'+ Aggiungi bolletta',sub_add_title:'Aggiungi bolletta',sub_edit_title:'Modifica bolletta',sub_empty_title:'Ancora nessuna bolletta.',sub_empty_sub:'Aggiungi i tuoi pagamenti ricorrenti - Netflix, Spotify, palestra, ecc.',sub_sum_monthly:'Totale mensile',sub_sum_annual:'Totale annuale',sub_by_category:'Per categoria',sub_per_month:'/mese',sub_next_label:'Prossimo',sub_name_label:'Nome',bill_kind_label:'Tipo',bill_kind_bill:'Bolletta',bill_kind_sub:'Abbonamento',sub_name_ph:'es. Netflix',sub_amount_label:'Importo',sub_freq_label:'Frequenza di fatturazione',sub_freq_monthly:'Mensile',sub_freq_annual:'Annuale',sub_freq_quarterly:'Trimestrale',sub_freq_weekly:'Settimanale',sub_unit_month:'mese',sub_unit_year:'anno',sub_unit_quarter:'trimestre',sub_cat_label:'Categoria',sub_date_label:'Data di scadenza',sub_name_hint:'Il servizio o fornitore di questo pagamento, come "Netflix" o "Abbonamento palestra".',sub_amount_hint:'Quanto ti viene addebitato a ogni ciclo di fatturazione.',sub_freq_hint:'Con quale frequenza questo abbonamento ti addebita.',sub_cat_hint:'Raggruppa questo abbonamento per il grafico delle categorie.',sub_date_hint:'La prossima data in cui questo abbonamento ti addebiterà. Appare nel calendario intelligente.',alloc_label_hint:'Etichetta questo come Bisogno, Desiderio o Risparmio così conta nelle tue categorie di distribuzione.',sub_cat_entertainment:'Intrattenimento',sub_cat_productivity:'Produttività',sub_cat_health:'Salute e fitness',sub_cat_food:'Cibo e bevande',sub_cat_cloud:'Archiviazione cloud',sub_cat_finance:'Finanza',sub_cat_education:'Istruzione',sub_cat_gaming:'Videogiochi',sub_cat_news:'Notizie e media',sub_cat_other:'Altro',help_sub_intro:"Tieni traccia di ogni pagamento ricorrente e scopri il tuo costo mensile e annuale reale. Gli abbonamenti che silenziosamente prosciugano il tuo conto sono facili da perdere di vista - questo li tiene visibili.",help_sub_how_h:'Aggiungere un abbonamento',help_sub_step1:'Clicca su + Aggiungi abbonamento',help_sub_step2:'Inserisci nome, importo e frequenza di fatturazione (mensile, annuale, trimestrale, settimanale)',help_sub_step3:'Scegli una categoria per raggruppare abbonamenti simili',help_sub_step4:'Imposta la prossima data di fatturazione - apparirà nel calendario intelligente',help_sub_monthly_h:'Equivalente mensile',help_sub_monthly_p:"Gli abbonamenti annuali e trimestrali vengono convertiti in un costo mensile così puoi vedere la tua spesa mensile reale a colpo d'occhio.",help_sub_pause_h:'Mettere in pausa gli abbonamenti',help_sub_pause_p:"Disattiva l'interruttore Attivo di un abbonamento che non stai usando. Non verrà conteggiato nei totali finché non lo riattivi.",help_sub_price_h:'Cronologia prezzi',help_sub_price_p:'Quando cambi il prezzo di un abbonamento, viene registrato automaticamente. Una piccola ↑ o ↓ accanto all\'importo mostra la modifica più recente - passaci sopra per vedere la cronologia completa.',help_sub_chart_h:'Grafico per categoria',help_sub_chart_p:'Il grafico a ciambella mostra come si distribuisce la spesa per abbonamenti tra le categorie - passa sopra un segmento per i dettagli.',help_sub_tip:'💡 Attiva "Automatizza" su un abbonamento perché venga aggiunto automaticamente alle tue transazioni a ogni ciclo di fatturazione.',automate_auto_pay:'Pagamento auto',sf_auto_contribute:'Auto-contributo',sf_auto_need_amount:'Aggiungi prima un importo e una data obiettivo',sf_auto_set:'Contributo mensile: {0}',automate_label:'Automatizza',automate_hint:'Lo aggiunge automaticamente alle transazioni secondo la pianificazione',automate_hint_off:"Attiva l'Automazione nelle Impostazioni per usarlo",automate_th:'Pagamento auto',automate_need_amount:'Imposta prima un pagamento minimo',automate_payment_word:'pagamento',automate_linked:'Transazione automatica collegata',sf_contribution_label:'Contributo mensile',sf_contribution_hint:'Registrato automaticamente ogni mese per far crescere questo fondo',sett_automation_h:'Automazione',sett_automation_desc:'Interruttore principale delle transazioni automatiche. Se disattivato, non vengono generate transazioni pianificate e le opzioni di automazione sono disattivate.',sett_automation_toggle:'Transazioni automatiche',sett_automation_hint:'Si applica a transazioni, abbonamenti, fondi e debiti',
+    recurring_remove:'Rimuovi regola',recurring_paused:'In pausa',recurring_active:'Attivo',recurring_saved:'Transazione automatica salvata ✓',dpc_add_debt_title:'Aggiungi debito',dpc_edit_debt_title:'Modifica debito',debt_due_day_modal_hint:'Il giorno del mese in cui è dovuto questo pagamento',toast_debt_added:'Debito aggiunto',toast_debt_updated:'Debito aggiornato',sf_billing_day_label:'Giorno di scadenza',sf_billing_day_hint:'Il giorno del mese in cui il contributo viene registrato automaticamente',sf_error_required:'Compila tutti i campi obbligatori',bill_paid_modal_title:'Segna bolletta come pagata',bill_paid_amount_label:'Importo pagato',bill_paid_amount_hint:"Quanto hai effettivamente pagato - viene registrato come transazione così la tua cronologia di spesa resta accurata, anche se diverso dall'importo previsto.",bill_paid_save_btn:'Registra pagamento',bill_paid_budgeted_hint:'Preventivato: {0}',toast_bill_marked_paid:'Pagamento registrato',sub_active:'Attivo',sub_paused:'In pausa',sub_desc:'Tieni traccia di ogni pagamento ricorrente e scopri il tuo costo annuale reale. Metti in pausa gli abbonamenti che non usi per tenere sotto controllo le spese.',sub_add_btn:'+ Aggiungi bolletta',sub_add_title:'Aggiungi bolletta',sub_edit_title:'Modifica bolletta',sub_empty_title:'Ancora nessuna bolletta.',sub_empty_sub:'Aggiungi i tuoi pagamenti ricorrenti - Netflix, Spotify, palestra, ecc.',sub_sum_monthly:'Totale mensile',sub_sum_annual:'Totale annuale',sub_by_category:'Per categoria',sub_per_month:'/mese',sub_next_label:'Prossimo',sub_name_label:'Nome',bill_kind_label:'Tipo',bill_kind_bill:'Bolletta',bill_kind_sub:'Abbonamento',sub_name_ph:'es. Netflix',sub_amount_label:'Importo',sub_freq_label:'Frequenza di fatturazione',sub_freq_monthly:'Mensile',sub_freq_annual:'Annuale',sub_freq_quarterly:'Trimestrale',sub_freq_weekly:'Settimanale',sub_unit_month:'mese',sub_unit_year:'anno',sub_unit_quarter:'trimestre',sub_cat_label:'Categoria',sub_date_label:'Data di scadenza',sub_name_hint:'Il servizio o fornitore di questo pagamento, come "Netflix" o "Abbonamento palestra".',sub_amount_hint:'Quanto ti viene addebitato a ogni ciclo di fatturazione.',sub_freq_hint:'Con quale frequenza questo abbonamento ti addebita.',sub_cat_hint:'Raggruppa questo abbonamento per il grafico delle categorie.',sub_date_hint:'La prossima data in cui questo abbonamento ti addebiterà. Appare nel calendario intelligente.',alloc_label_hint:'Etichetta questo come Bisogno, Desiderio o Risparmio così conta nelle tue categorie di distribuzione.',sub_cat_entertainment:'Intrattenimento',sub_cat_productivity:'Produttività',sub_cat_health:'Salute e fitness',sub_cat_food:'Cibo e bevande',sub_cat_cloud:'Archiviazione cloud',sub_cat_finance:'Finanza',sub_cat_education:'Istruzione',sub_cat_gaming:'Videogiochi',sub_cat_news:'Notizie e media',sub_cat_other:'Altro',help_sub_intro:"Tieni traccia di ogni pagamento ricorrente e scopri il tuo costo mensile e annuale reale. Gli abbonamenti che silenziosamente prosciugano il tuo conto sono facili da perdere di vista - questo li tiene visibili.",help_sub_how_h:'Aggiungere un abbonamento',help_sub_step1:'Clicca su + Aggiungi abbonamento',help_sub_step2:'Inserisci nome, importo e frequenza di fatturazione (mensile, annuale, trimestrale, settimanale)',help_sub_step3:'Scegli una categoria per raggruppare abbonamenti simili',help_sub_step4:'Imposta la prossima data di fatturazione - apparirà nel calendario intelligente',help_sub_monthly_h:'Equivalente mensile',help_sub_monthly_p:"Gli abbonamenti annuali e trimestrali vengono convertiti in un costo mensile così puoi vedere la tua spesa mensile reale a colpo d'occhio.",help_sub_pause_h:'Mettere in pausa gli abbonamenti',help_sub_pause_p:"Disattiva l'interruttore Attivo di un abbonamento che non stai usando. Non verrà conteggiato nei totali finché non lo riattivi.",help_sub_price_h:'Cronologia prezzi',help_sub_price_p:'Quando cambi il prezzo di un abbonamento, viene registrato automaticamente. Una piccola ↑ o ↓ accanto all\'importo mostra la modifica più recente - passaci sopra per vedere la cronologia completa.',help_sub_chart_h:'Grafico per categoria',help_sub_chart_p:'Il grafico a ciambella mostra come si distribuisce la spesa per abbonamenti tra le categorie - passa sopra un segmento per i dettagli.',help_sub_tip:'💡 Attiva "Automatizza" su un abbonamento perché venga aggiunto automaticamente alle tue transazioni a ogni ciclo di fatturazione.',automate_auto_pay:'Pagamento auto',sf_auto_contribute:'Auto-contributo',sf_auto_need_amount:'Aggiungi prima un importo e una data obiettivo',sf_auto_set:'Contributo mensile: {0}',automate_label:'Automatizza',automate_hint:'Lo aggiunge automaticamente alle transazioni secondo la pianificazione',automate_hint_off:"Attiva l'Automazione nelle Impostazioni per usarlo",automate_th:'Pagamento auto',automate_need_amount:'Imposta prima un pagamento minimo',automate_payment_word:'pagamento',automate_linked:'Transazione automatica collegata',sf_contribution_label:'Contributo mensile',sf_contribution_hint:'Registrato automaticamente ogni mese per far crescere questo obiettivo',sett_automation_h:'Automazione',sett_automation_desc:'Interruttore principale delle transazioni automatiche. Se disattivato, non vengono generate transazioni pianificate e le opzioni di automazione sono disattivate.',sett_automation_toggle:'Transazioni automatiche',sett_automation_hint:'Si applica a transazioni, abbonamenti, fondi e debiti',
     tx_type_sinking_fund:'Obiettivo di risparmio',
     help_dash_alloc_h:'Pannello distribuzione budget',
     help_dash_alloc_what_h:'Cos\u2019è',
@@ -3444,8 +3470,8 @@ const TRANSLATIONS = {
     guide_dashboard_big:"La Dashboard è il tuo centro di controllo - tutto ciò che conta per il tuo denaro vive in questa unica schermata, dal saldo finale a quello che ti aspetta questa settimana.",
     guide_dashboard_step1:"Controlla le schede riepilogo in alto per le tue <strong>Entrate totali</strong>, le tue <strong>Uscite totali</strong>, il tuo <strong>Tasso di risparmio</strong> e il tuo <strong>Avanzo netto</strong>.",
     guide_dashboard_step2:"Consulta l'elenco <strong>In arrivo</strong> per vedere tutto ciò che scade nei prossimi 7 giorni - bollette, pagamenti di debiti e abbonamenti, tutto in un unico posto.",
-    guide_dashboard_step3:"Controlla i tuoi riepiloghi di <strong>Rimborso debiti</strong> e <strong>Fondi accantonamento</strong> per vedere a colpo d'occhio i progressi verso i tuoi obiettivi più grandi.",
-    guide_dashboard_connect1:"Ogni numero qui proviene in tempo reale da Transazioni, Budget, Rimborso debiti, Fondi accantonamento e Abbonamenti - non c'è nulla da calcolare a mano.",
+    guide_dashboard_step3:"Controlla i tuoi riepiloghi di <strong>Rimborso debiti</strong> e <strong>Obiettivi di risparmio</strong> per vedere a colpo d'occhio i progressi verso i tuoi obiettivi più grandi.",
+    guide_dashboard_connect1:"Ogni numero qui proviene in tempo reale da Transazioni, Budget, Rimborso debiti, Obiettivi di risparmio e Abbonamenti - non c'è nulla da calcolare a mano.",
     guide_dashboard_connect2:"L'Avanzo netto include la tua impostazione di <strong>Riporto</strong>, così i soldi non spesi del periodo precedente possono ripercuotersi automaticamente.",
     guide_dashboard_connect3:"Se qualcosa non torna, vale quasi sempre la pena controllare la pagina di origine - la Dashboard è uno specchio, non una fonte.",
     guide_dashboard_tip:"Dedica 30 secondi ogni mattina a scorrere la Dashboard - è il modo più veloce per notare una bolletta o un pagamento di debito prima che sia in ritardo.",guide_dashboard_usecase_h:'Un esempio pratico',guide_dashboard_usecase_p:"<p><strong>Maria</strong> apre Ezzo Budget il giorno di paga. Dà un'occhiata alla Dashboard e vede che il suo saldo netto per questo periodo è di 420 € - abbastanza per aggiungere qualcosa in più al suo fondo di emergenza.</p><p>Il pannello del flusso di cassa mostra che ha già superato il budget per i Ristoranti, così quella sera rinuncia a ordinare da asporto invece di scoprirlo a fine mese.</p>",
@@ -3484,14 +3510,14 @@ const TRANSLATIONS = {
     guide_debt_connect3:"Pagare più del minimo qui - anche solo un po' di più - è di solito la leva più grande per accorciare i tempi di rimborso.",
     guide_debt_tip:"Elenca anche i debiti piccoli, come un prestito familiare - non conta l'importo, ma sapere tutto ciò che devi in un unico posto.",guide_debt_usecase_h:'Un esempio pratico',guide_debt_usecase_p:"<p><strong>Sam</strong> ha tre debiti: una carta di credito, un prestito auto e un piccolo prestito personale. Li inserisce tutti e tre, sceglie Valanga in modo che la carta con il tasso più alto venga saldata per prima, e vede subito la sua reale data di estinzione e gli interessi totali.</p><p>Quando riceve un bonus dal lavoro, lo digita nel campo <strong>Extra/mese</strong> proprio di quella carta invece che nel fondo comune dei pagamenti extra, così il bonus va esattamente dove vuole lui - poi apre il piano ℹ️ per vedere mese per mese quanto prima sarà libero dai debiti.</p>",
     guide_sinking_title:'Obiettivi di risparmio',
-    guide_sinking_big:"Un fondo di accantonamento è denaro che metti da parte poco alla volta per qualcosa di specifico che sai che arriverà - una vacanza, un nuovo laptop, dei regali - così non diventa mai un'emergenza quando la spesa arriva davvero.",
-    guide_sinking_step1:"Crea un fondo e dagli un <strong>Importo obiettivo</strong> e, se vuoi, una data obiettivo.",
+    guide_sinking_big:"Un obiettivo di risparmio è denaro che metti da parte poco alla volta per qualcosa di specifico che sai che arriverà - una vacanza, un nuovo laptop, dei regali - così non diventa mai un'emergenza quando la spesa arriva davvero.",
+    guide_sinking_step1:"Crea un obiettivo e dagli un <strong>Importo obiettivo</strong> e, se vuoi, una data obiettivo.",
     guide_sinking_step2:"Aggiungi contributi ogni volta che metti da parte denaro per esso, e guarda la <strong>barra di progresso</strong> riempirsi.",
-    guide_sinking_step3:"Una volta che un fondo raggiunge il suo obiettivo, sei pronto per quella spesa senza toccare il tuo budget abituale.",
-    guide_sinking_connect1:"I fondi di accantonamento sono separati dalla tua normale categoria Risparmi - servono per obiettivi specifici e pianificati invece che per un risparmio generico.",
+    guide_sinking_step3:"Una volta che un obiettivo raggiunge il suo importo, sei pronto per quella spesa senza toccare il tuo budget abituale.",
+    guide_sinking_connect1:"Gli obiettivi di risparmio sono separati dalla tua normale categoria Risparmi - servono per obiettivi specifici e pianificati invece che per un risparmio generico.",
     guide_sinking_connect2:"La tua Dashboard mostra un riepilogo dei progressi di tutti i tuoi fondi in un unico posto.",
-    guide_sinking_connect3:"Contribuire regolarmente a un fondo, anche con un piccolo importo, trasforma una grande spesa in qualcosa che non fa mai deragliare il tuo budget.",
-    guide_sinking_tip:"Suddividi i grandi obiettivi in importi mensili tondi - è molto più facile impegnarsi per 50 € al mese che per \"risparmiare per una vacanza prima o poi\".",guide_sinking_usecase_h:'Un esempio pratico',guide_sinking_usecase_p:"<p><strong>Elena</strong> sta pianificando una vacanza da 1.200 € per il prossimo luglio. Crea un Fondo di accantonamento con quell'importo e data obiettivo, e Ezzo Budget le dice che deve risparmiare 150 €/mese per arrivarci.</p><p>Attiva <strong>Automatizza</strong> in modo che quell'importo venga registrato come contributo ogni mese senza doverselo ricordare.</p>",
+    guide_sinking_connect3:"Contribuire regolarmente a un obiettivo, anche con un piccolo importo, trasforma una grande spesa in qualcosa che non fa mai deragliare il tuo budget.",
+    guide_sinking_tip:"Suddividi i grandi obiettivi in importi mensili tondi - è molto più facile impegnarsi per 50 € al mese che per \"risparmiare per una vacanza prima o poi\".",guide_sinking_usecase_h:'Un esempio pratico',guide_sinking_usecase_p:"<p><strong>Elena</strong> sta pianificando una vacanza da 1.200 € per il prossimo luglio. Crea un Obiettivo di risparmio con quell'importo e data obiettivo, e Ezzo Budget le dice che deve risparmiare 150 €/mese per arrivarci.</p><p>Attiva <strong>Automatizza</strong> in modo che quell'importo venga registrato come contributo ogni mese senza doverselo ricordare.</p>",
     guide_subscriptions_title:'Bollette',
     guide_subscriptions_big:"Gli abbonamenti tendono ad accumularsi silenziosamente - questa pagina elenca ogni servizio ricorrente che paghi in un unico posto, così nulla continua ad addebitarti senza che tu lo sappia.",
     guide_subscriptions_step1:"Aggiungi ogni abbonamento con il suo costo e la frequenza di fatturazione (mensile, annuale, ecc.).",
@@ -3516,9 +3542,9 @@ const TRANSLATIONS = {
     guide_rollover_step2:"Attivalo così qualsiasi importo residuo del periodo precedente si riporta automaticamente su quello nuovo.",
     guide_rollover_step3:"Controlla l'Avanzo netto della tua Dashboard - ora includerà quell'importo riportato.",
     guide_rollover_connect1:"Il Riporto funziona direttamente a partire dal tuo Avanzo netto del periodo precedente - meglio rispetti il tuo budget, più avrà da riportare.",
-    guide_rollover_connect2:"Questo è diverso dai Fondi accantonamento, che servono per obiettivi futuri pianificati - il Riporto riguarda solo il non perdere traccia del denaro che hai già.",
+    guide_rollover_connect2:"Questo è diverso dagli Obiettivi di risparmio, che servono per spese future pianificate - il Riporto riguarda solo il non perdere traccia del denaro che hai già.",
     guide_rollover_connect3:"Una serie di buoni mesi si accumula bene qui, poiché l'avanzo di ogni periodo si aggiunge al successivo.",
-    guide_rollover_tip:"Se un grande importo di riporto ti scotta in tasca, valuta di spostarne una parte in un Fondo di accantonamento così è destinato a qualcosa di specifico.",guide_rollover_usecase_h:'Un esempio pratico',guide_rollover_usecase_p:"<p>Alla fine di giugno, a <strong>Noor</strong> restano 180 € dopo aver coperto tutto. Poiché il <strong>Riporto automatico</strong> è attivo, non appena sposta il suo periodo di budget a luglio, quei 180 € compaiono automaticamente come suo riporto - aggiunti direttamente al suo saldo netto, invece di doverli calcolare e reinserire lei stessa.</p>",
+    guide_rollover_tip:"Se un grande importo di riporto ti scotta in tasca, valuta di spostarne una parte in un Obiettivo di risparmio così è destinato a qualcosa di specifico.",guide_rollover_usecase_h:'Un esempio pratico',guide_rollover_usecase_p:"<p>Alla fine di giugno, a <strong>Noor</strong> restano 180 € dopo aver coperto tutto. Poiché il <strong>Riporto automatico</strong> è attivo, non appena sposta il suo periodo di budget a luglio, quei 180 € compaiono automaticamente come suo riporto - aggiunti direttamente al suo saldo netto, invece di doverli calcolare e reinserire lei stessa.</p>",
     guide_automation_title:"Automazione",
     guide_automation_big:"L'Automazione prende le regole ricorrenti che hai configurato in Transazioni e le registra automaticamente per te, così le tue bollette, stipendi e abbonamenti abituali appaiono esattamente in tempo senza che tu debba fare nulla.",
     guide_automation_step1:"Apri le <strong>Impostazioni</strong> e trova la scheda <strong>Automazione</strong>.",
@@ -3535,7 +3561,7 @@ const TRANSLATIONS = {
     guide_penny_step3:"Fai una domanda con parole tue, tipo \"qual è la mia categoria di spesa più grande questo mese?\", oppure tocca uno dei pulsanti di domanda rapida per iniziare.",
     guide_penny_step4:"Attiva o disattiva la sua risposta vocale con l'icona altoparlante se preferisci ascoltare invece di leggere.",
     guide_penny_connect1:"Ezzo può solo leggere i tuoi dati di budget per rispondere alle domande - non può mai aggiungere, modificare o eliminare nulla per te.",
-    guide_penny_connect2:"Attinge direttamente da Dashboard, Transazioni, Rimborso debiti, Abbonamenti e Fondi accantonamento, così le sue risposte corrispondono sempre a ciò che vedresti tu stesso su quelle pagine.",
+    guide_penny_connect2:"Attinge direttamente da Dashboard, Transazioni, Rimborso debiti, Abbonamenti e Obiettivi di risparmio, così le sue risposte corrispondono sempre a ciò che vedresti tu stesso su quelle pagine.",
     guide_penny_connect3:"La tua chiave API viene cifrata e conservata solo sul tuo dispositivo - non viene mai inviata da nessuna parte tranne direttamente a Google quando fai una domanda a Ezzo.",
     guide_penny_tip:"Inizia con uno dei pulsanti di domanda rapida la prima volta - è il modo più veloce per vedere cosa sa fare prima di fare domande tue.",guide_penny_usecase_h:'Un esempio pratico',guide_penny_usecase_p:'<p>Ogni volta che <strong>Diane</strong> non è sicura di dove sia finito il suo denaro questo mese, apre Ezzo e chiede "perché le mie spese sono più alte del solito questo mese?"</p><p>Ezzo esamina le sue transazioni reali e le dà una risposta in linguaggio semplice - segnalando, ad esempio, che la spesa per i Ristoranti è raddoppiata - invece di doversi mettere a scavare da sola nell\'elenco delle transazioni.</p>',
     guide_settings_title:"Impostazioni",
@@ -3553,7 +3579,7 @@ const TRANSLATIONS = {
     upg_chip_tx:'{0} / {0} transazioni gratuite utilizzate',
     upg_chip_recurring:'{0} / {0} transazioni automatiche gratuite utilizzate',
     upg_chip_subs:'{0} / {0} abbonamento gratuito utilizzato',
-    upg_chip_sinking:'{0} / {0} fondo di accantonamento gratuito utilizzato',
+    upg_chip_sinking:'{0} / {0} obiettivo di risparmio gratuito utilizzato',
     upg_chip_debts:'{0} / {0} debito gratuito utilizzato',
     upg_chip_cat:'{0} / {0} categorie {1} gratuite utilizzate',
     upg_chip_limit:'Limite di prova gratuita raggiunto',
@@ -3563,7 +3589,7 @@ const TRANSLATIONS = {
     upg_sub:'Hai raggiunto il limite della prova gratuita. Esegui l’upgrade una volta per rimuovere ogni limite. Mai un abbonamento.',
     upg_feat_unlimited_tx_html:'Transazioni &amp; transazioni automatiche <strong>illimitate</strong>',
     upg_feat_unlimited_cat_html:'Categorie di budget <strong>illimitate</strong> in ogni sezione',
-    upg_feat_unlimited_other_html:'Debiti, abbonamenti &amp; fondi di accantonamento <strong>illimitati</strong>',
+    upg_feat_unlimited_other_html:'Debiti, abbonamenti &amp; obiettivi di risparmio <strong>illimitati</strong>',
     upg_feat_onetime:'Pagamento unico · aggiornamenti gratuiti a vita',
     upg_price_tag:'una tantum',upg_price_note:'Nessun abbonamento',
     upg_cta_ubp:'Sblocca Ultimate per {0}',
@@ -3630,7 +3656,7 @@ const TRANSLATIONS = {
     description:'Opis',date:'Data',type:'Typ',
     add_category:'+ Dodaj kategorię',no_transactions:'Brak transakcji.',
     upgrade_title:'Gotowy na doświadczenie pro?',
-    upgrade_desc:'Odblokuj kalkulator spłaty długów, fundusze celowe, inteligentny kalendarz i śledzenie subskrypcji.',
+    upgrade_desc:'Odblokuj kalkulator spłaty długów, cele oszczędnościowe, inteligentny kalendarz i śledzenie subskrypcji.',
     upgrade_now:'Ulepsz teraz →',
     mon:'Pon',tue:'Wt',wed:'Śr',thu:'Czw',fri:'Pt',sat:'Sob',sun:'Nd',
     quick_presets:'Szybki wybór:',select_currency:'Wybierz walutę',select_language:'Wybierz język',
@@ -3653,7 +3679,7 @@ const TRANSLATIONS = {
     cal_no_events_month:'Brak zdarzeń w tym miesiącu.',
     cal_no_events_sub:'Dodaj rachunki, długi lub subskrypcje, aby zobaczyć je tutaj.',
     cal_event_one:'zdarzenie',cal_event_many:'zdarzeń',cal_clear:'Wyczyść ×',
-    cal_leg_bill:'Rachunek',cal_leg_debt:'Dług',cal_leg_sub:'Subskrypcja',cal_leg_tx:'Transakcja',cal_leg_sinking:'Fundusz celowy',cal_leg_goal:'Data celu',cal_leg_auto:'Automatyczne',
+    cal_leg_bill:'Rachunek',cal_leg_debt:'Dług',cal_leg_sub:'Subskrypcja',cal_leg_tx:'Transakcja',cal_leg_sinking:'Cel oszczędnościowy',cal_leg_goal:'Data celu',cal_leg_auto:'Automatyczne',
     cal_paid:'✓ Zapłacono',cal_unpaid:'Niezapłacone',cal_mark_paid:'Oznacz jako zapłacone',
     help_cal_intro:'Inteligentny Kalendarz łączy wszystkie Twoje zobowiązania finansowe w jednym widoku miesięcznym - aktualizowany automatycznie w miarę dodawania danych.',
     help_cal_ev_types_h:'Typy zdarzeń',
@@ -3665,27 +3691,27 @@ const TRANSLATIONS = {
     help_cal_nav_p:'Użyj ← Wstecz i Dalej →, aby przechodzić między miesiącami. Kliknij dowolny dzień, aby zobaczyć jego zdarzenia. Kliknij ponownie lub „Wyczyść ×", aby cofnąć zaznaczenie.',
     help_cal_paid_h:'Oznaczanie rachunków jako zapłaconych',help_cal_paid_p:'Kliknij dzień, aby rozwinąć jego zdarzenia. Każdy niezapłacony rachunek pokazuje tam pole „Oznacz jako zapłacone" - zaznacz je, aby zapisać rzeczywiście zapłaconą kwotę jako transakcję, bez konieczności przechodzenia do zakładki Budżet.',help_cal_tip:'💡 Ustaw daty płatności dla rachunków i długów, aby w pełni wykorzystać możliwości kalendarza.',
     sf_add_btn:'+ Dodaj cel',
-    sf_desc:'Fundusz celowy pozwala Ci stopniowo oszczędzać na duży przyszły wydatek - bez nieprzyjemnych niespodzianek. Ustal docelową kwotę i datę, a my powiemy Ci dokładnie, ile oszczędzać co miesiąc.',
+    sf_desc:'Cel oszczędnościowy pozwala Ci stopniowo oszczędzać na duży przyszły wydatek - bez nieprzyjemnych niespodzianek. Ustal docelową kwotę i datę, a my powiemy Ci dokładnie, ile oszczędzać co miesiąc.',
     sf_empty_title:'Brak celów oszczędnościowych.',
     sf_empty_sub:'Idealny na: wakacje, naprawy samochodu, wesela, nowy sprzęt, rachunki roczne.',
     sf_pct_complete:'ukończono',
     sf_save_prefix:'Oszczędź',sf_per_month:'/miesiąc',
     sf_mo_left_tpl:'{0} mies. pozostało',
     sf_total_contrib:'Łączne wymagane miesięczne wpłaty:',
-    sf_modal_new:'🏺 Nowy fundusz celowy',sf_modal_edit:'✏️ Edytuj fundusz',
-    sf_fund_name_label:'Nazwa funduszu',sf_fund_name_ph:'np. Fundusz wakacyjny',
+    sf_modal_new:'🏺 Nowy cel oszczędnościowy',sf_modal_edit:'✏️ Edytuj cel',
+    sf_fund_name_label:'Nazwa celu',sf_fund_name_ph:'np. Letnie wakacje',
     sf_icon_label:'Ikona',sf_target_amount_label:'Kwota docelowa',sf_monthly_label:'Miesięczna wpłata',sf_monthly_hint:'Ile wpływa co miesiąc. Zostaw cel pusty dla celu otwartego.',
     sf_currently_saved_label:'Już zaoszczędzono',sf_target_date_label:'Data docelowa',
     sf_fund_name_hint:'Krótka nazwa tego, na co oszczędzasz, np. "Wakacje letnie" lub "Nowy laptop".',
-    sf_icon_hint:'Wybierz ikonę, aby ten fundusz wyróżniał się na pierwszy rzut oka.',
+    sf_icon_hint:'Wybierz ikonę, aby ten cel wyróżniał się na pierwszy rzut oka.',
     sf_target_amount_hint:'Całkowita kwota potrzebna do osiągnięcia tego celu.',
     sf_currently_saved_hint:'Ile już odłożyłeś na ten cel, jeśli cokolwiek.',
     sf_target_date_hint:'Do kiedy chcesz osiągnąć swój cel - używane do obliczenia, ile oszczędzać miesięcznie.',
-    sf_create_btn:'Utwórz fundusz',
-    help_sf_intro:'Fundusz celowy to pieniądze odkładane z góry na duży zaplanowany wydatek - bez nieprzyjemnych niespodzianek, gdy przychodzi rachunek.',
+    sf_create_btn:'Utwórz cel',
+    help_sf_intro:'Cel oszczędnościowy to pieniądze odkładane z góry na duży zaplanowany wydatek - bez nieprzyjemnych niespodzianek, gdy przychodzi rachunek.',
     help_sf_how_to_h:'Jak go używać',
-    help_sf_step1:'Kliknij + Dodaj fundusz',
-    help_sf_step2:'Nazwij fundusz (np. „Letnie wakacje"), wybierz ikonę',
+    help_sf_step1:'Kliknij + Dodaj cel',
+    help_sf_step2:'Nazwij cel (np. „Letnie wakacje"), wybierz ikonę',
     help_sf_step3:'Ustaw kwotę docelową (ile łącznie potrzebujesz)',
     help_sf_step4:'Ustaw datę docelową (kiedy potrzebujesz pieniędzy)',
     help_sf_step5:'Podaj, ile już zaoszczędziłeś',
@@ -3796,7 +3822,7 @@ const TRANSLATIONS = {
     help_tx_intro:'Każdy ruch pieniędzy trafia tutaj. Twoje rzeczywiste kwoty budżetu i panel aktualizują się automatycznie za każdym razem, gdy dodajesz transakcję.',
     help_tx_adding_h:'Dodawanie transakcji',
     help_tx_step1:'Wybierz Datę - kliknij pole daty, aby otworzyć kalendarz',
-    help_tx_step2:'Wybierz typ: Przychód, Wydatek, Rachunek, Oszczędności, Dług, Subskrypcja lub Fundusz celowy',
+    help_tx_step2:'Wybierz typ: Przychód, Wydatek, Rachunek, Oszczędności, Dług, Subskrypcja lub Cel oszczędnościowy',
     help_tx_step3:'Wybierz pasującą Kategorię (skonfigurowaną w zakładce Budżet)',
     help_tx_step4:'Wprowadź Kwotę i opcjonalny opis',
     help_tx_step5:'Kliknij Dodaj',
@@ -3889,7 +3915,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transakcja dodana \u2713',toast_tx_updated:'Zaktualizowano \u2713',toast_tx_deleted:'Usuni\u0119to',
     toast_period_updated:'Okres zaktualizowany \u2713',toast_period_error:'Data ko\u0144cowa musi by\u0107 po dacie pocz\u0105tkowej',
     toast_currency_updated:'Waluta zaktualizowana \u2713',toast_imported:'Zaimportowano {0} \u2713',
-    toast_fund_created:'Fundusz utworzony \u2713',toast_fund_updated:'Fundusz zaktualizowany \u2713',
+    toast_fund_created:'Cel utworzony ✓',toast_fund_updated:'Cel zaktualizowany ✓',
     toast_fund_contrib:'Dodano {amt} do {name} \u2713',
     toast_sub_added:'Subskrypcja dodana \u2713',toast_sub_updated:'Subskrypcja zaktualizowana \u2713',
     toast_alloc_enabled:'Podzia\u0142 w\u0142\u0105czony \u2713',toast_alloc_disabled:'Podzia\u0142 wy\u0142\u0105czony',
@@ -3898,7 +3924,7 @@ const TRANSLATIONS = {
     confirm_remove_cat:'Usun\u0105\u0107 t\u0119 kategori\u0119?',bud_edit_title:'\u270f\ufe0f Edytuj kategori\u0119',bud_name_required:'Nadaj kategorii nazw\u0119.',bud_name_taken:'Inna kategoria w tej sekcji ju\u017c u\u017cywa tej nazwy.',bud_expected_invalid:'Podaj oczekiwan\u0105 kwot\u0119 0 lub wi\u0119cej.',bud_due_day_invalid:'Podaj dzień płatności od 1 do 31 albo zostaw puste.',confirm_delete_all_tx:'Usun\u0105\u0107 WSZYSTKIE transakcje? Tej operacji nie mo\u017cna cofn\u0105\u0107.',
     confirm_remove_cat_with_tx:'{0} istniej\u0105ca(-ych) transakcja(-i) u\u017cywa tej kategorii. Zachowaj\u0105 j\u0105 jako etykiet\u0119, ale nie b\u0119dzie ju\u017c \u015bledzona w Twoim bud\u017cecie. Usun\u0105\u0107 mimo to?',
     confirm_delete_tx:'Usun\u0105\u0107 t\u0119 transakcj\u0119?',confirm_remove_debt:'Usun\u0105\u0107 ten d\u0142ug?',
-    confirm_delete_fund:'Usun\u0105\u0107 ten fundusz?',confirm_remove_sub:'Usun\u0105\u0107 t\u0119 subskrypcj\u0119?',
+    confirm_delete_fund:'Usunąć ten cel?',confirm_remove_sub:'Usun\u0105\u0107 t\u0119 subskrypcj\u0119?',
     confirm_reset_1:'Jeste\u015b pewny? Wszystkie dane zostan\u0105 trwale usuni\u0119te.',
     confirm_reset_2:'Ostatnia szansa - tego nie mo\u017cna cofn\u0105\u0107. Kontynuowa\u0107?',
     sett_upcoming_title:'📅 Okno nadchodzących',sett_upcoming_desc:'Wybierz, z iloma dniami wyprzedzenia lista Nadchodzące na pulpicie ma wyświetlać zdarzenia.',sett_upcoming_label:'Dni wyprzedzenia',
@@ -3922,7 +3948,7 @@ const TRANSLATIONS = {
     recurring_freq:'Cz\u0119stotliwo\u015b\u0107',freq_daily:'Codziennie',freq_weekly:'Co tydzie\u0144',
     freq_monthly:'Co miesi\u0105c',freq_quarterly:'Co kwarta\u0142',freq_annual:'Co rok',
     recurring_next_due:'Nast\u0119pny termin',recurring_generated:'Zautomatyzowano {0} nowych transakcji',
-    recurring_remove:'Usu\u0144 regu\u0142\u0119',recurring_paused:'Wstrzymano',recurring_active:'Aktywna',recurring_saved:'Transakcja automatyczna zapisana ✓',dpc_add_debt_title:'Dodaj dług',dpc_edit_debt_title:'Edytuj dług',debt_due_day_modal_hint:'Dzień miesiąca, w którym przypada ta płatność',toast_debt_added:'Dług dodany',toast_debt_updated:'Dług zaktualizowany',sf_billing_day_label:'Dzień płatności',sf_billing_day_hint:'Dzień miesiąca, w którym wpłata jest księgowana automatycznie',sf_error_required:'Wypełnij wszystkie wymagane pola',bill_paid_modal_title:'Oznacz rachunek jako zapłacony',bill_paid_amount_label:'Zapłacona kwota',bill_paid_amount_hint:'Ile faktycznie zapłaciłeś - zostanie to zapisane jako transakcja, aby Twoja historia wydatków była dokładna, nawet jeśli różni się od zaplanowanej kwoty.',bill_paid_save_btn:'Zapisz płatność',bill_paid_budgeted_hint:'Zaplanowano: {0}',toast_bill_marked_paid:'Płatność zapisana',sub_active:'Aktywna',sub_paused:'Wstrzymana',sub_desc:'Śledź każdą powtarzającą się płatność i poznaj swój rzeczywisty roczny koszt. Wstrzymaj subskrypcje, z których nie korzystasz, aby kontrolować wydatki.',sub_add_btn:'+ Dodaj rachunek',sub_add_title:'Dodaj rachunek',sub_edit_title:'Edytuj rachunek',sub_empty_title:'Brak rachunków.',sub_empty_sub:'Dodaj swoje powtarzające się płatności - Netflix, Spotify, siłownia itp.',sub_sum_monthly:'Suma miesięczna',sub_sum_annual:'Suma roczna',sub_by_category:'Według kategorii',sub_per_month:'/miesiąc',sub_next_label:'Następna',sub_name_label:'Nazwa',bill_kind_label:'Typ',bill_kind_bill:'Rachunek',bill_kind_sub:'Subskrypcja',sub_name_ph:'np. Netflix',sub_amount_label:'Kwota',sub_freq_label:'Częstotliwość rozliczeń',sub_freq_monthly:'Miesięcznie',sub_freq_annual:'Rocznie',sub_freq_quarterly:'Kwartalnie',sub_freq_weekly:'Tygodniowo',sub_unit_month:'miesiąc',sub_unit_year:'rok',sub_unit_quarter:'kwartał',sub_cat_label:'Kategoria',sub_date_label:'Data płatności',sub_name_hint:'Usługa lub dostawca, którego dotyczy ta płatność, np. "Netflix" lub "Karnet na siłownię".',sub_amount_hint:'Ile zostaniesz obciążony w każdym cyklu rozliczeniowym.',sub_freq_hint:'Jak często ta subskrypcja Cię obciąża.',sub_cat_hint:'Grupuje tę subskrypcję na wykresie kategorii.',sub_date_hint:'Najbliższa data, kiedy ta subskrypcja Cię obciąży. Pojawia się w inteligentnym kalendarzu.',alloc_label_hint:'Oznacz to jako Potrzebę, Zachciankę lub Oszczędność, aby liczyło się do Twoich kategorii podziału.',sub_cat_entertainment:'Rozrywka',sub_cat_productivity:'Produktywność',sub_cat_health:'Zdrowie i fitness',sub_cat_food:'Jedzenie i napoje',sub_cat_cloud:'Chmura',sub_cat_finance:'Finanse',sub_cat_education:'Edukacja',sub_cat_gaming:'Gry',sub_cat_news:'Wiadomości i media',sub_cat_other:'Inne',help_sub_intro:'Śledź każdą powtarzającą się płatność i poznaj swój rzeczywisty miesięczny i roczny koszt. Subskrypcje, które po cichu obciążają konto, łatwo przeoczyć - dzięki temu pozostają widoczne.',help_sub_how_h:'Dodawanie subskrypcji',help_sub_step1:'Kliknij + Dodaj subskrypcję',help_sub_step2:'Wpisz nazwę, kwotę i częstotliwość rozliczeń (miesięcznie, rocznie, kwartalnie, tygodniowo)',help_sub_step3:'Wybierz kategorię, aby grupować podobne subskrypcje',help_sub_step4:'Ustaw datę następnego rozliczenia - pojawi się w inteligentnym kalendarzu',help_sub_monthly_h:'Odpowiednik miesięczny',help_sub_monthly_p:'Subskrypcje roczne i kwartalne są przeliczane na koszt miesięczny, dzięki czemu od razu widzisz swój rzeczywisty miesięczny wydatek.',help_sub_pause_h:'Wstrzymywanie subskrypcji',help_sub_pause_p:'Wyłącz przełącznik Aktywna przy subskrypcji, z której obecnie nie korzystasz. Nie będzie liczona w sumach, dopóki nie włączysz go ponownie.',help_sub_price_h:'Historia cen',help_sub_price_p:'Gdy zmienisz cenę subskrypcji, jest to zapisywane automatycznie. Małe ↑ lub ↓ obok kwoty pokazuje ostatnią zmianę - najedź, aby zobaczyć pełną historię.',help_sub_chart_h:'Wykres według kategorii',help_sub_chart_p:'Wykres kołowy pokazuje, jak Twoje wydatki na subskrypcje rozkładają się na kategorie - najedź na segment, aby zobaczyć szczegóły.',help_sub_tip:'💡 Włącz „Automatyzuj” przy subskrypcji, aby była automatycznie dodawana do transakcji w każdym cyklu rozliczeniowym.',automate_auto_pay:'Auto-płatność',sf_auto_contribute:'Auto-wpłata',sf_auto_need_amount:'Najpierw dodaj kwotę docelową i datę',sf_auto_set:'Miesięczna wpłata: {0}',automate_label:'Automatyzuj',automate_hint:'Dodaje to automatycznie do transakcji według harmonogramu',automate_hint_off:'Włącz Automatyzację w Ustawieniach, aby użyć',automate_th:'Auto-płatność',automate_need_amount:'Najpierw ustaw minimalną płatność',automate_payment_word:'płatność',automate_linked:'Powiązana transakcja automatyczna',sf_contribution_label:'Miesięczna wpłata',sf_contribution_hint:'Księgowana automatycznie co miesiąc, aby zwiększać ten fundusz',sett_automation_h:'Automatyzacja',sett_automation_desc:'Główny przełącznik transakcji automatycznych. Gdy wyłączony, nie są generowane zaplanowane transakcje, a opcje automatyzacji są nieaktywne.',sett_automation_toggle:'Transakcje automatyczne',sett_automation_hint:'Dotyczy transakcji, subskrypcji, funduszy i długów',
+    recurring_remove:'Usu\u0144 regu\u0142\u0119',recurring_paused:'Wstrzymano',recurring_active:'Aktywna',recurring_saved:'Transakcja automatyczna zapisana ✓',dpc_add_debt_title:'Dodaj dług',dpc_edit_debt_title:'Edytuj dług',debt_due_day_modal_hint:'Dzień miesiąca, w którym przypada ta płatność',toast_debt_added:'Dług dodany',toast_debt_updated:'Dług zaktualizowany',sf_billing_day_label:'Dzień płatności',sf_billing_day_hint:'Dzień miesiąca, w którym wpłata jest księgowana automatycznie',sf_error_required:'Wypełnij wszystkie wymagane pola',bill_paid_modal_title:'Oznacz rachunek jako zapłacony',bill_paid_amount_label:'Zapłacona kwota',bill_paid_amount_hint:'Ile faktycznie zapłaciłeś - zostanie to zapisane jako transakcja, aby Twoja historia wydatków była dokładna, nawet jeśli różni się od zaplanowanej kwoty.',bill_paid_save_btn:'Zapisz płatność',bill_paid_budgeted_hint:'Zaplanowano: {0}',toast_bill_marked_paid:'Płatność zapisana',sub_active:'Aktywna',sub_paused:'Wstrzymana',sub_desc:'Śledź każdą powtarzającą się płatność i poznaj swój rzeczywisty roczny koszt. Wstrzymaj subskrypcje, z których nie korzystasz, aby kontrolować wydatki.',sub_add_btn:'+ Dodaj rachunek',sub_add_title:'Dodaj rachunek',sub_edit_title:'Edytuj rachunek',sub_empty_title:'Brak rachunków.',sub_empty_sub:'Dodaj swoje powtarzające się płatności - Netflix, Spotify, siłownia itp.',sub_sum_monthly:'Suma miesięczna',sub_sum_annual:'Suma roczna',sub_by_category:'Według kategorii',sub_per_month:'/miesiąc',sub_next_label:'Następna',sub_name_label:'Nazwa',bill_kind_label:'Typ',bill_kind_bill:'Rachunek',bill_kind_sub:'Subskrypcja',sub_name_ph:'np. Netflix',sub_amount_label:'Kwota',sub_freq_label:'Częstotliwość rozliczeń',sub_freq_monthly:'Miesięcznie',sub_freq_annual:'Rocznie',sub_freq_quarterly:'Kwartalnie',sub_freq_weekly:'Tygodniowo',sub_unit_month:'miesiąc',sub_unit_year:'rok',sub_unit_quarter:'kwartał',sub_cat_label:'Kategoria',sub_date_label:'Data płatności',sub_name_hint:'Usługa lub dostawca, którego dotyczy ta płatność, np. "Netflix" lub "Karnet na siłownię".',sub_amount_hint:'Ile zostaniesz obciążony w każdym cyklu rozliczeniowym.',sub_freq_hint:'Jak często ta subskrypcja Cię obciąża.',sub_cat_hint:'Grupuje tę subskrypcję na wykresie kategorii.',sub_date_hint:'Najbliższa data, kiedy ta subskrypcja Cię obciąży. Pojawia się w inteligentnym kalendarzu.',alloc_label_hint:'Oznacz to jako Potrzebę, Zachciankę lub Oszczędność, aby liczyło się do Twoich kategorii podziału.',sub_cat_entertainment:'Rozrywka',sub_cat_productivity:'Produktywność',sub_cat_health:'Zdrowie i fitness',sub_cat_food:'Jedzenie i napoje',sub_cat_cloud:'Chmura',sub_cat_finance:'Finanse',sub_cat_education:'Edukacja',sub_cat_gaming:'Gry',sub_cat_news:'Wiadomości i media',sub_cat_other:'Inne',help_sub_intro:'Śledź każdą powtarzającą się płatność i poznaj swój rzeczywisty miesięczny i roczny koszt. Subskrypcje, które po cichu obciążają konto, łatwo przeoczyć - dzięki temu pozostają widoczne.',help_sub_how_h:'Dodawanie subskrypcji',help_sub_step1:'Kliknij + Dodaj subskrypcję',help_sub_step2:'Wpisz nazwę, kwotę i częstotliwość rozliczeń (miesięcznie, rocznie, kwartalnie, tygodniowo)',help_sub_step3:'Wybierz kategorię, aby grupować podobne subskrypcje',help_sub_step4:'Ustaw datę następnego rozliczenia - pojawi się w inteligentnym kalendarzu',help_sub_monthly_h:'Odpowiednik miesięczny',help_sub_monthly_p:'Subskrypcje roczne i kwartalne są przeliczane na koszt miesięczny, dzięki czemu od razu widzisz swój rzeczywisty miesięczny wydatek.',help_sub_pause_h:'Wstrzymywanie subskrypcji',help_sub_pause_p:'Wyłącz przełącznik Aktywna przy subskrypcji, z której obecnie nie korzystasz. Nie będzie liczona w sumach, dopóki nie włączysz go ponownie.',help_sub_price_h:'Historia cen',help_sub_price_p:'Gdy zmienisz cenę subskrypcji, jest to zapisywane automatycznie. Małe ↑ lub ↓ obok kwoty pokazuje ostatnią zmianę - najedź, aby zobaczyć pełną historię.',help_sub_chart_h:'Wykres według kategorii',help_sub_chart_p:'Wykres kołowy pokazuje, jak Twoje wydatki na subskrypcje rozkładają się na kategorie - najedź na segment, aby zobaczyć szczegóły.',help_sub_tip:'💡 Włącz „Automatyzuj” przy subskrypcji, aby była automatycznie dodawana do transakcji w każdym cyklu rozliczeniowym.',automate_auto_pay:'Auto-płatność',sf_auto_contribute:'Auto-wpłata',sf_auto_need_amount:'Najpierw dodaj kwotę docelową i datę',sf_auto_set:'Miesięczna wpłata: {0}',automate_label:'Automatyzuj',automate_hint:'Dodaje to automatycznie do transakcji według harmonogramu',automate_hint_off:'Włącz Automatyzację w Ustawieniach, aby użyć',automate_th:'Auto-płatność',automate_need_amount:'Najpierw ustaw minimalną płatność',automate_payment_word:'płatność',automate_linked:'Powiązana transakcja automatyczna',sf_contribution_label:'Miesięczna wpłata',sf_contribution_hint:'Księgowana automatycznie co miesiąc, aby zasilać ten cel',sett_automation_h:'Automatyzacja',sett_automation_desc:'Główny przełącznik transakcji automatycznych. Gdy wyłączony, nie są generowane zaplanowane transakcje, a opcje automatyzacji są nieaktywne.',sett_automation_toggle:'Transakcje automatyczne',sett_automation_hint:'Dotyczy transakcji, subskrypcji, celów oszczędnościowych i długów',
     tx_type_sinking_fund:'Cel oszczędnościowy',
     help_dash_alloc_h:'Panel podziału budżetu',
     help_dash_alloc_what_h:'Czym jest',
@@ -4004,8 +4030,8 @@ const TRANSLATIONS = {
     guide_dashboard_big:'Pulpit to twoje centrum dowodzenia - wszystko, co ważne w twoich finansach, znajduje się na tym jednym ekranie, od wyniku końcowego po to, co czeka cię w tym tygodniu.',
     guide_dashboard_step1:'Sprawdź karty podsumowania u góry, aby zobaczyć swój <strong>Całkowity przychód</strong>, <strong>Całkowite wydatki</strong>, <strong>Wskaźnik oszczędności</strong> i <strong>Saldo netto</strong>.',
     guide_dashboard_step2:'Sprawdź listę <strong>Nadchodzące</strong>, aby zobaczyć wszystko, co jest wymagalne w ciągu następnych 7 dni - rachunki, płatności długów i subskrypcje w jednym miejscu.',
-    guide_dashboard_step3:'Sprawdź swoje podsumowania <strong>Spłaty długów</strong> i <strong>Funduszy celowych</strong>, aby zobaczyć postęp w realizacji większych celów na pierwszy rzut oka.',
-    guide_dashboard_connect1:'Każda liczba tutaj pochodzi na żywo z Transakcji, Budżetu, Spłaty długów, Funduszy celowych i Subskrypcji - nie ma nic do obliczania ręcznie.',
+    guide_dashboard_step3:'Sprawdź swoje podsumowania <strong>Spłaty długów</strong> i <strong>Celów oszczędnościowych</strong>, aby zobaczyć postęp w realizacji większych celów na pierwszy rzut oka.',
+    guide_dashboard_connect1:'Każda liczba tutaj pochodzi na żywo z Transakcji, Budżetu, Spłaty długów, Celów oszczędnościowych i Subskrypcji - nie ma nic do obliczania ręcznie.',
     guide_dashboard_connect2:'Saldo netto uwzględnia twoje ustawienie <strong>Przeniesienia</strong>, dzięki czemu niewydane pieniądze z poprzedniego okresu mogą przejść automatycznie.',
     guide_dashboard_connect3:'Jeśli coś się nie zgadza, prawie zawsze warto sprawdzić stronę źródłową - Pulpit jest lustrem, a nie źródłem.',
     guide_dashboard_tip:'Poświęć 30 sekund każdego ranka na przejrzenie Pulpitu - to najszybszy sposób, by zauważyć rachunek lub płatność długu, zanim się spóźni.',guide_dashboard_usecase_h:'Zobacz to w praktyce',guide_dashboard_usecase_p:'<p><strong>Maria</strong> otwiera Ezzo Budget w dniu wypłaty. Rzuca okiem na Pulpit i widzi, że jej saldo netto za ten okres wynosi 420 zł - wystarczająco, by dołożyć trochę więcej do funduszu awaryjnego.</p><p>Panel przepływu środków pokazuje, że przekroczyła już budżet na Restauracje, więc tego wieczoru rezygnuje z zamawiania jedzenia na wynos, zamiast dowiedzieć się o tym dopiero na koniec miesiąca.</p>',
@@ -4044,14 +4070,14 @@ const TRANSLATIONS = {
     guide_debt_connect3:'Płacenie więcej niż minimum tutaj - nawet trochę więcej - jest zwykle największą dźwignią do skrócenia czasu spłaty.',
     guide_debt_tip:'Wypisz nawet małe długi, takie jak pożyczka rodzinna - liczy się nie kwota, lecz wiedza o wszystkim, co jesteś winien, w jednym miejscu.',guide_debt_usecase_h:'Zobacz to w praktyce',guide_debt_usecase_p:'<p><strong>Sam</strong> ma trzy długi: kartę kredytową, kredyt samochodowy i mały pożyczkę osobistą. Wprowadza wszystkie trzy, wybiera Lawinę, aby karta z najwyższym oprocentowaniem została spłacona jako pierwsza, i od razu widzi realną datę spłaty oraz całkowite odsetki.</p><p>Gdy dostaje premię z pracy, wpisuje ją w pole <strong>Dodatkowo/mies.</strong> tej konkretnej karty zamiast do wspólnej puli dodatkowych wpłat, aby premia trafiła dokładnie tam, gdzie chce - następnie otwiera harmonogram ℹ️, by zobaczyć miesiąc po miesiącu, o ile szybciej pozbędzie się długu.</p>',
     guide_sinking_title:'Cele oszczędnościowe',
-    guide_sinking_big:'Fundusz celowy to pieniądze, które odkładasz po trochu na coś konkretnego, o czym wiesz, że nadejdzie - wakacje, nowy laptop, prezenty - dzięki czemu nigdy nie staje się to nagłym wydatkiem, gdy koszt faktycznie się pojawi.',
-    guide_sinking_step1:'Utwórz fundusz i nadaj mu <strong>Kwotę docelową</strong> oraz, jeśli chcesz, datę docelową.',
+    guide_sinking_big:'Cel oszczędnościowy to pieniądze, które odkładasz po trochu na coś konkretnego, o czym wiesz, że nadejdzie - wakacje, nowy laptop, prezenty - dzięki czemu nigdy nie staje się to nagłym wydatkiem, gdy koszt faktycznie się pojawi.',
+    guide_sinking_step1:'Utwórz cel i nadaj mu <strong>Kwotę docelową</strong> oraz, jeśli chcesz, datę docelową.',
     guide_sinking_step2:'Dodawaj wpłaty za każdym razem, gdy odkładasz na niego pieniądze, i obserwuj, jak wypełnia się <strong>pasek postępu</strong>.',
-    guide_sinking_step3:'Gdy fundusz osiągnie swój cel, jesteś gotowy na ten wydatek bez naruszania regularnego budżetu.',
-    guide_sinking_connect1:'Fundusze celowe różnią się od twojej zwykłej kategorii Oszczędności - służą konkretnym, zaplanowanym celom, a nie ogólnemu oszczędzaniu.',
-    guide_sinking_connect2:'Twój Pulpit pokazuje podsumowanie postępu wszystkich twoich funduszy w jednym miejscu.',
-    guide_sinking_connect3:'Regularne wpłacanie do funduszu, nawet niewielkiej kwoty, zamienia duży wydatek w coś, co nigdy nie wykoleja twojego budżetu.',
-    guide_sinking_tip:'Podziel duże cele na okrągłe miesięczne kwoty - o wiele łatwiej zobowiązać się do 200 zł miesięcznie niż do "zaoszczędzenia kiedyś na wakacje".',guide_sinking_usecase_h:'Zobacz to w praktyce',guide_sinking_usecase_p:'<p><strong>Elena</strong> planuje wakacje za 5000 zł na przyszły lipiec. Tworzy Fundusz celowy z tą kwotą docelową i datą, a Ezzo Budget informuje ją, że musi oszczędzać 600 zł miesięcznie, aby to osiągnąć.</p><p>Włącza <strong>Automatyzację</strong>, aby ta kwota była zapisywana jako wpłata co miesiąc bez konieczności pamiętania o tym.</p>',
+    guide_sinking_step3:'Gdy cel osiągnie swoją kwotę, jesteś gotowy na ten wydatek bez naruszania regularnego budżetu.',
+    guide_sinking_connect1:'Cele oszczędnościowe różnią się od twojej zwykłej kategorii Oszczędności - służą konkretnym, zaplanowanym celom, a nie ogólnemu oszczędzaniu.',
+    guide_sinking_connect2:'Twój Pulpit pokazuje podsumowanie postępu wszystkich twoich celów w jednym miejscu.',
+    guide_sinking_connect3:'Regularne wpłacanie na cel, nawet niewielkiej kwoty, zamienia duży wydatek w coś, co nigdy nie wykoleja twojego budżetu.',
+    guide_sinking_tip:'Podziel duże cele na okrągłe miesięczne kwoty - o wiele łatwiej zobowiązać się do 200 zł miesięcznie niż do "zaoszczędzenia kiedyś na wakacje".',guide_sinking_usecase_h:'Zobacz to w praktyce',guide_sinking_usecase_p:'<p><strong>Elena</strong> planuje wakacje za 5000 zł na przyszły lipiec. Tworzy Cel oszczędnościowy z tą kwotą docelową i datą, a Ezzo Budget informuje ją, że musi oszczędzać 600 zł miesięcznie, aby to osiągnąć.</p><p>Włącza <strong>Automatyzację</strong>, aby ta kwota była zapisywana jako wpłata co miesiąc bez konieczności pamiętania o tym.</p>',
     guide_subscriptions_title:'Rachunki',
     guide_subscriptions_big:'Subskrypcje mają tendencję do cichego narastania - ta strona wymienia każdą cykliczną usługę, za którą płacisz, w jednym miejscu, dzięki czemu nic nie obciąża cię bez twojej wiedzy.',
     guide_subscriptions_step1:'Dodaj każdą subskrypcję wraz z jej kosztem i częstotliwością rozliczeń (miesięczna, roczna itd.).',
@@ -4076,9 +4102,9 @@ const TRANSLATIONS = {
     guide_rollover_step2:'Włącz je, aby każda pozostała kwota z poprzedniego okresu automatycznie przechodziła do nowego.',
     guide_rollover_step3:'Sprawdź Saldo netto na swoim Pulpicie - będzie teraz zawierać tę przeniesioną kwotę.',
     guide_rollover_connect1:'Przeniesienie działa bezpośrednio w oparciu o twoje Saldo netto z poprzedniego okresu - im lepiej trzymasz się budżetu, tym więcej ma do przeniesienia.',
-    guide_rollover_connect2:'To różni się od Funduszy celowych, które służą zaplanowanym przyszłym celom - Przeniesienie dotyczy tylko tego, by nie stracić z oczu pieniędzy, które już masz.',
+    guide_rollover_connect2:'To różni się od Celów oszczędnościowych, które służą zaplanowanym przyszłym celom - Przeniesienie dotyczy tylko tego, by nie stracić z oczu pieniędzy, które już masz.',
     guide_rollover_connect3:'Seria dobrych miesięcy ładnie się tu kumuluje, ponieważ nadwyżka z każdego okresu dodaje się do kolejnego.',
-    guide_rollover_tip:'Jeśli duża kwota przeniesienia pali cię w kieszeni, rozważ przeniesienie jej części do Funduszu celowego, aby była przeznaczona na coś konkretnego.',guide_rollover_usecase_h:'Zobacz to w praktyce',guide_rollover_usecase_p:'<p>Pod koniec czerwca <strong>Noor</strong> zostaje 180 zł po pokryciu wszystkich wydatków. Ponieważ <strong>Automatyczne przenoszenie</strong> jest włączone, w momencie przejścia okresu budżetowego na lipiec te 180 zł automatycznie pojawia się jako jej przeniesienie - dodane wprost do salda netto, zamiast musieć samodzielnie je obliczać i wpisywać ponownie.</p>',
+    guide_rollover_tip:'Jeśli duża kwota przeniesienia pali cię w kieszeni, rozważ przeniesienie jej części do Celu oszczędnościowego, aby była przeznaczona na coś konkretnego.',guide_rollover_usecase_h:'Zobacz to w praktyce',guide_rollover_usecase_p:'<p>Pod koniec czerwca <strong>Noor</strong> zostaje 180 zł po pokryciu wszystkich wydatków. Ponieważ <strong>Automatyczne przenoszenie</strong> jest włączone, w momencie przejścia okresu budżetowego na lipiec te 180 zł automatycznie pojawia się jako jej przeniesienie - dodane wprost do salda netto, zamiast musieć samodzielnie je obliczać i wpisywać ponownie.</p>',
     guide_automation_title:'Automatyzacja',
     guide_automation_big:'Automatyzacja bierze reguły cykliczne skonfigurowane w Transakcjach i zapisuje je automatycznie za ciebie, dzięki czemu twoje stałe rachunki, pensje i subskrypcje pojawiają się dokładnie na czas bez twojego udziału.',
     guide_automation_step1:'Otwórz <strong>Ustawienia</strong> i znajdź kartę <strong>Automatyzacja</strong>.',
@@ -4095,7 +4121,7 @@ const TRANSLATIONS = {
     guide_penny_step3:'Zadaj pytanie własnymi słowami, na przykład "jaka jest moja największa kategoria wydatków w tym miesiącu?", albo dotknij jednego z przycisków szybkich pytań, aby zacząć.',
     guide_penny_step4:'Włącz lub wyłącz jej odpowiedź głosową za pomocą ikony głośnika, jeśli wolisz słuchać niż czytać.',
     guide_penny_connect1:'Ezzo może jedynie odczytywać twoje dane budżetowe, aby odpowiadać na pytania - nigdy nie może niczego dodać, edytować ani usunąć za ciebie.',
-    guide_penny_connect2:'Korzysta bezpośrednio z Pulpitu, Transakcji, Spłaty długów, Subskrypcji i Funduszy celowych, dzięki czemu jej odpowiedzi zawsze zgadzają się z tym, co zobaczyłbyś sam na tych stronach.',
+    guide_penny_connect2:'Korzysta bezpośrednio z Pulpitu, Transakcji, Spłaty długów, Subskrypcji i Celów oszczędnościowych, dzięki czemu jej odpowiedzi zawsze zgadzają się z tym, co zobaczyłbyś sam na tych stronach.',
     guide_penny_connect3:'Twój klucz API jest szyfrowany i przechowywany wyłącznie na twoim urządzeniu - nigdy nie jest wysyłany nigdzie indziej poza bezpośrednio do Google, gdy zadajesz Ezzo pytanie.',
     guide_penny_tip:'Zacznij od jednego z przycisków szybkich pytań za pierwszym razem - to najszybszy sposób, by zobaczyć, co potrafi, zanim zadasz własne pytania.',guide_penny_usecase_h:'Zobacz to w praktyce',guide_penny_usecase_p:'<p>Ilekroć <strong>Diane</strong> nie jest pewna, na co poszły jej pieniądze w tym miesiącu, otwiera Ezzo i pyta: "dlaczego moje wydatki są wyższe niż zwykle w tym miesiącu?"</p><p>Ezzo analizuje jej rzeczywiste transakcje i udziela odpowiedzi w prostym języku - wskazując na przykład, że wydatki na Restauracje się podwoiły - zamiast konieczności samodzielnego przeszukiwania listy transakcji.</p>',
     guide_settings_title:'Ustawienia',
@@ -4113,7 +4139,7 @@ const TRANSLATIONS = {
     upg_chip_tx:'{0} / {0} bezpłatnych transakcji wykorzystanych',
     upg_chip_recurring:'{0} / {0} bezpłatnych transakcji automatycznych wykorzystanych',
     upg_chip_subs:'{0} / {0} bezpłatna subskrypcja wykorzystana',
-    upg_chip_sinking:'{0} / {0} bezpłatny fundusz celowy wykorzystany',
+    upg_chip_sinking:'{0} / {0} bezpłatny cel oszczędnościowy wykorzystany',
     upg_chip_debts:'{0} / {0} bezpłatny dług wykorzystany',
     upg_chip_cat:'{0} / {0} bezpłatnych kategorii {1} wykorzystanych',
     upg_chip_limit:'Osiągnięto limit bezpłatnej wersji próbnej',
@@ -4123,7 +4149,7 @@ const TRANSLATIONS = {
     upg_sub:'Osiągnąłeś limit bezpłatnej wersji próbnej. Ulepsz raz, aby usunąć wszystkie limity. Nigdy subskrypcji.',
     upg_feat_unlimited_tx_html:'<strong>Nieograniczone</strong> transakcje &amp; transakcje automatyczne',
     upg_feat_unlimited_cat_html:'<strong>Nieograniczone</strong> kategorie budżetu w każdej sekcji',
-    upg_feat_unlimited_other_html:'<strong>Nieograniczone</strong> długi, subskrypcje &amp; fundusze celowe',
+    upg_feat_unlimited_other_html:'<strong>Nieograniczone</strong> długi, subskrypcje &amp; cele oszczędnościowe',
     upg_feat_onetime:'Jednorazowa płatność · darmowe aktualizacje na zawsze',
     upg_price_tag:'jednorazowo',upg_price_note:'Bez subskrypcji',
     upg_cta_ubp:'Odblokuj Ultimate za {0}',
@@ -4423,6 +4449,17 @@ function collectNotifications() {
   let ev = [];
   try { ev = getUpcomingEvents(BADGE_SOON_DAYS, computeActuals()) || []; } catch (e) { ev = []; }
   const seen = new Set();
+  // A minimum whose date has passed unpaid this period, as a late bill is.
+  let dAct = {};
+  try { dAct = computeActuals().debt || {}; } catch (e) { dAct = {}; }
+  (state.debts || []).forEach(d => {
+    const miss = debtOverdueDates(d, dAct).dates[0];
+    if (!miss) return;
+    seen.add(d.id);
+    out.push({ id: 'debt:' + d.id, section: 'debt', level: 'late', tag: 'overdue', date: miss.date,
+      title: d.name, detail: tf('nt_bill_late', fmt(miss.owe), cuRelative(miss.date)),
+      act: { label: t('pay_btn'), run: done => promptPay('debt', d.id, done, miss.date) } });
+  });
   ev.filter(e => e.type === 'debt' && !e.paid && (Number(e.amount) || 0) > 0).forEach(e => {
     if (seen.has(e.srcId)) return; seen.add(e.srcId);
     out.push({ id: 'debt:' + e.srcId, section: 'debt', level: 'soon', tag: 'soon', date: e.date,
@@ -6015,12 +6052,8 @@ function computeRedFlags(ctx) {
       const interest = (d.balance || 0) * (d.interestRate || 0) / 1200;
       if (interest > 0 && (d.minimumPayment || 0) <= interest) add('interest_' + d.id, 'high', tf('rf_interest', d.name), tf('rf_interest_d', fmt(interest), fmt(d.minimumPayment || 0)), t('rf_act_debt'), () => goAndFlash('debt', rfIds('data-debt-row', [d.id])));
       const day = parseInt(d.dueDay, 10);
-      if (day >= 1 && (d.minimumPayment || 0) > 0) {
-        const now = new Date(), last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-        const due = toLocalISO(new Date(now.getFullYear(), now.getMonth(), Math.min(day, last)));
-        const paid = act.debt[d.name] || 0;
-        if (due < today && due >= start && paid < d.minimumPayment) add('missed_' + d.id, 'high', tf('rf_missed', d.name), tf('rf_missed_d', day, fmt(paid), fmt(d.minimumPayment)), t('rf_act_pay'), () => promptPay('debt', d.id, () => renderDashboard(), due));
-      }
+      const miss = debtOverdueDates(d, act.debt).dates[0];
+      if (miss) add('missed_' + d.id, 'high', tf('rf_missed', d.name), tf('rf_missed_d', day, fmt(miss.paid), fmt(miss.min)), t('rf_act_pay'), () => promptPay('debt', d.id, () => renderDashboard(), miss.date));
     }),
     // Bills: a price rise, one that came in higher than usual, one with no date,
     // and subscriptions heavy against income.
@@ -7437,7 +7470,7 @@ function renderTxList(){
   el.querySelectorAll('.tx-bulk-tag-btn[data-bucket]').forEach(btn=>btn.addEventListener('click',()=>{
     const bid=btn.dataset.bucket;let n=0;
     state.transactions.forEach(tx=>{
-      // income / savings / sinking fund entries aren't taggable (savings map
+      // income / savings / savings goal entries aren't taggable (savings map
       // to the Save bucket automatically in computeAllocation)
       if(txSelected.has(tx.id)&&tx.type!=='income'&&tx.type!=='savings'&&tx.type!=='sinking_fund'){tx.allocation=bid;n++;}
     });
@@ -7589,7 +7622,7 @@ function openAddTxFromList(){
   if(trialBlocks('transaction')){ showUpgradeModal({reason:'transaction'}); return; }
   openQuickAddTx();
 }
-// Adjust a sinking fund's currentSaved when a sinking_fund tx is added (+1) or removed (-1)
+// Adjust a savings goal's currentSaved when a sinking_fund tx is added (+1) or removed (-1)
 // Transactions and automations file by name, so a rename carries them with
 // it. Without this a renamed bill, goal or debt loses its history: its
 // payments stop counting toward it and it reads as unpaid.
@@ -8572,9 +8605,6 @@ function openFundModal(fundId){
   document.getElementById('modalTitle').textContent=isNew?t('sf_modal_new'):t('sf_modal_edit');
   document.getElementById('modalBody').innerHTML=`<div class="field"><label class="field-label field-label--tip">${tipLabel(t('sf_fund_name_label'),'sf_fund_name_hint',true)}</label><input class="input" type="text" id="fundName" placeholder="${t('sf_fund_name_ph')}" value="${esc(f?.name||'')}"></div>
     <div class="field"><label class="field-label field-label--tip">${tipLabel(t('sf_icon_label'),'sf_icon_hint',false)}</label><div class="icon-picker">${FUND_ICONS.map(ic=>`<button class="icon-pick-btn${(f?.icon||FUND_ICONS[0])===ic?' is-active':''}" data-icon="${ic}" type="button">${ic}</button>`).join('')}</div></div>
-    <div class="field"><label class="field-label">${t('sf_monthly_label')}</label>
-      <input class="input" type="number" id="fundMonthly" min="0" step="0.01" placeholder="0.00" value="${f?.monthlyContribution||''}">
-      <span class="field-hint">${t('sf_monthly_hint')}</span></div>
     <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('sf_target_amount_label')} (${SYM})`,'sf_target_amount_hint',true)}</label><input class="input" type="number" id="fundTarget" min="0" step="10" placeholder="0.00" value="${f?.targetAmount||''}"></div>
     <div class="field"><label class="field-label field-label--tip">${tipLabel(`${t('sf_currently_saved_label')} (${SYM})`,'sf_currently_saved_hint',false)}</label><input class="input" type="number" id="fundSaved" min="0" step="10" placeholder="0.00" value="${f?.currentSaved||''}"></div>
     <div class="field"><label class="field-label field-label--tip">${tipLabel(t('sf_target_date_label'),'sf_target_date_hint',true)}</label>${styledDateField('fundDate','fundDateWrap',f?.targetDate||'')}</div>
@@ -8604,8 +8634,8 @@ function openFundModal(fundId){
     if(bad){if(errEl){errEl.textContent=t('sf_error_required');errEl.hidden=false;}return;}
     if(errEl)errEl.hidden=true;
     let fid,fundObj;
-    if(isNew){fid=uid();fundObj={id:fid,name,icon:selIcon,targetAmount:target,currentSaved:saved,targetDate:date,billingDay:auto?billingDay:null,monthlyContribution:parseFloat(document.getElementById('fundMonthly')?.value)||0};state.sinkingFunds.push(fundObj);trialUse('sinkingFunds');trackEvent('feature_used',{feature:'sinking_fund_created'});}
-    else{fid=fundId;fundObj=state.sinkingFunds.find(sf=>sf.id===fundId);if(fundObj){fundObj.monthlyContribution=parseFloat(document.getElementById('fundMonthly')?.value)||0;renameTxCategory('sinking_fund',fundObj.name,name);fundObj.name=name;fundObj.icon=selIcon;fundObj.targetAmount=target;fundObj.currentSaved=saved;fundObj.targetDate=date;if(auto)fundObj.billingDay=billingDay;}}
+    if(isNew){fid=uid();fundObj={id:fid,name,icon:selIcon,targetAmount:target,currentSaved:saved,targetDate:date,billingDay:auto?billingDay:null};state.sinkingFunds.push(fundObj);trialUse('sinkingFunds');trackEvent('feature_used',{feature:'sinking_fund_created'});}
+    else{fid=fundId;fundObj=state.sinkingFunds.find(sf=>sf.id===fundId);if(fundObj){renameTxCategory('sinking_fund',fundObj.name,name);fundObj.name=name;fundObj.icon=selIcon;fundObj.targetAmount=target;fundObj.currentSaved=saved;fundObj.targetDate=date;if(auto)fundObj.billingDay=billingDay;}}
     if(automationOn()&&fundObj){if(auto){const amt=Math.round((calcFund(fundObj).requiredMonthly||0)*100)/100;upsertLinkedTemplate('sinking_fund',fid,{type:'sinking_fund',category:name,label:name,amount:amt,frequency:'monthly',nextDue:nextDueFromDay(billingDay)});}else removeLinkedTemplate('sinking_fund',fid);}
     saveState();closeModal();renderSinking();showToast(t(isNew?'toast_fund_created':'toast_fund_updated'));
   });
@@ -8646,7 +8676,7 @@ function renderCalendar(){
   // listing both made 1 Rent look like 2 charges on the same day.
   const linkedPaidTxIds=new Set((state.bills||[]).flatMap(b=>rowPayTxIds(b)));
   for(const tx of state.transactions)if(tx.date.startsWith(monthStr)&&!linkedPaidTxIds.has(tx.id)){const d=parseInt(tx.date.split('-')[2]);addEv(d,{type:'transaction',label:tx.category,amount:tx.amount,color:'#6366f1'});}
-  // Sinking fund goal/target dates (milestones)
+  // Savings goal goal/target dates (milestones)
   for(const f of state.sinkingFunds||[])if(f.targetDate&&f.targetDate.startsWith(monthStr)){const d=parseInt(f.targetDate.split('-')[2]);if(d>=1&&d<=daysInMo)addEv(d,{type:'goal',label:f.name,amount:f.targetAmount||0,color:'#ec4899'});}
   // Scheduled automatic transactions: manual ones + sinking-fund contributions
   // (subscription & debt automations already appear via their own entity dates above)
@@ -10072,18 +10102,20 @@ function nlCommitted() {
       d = stepBillDate(d, b.frequency);
     }
   });
-  const start = state.settings.periodStart || '';
   let debtAct = {};
   try { debtAct = computeActuals().debt || {}; } catch (e) { debtAct = {}; }
-  const now = new Date();
+  const debtLeft = {};
   (state.debts || []).forEach(d => {
-    const day = parseInt(d.dueDay, 10), min = Number(d.minimumPayment) || 0;
-    if (!(day >= 1) || !(min > 0)) return;
-    const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    const due = toLocalISO(new Date(now.getFullYear(), now.getMonth(), Math.min(day, last)));
-    const paid = payRound2(Number(debtAct[d.name]) || 0);
-    if (due < today && (!start || due >= start) && (!end || due <= end) && paid < min - 0.005)
-      overdue.push({ label: d.name, date: due, amount: payRound2(min - paid), type: 'debt', id: d.id, occDate: due, paidSoFar: paid, expected: min });
+    const o = debtOverdueDates(d, debtAct);
+    o.dates.forEach(x => overdue.push({ label: d.name, date: x.date, amount: x.owe, type: 'debt', id: d.id, occDate: x.date, paidSoFar: x.paid, expected: x.min }));
+    debtLeft[d.id] = o.left;
+  });
+  // The next date in the period is settled by what the missed ones left over.
+  events = events.map(ev => {
+    if (ev.type !== 'debt' || !(ev.srcId in debtLeft) || (end && ev.date > end)) return ev;
+    const exp = Number(ev.expected) || 0, cover = Math.min(exp, debtLeft[ev.srcId]);
+    debtLeft[ev.srcId] = payRound2(debtLeft[ev.srcId] - cover);
+    return { ...ev, amount: payRound2(exp - cover), paid: exp > 0 && cover >= exp - 0.005, paidSoFar: cover };
   });
   const items = overdue.concat(events
     .filter(ev => !ev.paid && (Number(ev.amount) || 0) > 0 && (!end || ev.date <= end))
@@ -10603,23 +10635,40 @@ document.addEventListener('mousedown',e=>{
 },true);
 
 // ── Themed number steppers (replaces native spinner arrows) ───────────
+// A minus and a plus side by side after the field. Each press moves the
+// value by one (a dollar, a day, a percent); holding it down keeps going.
+const FK_NUM_SEL='input[type="number"]:not([data-stepper]):not([data-no-stepper])';
 function fkAddStepper(inp){
-  if(inp.dataset.stepper) return; inp.dataset.stepper='1';
-  const wrap=document.createElement('span'); wrap.className='num-field';
+  if(inp.dataset.stepper||!inp.parentNode) return; inp.dataset.stepper='1';
+  const wrap=document.createElement('span');
+  wrap.className='num-field'+(inp.classList.contains('input')?'':' num-field--inline');
   inp.parentNode.insertBefore(wrap,inp); wrap.appendChild(inp);
   const st=document.createElement('span'); st.className='num-steppers';
-  st.innerHTML='<button type="button" class="num-step" data-d="1" tabindex="-1">\u25B2</button><button type="button" class="num-step" data-d="-1" tabindex="-1">\u25BC</button>';
+  st.innerHTML='<button type="button" class="num-step" data-d="-1" tabindex="-1" aria-label="-1">\u2212</button><button type="button" class="num-step" data-d="1" tabindex="-1" aria-label="+1">+</button>';
   wrap.appendChild(st);
-  st.querySelectorAll('.num-step').forEach(b=>b.addEventListener('click',()=>{
-    const step=parseFloat(inp.step)||1, cur=parseFloat(inp.value)||0, dir=+b.dataset.d, mn=parseFloat(inp.min), mx=parseFloat(inp.max);
-    let n=cur+dir*step; if(!isNaN(mn)&&n<mn)n=mn; if(!isNaN(mx)&&n>mx)n=mx; n=Math.round(n*100)/100;
+  const bump=dir=>{
+    const cur=parseFloat(inp.value)||0, mn=parseFloat(inp.min), mx=parseFloat(inp.max);
+    let n=Math.round((cur+dir)*100)/100; if(!isNaN(mn)&&n<mn)n=mn; if(!isNaN(mx)&&n>mx)n=mx;
+    if(String(n)===inp.value) return;
     inp.value=n; inp.dispatchEvent(new Event('input',{bubbles:true})); inp.dispatchEvent(new Event('change',{bubbles:true}));
-  }));
+  };
+  st.querySelectorAll('.num-step').forEach(b=>{
+    const dir=+b.dataset.d; let wait=0, rep=0, held=false;
+    const stop=()=>{clearTimeout(wait);clearInterval(rep);wait=rep=0;};
+    b.addEventListener('pointerdown',e=>{
+      if(e.button!==0) return; e.preventDefault(); held=true; bump(dir);
+      wait=setTimeout(()=>{rep=setInterval(()=>bump(dir),70);},420);
+    });
+    b.addEventListener('pointerup',stop);
+    ['pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{stop();held=false;}));
+    // A click from the keyboard or a script, which has no pointer press before it.
+    b.addEventListener('click',()=>{ if(held){held=false;return;} bump(dir); });
+  });
 }
-function fkScanSteppers(root){ root&&root.querySelectorAll&&root.querySelectorAll('input.input[type="number"]:not([data-stepper])').forEach(fkAddStepper); }
+function fkScanSteppers(root){ root&&root.querySelectorAll&&root.querySelectorAll(FK_NUM_SEL).forEach(fkAddStepper); }
 function fkInitUIEnhancers(){
   fkScanSteppers(document);
-  new MutationObserver(muts=>{for(const m of muts)for(const n of m.addedNodes){if(n.nodeType!==1)continue;if(n.matches&&n.matches('input.input[type="number"]'))fkAddStepper(n);fkScanSteppers(n);}}).observe(document.body,{childList:true,subtree:true});
+  new MutationObserver(muts=>{for(const m of muts)for(const n of m.addedNodes){if(n.nodeType!==1)continue;if(n.matches&&n.matches(FK_NUM_SEL))fkAddStepper(n);fkScanSteppers(n);}}).observe(document.body,{childList:true,subtree:true});
 }
 
 // ── SBP IMPORT ────────────────────────────────────────────────────────
@@ -10635,7 +10684,7 @@ function checkSBPImport(){
   document.getElementById('importSBPBtn')?.addEventListener('click',()=>{
     state.settings={...sbp.settings};state.rollover=sbp.rollover||0;
     // The simple planner still budgets bills and savings as sections. Here
-    // they belong to the Bills and Saving Goals tabs, so they are moved on
+    // they belong to the Bills and Savings Goals tabs, so they are moved on
     // the way in rather than landing in a budget with nowhere for them.
     state.budgets=JSON.parse(JSON.stringify({income:sbp.budgets.income||[],expenses:sbp.budgets.expenses||[]}));
     state.bills=[...(state.bills||[]),...(sbp.budgets.bills||[]).map(r=>({
@@ -11096,7 +11145,7 @@ document.addEventListener('keydown', e => {
     e.preventDefault(); document.getElementById('saveSubBtn')?.click(); return;
   }
 
-  // Sinking fund modal
+  // Savings goal modal
   if (active.id === 'fundName' || active.id === 'fundTarget' || active.id === 'fundSaved') {
     e.preventDefault(); document.getElementById('saveFundBtn')?.click(); return;
   }

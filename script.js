@@ -77,7 +77,7 @@ const TRANSLATIONS = {
     tab_dashboard:'Dashboard', tab_budget:'Budget', tab_transactions:'Transactions',
     tab_income:'Income', tab_expenses:'Expenses', tab_bills:'Bills',
     tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',
-    tab_debt_payoff:'Debt Payoff', tab_sinking:'Sinking Funds',
+    tab_debt_payoff:'Debt Payoff', tab_sinking:'Savings Goals',
     tab_calendar:'Calendar', tab_subscriptions:'Subscriptions',
     // Dashboard stats
     total_income:'Total Income', expenses_bills:'Expenses & Bills',
@@ -93,7 +93,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transaction added \u2713',toast_tx_updated:'Updated \u2713',toast_tx_deleted:'Deleted',
     toast_period_updated:'Period updated \u2713',toast_period_error:'End date must be after start date',
     toast_currency_updated:'Currency updated \u2713',toast_imported:'Imported {0} \u2713',
-    toast_fund_created:'Fund created \u2713',toast_fund_updated:'Fund updated \u2713',
+    toast_fund_created:'Goal created ✓',toast_fund_updated:'Goal updated ✓',
     toast_fund_contrib:'Added {amt} to {name} \u2713',
     toast_sub_added:'Subscription added \u2713',toast_sub_updated:'Subscription updated \u2713',
     toast_alloc_enabled:'Allocation enabled \u2713',toast_alloc_disabled:'Allocation disabled',
@@ -104,7 +104,7 @@ const TRANSLATIONS = {
     confirm_remove_cat_with_tx:'{0} existing transaction(s) use this category. They will keep it as a label, but it will no longer be tracked in your budget. Delete anyway?',
     confirm_delete_all_tx:'Delete ALL transactions? This cannot be undone.',
     confirm_delete_tx:'Delete this transaction?',confirm_remove_debt:'Remove this debt?',
-    confirm_delete_fund:'Delete this fund?',confirm_remove_sub:'Remove this subscription?',
+    confirm_delete_fund:'Delete this goal?',confirm_remove_sub:'Remove this subscription?',
     confirm_reset_1:'Are you sure? All data will be permanently deleted.',
     confirm_reset_2:'Last chance - this cannot be undone. Continue?',
     export_csv_btn:'\uD83D\uDCE5 Export CSV',
@@ -323,7 +323,7 @@ const TRANSLATIONS = {
     dash_savings_rate:'Savings Rate', dash_saved_sfx:'saved',
     dash_income_sources:'Income Sources',dash_no_income:'No income logged yet.',dash_add_tx_link:'Add transactions →',
     dash_spending_breakdown:'Spending Breakdown',dash_no_spending:'No spending logged yet.',
-    upgrade_feat_debt:'💳 Debt Payoff',upgrade_feat_sinking:'🏺 Sinking Funds',upgrade_feat_calendar:'📅 Smart Calendar',
+    upgrade_feat_debt:'💳 Debt Payoff',upgrade_feat_sinking:'🏺 Savings Goals',upgrade_feat_calendar:'📅 Smart Calendar',
     upgrade_feat_subs:'🔄 Subscriptions',upgrade_feat_auto:'⚡ Automation',upgrade_feat_alloc:'🎯 Allocation',
     upg_chip_tx:'{0} / {0} free transactions used',upg_chip_cat:'{0} / {0} free {1} categories used',upg_chip_limit:'Free trial limit reached',
     upg_aria_label:'Upgrade to unlock the full planner',
@@ -334,7 +334,7 @@ const TRANSLATIONS = {
     upg_feat_csv:'CSV import &amp; export, full history',upg_feat_onetime:'One-time payment · free updates for life',
     upg_price_tag:'one-time',upg_price_note:'No subscription',
     upg_cta_sbp:'Unlock Simple Budget for {0}',
-    upg_upsell_lead:'⚡ Want debt payoff, sinking funds &amp; more?',upg_upsell_cta:'Get Ultimate for {0} →',
+    upg_upsell_lead:'⚡ Want debt payoff, savings goals &amp; more?',upg_upsell_cta:'Get Ultimate for {0} →',
     upg_later:'Maybe later',
     reauth_title:'Sign in with Google to continue',
     reauth_sub:'Your data for this tool is synced with Google Drive. Sign in again to pick up where you left off.',
@@ -372,7 +372,7 @@ const TRANSLATIONS = {
     cmp_feat5:'Budget period control with presets',
     cmp_feat6:'Rollover from previous period',
     cmp_feat7:'Debt Payoff (Snowball &amp; Avalanche)',
-    cmp_feat8:'Sinking funds tracker with monthly goals',
+    cmp_feat8:'Savings goals with monthly targets',
     cmp_feat9:'Smart calendar with all events auto-populated',
     cmp_feat10:'Subscription tracker with category breakdown',
     cmp_feat11:'Pro dashboard with hero stats &amp; upcoming panel',
@@ -385,7 +385,7 @@ const TRANSLATIONS = {
     tab_dashboard:'Dashboard',tab_budget:'Budget',tab_transactions:'Transaktionen',
     tab_income:'Einnahmen',tab_expenses:'Ausgaben',tab_bills:'Rechnungen',
     tab_debt:'Schulden',tab_savings:'Ersparnisse',tab_settings:'Einstellungen',
-    tab_debt_payoff:'Schuldenabbau',tab_sinking:'Rücklagen',
+    tab_debt_payoff:'Schuldenabbau',tab_sinking:'Sparziele',
     tab_calendar:'Kalender',tab_subscriptions:'Abonnements',
     total_income:'Gesamteinnahmen',expenses_bills:'Ausgaben & Rechnungen',
     debt_payments:'Schuldenzahlungen',total_savings:'Gesamtersparnis',
@@ -399,7 +399,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transaktion hinzugef\u00fcgt \u2713',toast_tx_updated:'Aktualisiert \u2713',toast_tx_deleted:'Gel\u00f6scht',
     toast_period_updated:'Zeitraum aktualisiert \u2713',toast_period_error:'Enddatum muss nach dem Startdatum liegen',
     toast_currency_updated:'W\u00e4hrung aktualisiert \u2713',toast_imported:'{0} importiert \u2713',
-    toast_fund_created:'Fonds erstellt \u2713',toast_fund_updated:'Fonds aktualisiert \u2713',
+    toast_fund_created:'Ziel erstellt ✓',toast_fund_updated:'Ziel aktualisiert ✓',
     toast_fund_contrib:'{amt} zu {name} hinzugef\u00fcgt \u2713',
     toast_sub_added:'Abonnement hinzugef\u00fcgt \u2713',toast_sub_updated:'Abonnement aktualisiert \u2713',
     toast_alloc_enabled:'Aufteilung aktiviert \u2713',toast_alloc_disabled:'Aufteilung deaktiviert',
@@ -410,7 +410,7 @@ const TRANSLATIONS = {
     confirm_remove_cat_with_tx:'{0} bestehende Transaktion(en) verwenden diese Kategorie. Sie behalten sie als Bezeichnung, wird aber nicht mehr in deinem Budget erfasst. Trotzdem löschen?',
     confirm_delete_all_tx:'ALLE Transaktionen l\u00f6schen? Das kann nicht r\u00fcckg\u00e4ngig gemacht werden.',
     confirm_delete_tx:'Diese Transaktion l\u00f6schen?',confirm_remove_debt:'Diese Schuld entfernen?',
-    confirm_delete_fund:'Diesen Fonds l\u00f6schen?',confirm_remove_sub:'Dieses Abonnement entfernen?',
+    confirm_delete_fund:'Dieses Ziel löschen?',confirm_remove_sub:'Dieses Abonnement entfernen?',
     confirm_reset_1:'Bist du sicher? Alle Daten werden dauerhaft gel\u00f6scht.',
     confirm_reset_2:'Letzte Chance - das kann nicht r\u00fcckg\u00e4ngig gemacht werden. Fortfahren?',
     export_csv_btn:'\uD83D\uDCE5 CSV exportieren',
@@ -608,7 +608,7 @@ const TRANSLATIONS = {
     dash_savings_rate:'Sparquote',dash_saved_sfx:'gespart',
     dash_income_sources:'Einnahmequellen',dash_no_income:'Noch keine Einnahmen erfasst.',dash_add_tx_link:'Transaktionen hinzufügen →',
     dash_spending_breakdown:'Ausgabenübersicht',dash_no_spending:'Noch keine Ausgaben erfasst.',
-    upgrade_feat_debt:'💳 Schuldentilgung',upgrade_feat_sinking:'🏺 Sparzielfonds',upgrade_feat_calendar:'📅 Smart-Kalender',
+    upgrade_feat_debt:'💳 Schuldentilgung',upgrade_feat_sinking:'🏺 Sparziele',upgrade_feat_calendar:'📅 Smart-Kalender',
     upgrade_feat_subs:'🔄 Abonnements',upgrade_feat_auto:'⚡ Automatisierung',upgrade_feat_alloc:'🎯 Zuweisung',
     upg_chip_tx:'{0} / {0} kostenlose Transaktionen genutzt',upg_chip_cat:'{0} / {0} kostenlose {1}-Kategorien genutzt',upg_chip_limit:'Kostenlose Testphase erreicht',
     upg_aria_label:'Upgrade, um den vollen Planer freizuschalten',
@@ -619,7 +619,7 @@ const TRANSLATIONS = {
     upg_feat_csv:'CSV-Import &amp; -Export, volle Historie',upg_feat_onetime:'Einmalzahlung · kostenlose Updates fürs Leben',
     upg_price_tag:'einmalig',upg_price_note:'Kein Abo',
     upg_cta_sbp:'Simple Budget freischalten für {0}',
-    upg_upsell_lead:'⚡ Schuldentilgung, Sparzielfonds &amp; mehr gewünscht?',upg_upsell_cta:'Ultimate holen für {0} →',
+    upg_upsell_lead:'⚡ Schuldentilgung, Sparziele &amp; mehr gewünscht?',upg_upsell_cta:'Ultimate holen für {0} →',
     upg_later:'Vielleicht später',
     reauth_title:'Melde dich mit Google an, um fortzufahren',
     reauth_sub:'Deine Daten für dieses Tool werden mit Google Drive synchronisiert. Melde dich erneut an, um dort weiterzumachen, wo du aufgehört hast.',
@@ -657,7 +657,7 @@ const TRANSLATIONS = {
     cmp_feat5:'Budgetzeitraum-Steuerung mit Voreinstellungen',
     cmp_feat6:'Übertrag aus vorheriger Periode',
     cmp_feat7:'Schuldentilgung (Schneeball &amp; Lawine)',
-    cmp_feat8:'Sparzielfonds-Tracker mit monatlichen Zielen',
+    cmp_feat8:'Sparziele mit monatlichen Beträgen',
     cmp_feat9:'Smart-Kalender mit automatisch befüllten Ereignissen',
     cmp_feat10:'Abo-Tracker mit Kategorieaufschlüsselung',
     cmp_feat11:'Pro-Dashboard mit Kennzahlen &amp; Übersichtspanel',
@@ -670,7 +670,7 @@ const TRANSLATIONS = {
     tab_dashboard:'Tableau de bord',tab_budget:'Budget',tab_transactions:'Transactions',
     tab_income:'Revenus',tab_expenses:'Dépenses',tab_bills:'Factures',
     tab_debt:'Dettes',tab_savings:'Épargne',tab_settings:'Paramètres',
-    tab_debt_payoff:'Remboursement',tab_sinking:'Provisions',
+    tab_debt_payoff:'Remboursement',tab_sinking:'Objectifs d\'épargne',
     tab_calendar:'Calendrier',tab_subscriptions:'Abonnements',
     total_income:'Revenus totaux',expenses_bills:'Dépenses & Factures',
     debt_payments:'Remboursements',total_savings:'Épargne totale',
@@ -684,7 +684,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transaction ajout\u00e9e \u2713',toast_tx_updated:'Mis \u00e0 jour \u2713',toast_tx_deleted:'Supprim\u00e9',
     toast_period_updated:'P\u00e9riode mise \u00e0 jour \u2713',toast_period_error:'La date de fin doit \u00eatre apr\u00e8s la date de d\u00e9but',
     toast_currency_updated:'Devise mise \u00e0 jour \u2713',toast_imported:'{0} import\u00e9(s) \u2713',
-    toast_fund_created:'Fonds cr\u00e9\u00e9 \u2713',toast_fund_updated:'Fonds mis \u00e0 jour \u2713',
+    toast_fund_created:'Objectif créé ✓',toast_fund_updated:'Objectif mis à jour ✓',
     toast_fund_contrib:'{amt} ajout\u00e9 \u00e0 {name} \u2713',
     toast_sub_added:'Abonnement ajout\u00e9 \u2713',toast_sub_updated:'Abonnement mis \u00e0 jour \u2713',
     toast_alloc_enabled:'R\u00e9partition activ\u00e9e \u2713',toast_alloc_disabled:'R\u00e9partition d\u00e9sactiv\u00e9e',
@@ -695,7 +695,7 @@ const TRANSLATIONS = {
     confirm_remove_cat_with_tx:'{0} transaction(s) existante(s) utilisent cette cat\u00e9gorie. Elles la conserveront comme \u00e9tiquette, mais elle ne sera plus suivie dans votre budget. Supprimer quand m\u00eame ?',
     confirm_delete_all_tx:'Supprimer TOUTES les transactions ? Cela est irr\u00e9versible.',
     confirm_delete_tx:'Supprimer cette transaction ?',confirm_remove_debt:'Supprimer cette dette ?',
-    confirm_delete_fund:'Supprimer ce fonds ?',confirm_remove_sub:'Supprimer cet abonnement ?',
+    confirm_delete_fund:'Supprimer cet objectif ?',confirm_remove_sub:'Supprimer cet abonnement ?',
     confirm_reset_1:'\u00cates-vous s\u00fbr ? Toutes les donn\u00e9es seront d\u00e9finitivement supprim\u00e9es.',
     confirm_reset_2:'Derni\u00e8re chance - c\u2019est irr\u00e9versible. Continuer ?',
     export_csv_btn:'\uD83D\uDCE5 Exporter CSV',
@@ -893,7 +893,7 @@ const TRANSLATIONS = {
     dash_savings_rate:"Taux d'épargne",dash_saved_sfx:'épargné',
     dash_income_sources:'Sources de revenus',dash_no_income:'Aucun revenu enregistré.',dash_add_tx_link:'Ajouter des transactions →',
     dash_spending_breakdown:'Détail des dépenses',dash_no_spending:'Aucune dépense enregistrée.',
-    upgrade_feat_debt:'💳 Remboursement de dettes',upgrade_feat_sinking:'🏺 Provisions',upgrade_feat_calendar:'📅 Calendrier intelligent',
+    upgrade_feat_debt:'💳 Remboursement de dettes',upgrade_feat_sinking:'🏺 Objectifs d\'épargne',upgrade_feat_calendar:'📅 Calendrier intelligent',
     upgrade_feat_subs:'🔄 Abonnements',upgrade_feat_auto:'⚡ Automatisation',upgrade_feat_alloc:'🎯 Répartition',
     upg_chip_tx:'{0} / {0} transactions gratuites utilisées',upg_chip_cat:'{0} / {0} catégories {1} gratuites utilisées',upg_chip_limit:'Limite d’essai gratuit atteinte',
     upg_aria_label:'Mettre à niveau pour débloquer le planificateur complet',
@@ -904,7 +904,7 @@ const TRANSLATIONS = {
     upg_feat_csv:'Import &amp; export CSV, historique complet',upg_feat_onetime:'Paiement unique · mises à jour gratuites à vie',
     upg_price_tag:'unique',upg_price_note:'Sans abonnement',
     upg_cta_sbp:'Débloquer Simple Budget pour {0}',
-    upg_upsell_lead:'⚡ Envie de remboursement de dettes, provisions &amp; plus ?',upg_upsell_cta:'Obtenir Ultimate pour {0} →',
+    upg_upsell_lead:'⚡ Envie de remboursement de dettes, objectifs d\'épargne &amp; plus ?',upg_upsell_cta:'Obtenir Ultimate pour {0} →',
     upg_later:'Plus tard',
     reauth_title:'Connectez-vous avec Google pour continuer',
     reauth_sub:'Vos données pour cet outil sont synchronisées avec Google Drive. Reconnectez-vous pour reprendre où vous en étiez.',
@@ -942,7 +942,7 @@ const TRANSLATIONS = {
     cmp_feat5:'Contrôle de la période budgétaire avec préréglages',
     cmp_feat6:'Report de la période précédente',
     cmp_feat7:'Remboursement de dettes (Boule de neige &amp; Avalanche)',
-    cmp_feat8:'Suivi des provisions avec objectifs mensuels',
+    cmp_feat8:'Objectifs d\'épargne avec montants mensuels',
     cmp_feat9:'Calendrier intelligent avec tous les événements auto-remplis',
     cmp_feat10:'Suivi des abonnements avec répartition par catégorie',
     cmp_feat11:'Tableau de bord Pro avec statistiques clés &amp; panneau à venir',
@@ -955,7 +955,7 @@ const TRANSLATIONS = {
     tab_dashboard:'Panel',tab_budget:'Presupuesto',tab_transactions:'Transacciones',
     tab_income:'Ingresos',tab_expenses:'Gastos',tab_bills:'Facturas',
     tab_debt:'Deudas',tab_savings:'Ahorros',tab_settings:'Ajustes',
-    tab_debt_payoff:'Pago de deudas',tab_sinking:'Fondos de ahorro',
+    tab_debt_payoff:'Pago de deudas',tab_sinking:'Metas de ahorro',
     tab_calendar:'Calendario',tab_subscriptions:'Suscripciones',
     total_income:'Ingresos totales',expenses_bills:'Gastos y facturas',
     debt_payments:'Pagos de deuda',total_savings:'Ahorros totales',
@@ -969,7 +969,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transacci\u00f3n a\u00f1adida \u2713',toast_tx_updated:'Actualizado \u2713',toast_tx_deleted:'Eliminado',
     toast_period_updated:'Per\u00edodo actualizado \u2713',toast_period_error:'La fecha de fin debe ser posterior a la fecha de inicio',
     toast_currency_updated:'Moneda actualizada \u2713',toast_imported:'{0} importado(s) \u2713',
-    toast_fund_created:'Fondo creado \u2713',toast_fund_updated:'Fondo actualizado \u2713',
+    toast_fund_created:'Meta creada ✓',toast_fund_updated:'Meta actualizada ✓',
     toast_fund_contrib:'{amt} a\u00f1adido a {name} \u2713',
     toast_sub_added:'Suscripci\u00f3n a\u00f1adida \u2713',toast_sub_updated:'Suscripci\u00f3n actualizada \u2713',
     toast_alloc_enabled:'Distribuci\u00f3n activada \u2713',toast_alloc_disabled:'Distribuci\u00f3n desactivada',
@@ -980,7 +980,7 @@ const TRANSLATIONS = {
     confirm_remove_cat_with_tx:'{0} transacci\u00f3n(es) existente(s) usan esta categor\u00eda. La conservar\u00e1n como etiqueta, pero ya no se har\u00e1 seguimiento en tu presupuesto. \u00bfEliminar de todos modos?',
     confirm_delete_all_tx:'\u00bfEliminar TODAS las transacciones? Esto no se puede deshacer.',
     confirm_delete_tx:'\u00bfEliminar esta transacci\u00f3n?',confirm_remove_debt:'\u00bfEliminar esta deuda?',
-    confirm_delete_fund:'\u00bfEliminar este fondo?',confirm_remove_sub:'\u00bfEliminar esta suscripci\u00f3n?',
+    confirm_delete_fund:'¿Eliminar esta meta?',confirm_remove_sub:'\u00bfEliminar esta suscripci\u00f3n?',
     confirm_reset_1:'\u00bfEst\u00e1s seguro? Todos los datos se eliminar\u00e1n permanentemente.',
     confirm_reset_2:'\u00daltima oportunidad - no se puede deshacer. \u00bfContinuar?',
     export_csv_btn:'\uD83D\uDCE5 Exportar CSV',
@@ -1156,7 +1156,7 @@ const TRANSLATIONS = {
     mod_desc_expenses:'Define un límite de presupuesto para cada categoría de gasto. Las barras de progreso se ponen rojas si te excedes.',
     mod_desc_bills:'Haz seguimiento de tus facturas recurrentes. Añade una fecha de vencimiento y marca la casilla una vez pagada.',
     mod_desc_debt:'Mantente al día con tus pagos de préstamos e hipoteca. Define los montos previstos y marca cada uno como pagado.',
-    mod_desc_savings:'Define una meta de ahorro para cada fondo. Las contribuciones reales provienen de tus transacciones registradas.',
+    mod_desc_savings:'Define una meta de ahorro para cada categoría. Las contribuciones reales provienen de tus transacciones registradas.',
     mod_add_category:'+ Añadir categoría',mod_add_new_category:'Añadir nueva categoría',mod_cat_name_label:'Nombre',
     tx_way_manual_sub:'Una vez, en la fecha que elijas',
     bud_quick_add:'Añadir rápido',
@@ -1178,7 +1178,7 @@ const TRANSLATIONS = {
     dash_savings_rate:'Tasa de ahorro',dash_saved_sfx:'ahorrado',
     dash_income_sources:'Fuentes de ingresos',dash_no_income:'Aún no se han registrado ingresos.',dash_add_tx_link:'Añadir transacciones →',
     dash_spending_breakdown:'Desglose de gastos',dash_no_spending:'Aún no se han registrado gastos.',
-    upgrade_feat_debt:'💳 Pago de deudas',upgrade_feat_sinking:'🏺 Fondos de ahorro',upgrade_feat_calendar:'📅 Calendario inteligente',
+    upgrade_feat_debt:'💳 Pago de deudas',upgrade_feat_sinking:'🏺 Metas de ahorro',upgrade_feat_calendar:'📅 Calendario inteligente',
     upgrade_feat_subs:'🔄 Suscripciones',upgrade_feat_auto:'⚡ Automatización',upgrade_feat_alloc:'🎯 Asignación',
     upg_chip_tx:'{0} / {0} transacciones gratuitas usadas',upg_chip_cat:'{0} / {0} categorías de {1} gratuitas usadas',upg_chip_limit:'Límite de prueba gratuita alcanzado',
     upg_aria_label:'Actualizar para desbloquear el planificador completo',
@@ -1189,7 +1189,7 @@ const TRANSLATIONS = {
     upg_feat_csv:'Importación &amp; exportación CSV, historial completo',upg_feat_onetime:'Pago único · actualizaciones gratuitas de por vida',
     upg_price_tag:'pago único',upg_price_note:'Sin suscripción',
     upg_cta_sbp:'Desbloquear Simple Budget por {0}',
-    upg_upsell_lead:'⚡ ¿Quieres pago de deudas, fondos de ahorro &amp; más?',upg_upsell_cta:'Obtener Ultimate por {0} →',
+    upg_upsell_lead:'⚡ ¿Quieres pago de deudas, metas de ahorro &amp; más?',upg_upsell_cta:'Obtener Ultimate por {0} →',
     upg_later:'Quizás más tarde',
     reauth_title:'Inicia sesión con Google para continuar',
     reauth_sub:'Tus datos para esta herramienta están sincronizados con Google Drive. Vuelve a iniciar sesión para continuar donde lo dejaste.',
@@ -1227,7 +1227,7 @@ const TRANSLATIONS = {
     cmp_feat5:'Control del período de presupuesto con preajustes',
     cmp_feat6:'Arrastre del período anterior',
     cmp_feat7:'Pago de deudas (Bola de nieve &amp; Avalancha)',
-    cmp_feat8:'Seguimiento de fondos de ahorro con metas mensuales',
+    cmp_feat8:'Metas de ahorro con importes mensuales',
     cmp_feat9:'Calendario inteligente con todos los eventos autocompletados',
     cmp_feat10:'Seguimiento de suscripciones con desglose por categoría',
     cmp_feat11:'Panel Pro con estadísticas clave &amp; panel de próximos eventos',
@@ -1240,7 +1240,7 @@ const TRANSLATIONS = {
     tab_dashboard:'Dashboard',tab_budget:'Budget',tab_transactions:'Transazioni',
     tab_income:'Entrate',tab_expenses:'Spese',tab_bills:'Bollette',
     tab_debt:'Debiti',tab_savings:'Risparmi',tab_settings:'Impostazioni',
-    tab_debt_payoff:'Estinzione debiti',tab_sinking:'Accantonamenti',
+    tab_debt_payoff:'Estinzione debiti',tab_sinking:'Obiettivi di risparmio',
     tab_calendar:'Calendario',tab_subscriptions:'Abbonamenti',
     total_income:'Entrate totali',expenses_bills:'Spese e bollette',
     debt_payments:'Pagamenti debiti',total_savings:'Risparmi totali',
@@ -1254,7 +1254,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transazione aggiunta \u2713',toast_tx_updated:'Aggiornato \u2713',toast_tx_deleted:'Eliminato',
     toast_period_updated:'Periodo aggiornato \u2713',toast_period_error:'La data di fine deve essere successiva alla data di inizio',
     toast_currency_updated:'Valuta aggiornata \u2713',toast_imported:'{0} importato/i \u2713',
-    toast_fund_created:'Fondo creato \u2713',toast_fund_updated:'Fondo aggiornato \u2713',
+    toast_fund_created:'Obiettivo creato ✓',toast_fund_updated:'Obiettivo aggiornato ✓',
     toast_fund_contrib:'{amt} aggiunto a {name} \u2713',
     toast_sub_added:'Abbonamento aggiunto \u2713',toast_sub_updated:'Abbonamento aggiornato \u2713',
     toast_alloc_enabled:'Distribuzione attivata \u2713',toast_alloc_disabled:'Distribuzione disattivata',
@@ -1265,7 +1265,7 @@ const TRANSLATIONS = {
     confirm_remove_cat_with_tx:'{0} transazione/i esistente/i usa/usano questa categoria. La manterranno come etichetta, ma non sarà più monitorata nel tuo budget. Eliminare comunque?',
     confirm_delete_all_tx:'Eliminare TUTTE le transazioni? Questa azione \u00e8 irreversibile.',
     confirm_delete_tx:'Eliminare questa transazione?',confirm_remove_debt:'Rimuovere questo debito?',
-    confirm_delete_fund:'Eliminare questo fondo?',confirm_remove_sub:'Rimuovere questo abbonamento?',
+    confirm_delete_fund:'Eliminare questo obiettivo?',confirm_remove_sub:'Rimuovere questo abbonamento?',
     confirm_reset_1:'Sei sicuro? Tutti i dati verranno eliminati definitivamente.',
     confirm_reset_2:'Ultima possibilit\u00e0 - non \u00e8 reversibile. Continuare?',
     export_csv_btn:'\uD83D\uDCE5 Esporta CSV',
@@ -1462,7 +1462,7 @@ const TRANSLATIONS = {
     dash_savings_rate:'Tasso di risparmio',dash_saved_sfx:'risparmiato',
     dash_income_sources:'Fonti di entrata',dash_no_income:'Nessuna entrata registrata.',dash_add_tx_link:'Aggiungi transazioni →',
     dash_spending_breakdown:'Dettaglio spese',dash_no_spending:'Nessuna spesa registrata.',
-    upgrade_feat_debt:'💳 Pagamento debiti',upgrade_feat_sinking:'🏺 Fondi di accantonamento',upgrade_feat_calendar:'📅 Calendario intelligente',
+    upgrade_feat_debt:'💳 Pagamento debiti',upgrade_feat_sinking:'🏺 Obiettivi di risparmio',upgrade_feat_calendar:'📅 Calendario intelligente',
     upgrade_feat_subs:'🔄 Abbonamenti',upgrade_feat_auto:'⚡ Automazione',upgrade_feat_alloc:'🎯 Ripartizione',
     upg_chip_tx:'{0} / {0} transazioni gratuite utilizzate',upg_chip_cat:'{0} / {0} categorie {1} gratuite utilizzate',upg_chip_limit:'Limite di prova gratuita raggiunto',
     upg_aria_label:'Esegui l’upgrade per sbloccare il pianificatore completo',
@@ -1473,7 +1473,7 @@ const TRANSLATIONS = {
     upg_feat_csv:'Importazione &amp; esportazione CSV, cronologia completa',upg_feat_onetime:'Pagamento unico · aggiornamenti gratuiti a vita',
     upg_price_tag:'una tantum',upg_price_note:'Nessun abbonamento',
     upg_cta_sbp:'Sblocca Simple Budget per {0}',
-    upg_upsell_lead:'⚡ Vuoi pagamento debiti, fondi di accantonamento &amp; altro?',upg_upsell_cta:'Ottieni Ultimate per {0} →',
+    upg_upsell_lead:'⚡ Vuoi pagamento debiti, obiettivi di risparmio &amp; altro?',upg_upsell_cta:'Ottieni Ultimate per {0} →',
     upg_later:'Forse più tardi',
     reauth_title:'Accedi con Google per continuare',
     reauth_sub:'I tuoi dati per questo strumento sono sincronizzati con Google Drive. Accedi di nuovo per riprendere da dove avevi lasciato.',
@@ -1511,7 +1511,7 @@ const TRANSLATIONS = {
     cmp_feat5:'Controllo del periodo di budget con preimpostazioni',
     cmp_feat6:'Riporto dal periodo precedente',
     cmp_feat7:'Pagamento debiti (Palla di neve &amp; Valanga)',
-    cmp_feat8:'Monitoraggio fondi di accantonamento con obiettivi mensili',
+    cmp_feat8:'Obiettivi di risparmio con importi mensili',
     cmp_feat9:'Calendario intelligente con tutti gli eventi popolati automaticamente',
     cmp_feat10:'Monitoraggio abbonamenti con ripartizione per categoria',
     cmp_feat11:'Dashboard Pro con statistiche principali &amp; pannello eventi in arrivo',
@@ -1524,7 +1524,7 @@ const TRANSLATIONS = {
     tab_dashboard:'Panel',tab_budget:'Budżet',tab_transactions:'Transakcje',
     tab_income:'Przychody',tab_expenses:'Wydatki',tab_bills:'Rachunki',
     tab_debt:'Długi',tab_savings:'Oszczędności',tab_settings:'Ustawienia',
-    tab_debt_payoff:'Spłata długów',tab_sinking:'Fundusze celowe',
+    tab_debt_payoff:'Spłata długów',tab_sinking:'Cele oszczędnościowe',
     tab_calendar:'Kalendarz',tab_subscriptions:'Subskrypcje',
     total_income:'Łączne przychody',expenses_bills:'Wydatki i rachunki',
     debt_payments:'Spłaty długów',total_savings:'Łączne oszczędności',
@@ -1538,7 +1538,7 @@ const TRANSLATIONS = {
     toast_tx_added:'Transakcja dodana \u2713',toast_tx_updated:'Zaktualizowano \u2713',toast_tx_deleted:'Usuni\u0119to',
     toast_period_updated:'Okres zaktualizowany \u2713',toast_period_error:'Data ko\u0144cowa musi by\u0107 po dacie pocz\u0105tkowej',
     toast_currency_updated:'Waluta zaktualizowana \u2713',toast_imported:'Zaimportowano {0} \u2713',
-    toast_fund_created:'Fundusz utworzony \u2713',toast_fund_updated:'Fundusz zaktualizowany \u2713',
+    toast_fund_created:'Cel utworzony ✓',toast_fund_updated:'Cel zaktualizowany ✓',
     toast_fund_contrib:'Dodano {amt} do {name} \u2713',
     toast_sub_added:'Subskrypcja dodana \u2713',toast_sub_updated:'Subskrypcja zaktualizowana \u2713',
     toast_alloc_enabled:'Podzia\u0142 w\u0142\u0105czony \u2713',toast_alloc_disabled:'Podzia\u0142 wy\u0142\u0105czony',
@@ -1549,7 +1549,7 @@ const TRANSLATIONS = {
     confirm_remove_cat_with_tx:'{0} istniej\u0105ca(-ych) transakcja(-i) u\u017cywa tej kategorii. Zachowaj\u0105 j\u0105 jako etykiet\u0119, ale nie b\u0119dzie ju\u017c \u015bledzona w Twoim bud\u017cecie. Usun\u0105\u0107 mimo to?',
     confirm_delete_all_tx:'Usun\u0105\u0107 WSZYSTKIE transakcje? Tej operacji nie mo\u017cna cofn\u0105\u0107.',
     confirm_delete_tx:'Usun\u0105\u0107 t\u0119 transakcj\u0119?',confirm_remove_debt:'Usun\u0105\u0107 ten d\u0142ug?',
-    confirm_delete_fund:'Usun\u0105\u0107 ten fundusz?',confirm_remove_sub:'Usun\u0105\u0107 t\u0119 subskrypcj\u0119?',
+    confirm_delete_fund:'Usunąć ten cel?',confirm_remove_sub:'Usun\u0105\u0107 t\u0119 subskrypcj\u0119?',
     confirm_reset_1:'Jeste\u015b pewny? Wszystkie dane zostan\u0105 trwale usuni\u0119te.',
     confirm_reset_2:'Ostatnia szansa - tego nie mo\u017cna cofn\u0105\u0107. Kontynuowa\u0107?',
     export_csv_btn:'\uD83D\uDCE5 Eksportuj CSV',
@@ -1725,7 +1725,7 @@ const TRANSLATIONS = {
     mod_desc_expenses:'Ustal limit budżetu dla każdej kategorii wydatków. Paski postępu zmieniają się na czerwone po przekroczeniu.',
     mod_desc_bills:'Śledź powtarzające się rachunki. Dodaj termin płatności, a następnie zaznacz pole po opłaceniu.',
     mod_desc_debt:'Trzymaj rękę na pulsie spłat kredytów i hipotek. Ustal spodziewane kwoty i oznacz każdą jako opłaconą.',
-    mod_desc_savings:'Ustal cel oszczędnościowy dla każdego funduszu. Rzeczywiste wpłaty pochodzą z zarejestrowanych transakcji.',
+    mod_desc_savings:'Ustal cel oszczędnościowy dla każdej kategorii. Rzeczywiste wpłaty pochodzą z zarejestrowanych transakcji.',
     mod_add_category:'+ Dodaj kategorię',mod_add_new_category:'Dodaj nową kategorię',mod_cat_name_label:'Nazwa',
     tx_way_manual_sub:'Jednorazowo, w dowolnym dniu',
     bud_quick_add:'Szybkie dodawanie',
@@ -1746,7 +1746,7 @@ const TRANSLATIONS = {
     dash_savings_rate:'Stopa oszczędności',dash_saved_sfx:'zaoszczędzono',
     dash_income_sources:'Źródła przychodów',dash_no_income:'Brak zarejestrowanych przychodów.',dash_add_tx_link:'Dodaj transakcje →',
     dash_spending_breakdown:'Zestawienie wydatków',dash_no_spending:'Brak zarejestrowanych wydatków.',
-    upgrade_feat_debt:'💳 Spłata długów',upgrade_feat_sinking:'🏺 Fundusze celowe',upgrade_feat_calendar:'📅 Inteligentny kalendarz',
+    upgrade_feat_debt:'💳 Spłata długów',upgrade_feat_sinking:'🏺 Cele oszczędnościowe',upgrade_feat_calendar:'📅 Inteligentny kalendarz',
     upgrade_feat_subs:'🔄 Subskrypcje',upgrade_feat_auto:'⚡ Automatyzacja',upgrade_feat_alloc:'🎯 Alokacja',
     upg_chip_tx:'{0} / {0} bezpłatnych transakcji wykorzystanych',upg_chip_cat:'{0} / {0} bezpłatnych kategorii {1} wykorzystanych',upg_chip_limit:'Osiągnięto limit bezpłatnej wersji próbnej',
     upg_aria_label:'Ulepsz, aby odblokować pełny planer',
@@ -1757,7 +1757,7 @@ const TRANSLATIONS = {
     upg_feat_csv:'Import &amp; eksport CSV, pełna historia',upg_feat_onetime:'Jednorazowa płatność · darmowe aktualizacje na zawsze',
     upg_price_tag:'jednorazowo',upg_price_note:'Bez subskrypcji',
     upg_cta_sbp:'Odblokuj Simple Budget za {0}',
-    upg_upsell_lead:'⚡ Chcesz spłatę długów, fundusze celowe &amp; więcej?',upg_upsell_cta:'Zdobądź Ultimate za {0} →',
+    upg_upsell_lead:'⚡ Chcesz spłatę długów, cele oszczędnościowe &amp; więcej?',upg_upsell_cta:'Zdobądź Ultimate za {0} →',
     upg_later:'Może później',
     reauth_title:'Zaloguj się przez Google, aby kontynuować',
     reauth_sub:'Twoje dane dla tego narzędzia są synchronizowane z Google Drive. Zaloguj się ponownie, aby kontynuować tam, gdzie skończyłeś.',
@@ -1795,7 +1795,7 @@ const TRANSLATIONS = {
     cmp_feat5:'Kontrola okresu budżetowego z ustawieniami wstępnymi',
     cmp_feat6:'Przeniesienie z poprzedniego okresu',
     cmp_feat7:'Spłata długów (Kula śniegowa &amp; Lawina)',
-    cmp_feat8:'Śledzenie funduszy celowych z miesięcznymi celami',
+    cmp_feat8:'Cele oszczędnościowe z miesięcznymi kwotami',
     cmp_feat9:'Inteligentny kalendarz z automatycznie uzupełnianymi wydarzeniami',
     cmp_feat10:'Śledzenie subskrypcji z podziałem na kategorie',
     cmp_feat11:'Panel Pro z kluczowymi statystykami &amp; panelem nadchodzących wydarzeń',
@@ -2848,8 +2848,12 @@ function collectNotifications() {
     if (!day) return;
     const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const thisMonth = toLocalISO(new Date(now.getFullYear(), now.getMonth(), Math.min(day, last)));
-    const late = thisMonth < today && thisMonth >= start;
-    const next = late ? thisMonth : nextDueFromDay(day);
+    // Early in a month the date that passed may be last month's.
+    const prevLast = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+    const lastMonth = toLocalISO(new Date(now.getFullYear(), now.getMonth() - 1, Math.min(day, prevLast)));
+    const lateOn = thisMonth < today && thisMonth >= start ? thisMonth : lastMonth < today && lastMonth >= start ? lastMonth : '';
+    const late = !!lateOn;
+    const next = late ? lateOn : nextDueFromDay(day);
     if (!late && !(next >= today && next <= soon)) return;
     const owe = rowRemaining(r) || Number(r.expected) || 0;
     out.push({ id: type + ':' + r.id, section: type, level: late ? 'late' : 'soon', tag: late ? 'overdue' : 'soon', date: next,
@@ -3783,7 +3787,7 @@ function dispatchRender(tab) {
 // ── Hub ───────────────────────────────────────────────────────────────
 const TOOLS = [
   { id:'budget', icon:'💰', color:'indigo', status:'live', name:'Simple Budget Planner', desc:'Track income, expenses, bills, debt, and savings - all in one place. Perfect for monthly budget control.' },
-  { id:'ubp',    icon:'⚡', color:'orange', status:'live', name:'Ultimate Budget Planner', desc:'The pro upgrade. Debt payoff calculator, sinking funds tracker, smart calendar, subscription tracker, and Ezzo, your AI budget assistant - all in one.' }
+  { id:'ubp',    icon:'⚡', color:'orange', status:'live', name:'Ultimate Budget Planner', desc:'The pro upgrade. Debt payoff calculator, savings goals tracker, smart calendar, subscription tracker, and Ezzo, your AI budget assistant - all in one.' }
 ];
 
 function renderHub() {
@@ -6304,7 +6308,12 @@ function nlCommitted() {
       const last = new Date(now0.getFullYear(), now0.getMonth() + 1, 0).getDate();
       const thisMonth = toLocalISO(new Date(now0.getFullYear(), now0.getMonth(), Math.min(day, last)));
       const start = state.settings.periodStart || '';
-      const due = thisMonth < today && (!start || thisMonth >= start) ? thisMonth : nextDueFromDay(day);
+      // Early in a month the date that passed may be last month's, still
+      // inside a period that began then.
+      const prevLast = new Date(now0.getFullYear(), now0.getMonth(), 0).getDate();
+      const lastMonth = toLocalISO(new Date(now0.getFullYear(), now0.getMonth() - 1, Math.min(day, prevLast)));
+      const due = thisMonth < today && (!start || thisMonth >= start) ? thisMonth
+        : start && lastMonth >= start && lastMonth < today ? lastMonth : nextDueFromDay(day);
       if (due < today && !(start && due >= start)) return;
       if (end && due > end) return;
       // A part-paid row commits only what is left of it.
@@ -6818,23 +6827,40 @@ document.addEventListener('mousedown',e=>{
 },true);
 
 // ── Themed number steppers (replaces native spinner arrows) ───────────
+// A minus and a plus side by side after the field. Each press moves the
+// value by one (a dollar, a day, a percent); holding it down keeps going.
+const FK_NUM_SEL='input[type="number"]:not([data-stepper]):not([data-no-stepper])';
 function fkAddStepper(inp){
-  if(inp.dataset.stepper) return; inp.dataset.stepper='1';
-  const wrap=document.createElement('span'); wrap.className='num-field';
+  if(inp.dataset.stepper||!inp.parentNode) return; inp.dataset.stepper='1';
+  const wrap=document.createElement('span');
+  wrap.className='num-field'+(inp.classList.contains('input')?'':' num-field--inline');
   inp.parentNode.insertBefore(wrap,inp); wrap.appendChild(inp);
   const st=document.createElement('span'); st.className='num-steppers';
-  st.innerHTML='<button type="button" class="num-step" data-d="1" tabindex="-1">\u25B2</button><button type="button" class="num-step" data-d="-1" tabindex="-1">\u25BC</button>';
+  st.innerHTML='<button type="button" class="num-step" data-d="-1" tabindex="-1" aria-label="-1">\u2212</button><button type="button" class="num-step" data-d="1" tabindex="-1" aria-label="+1">+</button>';
   wrap.appendChild(st);
-  st.querySelectorAll('.num-step').forEach(b=>b.addEventListener('click',()=>{
-    const step=parseFloat(inp.step)||1, cur=parseFloat(inp.value)||0, dir=+b.dataset.d, mn=parseFloat(inp.min), mx=parseFloat(inp.max);
-    let n=cur+dir*step; if(!isNaN(mn)&&n<mn)n=mn; if(!isNaN(mx)&&n>mx)n=mx; n=Math.round(n*100)/100;
+  const bump=dir=>{
+    const cur=parseFloat(inp.value)||0, mn=parseFloat(inp.min), mx=parseFloat(inp.max);
+    let n=Math.round((cur+dir)*100)/100; if(!isNaN(mn)&&n<mn)n=mn; if(!isNaN(mx)&&n>mx)n=mx;
+    if(String(n)===inp.value) return;
     inp.value=n; inp.dispatchEvent(new Event('input',{bubbles:true})); inp.dispatchEvent(new Event('change',{bubbles:true}));
-  }));
+  };
+  st.querySelectorAll('.num-step').forEach(b=>{
+    const dir=+b.dataset.d; let wait=0, rep=0, held=false;
+    const stop=()=>{clearTimeout(wait);clearInterval(rep);wait=rep=0;};
+    b.addEventListener('pointerdown',e=>{
+      if(e.button!==0) return; e.preventDefault(); held=true; bump(dir);
+      wait=setTimeout(()=>{rep=setInterval(()=>bump(dir),70);},420);
+    });
+    b.addEventListener('pointerup',stop);
+    ['pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{stop();held=false;}));
+    // A click from the keyboard or a script, which has no pointer press before it.
+    b.addEventListener('click',()=>{ if(held){held=false;return;} bump(dir); });
+  });
 }
-function fkScanSteppers(root){ root&&root.querySelectorAll&&root.querySelectorAll('input.input[type="number"]:not([data-stepper])').forEach(fkAddStepper); }
+function fkScanSteppers(root){ root&&root.querySelectorAll&&root.querySelectorAll(FK_NUM_SEL).forEach(fkAddStepper); }
 function fkInitUIEnhancers(){
   fkScanSteppers(document);
-  new MutationObserver(muts=>{for(const m of muts)for(const n of m.addedNodes){if(n.nodeType!==1)continue;if(n.matches&&n.matches('input.input[type="number"]'))fkAddStepper(n);fkScanSteppers(n);}}).observe(document.body,{childList:true,subtree:true});
+  new MutationObserver(muts=>{for(const m of muts)for(const n of m.addedNodes){if(n.nodeType!==1)continue;if(n.matches&&n.matches(FK_NUM_SEL))fkAddStepper(n);fkScanSteppers(n);}}).observe(document.body,{childList:true,subtree:true});
 }
 
 // ── Init ──────────────────────────────────────────────────────────────
@@ -7053,14 +7079,14 @@ function init() {
 // ── Review carousel ────────────────────────────────────────────────────
 const REVIEWS = [
   {name:'Megan T.',title:'Freelance Graphic Designer & Illustrator',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/44.jpg',text:'I tried every app out there and they all wanted $10 a month just to see my own spending. Ezzo Budget was the first tool that actually felt like mine. Paid off $3,200 in credit card debt in five months.'},
-  {name:'Daniel K.',title:'Full-Stack Software Engineer at a Startup',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/32.jpg',text:'The sinking funds feature changed how I save. I set a target for a trip to Japan and the planner calculated exactly how much I needed each month. The automatic transactions did the rest.'},
+  {name:'Daniel K.',title:'Full-Stack Software Engineer at a Startup',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/32.jpg',text:'The savings goals feature changed how I save. I set a target for a trip to Japan and the planner calculated exactly how much I needed each month. The automatic transactions did the rest.'},
   {name:'James R.',title:'Senior Account Manager in Advertising',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/75.jpg',text:'My wife and I used spreadsheets for years but always fell off after a month. Ezzo Budget is just clean enough that we actually stick with it. We can see our bills, track subscriptions, and it all lives in the browser.'},
   {name:'Priya S.',title:'Recent Business Graduate & Job Seeker',stars:4,tool:'SBP',img:'https://randomuser.me/api/portraits/women/65.jpg',text:'As a recent graduate I needed something dead simple. The Simple planner lets me see income vs. expenses in one screen. I caught a gym membership I forgot to cancel on day one.'},
   {name:'Carlos M.',title:'Independent Restaurant Owner & Operator',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/46.jpg',text:'I run a small restaurant and the subscription tracker alone saves me from forgetting about services I signed up for months ago. The calendar view is perfect for seeing what is due and when.'},
   {name:'Sarah L.',title:'Registered Nurse Working Night Shifts',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/17.jpg',text:'I work 12-hour shifts and have zero energy left for complicated finance apps. This one took me two minutes to set up and I have not missed a bill payment since. Exactly what I needed.'},
   {name:'Tom W.',title:'High School History Teacher & Coach',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/22.jpg',text:'The debt payoff calculator gave me a clear timeline for paying off my student loans. Seeing the numbers update in real time keeps me motivated. Down $8,000 in seven months.'},
   {name:'Aisha N.',title:'Digital Marketing Manager at an Agency',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/90.jpg',text:'I love that nothing leaves my device. Every other app wanted my bank login and I was never comfortable with that. Ezzo Budget gave me real budgeting without the privacy trade-off.'},
-  {name:'Ryan P.',title:'Licensed Electrician & Small Business Owner',stars:4,tool:'UBP',img:'https://randomuser.me/api/portraits/men/55.jpg',text:'I set up sinking funds for my tools, truck insurance, and license renewals. No more scrambling when a big expense hits. The automatic transactions make it completely hands-off.'},
+  {name:'Ryan P.',title:'Licensed Electrician & Small Business Owner',stars:4,tool:'UBP',img:'https://randomuser.me/api/portraits/men/55.jpg',text:'I set up savings goals for my tools, truck insurance, and license renewals. No more scrambling when a big expense hits. The automatic transactions make it completely hands-off.'},
   {name:'Emily C.',title:'Stay-at-Home Parent Managing Family Finances',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/33.jpg',text:'With three kids, every dollar matters. The Simple planner helped me find over $400 in monthly spending I did not even realize we had. We are finally putting real money into savings.'},
   {name:'Marco D.',title:'PhD Candidate in Applied Mathematics',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/men/86.jpg',text:'I budgeted on paper for years. Ezzo Budget is basically the digital version of that but with better math. CSV export means I can still pull data into my own spreadsheets when I want to.'},
   {name:'Jenny H.',title:'Senior Product Designer at a Tech Company',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/women/26.jpg',text:'The allocation buckets were a game changer. I split everything into needs, wants, and savings and now every transaction goes into the right bucket automatically. So satisfying.'},
@@ -7069,7 +7095,7 @@ const REVIEWS = [
   {name:'Kevin Z.',title:'IT Consultant Working with Enterprise Clients',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/29.jpg',text:'I have used YNAB, Monarch, and Mint before it shut down. This is the first tool where I do not feel like the product. My data stays local, I paid once, and I actually use it daily.'},
   {name:'Rachel A.',title:'Dental Hygienist Saving for a First Home',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/58.jpg',text:'I have never been good with money but this made it almost impossible to lose track. The dashboard shows me exactly where I stand and the progress bars turn red before I overspend.'},
   {name:'Chris G.',title:'Rideshare Driver & Gig Economy Worker',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/64.jpg',text:'My income changes every week. The Ultimate planner lets me adjust on the fly and the calendar shows me exactly when bills hit so I can plan my driving hours around it.'},
-  {name:'Natalie V.',title:'Professional Event Planner & Coordinator',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/women/12.jpg',text:'Sinking funds are perfect for my work. I create one for each upcoming event and watch the progress bars fill up. When the event arrives, the money is already there. No stress.'},
+  {name:'Natalie V.',title:'Professional Event Planner & Coordinator',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/women/12.jpg',text:'Savings goals are perfect for my work. I create one for each upcoming event and watch the progress bars fill up. When the event arrives, the money is already there. No stress.'},
   {name:'Alex J.',title:'Computer Science Major & Part-Time Tutor',stars:4,tool:'SBP',img:'https://randomuser.me/api/portraits/men/18.jpg',text:'I showed this to my roommates and now all four of us use it. It runs in the browser so there is nothing to install. We each have our own budget on our own laptop. Simple and private.'},
   {name:'Linda M.',title:'Retired Public School Teacher on a Pension',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/79.jpg',text:'At 63 I did not want another app to learn. This took me five minutes. I track my pension, Social Security, and monthly expenses. The CSV export lets my financial advisor review everything.'},
   {name:'Hassan E.',title:'Civil Engineer & First-Generation Homeowner',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/94.jpg',text:'Bought a house last year and suddenly had a dozen new bills to track. The Ultimate planner keeps my mortgage, insurance, utilities, and maintenance funds all organized. Wish I had found it sooner.'},

@@ -637,6 +637,9 @@ a.btn { text-decoration: none; }
 .alloc-color-swatch:hover { transform: scale(1.08); }
 .alloc-name-inp { flex: 1; min-width: 0; }
 .alloc-pct-field { flex: 0 0 84px; display: flex; align-items: center; gap: 5px; }
+/* With its minus and plus beside it the percent field sizes to its content. */
+.alloc-pct-field:has(.num-field) { flex: 0 0 auto; }
+.alloc-pct-field .num-field .alloc-pct-inp { flex: 0 0 52px; width: 52px; }
 .alloc-pct-inp { flex: 1; min-width: 0; -webkit-appearance: none; -moz-appearance: textfield; appearance: none; border: 1px solid var(--border); background: var(--surface-strong); border-radius: var(--radius-sm); padding: 8px 8px; font-size: 13px; font-weight: 600; font-family: inherit; color: var(--text-primary); text-align: center; }
 .alloc-pct-inp::-webkit-outer-spin-button, .alloc-pct-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .alloc-pct-inp:focus { outline: none; border-color: var(--grad-purple); box-shadow: 0 0 0 3px rgba(99,102,241,.13); }
@@ -4831,12 +4834,16 @@ details[open] > .recurring-summary::before { transform: rotate(90deg); }
 input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.num-field { position: relative; display: block; width: 100%; }
-.num-field > input.input { width: 100%; padding-right: 34px; }
-.num-steppers { position: absolute; top: 5px; right: 6px; bottom: 5px; width: 22px; display: flex; flex-direction: column; gap: 3px; pointer-events: none; }
-.num-step { flex: 1 1 0; min-height: 0; border: 1px solid var(--border-faint); background: var(--surface-strong); border-radius: 6px; color: var(--text-secondary); font-size: 7px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: all .12s; pointer-events: auto; }
+/* A minus and a plus side by side after the field. */
+.num-field { display: flex; align-items: stretch; gap: 6px; width: 100%; }
+.num-field > input { flex: 1 1 auto; min-width: 0; width: auto; }
+.num-field--inline { display: inline-flex; width: auto; max-width: 100%; vertical-align: middle; gap: 4px; }
+.num-steppers { display: flex; gap: 6px; flex: 0 0 auto; }
+.num-field--inline .num-steppers { gap: 4px; }
+.num-step { width: 40px; min-height: 36px; border: 1px solid var(--border-faint); background: var(--surface-strong); border-radius: 10px; color: var(--text-primary); font-size: 18px; font-weight: 600; line-height: 1; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: background .12s, color .12s, border-color .12s, transform .08s; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.num-field--inline .num-step { width: 30px; min-height: 30px; font-size: 16px; border-radius: 8px; }
 .num-step:hover { color: #fff; background: linear-gradient(135deg, var(--grad-indigo), var(--grad-purple)); border-color: transparent; }
-.num-step:active { transform: scale(.88); }
+.num-step:active { transform: scale(.92); }
 
 /* ── Native date icon hidden (custom calendar is used) ─────────── */
 input[type="date"]::-webkit-calendar-picker-indicator { display: none; opacity: 0; }
