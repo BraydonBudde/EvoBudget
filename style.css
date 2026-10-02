@@ -7007,32 +7007,22 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 /* ══ Can I afford it? ═══════════════════════════════════════════
    One column on every screen. Pairs share a grid with equal columns, so
    the chips, the two figures and the two buttons always line up. */
-.modal:has(> .modal-body > .af) { max-width: 560px; }
-@media (min-width: 768px) { .modal:has(> .modal-body > .af) { max-width: 560px; padding: 40px 44px; } }
+.modal:has(> .modal-body > .af) { max-width: 820px; width: calc(100% - 32px); }
+@media (min-width: 768px) { .modal:has(> .modal-body > .af) { max-width: 920px; } }
 .af-eyebrow { display: block; margin-bottom: 4px; font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--text-secondary); }
-.af { display: flex; flex-direction: column; gap: 16px; line-height: 1.45; }
-.af-ask {
-  display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: var(--radius-lg);
-  background: var(--surface-strong); border: 1px solid var(--border-faint);
+.af { display: flex; flex-direction: column; gap: 16px; }
+.af-side, .af-out, .af-actions, .af-foot { line-height: 1.45; }
+/* The pad on the left, the answer on the right, like the + spend keypad.
+   On a phone it is one column, with the answer between the quick amounts
+   and the keys so it stays in view while the amount is tapped in. */
+.af-ask { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+.af-side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.af-side .af-out { flex: 1 1 auto; }
+.af-label { text-align: center; }
+.af-quick { width: 100%; }
+@media (min-width: 701px) {
+  .af { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: stretch; }
 }
-.af-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
-.af-amount { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
-.af-sym { flex: 0 0 auto; font-family: var(--font-display); font-size: clamp(24px, 7vw, 32px); font-weight: 800; color: var(--text-secondary); }
-.af-input {
-  flex: 1 1 auto; min-width: 0; width: 100%; padding: 0; border: 0; outline: none; background: transparent;
-  font-family: var(--font-display); font-size: clamp(36px, 11vw, 52px); font-weight: 800; line-height: 1.1;
-  letter-spacing: -.03em; color: var(--text-primary); font-variant-numeric: tabular-nums;
-}
-.af-input::placeholder { color: var(--text-secondary); opacity: .45; }
-.af-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-.af-chip {
-  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 700; min-width: 0;
-  height: 44px; padding: 0 4px; border-radius: var(--radius-pill); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  color: var(--text-primary); background: var(--surface-solid); border: 1.5px solid var(--border-faint);
-  transition: border-color .15s, background .15s;
-}
-.af-chip:hover { border-color: rgba(var(--grad-indigo-rgb), .45); }
-.af-chip.is-on { border-color: var(--grad-indigo); background: rgba(var(--grad-indigo-rgb), .14); }
 
 .af-out {
   --af-ink: #059669; --af-bg: rgba(16,185,129,.09); --af-line: rgba(16,185,129,.3); --af-chip: #10b981;
@@ -7086,4 +7076,26 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 .af-actions .btn { height: 48px; justify-content: center; min-width: 0; }
 .af-actions .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
 .af-foot { margin: 0 !important; text-align: center; font-size: 12px; color: var(--text-secondary); }
+@media (max-width: 700px) {
+  .af-ask, .af-side { display: contents; }
+  .af-label { order: 1; } .af-amount { order: 2; } .af-quick { order: 3; } .af-out { order: 4; }
+  .af-keys { order: 5; align-self: center; } .af-clear { order: 6; align-self: center; }
+  .af-actions { order: 7; } .af-foot { order: 8; }
+  /* Kept to one screen: the label stays for screen readers, the bullet
+     points and the footnote give way, everything else tightens a little. */
+  .af { gap: 10px; }
+  .af-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .af-amount { min-height: 52px; }
+  .af-out { padding: 12px; gap: 10px; }
+  .af-out.is-empty { min-height: 0; padding: 14px 16px; }
+  .af-empty-ico svg { width: 26px; height: 26px; }
+  .af-badge { flex-basis: 38px; width: 38px; height: 38px; }
+  .af-title { font-size: 17px; }
+  .af-line { font-size: 13px; }
+  .af-tile { padding: 9px 12px; }
+  .af-facts, .af-foot { display: none; }
+  .af-keys { gap: 6px; }
+  .af-keys .qa-key { height: 44px; }
+  .af-actions .btn { height: 46px; }
+}
 .tx-way--afford .tx-way-ico { background: rgba(16,185,129,.13); }
