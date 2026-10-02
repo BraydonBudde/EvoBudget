@@ -1229,7 +1229,7 @@ input[type="number"].expected-input {
 @media (max-width: 480px) {
   /* Dropped under the text and sharing the width, so neither is clipped. */
   .tx-way-btns { flex: 1 1 100%; }
-  .tx-way-btns .btn { flex: 1 1 0; }
+  .tx-way-btns .btn { flex: 1 1 0; justify-content: center; }
 }
 
 /* ── The list and its filters, in one card ──────────────────────────────
@@ -7003,3 +7003,87 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 
 /* The sidebar foot holds nothing now, but still pushes the account card down. */
 .nav-rail-foot.is-empty { border-top: 0; padding-top: 0; min-height: 0; }
+
+/* ══ Can I afford it? ═══════════════════════════════════════════
+   One column on every screen. Pairs share a grid with equal columns, so
+   the chips, the two figures and the two buttons always line up. */
+.modal:has(> .modal-body > .af) { max-width: 560px; }
+@media (min-width: 768px) { .modal:has(> .modal-body > .af) { max-width: 560px; padding: 40px 44px; } }
+.af-eyebrow { display: block; margin-bottom: 4px; font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--text-secondary); }
+.af { display: flex; flex-direction: column; gap: 16px; line-height: 1.45; }
+.af-ask {
+  display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: var(--radius-lg);
+  background: var(--surface-strong); border: 1px solid var(--border-faint);
+}
+.af-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.af-amount { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.af-sym { flex: 0 0 auto; font-family: var(--font-display); font-size: clamp(24px, 7vw, 32px); font-weight: 800; color: var(--text-secondary); }
+.af-input {
+  flex: 1 1 auto; min-width: 0; width: 100%; padding: 0; border: 0; outline: none; background: transparent;
+  font-family: var(--font-display); font-size: clamp(36px, 11vw, 52px); font-weight: 800; line-height: 1.1;
+  letter-spacing: -.03em; color: var(--text-primary); font-variant-numeric: tabular-nums;
+}
+.af-input::placeholder { color: var(--text-secondary); opacity: .45; }
+.af-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.af-chip {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 700; min-width: 0;
+  height: 44px; padding: 0 4px; border-radius: var(--radius-pill); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--text-primary); background: var(--surface-solid); border: 1.5px solid var(--border-faint);
+  transition: border-color .15s, background .15s;
+}
+.af-chip:hover { border-color: rgba(var(--grad-indigo-rgb), .45); }
+.af-chip.is-on { border-color: var(--grad-indigo); background: rgba(var(--grad-indigo-rgb), .14); }
+
+.af-out {
+  --af-ink: #059669; --af-bg: rgba(16,185,129,.09); --af-line: rgba(16,185,129,.3); --af-chip: #10b981;
+  display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: var(--radius-lg);
+  background: var(--af-bg); border: 1px solid var(--af-line);
+}
+.af-out--cau { --af-ink: #b45309; --af-bg: rgba(245,158,11,.09); --af-line: rgba(245,158,11,.34); --af-chip: #f59e0b; }
+.af-out--wait { --af-ink: #e11d48; --af-bg: rgba(244,63,94,.08); --af-line: rgba(244,63,94,.32); --af-chip: #f43f5e; }
+[data-theme="dark"] .af-out { --af-ink: #34d399; }
+[data-theme="dark"] .af-out--cau { --af-ink: #fbbf24; }
+[data-theme="dark"] .af-out--wait { --af-ink: #fb7185; }
+.af-out.is-empty {
+  align-items: center; justify-content: center; text-align: center; gap: 8px; min-height: 168px; padding: 18px 20px;
+  background: transparent; border-style: dashed; border-color: var(--border-faint);
+}
+.af-empty-ico svg { width: 34px; height: 34px; color: var(--grad-indigo); stroke-width: 1.8; }
+.af-empty { margin: 0; font-size: 14px; color: var(--text-secondary); max-width: 34ch; }
+.af-verdict { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.af-badge {
+  flex: 0 0 42px; width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center;
+  background: var(--af-chip); color: #fff;
+}
+.af-badge svg { width: 21px; height: 21px; }
+.af-verdict-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.af-title { font-family: var(--font-display); font-size: 19px; font-weight: 800; line-height: 1.2; color: var(--af-ink); }
+.af-line { font-size: 13.5px; color: var(--text-secondary); }
+/* Both figures sit on the same line: each tile stretches to the taller one
+   and its figure is pushed to the foot, whatever length its label runs to. */
+.af-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.af-tile {
+  display: flex; flex-direction: column; gap: 3px; min-width: 0; padding: 12px 14px; border-radius: var(--radius-md);
+  background: var(--surface-solid); border: 1px solid var(--border-faint);
+}
+.af-tile-k { font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text-secondary); line-height: 1.3; }
+.af-tile-v {
+  margin-top: auto; padding-top: 3px; height: 27px; line-height: 24px; font-family: var(--font-display); font-size: clamp(15px, 4.4vw, 19px); font-weight: 800;
+  color: var(--text-primary); white-space: nowrap; font-variant-numeric: tabular-nums;
+  /* Sized to its own length and its tile, so a long figure shrinks rather than clips. */
+  font-size: clamp(12px, calc(100cqi / (var(--len, 9) * .66)), 19px);
+}
+.af-tile { container-type: inline-size; }
+.af-out.is-short .af-tile-v[data-af="free"] { color: var(--af-ink); }
+.af-tile-now { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.af-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.modal-body .af-fact { margin: 0; }
+.af-fact { position: relative; padding-left: 16px; font-size: 13.5px; color: var(--text-primary); }
+.af-fact::before { content: ''; position: absolute; left: 0; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+.af-fact--cau::before { background: #f59e0b; }
+.af-fact--wait::before { background: #f43f5e; }
+.af-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.af-actions .btn { height: 48px; justify-content: center; min-width: 0; }
+.af-actions .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.af-foot { margin: 0 !important; text-align: center; font-size: 12px; color: var(--text-secondary); }
+.tx-way--afford .tx-way-ico { background: rgba(16,185,129,.13); }
