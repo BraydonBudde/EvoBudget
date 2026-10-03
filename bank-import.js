@@ -25,6 +25,12 @@
    6. Check     the running balance is followed row by row and the net
                 change compared with the opening and closing balance.
 
+   PDF statements are read on the device too (pdf.js, bundled in vendor/):
+   the words on each page are put back into lines and columns and go
+   through exactly the same steps. A scanned statement has no words to
+   read; only then, and only when the person says so after being told
+   what it means, Ezzo reads the PDF itself.
+
    Ezzo (penny.js) is asked only to pick categories, and is sent only
    shop names and whether money went out or came in: never amounts,
    dates, balances or account details. The request goes through
@@ -467,6 +473,27 @@ function biDetectFlip(rows, map) {
   }
   return false;
 }
+// Every amount printed without a sign, beside a running balance: each one
+// went the way the balance moved. The first is settled by the statement's
+// opening balance when there is one, otherwise by what it says it is.
+function biSignFromBalance(rows, statement) {
+  if (!rows.length || rows.some(r => r.amount < 0)) return false;
+  const chron = biChrono(rows), withBal = chron.filter(r => r.balance != null);
+  if (withBal.length < 2 || withBal.length < chron.length * 0.8) return false;
+  let fixed = 0;
+  for (let i = 1; i < chron.length; i++) {
+    const a = chron[i - 1], b = chron[i];
+    if (a.balance == null || b.balance == null) continue;
+    const d = biRound(b.balance - a.balance);
+    if (Math.abs(Math.abs(d) - b.amount) < 0.011) { if (d < 0) b.amount = -b.amount; fixed++; }
+  }
+  if (!fixed) return false;
+  const first = chron[0];
+  const open = statement && statement.start != null ? biAmount(String(statement.start), biDecimalMark([String(statement.start)])) : NaN;
+  if (!isNaN(open) && first.balance != null) { if (biRound(first.balance - open) < 0) first.amount = -first.amount; }
+  else if (!/(salary|payroll|deposit|credit|refund|interest|transfer from|paid in|gehalt|lohn|gutschrift|salaire|virement recu|nomina|abono|stipendio|accredito|wynagrodzenie|wplyw)/.test(biNorm(first.full || first.raw))) first.amount = -first.amount;
+  return true;
+}
 // Oldest first, whichever way round the bank wrote it.
 function biChrono(rows) {
   if (rows.length < 2) return rows.slice();
@@ -637,19 +664,26 @@ async function biAskEzzo(items) {
 let _bi = null;
 function biPickFile(opts) {
   const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = '.csv,.txt,text/csv,text/plain'; inp.style.display = 'none';
+  inp.type = 'file'; inp.accept = '.csv,.txt,.pdf,text/csv,text/plain,application/pdf'; inp.style.display = 'none';
   inp.addEventListener('change', () => { const f = inp.files && inp.files[0]; inp.remove(); if (f) openBankImport(f, opts); });
   document.body.appendChild(inp); inp.click();
 }
 async function openBankImport(file, opts) {
   const o = opts || {};
+  let head8 = '';
+  try { head8 = new TextDecoder('latin1').decode(await file.slice(0, 1024).arrayBuffer()); } catch (e) {}
+  if (/\.pdf$/i.test(file.name || '') || /%PDF-/.test(head8)) { biOpenPdf(file, o); return; }
   if (file.size > BI_MAX_BYTES) { biAlert(t('bi_err_big')); return; }
   let text = '';
   try { text = biDecode(await file.arrayBuffer()); } catch (e) { biAlert(t('bi_err_type')); return; }
-  if (!text.trim() || /^\s*(%PDF|PK\u0003|<\?xml|<html|\{)/i.test(text)) { biAlert(t('bi_err_type')); return; }
-  const delim = biDelimiter(text);
-  const all = biParseCsv(text, delim);
+  if (!text.trim() || /^\s*(PK\u0003|<\?xml|<html|\{)/i.test(text)) { biAlert(t('bi_err_type')); return; }
+  const all = biParseCsv(text, biDelimiter(text));
   if (!all.length) { biAlert(t('bi_err_empty')); return; }
+  biStartFromRows(all, file.name, o, { source: 'csv' });
+}
+// Rows from either reader go the same way from here.
+function biStartFromRows(all, name, o, extra) {
+  const x = extra || {};
   // The planner's own export goes back in exactly as it came out.
   const head0 = (all[0] || []).map(biNorm);
   if (head0[0] === 'date' && head0[1] === 'type' && head0[2] === 'category' && head0[3] === 'amount') { biImportOwnExport(all); return; }
@@ -657,8 +691,12 @@ async function openBankImport(file, opts) {
   const head = h >= 0 ? all[h] : null;
   const body = (h >= 0 ? all.slice(h + 1) : all).slice(0, BI_MAX_ROWS);
   const map = head ? biMapFromHeader(head, body) : biMapFromContent(body);
-  _bi = { file: file.name, head, body, map, dateOrder: 'auto', flip: null, items: [], skipped: [], tab: 'all', shown: BI_PAGE,
-    useEzzo: o.via === 'ezzo' ? true : biEzzoReady(), via: o.via || 'tx', ezzo: { state: 'idle' } };
+  _bi = { file: name, head, body, map, dateOrder: 'auto', flip: null, items: [], skipped: [], tab: 'all', shown: BI_PAGE,
+    useEzzo: o.via === 'ezzo' ? true : biEzzoReady(), via: o.via || 'tx', ezzo: { state: 'idle' },
+    source: x.source || 'csv', pdfFile: x.file || null, opts: o, statement: x.statement || null };
+  // A statement's own opening and closing balance, when the PDF printed them.
+  const st = x.statement;
+  if (st && st.start != null && st.end != null) { _bi.recStart = String(st.start); _bi.recEnd = String(st.end); _bi.recOpen = true; }
   biRun();
   biRender();
   if (_bi.useEzzo && biEzzoReady()) biRunEzzo();
@@ -671,6 +709,7 @@ function biRun() {
   if (!b.ok) { b.items = []; b.skipped = []; b.recon = null; return; }
   const built = biBuildRows(b);
   b.order = built.order;
+  b.signedByBalance = biSignFromBalance(built.rows, b.statement);
   if (b.flip === null) { b.flip = biDetectFlip(built.rows, b.map); b.autoFlip = b.flip; }
   // The balance follows the bank's own signs, so it is checked on those;
   // money in and out are then said the right way round.
@@ -778,6 +817,8 @@ function biRender() {
       </div>
     </details>
     ${b.ok ? `
+    ${b.source === 'pdf' ? `<p class="bi-note">${BI_INFO}<span>${esc(t('bi_pdf_note_local'))}</span>${biEzzoReady() ? `<button class="link-btn bi-rec-open" type="button" data-bi-pdf-ezzo>${esc(t('bi_pdf_ezzo_retry'))}</button>` : ''}</p>` : ''}
+    ${b.source === 'pdf-ezzo' ? `<p class="bi-note">${BI_INFO}<span>${esc(t('bi_pdf_note_ezzo'))}</span></p>` : ''}
     ${b.autoFlip ? `<p class="bi-note">${BI_INFO}<span>${esc(t('bi_flip_auto'))}</span></p>` : ''}
     ${reconHtml}
     ${ezzoHtml}
@@ -847,6 +888,7 @@ function biWire() {
     if (n) showToast(tf('bi_applied_same', n, it.desc));
   }));
   root.querySelector('[data-bi-cancel]')?.addEventListener('click', () => { _bi = null; closeModal(); });
+  root.querySelector('[data-bi-pdf-ezzo]')?.addEventListener('click', () => { const f = b.pdfFile, o = b.opts || {}; _bi = null; biPdfAskEzzo(f, o, t('bi_pdf_retry_lead')); });
   root.querySelector('[data-bi-add]')?.addEventListener('click', biCommit);
 }
 function biRecCheck() {
@@ -907,6 +949,249 @@ function biImportOwnExport(all) {
 }
 function biAlert(msg) { try { alertDialog(msg); } catch (e) { showToast(msg); } }
 
+// ── PDF statements ───────────────────────────────────────────────────────
+const BI_PDF_MAX_BYTES = 15 * 1024 * 1024;
+const BI_PDF_EZZO_MAX_BYTES = 10 * 1024 * 1024;
+const BI_PDFJS_VER = '3.11.174';
+let _biPdfLib = null;
+// pdf.js is only fetched the first time a PDF is chosen.
+function biLoadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if (_biPdfLib) return _biPdfLib;
+  _biPdfLib = new Promise((res, rej) => {
+    const sc = document.createElement('script');
+    sc.src = 'vendor/pdfjs/pdf.min.js?v=' + BI_PDFJS_VER;
+    sc.onload = () => {
+      if (!window.pdfjsLib) { _biPdfLib = null; rej(new Error('pdfjs')); return; }
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdfjs/pdf.worker.min.js?v=' + BI_PDFJS_VER;
+      res(window.pdfjsLib);
+    };
+    sc.onerror = () => { _biPdfLib = null; sc.remove(); rej(new Error('pdfjs')); };
+    document.head.appendChild(sc);
+  });
+  return _biPdfLib;
+}
+function biSheet(html) {
+  document.getElementById('modalTitle').innerHTML = esc(t('bi_title'));
+  document.getElementById('modalBody').innerHTML = `<div class="bi bi-sheet">${html}</div>`;
+  document.getElementById('tutorialOverlay').hidden = false;
+}
+const biWaiting = msg => `<div class="bi-wait"><span class="bi-spin" aria-hidden="true"></span><span>${esc(msg)}</span></div>`;
+// A protected statement: the password goes to pdf.js on this device only.
+function biAskPassword(wrong) {
+  return new Promise(resolve => {
+    biSheet(`<p class="bi-lead"><b>${esc(t('bi_pdf_pw_title'))}</b><span>${esc(t('bi_pdf_pw'))}</span></p>
+      ${wrong ? `<p class="bi-note bi-note--warn">${BI_WARN}<span>${esc(t('bi_pdf_pw_wrong'))}</span></p>` : ''}
+      <input class="input" type="password" id="biPdfPw" autocomplete="off" aria-label="${esc(t('bi_pdf_pw_title'))}">
+      <div class="bi-actions"><button class="btn btn-ghost" type="button" data-bi-pw-cancel>${esc(t('cancel'))}</button><button class="btn btn-primary" type="button" data-bi-pw-ok>${esc(t('bi_pdf_pw_open'))}</button></div>`);
+    const inp = document.getElementById('biPdfPw');
+    const ok = () => resolve(inp.value);
+    document.querySelector('[data-bi-pw-ok]').addEventListener('click', ok);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') ok(); });
+    document.querySelector('[data-bi-pw-cancel]').addEventListener('click', () => resolve(null));
+    setTimeout(() => inp.focus(), 50);
+  });
+}
+async function biPdfOpenDoc(lib, data) {
+  let password, wrong = false;
+  for (let tries = 0; tries < 6; tries++) {
+    try { return await lib.getDocument({ data: data.slice(), password, isEvalSupported: false }).promise; }
+    catch (e) {
+      if (e && e.name === 'PasswordException') {
+        password = await biAskPassword(wrong || e.code === 2);
+        if (password == null) { const c = new Error('cancelled'); c.name = 'biCancelled'; throw c; }
+        wrong = true;
+        biSheet(biWaiting(t('bi_pdf_reading')));
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw new Error('password');
+}
+async function biOpenPdf(file, o) {
+  if (file.size > BI_PDF_MAX_BYTES) { biAlert(t('bi_err_big')); return; }
+  biSheet(biWaiting(t('bi_pdf_reading')));
+  let lib;
+  try { lib = await biLoadPdfJs(); } catch (e) { biPdfAskEzzo(file, o, t('bi_pdf_lib')); return; }
+  let doc;
+  try { doc = await biPdfOpenDoc(lib, new Uint8Array(await file.arrayBuffer())); }
+  catch (e) { if (e && e.name === 'biCancelled') { closeModal(); return; } biPdfAskEzzo(file, o, t('bi_pdf_bad')); return; }
+  let lines = [];
+  try {
+    for (let n = 1; n <= Math.min(doc.numPages, 80); n++) {
+      const page = await doc.getPage(n);
+      const tc = await page.getTextContent();
+      lines = lines.concat(biPdfLines(tc.items || [], n));
+    }
+  } catch (e) { lines = []; }
+  try { doc.destroy(); } catch (e) {}
+  const parsed = biPdfToRows(lines);
+  if (parsed && parsed.rows.length > 1) { biStartFromRows(parsed.rows, file.name, o, { source: 'pdf', statement: parsed.statement, file }); return; }
+  biPdfAskEzzo(file, o, lines.length ? t('bi_pdf_none') : t('bi_pdf_scanned'));
+}
+// The words on a page, back into lines (by height on the page) and cells
+// (a gap wider than a space starts a new one).
+function biPdfLines(items, page) {
+  const words = items.filter(it => it && typeof it.str === 'string' && it.str.trim())
+    .map(it => ({ s: it.str, x: it.transform[4], y: it.transform[5], w: it.width || 0, h: Math.abs(it.transform[3]) || it.height || 8 }));
+  words.sort((a, b) => b.y - a.y || a.x - b.x);
+  const lines = [];
+  words.forEach(w => {
+    const ln = lines.find(l => Math.abs(l.y - w.y) <= Math.max(2, w.h * 0.45));
+    if (ln) ln.words.push(w); else lines.push({ y: w.y, page, words: [w] });
+  });
+  lines.sort((a, b) => b.y - a.y);
+  return lines.map(l => {
+    l.words.sort((a, b) => a.x - b.x);
+    const cells = [];
+    l.words.forEach(w => {
+      const c = cells[cells.length - 1];
+      const gap = c ? w.x - c.x1 : Infinity;
+      if (c && gap < Math.max(4, w.h * 0.9)) { c.text += (gap > w.h * 0.15 && !/\s$/.test(c.text) && !/^\s/.test(w.s) ? ' ' : '') + w.s; c.x1 = Math.max(c.x1, w.x + w.w); }
+      else cells.push({ text: w.s, x0: w.x, x1: w.x + w.w });
+    });
+    cells.forEach(c => { c.text = c.text.replace(/\s+/g, ' ').trim(); });
+    return { page: l.page, y: l.y, cells: cells.filter(c => c.text), text: cells.map(c => c.text).join(' ').replace(/\s+/g, ' ').trim() };
+  }).filter(l => l.cells.length);
+}
+const BI_PDF_NUM = /^[(+\-\u2212]?\s?(?:[$€£zł]|zł|eur|usd|gbp|pln|chf)?\s?\d{1,3}(?:[ .,'\u00a0]\d{3})*(?:[.,]\d{2})\s?(?:cr|dr|-)?\)?$|^[(+\-\u2212]?\d+[.,]\d{2}\s?(?:cr|dr|-)?\)?$/i;
+const BI_PDF_OPEN = /\b(opening|previous|beginning|starting|start) balance|balance (brought forward|b\/f|at start)|alter kontostand|anfangssaldo|kontostand am .* alt|solde (precedent|initial|ancien|au debut)|ancien solde|saldo (inicial|anterior|iniziale|precedente|poczatkowe|otwarcia)/;
+const BI_PDF_CLOSE = /\b(closing|new|ending|end) balance|balance (carried forward|c\/f|at end)|neuer kontostand|endsaldo|solde (final|nouveau|au)|nouveau solde|saldo (final|finale|koncowe|zamkniecia)/;
+// Statements often leave the year off each line; it is the statement's own.
+function biPdfYear(lines) {
+  const yrs = {};
+  lines.forEach(l => (l.text.match(/\b(19|20)\d{2}\b/g) || []).forEach(y => { yrs[y] = (yrs[y] || 0) + 1; }));
+  const best = Object.entries(yrs).sort((a, b) => b[1] - a[1])[0];
+  return best ? Number(best[0]) : new Date().getFullYear();
+}
+function biPdfWithYear(v, year) {
+  const s = String(v || '').trim();
+  if (/^\d{1,2}[\/.\-]\d{1,2}\.?$/.test(s)) return s.replace(/\.$/, '') + (s.includes('/') ? '/' : s.includes('-') ? '-' : '.') + year;
+  if (/^\d{1,2}\.?\s+[a-z\u00c0-\u017f]{3,}\.?$/i.test(s) || /^[a-z\u00c0-\u017f]{3,}\.?\s+\d{1,2}$/i.test(s)) return s + ' ' + year;
+  return s;
+}
+function biPdfToRows(lines) {
+  const statement = {};
+  const year = biPdfYear(lines);
+  lines.forEach(l => {
+    const n = biNorm(l.text);
+    const lastNum = [...l.cells].reverse().map(c => c.text).find(c => BI_PDF_NUM.test(c));
+    if (lastNum != null && statement.start == null && BI_PDF_OPEN.test(n)) statement.start = lastNum;
+    if (lastNum != null && BI_PDF_CLOSE.test(n)) statement.end = lastNum;
+  });
+  const isNum = c => BI_PDF_NUM.test(c.text);
+  const dateOf = text => { const w = biPdfWithYear(text, year); return biLooksDate(w) ? w : null; };
+  // With a heading row: every cell goes to the column its middle sits under.
+  const hIdx = lines.findIndex(l => l.cells.length >= 2 && l.cells.some(c => biColumnScore(c.text, BI_HEAD.date) >= 2) &&
+    l.cells.some(c => ['amount', 'debit', 'credit'].some(k => biColumnScore(c.text, BI_HEAD[k]) >= 2)));
+  const out = [];
+  if (hIdx >= 0) {
+    const head = lines[hIdx].cells;
+    const mid = c => (c.x0 + c.x1) / 2;
+    const cuts = head.slice(1).map((c, i) => (mid(head[i]) + mid(c)) / 2);
+    const colOf = c => { const m = mid(c); let i = 0; while (i < cuts.length && m > cuts[i]) i++; return i; };
+    const role = k => head.findIndex(c => biColumnScore(c.text, BI_HEAD[k]) >= 2);
+    const dCol = role('date'), descCol = [role('desc'), role('payee')].find(i => i >= 0);
+    const numCols = new Set(['amount', 'debit', 'credit', 'balance'].map(role).filter(i => i >= 0));
+    const headText = biNorm(lines[hIdx].text);
+    out.push(head.map(c => c.text));
+    let lastDate = null;
+    lines.slice(hIdx + 1).forEach(l => {
+      if (biNorm(l.text) === headText) return;
+      const row = head.map(() => '');
+      l.cells.forEach(c => { const i = colOf(c); row[i] = row[i] ? row[i] + ' ' + c.text : c.text; });
+      const hasAmt = [...numCols].some(i => i !== role('balance') && row[i] && BI_PDF_NUM.test(row[i].trim()));
+      const d = dCol >= 0 ? dateOf(row[dCol]) : null;
+      if (d) { row[dCol] = d; lastDate = d; }
+      if (!hasAmt) {
+        // A second line of the one above it.
+        const prev = out[out.length - 1];
+        if (out.length > 1 && !d && descCol != null && row[descCol] && !BI_SKIP_LINE.test(biNorm(l.text)) && !BI_PDF_OPEN.test(biNorm(l.text)) && !BI_PDF_CLOSE.test(biNorm(l.text))) prev[descCol] = (prev[descCol] + ' ' + row[descCol]).trim();
+        return;
+      }
+      if (!d) { if (!lastDate) return; row[dCol] = lastDate; }   // the date printed once for the day
+      out.push(row);
+    });
+    if (out.length > 1) return { rows: out, statement };
+  }
+  // No heading: a line that starts with a date and ends in amounts.
+  out.length = 0;
+  out.push(['Date', 'Description', 'Amount', 'Balance']);
+  let last = null, lastDate = null;
+  lines.forEach(l => {
+    const cells = l.cells.map(c => c.text);
+    let d = null, k = 0;
+    for (let j = 1; j <= Math.min(3, cells.length) && !d; j++) { const cand = dateOf(cells.slice(0, j).join(' ')); if (cand) { d = cand; k = j; } }
+    if (!d) { const m = /^(\d{1,2}[\/.\-]\d{1,2}(?:[\/.\-]\d{2,4})?|\d{1,2}\s+[a-z\u00c0-\u017f]{3,}\.?(?:\s+\d{2,4})?)\s+(.*)$/i.exec(l.text); if (m && dateOf(m[1])) { d = dateOf(m[1]); cells.splice(0, cells.length, m[1], ...m[2].split(/\s{2,}/)); k = 1; } }
+    const nums = [];
+    let rest = cells.slice(k);
+    while (rest.length && BI_PDF_NUM.test(rest[rest.length - 1])) nums.unshift(rest.pop());
+    const desc = rest.join(' ').trim();
+    if (!nums.length) {
+      if (last && !d && desc && !BI_SKIP_LINE.test(biNorm(desc)) && !BI_PDF_OPEN.test(biNorm(l.text)) && !BI_PDF_CLOSE.test(biNorm(l.text))) last[1] = (last[1] + ' ' + desc).trim();
+      return;
+    }
+    if (!d && !lastDate) return;
+    if (!desc || BI_PDF_OPEN.test(biNorm(l.text)) || BI_PDF_CLOSE.test(biNorm(l.text))) return;
+    if (d) lastDate = d;
+    last = [d || lastDate, desc, nums.length >= 2 ? nums[nums.length - 2] : nums[0], nums.length >= 2 ? nums[nums.length - 1] : ''];
+    out.push(last);
+  });
+  return { rows: out, statement };
+}
+// Nothing could be read here (a scanned page has no words, only a picture of
+// them). Ezzo can read it, but only after saying plainly what that means.
+function biPdfAskEzzo(file, o, lead) {
+  const can = biEzzoReady() && file && file.size <= BI_PDF_EZZO_MAX_BYTES;
+  biSheet(`<p class="bi-lead"><span>${esc(lead)}</span></p>
+    ${can ? `<div class="bi-consent">${BI_WARN}<span>${esc(t('bi_pdf_ezzo_warn'))}</span></div>` : `<p class="bi-note">${BI_INFO}<span>${esc(biEzzoReady() ? t('bi_err_big') : t('bi_pdf_ezzo_off'))}</span></p>`}
+    <div class="bi-actions${can ? '' : ' bi-actions--one'}">
+      <button class="btn btn-ghost" type="button" data-bi-close>${esc(t(can ? 'cancel' : 'close'))}</button>
+      ${can ? `<button class="btn btn-primary" type="button" data-bi-ezzo-read>${esc(t('bi_pdf_ezzo_btn'))}</button>` : ''}
+    </div>`);
+  document.querySelector('[data-bi-close]')?.addEventListener('click', () => closeModal());
+  document.querySelector('[data-bi-ezzo-read]')?.addEventListener('click', () => biEzzoReadPdf(file, o));
+}
+function biB64(file) {
+  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = rej; r.readAsDataURL(file); });
+}
+async function biEzzoReadPdf(file, o) {
+  biSheet(biWaiting(t('bi_pdf_ezzo_working')));
+  let text = '';
+  try {
+    const data = await biB64(file);
+    await pennyStreamWithFallback({
+      systemInstruction: { parts: [{ text: 'You read bank and credit card statements. Return every transaction exactly as printed, oldest first. Reply with compact JSON only, no other text: {"o":opening balance as a number or null,"c":closing balance as a number or null,"r":[{"d":"YYYY-MM-DD","t":"the description as printed, leaving out account, card and reference numbers","a":-12.34,"b":the balance after it as a number, or null}]}. "a" is negative for money that left the account and positive for money that came in. Use the statement\'s own year for every date. Balance lines, totals, fees summaries and headings are not transactions.' }] },
+      contents: [{ role: 'user', parts: [{ inlineData: { mimeType: 'application/pdf', data } }, { text: 'List every transaction in this statement.' }] }],
+      generationConfig: { maxOutputTokens: 8192, temperature: 0 }
+    }, chunk => {
+      const cand = chunk.candidates && chunk.candidates[0];
+      for (const part of (cand && cand.content && cand.content.parts) || []) if (part.text) text += part.text;
+    });
+  } catch (e) { biPdfAskEzzo(file, o, t('bi_pdf_ezzo_fail')); return; }
+  const got = biParseEzzoRows(text);
+  if (!got.rows.length) { biPdfAskEzzo(file, o, t('bi_pdf_ezzo_fail')); return; }
+  const rows = [['Date', 'Description', 'Amount', 'Balance']].concat(got.rows.map(r => [r.d, r.t, String(r.a), r.b == null ? '' : String(r.b)]));
+  biStartFromRows(rows, file.name, o, { source: 'pdf-ezzo', statement: { start: got.o, end: got.c }, file });
+}
+// Whole answer when it parses; otherwise every complete row it managed
+// before running out of room.
+function biParseEzzoRows(text) {
+  const clean = String(text || '').replace(/```(json)?/g, '');
+  const m = /\{[\s\S]*\}/.exec(clean);
+  try {
+    const j = m ? JSON.parse(m[0]) : null;
+    if (j && Array.isArray(j.r)) return { rows: j.r.filter(biEzzoRowOk), o: typeof j.o === 'number' ? j.o : null, c: typeof j.c === 'number' ? j.c : null };
+  } catch (e) {}
+  const rows = [];
+  (clean.match(/\{"d"\s*:\s*"[^"]*"\s*,\s*"t"\s*:\s*"(?:[^"\\]|\\.)*"\s*,\s*"a"\s*:\s*-?[\d.]+(?:\s*,\s*"b"\s*:\s*(?:-?[\d.]+|null))?\s*\}/g) || [])
+    .forEach(s => { try { const r = JSON.parse(s); if (biEzzoRowOk(r)) rows.push(r); } catch (e) {} });
+  const num = re => { const x = re.exec(clean); return x ? Number(x[1]) : null; };
+  return { rows, o: num(/"o"\s*:\s*(-?[\d.]+)/), c: num(/"c"\s*:\s*(-?[\d.]+)/) };
+}
+const biEzzoRowOk = r => r && /^\d{4}-\d{2}-\d{2}$/.test(r.d || '') && typeof r.t === 'string' && typeof r.a === 'number' && isFinite(r.a);
+
 // ── Ezzo in the chat ─────────────────────────────────────────────────────
 // Ezzo tells the story of the import in the conversation; the rows
 // themselves are reviewed in the sheet.
@@ -930,8 +1215,26 @@ function biChatSay(kind, extra) {
 // ── Words ────────────────────────────────────────────────────────────────
 const BI_WORDS = {
   en: {
+    bi_pdf_note_ezzo: 'Read by Ezzo from your PDF. Check the rows before adding them.',
+    bi_pdf_note_local: 'Read from your PDF on this device. PDFs are harder to read than CSV files, so check the rows before adding them.',
+    bi_pdf_retry_lead: 'Ezzo can read this statement for you instead.',
+    bi_pdf_ezzo_retry: 'Rows look wrong? Let Ezzo read it',
+    bi_pdf_ezzo_fail: 'Ezzo could not read this statement just now.',
+    bi_pdf_ezzo_working: 'Ezzo is reading your statement…',
+    bi_pdf_ezzo_off: 'Turn on Ezzo in Settings and it can read statements like this one.',
+    bi_pdf_ezzo_warn: 'Ezzo can read it, but that sends the whole statement to Google Gemini, including your name and any account details printed on it.',
+    bi_pdf_ezzo_btn: 'Let Ezzo read it',
+    bi_pdf_lib: 'The PDF reader could not load. Check your connection and try again.',
+    bi_pdf_bad: 'This PDF could not be opened.',
+    bi_pdf_scanned: 'This PDF is a scanned picture, so there is no text on it to read on your device.',
+    bi_pdf_none: 'No transactions could be read from this PDF on your device.',
+    bi_pdf_pw_open: 'Open',
+    bi_pdf_pw_wrong: 'That password did not open it. Try again.',
+    bi_pdf_pw: 'Enter the password your bank gave you for it. It is only used on this device.',
+    bi_pdf_pw_title: 'This statement is protected',
+    bi_pdf_reading: 'Reading your statement…',
     bi_title: 'Import from your bank', bi_private: 'Your file is read on this device and is not kept. Account and card numbers are left out.',
-    bi_err_type: 'That does not look like a CSV file. Choose the CSV (comma separated) export from your bank.',
+    bi_err_type: 'That file could not be read. Choose the CSV or PDF statement from your bank.',
     bi_err_big: 'That file is too large. Export a shorter date range and try again.', bi_err_empty: 'No transactions were found in that file.',
     bi_err_cols: 'Choose which columns hold the date, the description and the amount.',
     bi_map_title: 'How your file is read', bi_map_change: 'Change', bi_col_date: 'Date', bi_col_desc: 'Description', bi_col_amount: 'Amount', bi_col_out: 'Money out', bi_col_in: 'Money in',
@@ -954,15 +1257,33 @@ const BI_WORDS = {
     bi_outside: '{0} are outside this budget period, so they will not change its figures.', bi_alloc: 'Budget allocation is on. Tag these on the Transactions page afterwards; they show a ? until then.',
     bi_trial: 'Your free trial can add {0} more. Unlock the full planner to add the rest.',
     bi_add_n: 'Add {0} transactions', bi_add_1: 'Add 1 transaction', bi_done_n: 'Added {0} transactions from your bank.', bi_done_1: 'Added 1 transaction from your bank.',
-    bi_applied_same: 'Also set for {0} more from {1}.', bi_chip: 'Import a bank CSV', bi_attach: 'Import a bank statement (CSV)',
+    bi_applied_same: 'Also set for {0} more from {1}.', bi_chip: 'Import a bank statement', bi_attach: 'Import a bank statement (CSV or PDF)',
     bi_chat_found: 'I read {0} transactions: {1} ready to add, {2} already in your planner, {3} transfers between your accounts and {4} lines left out.',
     bi_chat_bal_ok: 'The balance checks out.', bi_chat_bal_off: 'The balance does not quite add up, so some rows may be missing from the export.',
     bi_chat_sorted: 'I chose categories for {0} of {1} places. Have a look and add them when you are happy.',
     bi_chat_added: 'Done. I added {0} transactions.', bi_chat_added_review: 'Done. I added {0} transactions. {1} are Uncategorized for you to sort on the Transactions page.'
   },
   de: {
+    bi_pdf_note_ezzo: 'Von Ezzo aus deiner PDF gelesen. Prüfe die Zeilen vor dem Hinzufügen.',
+    bi_pdf_note_local: 'Auf diesem Gerät aus deiner PDF gelesen. PDFs sind schwerer zu lesen als CSV-Dateien, prüfe die Zeilen also vor dem Hinzufügen.',
+    bi_pdf_retry_lead: 'Ezzo kann diesen Kontoauszug stattdessen für dich lesen.',
+    bi_pdf_ezzo_retry: 'Zeilen sehen falsch aus? Ezzo lesen lassen',
+    bi_pdf_ezzo_fail: 'Ezzo konnte diesen Kontoauszug gerade nicht lesen.',
+    bi_pdf_ezzo_working: 'Ezzo liest deinen Kontoauszug…',
+    bi_pdf_ezzo_off: 'Schalte Ezzo in den Einstellungen ein, dann kann er solche Kontoauszüge lesen.',
+    bi_pdf_ezzo_warn: 'Ezzo kann ihn lesen, schickt dafür aber den ganzen Kontoauszug an Google Gemini, mit deinem Namen und allen Kontodaten darauf.',
+    bi_pdf_ezzo_btn: 'Ezzo lesen lassen',
+    bi_pdf_lib: 'Der PDF-Leser konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.',
+    bi_pdf_bad: 'Diese PDF konnte nicht geöffnet werden.',
+    bi_pdf_scanned: 'Diese PDF ist ein eingescanntes Bild, darauf gibt es keinen Text, der sich auf deinem Gerät lesen lässt.',
+    bi_pdf_none: 'Aus dieser PDF konnten auf deinem Gerät keine Umsätze gelesen werden.',
+    bi_pdf_pw_open: 'Öffnen',
+    bi_pdf_pw_wrong: 'Mit diesem Passwort ließ er sich nicht öffnen. Versuche es erneut.',
+    bi_pdf_pw: 'Gib das Passwort deiner Bank ein. Es wird nur auf diesem Gerät verwendet.',
+    bi_pdf_pw_title: 'Dieser Kontoauszug ist geschützt',
+    bi_pdf_reading: 'Dein Kontoauszug wird gelesen…',
     bi_title: 'Von deiner Bank importieren', bi_private: 'Deine Datei wird auf diesem Gerät gelesen und nicht gespeichert. Konto- und Kartennummern werden weggelassen.',
-    bi_err_type: 'Das sieht nicht nach einer CSV-Datei aus. Wähle den CSV-Export deiner Bank.', bi_err_big: 'Die Datei ist zu groß. Exportiere einen kürzeren Zeitraum und versuche es erneut.',
+    bi_err_type: 'Diese Datei konnte nicht gelesen werden. Wähle den CSV- oder PDF-Kontoauszug deiner Bank.', bi_err_big: 'Die Datei ist zu groß. Exportiere einen kürzeren Zeitraum und versuche es erneut.',
     bi_err_empty: 'In dieser Datei wurden keine Umsätze gefunden.', bi_err_cols: 'Wähle, welche Spalten Datum, Beschreibung und Betrag enthalten.',
     bi_map_title: 'So wird deine Datei gelesen', bi_map_change: 'Ändern', bi_col_date: 'Datum', bi_col_desc: 'Beschreibung', bi_col_amount: 'Betrag', bi_col_out: 'Ausgang', bi_col_in: 'Eingang',
     bi_col_balance: 'Kontostand', bi_col_none: 'Nicht in dieser Datei', bi_col_n: 'Spalte', bi_date_order: 'Datumsformat', bi_date_auto: 'Automatisch', bi_date_dmy: 'Tag, Monat, Jahr',
@@ -984,15 +1305,33 @@ const BI_WORDS = {
     bi_outside: '{0} liegen außerhalb dieses Budgetzeitraums und ändern seine Zahlen nicht.', bi_alloc: 'Die Budgetaufteilung ist an. Ordne diese danach auf der Seite Transaktionen zu; bis dahin zeigen sie ein ?.',
     bi_trial: 'Deine Testversion kann noch {0} hinzufügen. Schalte den vollen Planer frei, um den Rest hinzuzufügen.',
     bi_add_n: '{0} Transaktionen hinzufügen', bi_add_1: '1 Transaktion hinzufügen', bi_done_n: '{0} Transaktionen von deiner Bank hinzugefügt.', bi_done_1: '1 Transaktion von deiner Bank hinzugefügt.',
-    bi_applied_same: 'Auch für {0} weitere von {1} gesetzt.', bi_chip: 'Bank-CSV importieren', bi_attach: 'Kontoauszug importieren (CSV)',
+    bi_applied_same: 'Auch für {0} weitere von {1} gesetzt.', bi_chip: 'Kontoauszug importieren', bi_attach: 'Kontoauszug importieren (CSV oder PDF)',
     bi_chat_found: 'Ich habe {0} Umsätze gelesen: {1} bereit zum Hinzufügen, {2} schon in deinem Planer, {3} Umbuchungen zwischen deinen Konten und {4} Zeilen weggelassen.',
     bi_chat_bal_ok: 'Der Kontostand stimmt.', bi_chat_bal_off: 'Der Kontostand geht nicht ganz auf, vielleicht fehlen Zeilen im Export.',
     bi_chat_sorted: 'Ich habe für {0} von {1} Orten Kategorien gewählt. Sieh sie dir an und füge sie hinzu, wenn alles passt.',
     bi_chat_added: 'Erledigt. Ich habe {0} Transaktionen hinzugefügt.', bi_chat_added_review: 'Erledigt. Ich habe {0} Transaktionen hinzugefügt. {1} sind Ohne Kategorie und warten auf der Seite Transaktionen auf dich.'
   },
   fr: {
+    bi_pdf_note_ezzo: 'Lu par Ezzo depuis votre PDF. Vérifiez les lignes avant de les ajouter.',
+    bi_pdf_note_local: 'Lu depuis votre PDF sur cet appareil. Les PDF sont plus difficiles à lire que les CSV, vérifiez donc les lignes avant de les ajouter.',
+    bi_pdf_retry_lead: 'Ezzo peut lire ce relevé à votre place.',
+    bi_pdf_ezzo_retry: 'Des lignes semblent fausses ? Laisser Ezzo le lire',
+    bi_pdf_ezzo_fail: 'Ezzo n’a pas pu lire ce relevé pour le moment.',
+    bi_pdf_ezzo_working: 'Ezzo lit votre relevé…',
+    bi_pdf_ezzo_off: 'Activez Ezzo dans les Paramètres pour qu’il lise ce genre de relevé.',
+    bi_pdf_ezzo_warn: 'Ezzo peut le lire, mais cela envoie tout le relevé à Google Gemini, avec votre nom et les données de compte qui y figurent.',
+    bi_pdf_ezzo_btn: 'Laisser Ezzo le lire',
+    bi_pdf_lib: 'Le lecteur PDF n’a pas pu se charger. Vérifiez votre connexion et réessayez.',
+    bi_pdf_bad: 'Ce PDF n’a pas pu être ouvert.',
+    bi_pdf_scanned: 'Ce PDF est une image numérisée, il ne contient donc pas de texte lisible sur votre appareil.',
+    bi_pdf_none: 'Aucune opération n’a pu être lue dans ce PDF sur votre appareil.',
+    bi_pdf_pw_open: 'Ouvrir',
+    bi_pdf_pw_wrong: 'Ce mot de passe ne l’a pas ouvert. Réessayez.',
+    bi_pdf_pw: 'Saisissez le mot de passe fourni par votre banque. Il n’est utilisé que sur cet appareil.',
+    bi_pdf_pw_title: 'Ce relevé est protégé',
+    bi_pdf_reading: 'Lecture de votre relevé…',
     bi_title: 'Importer depuis votre banque', bi_private: 'Votre fichier est lu sur cet appareil et n’est pas conservé. Les numéros de compte et de carte sont ignorés.',
-    bi_err_type: 'Ce fichier ne ressemble pas à un CSV. Choisissez l’export CSV de votre banque.', bi_err_big: 'Ce fichier est trop volumineux. Exportez une période plus courte et réessayez.',
+    bi_err_type: 'Ce fichier n’a pas pu être lu. Choisissez le relevé CSV ou PDF de votre banque.', bi_err_big: 'Ce fichier est trop volumineux. Exportez une période plus courte et réessayez.',
     bi_err_empty: 'Aucune opération trouvée dans ce fichier.', bi_err_cols: 'Choisissez les colonnes de la date, du libellé et du montant.',
     bi_map_title: 'Comment votre fichier est lu', bi_map_change: 'Modifier', bi_col_date: 'Date', bi_col_desc: 'Libellé', bi_col_amount: 'Montant', bi_col_out: 'Débit', bi_col_in: 'Crédit',
     bi_col_balance: 'Solde', bi_col_none: 'Absent de ce fichier', bi_col_n: 'Colonne', bi_date_order: 'Format de date', bi_date_auto: 'Automatique', bi_date_dmy: 'Jour, mois, année',
@@ -1014,15 +1353,33 @@ const BI_WORDS = {
     bi_outside: '{0} sont hors de cette période budgétaire et ne changeront pas ses chiffres.', bi_alloc: 'La répartition budgétaire est activée. Classez ces opérations ensuite sur la page Transactions ; elles affichent un ? d’ici là.',
     bi_trial: 'Votre essai gratuit peut encore en ajouter {0}. Débloquez le planificateur complet pour ajouter le reste.',
     bi_add_n: 'Ajouter {0} transactions', bi_add_1: 'Ajouter 1 transaction', bi_done_n: '{0} transactions ajoutées depuis votre banque.', bi_done_1: '1 transaction ajoutée depuis votre banque.',
-    bi_applied_same: 'Appliqué aussi à {0} autres de {1}.', bi_chip: 'Importer un CSV bancaire', bi_attach: 'Importer un relevé bancaire (CSV)',
+    bi_applied_same: 'Appliqué aussi à {0} autres de {1}.', bi_chip: 'Importer un relevé bancaire', bi_attach: 'Importer un relevé bancaire (CSV ou PDF)',
     bi_chat_found: 'J’ai lu {0} opérations : {1} prêtes à ajouter, {2} déjà dans votre planificateur, {3} virements entre vos comptes et {4} lignes ignorées.',
     bi_chat_bal_ok: 'Le solde est juste.', bi_chat_bal_off: 'Le solde ne tombe pas tout à fait juste, il manque peut-être des lignes dans l’export.',
     bi_chat_sorted: 'J’ai choisi les catégories de {0} commerces sur {1}. Jetez un œil et ajoutez-les quand tout vous convient.',
     bi_chat_added: 'C’est fait. J’ai ajouté {0} transactions.', bi_chat_added_review: 'C’est fait. J’ai ajouté {0} transactions. {1} sont Sans catégorie, à classer sur la page Transactions.'
   },
   es: {
+    bi_pdf_note_ezzo: 'Leído por Ezzo de tu PDF. Revisa las filas antes de añadirlas.',
+    bi_pdf_note_local: 'Leído de tu PDF en este dispositivo. Los PDF son más difíciles de leer que los CSV, así que revisa las filas antes de añadirlas.',
+    bi_pdf_retry_lead: 'Ezzo puede leer este extracto por ti.',
+    bi_pdf_ezzo_retry: '¿Filas incorrectas? Deja que Ezzo lo lea',
+    bi_pdf_ezzo_fail: 'Ezzo no pudo leer este extracto ahora.',
+    bi_pdf_ezzo_working: 'Ezzo está leyendo tu extracto…',
+    bi_pdf_ezzo_off: 'Activa Ezzo en Ajustes y podrá leer extractos como este.',
+    bi_pdf_ezzo_warn: 'Ezzo puede leerlo, pero eso envía el extracto completo a Google Gemini, con tu nombre y los datos de cuenta que aparezcan.',
+    bi_pdf_ezzo_btn: 'Dejar que Ezzo lo lea',
+    bi_pdf_lib: 'No se pudo cargar el lector de PDF. Revisa tu conexión y vuelve a intentarlo.',
+    bi_pdf_bad: 'No se pudo abrir este PDF.',
+    bi_pdf_scanned: 'Este PDF es una imagen escaneada, así que no tiene texto que se pueda leer en tu dispositivo.',
+    bi_pdf_none: 'No se pudo leer ningún movimiento de este PDF en tu dispositivo.',
+    bi_pdf_pw_open: 'Abrir',
+    bi_pdf_pw_wrong: 'Esa contraseña no lo abrió. Inténtalo de nuevo.',
+    bi_pdf_pw: 'Escribe la contraseña que te dio tu banco. Solo se usa en este dispositivo.',
+    bi_pdf_pw_title: 'Este extracto está protegido',
+    bi_pdf_reading: 'Leyendo tu extracto…',
     bi_title: 'Importar de tu banco', bi_private: 'Tu archivo se lee en este dispositivo y no se guarda. Se omiten los números de cuenta y de tarjeta.',
-    bi_err_type: 'Eso no parece un archivo CSV. Elige la exportación CSV de tu banco.', bi_err_big: 'El archivo es demasiado grande. Exporta un periodo más corto y vuelve a intentarlo.',
+    bi_err_type: 'No se pudo leer ese archivo. Elige el extracto CSV o PDF de tu banco.', bi_err_big: 'El archivo es demasiado grande. Exporta un periodo más corto y vuelve a intentarlo.',
     bi_err_empty: 'No se encontraron movimientos en ese archivo.', bi_err_cols: 'Elige qué columnas contienen la fecha, el concepto y el importe.',
     bi_map_title: 'Cómo se lee tu archivo', bi_map_change: 'Cambiar', bi_col_date: 'Fecha', bi_col_desc: 'Concepto', bi_col_amount: 'Importe', bi_col_out: 'Cargos', bi_col_in: 'Abonos',
     bi_col_balance: 'Saldo', bi_col_none: 'No está en este archivo', bi_col_n: 'Columna', bi_date_order: 'Formato de fecha', bi_date_auto: 'Automático', bi_date_dmy: 'Día, mes, año',
@@ -1044,15 +1401,33 @@ const BI_WORDS = {
     bi_outside: '{0} quedan fuera de este periodo, así que no cambiarán sus cifras.', bi_alloc: 'La asignación del presupuesto está activada. Etiquétalas después en la página Transacciones; hasta entonces muestran un ?.',
     bi_trial: 'Tu prueba gratuita puede añadir {0} más. Desbloquea el planificador completo para añadir el resto.',
     bi_add_n: 'Añadir {0} transacciones', bi_add_1: 'Añadir 1 transacción', bi_done_n: 'Se añadieron {0} transacciones de tu banco.', bi_done_1: 'Se añadió 1 transacción de tu banco.',
-    bi_applied_same: 'También aplicado a {0} más de {1}.', bi_chip: 'Importar un CSV del banco', bi_attach: 'Importar un extracto bancario (CSV)',
+    bi_applied_same: 'También aplicado a {0} más de {1}.', bi_chip: 'Importar un extracto bancario', bi_attach: 'Importar un extracto bancario (CSV o PDF)',
     bi_chat_found: 'He leído {0} movimientos: {1} listos para añadir, {2} ya en tu planificador, {3} traspasos entre tus cuentas y {4} líneas omitidas.',
     bi_chat_bal_ok: 'El saldo cuadra.', bi_chat_bal_off: 'El saldo no cuadra del todo, puede que falten filas en la exportación.',
     bi_chat_sorted: 'He elegido categorías para {0} de {1} comercios. Revísalas y añádelas cuando te parezca bien.',
     bi_chat_added: 'Hecho. He añadido {0} transacciones.', bi_chat_added_review: 'Hecho. He añadido {0} transacciones. {1} están Sin categoría para que las ordenes en la página Transacciones.'
   },
   it: {
+    bi_pdf_note_ezzo: 'Letto da Ezzo dal tuo PDF. Controlla le righe prima di aggiungerle.',
+    bi_pdf_note_local: 'Letto dal PDF su questo dispositivo. I PDF sono più difficili da leggere dei CSV, quindi controlla le righe prima di aggiungerle.',
+    bi_pdf_retry_lead: 'Ezzo può leggere questo estratto conto al posto tuo.',
+    bi_pdf_ezzo_retry: 'Righe sbagliate? Fallo leggere a Ezzo',
+    bi_pdf_ezzo_fail: 'Ezzo non è riuscito a leggere questo estratto conto ora.',
+    bi_pdf_ezzo_working: 'Ezzo sta leggendo l’estratto conto…',
+    bi_pdf_ezzo_off: 'Attiva Ezzo nelle Impostazioni e potrà leggere estratti conto come questo.',
+    bi_pdf_ezzo_warn: 'Ezzo può leggerlo, ma così l’intero estratto conto viene inviato a Google Gemini, con il tuo nome e i dati del conto riportati.',
+    bi_pdf_ezzo_btn: 'Fallo leggere a Ezzo',
+    bi_pdf_lib: 'Il lettore PDF non si è caricato. Controlla la connessione e riprova.',
+    bi_pdf_bad: 'Impossibile aprire questo PDF.',
+    bi_pdf_scanned: 'Questo PDF è un’immagine scansionata, quindi non contiene testo leggibile sul tuo dispositivo.',
+    bi_pdf_none: 'Non è stato possibile leggere movimenti da questo PDF sul tuo dispositivo.',
+    bi_pdf_pw_open: 'Apri',
+    bi_pdf_pw_wrong: 'Questa password non l’ha aperto. Riprova.',
+    bi_pdf_pw: 'Inserisci la password che ti ha dato la banca. Viene usata solo su questo dispositivo.',
+    bi_pdf_pw_title: 'Questo estratto conto è protetto',
+    bi_pdf_reading: 'Lettura dell’estratto conto…',
     bi_title: 'Importa dalla tua banca', bi_private: 'Il file viene letto su questo dispositivo e non viene conservato. Numeri di conto e di carta vengono esclusi.',
-    bi_err_type: 'Non sembra un file CSV. Scegli l’esportazione CSV della tua banca.', bi_err_big: 'Il file è troppo grande. Esporta un periodo più breve e riprova.',
+    bi_err_type: 'Impossibile leggere il file. Scegli l’estratto conto CSV o PDF della tua banca.', bi_err_big: 'Il file è troppo grande. Esporta un periodo più breve e riprova.',
     bi_err_empty: 'Nessun movimento trovato in questo file.', bi_err_cols: 'Scegli le colonne con la data, la descrizione e l’importo.',
     bi_map_title: 'Come viene letto il file', bi_map_change: 'Modifica', bi_col_date: 'Data', bi_col_desc: 'Descrizione', bi_col_amount: 'Importo', bi_col_out: 'Uscite', bi_col_in: 'Entrate',
     bi_col_balance: 'Saldo', bi_col_none: 'Non presente nel file', bi_col_n: 'Colonna', bi_date_order: 'Formato data', bi_date_auto: 'Automatico', bi_date_dmy: 'Giorno, mese, anno',
@@ -1074,15 +1449,33 @@ const BI_WORDS = {
     bi_outside: '{0} sono fuori da questo periodo, quindi non cambieranno le sue cifre.', bi_alloc: 'La ripartizione del budget è attiva. Assegnale poi nella pagina Transazioni; fino ad allora mostrano un ?.',
     bi_trial: 'La prova gratuita può aggiungerne ancora {0}. Sblocca il planner completo per aggiungere il resto.',
     bi_add_n: 'Aggiungi {0} transazioni', bi_add_1: 'Aggiungi 1 transazione', bi_done_n: 'Aggiunte {0} transazioni dalla tua banca.', bi_done_1: 'Aggiunta 1 transazione dalla tua banca.',
-    bi_applied_same: 'Impostata anche per altre {0} di {1}.', bi_chip: 'Importa un CSV della banca', bi_attach: 'Importa un estratto conto (CSV)',
+    bi_applied_same: 'Impostata anche per altre {0} di {1}.', bi_chip: 'Importa un estratto conto', bi_attach: 'Importa un estratto conto (CSV o PDF)',
     bi_chat_found: 'Ho letto {0} movimenti: {1} pronti da aggiungere, {2} già nel planner, {3} giroconti tra i tuoi conti e {4} righe escluse.',
     bi_chat_bal_ok: 'Il saldo torna.', bi_chat_bal_off: 'Il saldo non torna del tutto, forse mancano righe nell’esportazione.',
     bi_chat_sorted: 'Ho scelto le categorie per {0} esercenti su {1}. Dai un’occhiata e aggiungile quando va bene.',
     bi_chat_added: 'Fatto. Ho aggiunto {0} transazioni.', bi_chat_added_review: 'Fatto. Ho aggiunto {0} transazioni. {1} sono Senza categoria da sistemare nella pagina Transazioni.'
   },
   pl: {
+    bi_pdf_note_ezzo: 'Odczytane przez Ezzo z twojego PDF. Sprawdź wiersze przed dodaniem.',
+    bi_pdf_note_local: 'Odczytano z PDF na tym urządzeniu. PDF trudniej odczytać niż CSV, więc sprawdź wiersze przed dodaniem.',
+    bi_pdf_retry_lead: 'Ezzo może przeczytać ten wyciąg za ciebie.',
+    bi_pdf_ezzo_retry: 'Wiersze wyglądają źle? Niech Ezzo go przeczyta',
+    bi_pdf_ezzo_fail: 'Ezzo nie mógł teraz przeczytać tego wyciągu.',
+    bi_pdf_ezzo_working: 'Ezzo czyta twój wyciąg…',
+    bi_pdf_ezzo_off: 'Włącz Ezzo w Ustawieniach, a przeczyta takie wyciągi.',
+    bi_pdf_ezzo_warn: 'Ezzo może go przeczytać, ale wtedy cały wyciąg trafia do Google Gemini, razem z twoim imieniem i nazwiskiem oraz danymi konta.',
+    bi_pdf_ezzo_btn: 'Niech Ezzo go przeczyta',
+    bi_pdf_lib: 'Nie udało się wczytać czytnika PDF. Sprawdź połączenie i spróbuj ponownie.',
+    bi_pdf_bad: 'Nie udało się otworzyć tego PDF.',
+    bi_pdf_scanned: 'Ten PDF to zeskanowany obraz, więc nie ma w nim tekstu do odczytania na twoim urządzeniu.',
+    bi_pdf_none: 'Nie udało się odczytać transakcji z tego PDF na twoim urządzeniu.',
+    bi_pdf_pw_open: 'Otwórz',
+    bi_pdf_pw_wrong: 'To hasło go nie otworzyło. Spróbuj ponownie.',
+    bi_pdf_pw: 'Wpisz hasło od banku. Jest używane tylko na tym urządzeniu.',
+    bi_pdf_pw_title: 'Ten wyciąg jest chroniony',
+    bi_pdf_reading: 'Czytam twój wyciąg…',
     bi_title: 'Import z banku', bi_private: 'Plik jest czytany na tym urządzeniu i nie jest zapisywany. Numery kont i kart są pomijane.',
-    bi_err_type: 'To nie wygląda na plik CSV. Wybierz eksport CSV ze swojego banku.', bi_err_big: 'Plik jest za duży. Wyeksportuj krótszy okres i spróbuj ponownie.',
+    bi_err_type: 'Nie udało się odczytać pliku. Wybierz wyciąg CSV lub PDF ze swojego banku.', bi_err_big: 'Plik jest za duży. Wyeksportuj krótszy okres i spróbuj ponownie.',
     bi_err_empty: 'W tym pliku nie znaleziono transakcji.', bi_err_cols: 'Wybierz kolumny z datą, opisem i kwotą.',
     bi_map_title: 'Jak czytany jest plik', bi_map_change: 'Zmień', bi_col_date: 'Data', bi_col_desc: 'Opis', bi_col_amount: 'Kwota', bi_col_out: 'Obciążenia', bi_col_in: 'Uznania',
     bi_col_balance: 'Saldo', bi_col_none: 'Brak w tym pliku', bi_col_n: 'Kolumna', bi_date_order: 'Format daty', bi_date_auto: 'Automatycznie', bi_date_dmy: 'Dzień, miesiąc, rok',
@@ -1104,7 +1497,7 @@ const BI_WORDS = {
     bi_outside: '{0} jest poza tym okresem budżetu, więc nie zmienią jego liczb.', bi_alloc: 'Podział budżetu jest włączony. Oznacz je potem na stronie Transakcje; do tego czasu mają ?.',
     bi_trial: 'Wersja próbna może dodać jeszcze {0}. Odblokuj pełny planer, aby dodać resztę.',
     bi_add_n: 'Dodaj transakcje: {0}', bi_add_1: 'Dodaj 1 transakcję', bi_done_n: 'Dodano transakcje z banku: {0}.', bi_done_1: 'Dodano 1 transakcję z banku.',
-    bi_applied_same: 'Ustawiono też dla {0} kolejnych z {1}.', bi_chip: 'Importuj CSV z banku', bi_attach: 'Importuj wyciąg bankowy (CSV)',
+    bi_applied_same: 'Ustawiono też dla {0} kolejnych z {1}.', bi_chip: 'Importuj wyciąg bankowy', bi_attach: 'Importuj wyciąg bankowy (CSV lub PDF)',
     bi_chat_found: 'Przeczytałem {0} transakcji: {1} gotowych do dodania, {2} już w planerze, {3} przelewów między twoimi kontami i {4} pominiętych wierszy.',
     bi_chat_bal_ok: 'Saldo się zgadza.', bi_chat_bal_off: 'Saldo nie do końca się zgadza, być może w eksporcie brakuje wierszy.',
     bi_chat_sorted: 'Wybrałem kategorie dla {0} z {1} miejsc. Rzuć okiem i dodaj je, gdy wszystko pasuje.',

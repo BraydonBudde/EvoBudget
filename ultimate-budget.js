@@ -933,7 +933,7 @@ const TRANSLATIONS = {
     help_dpc_extra_targeted_li:'Extra/mo (per debt) - an optional amount paid only toward that one debt every month, on top of its minimum, regardless of your snowball/avalanche order.',
     dsched_col_date:'Date',dsched_col_payment:'Payment',dsched_col_principal:'Principal',dsched_col_interest:'Interest',dsched_col_escrow:'Escrow',dsched_col_balance:'Balance',
     dsched_never_payoff_warning:"At this pace, this debt won't be fully paid off within 50 years - the payment barely outpaces interest. Consider a higher minimum, a higher percentage floor, or an extra payment.",
-    tx_import_csv:'\uD83D\uDCE5 Import CSV',
+    tx_import_csv:'\uD83D\uDCE5 Import CSV or PDF',
     tx_page_desc:'Log every dollar that moves - each entry updates your budget categories, dashboard, and allocation automatically.',
     tx_add_title:'Add a transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Category',tx_amount:'Amount',
@@ -1511,7 +1511,7 @@ const TRANSLATIONS = {
     dsched_col_date:'Datum',dsched_col_payment:'Zahlung',dsched_col_principal:'Tilgung',dsched_col_interest:'Zinsen',dsched_col_escrow:'Treuhand',dsched_col_balance:'Saldo',
     dsched_never_payoff_warning:'In diesem Tempo wird diese Schuld innerhalb von 50 Jahren nicht vollständig abbezahlt sein - die Zahlung übertrifft die Zinsen kaum. Erwäge eine höhere Mindestzahlung, einen höheren Prozentsatz-Mindestbetrag oder eine Extrazahlung.',
     help_dpc_tip:'\uD83D\uDCA1 Wechsle zwischen den Methoden, um zu sehen, wie viele Zinsen du mit jedem Ansatz sparen würdest.',
-    tx_import_csv:'\uD83D\uDCE5 CSV importieren',
+    tx_import_csv:'\uD83D\uDCE5 CSV oder PDF importieren',
     tx_page_desc:'Erfasse jeden bewegten Euro - jeder Eintrag aktualisiert automatisch deine Budgetkategorien, dein Dashboard und deine Zuweisung.',
     tx_add_title:'Transaktion hinzufügen',
     tx_date:'Datum',tx_type:'Art',tx_category:'Kategorie',tx_amount:'Betrag',
@@ -2071,7 +2071,7 @@ const TRANSLATIONS = {
     dsched_col_date:'Date',dsched_col_payment:'Paiement',dsched_col_principal:'Capital',dsched_col_interest:'Intérêts',dsched_col_escrow:'Séquestre',dsched_col_balance:'Solde',
     dsched_never_payoff_warning:"À ce rythme, cette dette ne sera pas entièrement remboursée avant 50 ans - le paiement dépasse à peine les intérêts. Envisagez un minimum plus élevé, un plancher en pourcentage plus élevé, ou un paiement supplémentaire.",
     help_dpc_tip:"\uD83D\uDCA1 Basculez entre les méthodes pour voir combien d'intérêts vous économiseriez avec chaque approche.",
-    tx_import_csv:'\uD83D\uDCE5 Importer CSV',
+    tx_import_csv:'\uD83D\uDCE5 Importer CSV ou PDF',
     tx_page_desc:'Enregistrez chaque euro qui bouge - chaque entrée met à jour automatiquement vos catégories de budget, votre tableau de bord et votre répartition.',
     tx_add_title:'Ajouter une transaction',
     tx_date:'Date',tx_type:'Type',tx_category:'Catégorie',tx_amount:'Montant',
@@ -2631,7 +2631,7 @@ const TRANSLATIONS = {
     dsched_col_date:'Fecha',dsched_col_payment:'Pago',dsched_col_principal:'Capital',dsched_col_interest:'Interés',dsched_col_escrow:'Depósito',dsched_col_balance:'Saldo',
     dsched_never_payoff_warning:'A este ritmo, esta deuda no se pagará por completo dentro de 50 años - el pago apenas supera el interés. Considera un mínimo más alto, un piso porcentual más alto, o un pago extra.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna entre métodos para ver cuántos intereses ahorrarías con cada enfoque.',
-    tx_import_csv:'\uD83D\uDCE5 Importar CSV',
+    tx_import_csv:'\uD83D\uDCE5 Importar CSV o PDF',
     tx_page_desc:'Registra cada dólar que se mueve - cada entrada actualiza automáticamente tus categorías de presupuesto, tu panel y tu asignación.',
     tx_add_title:'Añadir una transacción',
     tx_date:'Fecha',tx_type:'Tipo',tx_category:'Categoría',tx_amount:'Importe',
@@ -3192,7 +3192,7 @@ const TRANSLATIONS = {
     dsched_col_date:'Data',dsched_col_payment:'Pagamento',dsched_col_principal:'Capitale',dsched_col_interest:'Interessi',dsched_col_escrow:'Deposito',dsched_col_balance:'Saldo',
     dsched_never_payoff_warning:'A questo ritmo, questo debito non sarà completamente saldato entro 50 anni - il pagamento supera appena gli interessi. Considera una rata minima più alta, una soglia percentuale più alta o un pagamento extra.',
     help_dpc_tip:'\uD83D\uDCA1 Alterna tra i metodi per vedere quanti interessi risparmieresti con ciascun approccio.',
-    tx_import_csv:'\uD83D\uDCE5 Importa CSV',
+    tx_import_csv:'\uD83D\uDCE5 Importa CSV o PDF',
     tx_page_desc:'Registra ogni euro che si muove - ogni voce aggiorna automaticamente le tue categorie di budget, la dashboard e la ripartizione.',
     tx_add_title:'Aggiungi una transazione',
     tx_date:'Data',tx_type:'Tipo',tx_category:'Categoria',tx_amount:'Importo',
@@ -3752,7 +3752,7 @@ const TRANSLATIONS = {
     dsched_col_date:'Data',dsched_col_payment:'Płatność',dsched_col_principal:'Kapitał',dsched_col_interest:'Odsetki',dsched_col_escrow:'Depozyt',dsched_col_balance:'Saldo',
     dsched_never_payoff_warning:'W tym tempie ten dług nie zostanie w pełni spłacony w ciągu 50 lat - płatność ledwo przewyższa odsetki. Rozważ wyższą minimalną ratę, wyższy próg procentowy lub dodatkową płatność.',
     help_dpc_tip:'\uD83D\uDCA1 Przełącz między metodami, aby zobaczyć, ile odsetek zaoszczędziłbyś przy każdym podejściu.',
-    tx_import_csv:'\uD83D\uDCE5 Importuj CSV',
+    tx_import_csv:'\uD83D\uDCE5 Importuj CSV lub PDF',
     tx_page_desc:'Zapisuj każdą przepływającą złotówkę - każdy wpis automatycznie aktualizuje Twoje kategorie budżetu, panel i alokację.',
     tx_add_title:'Dodaj transakcję',
     tx_date:'Data',tx_type:'Typ',tx_category:'Kategoria',tx_amount:'Kwota',
@@ -7738,7 +7738,7 @@ function renderTransactions() {
   const allocEnabled=state.allocation?.enabled;
   // Logging one is the only way in: nothing is added by itself, so every
   // transaction here is one the person says happened.
-  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('transactions')} ${t('tab_transactions')}</h2><div class="section-header-actions">${helpBtn('transactions')}<label class="btn btn-primary btn-sm csv-label">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv" style="display:none"></label></div></div>
+  el.innerHTML=`<div class="section-header"><h2 class="section-title">${appIconSvg('transactions')} ${t('tab_transactions')}</h2><div class="section-header-actions">${helpBtn('transactions')}<label class="btn btn-primary btn-sm csv-label">${t('tx_import_csv')}<input type="file" id="csvInput" accept=".csv,.pdf,text/csv,application/pdf" style="display:none"></label></div></div>
     <p class="section-desc">${t('tx_page_desc')}</p>
     <div class="panel tx-ways"><div class="panel-inner-sm"><div class="tx-ways-row">
       <div class="tx-way">

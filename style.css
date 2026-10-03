@@ -7406,3 +7406,17 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 .penny-drawer .penny-attach-btn svg { width: 20px; height: 20px; }
 .penny-drawer .penny-qp-import { border-style: dashed; }
 .bi .bi-c-type, .bi .bi-c-cat, .bi .bi-map-f .select { padding-right: 32px; }
+
+/* Import: reading a statement, its password, letting Ezzo read it */
+.bi-sheet { gap: 16px; }
+.bi-wait { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 40px 10px; font-size: 15px; color: var(--text-secondary); }
+.bi-wait .bi-spin { width: 20px; height: 20px; margin: 0; }
+.bi-lead { margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; color: var(--text-primary); }
+.bi-lead span { color: var(--text-secondary); }
+.bi-consent { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: var(--radius-md); font-size: 13.5px; color: var(--text-primary);
+  background: rgba(245, 158, 11, .1); border: 1px solid rgba(245, 158, 11, .34); }
+.bi-consent svg { color: #f59e0b; margin-top: 1px; }
+.bi-note .bi-rec-open { margin-left: auto; flex: 0 0 auto; }
+.modal:has(> .modal-body > .bi-sheet) { max-width: 560px; }
+.bi-sheet .bi-actions { position: static; background: transparent; padding-top: 0; }
+.bi-actions--one { grid-template-columns: 1fr; }
