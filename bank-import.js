@@ -31,16 +31,19 @@
    read; only then, and only when the person says so after being told
    what it means, Ezzo reads the PDF itself.
 
-   Ezzo (penny.js) is asked only to pick categories, and is sent only
-   shop names and whether money went out or came in: never amounts,
-   dates, balances or account details. The request goes through
-   pennyStreamWithFallback exactly as the chat's own requests do.
+   Ezzo (penny.js) then looks at every row the app is not already sure
+   of: it names the place the money went (from the details, the way a
+   person would say it) and sorts it into the person's own categories,
+   bills, debts or goals, before anything is reviewed. It is sent each
+   row's details with account, card, phone and reference numbers, amounts,
+   dates and times taken out, plus whether money went out or came in. The
+   request goes through pennyStreamWithFallback exactly as the chat's do.
    ===================================================================== */
 
 const BI_MAX_BYTES = 5 * 1024 * 1024;
 const BI_MAX_ROWS = 5000;
 const BI_PAGE = 100;
-const BI_EZZO_BATCH = 120;
+const BI_EZZO_BATCH = 60;
 
 // ── Text helpers ─────────────────────────────────────────────────────────
 const biNorm = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -330,6 +333,19 @@ const BI_BRANDS = [
   [/at&t|\batt\b/, 'AT&T', 'utilities'], [/comcast|xfinity/, 'Xfinity', 'utilities'], [/orange\b/, 'Orange', 'utilities'], [/telekom/, 'Telekom', 'utilities'],
   [/british gas/, 'British Gas', 'utilities'], [/octopus energy/, 'Octopus Energy', 'utilities'], [/\be\.?on\b/, 'E.ON', 'utilities'], [/edf\b/, 'EDF', 'utilities'],
   [/planet fitness/, 'Planet Fitness', 'health'], [/puregym|pure gym/, 'PureGym', 'health'], [/mcfit/, 'McFit', 'health'], [/basic-?fit/, 'Basic-Fit', 'health'],
+  [/\bdino\b/, 'Dino', 'groceries'], [/lewiatan/, 'Lewiatan', 'groceries'], [/stokrotka/, 'Stokrotka', 'groceries'], [/polomarket/, 'POLOmarket', 'groceries'],
+  [/\bspar\b/, 'Spar', 'groceries'], [/\bbilla\b/, 'Billa', 'groceries'], [/\bhofer\b/, 'Hofer', 'groceries'], [/\bjumbo\b/, 'Jumbo', 'groceries'], [/albert heijn/, 'Albert Heijn', 'groceries'],
+  [/sinsay/, 'Sinsay', 'shopping'], [/\bkik\b/, 'KiK', 'shopping'], [/\bccc\b/, 'CCC', 'shopping'], [/\btedi\b/, 'TEDi', 'shopping'], [/pepco/, 'Pepco', 'shopping'],
+  [/\baction\b/, 'Action', 'shopping'], [/reserved/, 'Reserved', 'shopping'], [/\bhebe\b/, 'Hebe', 'health'], [/castorama/, 'Castorama', 'shopping'], [/leroy merlin/, 'Leroy Merlin', 'shopping'],
+  [/\bobi\b/, 'OBI', 'shopping'], [/media ?markt/, 'MediaMarkt', 'shopping'], [/rtv euro agd/, 'RTV Euro AGD', 'shopping'], [/\bempik\b/, 'Empik', 'shopping'], [/\bolx\b/, 'OLX', 'shopping'],
+  [/decathlon/, 'Decathlon', 'shopping'], [/baltona/, 'Baltona', 'shopping'], [/smyk/, 'Smyk', 'shopping'],
+  [/tauron/, 'Tauron', 'utilities'], [/\bpge\b/, 'PGE', 'utilities'], [/\benea\b/, 'Enea', 'utilities'], [/energa/, 'Energa', 'utilities'], [/\bpgnig\b/, 'PGNiG', 'utilities'],
+  [/\bplay\b/, 'Play', 'utilities'], [/\bnetia\b/, 'Netia', 'utilities'], [/\bupc\b/, 'UPC', 'utilities'], [/vectra/, 'Vectra', 'utilities'],
+  [/\blotos\b/, 'Lotos', 'transport'], [/circle ?k/, 'Circle K', 'transport'], [/\bmoya\b/, 'Moya', 'transport'], [/\bamic\b/, 'Amic', 'transport'],
+  [/jakdojade/, 'Jakdojade', 'transport'], [/skycash/, 'SkyCash', 'transport'], [/\bmpk\b/, 'MPK', 'transport'], [/\bztm\b/, 'ZTM', 'transport'],
+  [/\bhbo\b|\bmax\.com\b/, 'Max', 'subs'], [/canal\+|canal plus/, 'Canal+', 'subs'], [/\bplayer\.pl\b/, 'Player', 'subs'],
+  [/dla zdrowia/, 'Dla Zdrowia', 'health'], [/super-?pharm/, 'Super-Pharm', 'health'], [/ziko/, 'Ziko', 'health'], [/doz\b/, 'DOZ', 'health'], [/apteka/, 'Apteka', 'health'],
+  [/inpost/, 'InPost', 'shopping'],
   [/paypal/, 'PayPal', ''], [/venmo/, 'Venmo', ''], [/\bzelle\b/, 'Zelle', ''], [/cash\s*app/, 'Cash App', '']
 ];
 // Words that say what kind of place it was when the brand is not known.
@@ -342,30 +358,43 @@ const BI_KIND_WORDS = [
   [/atm|cash withdrawal|geldautomat|bargeld|retrait|cajero|prelievo|bankomat|wyplata gotowki/, 'cash'],
   [/insurance|versicherung|assurance|seguro|assicurazion|ubezpieczen/, 'insurance'],
   [/electric|energy|water|strom|gas bill|internet|broadband|mobile|telecom/, 'utilities'],
-  [/cinema|kino|cine|theatre|theater|concert|ticket|museum/, 'fun']
+  [/cinema|kino|cine|theatre|theater|concert|ticket|museum/, 'fun'],
+  [/resort|basen|aquapark|swimming|pool|schwimmbad|piscine|piscina|silownia|fitness|gym\b/, 'fun'],
+  [/dentist|dentico|stomatolog|zahnarzt|dentiste|dentista|dental/, 'health'],
+  [/przedszkol|zlobek|szkola|kindergarten|kita|school|schule|ecole|creche|escuela|guarderia|scuola|asilo/, 'education'],
+  [/prowizja|oplata za|bank fee|service charge|monthly fee|commission|gebuhr|entgelt|frais|comision|commissione/, 'fees']
 ];
 // What each kind of spending tends to be called as a budget category.
 const BI_KIND_CATS = {
-  groceries: /grocer|supermarket|food|lebensmittel|einkauf|courses|aliment|comestible|supermercado|spesa|spozyw|jedzenie/,
-  eating: /eat|dining|restaurant|takeaway|take away|coffee|cafe|food|essen|gastro|restau|comida|ristorant|jedzenie/,
-  transport: /transport|travel|commute|fuel|gas|petrol|car|auto|taxi|verkehr|tank|carburant|essence|gasolina|benzina|paliwo|dojazd|mobilit/,
-  shopping: /shopping|clothes|clothing|household|home|personal|kleidung|haushalt|achats|vetement|compras|ropa|abbigliament|zakupy|ubrania|dom\b/,
-  subs: /subscription|streaming|entertainment|media|abo|abonnement|suscrip|abbonament|subskryp|rozrywk|fun|leisure|freizeit|loisir|ocio|svago/,
-  utilities: /utilit|bills|electric|energy|internet|phone|mobile|strom|nebenkosten|facture|energie|suministro|bollett|rachunk|oplaty/,
-  health: /health|pharmacy|medical|doctor|fitness|gym|sport|gesundheit|apotheke|sante|pharmac|salud|farmac|salute|zdrow|aptek/,
-  travel: /travel|holiday|vacation|trip|hotel|urlaub|reise|voyage|vacance|viaje|vacacion|viagg|vacanz|podroz|urlop|wakacj/,
-  cash: /cash|atm|bargeld|espece|efectivo|contant|gotowk/,
+  groceries: /grocer|supermarket|\bfood|lebensmittel|einkauf|courses|aliment|comestible|supermercado|\bspesa|spozyw|jedzenie/,
+  eating: /\beat|dining|restaurant|takeaway|take away|coffee|\bcafe|\bfood|\bessen|gastro|restau|comida|ristorant|jedzenie/,
+  transport: /transport|travel|commute|\bfuel|\bgas\b|petrol|\bcar\b|\bcars\b|\bauto\b|\btaxi|verkehr|\btank|carburant|essence|gasolina|benzina|paliwo|dojazd|mobilit/,
+  shopping: /shopping|clothes|clothing|household|\bhome\b|personal|kleidung|haushalt|achats|vetement|compras|\bropa\b|abbigliament|zakupy|ubrania|\bdom\b/,
+  subs: /subscription|streaming|entertainment|\bmedia\b|\babo\b|abonnement|suscrip|abbonament|subskryp|rozrywk|\bfun\b|leisure|freizeit|loisir|\bocio|svago/,
+  utilities: /utilit|\bbills?\b|electric|energy|internet|\bphone|mobile|\bstrom|nebenkosten|facture|energie|suministro|bollett|rachunk|oplaty/,
+  health: /health|pharmacy|medical|doctor|fitness|\bgym\b|\bsports?\b|gesundheit|apotheke|sante|pharmac|salud|farmac|salute|zdrow|aptek/,
+  travel: /travel|holiday|vacation|\btrip|hotel|urlaub|reise|voyage|vacance|viaje|vacacion|viagg|vacanz|podroz|urlop|wakacj/,
+  cash: /\bcash\b|\batm\b|bargeld|espece|efectivo|contant|gotowk/,
   insurance: /insur|versicher|assuranc|seguro|assicura|ubezpiec/,
-  fun: /fun|entertainment|leisure|going out|hobby|freizeit|loisir|ocio|svago|rozrywk/,
-  salary: /salary|wage|pay\b|paycheck|payroll|income|gehalt|lohn|salaire|nomina|sueldo|stipendio|wynagrodz|pensj/
+  fun: /\bfun\b|entertainment|leisure|going out|hobby|freizeit|loisir|\bocio|svago|rozrywk/,
+  salary: /salary|\bwages?\b|\bpay\b|paycheck|payroll|\bincome|gehalt|\blohn|salaire|nomina|sueldo|stipendio|wynagrodz|pensj/,
+  fees: /\bfees?\b|\bbank|\bcharges?\b|oplat|prowizj|gebuhr|entgelt|\bfrais|comision|commission/,
+  education: /educat|school|kindergarten|childcare|\bkids?\b|\bchild|szkol|przedszkol|\bkita\b|ecole|creche|escuela|guarderia|scuola|asilo|dzieci/
 };
 const BI_SALARY = /salary|payroll|wages|paycheck|gehalt|lohn|salaire|nomina|sueldo|stipendio|wynagrodzenie|pensja|bezuge/;
 const BI_STATES = new Set('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC ON QC BC AB MB SK NS NB NL PE'.split(' '));
 // Card scheme words, payment rails and processor prefixes that say nothing
 // about where the money went.
 const BI_NOISE = /\b(ppd|ccd|purchase authorized on|authorized on|pos|purchase|card purchase|debit card purchase|debit card|credit card|visa debit|visa|mastercard|maestro|mc|contactless|cntls|apple pay|google pay|gpay|ach|direct debit|dd|standing order|so|fpi|fpo|bgc|tfr|chq|sepa|recurring|payment to|payment from|online|web|www|com|kartenzahlung|lastschrift|sepa lastschrift|paiement cb|paiement par carte|prlv sepa|prlv|carte|cb|compra tarjeta|compra|pago con tarjeta|pago|pagamento pos|pagamento|platnosc karta|zakup przy uzyciu karty|transakcja karta|blik)\b/gi;
+// Banks often say outright where a card was used: "Lokalizacja: DINO
+// POLSKA S.A. 01 OSIEK PL", "Merchant: ...", "Zahlungsempfänger: ...".
+const BI_LABEL = /(?:lokalizacja|location|merchant(?:\s+name)?|h(?:ä|ae)ndler|commer(?:ç|c)ant|comercio|establecimiento|esercente|payee|beneficiary|beneficiario|b(?:é|e)n(?:é|e)ficiaire|zahlungsempf(?:ä|ae)nger|empf(?:ä|ae)nger|odbiorca|nadawca|kontrahent)\s*[:：]\s*(.+?)(?=\s+(?:nr\.?\s*ref|ref\.?|kwota\s+oryg|godz\.?|tel\.?|data\b|date\b|karta\b|card\b|amount\b|betrag\b|montant\b|importe\b|importo\b)|$)/i;
+const BI_LEGAL = /\s(?:s\.\s?a\.?|sa|sp\.?\s?z\.?\s?o\.?\s?o\.?|sp\.?\s?zo\.?\s?o\.?|sp\.\s?j\.?|sp\.\s?k\.?|gmbh|ltd\.?|limited|llc|inc\.?|plc|sarl|s\.?a\.?r\.?l\.?|s\.?r\.?l\.?|s\.?p\.?a\.?|s\.l\.|ag|b\.?v\.?|kg|oy)(?=[\s,.]|$)/i;
+const BI_COUNTRY = new Set('PL DE GB IE BG FR ES IT NL BE LU AT CH CZ SK HU RO HR SI LT LV EE FI SE NO DK PT GR CY MT US CA AU NZ UA TR'.split(' '));
 function biClean(raw) {
   let s = String(raw || '');
+  const lab = BI_LABEL.exec(s);
+  if (lab && lab[1].replace(/[^A-Za-z\u00c0-\u017f]/g, '').length >= 2) s = lab[1];
   // Never kept: card and account numbers, IBANs, emails, long references.
   s = s.replace(/\b[A-Z]{2}\d{2}[A-Z0-9 ]{10,30}\b/g, ' ')
        .replace(/[X*•]{2,}\s?\d{2,6}/gi, ' ')
@@ -374,6 +403,8 @@ function biClean(raw) {
        .replace(/\b(ref|reference|referenz|id|trace|auth|txn)\s*[:#.]?\s*[A-Z0-9\-]{4,}/gi, ' ')
        .replace(/\.{2,}\s?\d+/g, ' ')
        .replace(/\b[a-z]{3,}#\s*:?/gi, ' ')
+       .replace(/(?:\d[\s-]?){9,}\d/g, ' ')
+       .replace(/\b(nr\.?\s*ref|ref\.?\s*w(?:ł|l)\.?\s*zlec|kwota\s+oryg|data\s+przetw|data\s+dokumentu|godz|tel|koszty\s+przeliczenia)\b.*$/i, ' ')
        .replace(/\d{6,}/g, ' ');
   const low = biNorm(s) + ' ' + s.toLowerCase();
   for (const [re, name, kind] of BI_BRANDS) if (re.test(low)) return { name, kind, brand: true };
@@ -386,6 +417,19 @@ function biClean(raw) {
        .replace(/\b(usa|gb|gbr|uk|deu|fra|esp|ita|pol)\b\s*$/i, ' ')
        .replace(/(^|\s)\d{2,5}(?=\s|$)/g, ' ')
        .replace(/\s{2,}/g, ' ').replace(/^[\s\-–,.:/]+|[\s\-–,.:/]+$/g, '').trim();
+  // A legal form ends a company's name: "MOLO RESORT SP.ZO.O RES" is Molo Resort.
+  const lf = BI_LEGAL.exec(' ' + s);
+  if (lf && lf.index > 2) s = (' ' + s).slice(0, lf.index).trim();
+  // A country code at the end, "SZARA GES KRAKOW PL": the code goes, and
+  // the town before it while a name is still left.
+  let ws = s.split(/\s+/);
+  if (ws.length >= 2 && BI_COUNTRY.has(ws[ws.length - 1])) {
+    ws.pop();
+    const last = ws[ws.length - 1] || '';
+    if (ws.length >= 3 || (ws.length === 2 && last === last.toUpperCase() && /[A-Z]/.test(last) && ws[0] === ws[0].toUpperCase())) ws.pop();
+    s = ws.join(' ');
+  }
+  s = s.replace(/\b(karta|card|lokalizacja|location|pln|eur|usd|gbp|chf)\b\s*:?/gi, ' ').replace(/\s{2,}/g, ' ').replace(/^[\s\-–,.:/"]+|[\s\-–,.:/"]+$/g, '').trim();
   // A US-style ending, "OAKLAND CA": the state goes, and the town with it
   // when that still leaves a name of two words or more.
   const words = s.split(/\s+/);
@@ -395,12 +439,47 @@ function biClean(raw) {
     s = words.join(' ');
   }
   if (!s) s = String(raw || '').replace(/\d{6,}/g, ' ').trim();
-  const pretty = /[a-z]/.test(s) && /[A-Z]/.test(s) ? s : s.toLowerCase().replace(/(^|[\s\-/&.'(])([a-zà-ſ])/g, (m, a, b) => a + b.toUpperCase());
+  const pretty = /[a-z]/.test(s) && /[A-Z]/.test(s) ? s : s.toLowerCase().replace(/(^|[\s\-/&.'("])([a-zà-ſ])/g, (m, a, b) => a + b.toUpperCase());
   const name = pretty.slice(0, 60);
   const n = biNorm(name);
   let kind = '';
   for (const [re, k] of BI_KIND_WORDS) if (re.test(n)) { kind = k; break; }
   return { name, kind, brand: false };
+}
+
+function biMinimize(raw) {
+  return String(raw || '')
+    .replace(/\b[A-Z]{2}\s?\d{2}(?:\s?[A-Z0-9]{4}){3,8}\b/g, ' ')
+    .replace(/[X*•]{2,}\s?\d{2,6}/gi, ' ')
+    .replace(/(?:\d[\s-]?){8,}\d/g, ' ')
+    .replace(/\S+@\S+\.\S+/g, ' ')
+    .replace(/\bkwota\s+oryg\.?\s*:?\s*[\d\s.,]+\s*[A-Z]{3}\b/gi, ' ')
+    .replace(/\b\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}\b/g, ' ')
+    .replace(/\b\d{1,2}:\d{2}(:\d{2})?\b/g, ' ')
+    .replace(/[-\u2212]?\d[\d\s.']*[.,]\d{2}\b/g, ' ')
+    .replace(/\b\d{2}-\d{3}\b/g, ' ')
+    .replace(/\b(nr\.?\s*ref|ref\.?|reference|referenz|tel\.?|telefon|phone|godz\.?|data\s+(przetw|dokumentu)\.?|od|do)\s*[:.]?\s*(?=\s|$)/gi, ' ')
+    .replace(/\d{5,}/g, ' ')
+    .replace(/\s{2,}/g, ' ').trim().slice(0, 180);
+}
+// The bank's type, without any transaction id printed beside it.
+const biTypeText = s => String(s || '').replace(/\b(?=[A-Z0-9]*\d)[A-Z0-9]{8,}\b/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+const biSentence = s => { const v = String(s || '').trim().toLowerCase(); return v ? v[0].toUpperCase() + v.slice(1) : ''; };
+const BI_CASH_TYPE = /bankomat|\batm\b|cash withdrawal|wyplata gotowki|geldautomat|bargeld|retrait|cajero|prelievo|wyplata w bankomacie/;
+const BI_FEE_TYPE = /prowizja|oplata|\bfee\b|charge|commission|gebuhr|entgelt|frais|comision|commissione/;
+
+// A bank's own words for the kind of payment, which say nothing about where.
+const BI_GENERIC = /^(zakup przy uzyciu karty|zakup w terminalu( kod mobilny)?|platnosc web( kod mobilny)?|kod mobilny|przelew( wychodzacy| przychodzacy| przych| na telefon( wychodzacy)?( zew)?)?( rodzinny| systemat| wplyw)*|realizacja zlecenia stalego|card (payment|purchase)|debit card( purchase)?|direct debit|standing order|faster payment|bill payment|transfer|payment|purchase|debit|credit|pos|kartenzahlung|lastschrift|uberweisung|dauerauftrag|paiement( par carte| cb)?|prelevement|virement|compra( con tarjeta)?|pago( con tarjeta)?|transferencia|recibo|pagamento( pos)?|bonifico|addebito)$/;
+function biPickName(r) {
+  const own = r.raw && r.raw !== r.kindRaw ? r.raw : '';
+  const cands = [own, r.kindRaw].filter(Boolean).map(x => ({ src: x, c: biClean(x) }));
+  if (!cands.length) return biClean('');
+  const brand = cands.find(x => x.c.brand);
+  if (brand) return brand.c;
+  const labelled = cands.find(x => BI_LABEL.test(x.src));
+  if (labelled) return labelled.c;
+  const real = cands.find(x => x.c.name && !BI_GENERIC.test(biNorm(biTypeText(x.c.name))) && /[a-z\u00c0-\u017f]{3,}/i.test(x.c.name));
+  return (real || cands[0]).c;
 }
 
 // ── 5. Transfers, refunds and the like ───────────────────────────────────
@@ -421,7 +500,8 @@ function biBuildRows(ctx) {
   body.forEach((r, idx) => {
     const cell = k => (map[k] != null ? (r[map[k]] || '') : '');
     const descRaw = (cell('payee') || cell('desc')).trim();
-    const fullRaw = [cell('payee'), cell('desc')].filter(Boolean).join(' ').trim();
+    const kindRaw = cell('kind').trim();
+    const fullRaw = [cell('payee'), cell('desc'), kindRaw].filter(Boolean).join(' ').trim();
     const why = reason => skipped.push({ line: idx, reason, date: cell('date'), desc: biClean(descRaw).name, amount: cell('amount') || cell('debit') || cell('credit') });
     if (BI_SKIP_LINE.test(biNorm(descRaw))) return why('summary');
     const date = biParseDate(cell('date'), order);
@@ -445,7 +525,7 @@ function biBuildRows(ctx) {
     if (isNaN(amount)) return why('amount');
     if (Math.abs(amount) < 0.005) return why('zero');
     const bal = map.balance != null ? biAmount(cell('balance'), mark) : NaN;
-    out.push({ line: idx, date, amount: biRound(amount), balance: isNaN(bal) ? null : biRound(bal), raw: descRaw, full: fullRaw, kindHint: kindCell, bankCat: cell('category') });
+    out.push({ line: idx, date, amount: biRound(amount), balance: isNaN(bal) ? null : biRound(bal), raw: descRaw || kindRaw, full: fullRaw, kindHint: kindCell, kindRaw, bankCat: cell('category') });
   });
   return { rows: out, skipped, order, mark };
 }
@@ -559,10 +639,17 @@ function biClassify(rows, opts) {
   const dayDiff = (a, b) => Math.abs((new Date(a + 'T00:00:00') - new Date(b + 'T00:00:00')) / 86400000);
   const items = rows.map(r => {
     const amount = opts.flip ? -r.amount : r.amount;
-    const cl = biClean(r.raw);
+    const cl = biPickName(r);
     const text = biNorm(r.full || r.raw) + ' ' + biNorm(cl.name);
     const it = { id: 'bi' + r.line, line: r.line, date: r.date, amount: Math.abs(amount), inbound: amount > 0, desc: cl.name, brand: cl.brand, kind: cl.kind,
-      type: amount > 0 ? 'income' : 'expense', category: C.uncat, how: 'review', checked: true, flags: [], bankCat: r.bankCat, kindHint: r.kindHint };
+      type: amount > 0 ? 'income' : 'expense', category: C.uncat, how: 'review', checked: true, flags: [], bankCat: r.bankCat, kindHint: r.kindHint,
+      x: biMinimize(r.full || r.raw), k: biMinimize(r.kindRaw || '') };
+    // Cash out of a machine, and the bank's own charges: named for what they are.
+    const kt = biNorm(r.kindRaw || '') + ' ' + biNorm(r.full || r.raw);
+    const kindText = biTypeText(r.kindRaw);
+    if (!cl.brand && kindText && BI_FEE_TYPE.test(biNorm(kindText))) { it.kind = 'fees'; it.desc = biSentence(kindText); }
+    else if (!cl.brand && BI_CASH_TYPE.test(kt)) { it.kind = 'cash'; if (kindText && BI_CASH_TYPE.test(biNorm(kindText))) it.desc = biSentence(kindText); }
+    if (!it.desc && kindText) it.desc = biSentence(kindText);
     // Between the person's own accounts: not spending, so left out.
     const tHint = /(^| )(topup|top up|exchange|pot transfer|pot|transfer between|internal|savings transfer|account transfer|acct xfer)( |$)/.test(r.kindHint || '');
     if (BI_CARD_PAYMENT.test(text)) {
@@ -596,8 +683,8 @@ function biClassify(rows, opts) {
     }
     if (it.inbound) {
       if (BI_SALARY.test(text)) { const c = biKindCategory('salary', list) || (list.length === 1 ? list[0] : ''); if (c) { Object.assign(it, { category: c, how: 'suggested' }); return it; } }
-    } else if (cl.kind) {
-      const c = biKindCategory(cl.kind, list);
+    } else if (it.kind) {
+      const c = biKindCategory(it.kind, list);
       if (c) { Object.assign(it, { category: c, how: 'suggested' }); return it; }
     }
     return it;
@@ -627,34 +714,60 @@ function biClassify(rows, opts) {
 
 // ── Ezzo, for the categories still unknown ───────────────────────────────
 function biEzzoReady() { try { return typeof pennyIsActive === 'function' && pennyIsActive() && typeof pennyStreamWithFallback === 'function'; } catch (e) { return false; } }
+// Which rows Ezzo looks at: spending and income the app has only guessed,
+// not ones it knows (your history, your bills, debts and goals, your own
+// choice), and not ones already in the planner.
+const biEzzoWants = it => (it.type === 'expense' || it.type === 'income') && (it.how === 'review' || it.how === 'suggested') && it.dupe !== 'exact' && !!(it.desc || it.x);
 async function biAskEzzo(items) {
   const C = biCats();
-  const open = items.filter(it => (it.type === 'expense' || it.type === 'income') && it.how === 'review' && it.desc);
-  const uniq = [], key = it => (it.inbound ? 'in' : 'out') + '|' + biNorm(it.desc);
+  const open = items.filter(biEzzoWants);
+  const uniq = [], key = it => (it.inbound ? 'in' : 'out') + '|' + biKey(it.desc) + '|' + biKey(it.x) + '|' + biKey(it.k);
   const seen = new Map();
-  open.forEach(it => { const k = key(it); if (!seen.has(k)) { seen.set(k, uniq.length); uniq.push({ n: it.desc, d: it.inbound ? 'in' : 'out', b: it.bankCat || undefined }); } });
-  if (!uniq.length || (!C.expense.length && !C.income.length)) return { asked: 0, sorted: 0 };
+  open.forEach(it => { const k = key(it); if (!seen.has(k)) { seen.set(k, uniq.length);
+    uniq.push({ n: it.desc || undefined, x: it.x || undefined, k: it.k || undefined, d: it.inbound ? 'in' : 'out', b: it.bankCat || undefined }); } });
+  if (!uniq.length) return { asked: 0, sorted: 0 };
   const answers = new Map();
   for (let s = 0; s < uniq.length; s += BI_EZZO_BATCH) {
     const batch = uniq.slice(s, s + BI_EZZO_BATCH).map((x, i) => ({ i: s + i, ...x }));
     let text = '';
     await pennyStreamWithFallback({
-      systemInstruction: { parts: [{ text: 'You sort bank transactions into a person\'s own budget categories. You are given their spending categories ("out"), their income categories ("in"), and a list of shops or payees. Each item has an index i, a name n, a direction d ("out" for money spent, "in" for money received) and sometimes the bank\'s own category b. For each item choose the single best category from the list that matches its direction, copied exactly as written, or null when none fits well. Never invent a category and never use one from the other direction. Reply with JSON only, no other text: {"r":[{"i":0,"c":"Groceries"}]}' }] },
-      contents: [{ role: 'user', parts: [{ text: JSON.stringify({ out: C.expense, in: C.income, items: batch }) }] }],
-      generationConfig: { maxOutputTokens: 4096, temperature: 0.1 }
+      systemInstruction: { parts: [{ text: 'You sort a person\'s bank transactions into their own budget before they review them. Each item has: i (index), n (the name the app read, may be rough), x (the transaction details from the bank, with numbers removed), k (the bank\'s transaction type), d ("out" for money spent, "in" for money received) and sometimes b (the bank\'s own category). You also get the person\'s lists: out (spending categories), in (income categories), bills, debts and goals. For every item return:\n'
+        + 'm: who the money went to or came from, the way a person would say it: the shop, restaurant, company, service or person, in its usual capitalisation, without legal forms (S.A., Sp. z o.o., GmbH, Ltd, Inc), store numbers, towns or country codes. Use what you know about places: "JMP S.A. BIEDRONKA 6864 OSIEK" is "Biedronka", "MOLO RESORT SP.ZO.O RES OSIEK" is "Molo Resort". For cash machines, bank fees, interest and similar with no place, a short plain label in the language of the details. Never include card, account, phone or reference numbers.\n'
+        + 't: "expense", "income", "bill", "debt", "goal" or "transfer". Use bill, debt or goal only when the item clearly pays one of the person\'s own listed ones, and transfer only for money moved between the person\'s own accounts.\n'
+        + 'c: the single best category, copied exactly from "out" for an expense or "in" for income, or the exact bill, debt or goal name; null if nothing fits. Decide from what the place is: a supermarket is groceries, a fuel station transport, a pharmacy or dentist health, a restaurant eating out, a streaming service a subscription. Never invent a category and never take one from the wrong direction.\n'
+        + 'Reply with JSON only, no other text: {"r":[{"i":0,"m":"Biedronka","t":"expense","c":"Groceries"}]}' }] },
+      contents: [{ role: 'user', parts: [{ text: JSON.stringify({ out: C.expense, in: C.income, bills: C.bills.map(x => x.name), debts: C.debts.map(x => x.name), goals: C.goals.map(x => x.name), items: batch }) }] }],
+      generationConfig: { maxOutputTokens: 8192, temperature: 0.1 }
     }, chunk => {
       const cand = chunk.candidates && chunk.candidates[0];
       for (const part of (cand && cand.content && cand.content.parts) || []) if (part.text) text += part.text;
     });
-    const m = /\{[\s\S]*\}/.exec(text.replace(/```(json)?/g, ''));
+    const clean = text.replace(/```(json)?/g, '');
+    const m = /\{[\s\S]*\}/.exec(clean);
     let parsed = null; try { parsed = m ? JSON.parse(m[0]) : null; } catch (e) { parsed = null; }
-    ((parsed && parsed.r) || []).forEach(x => { if (x && Number.isInteger(x.i) && typeof x.c === 'string') answers.set(x.i, x.c); });
+    let rows = (parsed && parsed.r) || [];
+    // Cut off before the end: every complete answer is still used.
+    if (!parsed) rows = (clean.match(/\{\s*"i"\s*:\s*\d+[^{}]*\}/g) || []).map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(Boolean);
+    rows.forEach(x => { if (x && Number.isInteger(x.i)) answers.set(x.i, x); });
   }
   const placed = new Set();
   open.forEach(it => {
-    const k = seen.get(key(it)), c = answers.get(k);
-    const list = it.inbound ? C.income : C.expense;
-    if (c && list.includes(c)) { it.category = c; it.how = 'ezzo'; placed.add(k); }
+    const k = seen.get(key(it)), a = answers.get(k);
+    if (!a) return;
+    let used = false;
+    const name = typeof a.m === 'string' ? a.m.replace(/\s+/g, ' ').trim().slice(0, 48) : '';
+    if (name && !it.brand && !it.descEdited && !/\d{4,}/.test(name)) { it.desc = name; used = true; }
+    if (it.how === 'manual') { if (used) placed.add(k); return; }
+    const c = typeof a.c === 'string' ? a.c : '';
+    if (a.t === 'transfer') { Object.assign(it, { type: 'transfer', category: '', how: 'transfer', checked: false }); used = true; }
+    else if (!it.inbound && (a.t === 'bill' || a.t === 'debt' || a.t === 'goal')) {
+      const list = a.t === 'bill' ? C.bills : a.t === 'debt' ? C.debts : C.goals;
+      if (list.some(x => x.name === c)) { Object.assign(it, { type: a.t === 'goal' ? 'sinking_fund' : a.t, category: c, how: 'ezzo' }); used = true; }
+    } else {
+      const list = it.inbound ? C.income : C.expense;
+      if (c && list.includes(c)) { Object.assign(it, { type: it.inbound ? 'income' : 'expense', category: c, how: 'ezzo' }); used = true; }
+    }
+    if (used) placed.add(k);
   });
   return { asked: uniq.length, sorted: placed.size };
 }
@@ -720,8 +833,8 @@ function biRun() {
 }
 async function biRunEzzo() {
   const b = _bi; if (!b) return;
-  if (!b.items.some(it => (it.type === 'expense' || it.type === 'income') && it.how === 'review' && it.desc)) { b.ezzo = { state: 'none' }; biRender(); return; }
-  b.ezzo = { state: 'running', n: new Set(b.items.filter(it => it.how === 'review' && it.desc && (it.type === 'expense' || it.type === 'income')).map(it => biNorm(it.desc))).size };
+  if (!b.items.some(biEzzoWants)) { b.ezzo = { state: 'none' }; biRender(); return; }
+  b.ezzo = { state: 'running', n: new Set(b.items.filter(biEzzoWants).map(it => biKey(it.desc) + '|' + biKey(it.x))).size };
   biRender();
   try {
     const r = await biAskEzzo(b.items);
@@ -764,6 +877,7 @@ function biRender() {
     if (it.type === 'transfer') return `<span class="bi-tag bi-tag--transfer">${esc(t('bi_tag_transfer'))}</span>`;
     if ((it.type === 'expense' || it.type === 'income') && biIsUncat(it.category)) return `<span class="bi-tag bi-tag--review">${esc(t('bi_tag_review'))}</span>`;
     const k = { learned: 'bi_tag_learned', bill: 'bi_tag_bill', debt: 'bi_tag_debt', goal: 'bi_tag_goal', ezzo: 'bi_tag_ezzo', suggested: 'bi_tag_suggested', manual: 'bi_tag_manual' }[it.how];
+    if (it.how === 'ezzo' && it.type === 'bill') return `<span class="bi-tag bi-tag--bill">${esc(t('bi_tag_bill'))}</span>`;
     return k ? `<span class="bi-tag bi-tag--${it.how}">${esc(t(k))}</span>` : '';
   };
   const filt = { all: () => true, review: it => it.type !== 'transfer' && !it.dupe && (it.type === 'expense' || it.type === 'income') && biIsUncat(it.category), dupe: it => !!it.dupe, transfer: it => it.type === 'transfer' }[b.tab] || (() => true);
@@ -865,7 +979,7 @@ function biWire() {
   }));
   biRecCheck();
   root.querySelectorAll('[data-bi-check]').forEach(cb => cb.addEventListener('change', () => { const it = biItem(cb.dataset.biCheck); if (it) { it.checked = cb.checked; biRender(); } }));
-  root.querySelectorAll('[data-bi-desc]').forEach(inp => inp.addEventListener('change', () => { const it = biItem(inp.dataset.biDesc); if (it) it.desc = inp.value.trim(); }));
+  root.querySelectorAll('[data-bi-desc]').forEach(inp => inp.addEventListener('change', () => { const it = biItem(inp.dataset.biDesc); if (it) { it.desc = inp.value.trim(); it.descEdited = true; } }));
   root.querySelectorAll('[data-bi-type]').forEach(sel => sel.addEventListener('change', () => {
     const it = biItem(sel.dataset.biType); if (!it) return;
     it.type = sel.value; it.how = 'manual';
@@ -1055,7 +1169,9 @@ function biPdfLines(items, page) {
   }).filter(l => l.cells.length);
 }
 const BI_PDF_NUM = /^[(+\-\u2212]?\s?(?:[$€£zł]|zł|eur|usd|gbp|pln|chf)?\s?\d{1,3}(?:[ .,'\u00a0]\d{3})*(?:[.,]\d{2})\s?(?:cr|dr|-)?\)?$|^[(+\-\u2212]?\d+[.,]\d{2}\s?(?:cr|dr|-)?\)?$/i;
-const BI_PDF_OPEN = /\b(opening|previous|beginning|starting|start) balance|balance (brought forward|b\/f|at start)|alter kontostand|anfangssaldo|kontostand am .* alt|solde (precedent|initial|ancien|au debut)|ancien solde|saldo (inicial|anterior|iniziale|precedente|poczatkowe|otwarcia)/;
+const BI_PDF_PAGE = /^(strona|page|seite|pagina|pag|pagine)\s*\d+\s*(z|of|von|de|di|sur)?\s*\d*$/;
+const BI_PDF_CARRY = /saldo (do|z) przeniesienia|carried forward|brought forward|balance (c|b) f\b|ubertrag|vortrag|a reporter|report a nouveau|riporto|saldo da riportare|suma do przeniesienia|suma z przeniesienia/;
+const BI_PDF_OPEN = /\bsaldo poprzednie|\b(opening|previous|beginning|starting|start) balance|balance (brought forward|b\/f|at start)|alter kontostand|anfangssaldo|kontostand am .* alt|solde (precedent|initial|ancien|au debut)|ancien solde|saldo (inicial|anterior|iniziale|precedente|poczatkowe|otwarcia)/;
 const BI_PDF_CLOSE = /\b(closing|new|ending|end) balance|balance (carried forward|c\/f|at end)|neuer kontostand|endsaldo|solde (final|nouveau|au)|nouveau solde|saldo (final|finale|koncowe|zamkniecia)/;
 // Statements often leave the year off each line; it is the statement's own.
 function biPdfYear(lines) {
@@ -1070,72 +1186,75 @@ function biPdfWithYear(v, year) {
   if (/^\d{1,2}\.?\s+[a-z\u00c0-\u017f]{3,}\.?$/i.test(s) || /^[a-z\u00c0-\u017f]{3,}\.?\s+\d{1,2}$/i.test(s)) return s + ' ' + year;
   return s;
 }
+// A statement, line by line. A transaction starts with a date and ends in
+// money: its amount, and the balance after it when the statement keeps one.
+// The lines under it, up to the next transaction, are its details (a value
+// date, the description, where the card was used). A line with no date but
+// money in the amount column is another transaction from the same day.
+// Balance lines, carried-over balances and anything printed in the same
+// place on every page (headings, account number, footer) are not
+// transactions. This reads the words, not the layout, so it holds up
+// however a bank's PDF happens to group its text.
+const BI_PDF_MONEY_END = /(?<![\d.,])([-+\u2212]?\s?(?:[$€£]\s?)?\d{1,3}(?:[ \u00a0.,']\d{3})*[.,]\d{2}(?:\s?(?:cr|dr))?-?)\s*(?:pln|eur|usd|gbp|chf|zł|zl|kr)?\s*$/i;
+const BI_PDF_LEAD_DATE = /^\s*(\d{4}-\d{2}-\d{2}|\d{1,2}[\/.\-]\d{1,2}(?:[\/.\-]\d{2,4})?\.?|\d{1,2}\.?\s+[a-z\u00c0-\u017f]{3,}\.?(?:\s+\d{2,4})?|[a-z\u00c0-\u017f]{3,}\.?\s+\d{1,2},?(?:\s+\d{4})?)(?=\s|$)/i;
 function biPdfToRows(lines) {
   const statement = {};
   const year = biPdfYear(lines);
   lines.forEach(l => {
     const n = biNorm(l.text);
-    const lastNum = [...l.cells].reverse().map(c => c.text).find(c => BI_PDF_NUM.test(c));
-    if (lastNum != null && statement.start == null && BI_PDF_OPEN.test(n)) statement.start = lastNum;
-    if (lastNum != null && BI_PDF_CLOSE.test(n)) statement.end = lastNum;
+    const m = BI_PDF_MONEY_END.exec(l.text);
+    if (m && statement.start == null && BI_PDF_OPEN.test(n)) statement.start = m[1].trim();
+    if (m && BI_PDF_CLOSE.test(n)) statement.end = m[1].trim();
   });
-  const isNum = c => BI_PDF_NUM.test(c.text);
   const dateOf = text => { const w = biPdfWithYear(text, year); return biLooksDate(w) ? w : null; };
-  // With a heading row: every cell goes to the column its middle sits under.
-  const hIdx = lines.findIndex(l => l.cells.length >= 2 && l.cells.some(c => biColumnScore(c.text, BI_HEAD.date) >= 2) &&
-    l.cells.some(c => ['amount', 'debit', 'credit'].some(k => biColumnScore(c.text, BI_HEAD[k]) >= 2)));
-  const out = [];
-  if (hIdx >= 0) {
-    const head = lines[hIdx].cells;
-    const mid = c => (c.x0 + c.x1) / 2;
-    const cuts = head.slice(1).map((c, i) => (mid(head[i]) + mid(c)) / 2);
-    const colOf = c => { const m = mid(c); let i = 0; while (i < cuts.length && m > cuts[i]) i++; return i; };
-    const role = k => head.findIndex(c => biColumnScore(c.text, BI_HEAD[k]) >= 2);
-    const dCol = role('date'), descCol = [role('desc'), role('payee')].find(i => i >= 0);
-    const numCols = new Set(['amount', 'debit', 'credit', 'balance'].map(role).filter(i => i >= 0));
-    const headText = biNorm(lines[hIdx].text);
-    out.push(head.map(c => c.text));
-    let lastDate = null;
-    lines.slice(hIdx + 1).forEach(l => {
-      if (biNorm(l.text) === headText) return;
-      const row = head.map(() => '');
-      l.cells.forEach(c => { const i = colOf(c); row[i] = row[i] ? row[i] + ' ' + c.text : c.text; });
-      const hasAmt = [...numCols].some(i => i !== role('balance') && row[i] && BI_PDF_NUM.test(row[i].trim()));
-      const d = dCol >= 0 ? dateOf(row[dCol]) : null;
-      if (d) { row[dCol] = d; lastDate = d; }
-      if (!hasAmt) {
-        // A second line of the one above it.
-        const prev = out[out.length - 1];
-        if (out.length > 1 && !d && descCol != null && row[descCol] && !BI_SKIP_LINE.test(biNorm(l.text)) && !BI_PDF_OPEN.test(biNorm(l.text)) && !BI_PDF_CLOSE.test(biNorm(l.text))) prev[descCol] = (prev[descCol] + ' ' + row[descCol]).trim();
-        return;
-      }
-      if (!d) { if (!lastDate) return; row[dCol] = lastDate; }   // the date printed once for the day
-      out.push(row);
-    });
-    if (out.length > 1) return { rows: out, statement };
-  }
-  // No heading: a line that starts with a date and ends in amounts.
-  out.length = 0;
-  out.push(['Date', 'Description', 'Amount', 'Balance']);
-  let last = null, lastDate = null;
+  const lead = text => { const m = BI_PDF_LEAD_DATE.exec(text); if (!m) return null; const d = dateOf(m[1]); return d ? { d, rest: text.slice(m[0].length).trim() } : null; };
+  const trailing = text => {
+    let rest = text.trim(); const toks = [];
+    for (let m; toks.length < 3 && (m = BI_PDF_MONEY_END.exec(rest)); ) { toks.unshift(m[1].replace(/\s+/g, ' ').trim()); rest = rest.slice(0, m.index).trim(); }
+    return { toks, rest };
+  };
+  // The heading row, when there is one: it says whether a balance is kept,
+  // and where the money columns end on the page.
+  const isHead = l => biColumnScore(l.text, BI_HEAD.date) >= 1 && ['amount', 'debit', 'credit'].some(k => l.cells.some(c => biColumnScore(c.text, BI_HEAD[k]) >= 1) || biColumnScore(l.text, BI_HEAD[k]) >= 1)
+    && !BI_PDF_MONEY_END.test(l.text);
+  const head = lines.find(isHead);
+  const headHas = k => !!head && (head.cells.some(c => biColumnScore(c.text, BI_HEAD[k]) >= 1) || biColumnScore(head.text, BI_HEAD[k]) >= 1);
+  const keepsBalance = !head || headHas('balance');
+  // Page furniture: the same words in the same place on two or more pages.
+  const spot = l => biNorm(l.text) + '|' + Math.round(l.y / 4);
+  const pagesOf = new Map();
+  lines.forEach(l => { const k = spot(l); if (!pagesOf.has(k)) pagesOf.set(k, new Set()); pagesOf.get(k).add(l.page); });
+  const furniture = l => (pagesOf.get(spot(l)).size >= 2 && !lead(l.text)) || BI_PDF_PAGE.test(biNorm(l.text));
+  // Where the money ends on the page: from the transactions that have a date.
+  const ends = [];
+  lines.forEach(l => { const ld = lead(l.text); if (ld && trailing(ld.rest).toks.length) ends.push(l.cells[l.cells.length - 1].x1); });
+  ends.sort((a, b) => a - b);
+  const moneyX = ends.length ? ends[Math.floor(ends.length / 2)] : null;
+  const out = [['Date', 'Type', 'Amount', 'Balance', 'Details']];
+  let cur = null, page = 0, lastDate = null;
   lines.forEach(l => {
-    const cells = l.cells.map(c => c.text);
-    let d = null, k = 0;
-    for (let j = 1; j <= Math.min(3, cells.length) && !d; j++) { const cand = dateOf(cells.slice(0, j).join(' ')); if (cand) { d = cand; k = j; } }
-    if (!d) { const m = /^(\d{1,2}[\/.\-]\d{1,2}(?:[\/.\-]\d{2,4})?|\d{1,2}\s+[a-z\u00c0-\u017f]{3,}\.?(?:\s+\d{2,4})?)\s+(.*)$/i.exec(l.text); if (m && dateOf(m[1])) { d = dateOf(m[1]); cells.splice(0, cells.length, m[1], ...m[2].split(/\s{2,}/)); k = 1; } }
-    const nums = [];
-    let rest = cells.slice(k);
-    while (rest.length && BI_PDF_NUM.test(rest[rest.length - 1])) nums.unshift(rest.pop());
-    const desc = rest.join(' ').trim();
-    if (!nums.length) {
-      if (last && !d && desc && !BI_SKIP_LINE.test(biNorm(desc)) && !BI_PDF_OPEN.test(biNorm(l.text)) && !BI_PDF_CLOSE.test(biNorm(l.text))) last[1] = (last[1] + ' ' + desc).trim();
+    if (l.page !== page) { page = l.page; cur = null; }
+    const n = biNorm(l.text);
+    if (isHead(l) || furniture(l)) return;
+    if (BI_PDF_CARRY.test(n) || BI_PDF_CLOSE.test(n) || BI_PDF_OPEN.test(n) || BI_SKIP_LINE.test(n)) { cur = null; return; }
+    const ld = lead(l.text);
+    const body = ld ? ld.rest : l.text;
+    const { toks, rest } = trailing(body);
+    const aligned = moneyX != null && Math.abs(l.cells[l.cells.length - 1].x1 - moneyX) < 45;
+    if (toks.length && (ld || (lastDate && aligned))) {
+      if (BI_SKIP_LINE.test(biNorm(rest)) || BI_PDF_OPEN.test(biNorm(rest)) || BI_PDF_CLOSE.test(biNorm(rest))) { cur = null; return; }
+      const d = ld ? ld.d : lastDate;
+      lastDate = d;
+      const amount = keepsBalance && toks.length >= 2 ? toks[toks.length - 2] : toks[0];
+      const balance = keepsBalance && toks.length >= 2 ? toks[toks.length - 1] : '';
+      cur = [d, rest, amount, balance, ''];
+      out.push(cur);
       return;
     }
-    if (!d && !lastDate) return;
-    if (!desc || BI_PDF_OPEN.test(biNorm(l.text)) || BI_PDF_CLOSE.test(biNorm(l.text))) return;
-    if (d) lastDate = d;
-    last = [d || lastDate, desc, nums.length >= 2 ? nums[nums.length - 2] : nums[0], nums.length >= 2 ? nums[nums.length - 1] : ''];
-    out.push(last);
+    // Under a transaction: its details. A value date at the start is dropped.
+    if (!cur) return;
+    const words = (ld ? ld.rest : l.text).trim();
+    if (words) cur[4] = cur[4] ? cur[4] + ' ' + words : words;
   });
   return { rows: out, statement };
 }
@@ -1244,9 +1363,9 @@ const BI_WORDS = {
     bi_rec_ok: 'The balance checks out, from {0} to {1}.', bi_rec_off: 'The balance is off by {0}. {1} rows do not follow the running balance, so some may be missing from the export.',
     bi_rec_none: 'Money in {0}, money out {1}, net {2}.', bi_rec_check: 'Check against your statement', bi_rec_start: 'Starting balance', bi_rec_end: 'Ending balance',
     bi_rec_match: 'Matches your statement.', bi_rec_diff: 'Off by {0}.',
-    bi_ezzo_offer: 'Ezzo can choose categories for the rest.', bi_ezzo_btn: 'Ask Ezzo', bi_ezzo_working: 'Ezzo is choosing categories for {0} places…',
-    bi_ezzo_done: 'Ezzo chose categories for {0} of {1} places.', bi_ezzo_fail: 'Ezzo could not choose categories just now, so the rest are Uncategorized for you to pick.',
-    bi_ezzo_none: 'Every row already has a category.', bi_ezzo_note: 'Only shop names are sent to Google Gemini. Never amounts, dates or account details.',
+    bi_ezzo_offer: 'Ezzo can work out where each payment went and sort it.', bi_ezzo_btn: 'Ask Ezzo', bi_ezzo_working: 'Ezzo is working out where {0} payments went…',
+    bi_ezzo_done: 'Ezzo named and sorted {0} of {1} places.', bi_ezzo_fail: 'Ezzo could not choose categories just now, so the rest are Uncategorized for you to pick.',
+    bi_ezzo_none: 'Every row already has a category.', bi_ezzo_note: 'Ezzo sees each row\'s details with account, card, phone and reference numbers, amounts, dates and times taken out.',
     bi_ezzo_off: 'Turn on Ezzo in Settings and it can choose categories for the rows that still need one.',
     bi_tab_all: 'All', bi_s_review: 'Need a category', bi_s_dupe: 'Already logged', bi_s_transfer: 'Transfers',
     bi_tag_learned: 'From your history', bi_tag_bill: 'Your bill', bi_tag_debt: 'Your debt', bi_tag_goal: 'Your goal', bi_tag_ezzo: 'Ezzo', bi_tag_suggested: 'Suggested', bi_tag_manual: 'Your choice',
@@ -1260,7 +1379,7 @@ const BI_WORDS = {
     bi_applied_same: 'Also set for {0} more from {1}.', bi_chip: 'Import a bank statement', bi_attach: 'Import a bank statement (CSV or PDF)',
     bi_chat_found: 'I read {0} transactions: {1} ready to add, {2} already in your planner, {3} transfers between your accounts and {4} lines left out.',
     bi_chat_bal_ok: 'The balance checks out.', bi_chat_bal_off: 'The balance does not quite add up, so some rows may be missing from the export.',
-    bi_chat_sorted: 'I chose categories for {0} of {1} places. Have a look and add them when you are happy.',
+    bi_chat_sorted: 'I named and sorted {0} of {1} places. Have a look and add them when you are happy.',
     bi_chat_added: 'Done. I added {0} transactions.', bi_chat_added_review: 'Done. I added {0} transactions. {1} are Uncategorized for you to sort on the Transactions page.'
   },
   de: {
@@ -1293,9 +1412,9 @@ const BI_WORDS = {
     bi_rec_ok: 'Der Kontostand stimmt, von {0} bis {1}.', bi_rec_off: 'Der Kontostand weicht um {0} ab. {1} Zeilen passen nicht zum laufenden Saldo, vielleicht fehlen Umsätze im Export.',
     bi_rec_none: 'Eingang {0}, Ausgang {1}, netto {2}.', bi_rec_check: 'Mit dem Kontoauszug abgleichen', bi_rec_start: 'Anfangssaldo', bi_rec_end: 'Endsaldo',
     bi_rec_match: 'Passt zu deinem Kontoauszug.', bi_rec_diff: 'Weicht um {0} ab.',
-    bi_ezzo_offer: 'Ezzo kann für den Rest Kategorien wählen.', bi_ezzo_btn: 'Ezzo fragen', bi_ezzo_working: 'Ezzo wählt Kategorien für {0} Orte…',
-    bi_ezzo_done: 'Ezzo hat für {0} von {1} Orten Kategorien gewählt.', bi_ezzo_fail: 'Ezzo konnte gerade keine Kategorien wählen, der Rest ist Ohne Kategorie zum Auswählen.',
-    bi_ezzo_none: 'Jede Zeile hat schon eine Kategorie.', bi_ezzo_note: 'Nur Geschäftsnamen gehen an Google Gemini. Nie Beträge, Daten oder Kontodaten.',
+    bi_ezzo_offer: 'Ezzo kann herausfinden, wohin jede Zahlung ging, und sie einsortieren.', bi_ezzo_btn: 'Ezzo fragen', bi_ezzo_working: 'Ezzo findet heraus, wohin {0} Zahlungen gingen…',
+    bi_ezzo_done: 'Ezzo hat {0} von {1} Orten benannt und einsortiert.', bi_ezzo_fail: 'Ezzo konnte gerade keine Kategorien wählen, der Rest ist Ohne Kategorie zum Auswählen.',
+    bi_ezzo_none: 'Jede Zeile hat schon eine Kategorie.', bi_ezzo_note: 'Ezzo sieht die Details jeder Zeile ohne Konto-, Karten-, Telefon- und Referenznummern, Beträge, Daten und Uhrzeiten.',
     bi_ezzo_off: 'Schalte Ezzo in den Einstellungen ein, dann wählt er Kategorien für die übrigen Zeilen.',
     bi_tab_all: 'Alle', bi_s_review: 'Brauchen Kategorie', bi_s_dupe: 'Schon erfasst', bi_s_transfer: 'Umbuchungen',
     bi_tag_learned: 'Aus deinem Verlauf', bi_tag_bill: 'Deine Rechnung', bi_tag_debt: 'Deine Schuld', bi_tag_goal: 'Dein Ziel', bi_tag_ezzo: 'Ezzo', bi_tag_suggested: 'Vorschlag', bi_tag_manual: 'Deine Wahl',
@@ -1309,7 +1428,7 @@ const BI_WORDS = {
     bi_applied_same: 'Auch für {0} weitere von {1} gesetzt.', bi_chip: 'Kontoauszug importieren', bi_attach: 'Kontoauszug importieren (CSV oder PDF)',
     bi_chat_found: 'Ich habe {0} Umsätze gelesen: {1} bereit zum Hinzufügen, {2} schon in deinem Planer, {3} Umbuchungen zwischen deinen Konten und {4} Zeilen weggelassen.',
     bi_chat_bal_ok: 'Der Kontostand stimmt.', bi_chat_bal_off: 'Der Kontostand geht nicht ganz auf, vielleicht fehlen Zeilen im Export.',
-    bi_chat_sorted: 'Ich habe für {0} von {1} Orten Kategorien gewählt. Sieh sie dir an und füge sie hinzu, wenn alles passt.',
+    bi_chat_sorted: 'Ich habe {0} von {1} Orten benannt und einsortiert. Sieh sie dir an und füge sie hinzu, wenn alles passt.',
     bi_chat_added: 'Erledigt. Ich habe {0} Transaktionen hinzugefügt.', bi_chat_added_review: 'Erledigt. Ich habe {0} Transaktionen hinzugefügt. {1} sind Ohne Kategorie und warten auf der Seite Transaktionen auf dich.'
   },
   fr: {
@@ -1342,9 +1461,9 @@ const BI_WORDS = {
     bi_rec_ok: 'Le solde est juste, de {0} à {1}.', bi_rec_off: 'Le solde est décalé de {0}. {1} lignes ne suivent pas le solde courant, il manque peut-être des opérations dans l’export.',
     bi_rec_none: 'Crédits {0}, débits {1}, net {2}.', bi_rec_check: 'Comparer à votre relevé', bi_rec_start: 'Solde de départ', bi_rec_end: 'Solde final',
     bi_rec_match: 'Correspond à votre relevé.', bi_rec_diff: 'Écart de {0}.',
-    bi_ezzo_offer: 'Ezzo peut choisir les catégories du reste.', bi_ezzo_btn: 'Demander à Ezzo', bi_ezzo_working: 'Ezzo choisit les catégories de {0} commerces…',
-    bi_ezzo_done: 'Ezzo a choisi les catégories de {0} commerces sur {1}.', bi_ezzo_fail: 'Ezzo n’a pas pu choisir les catégories pour le moment, le reste est Sans catégorie à choisir.',
-    bi_ezzo_none: 'Chaque ligne a déjà une catégorie.', bi_ezzo_note: 'Seuls les noms des commerces sont envoyés à Google Gemini. Jamais les montants, les dates ni les données de compte.',
+    bi_ezzo_offer: 'Ezzo peut trouver où est allé chaque paiement et le classer.', bi_ezzo_btn: 'Demander à Ezzo', bi_ezzo_working: 'Ezzo cherche où sont allés {0} paiements…',
+    bi_ezzo_done: 'Ezzo a nommé et classé {0} lieux sur {1}.', bi_ezzo_fail: 'Ezzo n’a pas pu choisir les catégories pour le moment, le reste est Sans catégorie à choisir.',
+    bi_ezzo_none: 'Chaque ligne a déjà une catégorie.', bi_ezzo_note: 'Ezzo voit les détails de chaque ligne sans numéros de compte, de carte, de téléphone ni de référence, ni montants, dates ou heures.',
     bi_ezzo_off: 'Activez Ezzo dans les Paramètres pour qu’il choisisse les catégories des lignes restantes.',
     bi_tab_all: 'Tout', bi_s_review: 'Sans catégorie', bi_s_dupe: 'Déjà saisies', bi_s_transfer: 'Virements',
     bi_tag_learned: 'D’après votre historique', bi_tag_bill: 'Votre facture', bi_tag_debt: 'Votre dette', bi_tag_goal: 'Votre objectif', bi_tag_ezzo: 'Ezzo', bi_tag_suggested: 'Suggestion', bi_tag_manual: 'Votre choix',
@@ -1358,7 +1477,7 @@ const BI_WORDS = {
     bi_applied_same: 'Appliqué aussi à {0} autres de {1}.', bi_chip: 'Importer un relevé bancaire', bi_attach: 'Importer un relevé bancaire (CSV ou PDF)',
     bi_chat_found: 'J’ai lu {0} opérations : {1} prêtes à ajouter, {2} déjà dans votre planificateur, {3} virements entre vos comptes et {4} lignes ignorées.',
     bi_chat_bal_ok: 'Le solde est juste.', bi_chat_bal_off: 'Le solde ne tombe pas tout à fait juste, il manque peut-être des lignes dans l’export.',
-    bi_chat_sorted: 'J’ai choisi les catégories de {0} commerces sur {1}. Jetez un œil et ajoutez-les quand tout vous convient.',
+    bi_chat_sorted: 'J’ai nommé et classé {0} lieux sur {1}. Jetez un œil et ajoutez-les quand tout vous convient.',
     bi_chat_added: 'C’est fait. J’ai ajouté {0} transactions.', bi_chat_added_review: 'C’est fait. J’ai ajouté {0} transactions. {1} sont Sans catégorie, à classer sur la page Transactions.'
   },
   es: {
@@ -1391,9 +1510,9 @@ const BI_WORDS = {
     bi_rec_ok: 'El saldo cuadra, de {0} a {1}.', bi_rec_off: 'El saldo no cuadra por {0}. {1} filas no siguen el saldo, puede que falten movimientos en la exportación.',
     bi_rec_none: 'Entradas {0}, salidas {1}, neto {2}.', bi_rec_check: 'Comparar con tu extracto', bi_rec_start: 'Saldo inicial', bi_rec_end: 'Saldo final',
     bi_rec_match: 'Coincide con tu extracto.', bi_rec_diff: 'Diferencia de {0}.',
-    bi_ezzo_offer: 'Ezzo puede elegir las categorías del resto.', bi_ezzo_btn: 'Preguntar a Ezzo', bi_ezzo_working: 'Ezzo está eligiendo categorías para {0} comercios…',
-    bi_ezzo_done: 'Ezzo eligió categorías para {0} de {1} comercios.', bi_ezzo_fail: 'Ezzo no pudo elegir categorías ahora, así que el resto queda Sin categoría para que elijas.',
-    bi_ezzo_none: 'Cada fila ya tiene categoría.', bi_ezzo_note: 'Solo se envían a Google Gemini los nombres de los comercios. Nunca importes, fechas ni datos de cuenta.',
+    bi_ezzo_offer: 'Ezzo puede averiguar adónde fue cada pago y ordenarlo.', bi_ezzo_btn: 'Preguntar a Ezzo', bi_ezzo_working: 'Ezzo está averiguando adónde fueron {0} pagos…',
+    bi_ezzo_done: 'Ezzo nombró y ordenó {0} de {1} lugares.', bi_ezzo_fail: 'Ezzo no pudo elegir categorías ahora, así que el resto queda Sin categoría para que elijas.',
+    bi_ezzo_none: 'Cada fila ya tiene categoría.', bi_ezzo_note: 'Ezzo ve los detalles de cada fila sin números de cuenta, tarjeta, teléfono ni referencia, ni importes, fechas u horas.',
     bi_ezzo_off: 'Activa Ezzo en Ajustes y podrá elegir categorías para las filas que falten.',
     bi_tab_all: 'Todas', bi_s_review: 'Sin categoría', bi_s_dupe: 'Ya registradas', bi_s_transfer: 'Traspasos',
     bi_tag_learned: 'De tu historial', bi_tag_bill: 'Tu factura', bi_tag_debt: 'Tu deuda', bi_tag_goal: 'Tu meta', bi_tag_ezzo: 'Ezzo', bi_tag_suggested: 'Sugerida', bi_tag_manual: 'Tu elección',
@@ -1407,7 +1526,7 @@ const BI_WORDS = {
     bi_applied_same: 'También aplicado a {0} más de {1}.', bi_chip: 'Importar un extracto bancario', bi_attach: 'Importar un extracto bancario (CSV o PDF)',
     bi_chat_found: 'He leído {0} movimientos: {1} listos para añadir, {2} ya en tu planificador, {3} traspasos entre tus cuentas y {4} líneas omitidas.',
     bi_chat_bal_ok: 'El saldo cuadra.', bi_chat_bal_off: 'El saldo no cuadra del todo, puede que falten filas en la exportación.',
-    bi_chat_sorted: 'He elegido categorías para {0} de {1} comercios. Revísalas y añádelas cuando te parezca bien.',
+    bi_chat_sorted: 'He nombrado y ordenado {0} de {1} lugares. Revísalos y añádelos cuando te parezca bien.',
     bi_chat_added: 'Hecho. He añadido {0} transacciones.', bi_chat_added_review: 'Hecho. He añadido {0} transacciones. {1} están Sin categoría para que las ordenes en la página Transacciones.'
   },
   it: {
@@ -1440,9 +1559,9 @@ const BI_WORDS = {
     bi_rec_ok: 'Il saldo torna, da {0} a {1}.', bi_rec_off: 'Il saldo è sfasato di {0}. {1} righe non seguono il saldo progressivo, forse mancano movimenti nell’esportazione.',
     bi_rec_none: 'Entrate {0}, uscite {1}, netto {2}.', bi_rec_check: 'Confronta con l’estratto conto', bi_rec_start: 'Saldo iniziale', bi_rec_end: 'Saldo finale',
     bi_rec_match: 'Corrisponde all’estratto conto.', bi_rec_diff: 'Differenza di {0}.',
-    bi_ezzo_offer: 'Ezzo può scegliere le categorie per il resto.', bi_ezzo_btn: 'Chiedi a Ezzo', bi_ezzo_working: 'Ezzo sta scegliendo le categorie per {0} esercenti…',
-    bi_ezzo_done: 'Ezzo ha scelto le categorie per {0} esercenti su {1}.', bi_ezzo_fail: 'Ezzo non è riuscito a scegliere le categorie ora, quindi il resto è Senza categoria da scegliere.',
-    bi_ezzo_none: 'Ogni riga ha già una categoria.', bi_ezzo_note: 'A Google Gemini vengono inviati solo i nomi degli esercenti. Mai importi, date o dati del conto.',
+    bi_ezzo_offer: 'Ezzo può capire dove è andato ogni pagamento e sistemarlo.', bi_ezzo_btn: 'Chiedi a Ezzo', bi_ezzo_working: 'Ezzo sta capendo dove sono andati {0} pagamenti…',
+    bi_ezzo_done: 'Ezzo ha nominato e sistemato {0} esercenti su {1}.', bi_ezzo_fail: 'Ezzo non è riuscito a scegliere le categorie ora, quindi il resto è Senza categoria da scegliere.',
+    bi_ezzo_none: 'Ogni riga ha già una categoria.', bi_ezzo_note: 'Ezzo vede i dettagli di ogni riga senza numeri di conto, carta, telefono o riferimento, né importi, date o orari.',
     bi_ezzo_off: 'Attiva Ezzo nelle Impostazioni e potrà scegliere le categorie per le righe rimaste.',
     bi_tab_all: 'Tutte', bi_s_review: 'Senza categoria', bi_s_dupe: 'Già registrate', bi_s_transfer: 'Giroconti',
     bi_tag_learned: 'Dalla tua cronologia', bi_tag_bill: 'La tua bolletta', bi_tag_debt: 'Il tuo debito', bi_tag_goal: 'Il tuo obiettivo', bi_tag_ezzo: 'Ezzo', bi_tag_suggested: 'Suggerita', bi_tag_manual: 'Tua scelta',
@@ -1456,7 +1575,7 @@ const BI_WORDS = {
     bi_applied_same: 'Impostata anche per altre {0} di {1}.', bi_chip: 'Importa un estratto conto', bi_attach: 'Importa un estratto conto (CSV o PDF)',
     bi_chat_found: 'Ho letto {0} movimenti: {1} pronti da aggiungere, {2} già nel planner, {3} giroconti tra i tuoi conti e {4} righe escluse.',
     bi_chat_bal_ok: 'Il saldo torna.', bi_chat_bal_off: 'Il saldo non torna del tutto, forse mancano righe nell’esportazione.',
-    bi_chat_sorted: 'Ho scelto le categorie per {0} esercenti su {1}. Dai un’occhiata e aggiungile quando va bene.',
+    bi_chat_sorted: 'Ho nominato e sistemato {0} esercenti su {1}. Dai un’occhiata e aggiungili quando va bene.',
     bi_chat_added: 'Fatto. Ho aggiunto {0} transazioni.', bi_chat_added_review: 'Fatto. Ho aggiunto {0} transazioni. {1} sono Senza categoria da sistemare nella pagina Transazioni.'
   },
   pl: {
@@ -1489,9 +1608,9 @@ const BI_WORDS = {
     bi_rec_ok: 'Saldo się zgadza, od {0} do {1}.', bi_rec_off: 'Saldo różni się o {0}. {1} wierszy nie pasuje do salda, być może w eksporcie brakuje transakcji.',
     bi_rec_none: 'Wpływy {0}, wydatki {1}, netto {2}.', bi_rec_check: 'Porównaj z wyciągiem', bi_rec_start: 'Saldo początkowe', bi_rec_end: 'Saldo końcowe',
     bi_rec_match: 'Zgadza się z wyciągiem.', bi_rec_diff: 'Różnica {0}.',
-    bi_ezzo_offer: 'Ezzo może wybrać kategorie dla reszty.', bi_ezzo_btn: 'Zapytaj Ezzo', bi_ezzo_working: 'Ezzo wybiera kategorie dla {0} miejsc…',
-    bi_ezzo_done: 'Ezzo wybrał kategorie dla {0} z {1} miejsc.', bi_ezzo_fail: 'Ezzo nie mógł teraz wybrać kategorii, więc reszta jest Bez kategorii do wyboru.',
-    bi_ezzo_none: 'Każdy wiersz ma już kategorię.', bi_ezzo_note: 'Do Google Gemini trafiają tylko nazwy sklepów. Nigdy kwoty, daty ani dane konta.',
+    bi_ezzo_offer: 'Ezzo może ustalić, dokąd poszła każda płatność, i ją przypisać.', bi_ezzo_btn: 'Zapytaj Ezzo', bi_ezzo_working: 'Ezzo ustala, dokąd poszło {0} płatności…',
+    bi_ezzo_done: 'Ezzo nazwał i przypisał {0} z {1} miejsc.', bi_ezzo_fail: 'Ezzo nie mógł teraz wybrać kategorii, więc reszta jest Bez kategorii do wyboru.',
+    bi_ezzo_none: 'Każdy wiersz ma już kategorię.', bi_ezzo_note: 'Ezzo widzi szczegóły każdego wiersza bez numerów kont, kart, telefonów i referencji, bez kwot, dat i godzin.',
     bi_ezzo_off: 'Włącz Ezzo w Ustawieniach, a wybierze kategorie dla pozostałych wierszy.',
     bi_tab_all: 'Wszystkie', bi_s_review: 'Bez kategorii', bi_s_dupe: 'Już zapisane', bi_s_transfer: 'Przelewy własne',
     bi_tag_learned: 'Z twojej historii', bi_tag_bill: 'Twój rachunek', bi_tag_debt: 'Twój dług', bi_tag_goal: 'Twój cel', bi_tag_ezzo: 'Ezzo', bi_tag_suggested: 'Propozycja', bi_tag_manual: 'Twój wybór',
@@ -1505,7 +1624,7 @@ const BI_WORDS = {
     bi_applied_same: 'Ustawiono też dla {0} kolejnych z {1}.', bi_chip: 'Importuj wyciąg bankowy', bi_attach: 'Importuj wyciąg bankowy (CSV lub PDF)',
     bi_chat_found: 'Przeczytałem {0} transakcji: {1} gotowych do dodania, {2} już w planerze, {3} przelewów między twoimi kontami i {4} pominiętych wierszy.',
     bi_chat_bal_ok: 'Saldo się zgadza.', bi_chat_bal_off: 'Saldo nie do końca się zgadza, być może w eksporcie brakuje wierszy.',
-    bi_chat_sorted: 'Wybrałem kategorie dla {0} z {1} miejsc. Rzuć okiem i dodaj je, gdy wszystko pasuje.',
+    bi_chat_sorted: 'Nazwałem i przypisałem {0} z {1} miejsc. Rzuć okiem i dodaj je, gdy wszystko pasuje.',
     bi_chat_added: 'Gotowe. Dodałem transakcje: {0}.', bi_chat_added_review: 'Gotowe. Dodałem transakcje: {0}. {1} są Bez kategorii do uporządkowania na stronie Transakcje.'
   }
 };
