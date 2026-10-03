@@ -7420,3 +7420,16 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 .modal:has(> .modal-body > .bi-sheet) { max-width: 560px; }
 .bi-sheet .bi-actions { position: static; background: transparent; padding-top: 0; }
 .bi-actions--one { grid-template-columns: 1fr; }
+
+/* ── Settings: your name ── */
+.own-names { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+.own-names:empty { display: none; }
+.own-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 6px 5px 11px; border-radius: var(--radius-pill); font-size: 13.5px; font-weight: 600;
+  color: var(--text-primary); background: rgba(var(--grad-indigo-rgb), .12); border: 1px solid rgba(var(--grad-indigo-rgb), .3); }
+.own-chip .app-ico { width: 15px; height: 15px; color: var(--grad-indigo); }
+.own-chip button { appearance: none; cursor: pointer; width: 24px; height: 24px; border-radius: 50%; border: none; font-size: 15px; line-height: 1;
+  color: var(--text-secondary); background: transparent; }
+.own-chip button:hover { color: #f43f5e; background: rgba(244, 63, 94, .12); }
+.own-add { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.own-add .btn { height: 40px; }
+.own-err { margin: 8px 0 0; font-size: 12.5px; color: #f43f5e; }

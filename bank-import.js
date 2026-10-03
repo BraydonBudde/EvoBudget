@@ -259,7 +259,9 @@ function biDateOrder(values) {
   if (Math.abs(a - b) > 0.05) return a > b ? 'dmy' : 'mdy';
   // A statement's dates sit close together and are not in the future: the
   // reading that spreads them over fewer days, none ahead of today, wins.
-  const today = new Date().toISOString().slice(0, 10);
+  // Today where the person is, with a day to spare for banks in other time zones.
+  const tm = new Date(); tm.setDate(tm.getDate() + 1);
+  const today = `${tm.getFullYear()}-${String(tm.getMonth() + 1).padStart(2, '0')}-${String(tm.getDate()).padStart(2, '0')}`;
   const span = order => { const ds = values.map(v => biParseDate(v, order)).filter(Boolean).sort();
     if (!ds.length) return Infinity;
     return (new Date(ds[ds.length - 1]) - new Date(ds[0])) / 86400000 + ds.filter(d => d > today).length * 400; };
@@ -439,7 +441,7 @@ function biClean(raw) {
     s = words.join(' ');
   }
   if (!s) s = String(raw || '').replace(/\d{6,}/g, ' ').trim();
-  const pretty = /[a-z]/.test(s) && /[A-Z]/.test(s) ? s : s.toLowerCase().replace(/(^|[\s\-/&.'("])([a-zà-ſ])/g, (m, a, b) => a + b.toUpperCase());
+  const pretty = /[a-z]/.test(s) && /[A-Z]/.test(s) ? s : s.toLowerCase().replace(/(^|[\s\-/&.("])([a-zà-ſ])/g, (m, a, b) => a + b.toUpperCase());
   const name = pretty.slice(0, 60);
   const n = biNorm(name);
   let kind = '';
@@ -481,6 +483,30 @@ function biPickName(r) {
   const real = cands.find(x => x.c.name && !BI_GENERIC.test(biNorm(biTypeText(x.c.name))) && /[a-z\u00c0-\u017f]{3,}/i.test(x.c.name));
   return (real || cands[0]).c;
 }
+
+// ── Your own name ────────────────────────────────────────────────────────
+// Money that goes to the person's own name at another bank, or comes from
+// it, moved between their own accounts: it is neither spent nor earned. The
+// whole name has to be there (every word, in any order, any case), so a
+// common first name alone never counts. Paying a loan or card in one's own
+// name is still a debt payment, and money from an employer, a benefits
+// office, a refund or interest is still income, though the name is on it.
+function biOwnNames() {
+  return ((state?.settings?.ownNames) || []).map(n => biNorm(n).split(' ').filter(w => w.length >= 2)).filter(ws => ws.length >= 2);
+}
+function biHasOwnName(text) {
+  const names = biOwnNames(); if (!names.length || !text) return false;
+  const words = new Set(biNorm(text).split(' '));
+  return names.some(ws => ws.every(w => words.has(w)));
+}
+// The name never leaves the device: Ezzo sees [you] in its place.
+function biMaskOwn(text) {
+  if (!text || !biHasOwnName(text)) return text;
+  const tokens = new Set(biOwnNames().flat());
+  return String(text).split(/(\s+)/).map(p => /^\s+$/.test(p) || !tokens.has(biNorm(p)) ? p : '[you]').join('').replace(/\[you\](\s*\[you\])+/g, '[you]');
+}
+const BI_OWN_DEBT = /kredyt|hipotec|mortgage|\bloan|pozyczk|\brata\b|credit card|karta kredyt|leasing|darlehen|hypothek|kredit|\bpret\b|prestamo|hipoteca|prestito|mutuo|finanziament/;
+const BI_OWN_INCOME = /salary|payroll|\bwages?\b|gehalt|\blohn|salaire|nomina|sueldo|stipendio|wynagrodz|\bzus\b|swiadczen|benefit|pension|emerytur|\brenta\b|refund|zwrot|erstattung|rembours|reembolso|rimborso|cashback|interest|odsetk|zinsen|interets|intereses|interessi|dividend|\btax|podat|urzad|finanzamt|hmrc|\birs\b|government|rente\b/;
 
 // ── 5. Transfers, refunds and the like ───────────────────────────────────
 const BI_TRANSFER = /\b(transfer|xfer|tfr|internal|own account|to savings|from savings|savings account|to checking|from checking|to current|from current|moved to|moved from|pot|pocket|vault|space|round ?up|top ?up|topup|exchange|umbuchung|ubertrag|eigene|eigenes konto|sparkonto|virement interne|virement vers|virement de|vers livret|livret a|traspaso|entre cuentas|giroconto|girofondo|przelew wlasny|przelew wewnetrzny|przelew na wlasne|lokata)\b/;
@@ -645,7 +671,7 @@ function biClassify(rows, opts) {
     const text = biNorm(r.full || r.raw) + ' ' + biNorm(cl.name);
     const it = { id: 'bi' + r.line, line: r.line, date: r.date, amount: Math.abs(amount), inbound: amount > 0, desc: cl.name, brand: cl.brand, kind: cl.kind,
       type: amount > 0 ? 'income' : 'expense', category: C.uncat, how: 'review', checked: true, flags: [], bankCat: r.bankCat, kindHint: r.kindHint,
-      x: biMinimize(r.full || r.raw), k: biMinimize(r.kindRaw || '') };
+      x: biMaskOwn(biMinimize(r.full || r.raw)), k: biMinimize(r.kindRaw || '') };
     // Cash out of a machine, and the bank's own charges: named for what they are.
     const kt = biNorm(r.kindRaw || '') + ' ' + biNorm(r.full || r.raw);
     const kindText = biTypeText(r.kindRaw);
@@ -654,6 +680,16 @@ function biClassify(rows, opts) {
     if (!it.desc && kindText) it.desc = biSentence(kindText);
     // Between the person's own accounts: not spending, so left out.
     const tHint = /(^| )(topup|top up|exchange|pot transfer|pot|transfer between|internal|savings transfer|account transfer|acct xfer)( |$)/.test(r.kindHint || '');
+    // Your own name on the other end: a move between your own accounts.
+    if (biHasOwnName(r.full || r.raw)) {
+      const goal = C.goals.find(g => biNameIn(g.name, text));
+      if (goal && !it.inbound) { Object.assign(it, { type: 'sinking_fund', category: goal.name, how: 'goal' }); return it; }
+      const debt = !it.inbound && C.debts.find(d => biNameIn(d.name, text));
+      if (debt) { Object.assign(it, { type: 'debt', category: debt.name, how: 'debt' }); return it; }
+      if (it.inbound ? !BI_OWN_INCOME.test(text) : !BI_OWN_DEBT.test(text)) {
+        Object.assign(it, { type: 'transfer', category: '', how: 'transfer', checked: false, own: true }); return it;
+      }
+    }
     if (BI_CARD_PAYMENT.test(text)) {
       const debt = C.debts.find(d => biNameIn(d.name, text) || /card|credit|karte|carte|tarjeta|carta|karta/.test(biNorm(d.name)));
       if (debt && !it.inbound) { Object.assign(it, { type: 'debt', category: debt.name, how: 'debt' }); return it; }
@@ -726,7 +762,7 @@ async function biAskEzzo(items) {
   const uniq = [], key = it => (it.inbound ? 'in' : 'out') + '|' + biKey(it.desc) + '|' + biKey(it.x) + '|' + biKey(it.k);
   const seen = new Map();
   open.forEach(it => { const k = key(it); if (!seen.has(k)) { seen.set(k, uniq.length);
-    uniq.push({ n: it.desc || undefined, x: it.x || undefined, k: it.k || undefined, d: it.inbound ? 'in' : 'out', b: it.bankCat || undefined }); } });
+    uniq.push({ n: biMaskOwn(it.desc) || undefined, x: it.x || undefined, k: it.k || undefined, d: it.inbound ? 'in' : 'out', b: it.bankCat || undefined }); } });
   if (!uniq.length) return { asked: 0, sorted: 0 };
   const answers = new Map();
   for (let s = 0; s < uniq.length; s += BI_EZZO_BATCH) {
@@ -735,7 +771,7 @@ async function biAskEzzo(items) {
     await pennyStreamWithFallback({
       systemInstruction: { parts: [{ text: 'You sort a person\'s bank transactions into their own budget before they review them. Each item has: i (index), n (the name the app read, may be rough), x (the transaction details from the bank, with numbers removed), k (the bank\'s transaction type), d ("out" for money spent, "in" for money received) and sometimes b (the bank\'s own category). You also get the person\'s lists: out (spending categories), in (income categories), bills, debts and goals. For every item return:\n'
         + 'm: who the money went to or came from, the way a person would say it: the shop, restaurant, company, service or person, in its usual capitalisation, without legal forms (S.A., Sp. z o.o., GmbH, Ltd, Inc), store numbers, towns or country codes. Use what you know about places: "JMP S.A. BIEDRONKA 6864 OSIEK" is "Biedronka", "MOLO RESORT SP.ZO.O RES OSIEK" is "Molo Resort". For cash machines, bank fees, interest and similar with no place, a short plain label in the language of the details. Never include card, account, phone or reference numbers.\n'
-        + 't: "expense", "income", "bill", "debt", "goal" or "transfer". Use bill, debt or goal only when the item clearly pays one of the person\'s own listed ones, and transfer only for money moved between the person\'s own accounts.\n'
+        + 't: "expense", "income", "bill", "debt", "goal" or "transfer". Use bill, debt or goal only when the item clearly pays one of the person\'s own listed ones, and transfer only for money moved between the person\'s own accounts. [you] in the details stands for the person\'s own name: money sent to [you], or arriving from [you] with nothing else behind it, is a transfer; paying a loan, mortgage or card in their name is a debt payment, and money from an employer, a benefits office, a refund or interest is income, even when [you] appears as the recipient.\n'
         + 'c: the single best category, copied exactly from "out" for an expense or "in" for income, or the exact bill, debt or goal name. Decide from what the place is: a supermarket is groceries, a fuel station transport, a pharmacy or dentist health, a restaurant eating out, a streaming service a subscription. When you are unsure, use the list\'s catch-all category (Other, or whatever the list calls it) rather than leaving it empty; null only if the list has no such category. Never invent a category and never take one from the wrong direction.\n'
         + 'Reply with JSON only, no other text: {"r":[{"i":0,"m":"Biedronka","t":"expense","c":"Groceries"}]}' }] },
       contents: [{ role: 'user', parts: [{ text: JSON.stringify({ out: C.expense, in: C.income, bills: C.bills.map(x => x.name), debts: C.debts.map(x => x.name), goals: C.goals.map(x => x.name), items: batch }) }] }],
@@ -878,7 +914,7 @@ function biRender() {
   const tag = it => {
     if (it.dupe === 'exact') return `<span class="bi-tag bi-tag--dupe">${esc(t('bi_tag_dupe'))}</span>`;
     if (it.dupe === 'near') return `<span class="bi-tag bi-tag--dupe">${esc(tf('bi_tag_maybe', formatDateShort(it.dupeDate)))}</span>`;
-    if (it.type === 'transfer') return `<span class="bi-tag bi-tag--transfer">${esc(t('bi_tag_transfer'))}</span>`;
+    if (it.type === 'transfer') return `<span class="bi-tag bi-tag--transfer">${esc(t(it.own ? (it.inbound ? 'bi_tag_own_in' : 'bi_tag_own_out') : 'bi_tag_transfer'))}</span>`;
     if ((it.type === 'expense' || it.type === 'income') && biIsUncat(it.category)) return `<span class="bi-tag bi-tag--review">${esc(t('bi_tag_review'))}</span>`;
     const k = { learned: 'bi_tag_learned', bill: 'bi_tag_bill', debt: 'bi_tag_debt', goal: 'bi_tag_goal', ezzo: 'bi_tag_ezzo', suggested: 'bi_tag_suggested', manual: 'bi_tag_manual' }[it.how];
     if (it.how === 'ezzo' && it.type === 'bill') return `<span class="bi-tag bi-tag--bill">${esc(t('bi_tag_bill'))}</span>`;
@@ -949,6 +985,7 @@ function biRender() {
     ${skippedHtml}
     ${outside ? `<p class="bi-note">${BI_INFO}<span>${esc(tf('bi_outside', outside))}</span></p>` : ''}
     ${state.allocation?.enabled ? `<p class="bi-note">${BI_INFO}<span>${esc(t('bi_alloc'))}</span></p>` : ''}
+    ${!biOwnNames().length ? `<p class="bi-note">${BI_INFO}<span>${esc(t('bi_own_hint'))}</span></p>` : ''}
     ${room < cnt.ready ? `<p class="bi-note bi-note--trial">${BI_INFO}<span>${esc(tf('bi_trial', room))}</span></p>` : ''}` : `<p class="bi-note bi-note--warn">${BI_WARN}<span>${esc(t('bi_err_cols'))}</span></p>`}
     <div class="bi-actions">
       <button class="btn btn-ghost" type="button" data-bi-cancel>${esc(t('cancel'))}</button>
@@ -1337,6 +1374,7 @@ function biChatSay(kind, extra) {
 // ── Words ────────────────────────────────────────────────────────────────
 const BI_WORDS = {
   en: {
+    bi_tag_own_out: 'To your own account', bi_tag_own_in: 'From your own account', bi_own_hint: 'Add your name in Settings and money you move to your own accounts at other banks is spotted and left out too.',
     bi_no_desc: 'No description',
     bi_pdf_note_ezzo: 'Read by Ezzo from your PDF. Check the rows before adding them.',
     bi_pdf_note_local: 'Read from your PDF on this device. PDFs are harder to read than CSV files, so check the rows before adding them.',
@@ -1387,6 +1425,7 @@ const BI_WORDS = {
     bi_chat_added: 'Done. I added {0} transactions.', bi_chat_added_review: 'Done. I added {0} transactions. {1} are Uncategorized for you to sort on the Transactions page.'
   },
   de: {
+    bi_tag_own_out: 'Auf dein eigenes Konto', bi_tag_own_in: 'Von deinem eigenen Konto', bi_own_hint: 'Trag in den Einstellungen deinen Namen ein, dann wird auch Geld erkannt und weggelassen, das du auf eigene Konten bei anderen Banken schiebst.',
     bi_no_desc: 'Keine Beschreibung',
     bi_pdf_note_ezzo: 'Von Ezzo aus deiner PDF gelesen. Prüfe die Zeilen vor dem Hinzufügen.',
     bi_pdf_note_local: 'Auf diesem Gerät aus deiner PDF gelesen. PDFs sind schwerer zu lesen als CSV-Dateien, prüfe die Zeilen also vor dem Hinzufügen.',
@@ -1436,6 +1475,7 @@ const BI_WORDS = {
     bi_chat_added: 'Erledigt. Ich habe {0} Transaktionen hinzugefügt.', bi_chat_added_review: 'Erledigt. Ich habe {0} Transaktionen hinzugefügt. {1} sind Ohne Kategorie und warten auf der Seite Transaktionen auf dich.'
   },
   fr: {
+    bi_tag_own_out: 'Vers votre propre compte', bi_tag_own_in: 'De votre propre compte', bi_own_hint: 'Ajoutez votre nom dans les Paramètres et l’argent que vous déplacez vers vos comptes dans d’autres banques sera aussi repéré et laissé de côté.',
     bi_no_desc: 'Sans libellé',
     bi_pdf_note_ezzo: 'Lu par Ezzo depuis votre PDF. Vérifiez les lignes avant de les ajouter.',
     bi_pdf_note_local: 'Lu depuis votre PDF sur cet appareil. Les PDF sont plus difficiles à lire que les CSV, vérifiez donc les lignes avant de les ajouter.',
@@ -1485,6 +1525,7 @@ const BI_WORDS = {
     bi_chat_added: 'C’est fait. J’ai ajouté {0} transactions.', bi_chat_added_review: 'C’est fait. J’ai ajouté {0} transactions. {1} sont Sans catégorie, à classer sur la page Transactions.'
   },
   es: {
+    bi_tag_own_out: 'A tu propia cuenta', bi_tag_own_in: 'De tu propia cuenta', bi_own_hint: 'Añade tu nombre en Ajustes y el dinero que mueves a tus cuentas en otros bancos también se detectará y se dejará fuera.',
     bi_no_desc: 'Sin concepto',
     bi_pdf_note_ezzo: 'Leído por Ezzo de tu PDF. Revisa las filas antes de añadirlas.',
     bi_pdf_note_local: 'Leído de tu PDF en este dispositivo. Los PDF son más difíciles de leer que los CSV, así que revisa las filas antes de añadirlas.',
@@ -1534,6 +1575,7 @@ const BI_WORDS = {
     bi_chat_added: 'Hecho. He añadido {0} transacciones.', bi_chat_added_review: 'Hecho. He añadido {0} transacciones. {1} están Sin categoría para que las ordenes en la página Transacciones.'
   },
   it: {
+    bi_tag_own_out: 'Sul tuo conto', bi_tag_own_in: 'Dal tuo conto', bi_own_hint: 'Aggiungi il tuo nome nelle Impostazioni e anche i soldi che sposti sui tuoi conti in altre banche verranno riconosciuti ed esclusi.',
     bi_no_desc: 'Senza descrizione',
     bi_pdf_note_ezzo: 'Letto da Ezzo dal tuo PDF. Controlla le righe prima di aggiungerle.',
     bi_pdf_note_local: 'Letto dal PDF su questo dispositivo. I PDF sono più difficili da leggere dei CSV, quindi controlla le righe prima di aggiungerle.',
@@ -1583,6 +1625,7 @@ const BI_WORDS = {
     bi_chat_added: 'Fatto. Ho aggiunto {0} transazioni.', bi_chat_added_review: 'Fatto. Ho aggiunto {0} transazioni. {1} sono Senza categoria da sistemare nella pagina Transazioni.'
   },
   pl: {
+    bi_tag_own_out: 'Na twoje konto', bi_tag_own_in: 'Z twojego konta', bi_own_hint: 'Dodaj swoje imię i nazwisko w Ustawieniach, a pieniądze przelewane na twoje konta w innych bankach też zostaną rozpoznane i pominięte.',
     bi_no_desc: 'Brak opisu',
     bi_pdf_note_ezzo: 'Odczytane przez Ezzo z twojego PDF. Sprawdź wiersze przed dodaniem.',
     bi_pdf_note_local: 'Odczytano z PDF na tym urządzeniu. PDF trudniej odczytać niż CSV, więc sprawdź wiersze przed dodaniem.',

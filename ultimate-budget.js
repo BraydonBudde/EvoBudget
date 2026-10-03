@@ -769,7 +769,7 @@ const TRANSLATIONS = {
     // Tabs
     tab_dashboard:'Dashboard', tab_budget:'Budget', tab_transactions:'Transactions',
     tab_income:'Income', tab_expenses:'Expenses', tab_bills:'Bills',
-    tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',penny_hello:'Hi, I\'m Ezzo',penny_hello_sub:'Ask me anything about your budget, or send me a bank statement and I will sort it for you to check.',hu_see_all:'See all {0} in Notifications',set_name_title:'Planner name',set_name_desc:'Shown at the top of the sidebar.',set_name_label:'Name',lic_title:'License key',lic_desc:'The key that unlocked Ultimate Budget on this device. Support may ask for it.',lic_show:'Show',lic_hide:'Hide',lic_copy:'Copy',lic_copied:'License key copied',lic_none:'No license key is stored on this device. If you need help, contact support with the email you bought with.',af_title:'Can I afford it?',af_eyebrow:'Before you buy',af_how_much:'How much is it?',af_empty:'Tap in an amount and you will see straight away what it does to your money.',af_yes:'Yes, go for it',af_yes_line:'It fits inside today\'s {0}, so nothing else moves.',af_days:'Yes, but it costs your days',af_tight:'You can, but it gets tight',af_days_line:'Your daily amount drops from {0} to {1} until {2}.',af_wait:'Wait for your next period',af_wait_line:'You would be {0} short. Your next period starts {1}.',af_free_after:'Free to spend after',af_day_after:'A day, until {0}',af_now:'now {0}',af_left_today:'{0} still free today after this',af_covered:'Still covered: {0}',af_less_day:'{0} less to spend each day until {1}',af_tight_note:'That leaves little room for surprises',af_dip:'Buying now would dip into money set aside for bills',af_save_toward:'Or save towards it: {0} a week gets you there in a month',af_not_now:'Not now',af_log:'Log it',af_log_anyway:'Log it anyway',af_foot:'Bills already due are set aside first.',tx_way_afford_sub:'See what a purchase would do before you buy it',tx_way_afford_btn:'Check',nl_bills_today:'+ {0} in bills',pay_settled:'{0} {1} paid · already set aside ✓',pay_settled_part:'{0} {1} of {2} paid · already set aside ✓',pay_settled_over:'{0} paid · {1} more than planned',toast_undo_btn:'Undo',toast_undone:'Undone',nth_what:'What this means',nth_fix:'How to fix it',nth_aria:'What is this and how do I fix it?',nth_close:'Got it',nth_bill_late_w:'This bill\'s due date has passed and it has not been paid yet.',nth_bill_late_f:'If you have paid it, tap Pay and log it with the date it went out | If not, pay it as soon as you can to avoid late fees | If the amount or date has changed, update the bill so future reminders are right',nth_bill_soon_w:'This bill is due within the next week.',nth_bill_soon_f:'Make sure the money is there before the due date | Tap Pay once it has left your account | If you pay it another way, still log it here so your figures stay right',nth_debt_late_w:'This debt\'s minimum payment date has passed and the full minimum has not been logged.',nth_debt_late_f:'If you paid it, tap Pay and log it with the date it left your account | If not, pay at least the minimum straight away: a missed minimum can bring fees and hurt your credit | Check the debt\'s due day is right',nth_debt_soon_w:'This debt\'s minimum payment is due within the next week.',nth_debt_soon_f:'Make sure the minimum is covered before the due date | Tap Pay once it has gone out | Paying more than the minimum clears the debt sooner',nth_over_w:'You have spent more in this category than you planned for this period.',nth_over_f:'Tap Review to see the category | Hold back on it until the period ends | If the amount was unrealistic, raise it and lower another so your plan still adds up',nth_uncat_w:'These expenses were logged to sort later and have no category, so your budget cannot count them properly.',nth_uncat_f:'Tap Sort them to see them | Give each one a category | Your budget updates straight away',nth_goal_late_w:'This goal\'s date has passed and it has not reached its target.',nth_goal_late_f:'Tap Review to find the goal | Set a new date, or lower the target to what you have saved | If you no longer need it, delete the goal',nav_menu:'Menu',
+    tab_debt:'Debt', tab_savings:'Savings', tab_settings:'Settings',own_title:'Twoje imię i nazwisko',own_desc:'Tak, jak drukuje je twój bank. Pieniądze, które przelewasz sobie na inne konto lub które przychodzą od ciebie, są wtedy pomijane przy imporcie jako przelew między twoimi kontami, a nie wydatek. Dodaj też osoby, których konta są twoje, np. partnera na koncie wspólnym.',own_ph:'Imię i nazwisko',own_add:'Dodaj',own_remove:'Usuń: {0}',own_one_word:'Podaj imię i nazwisko, żeby nie pomylić z kimś innym.',own_dupe:'To imię i nazwisko już jest.',own_title:'Il tuo nome',own_desc:'Come lo stampa la tua banca. I soldi che mandi a te stesso su un altro conto, o che arrivano da te, vengono esclusi all’importazione come giroconto tra i tuoi conti, non come spesa. Aggiungi anche chi condivide i tuoi conti, come il partner su un conto cointestato.',own_ph:'Nome e cognome',own_add:'Aggiungi',own_remove:'Rimuovi {0}',own_one_word:'Aggiungi nome e cognome, così non si confonde con qualcun altro.',own_dupe:'Questo nome c’è già.',own_title:'Tu nombre',own_desc:'Tal como lo imprime tu banco. El dinero que te envías a otra cuenta, o que llega de ti, se deja fuera al importar como un traspaso entre tus propias cuentas, no como gasto. Añade también a quien comparta tus cuentas, como tu pareja en una cuenta conjunta.',own_ph:'Nombre y apellido',own_add:'Añadir',own_remove:'Quitar a {0}',own_one_word:'Añade nombre y apellido, para no confundirlo con otra persona.',own_dupe:'Ese nombre ya está.',own_title:'Votre nom',own_desc:'Tel que votre banque l’imprime. L’argent que vous vous envoyez sur un autre compte, ou qui vient de vous, est alors laissé de côté à l’import comme un virement entre vos propres comptes, pas une dépense. Ajoutez aussi les personnes dont les comptes sont les vôtres, comme un conjoint sur un compte joint.',own_ph:'Prénom et nom',own_add:'Ajouter',own_remove:'Retirer {0}',own_one_word:'Ajoutez un prénom et un nom, pour ne pas confondre avec quelqu’un d’autre.',own_dupe:'Ce nom y est déjà.',own_title:'Dein Name',own_desc:'So, wie deine Bank ihn druckt. Geld, das du dir selbst auf ein anderes Konto schickst oder das von dir kommt, wird beim Import dann als Umbuchung zwischen deinen eigenen Konten weggelassen, nicht als Ausgabe. Füge auch andere hinzu, deren Konten deine sind, etwa Partner auf einem Gemeinschaftskonto.',own_ph:'Vor- und Nachname',own_add:'Hinzufügen',own_remove:'{0} entfernen',own_one_word:'Gib Vor- und Nachnamen ein, damit er nicht mit jemand anderem verwechselt wird.',own_dupe:'Dieser Name ist schon da.',own_title:'Your name',own_desc:'As your bank prints it. Money you send to yourself at another bank, or that arrives from you, is then left out of an import as a move between your own accounts, not spending. Add anyone else whose accounts are yours too, like a partner on a joint account.',own_ph:'First and last name',own_add:'Add',own_remove:'Remove {0}',own_one_word:'Add a first and last name, so it is not mistaken for someone else.',own_dupe:'That name is already there.',penny_hello:'Hi, I\'m Ezzo',penny_hello_sub:'Ask me anything about your budget, or send me a bank statement and I will sort it for you to check.',hu_see_all:'See all {0} in Notifications',set_name_title:'Planner name',set_name_desc:'Shown at the top of the sidebar.',set_name_label:'Name',lic_title:'License key',lic_desc:'The key that unlocked Ultimate Budget on this device. Support may ask for it.',lic_show:'Show',lic_hide:'Hide',lic_copy:'Copy',lic_copied:'License key copied',lic_none:'No license key is stored on this device. If you need help, contact support with the email you bought with.',af_title:'Can I afford it?',af_eyebrow:'Before you buy',af_how_much:'How much is it?',af_empty:'Tap in an amount and you will see straight away what it does to your money.',af_yes:'Yes, go for it',af_yes_line:'It fits inside today\'s {0}, so nothing else moves.',af_days:'Yes, but it costs your days',af_tight:'You can, but it gets tight',af_days_line:'Your daily amount drops from {0} to {1} until {2}.',af_wait:'Wait for your next period',af_wait_line:'You would be {0} short. Your next period starts {1}.',af_free_after:'Free to spend after',af_day_after:'A day, until {0}',af_now:'now {0}',af_left_today:'{0} still free today after this',af_covered:'Still covered: {0}',af_less_day:'{0} less to spend each day until {1}',af_tight_note:'That leaves little room for surprises',af_dip:'Buying now would dip into money set aside for bills',af_save_toward:'Or save towards it: {0} a week gets you there in a month',af_not_now:'Not now',af_log:'Log it',af_log_anyway:'Log it anyway',af_foot:'Bills already due are set aside first.',tx_way_afford_sub:'See what a purchase would do before you buy it',tx_way_afford_btn:'Check',nl_bills_today:'+ {0} in bills',pay_settled:'{0} {1} paid · already set aside ✓',pay_settled_part:'{0} {1} of {2} paid · already set aside ✓',pay_settled_over:'{0} paid · {1} more than planned',toast_undo_btn:'Undo',toast_undone:'Undone',nth_what:'What this means',nth_fix:'How to fix it',nth_aria:'What is this and how do I fix it?',nth_close:'Got it',nth_bill_late_w:'This bill\'s due date has passed and it has not been paid yet.',nth_bill_late_f:'If you have paid it, tap Pay and log it with the date it went out | If not, pay it as soon as you can to avoid late fees | If the amount or date has changed, update the bill so future reminders are right',nth_bill_soon_w:'This bill is due within the next week.',nth_bill_soon_f:'Make sure the money is there before the due date | Tap Pay once it has left your account | If you pay it another way, still log it here so your figures stay right',nth_debt_late_w:'This debt\'s minimum payment date has passed and the full minimum has not been logged.',nth_debt_late_f:'If you paid it, tap Pay and log it with the date it left your account | If not, pay at least the minimum straight away: a missed minimum can bring fees and hurt your credit | Check the debt\'s due day is right',nth_debt_soon_w:'This debt\'s minimum payment is due within the next week.',nth_debt_soon_f:'Make sure the minimum is covered before the due date | Tap Pay once it has gone out | Paying more than the minimum clears the debt sooner',nth_over_w:'You have spent more in this category than you planned for this period.',nth_over_f:'Tap Review to see the category | Hold back on it until the period ends | If the amount was unrealistic, raise it and lower another so your plan still adds up',nth_uncat_w:'These expenses were logged to sort later and have no category, so your budget cannot count them properly.',nth_uncat_f:'Tap Sort them to see them | Give each one a category | Your budget updates straight away',nth_goal_late_w:'This goal\'s date has passed and it has not reached its target.',nth_goal_late_f:'Tap Review to find the goal | Set a new date, or lower the target to what you have saved | If you no longer need it, delete the goal',nav_menu:'Menu',
     tab_debt_payoff:'Debt Payoff', tab_sinking:'Savings Goals',
     tab_calendar:'Calendar', tab_subscriptions:'Bills',
     // Dashboard stats
@@ -4732,7 +4732,8 @@ function paintRailAccount(rail) {
   try { email = typeof syncGetEmail === 'function' ? syncGetEmail('ubp') : ''; } catch (e) {}
   try { mode = typeof syncGetMode === 'function' ? syncGetMode('ubp') : ''; } catch (e) {}
   const google = mode === 'google' && !!email;
-  const name = google ? email.split('@')[0] : t('rail_guest');
+  const own = (state?.settings?.ownNames || [])[0];
+  const name = google ? (own || email.split('@')[0]) : (own || t('rail_guest'));
   const initial = (name.trim().charAt(0) || '?').toUpperCase();
   box.innerHTML = `<span class="nra-avatar" aria-hidden="true">${esc(initial)}</span>
     <span class="nra-text"><span class="nra-name">${esc(name)}</span><span class="nra-sub">${esc(google ? email : t('rail_local'))}</span></span>
@@ -7252,6 +7253,7 @@ const APP_ICONS = {
   debt:          '<rect x="2.6" y="5.2" width="18.8" height="13.6" rx="2.4"/><path d="M2.6 10h18.8"/>',
   subscriptions: '<path d="M20.4 11.2a8.4 8.4 0 0 0-14.4-5.3L3.2 8.6"/><path d="M3.6 12.8a8.4 8.4 0 0 0 14.4 5.3l2.8-2.7"/><path d="M3.2 4.6v4h4"/><path d="M20.8 19.4v-4h-4"/>',
   sinking:       '<circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="4.3"/><circle cx="12" cy="12" r="0.9"/>',
+  user:          '<circle cx="12" cy="8.2" r="3.8"/><path d="M4.6 20.2a7.4 7.4 0 0 1 14.8 0"/>',
   tag:           '<path d="M3.5 12.6V4.4a.9.9 0 0 1 .9-.9h8.2l7.9 7.9a1.3 1.3 0 0 1 0 1.8l-6.6 6.6a1.3 1.3 0 0 1-1.8 0z"/><circle cx="8.2" cy="8.2" r="1.4"/>',
   key:           '<circle cx="7.8" cy="15.8" r="4.2"/><path d="m10.8 12.8 8.7-8.7"/><path d="m16.6 7 2.6 2.6"/><path d="m14.4 9.2 2 2"/>',
   // A shopping bag, for Can I afford it?
@@ -9275,7 +9277,7 @@ function exportCSV(){
 const SET_CARDS = { '\ud83d\udcc5': ['calendar', 'budget'], '\ud83d\udcb1': ['coins', 'general'], '\ud83d\udd04': ['transactions', 'budget'],
   '\u2728': ['assistant', 'assist'], '\u26a1': ['bolt', 'assist'], '\ud83e\udded': ['list', 'look'], '\ud83d\udcca': ['dashboard', 'look'],
   '\ud83c\udf19': ['moon', 'look'], '\u2601\ufe0f': ['cloud', 'data'], '\u2601': ['cloud', 'data'], '\ud83c\udf10': ['globe', 'general'],
-  '\ud83c\udfaf': ['sinking', 'budget'], '\ud83c\udff7\ufe0f': ['tag', 'general'], '\ud83c\udff7': ['tag', 'general'], '\ud83d\udd11': ['key', 'data'], '\ud83d\udce4': ['upload', 'data'], '\u26a0\ufe0f': ['alert', 'data'], '\u26a0': ['alert', 'data'] };
+  '\ud83c\udfaf': ['sinking', 'budget'], '\ud83c\udff7\ufe0f': ['tag', 'general'], '\ud83d\udc64': ['user', 'general'], '\ud83c\udff7': ['tag', 'general'], '\ud83d\udd11': ['key', 'data'], '\ud83d\udce4': ['upload', 'data'], '\u26a0\ufe0f': ['alert', 'data'], '\u26a0': ['alert', 'data'] };
 const SET_GROUPS = ['general', 'budget', 'look', 'assist', 'data', 'more'];
 function applyWidthPref() {
   document.documentElement.dataset.width = state?.settings?.fullWidth === false ? 'fixed' : 'full';
@@ -9339,6 +9341,16 @@ function renderSettings(){
         <div class="field"><label class="field-label" for="settPlannerName">${t('set_name_label')}</label>
           <input class="input" type="text" id="settPlannerName" maxlength="40" autocomplete="off" value="${esc(s.appTitle||'')}" placeholder="${esc(APP_DEFAULT_TITLE)}">
         </div>
+      </div></div>
+      <div class="panel"><div class="panel-inner">
+        <div class="settings-card-title">👤 ${t('own_title')}</div>
+        <p class="settings-desc">${t('own_desc')}</p>
+        <div class="own-names" id="ownNames">${ownNamesHtml()}</div>
+        <div class="own-add">
+          <input class="input" type="text" id="ownNameInput" maxlength="60" autocomplete="name" placeholder="${esc(t('own_ph'))}" aria-label="${esc(t('own_ph'))}">
+          <button class="btn btn-primary btn-sm" id="ownNameAdd" type="button">${t('own_add')}</button>
+        </div>
+        <p class="own-err" id="ownNameErr" hidden></p>
       </div></div>
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">📅 ${t('budget_period')}</div>
@@ -9658,6 +9670,30 @@ function renderSettings(){
     const tEl = document.getElementById('appTitleText');
     if (tEl) tEl.textContent = nameInp.value.trim() || APP_DEFAULT_TITLE;
   });
+  // Names on the person's own accounts: a first and a last name each, so a
+  // common word alone is never taken for them.
+  const ownErr = document.getElementById('ownNameErr');
+  const ownPaint = () => { const box = document.getElementById('ownNames'); if (box) box.innerHTML = ownNamesHtml(); wireOwnRemove(); try { buildNavRail(); } catch (e) {} };
+  const wireOwnRemove = () => document.querySelectorAll('[data-own-del]').forEach(b => b.addEventListener('click', () => {
+    const list = (state.settings.ownNames || []).slice(); list.splice(Number(b.dataset.ownDel), 1);
+    state.settings.ownNames = list; saveState(); ownPaint();
+  }));
+  const ownAdd = () => {
+    const inp = document.getElementById('ownNameInput'), v = inp.value.replace(/\s+/g, ' ').trim();
+    if (!v) return;
+    const words = v.split(' ').filter(w => w.replace(/[^\p{L}]/gu, '').length >= 2);
+    const list = state.settings.ownNames || [];
+    const key = x => x.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/\s+/).sort().join(' ');
+    if (words.length < 2) { ownErr.textContent = t('own_one_word'); ownErr.hidden = false; return; }
+    if (list.some(x => key(x) === key(v))) { ownErr.textContent = t('own_dupe'); ownErr.hidden = false; return; }
+    ownErr.hidden = true;
+    state.settings.ownNames = list.concat([v]); inp.value = '';
+    saveState(); ownPaint(); showToast(t('toast_saved'));
+  };
+  document.getElementById('ownNameAdd')?.addEventListener('click', ownAdd);
+  document.getElementById('ownNameInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ownAdd(); } });
+  document.getElementById('ownNameInput')?.addEventListener('input', () => { ownErr.hidden = true; });
+  wireOwnRemove();
   nameInp?.addEventListener('change', () => {
     const v = nameInp.value.trim();
     if (v) state.settings.appTitle = v; else delete state.settings.appTitle;
@@ -10239,6 +10275,10 @@ function fkDialog({ message, confirmText, cancelText, danger = false, alertOnly 
 function confirmDialog(opts)         { return fkDialog({ danger: true, ...opts }); }
 function alertDialog(message, icon)  { return fkDialog({ message, alertOnly: true, icon }); }
 
+// The names on the person's own accounts, as chips.
+function ownNamesHtml() {
+  return (state.settings.ownNames || []).map((n, i) => `<span class="own-chip">${appIconSvg('user')}<span>${esc(n)}</span><button type="button" data-own-del="${i}" aria-label="${esc(tf('own_remove', n))}" title="${esc(tf('own_remove', n))}">\u00d7</button></span>`).join('');
+}
 // ── Editable planner title ────────────────────────────────────────────
 const APP_DEFAULT_TITLE = 'Ultimate Budget';
 function applyAppTitle(){ const el=document.getElementById('appTitleText'); if(el) el.textContent=state?.settings?.appTitle||APP_DEFAULT_TITLE; }
