@@ -366,20 +366,20 @@ const BI_KIND_WORDS = [
 ];
 // What each kind of spending tends to be called as a budget category.
 const BI_KIND_CATS = {
-  groceries: /grocer|supermarket|\bfood|lebensmittel|einkauf|courses|aliment|comestible|supermercado|\bspesa|spozyw|jedzenie/,
-  eating: /\beat|dining|restaurant|takeaway|take away|coffee|\bcafe|\bfood|\bessen|gastro|restau|comida|ristorant|jedzenie/,
-  transport: /transport|travel|commute|\bfuel|\bgas\b|petrol|\bcar\b|\bcars\b|\bauto\b|\btaxi|verkehr|\btank|carburant|essence|gasolina|benzina|paliwo|dojazd|mobilit/,
-  shopping: /shopping|clothes|clothing|household|\bhome\b|personal|kleidung|haushalt|achats|vetement|compras|\bropa\b|abbigliament|zakupy|ubrania|\bdom\b/,
-  subs: /subscription|streaming|entertainment|\bmedia\b|\babo\b|abonnement|suscrip|abbonament|subskryp|rozrywk|\bfun\b|leisure|freizeit|loisir|\bocio|svago/,
-  utilities: /utilit|\bbills?\b|electric|energy|internet|\bphone|mobile|\bstrom|nebenkosten|facture|energie|suministro|bollett|rachunk|oplaty/,
+  groceries: /grocer|supermarket|\bfood|lebensmittel|\bcourses|aliment|comestible|supermercado|\bspesa|spozyw/,
+  eating: /\beat|dining|restaurant|takeaway|take away|coffee|\bcafe|\bfood|\bessen|gastro|restau|comida|\bcomer\b|mangiar|ristorant|jedzenie/,
+  transport: /transport|trasport|travel|commute|\bfuel|\bgas\b|petrol|\bcar\b|\bcars\b|\bauto\b|\btaxi|verkehr|\btank|carburant|essence|gasolina|benzina|paliwo|dojazd|mobilit/,
+  shopping: /shopping|clothes|clothing|household|\bhome\b|kleidung|haushalt|einkauf|achats|vetement|compras|acquisti|\bropa\b|abbigliament|zakupy(?! spozyw)|ubrania|\bdom\b/,
+  subs: /subscription|streaming|\babos?\b|abonnement|suscrip|abbonament|subskryp|entertainment|rozrywk|\bfun\b|leisure|freizeit|loisir|\bocio|svago/,
+  utilities: /utilit|\bbills?\b|electric|energy|internet|\bphone|mobile|\bstrom|nebenkosten|\bcharges\b|facture|energie|suministro|bollett|rachunk|\bmedia\b/,
   health: /health|pharmacy|medical|doctor|fitness|\bgym\b|\bsports?\b|gesundheit|apotheke|sante|pharmac|salud|farmac|salute|zdrow|aptek/,
   travel: /travel|holiday|vacation|\btrip|hotel|urlaub|reise|voyage|vacance|viaje|vacacion|viagg|vacanz|podroz|urlop|wakacj/,
   cash: /\bcash\b|\batm\b|bargeld|espece|efectivo|contant|gotowk/,
   insurance: /insur|versicher|assuranc|seguro|assicura|ubezpiec/,
   fun: /\bfun\b|entertainment|leisure|going out|hobby|freizeit|loisir|\bocio|svago|rozrywk/,
   salary: /salary|\bwages?\b|\bpay\b|paycheck|payroll|\bincome|gehalt|\blohn|salaire|nomina|sueldo|stipendio|wynagrodz|pensj/,
-  fees: /\bfees?\b|\bbank|\bcharges?\b|oplat|prowizj|gebuhr|entgelt|\bfrais|comision|commission/,
-  education: /educat|school|kindergarten|childcare|\bkids?\b|\bchild|szkol|przedszkol|\bkita\b|ecole|creche|escuela|guarderia|scuola|asilo|dzieci/
+  fees: /\bfees?\b|\bbank|oplat|prowizj|gebuhr|entgelt|\bfrais|comision|commission/,
+  education: /\bkids?\b|\bchild|kinder\b|enfants|ninos|figli|dzieci|educat|school|kindergarten|childcare|szkol|przedszkol|\bkita\b|ecole|creche|escuela|guarderia|scuola|asilo|bildung|istruzione|edukacj/
 };
 const BI_SALARY = /salary|payroll|wages|paycheck|gehalt|lohn|salaire|nomina|sueldo|stipendio|wynagrodzenie|pensja|bezuge/;
 const BI_STATES = new Set('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC ON QC BC AB MB SK NS NB NL PE'.split(' '));
@@ -608,6 +608,8 @@ function biCats() {
     bills: (state.bills || []).filter(b => b.name), debts: (state.debts || []).filter(d => d.name), goals: (state.sinkingFunds || []).filter(g => g.name)
   };
 }
+// A catch-all category, whatever the person calls it.
+const biIsOther = c => /^(other|others|misc|miscellaneous|sonstiges|andere|autres|divers|otros|varios|altro|altri|varie|inne|pozostale|pozostałe)\b/i.test(String(c || '').trim()) || /^(other|sonstiges|autres|otros|altro|inne|pozostale)$/.test(biNorm(c));
 let _biUncat = null;
 const biIsUncat = c => !c || (_biUncat || (_biUncat = new Set(Object.values(TRANSLATIONS).map(x => x && x.qa_uncat).filter(Boolean)))).has(c);
 // A name inside a description, word for word: "Netflix" in "Netflix.com".
@@ -734,7 +736,7 @@ async function biAskEzzo(items) {
       systemInstruction: { parts: [{ text: 'You sort a person\'s bank transactions into their own budget before they review them. Each item has: i (index), n (the name the app read, may be rough), x (the transaction details from the bank, with numbers removed), k (the bank\'s transaction type), d ("out" for money spent, "in" for money received) and sometimes b (the bank\'s own category). You also get the person\'s lists: out (spending categories), in (income categories), bills, debts and goals. For every item return:\n'
         + 'm: who the money went to or came from, the way a person would say it: the shop, restaurant, company, service or person, in its usual capitalisation, without legal forms (S.A., Sp. z o.o., GmbH, Ltd, Inc), store numbers, towns or country codes. Use what you know about places: "JMP S.A. BIEDRONKA 6864 OSIEK" is "Biedronka", "MOLO RESORT SP.ZO.O RES OSIEK" is "Molo Resort". For cash machines, bank fees, interest and similar with no place, a short plain label in the language of the details. Never include card, account, phone or reference numbers.\n'
         + 't: "expense", "income", "bill", "debt", "goal" or "transfer". Use bill, debt or goal only when the item clearly pays one of the person\'s own listed ones, and transfer only for money moved between the person\'s own accounts.\n'
-        + 'c: the single best category, copied exactly from "out" for an expense or "in" for income, or the exact bill, debt or goal name; null if nothing fits. Decide from what the place is: a supermarket is groceries, a fuel station transport, a pharmacy or dentist health, a restaurant eating out, a streaming service a subscription. Never invent a category and never take one from the wrong direction.\n'
+        + 'c: the single best category, copied exactly from "out" for an expense or "in" for income, or the exact bill, debt or goal name. Decide from what the place is: a supermarket is groceries, a fuel station transport, a pharmacy or dentist health, a restaurant eating out, a streaming service a subscription. When you are unsure, use the list\'s catch-all category (Other, or whatever the list calls it) rather than leaving it empty; null only if the list has no such category. Never invent a category and never take one from the wrong direction.\n'
         + 'Reply with JSON only, no other text: {"r":[{"i":0,"m":"Biedronka","t":"expense","c":"Groceries"}]}' }] },
       contents: [{ role: 'user', parts: [{ text: JSON.stringify({ out: C.expense, in: C.income, bills: C.bills.map(x => x.name), debts: C.debts.map(x => x.name), goals: C.goals.map(x => x.name), items: batch }) }] }],
       generationConfig: { maxOutputTokens: 8192, temperature: 0.1 }
@@ -765,7 +767,9 @@ async function biAskEzzo(items) {
       if (list.some(x => x.name === c)) { Object.assign(it, { type: a.t === 'goal' ? 'sinking_fund' : a.t, category: c, how: 'ezzo' }); used = true; }
     } else {
       const list = it.inbound ? C.income : C.expense;
-      if (c && list.includes(c)) { Object.assign(it, { type: it.inbound ? 'income' : 'expense', category: c, how: 'ezzo' }); used = true; }
+      // Not sure: the person's own catch-all, rather than nowhere.
+      const pick = c && list.includes(c) ? c : (biIsUncat(it.category) ? list.find(biIsOther) : '');
+      if (pick) { Object.assign(it, { type: it.inbound ? 'income' : 'expense', category: pick, how: 'ezzo' }); used = true; }
     }
     if (used) placed.add(k);
   });

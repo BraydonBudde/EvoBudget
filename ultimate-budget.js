@@ -76,14 +76,44 @@ function bindDateField(inputId, wrapId, onChange) {
 const UBP_KEY = 'evobudget_ubp_v1';
 const SBP_KEY = 'evobudget_v1';
 
+// The budget a new planner starts with: the income and spending most
+// households have, each list ending in Other, so anything that fits
+// nowhere else (Ezzo's unsure guesses included) still has a home. All at
+// zero until the person plans them. One list per language, row for row.
+const DEFAULT_BUDGET = {
+  en: { income: ['Salary', 'Side income', 'Bonus', 'Benefits', 'Investments', 'Rental income', 'Gifts', 'Refunds', 'Other'],
+        expenses: ['Groceries', 'Eating out', 'Transport', 'Shopping', 'Clothing', 'Health', 'Personal care', 'Home', 'Utilities', 'Subscriptions', 'Entertainment', 'Travel', 'Kids', 'Pets', 'Education', 'Gifts & donations', 'Fees & charges', 'Cash', 'Other'] },
+  de: { income: ['Gehalt', 'Nebeneinkommen', 'Bonus', 'Sozialleistungen', 'Kapitalerträge', 'Mieteinnahmen', 'Geschenke', 'Erstattungen', 'Sonstiges'],
+        expenses: ['Lebensmittel', 'Essen gehen', 'Verkehr', 'Einkäufe', 'Kleidung', 'Gesundheit', 'Körperpflege', 'Haushalt', 'Nebenkosten', 'Abos', 'Freizeit', 'Reisen', 'Kinder', 'Haustiere', 'Bildung', 'Geschenke & Spenden', 'Gebühren', 'Bargeld', 'Sonstiges'] },
+  fr: { income: ['Salaire', 'Revenus annexes', 'Prime', 'Prestations', 'Placements', 'Revenus locatifs', 'Cadeaux', 'Remboursements', 'Autres'],
+        expenses: ['Courses', 'Restaurants', 'Transport', 'Achats', 'Vêtements', 'Santé', 'Soins personnels', 'Maison', 'Charges', 'Abonnements', 'Loisirs', 'Voyages', 'Enfants', 'Animaux', 'Éducation', 'Cadeaux & dons', 'Frais bancaires', 'Espèces', 'Autres'] },
+  es: { income: ['Sueldo', 'Ingresos extra', 'Bonificación', 'Prestaciones', 'Inversiones', 'Alquileres', 'Regalos', 'Reembolsos', 'Otros'],
+        expenses: ['Supermercado', 'Comer fuera', 'Transporte', 'Compras', 'Ropa', 'Salud', 'Cuidado personal', 'Hogar', 'Suministros', 'Suscripciones', 'Ocio', 'Viajes', 'Niños', 'Mascotas', 'Educación', 'Regalos y donaciones', 'Comisiones', 'Efectivo', 'Otros'] },
+  it: { income: ['Stipendio', 'Entrate extra', 'Bonus', 'Sussidi', 'Investimenti', 'Affitti', 'Regali', 'Rimborsi', 'Altro'],
+        expenses: ['Spesa', 'Mangiare fuori', 'Trasporti', 'Acquisti', 'Abbigliamento', 'Salute', 'Cura personale', 'Casa', 'Bollette', 'Abbonamenti', 'Svago', 'Viaggi', 'Figli', 'Animali', 'Istruzione', 'Regali e donazioni', 'Commissioni', 'Contanti', 'Altro'] },
+  pl: { income: ['Wynagrodzenie', 'Dodatkowe dochody', 'Premia', 'Świadczenia', 'Inwestycje', 'Wynajem', 'Prezenty', 'Zwroty', 'Inne'],
+        expenses: ['Zakupy spożywcze', 'Jedzenie na mieście', 'Transport', 'Zakupy', 'Ubrania', 'Zdrowie', 'Higiena i uroda', 'Dom', 'Media', 'Subskrypcje', 'Rozrywka', 'Podróże', 'Dzieci', 'Zwierzęta', 'Edukacja', 'Prezenty i darowizny', 'Opłaty bankowe', 'Gotówka', 'Inne'] },
+};
+// Renaming follows the language until a category is used: a row whose name
+// is still the default in the old language, and that nothing is logged
+// under, takes the same row's name in the new one.
+function localizeDefaultBudget(from, to) {
+  const a = DEFAULT_BUDGET[from], b = DEFAULT_BUDGET[to];
+  if (!a || !b || from === to || !state?.budgets) return;
+  const used = new Set((state.transactions || []).map(tx => tx.category));
+  ['income', 'expenses'].forEach(sec => (state.budgets[sec] || []).forEach(r => {
+    const i = a[sec].indexOf(r.category);
+    if (i >= 0 && !used.has(r.category) && !(state.budgets[sec] || []).some(x => x !== r && x.category === b[sec][i])) r.category = b[sec][i];
+  }));
+}
 function defaultState() {
   const {start,end} = getMonthBounds();
   return {
     settings: { currency:'USD', symbol:'$', periodStart:start, periodEnd:end, language:'en', pennyEnabled:false, upcomingDays:30, dashboardLayout:SLEEK_LAYOUT, dashboardAnimations:true, onboardingDone:false },
     rollover: 0,
     budgets: {
-      income:   [{id:uid(),category:'Paycheck',expected:0}],
-      expenses: [{id:uid(),category:'Food',expected:0}]
+      income:   DEFAULT_BUDGET.en.income.map(category => ({ id: uid(), category, expected: 0 })),
+      expenses: DEFAULT_BUDGET.en.expenses.map(category => ({ id: uid(), category, expected: 0 }))
     },
     transactions: [],
     debts: [],
@@ -9508,6 +9538,7 @@ function renderSettings(){
   });
 
   document.getElementById('settLanguage')?.addEventListener('change', e => {
+    localizeDefaultBudget(state.settings.language || 'en', e.target.value);
     state.settings.language = e.target.value;
     saveState();
     applyLanguage();
