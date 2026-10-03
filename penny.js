@@ -891,6 +891,7 @@ function pennyBuildDrawer() {
       </div>
       <form class="penny-input-row" id="pennyInputForm">
         <div class="penny-input-wrap">
+          ${typeof biPickFile === 'function' ? `<button class="penny-attach-btn" id="pennyAttachBtn" type="button" aria-label="${esc(t('bi_attach'))}" title="${esc(t('bi_attach'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 11.5-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.6-8.6a3.7 3.7 0 0 1 5.2 5.2l-8.6 8.6a1.8 1.8 0 0 1-2.6-2.6l8-8"/></svg></button>` : ''}
           <input class="input penny-input" id="pennyInput" type="text" placeholder="${esc(t('penny_input_placeholder'))}" autocomplete="off">
           <button class="penny-send-btn" id="pennySendBtn" type="submit" aria-label="${esc(t('penny_send'))}" title="${esc(t('penny_send'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
         </div>
@@ -900,6 +901,7 @@ function pennyBuildDrawer() {
   _pennyDrawerBuilt = true;
 
   document.getElementById('pennyDrawerClose')?.addEventListener('click', pennyCloseChat);
+  document.getElementById('pennyAttachBtn')?.addEventListener('click', () => biPickFile({ via: 'ezzo' }));
   document.getElementById('pennyDrawerScrim')?.addEventListener('click', pennyCloseChat);
   document.getElementById('pennyVoiceToggleBtn')?.addEventListener('click', e => {
     const on = pennyToggleVoice();
@@ -924,8 +926,10 @@ function pennyRenderQuickActions() {
   const wrap = document.getElementById('pennyQuickActions');
   if (!wrap) return;
   const prompts = ['penny_qp_leftover', 'penny_qp_top_category', 'penny_qp_chart'];
-  wrap.innerHTML = prompts.map(k => `<button class="btn btn-ghost btn-sm penny-qp-btn" data-qp="${k}" type="button">${esc(t(k))}</button>`).join('');
+  wrap.innerHTML = prompts.map(k => `<button class="btn btn-ghost btn-sm penny-qp-btn" data-qp="${k}" type="button">${esc(t(k))}</button>`).join('')
+    + (typeof biPickFile === 'function' ? `<button class="btn btn-ghost btn-sm penny-qp-btn penny-qp-import" data-qp-import type="button">${esc(t('bi_chip'))}</button>` : '');
   wrap.querySelectorAll('[data-qp]').forEach(b => b.addEventListener('click', () => pennySendMessage(t(b.dataset.qp))));
+  wrap.querySelector('[data-qp-import]')?.addEventListener('click', () => biPickFile({ via: 'ezzo' }));
 }
 // Lightweight, dependency-free markdown -> HTML for Ezzo's OWN responses
 // only (never the user's own messages, which stay as plain escaped text -
