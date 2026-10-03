@@ -57,6 +57,9 @@ const PENNY_VOICE_KEY = 'evobudget_penny_voice_on';
 // translate(-1.8,0) recenters the composite shape (big + small sparkle) -
 // their combined bounding box otherwise skews right of the 24x24 viewBox
 // center, which reads as visibly off-center at small sizes.
+// Ezzo's face for the chat. The badge behind it carries the colour, so the
+// face is drawn in white and reads the same on every theme.
+const PENNY_AVATAR_SVG = `<svg class="ez-face" viewBox="0 0 32 32" fill="none" aria-hidden="true"><ellipse class="ez-eye" cx="11.6" cy="14.4" rx="2.1" ry="2.9" fill="#fff"/><ellipse class="ez-eye" cx="20.4" cy="14.4" rx="2.1" ry="2.9" fill="#fff"/><circle cx="8.4" cy="19.2" r="1.8" fill="#fff" opacity=".24"/><circle cx="23.6" cy="19.2" r="1.8" fill="#fff" opacity=".24"/><path d="M12.4 20.4c1 1.3 2.2 1.9 3.6 1.9s2.6-.6 3.6-1.9" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/><path class="ez-spark" d="M25.8 2.6l.75 2 2 .75-2 .75-.75 2-.75-2-2-.75 2-.75z" fill="#fff"/></svg>`;
 const PENNY_ICON_SVG = `<svg width="100%" height="100%" viewBox="4 1.35 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.9L18.7 9l-4.9 1.8L12 15.7l-1.8-4.9L5.3 9l4.9-1.8L12 3z"/></svg>`;
 const PENNY_SPEAKER_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>`;
 const PENNY_SPEAKER_MUTED_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="1.5" y1="1.5" x2="22.5" y2="22.5"/></svg>`;
@@ -870,20 +873,26 @@ function pennyBuildDrawer() {
     <div class="penny-drawer-scrim" id="pennyDrawerScrim"></div>
     <div class="penny-drawer-panel" role="dialog" aria-modal="true" aria-label="${esc(t('penny_chat_title'))}">
       <div class="penny-drawer-header">
-        <span class="penny-avatar">${PENNY_ICON_SVG}</span>
-        <span class="penny-drawer-title">${t('penny_chat_title')}</span>
+        <span class="ez-avatar" aria-hidden="true">${PENNY_AVATAR_SVG}<i class="ez-status"></i></span>
+        <span class="penny-head-txt"><span class="penny-drawer-title">Ezzo</span><span class="penny-drawer-sub">${t('penny_disclaimer')}</span></span>
         <span class="penny-drawer-header-actions">
           ${voiceBtn}
-          <button class="penny-icon-btn" id="pennyDrawerClose" type="button" aria-label="${esc(t('penny_close'))}">✕</button>
+          <button class="penny-icon-btn" id="pennyDrawerClose" type="button" aria-label="${esc(t('penny_close'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
         </span>
       </div>
-      <p class="penny-disclaimer">${t('penny_disclaimer')}</p>
-      <div class="penny-messages" id="pennyMessages"></div>
-      <div class="penny-quick-actions" id="pennyQuickActions"></div>
+      <div class="penny-body">
+        <div class="penny-welcome">
+          <span class="ez-avatar ez-avatar--xl" aria-hidden="true">${PENNY_AVATAR_SVG}</span>
+          <h3 class="penny-welcome-title">${esc(t('penny_hello'))}</h3>
+          <p class="penny-welcome-sub">${esc(t('penny_hello_sub'))}</p>
+        </div>
+        <div class="penny-messages" id="pennyMessages"></div>
+        <div class="penny-quick-actions" id="pennyQuickActions"></div>
+      </div>
       <form class="penny-input-row" id="pennyInputForm">
         <div class="penny-input-wrap">
           <input class="input penny-input" id="pennyInput" type="text" placeholder="${esc(t('penny_input_placeholder'))}" autocomplete="off">
-          <button class="btn btn-primary btn-sm penny-send-btn" id="pennySendBtn" type="submit">${t('penny_send')}</button>
+          <button class="penny-send-btn" id="pennySendBtn" type="submit" aria-label="${esc(t('penny_send'))}" title="${esc(t('penny_send'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
         </div>
       </form>
     </div>`;
@@ -955,7 +964,7 @@ function pennyAppendMessage(role, text) {
   if (qa) qa.innerHTML = '';
   const row = document.createElement('div');
   row.className = 'penny-msg penny-msg--' + (role === 'user' ? 'user' : 'penny');
-  if (role !== 'user') row.innerHTML = `<span class="penny-msg-avatar">${PENNY_ICON_SVG}</span>`;
+  if (role !== 'user') row.innerHTML = `<span class="penny-msg-avatar">${PENNY_AVATAR_SVG}</span>`;
   const bubble = document.createElement('div');
   bubble.className = 'penny-msg-bubble';
   bubble.innerHTML = `<div class="penny-msg-text"></div>`;
@@ -974,7 +983,7 @@ function pennyShowTyping() {
   const row = document.createElement('div');
   row.className = 'penny-msg penny-msg--penny';
   row.id = 'pennyTypingRow';
-  row.innerHTML = `<span class="penny-msg-avatar">${PENNY_ICON_SVG}</span><div class="penny-msg-bubble penny-typing"><span></span><span></span><span></span></div>`;
+  row.innerHTML = `<span class="penny-msg-avatar">${PENNY_AVATAR_SVG}</span><div class="penny-msg-bubble penny-typing"><span></span><span></span><span></span></div>`;
   list.appendChild(row);
   list.scrollTop = list.scrollHeight;
 }
@@ -993,7 +1002,7 @@ function pennyRenderChatError(kind, retryText) {
   const showRetry = (kind === 'rate_limited' || kind === 'overloaded' || kind === 'network' || kind === 'unknown') && !!retryText;
   const row = document.createElement('div');
   row.className = 'penny-msg penny-msg--penny penny-msg--error';
-  row.innerHTML = `<span class="penny-msg-avatar">${PENNY_ICON_SVG}</span>
+  row.innerHTML = `<span class="penny-msg-avatar">${PENNY_AVATAR_SVG}</span>
     <div class="penny-msg-bubble penny-msg-bubble--error">
       <div class="penny-msg-text">⚠️ ${esc(t(msgKey))}</div>
       ${showSettings ? `<button class="btn btn-ghost btn-sm penny-err-action" id="pennyErrSettingsBtn" type="button">${esc(t('penny_open_settings'))}</button>` : ''}
