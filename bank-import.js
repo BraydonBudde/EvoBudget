@@ -8,8 +8,8 @@
 
    1. Read      encoding, delimiter, header row (six languages, or none
                 at all), a date format and a decimal mark for the file.
-   2. Validate  each row needs a readable date and amount and something
-                to call it. Pending, declined and balance lines are left
+   2. Validate  each row needs a readable date and an amount. One with no
+                description still comes in, its description left empty. Pending, declined and balance lines are left
                 out, each with its reason. Account, card and reference
                 numbers are never kept.
    3. Signs     money out is spending, money in is income. A card export
@@ -444,7 +444,6 @@ function biBuildRows(ctx) {
     if (!date) return why('date');
     if (isNaN(amount)) return why('amount');
     if (Math.abs(amount) < 0.005) return why('zero');
-    if (!descRaw) return why('desc');
     const bal = map.balance != null ? biAmount(cell('balance'), mark) : NaN;
     out.push({ line: idx, date, amount: biRound(amount), balance: isNaN(bal) ? null : biRound(bal), raw: descRaw, full: fullRaw, kindHint: kindCell, bankCat: cell('category') });
   });
@@ -620,7 +619,7 @@ function biClassify(rows, opts) {
   // on the same day or near it. A matching pair is both a transfer.
   items.forEach(a => {
     if (a.type === 'transfer' || a.inbound) return;
-    const b = items.find(x => x !== a && x.inbound && x.type !== 'transfer' && Math.abs(x.amount - a.amount) < 0.005 && dayDiff(x.date, a.date) <= 2 && (BI_TRANSFER.test(biNorm(x.desc)) || biNorm(x.desc) === biNorm(a.desc)));
+    const b = items.find(x => x !== a && x.inbound && x.type !== 'transfer' && Math.abs(x.amount - a.amount) < 0.005 && dayDiff(x.date, a.date) <= 2 && (BI_TRANSFER.test(biNorm(x.desc)) || (!!a.desc && biNorm(x.desc) === biNorm(a.desc))));
     if (b) [a, b].forEach(x => Object.assign(x, { type: 'transfer', category: '', how: 'transfer', checked: false }));
   });
   return items;
@@ -630,7 +629,7 @@ function biClassify(rows, opts) {
 function biEzzoReady() { try { return typeof pennyIsActive === 'function' && pennyIsActive() && typeof pennyStreamWithFallback === 'function'; } catch (e) { return false; } }
 async function biAskEzzo(items) {
   const C = biCats();
-  const open = items.filter(it => (it.type === 'expense' || it.type === 'income') && it.how === 'review');
+  const open = items.filter(it => (it.type === 'expense' || it.type === 'income') && it.how === 'review' && it.desc);
   const uniq = [], key = it => (it.inbound ? 'in' : 'out') + '|' + biNorm(it.desc);
   const seen = new Map();
   open.forEach(it => { const k = key(it); if (!seen.has(k)) { seen.set(k, uniq.length); uniq.push({ n: it.desc, d: it.inbound ? 'in' : 'out', b: it.bankCat || undefined }); } });
@@ -721,8 +720,8 @@ function biRun() {
 }
 async function biRunEzzo() {
   const b = _bi; if (!b) return;
-  if (!b.items.some(it => (it.type === 'expense' || it.type === 'income') && it.how === 'review')) { b.ezzo = { state: 'none' }; biRender(); return; }
-  b.ezzo = { state: 'running', n: new Set(b.items.filter(it => it.how === 'review' && (it.type === 'expense' || it.type === 'income')).map(it => biNorm(it.desc))).size };
+  if (!b.items.some(it => (it.type === 'expense' || it.type === 'income') && it.how === 'review' && it.desc)) { b.ezzo = { state: 'none' }; biRender(); return; }
+  b.ezzo = { state: 'running', n: new Set(b.items.filter(it => it.how === 'review' && it.desc && (it.type === 'expense' || it.type === 'income')).map(it => biNorm(it.desc))).size };
   biRender();
   try {
     const r = await biAskEzzo(b.items);
@@ -773,7 +772,7 @@ function biRender() {
     <div class="bi-row${it.checked ? '' : ' is-off'}${it.inbound ? ' is-in' : ''}" data-bi-row="${it.id}">
       <label class="check-label bi-c-check"><input type="checkbox" data-bi-check="${it.id}"${it.checked ? ' checked' : ''}${it.type === 'transfer' ? '' : ''} aria-label="${esc(t('bi_include'))}"><span class="checkmark checkmark--sm"></span></label>
       <span class="bi-c-date">${esc(formatDateShort(it.date))}<small>${esc(it.date.slice(0, 4))}</small></span>
-      <input class="input input-sm bi-c-desc" type="text" value="${esc(it.desc)}" data-bi-desc="${it.id}" maxlength="80" aria-label="${esc(t('tx_th_desc'))}">
+      <input class="input input-sm bi-c-desc" type="text" value="${esc(it.desc)}" data-bi-desc="${it.id}" maxlength="80" placeholder="${esc(t('bi_no_desc'))}" aria-label="${esc(t('tx_th_desc'))}">
       <span class="bi-c-amt ${it.inbound ? 'is-in' : 'is-out'}">${it.inbound ? '+' : '−'}${fmt(it.amount)}</span>
       <select class="select select-sm bi-c-type" data-bi-type="${it.id}" aria-label="${esc(t('tx_type'))}">${typeOpts(it)}</select>
       <select class="select select-sm bi-c-cat" data-bi-cat="${it.id}" aria-label="${esc(t('tx_category'))}"${it.type === 'transfer' ? ' disabled' : ''}>${it.type === 'transfer' ? `<option>${esc(t('bi_left_out'))}</option>` : catOpts(it)}</select>
@@ -866,7 +865,7 @@ function biWire() {
   }));
   biRecCheck();
   root.querySelectorAll('[data-bi-check]').forEach(cb => cb.addEventListener('change', () => { const it = biItem(cb.dataset.biCheck); if (it) { it.checked = cb.checked; biRender(); } }));
-  root.querySelectorAll('[data-bi-desc]').forEach(inp => inp.addEventListener('change', () => { const it = biItem(inp.dataset.biDesc); if (it) it.desc = inp.value.trim() || it.desc; }));
+  root.querySelectorAll('[data-bi-desc]').forEach(inp => inp.addEventListener('change', () => { const it = biItem(inp.dataset.biDesc); if (it) it.desc = inp.value.trim(); }));
   root.querySelectorAll('[data-bi-type]').forEach(sel => sel.addEventListener('change', () => {
     const it = biItem(sel.dataset.biType); if (!it) return;
     it.type = sel.value; it.how = 'manual';
@@ -883,7 +882,7 @@ function biWire() {
     const it = biItem(sel.dataset.biCat); if (!it) return;
     it.category = sel.value; it.how = 'manual';
     let n = 0;
-    b.items.forEach(x => { if (x !== it && x.how !== 'manual' && x.type === it.type && biNorm(x.desc) === biNorm(it.desc)) { x.category = sel.value; x.how = 'manual'; n++; } });
+    if (it.desc) b.items.forEach(x => { if (x !== it && x.how !== 'manual' && x.type === it.type && biNorm(x.desc) === biNorm(it.desc)) { x.category = sel.value; x.how = 'manual'; n++; } });
     biRender();
     if (n) showToast(tf('bi_applied_same', n, it.desc));
   }));
@@ -909,7 +908,7 @@ function biCommit() {
   const saveB = state.allocation?.enabled ? (state.allocation.buckets || []).find(x => x.id === 'save') : null;
   const batch = 'imp' + Date.now().toString(36);
   chosen.forEach(it => {
-    const tx = { id: uid(), date: it.date, type: it.type, category: it.category || t('qa_uncat'), amount: biRound(it.amount), description: it.desc, importId: batch };
+    const tx = { id: uid(), date: it.date, type: it.type, category: it.category || t('qa_uncat'), amount: biRound(it.amount), description: it.desc || '', importId: batch };
     if (tx.type === 'sinking_fund' && saveB) tx.allocation = saveB.id;
     state.transactions.push(tx);
     applySinkingFundDelta(tx, +1);
@@ -1215,6 +1214,7 @@ function biChatSay(kind, extra) {
 // ── Words ────────────────────────────────────────────────────────────────
 const BI_WORDS = {
   en: {
+    bi_no_desc: 'No description',
     bi_pdf_note_ezzo: 'Read by Ezzo from your PDF. Check the rows before adding them.',
     bi_pdf_note_local: 'Read from your PDF on this device. PDFs are harder to read than CSV files, so check the rows before adding them.',
     bi_pdf_retry_lead: 'Ezzo can read this statement for you instead.',
@@ -1264,6 +1264,7 @@ const BI_WORDS = {
     bi_chat_added: 'Done. I added {0} transactions.', bi_chat_added_review: 'Done. I added {0} transactions. {1} are Uncategorized for you to sort on the Transactions page.'
   },
   de: {
+    bi_no_desc: 'Keine Beschreibung',
     bi_pdf_note_ezzo: 'Von Ezzo aus deiner PDF gelesen. Prüfe die Zeilen vor dem Hinzufügen.',
     bi_pdf_note_local: 'Auf diesem Gerät aus deiner PDF gelesen. PDFs sind schwerer zu lesen als CSV-Dateien, prüfe die Zeilen also vor dem Hinzufügen.',
     bi_pdf_retry_lead: 'Ezzo kann diesen Kontoauszug stattdessen für dich lesen.',
@@ -1312,6 +1313,7 @@ const BI_WORDS = {
     bi_chat_added: 'Erledigt. Ich habe {0} Transaktionen hinzugefügt.', bi_chat_added_review: 'Erledigt. Ich habe {0} Transaktionen hinzugefügt. {1} sind Ohne Kategorie und warten auf der Seite Transaktionen auf dich.'
   },
   fr: {
+    bi_no_desc: 'Sans libellé',
     bi_pdf_note_ezzo: 'Lu par Ezzo depuis votre PDF. Vérifiez les lignes avant de les ajouter.',
     bi_pdf_note_local: 'Lu depuis votre PDF sur cet appareil. Les PDF sont plus difficiles à lire que les CSV, vérifiez donc les lignes avant de les ajouter.',
     bi_pdf_retry_lead: 'Ezzo peut lire ce relevé à votre place.',
@@ -1360,6 +1362,7 @@ const BI_WORDS = {
     bi_chat_added: 'C’est fait. J’ai ajouté {0} transactions.', bi_chat_added_review: 'C’est fait. J’ai ajouté {0} transactions. {1} sont Sans catégorie, à classer sur la page Transactions.'
   },
   es: {
+    bi_no_desc: 'Sin concepto',
     bi_pdf_note_ezzo: 'Leído por Ezzo de tu PDF. Revisa las filas antes de añadirlas.',
     bi_pdf_note_local: 'Leído de tu PDF en este dispositivo. Los PDF son más difíciles de leer que los CSV, así que revisa las filas antes de añadirlas.',
     bi_pdf_retry_lead: 'Ezzo puede leer este extracto por ti.',
@@ -1408,6 +1411,7 @@ const BI_WORDS = {
     bi_chat_added: 'Hecho. He añadido {0} transacciones.', bi_chat_added_review: 'Hecho. He añadido {0} transacciones. {1} están Sin categoría para que las ordenes en la página Transacciones.'
   },
   it: {
+    bi_no_desc: 'Senza descrizione',
     bi_pdf_note_ezzo: 'Letto da Ezzo dal tuo PDF. Controlla le righe prima di aggiungerle.',
     bi_pdf_note_local: 'Letto dal PDF su questo dispositivo. I PDF sono più difficili da leggere dei CSV, quindi controlla le righe prima di aggiungerle.',
     bi_pdf_retry_lead: 'Ezzo può leggere questo estratto conto al posto tuo.',
@@ -1456,6 +1460,7 @@ const BI_WORDS = {
     bi_chat_added: 'Fatto. Ho aggiunto {0} transazioni.', bi_chat_added_review: 'Fatto. Ho aggiunto {0} transazioni. {1} sono Senza categoria da sistemare nella pagina Transazioni.'
   },
   pl: {
+    bi_no_desc: 'Brak opisu',
     bi_pdf_note_ezzo: 'Odczytane przez Ezzo z twojego PDF. Sprawdź wiersze przed dodaniem.',
     bi_pdf_note_local: 'Odczytano z PDF na tym urządzeniu. PDF trudniej odczytać niż CSV, więc sprawdź wiersze przed dodaniem.',
     bi_pdf_retry_lead: 'Ezzo może przeczytać ten wyciąg za ciebie.',
