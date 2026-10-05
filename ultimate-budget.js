@@ -807,7 +807,7 @@ const TRANSLATIONS = {
     dash_anim_title:'Dashboard Animations',dash_anim_desc:'Play a subtle entrance animation when the dashboard loads.',dash_anim_label:'Enable animations',
     help_sett_intro:'All your preferences for the Ultimate Budget Planner. Changes are saved automatically as you make them.',
     help_sett_currency_p:'Changes the currency symbol everywhere in the app immediately on selection.',
-    help_sett_appearance_p:'Choose from five colour themes - Light, Dark, Synthwave, Vintage, or Terminal. Your preference is remembered across sessions.',
+    help_sett_appearance_p:'Choose from six colour themes: Light, Peachy, Dark, Vintage, Jolly or Frosty. Your preference is remembered across sessions.',
     help_sett_layout_p:'Choose from two Dashboard designs - Classic or Radial Pulse. Each shows the same underlying data with its own charts and arrangement, with more designs coming soon.',
     help_sett_nav_h:'Navigation',
     help_sett_nav_top:'Top - the classic tab bar across the top of the page.',
@@ -1269,10 +1269,10 @@ const TRANSLATIONS = {
     guide_penny_connect3:"Your API key is encrypted and stored only on your own device - it's never sent anywhere except directly to Google when you ask Ezzo a question.",
     guide_penny_tip:"Start with one of the quick-question buttons the first time - it's the fastest way to see what she can do before asking your own questions.",guide_penny_usecase_h:'See it in action',guide_penny_usecase_p:'<p>Whenever <strong>Diane</strong> isn\'t sure where her money went this month, she opens Ezzo and asks "why is my spending higher than usual this month?"</p><p>Ezzo looks at her actual transactions and gives her a plain-language answer - pointing out, say, that Dining spending doubled - instead of her having to dig through the Transactions list herself.</p>',
     guide_settings_title:'Settings',
-    guide_settings_big:'Settings is where the app adapts to you - currency, budgeting period, rollover, appearance, language, and how your data is stored and backed up.',
+    guide_settings_big:'Settings is where the app adapts to you - currency, budgeting period, rollover, appearance, persona, and how your data is stored and backed up.',
     guide_settings_step1:'Pick your <strong>Currency</strong> and <strong>Budget Period</strong> so the app matches how you actually get paid and spend.',
     guide_settings_step2:'Turn on <strong>Rollover</strong> if you want unspent money to carry into the next period.',
-    guide_settings_step3:'Pick an <strong>Appearance</strong> theme (Light, Dark, Synthwave, Vintage, or Terminal), and your <strong>Language</strong> from the list.',
+    guide_settings_step3:'Pick an <strong>Appearance</strong> theme (Light, Peachy, Dark, Vintage, Jolly or Frosty), and a <strong>Persona</strong> for how the app talks to you.',
     guide_settings_step4:'Set up <strong>Allocation Buckets</strong> if you want to budget by percentage (like 50% needs, 30% wants, 20% savings) instead of fixed category amounts.',
     guide_settings_step5:'Choose how your data is stored under <strong>Data & Sync</strong> - locally on this device, or synced with Google Drive so it follows you across devices.',
     guide_settings_step6:'Use <strong>Export Data</strong> to back up everything, or <strong>Reset Data</strong> if you ever want to start completely fresh.',
@@ -1331,6 +1331,12 @@ const TRANSLATIONS = {
 };
 
 function t(key) {
+  // The chosen persona speaks first; whatever it has no version of reads as Stiff.
+  const persona = state?.settings?.persona;
+  if (persona && persona !== 'stiff' && typeof PERSONA_WORDS !== 'undefined') {
+    const pv = PERSONA_WORDS[persona]?.[key];
+    if (pv != null) return pv;
+  }
   const lang = 'en';
   const v = TRANSLATIONS[lang]?.[key] ?? TRANSLATIONS.en[key];
   if (v != null) return v;
@@ -4435,6 +4441,8 @@ const APP_ICONS = {
   key:           '<circle cx="7.8" cy="15.8" r="4.2"/><path d="m10.8 12.8 8.7-8.7"/><path d="m16.6 7 2.6 2.6"/><path d="m14.4 9.2 2 2"/>',
   // A shopping bag, for Can I afford it?
   afford:        '<path d="M5.2 7.6h13.6l-1 12.2a1.4 1.4 0 0 1-1.4 1.3H7.6a1.4 1.4 0 0 1-1.4-1.3z"/><path d="M8.8 10V6.6a3.2 3.2 0 0 1 6.4 0V10"/>',
+  // Two faces, one smiling and one not, for the persona setting.
+  persona:       '<path d="M4 5.5c2.6-1.2 5.4-1.2 8 0v6.2c0 3.2-1.8 5.4-4 5.4s-4-2.2-4-5.4z"/><path d="M12 9.2c2.6-1.2 5.4-1.2 8 0v5.7c0 3.2-1.8 5.6-4 5.6-1.4 0-2.6-.9-3.3-2.3"/><path d="M6.4 10h.01"/><path d="M9.6 10h.01"/><path d="M6.6 13.2c.8.8 2.2.8 3 0"/><path d="M14.6 13.6h.01"/><path d="M17.6 13.6h.01"/><path d="M14.6 17.6c.8-.9 2.2-.9 3 0"/>',
   // A trophy, for Challenges.
   challenges:    '<path d="M7.4 3.8h9.2v5.4a4.6 4.6 0 0 1-9.2 0z"/><path d="M7.4 5.8H4.2v1.3a3.4 3.4 0 0 0 3.5 3.4"/><path d="M16.6 5.8h3.2v1.3a3.4 3.4 0 0 1-3.5 3.4"/><path d="M12 13.8v3.4"/><path d="M8.4 20.4h7.2"/><path d="M9.6 17.2h4.8l.6 3.2H9z"/>',
   calendar:      '<rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/>',
@@ -6452,7 +6460,7 @@ function exportCSV(){
 // The cards are built as before and then sorted into titled groups, each
 // title's emoji traded for the app's own outline icon. Moving a card keeps
 // every listener it was given.
-const SET_CARDS = { '\ud83c\udfc6': ['challenges', 'challenges'], '\ud83d\udcc5': ['calendar', 'budget'], '\ud83d\udcb1': ['coins', 'general'], '\ud83d\udd04': ['transactions', 'budget'],
+const SET_CARDS = { '\ud83c\udfad': ['persona', 'general'], '\ud83c\udfc6': ['challenges', 'challenges'], '\ud83d\udcc5': ['calendar', 'budget'], '\ud83d\udcb1': ['coins', 'general'], '\ud83d\udd04': ['transactions', 'budget'],
   '\u2728': ['assistant', 'assist'], '\u26a1': ['bolt', 'assist'], '\ud83e\udded': ['list', 'look'], '\ud83d\udcca': ['dashboard', 'look'],
   '\ud83c\udf19': ['moon', 'look'], '\u2601\ufe0f': ['cloud', 'data'], '\u2601': ['cloud', 'data'], '\ud83c\udf10': ['globe', 'general'],
   '\ud83c\udfaf': ['sinking', 'budget'], '\ud83c\udff7\ufe0f': ['tag', 'general'], '\ud83d\udc64': ['user', 'general'], '\ud83c\udff7': ['tag', 'general'], '\ud83d\udd11': ['key', 'data'], '\ud83d\udce4': ['upload', 'data'], '\u26a0\ufe0f': ['alert', 'data'], '\u26a0': ['alert', 'data'] };
@@ -6643,6 +6651,7 @@ function renderSettings(){
         ${(syncGetMode('ubp')==='google'&&syncGetEmail('ubp'))?`<p class="sync-status-line">${tf('sync_signed_in_as',`<strong>${esc(syncGetEmail('ubp'))}</strong>`)}</p>`:''}
         <p class="sync-error" id="syncSettError" hidden>${t('sync_error_generic')}</p>
       </div></div>
+      ${typeof personaCardHtml === 'function' ? personaCardHtml() : ''}
       ${typeof chRangeCardHtml === 'function' ? chRangeCardHtml() : ''}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">${t('alloc_sett_title')}</div>
@@ -6702,6 +6711,7 @@ function renderSettings(){
   });
   wireNavPositionPicker(el);
   if (typeof chWireRangeCard === 'function') chWireRangeCard(el);
+  if (typeof personaWireCard === 'function') personaWireCard(el);
   wireDashboardLayoutPicker(el);
 
   el.querySelectorAll('[data-sync-mode]').forEach(btn => {
