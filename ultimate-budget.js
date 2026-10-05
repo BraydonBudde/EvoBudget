@@ -5538,7 +5538,7 @@ function dispatchRender(tab) {
   maybeAdvancePeriod();
   rollBills();
   queueNavBadges();
-  ({dashboard:renderDashboard,budget:renderBudget,transactions:renderTransactions,debt:renderDebt,goals:renderSinking,calendar:renderCalendar,bills:renderSubscriptions,settings:renderSettings,notifications:renderNotifications}[tab]||renderDashboard)();
+  ({dashboard:renderDashboard,budget:renderBudget,transactions:renderTransactions,debt:renderDebt,goals:renderSinking,calendar:renderCalendar,bills:renderSubscriptions,settings:renderSettings,notifications:renderNotifications,challenges:typeof renderChallenges==='function'?renderChallenges:renderDashboard}[tab]||renderDashboard)();
 }
 function switchTab(tab) {
   if (tab === 'dashboard') _dashEntering = true;
@@ -6771,7 +6771,7 @@ function renderDashboardLayout1() {
       ? dashStatsHtml({act,sum,spendPoints,expOut,spendSegs,cashGridHtml,bottomRowHtml,allocHtml})
       : `${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
     ${spendPanelHtml(spendPoints)}
-    <div class="ov-grid"><div class="ov-col">${periodSoFarHtml(sum, spendSegs)}${goalProgressHtml()}</div>${recentActivityHtml()}</div>
+    <div class="ov-grid"><div class="ov-col">${periodSoFarHtml(sum, spendSegs)}${goalProgressHtml()}${typeof chDashHtml === 'function' ? chDashHtml() : ''}</div>${recentActivityHtml()}</div>
     ${allocHtml}
     ${redFlagsHtml(rf)}`}`;
   wireDashViews(el, rf);
@@ -7258,6 +7258,8 @@ const APP_ICONS = {
   key:           '<circle cx="7.8" cy="15.8" r="4.2"/><path d="m10.8 12.8 8.7-8.7"/><path d="m16.6 7 2.6 2.6"/><path d="m14.4 9.2 2 2"/>',
   // A shopping bag, for Can I afford it?
   afford:        '<path d="M5.2 7.6h13.6l-1 12.2a1.4 1.4 0 0 1-1.4 1.3H7.6a1.4 1.4 0 0 1-1.4-1.3z"/><path d="M8.8 10V6.6a3.2 3.2 0 0 1 6.4 0V10"/>',
+  // A trophy, for Challenges.
+  challenges:    '<path d="M7.4 3.8h9.2v5.4a4.6 4.6 0 0 1-9.2 0z"/><path d="M7.4 5.8H4.2v1.3a3.4 3.4 0 0 0 3.5 3.4"/><path d="M16.6 5.8h3.2v1.3a3.4 3.4 0 0 1-3.5 3.4"/><path d="M12 13.8v3.4"/><path d="M8.4 20.4h7.2"/><path d="M9.6 17.2h4.8l.6 3.2H9z"/>',
   calendar:      '<rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/>',
   // The same gear the top bar and the phone dock draw, so Settings looks the same everywhere.
   settings:      '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
