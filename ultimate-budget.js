@@ -785,7 +785,7 @@ const TRANSLATIONS = {
     this_month:'This Month', this_week:'This Week', last_week:'Last Week', last_month:'Last Month', last_30_days:'Last 30 Days', this_quarter:'This Quarter', this_year:'This Year',
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
-    light:'Light', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
+    light:'Light',theme_minimal:'Minimal', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
     auto_badge:'Auto', auto_badge_title:'Added automatically on this date. Pay it now to settle it early or by hand.',
     nw_calendar:'Calendar', nw_calendar_desc:'This month at a glance, with today and every due date marked.',
     nw_cal_due:'Due', nw_cal_spent:'Spent',
@@ -1367,7 +1367,7 @@ const TRANSLATIONS = {
     this_month:'Diesen Monat',this_week:'Diese Woche',last_week:'Letzte Woche',last_month:'Letzter Monat',last_30_days:'Letzte 30 Tage',this_quarter:'Dieses Quartal',this_year:'Dieses Jahr',
     currency:'Währung',rollover:'Übertrag',appearance:'Erscheinungsbild',
     language:'Sprache',reset_data:'Alle Daten zurücksetzen',
-    light:'Hell',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    light:'Hell',theme_minimal:'Minimal',dark:'Dunkel',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     auto_badge:'Auto', auto_badge_title:'Wird an diesem Tag automatisch gebucht. Jetzt zahlen, um es früher oder von Hand zu erledigen.',
     nw_calendar:'Kalender', nw_calendar_desc:'Dieser Monat auf einen Blick, mit heute und jedem Fälligkeitstag.',
     nw_cal_due:'Fällig', nw_cal_spent:'Ausgegeben',
@@ -1927,7 +1927,7 @@ const TRANSLATIONS = {
     this_month:'Ce mois',this_week:'Cette semaine',last_week:'Semaine pr\u00e9c.',last_month:'Mois pr\u00e9c.',last_30_days:'30 derniers jours',this_quarter:'Ce trimestre',this_year:'Cette ann\u00e9e',
     currency:'Devise',rollover:'Report',appearance:'Apparence',
     language:'Langue',reset_data:'Réinitialiser les données',
-    light:'Clair',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    light:'Clair',theme_minimal:'Minimal',dark:'Sombre',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     auto_badge:'Auto', auto_badge_title:"Ajouté automatiquement à cette date. Payez maintenant pour le régler plus tôt ou à la main.",
     nw_calendar:'Calendrier', nw_calendar_desc:"Le mois en un coup d'oeil, avec aujourd'hui et chaque échéance.",
     nw_cal_due:'Dû', nw_cal_spent:'Dépensé',
@@ -2487,7 +2487,7 @@ const TRANSLATIONS = {
     this_month:'Este mes',this_week:'Esta semana',last_week:'Sem. pasada',last_month:'Mes pasado',last_30_days:'\u00daltimos 30 d\u00edas',this_quarter:'Este trimestre',this_year:'Este a\u00f1o',
     currency:'Moneda',rollover:'Saldo anterior',appearance:'Apariencia',
     language:'Idioma',reset_data:'Restablecer datos',
-    light:'Claro',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    light:'Claro',theme_minimal:'Minimal',dark:'Oscuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     auto_badge:'Auto', auto_badge_title:'Se añade automáticamente en esta fecha. Págalo ahora para saldarlo antes o a mano.',
     nw_calendar:'Calendario', nw_calendar_desc:'El mes de un vistazo, con hoy y cada fecha de vencimiento.',
     nw_cal_due:'Pendiente', nw_cal_spent:'Gastado',
@@ -3047,7 +3047,7 @@ const TRANSLATIONS = {
     this_month:'Questo mese',this_week:'Questa settimana',last_week:'Sett. scorsa',last_month:'Mese scorso',last_30_days:'Ultimi 30 giorni',this_quarter:'Questo trimestre',this_year:'Quest\u2019anno',
     currency:'Valuta',rollover:'Riporto',appearance:'Aspetto',
     language:'Lingua',reset_data:'Reimposta dati',
-    light:'Chiaro',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    light:'Chiaro',theme_minimal:'Minimale',dark:'Scuro',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     auto_badge:'Auto', auto_badge_title:'Viene aggiunto automaticamente in questa data. Pagalo ora per saldarlo prima o a mano.',
     nw_calendar:'Calendario', nw_calendar_desc:'Il mese a colpo d\u2019occhio, con oggi e ogni scadenza.',
     nw_cal_due:'Da pagare', nw_cal_spent:'Speso',
@@ -3608,7 +3608,7 @@ const TRANSLATIONS = {
     this_month:'Ten miesiąc',this_week:'Ten tydzień',last_week:'Poprz. tydzień',last_month:'Poprz. miesiąc',last_30_days:'Ostatnie 30 dni',this_quarter:'Ten kwartał',this_year:'Ten rok',
     currency:'Waluta',rollover:'Przeniesienie',appearance:'Wygląd',
     language:'Język',reset_data:'Zresetuj dane',
-    light:'Jasny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
+    light:'Jasny',theme_minimal:'Minimalny',dark:'Ciemny',theme_synthwave:'Synthwave',theme_vintage_ledger:'Vintage',theme_terminal:'Terminal',
     auto_badge:'Auto', auto_badge_title:'Zostanie dodane automatycznie w tym dniu. Zapłać teraz, aby rozliczyć wcześniej lub ręcznie.',
     nw_calendar:'Kalendarz', nw_calendar_desc:'Ten miesiąc na pierwszy rzut oka, z dziś i każdym terminem.',
     nw_cal_due:'Do zapłaty', nw_cal_spent:'Wydano',
@@ -5997,7 +5997,7 @@ function recentActivityHtml() {
     ${rows.length ? `<div class="ra-list">${rows.map(tx => {
       const inc = tx.type === 'income';
       const tint = RA_TINT[tx.type] || 'var(--grad-indigo)';
-      return `<div class="ra-row" data-ra-id="${esc(tx.id)}">
+      return `<div class="ra-row" data-ra-id="${esc(tx.id)}" style="--tint:${tint}">
         <span class="ra-ico" style="color:${tint};background:color-mix(in srgb, ${tint} 14%, transparent)" aria-hidden="true">${appIconSvg(RA_ICON[tx.type] || 'transactions')}</span>
         <span class="ra-main"><span class="ra-name">${esc(tx.description || tx.category)}</span>
           <span class="ra-meta">${esc(formatDateShort(tx.date))} · ${esc(tx.category)} · ${esc(txTypeLabel(tx.type))}</span></span>
@@ -9422,6 +9422,10 @@ function renderSettings(){
             <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='light'?' is-active':''}" data-theme-val="light" type="button" title="${t('light')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               ${t('light')}
+            </button>
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='minimal'?' is-active':''}" data-theme-val="minimal" type="button" title="${t('theme_minimal')}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M9 12h6"/></svg>
+              ${t('theme_minimal')}
             </button>
             <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='dark'?' is-active':''}" data-theme-val="dark" type="button" title="${t('dark')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>

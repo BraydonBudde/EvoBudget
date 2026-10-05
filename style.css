@@ -4056,18 +4056,56 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   THE FRAMED SHELL
+   THE OPEN SHELL
    ───────────────────────────────────────────────────────────────
-   With the sections down the side, the whole app sits in one large
-   rounded frame. The sidebar is part of the frame itself, not a card
-   floating beside the page, and every section sits in one big rounded
-   stage to its right. Each theme keeps its own colours: the frame is the
-   deepest tone the theme has, the stage a step lighter.
+   With the sections down the side, the app takes the whole window:
+   the sidebar runs the full height of the left (or right) edge, set
+   apart from the page by one thin line, and every section sits
+   straight on the page beside it. No frame and no stage around them;
+   the cards carry the shape. Each theme sets the colours through the
+   --ui-* tokens at the end of this file.
 
-   It starts at 901px. A narrow tablet keeps the open sidebar layout, where
-   the sections have the width they need, and a phone the top bar and
-   dock.
+   It starts at 901px. A narrow tablet keeps the open sidebar layout,
+   where the sections have the width they need, and a phone the top bar
+   and dock.
    ═══════════════════════════════════════════════════════════════ */
+@media (min-width: 901px) {
+  html[data-nav="left"]  .app.tool-shell,
+  html[data-nav="left"]  .view.tool-shell.is-active,
+  html[data-nav="right"] .app.tool-shell,
+  html[data-nav="right"] .view.tool-shell.is-active {
+    inset: 0; min-height: 0; height: auto; max-width: none;
+    padding: 0; gap: 0; border-radius: 0; border: 0; box-shadow: none; overflow: hidden;
+    background: var(--ui-page);
+  }
+  html[data-nav="left"]  .tool-shell > .nav-rail,
+  html[data-nav="right"] .tool-shell > .nav-rail {
+    padding: 0; background: var(--ui-side);
+    border-right: 1px solid var(--ui-divider);
+  }
+  html[data-nav="right"] .tool-shell > .nav-rail { border-right: 0; border-left: 1px solid var(--ui-divider); }
+  html[data-nav="left"]  .nav-rail-box,
+  html[data-nav="right"] .nav-rail-box {
+    height: 100%; background: none; border: 0; border-radius: 0; box-shadow: none;
+    padding: 30px 20px 20px;
+  }
+  /* The sections sit on the page itself and do the scrolling. */
+  html[data-nav="left"]  .tool-shell > .app-scroll,
+  html[data-nav="right"] .tool-shell > .app-scroll {
+    background: none; border: 0; border-radius: 0; box-shadow: none;
+    padding: 34px 40px 56px;
+  }
+  html[data-nav="left"]  .tool-shell > .app-scroll > .bview,
+  html[data-nav="right"] .tool-shell > .app-scroll > .bview { max-width: var(--shell-w); margin-inline: auto; }
+  html[data-width="full"][data-nav] .tool-shell > .app-scroll > .bview { max-width: none; }
+}
+@media (min-width: 901px) and (max-width: 1150px) {
+  html[data-nav="left"]  .nav-rail-box,
+  html[data-nav="right"] .nav-rail-box { padding: 24px 10px 14px; }
+  html[data-nav="left"]  .tool-shell > .app-scroll,
+  html[data-nav="right"] .tool-shell > .app-scroll { padding: 28px 26px 44px; }
+}
+
 :root {
   --frame-bg: color-mix(in srgb, var(--grad-indigo) 12%, #e9e8f3);
   --stage-bg: #f8f8fc;
@@ -4079,47 +4117,6 @@ html[data-nav="top"] .tool-topbar > .tool-topbar-right .penny-nav-btn.penny-off 
 [data-theme="vintage-ledger"] {
   --frame-bg: #eadcc2;
   --stage-bg: var(--surface-solid);
-}
-@media (min-width: 901px) {
-  html[data-nav="left"]  .app.tool-shell,
-  html[data-nav="left"]  .view.tool-shell.is-active,
-  html[data-nav="right"] .app.tool-shell,
-  html[data-nav="right"] .view.tool-shell.is-active {
-    inset: 14px; min-height: 0; height: auto;
-    max-width: calc(var(--shell-w) + var(--rail-w) + 40px);
-    padding: 12px; gap: 0;
-    border-radius: 32px;
-    background: var(--frame-bg);
-    border: 1px solid var(--border-soft);
-    box-shadow: 0 40px 90px -46px rgba(0, 0, 0, .4);
-    overflow: hidden;
-  }
-  /* The sidebar lies flat on the frame: no card of its own. */
-  html[data-nav="left"]  .tool-shell > .nav-rail,
-  html[data-nav="right"] .tool-shell > .nav-rail { padding: 10px 10px 10px 8px; }
-  html[data-nav="right"] .tool-shell > .nav-rail { padding: 10px 8px 10px 10px; }
-  html[data-nav="left"]  .nav-rail-box,
-  html[data-nav="right"] .nav-rail-box {
-    background: none; border: 0; box-shadow: none; padding: 10px 6px 6px;
-  }
-  html[data-nav="left"]  .nav-rail-brand,
-  html[data-nav="right"] .nav-rail-brand { border-bottom-color: var(--border-faint); }
-  /* The stage: one big rounded container that holds every section and
-     does the scrolling. It keeps its edge while scrolled, so the fade the
-     open layout uses at the top is not needed here. */
-  html[data-nav="left"]  .tool-shell > .app-scroll,
-  html[data-nav="right"] .tool-shell > .app-scroll {
-    background: var(--stage-bg);
-    border-radius: 24px;
-    border: 1px solid var(--border-faint);
-    box-shadow: 0 10px 40px -24px rgba(var(--grad-indigo-rgb), .35);
-    padding: 30px 32px 48px;
-    -webkit-mask-image: none; mask-image: none;
-  }
-}
-@media (min-width: 901px) and (max-width: 1150px) {
-  html[data-nav="left"]  .tool-shell > .app-scroll,
-  html[data-nav="right"] .tool-shell > .app-scroll { padding: 24px 22px 40px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -7650,3 +7647,320 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 @media (max-width: 360px) {
   html[data-nav="top"] .tool-topbar > .budget-tabs .btab { min-width: 32px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   OPEN LAYOUT AND QUIET CARDS
+   ───────────────────────────────────────────────────────────────
+   The page is one calm canvas: the sidebar down one edge behind a
+   thin line, the sections straight on the page, and cards that carry
+   the shape with a soft shadow instead of a frame around everything.
+   Figures sit in flat tiles, rows in small cards with a coloured edge,
+   and the dashboard's main figure in one solid colour card.
+
+   Everything is driven by tokens, so each appearance keeps its own
+   colours and only the shapes are shared:
+     --ui-page      the canvas          --ui-side     the sidebar
+     --ui-divider   the sidebar's line  --ui-tile     flat tiles, controls
+     --ui-card-shadow                   --ui-feature  the colour card
+     --ui-feature-ink  its text         --ui-btn / --ui-btn-ink  primary buttons
+   The existing surface tokens are set to match, so every card already
+   built on them follows without a rule of its own.
+   ═══════════════════════════════════════════════════════════════ */
+:root:not([data-theme]), [data-theme="light"] {
+  --ui-page: #f6f6f9;
+  --ui-side: #ffffff;
+  --ui-divider: #e8e8ef;
+  --ui-tile: #f1f1f5;
+  --ui-card-shadow: 0 1px 2px rgba(22, 20, 40, .04), 0 12px 32px -20px rgba(22, 20, 40, .22);
+  --ui-row-shadow: 0 1px 2px rgba(22, 20, 40, .05), 0 6px 18px -12px rgba(22, 20, 40, .22);
+  --ui-feature: linear-gradient(145deg, #4f46e5 0%, #6d3fd8 100%);
+  --ui-feature-ink: #ffffff;
+  --ui-feature-shadow: 0 18px 40px -22px rgba(79, 70, 229, .75);
+  --ui-btn: #1c1a2b;
+  --ui-btn-ink: #ffffff;
+  --surface: #ffffff;
+  --surface-strong: #f1f1f5;
+  --surface-solid: #ffffff;
+  --border-soft: #ececf2;
+  --border-faint: rgba(28, 26, 43, .08);
+}
+[data-theme="dark"] {
+  --ui-page: #0c0a18;
+  --ui-side: #0f0c1e;
+  --ui-divider: rgba(129, 140, 248, .12);
+  --ui-tile: #1c1834;
+  --ui-card-shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 16px 36px -22px rgba(0, 0, 0, .8);
+  --ui-row-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 20px -14px rgba(0, 0, 0, .7);
+  --ui-feature: linear-gradient(145deg, #5b5bf0 0%, #8b5cf6 100%);
+  --ui-feature-ink: #ffffff;
+  --ui-feature-shadow: 0 18px 44px -24px rgba(124, 108, 250, .8);
+  --ui-btn: #ede8ff;
+  --ui-btn-ink: #14102a;
+  --surface: #14112a;
+  --surface-strong: #1c1834;
+  --surface-solid: #14112a;
+  --border-soft: rgba(129, 140, 248, .11);
+}
+[data-theme="synthwave"] {
+  --ui-page: #110220;
+  --ui-side: #14032a;
+  --ui-divider: rgba(255, 46, 151, .18);
+  --ui-tile: #2a0a4a;
+  --ui-card-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 16px 36px -22px rgba(0, 0, 0, .85);
+  --ui-row-shadow: 0 8px 20px -14px rgba(0, 0, 0, .8);
+  --ui-feature: linear-gradient(145deg, #ff2e97 0%, #b829ea 100%);
+  --ui-feature-ink: #ffffff;
+  --ui-feature-shadow: 0 18px 44px -22px rgba(255, 46, 151, .7);
+  --ui-btn: linear-gradient(135deg, #ff2e97, #b829ea);
+  --ui-btn-ink: #ffffff;
+  --surface: #1c0634;
+  --surface-strong: #2a0a4a;
+  --surface-solid: #1c0634;
+}
+[data-theme="vintage-ledger"] {
+  --ui-page: #efe3cb;
+  --ui-side: #e8d9bc;
+  --ui-divider: rgba(90, 62, 38, .2);
+  --ui-tile: #f0e5ce;
+  --ui-card-shadow: 0 1px 2px rgba(107, 68, 35, .08), 0 12px 30px -20px rgba(107, 68, 35, .4);
+  --ui-row-shadow: 0 6px 16px -12px rgba(107, 68, 35, .45);
+  --ui-feature: linear-gradient(145deg, #6b4a2b 0%, #8b5e34 100%);
+  --ui-feature-ink: #fbf3e2;
+  --ui-feature-shadow: 0 18px 40px -24px rgba(74, 52, 25, .8);
+  --ui-btn: #3b2a1a;
+  --ui-btn-ink: #faf3e3;
+  --surface: #faf3e3;
+  --surface-strong: #f0e5ce;
+}
+[data-theme="terminal"] {
+  --ui-page: #030a05;
+  --ui-side: #041008;
+  --ui-divider: rgba(74, 222, 128, .2);
+  --ui-tile: #0a1d10;
+  --ui-card-shadow: 0 0 0 1px rgba(74, 222, 128, .08);
+  --ui-row-shadow: none;
+  --ui-feature: linear-gradient(145deg, #0f3d22 0%, #14532d 100%);
+  --ui-feature-ink: #d2f8dc;
+  --ui-feature-shadow: 0 0 0 1px rgba(74, 222, 128, .3);
+  --ui-btn: #4ade80;
+  --ui-btn-ink: #03140a;
+  --surface: #06140a;
+  --surface-strong: #0a1d10;
+}
+/* ── Minimal: soft grey, everything pressed out of the same material ──
+   Neumorphic: one surface colour for the page and every card, shaped
+   only by a light shadow above-left and a dark one below-right. Raised
+   for cards and buttons, pressed in for fields, tracks and switches. */
+[data-theme="minimal"] {
+  color-scheme: light;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --grad-indigo: #3d414d;
+  --grad-indigo-rgb: 61, 65, 77;
+  --grad-purple: #5b606e;
+  --grad-pink: #8a8f9c;
+  --grad-orange: #fb923c;
+  --neu-bg: #e6e8ed;
+  --neu-hi: #ffffff;
+  --neu-lo: #c3c8d2;
+  --neu-raise: 9px 9px 20px var(--neu-lo), -9px -9px 20px var(--neu-hi);
+  --neu-raise-sm: 5px 5px 11px var(--neu-lo), -5px -5px 11px var(--neu-hi);
+  --neu-inset: inset 4px 4px 9px var(--neu-lo), inset -4px -4px 9px var(--neu-hi);
+  --neu-inset-sm: inset 2px 2px 5px var(--neu-lo), inset -2px -2px 5px var(--neu-hi);
+  --surface: var(--neu-bg);
+  --surface-strong: var(--neu-bg);
+  --surface-solid: var(--neu-bg);
+  --border-soft: transparent;
+  --border-faint: rgba(61, 65, 77, .09);
+  --text-primary: #2c2f37;
+  --text-secondary: #6f7480;
+  --text-faint: #9a9fab;
+  --shadow-card: var(--neu-raise);
+  --shadow-pop: var(--neu-raise-sm);
+  --radius-lg: 26px;
+  --radius-md: 20px;
+  --radius-sm: 14px;
+  --ui-page: var(--neu-bg);
+  --ui-side: var(--neu-bg);
+  --ui-divider: rgba(255, 255, 255, .8);
+  --ui-tile: var(--neu-bg);
+  --ui-card-shadow: var(--neu-raise);
+  --ui-row-shadow: var(--neu-raise-sm);
+  --ui-feature: var(--neu-bg);
+  --ui-feature-ink: #2c2f37;
+  --ui-feature-shadow: var(--neu-raise);
+  --ui-btn: var(--neu-bg);
+  --ui-btn-ink: #2c2f37;
+}
+
+/* Shapes shared by every appearance. Minimal keeps rounder corners. */
+:root { --ui-btn-radius: 12px; --ui-tile-radius: 14px; --radius-lg: 20px; --radius-md: 16px; --radius-sm: 11px; }
+[data-theme="minimal"] { --ui-btn-radius: 999px; --ui-tile-radius: 18px; --radius-lg: 26px; --radius-md: 20px; --radius-sm: 14px; }
+
+/* ── The canvas ── */
+.backdrop { background: var(--ui-page); }
+[data-theme="light"] .backdrop .blob, :root:not([data-theme]) .backdrop .blob { opacity: .2; }
+[data-theme="dark"] .backdrop .blob { opacity: .3; }
+[data-theme="light"] .backdrop::before { display: none; }
+[data-theme="minimal"] .backdrop .blob, [data-theme="minimal"] .backdrop::before { opacity: 0; }
+
+/* ── Cards ── */
+.panel { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.tool-shell .app-scroll .panel,
+.tool-shell .app-scroll .scard { box-shadow: var(--ui-card-shadow); }
+.stg-card { border-radius: var(--radius-lg); }
+.env-card { box-shadow: var(--ui-card-shadow); border-color: var(--border-soft); }
+.env-card:hover { box-shadow: var(--ui-card-shadow), 0 14px 30px -18px rgba(var(--grad-indigo-rgb), .45); }
+@media (hover: none) { .env-card:hover { box-shadow: var(--ui-card-shadow); } }
+
+/* Figures in flat tiles: no outline, the tile is the shape. */
+.nl-pill, .psf-tile, .bud-sum-fig, .ch-stat, .af-tile, .cu-date { border-color: transparent; border-radius: var(--ui-tile-radius); }
+.nl-pill, .bud-sum-fig, .ch-stat, .af-tile, .cu-date { background: var(--ui-tile); }
+.ch-stat--main { background: linear-gradient(135deg, rgba(16,185,129,.16), rgba(16,185,129,.05)); }
+
+/* Rows as small cards, each with a coloured edge for what it is. */
+.ra-row {
+  background: var(--surface-solid); border-color: transparent; border-radius: var(--ui-tile-radius);
+  box-shadow: inset 4px 0 0 var(--tint, var(--grad-indigo)), var(--ui-row-shadow);
+}
+
+/* ── Buttons and controls ── */
+.btn { border-radius: var(--ui-btn-radius); }
+/* A button wider than its words keeps them in the middle. :where() keeps
+   this a default, so any button that lays itself out still wins. */
+:where(.btn) { justify-content: center; }
+.btn-primary { background: var(--ui-btn); color: var(--ui-btn-ink); box-shadow: none; }
+.btn-primary:hover { box-shadow: 0 10px 22px -12px rgba(20, 18, 40, .55); transform: translateY(-1px); }
+.btn-ghost { border-color: transparent; background: var(--ui-tile); }
+.help-icon-btn, .view-toggle { border-radius: var(--ui-btn-radius); border-color: transparent; background: var(--ui-tile); }
+.period-btn, .dv-toggle { border-color: transparent; background: var(--ui-tile); box-shadow: none; }
+.period-btn { border-radius: var(--ui-btn-radius); }
+.dv-toggle { border-radius: calc(var(--ui-btn-radius) + 2px); }
+.dv-toggle .dv-opt { border-radius: calc(var(--ui-btn-radius) - 2px); }
+.dv-toggle .dv-opt.is-on { background: var(--ui-btn); color: var(--ui-btn-ink); box-shadow: none; }
+.select, .input { border-radius: var(--radius-sm); }
+
+/* ── Page titles: one size for every section, the greeting included ── */
+.section-title, .sleek-greeting.section-title { font-size: clamp(1.75rem, 2.3vw, 2.3rem); letter-spacing: -.025em; line-height: 1.15; }
+.sleek-eyebrow { font-size: 13.5px; margin-bottom: 4px; }
+
+/* ── The sidebar ── */
+html .nav-rail-brand { border-bottom: 0; padding: 0 10px 20px; margin-bottom: 0; }
+html .nav-rail-brand .wordmark { font-size: 16.5px; }
+html .nav-rail-heading { margin: 16px 12px 8px; }
+html .nav-rail-sections { gap: 2px; }
+html .nav-rail-item {
+  position: relative; gap: 13px; padding: 9px 12px 9px 16px; border: 0; border-radius: 12px;
+  background: none; color: var(--text-secondary); font-size: 14px; font-weight: 500;
+}
+html .nav-rail-item .nav-rail-icon,
+html .nav-rail-item.is-active .nav-rail-icon {
+  width: 22px; height: 22px; flex: 0 0 22px; border-radius: 0; background: none; box-shadow: none; color: inherit;
+}
+html .nav-rail-item:hover:not(.is-active) { background: var(--ui-tile); color: var(--text-primary); }
+html .nav-rail-item.is-active { background: var(--ui-tile); color: var(--text-primary); font-weight: 700; box-shadow: none; }
+html .nav-rail-item.is-active .nav-rail-icon { color: var(--grad-indigo); }
+html .nav-rail-item.is-active::before {
+  content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 3px; border-radius: 3px; background: var(--grad-indigo);
+}
+html .nav-rail-account { background: var(--ui-tile); border-color: transparent; border-radius: var(--ui-tile-radius); }
+@media (min-width: 1151px) {
+  html .nav-rail-item { padding-top: 9px; padding-bottom: 9px; }
+}
+@media (max-width: 1150px) {
+  html .nav-rail-item { justify-content: center; padding: 11px 0; }
+  html .nav-rail-item.is-active::before { left: 2px; }
+  html .nav-rail-account { background: none; }
+}
+
+/* ── The dashboard's top row: a colour card and a list card ──
+   The hero stops being one panel and becomes two cards side by side,
+   the gap matching the grid below so both columns line up. */
+.tool-shell .app-scroll .nl-hero,
+.nl-hero, .nl-hero.is-negative {
+  background: none; border: 0; box-shadow: none; overflow: visible; column-gap: 14px; row-gap: 14px;
+}
+.nl-hero .nl-left {
+  position: relative; overflow: hidden; border-radius: var(--radius-lg);
+  background: var(--ui-feature); color: var(--ui-feature-ink); box-shadow: var(--ui-feature-shadow);
+}
+.nl-hero.is-negative .nl-left { background: linear-gradient(145deg, #e11d48 0%, #be123c 100%); --ui-feature-ink: #ffffff; }
+html[data-theme] .nl-hero .nl-left .nl-value,
+html[data-theme] .nl-hero.is-negative .nl-left .nl-value { color: var(--ui-feature-ink); }
+html[data-theme] .nl-hero .nl-left .nl-dec { color: color-mix(in srgb, var(--ui-feature-ink) 66%, transparent); }
+.nl-hero .nl-label, .nl-hero .nl-track-cap { color: color-mix(in srgb, var(--ui-feature-ink) 72%, transparent); }
+.nl-hero .nl-sub { color: color-mix(in srgb, var(--ui-feature-ink) 86%, transparent); }
+.nl-hero .nl-sub b { color: var(--ui-feature-ink); }
+.nl-hero .nl-sub.is-settle-cap { color: color-mix(in srgb, #6ee7b7 70%, var(--ui-feature-ink)); }
+.nl-hero .nl-pill { background: color-mix(in srgb, var(--ui-feature-ink) 14%, transparent); border-color: transparent; }
+.nl-hero .nl-pill span, .nl-hero .nl-pill-sub { color: color-mix(in srgb, var(--ui-feature-ink) 72%, transparent); }
+.nl-hero .nl-pill strong { color: var(--ui-feature-ink); }
+.nl-hero .nl-pill--today { background: color-mix(in srgb, var(--ui-feature-ink) 22%, transparent); }
+.nl-hero .nl-pill--today strong { color: color-mix(in srgb, #6ee7b7 75%, var(--ui-feature-ink)); }
+.nl-hero .nl-track { background: color-mix(in srgb, var(--ui-feature-ink) 22%, transparent); }
+.nl-hero .nl-track i { background: var(--ui-feature-ink); }
+.nl-hero--cu .nl-right { padding: 0; }
+/* The two columns under it split the same way, so every card on the
+   dashboard shares the same two edges. */
+@media (min-width: 901px) { .ov-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
+.nl-hero--cu .coming-up {
+  padding: 20px 22px 8px; border-radius: var(--radius-lg);
+  background: var(--surface); border: 1px solid var(--border-soft); box-shadow: var(--ui-card-shadow);
+}
+
+/* Cards that are not panels take the same shape. */
+.ch-gc { border-color: var(--border-soft); box-shadow: var(--ui-card-shadow); }
+.cal-ev-item { border-color: transparent; background: var(--surface-solid); box-shadow: var(--ui-row-shadow); }
+
+/* ═══ Minimal: the neumorphic details ═══════════════════════════════ */
+[data-theme="minimal"] body { background: var(--neu-bg); }
+[data-theme="minimal"] .panel, [data-theme="minimal"] .env-card, [data-theme="minimal"] .stg-card { border-color: transparent; }
+/* The sidebar is carved from the same surface: a groove for its edge. */
+@media (min-width: 901px) {
+  html[data-theme="minimal"][data-nav="left"] .tool-shell > .nav-rail { box-shadow: 1px 0 0 #d3d7de; }
+  html[data-theme="minimal"][data-nav="right"] .tool-shell > .nav-rail { box-shadow: -1px 0 0 #d3d7de; }
+}
+html[data-theme="minimal"] .nav-rail-item.is-active { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
+html[data-theme="minimal"] .nav-rail-item:hover:not(.is-active) { background: none; box-shadow: var(--neu-inset-sm); }
+html[data-theme="minimal"] .nav-rail-item.is-active::before { display: none; }
+html[data-theme="minimal"] .nav-rail-account { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
+/* Raised: the things you press and the small cards. */
+[data-theme="minimal"] .btn-primary, [data-theme="minimal"] .btn-ghost, [data-theme="minimal"] .help-icon-btn, [data-theme="minimal"] .view-toggle,
+[data-theme="minimal"] .period-btn, [data-theme="minimal"] .qa-key, [data-theme="minimal"] .qa-chip, [data-theme="minimal"] .env-btn,
+[data-theme="minimal"] .cu-pay, [data-theme="minimal"] .theme-opt, [data-theme="minimal"] .layout-opt, [data-theme="minimal"] .cf-target {
+  background: var(--neu-bg); border-color: transparent; box-shadow: var(--neu-raise-sm); color: var(--text-primary);
+}
+[data-theme="minimal"] .btn-primary:hover { box-shadow: var(--neu-raise); }
+[data-theme="minimal"] .btn-primary:active, [data-theme="minimal"] .btn-ghost:active, [data-theme="minimal"] .qa-key:active,
+[data-theme="minimal"] .help-icon-btn:active, [data-theme="minimal"] .env-btn:active { box-shadow: var(--neu-inset-sm); transform: none; }
+[data-theme="minimal"] .help-icon-btn { border-radius: 50%; }
+[data-theme="minimal"] .section-header-actions > .help-icon-btn, [data-theme="minimal"] .view-toggle { border-radius: 50%; }
+/* Chosen, pressed in. */
+[data-theme="minimal"] .theme-setting-row .theme-opt.is-active, [data-theme="minimal"] .layout-setting-row .layout-opt.is-active,
+[data-theme="minimal"] .qa-chip.is-on, [data-theme="minimal"] .qa-type.is-on, [data-theme="minimal"] .cf-target.is-on {
+  background: var(--neu-bg); color: var(--text-primary); border-color: transparent; box-shadow: var(--neu-inset);
+}
+[data-theme="minimal"] .dv-toggle { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="minimal"] .dv-toggle .dv-opt.is-on { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .period-btn-ico { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-inset-sm); }
+/* Pressed in: where you type, and what fills. */
+[data-theme="minimal"] .input, [data-theme="minimal"] .select, [data-theme="minimal"] .date-field-styled,
+[data-theme="minimal"] textarea { background-color: var(--neu-bg); border-color: transparent; box-shadow: var(--neu-inset); }
+[data-theme="minimal"] .input:focus, [data-theme="minimal"] .select:focus { box-shadow: var(--neu-inset), 0 0 0 2px rgba(61, 65, 77, .25); }
+[data-theme="minimal"] .rec-toggle-track { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); border-color: transparent; }
+[data-theme="minimal"] .nl-track, [data-theme="minimal"] .prog-bar-wrap, [data-theme="minimal"] .psf-bar, [data-theme="minimal"] .gp-sum-bar,
+[data-theme="minimal"] .bud-sum-track, [data-theme="minimal"] .cf-prog-bar { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+/* Tiles and rows. */
+[data-theme="minimal"] .nl-pill, [data-theme="minimal"] .bud-sum-fig, [data-theme="minimal"] .ch-stat, [data-theme="minimal"] .af-tile,
+[data-theme="minimal"] .cu-date, [data-theme="minimal"] .psf-tile { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="minimal"] .ra-row, [data-theme="minimal"] .cal-ev-item { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .ch-gc { border-color: transparent; }
+[data-theme="minimal"] .btn.preset-active { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-inset); }
+[data-theme="minimal"] .ra-ico { box-shadow: var(--neu-inset-sm); }
+/* The colour card is the one raised slab on the page. */
+[data-theme="minimal"] .nl-hero .nl-pill { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="minimal"] .nl-hero .nl-track i { background: var(--text-primary); }
+[data-theme="minimal"] .nl-hero .nl-pill--today strong { color: #059669; }
+[data-theme="minimal"] .nl-hero.is-negative .nl-left { background: var(--neu-bg); --ui-feature-ink: #be123c; }
+[data-theme="minimal"] .wordmark-icon, [data-theme="minimal"] .nra-avatar { background: #3d414d; }
+[data-theme="minimal"] #toast { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-raise); border-color: transparent; }
+[data-theme="minimal"] .modal, [data-theme="minimal"] .fk-dialog { background: var(--neu-bg); box-shadow: var(--neu-raise); border-color: transparent; }
