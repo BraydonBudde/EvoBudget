@@ -158,7 +158,7 @@ function chRenderLobby(el) {
     const s = chStats(g);
     const meta = s.plays ? `<span class="ch-gc-meta">${esc(tf(s.plays === 1 ? 'ch_plays_1' : 'ch_plays_n', s.plays))}${s.saved > 0 ? ` · <b>${esc(tf('ch_gc_saved', fmt(s.saved)))}</b>` : ''}</span>` : '';
     return `<button class="ch-gc" type="button" data-ch-play="${g}">
-      <span class="ch-gc-art" aria-hidden="true"><span class="ch-mini-coin">${CF_SKULL}</span></span>
+      <span class="ch-gc-art" aria-hidden="true"><span class="ch-mini-coin"><span>${appIconSvg('sinking')}</span></span></span>
       <span class="ch-gc-body"><b class="ch-gc-title">${esc(t('ch_cf_title'))}</b><span class="ch-gc-desc">${esc(t('ch_cf_desc'))}</span>${meta}</span>
       <span class="btn btn-primary btn-sm ch-gc-go">${esc(t('ch_play'))}</span>
     </button>`;
@@ -229,7 +229,7 @@ function chOpenGame(id) {
 }
 function chBackToLobby() { _ch.screen = 'lobby'; if (_cf && _cf.phase !== 'flipping') _cf.phase = 'setup'; renderChallenges(); }
 
-// ── The bounty's range ───────────────────────────────────────────────
+// ── The amount's range ───────────────────────────────────────────────
 // The lowest and highest amount the slider goes to, set in Settings.
 const CH_RANGE_DEFAULT = { min: 0, max: 100 };
 const CH_RANGE_CAP = 1000000;
@@ -278,24 +278,16 @@ function chWireRangeCard(el) {
 }
 
 // ── Coin Flip ────────────────────────────────────────────────────────
-// A pirate's call: the coin is a gold doubloon tossed over the sea, with
-// the amount and its slider in the same card. Heads, the treasure is
-// stashed in a goal or debt; tails, feast.
+// One card holds the whole game: what tempts you, roughly what it costs
+// (a slider over the range in Settings) and where the money goes, beside
+// the coin itself. Heads, the money goes to that goal or debt; tails,
+// enjoy it.
 const cfAmount = () => chRound(_cf.amount);
 function cfCurrentTarget() {
   const list = chTargetList();
   return list.find(x => x.key === _cf.target) || list[0] || null;
 }
 function cfLabelNow() { return _cf.preset === 'other' ? (_cf.label.trim() || t('ch_p_other')) : t('ch_p_' + _cf.preset); }
-// A plain skull and crossbones, drawn here: the doubloon's face.
-const CF_SKULL = `<svg class="cf-skull" viewBox="0 0 64 64" aria-hidden="true">
-  <g class="cf-skull-bone"><rect x="5" y="40" width="54" height="7" rx="3.5" transform="rotate(30 32 43.5)"/><rect x="5" y="40" width="54" height="7" rx="3.5" transform="rotate(-30 32 43.5)"/></g>
-  <path class="cf-skull-head" d="M32 6C20.4 6 12 13.9 12 24.3c0 6.4 3.2 11.2 8 14V44a3 3 0 0 0 3 3h18a3 3 0 0 0 3-3v-5.7c4.8-2.8 8-7.6 8-14C52 13.9 43.6 6 32 6z"/>
-  <g class="cf-skull-hole"><ellipse cx="24.5" cy="26" rx="5" ry="5.6"/><ellipse cx="39.5" cy="26" rx="5" ry="5.6"/><path d="M32 32.5l-3 5.5h6z"/>
-    <rect x="25.6" y="41" width="2.4" height="6" rx="1"/><rect x="30.8" y="41" width="2.4" height="6" rx="1"/><rect x="36" y="41" width="2.4" height="6" rx="1"/></g>
-</svg>`;
-const CF_WAVE = '<svg viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 Q 75 0 150 30 T 300 30 T 450 30 T 600 30 T 750 30 T 900 30 T 1050 30 T 1200 30 V 60 H 0 Z"/></svg>';
-
 function cfRender(el) {
   const r = chRange();
   el.innerHTML = `<div class="ch-game">
@@ -305,36 +297,31 @@ function cfRender(el) {
       <h2 class="section-title">${esc(t('ch_cf_title'))}</h2>
       <p class="section-desc">${esc(t('ch_cf_desc'))}</p>
     </div>
-    <div class="cf">
-      <section class="panel cf-setup" id="cfSetup"><div class="panel-inner-sm">
+    <section class="panel cf-card"><div class="cf-card-inner">
+      <div class="cf-setup" id="cfSetup">
         <p class="cf-step"><b>1</b>${esc(t('ch_step_what'))}</p>
         <div class="cf-presets" role="radiogroup" aria-label="${chAttr(t('ch_step_what'))}">${CH_PRESETS.map(p =>
           `<button class="qa-chip cf-preset" type="button" role="radio" data-cf-preset="${p.id}"><span aria-hidden="true">${p.emoji}</span>${esc(t('ch_p_' + p.id))}</button>`).join('')}</div>
         <input class="input cf-other" id="cfOther" type="text" maxlength="40" autocomplete="off" placeholder="${chAttr(t('ch_other_ph'))}" hidden>
-        <p class="cf-step"><b>2</b>${esc(t('ch_step_where'))}</p>
-        <div class="cf-targets" id="cfTargets" role="radiogroup" aria-label="${chAttr(t('ch_step_where'))}"></div>
-      </div></section>
-      <section class="panel cf-play"><div class="panel-inner-sm">
-        <div class="cf-stage" id="cfStage">
-          <i class="cf-sun" aria-hidden="true"></i>
-          <i class="cf-gull cf-gull--a" aria-hidden="true"></i><i class="cf-gull cf-gull--b" aria-hidden="true"></i>
-          <div class="cf-waves" aria-hidden="true"><div class="cf-wave cf-wave--back">${CF_WAVE}${CF_WAVE}</div><div class="cf-wave cf-wave--front">${CF_WAVE}${CF_WAVE}</div></div>
-          <div class="cf-toss" id="cfToss">
-            <div class="cf-coin is-idle" id="cfCoin">
-              <div class="cf-face cf-face--heads"><span class="cf-face-ico">${CF_SKULL}</span><span class="cf-face-word">${esc(t('ch_face_heads'))}</span></div>
-              <div class="cf-face cf-face--tails"><span class="cf-face-ico cf-face-emoji" id="cfTailsEmoji"></span><span class="cf-face-word">${esc(t('ch_face_tails'))}</span></div>
-            </div>
-          </div>
-          <div class="cf-shadow" id="cfShadow"></div>
-        </div>
+        <div class="cf-step cf-step--amount"><b>2</b><span>${esc(t('ch_step_cost'))}</span><strong class="cf-amount-v" id="cfDisplay"></strong></div>
         <div class="cf-amount" id="cfAmountBox">
-          <div class="cf-amount-top"><span class="cf-amount-k">${esc(t('ch_step_cost'))}</span><b class="cf-amount-v" id="cfDisplay"></b></div>
           <input class="cf-slider" id="cfSlider" type="range" min="${r.min}" max="${r.max}" step="${chStep(r)}" value="${cfAmount()}" aria-label="${chAttr(t('ch_step_cost'))}">
           <div class="cf-slider-ends"><span>${esc(chBounty(r.min))}</span><button class="link-btn cf-range-link" type="button" data-cf-range>${esc(t('ch_range_link'))}</button><span>${esc(chBounty(r.max))}</span></div>
         </div>
-        <div class="cf-panel" id="cfPanel" aria-live="polite"></div>
-      </div></section>
-    </div>
+        <p class="cf-step"><b>3</b>${esc(t('ch_step_where'))}</p>
+        <div class="cf-targets" id="cfTargets" role="radiogroup" aria-label="${chAttr(t('ch_step_where'))}"></div>
+      </div>
+      <div class="cf-stage" id="cfStage">
+        <div class="cf-toss" id="cfToss">
+          <div class="cf-coin is-idle" id="cfCoin">
+            <div class="cf-face cf-face--heads"><span class="cf-face-ico">${appIconSvg('sinking')}</span><span class="cf-face-word">${esc(t('ch_face_heads'))}</span></div>
+            <div class="cf-face cf-face--tails"><span class="cf-face-ico cf-face-emoji" id="cfTailsEmoji"></span><span class="cf-face-word">${esc(t('ch_face_tails'))}</span></div>
+          </div>
+        </div>
+        <div class="cf-shadow" id="cfShadow"></div>
+      </div>
+      <div class="cf-panel" id="cfPanel" aria-live="polite"></div>
+    </div></section>
   </div>`;
   const $ = id => document.getElementById(id);
   el.querySelector('[data-ch-back]').addEventListener('click', chBackToLobby);
@@ -444,7 +431,7 @@ function cfPaintPanel() {
   const e = _cf.entry;
   const tx = chTxOf(e);
   if (tx) {
-    // Stashed: say where it went, and show the goal move when it has a bar.
+    // Saved: say where it went, and show the goal move when it has a bar.
     const goal = e.target.kind === 'goal' ? (state.sinkingFunds || []).find(f => f.id === e.target.id) : null;
     const has = goal && fundHasTarget(goal);
     const now = has ? Math.min(100, Math.round((goal.currentSaved || 0) / goal.targetAmount * 100)) : 0;
@@ -463,7 +450,7 @@ function cfPaintPanel() {
     });
   } else if (e.side === 'heads') {
     p.className = 'cf-panel cf-panel--heads is-in';
-    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge cf-badge--skull">${CF_SKULL}</span><span class="cf-verdict-txt"><b>${esc(t('ch_res_heads'))}</b><span>${esc(tf('ch_res_heads_line', fmt(e.amount), cfTargetName(e)))}</span></span></div>
+    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge">${appIconSvg('sinking')}</span><span class="cf-verdict-txt"><b>${esc(t('ch_res_heads'))}</b><span>${esc(tf('ch_res_heads_line', fmt(e.amount), cfTargetName(e)))}</span></span></div>
       <div class="cf-acts">
         <button class="btn btn-primary" type="button" data-cf-save>${esc(tf('ch_save_btn', fmt(e.amount)))}</button>
         <button class="btn btn-ghost" type="button" data-cf-again>${esc(t('ch_not_now'))}</button>
@@ -551,7 +538,7 @@ function cfSaveNow(btn, bonus) {
   cfPaintPanel();
   cfBurst();
 }
-// Gold coins thrown out from the doubloon, for a win.
+// Coins thrown out from the coin, for a win.
 function cfBurst() {
   const stage = document.getElementById('cfStage');
   if (!stage || ddReduced() || !stage.animate) return;
@@ -619,8 +606,8 @@ function chDashHtml() {
 const CH_WORDS = {
   en: {
     tab_challenges: 'Challenges', stg_challenges: 'Challenges',
-    ch_set_title: 'Coin Flip range', ch_set_desc: 'The lowest and highest bounty the Coin Flip slider goes to.', ch_set_min: 'Lowest', ch_set_max: 'Highest',
-    ch_set_err_min: 'The lowest bounty must be 0 or more.', ch_set_err_order: 'The highest bounty must be more than the lowest.', ch_set_err_cap: 'The highest bounty can be at most {0}.',
+    ch_set_title: 'Coin Flip range', ch_set_desc: 'The lowest and highest amount the Coin Flip slider goes to.', ch_set_min: 'Lowest', ch_set_max: 'Highest',
+    ch_set_err_min: 'The lowest amount must be 0 or more.', ch_set_err_order: 'The highest amount must be more than the lowest.', ch_set_err_cap: 'The highest amount can be at most {0}.',
     ch_desc: 'Small games for the moment you are about to spend. When the money wins, what you would have spent goes to a goal or a debt instead.',
     ch_cat_decide: 'Quick decisions', ch_cat_decide_desc: 'Torn between two choices? Let a game decide, and let your savings win.',
     ch_play: 'Play', ch_plays_1: 'Played once', ch_plays_n: 'Played {0} times', ch_gc_saved: '{0} saved',
@@ -628,7 +615,7 @@ const CH_WORDS = {
     ch_hist_title: 'Your results', ch_hist_empty: 'Nothing played yet. Every result will show here.', ch_show_all: 'Show all ({0})', ch_show_less: 'Show less',
     ch_back: 'All challenges',
     ch_cf_title: 'Coin Flip',
-    ch_cf_desc: 'Torn between spending and saving? Let the doubloon decide. Heads, you skip it and the treasure goes to a goal or debt. Tails, you feast, guilt free.',
+    ch_cf_desc: 'Torn between spending and saving? Let a coin decide. Heads, you skip it and the money goes to a goal or debt. Tails, enjoy it, guilt free.',
     ch_step_what: 'What is tempting you?', ch_step_cost: 'Roughly what would it cost?', ch_step_where: 'If it lands heads, the money goes to',
     ch_range_link: 'Change the range',
     ch_p_takeout: 'Takeout', ch_p_coffee: 'Coffee', ch_p_treat: 'A treat', ch_p_shopping: 'Shopping', ch_p_night: 'Night out', ch_p_other: 'Something else',
@@ -638,13 +625,13 @@ const CH_WORDS = {
     ch_none: 'No goals or debts yet, so wins can go to a Challenge Jar. Or set up your own:', ch_new_goal: 'New goal', ch_new_debt: 'Add a debt',
     ch_heads: 'Heads', ch_tails: 'Tails', ch_face_heads: 'Save', ch_face_tails: 'Enjoy',
     ch_rule_heads: 'Skip it, and {0} goes to {1}.', ch_rule_tails: 'Enjoy it, guilt free.', ch_the_money: 'the money',
-    ch_flip: 'Flip the doubloon', ch_flipping: 'The doubloon is in the air…',
-    ch_need_amount: 'Slide the bounty above zero first.', ch_need_target: 'Choose where the money goes.',
-    ch_res_heads: 'Heads! Treasure secured.', ch_res_heads_line: 'Skip it and stash the {0} you would have spent in {1}.',
-    ch_save_btn: 'Stash {0}', ch_not_now: 'Not now',
-    ch_res_tails: 'Tails! Feast away.', ch_res_tails_line: 'The doubloon says yes, so enjoy it, guilt free.',
-    ch_log_spend: 'Log the spend', ch_save_anyway: 'Stash {0} anyway', ch_again: 'Flip again',
-    ch_saved_title: 'Treasure stashed!', ch_saved_line: '{0} went to {1}.', ch_open_target: 'Open {0}',
+    ch_flip: 'Flip the coin', ch_flipping: 'Flipping…',
+    ch_need_amount: 'Slide to roughly what it would cost first.', ch_need_target: 'Choose where the money goes.',
+    ch_res_heads: 'Heads. Skip it.', ch_res_heads_line: 'Put the {0} you would have spent into {1}.',
+    ch_save_btn: 'Save {0}', ch_not_now: 'Not now',
+    ch_res_tails: 'Tails. Enjoy it.', ch_res_tails_line: 'The coin says yes, so enjoy it, guilt free.',
+    ch_log_spend: 'Log the spend', ch_save_anyway: 'Save {0} anyway', ch_again: 'Flip again',
+    ch_saved_title: 'Saved!', ch_saved_line: '{0} went to {1}.', ch_open_target: 'Open {0}',
     ch_cf_tx_heads: 'Coin Flip: skipped {0}', ch_cf_tx_bonus: 'Coin Flip: saved anyway ({0})', ch_cf_tx_tails: 'Coin Flip: {0}',
     ch_toast_saved: '{0} saved to {1}.',
     ch_h_saved: 'Skipped {0}', ch_h_bonus: 'Saved anyway: {0}', ch_h_kept: 'Skipped {0}, not saved yet', ch_h_undone: '{0}, taken back', ch_h_enjoyed: 'Enjoyed {0}',
