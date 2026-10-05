@@ -7747,11 +7747,11 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
   --surface: #06140a;
   --surface-strong: #0a1d10;
 }
-/* ── Minimal: soft grey, everything pressed out of the same material ──
+/* ── Peachy, the base: everything pressed out of the same material ──
    Neumorphic: one surface colour for the page and every card, shaped
    only by a light shadow above-left and a dark one below-right. Raised
    for cards and buttons, pressed in for fields, tracks and switches. */
-[data-theme="minimal"] {
+[data-theme="peachy"] {
   color-scheme: light;
   --font-display: 'Inter', system-ui, sans-serif;
   --grad-indigo: #3d414d;
@@ -7792,16 +7792,16 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
   --ui-btn-ink: #2c2f37;
 }
 
-/* Shapes shared by every appearance. Minimal keeps rounder corners. */
+/* Shapes shared by every appearance. Peachy keeps rounder corners. */
 :root { --ui-btn-radius: 12px; --ui-tile-radius: 14px; --radius-lg: 20px; --radius-md: 16px; --radius-sm: 11px; }
-[data-theme="minimal"] { --ui-btn-radius: 999px; --ui-tile-radius: 18px; --radius-lg: 26px; --radius-md: 20px; --radius-sm: 14px; }
+[data-theme="peachy"] { --ui-btn-radius: 999px; --ui-tile-radius: 18px; --radius-lg: 26px; --radius-md: 20px; --radius-sm: 14px; }
 
 /* ── The canvas ── */
 .backdrop { background: var(--ui-page); }
 [data-theme="light"] .backdrop .blob, :root:not([data-theme]) .backdrop .blob { opacity: .2; }
 [data-theme="dark"] .backdrop .blob { opacity: .3; }
 [data-theme="light"] .backdrop::before { display: none; }
-[data-theme="minimal"] .backdrop .blob, [data-theme="minimal"] .backdrop::before { opacity: 0; }
+[data-theme="peachy"] .backdrop .blob, [data-theme="peachy"] .backdrop::before { opacity: 0; }
 
 /* ── Cards ── */
 .panel { backdrop-filter: none; -webkit-backdrop-filter: none; }
@@ -7910,58 +7910,58 @@ html[data-theme] .nl-hero .nl-left .nl-dec { color: color-mix(in srgb, var(--ui-
 .ch-gc { border-color: var(--border-soft); box-shadow: var(--ui-card-shadow); }
 .cal-ev-item { border-color: transparent; background: var(--surface-solid); box-shadow: var(--ui-row-shadow); }
 
-/* ═══ Minimal: the neumorphic details ═══════════════════════════════ */
-[data-theme="minimal"] body { background: var(--neu-bg); }
-[data-theme="minimal"] .panel, [data-theme="minimal"] .env-card, [data-theme="minimal"] .stg-card { border-color: transparent; }
+/* ═══ Peachy: the raised and pressed details ═══════════════════════════════ */
+[data-theme="peachy"] body { background: var(--neu-bg); }
+[data-theme="peachy"] .panel, [data-theme="peachy"] .env-card, [data-theme="peachy"] .stg-card { border-color: transparent; }
 /* The sidebar is carved from the same surface: a groove for its edge. */
 @media (min-width: 901px) {
-  html[data-theme="minimal"][data-nav="left"] .tool-shell > .nav-rail { box-shadow: 1px 0 0 #d3d7de; }
-  html[data-theme="minimal"][data-nav="right"] .tool-shell > .nav-rail { box-shadow: -1px 0 0 #d3d7de; }
+  html[data-theme="peachy"][data-nav="left"] .tool-shell > .nav-rail { box-shadow: 1px 0 0 #d3d7de; }
+  html[data-theme="peachy"][data-nav="right"] .tool-shell > .nav-rail { box-shadow: -1px 0 0 #d3d7de; }
 }
-html[data-theme="minimal"] .nav-rail-item.is-active { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
-html[data-theme="minimal"] .nav-rail-item:hover:not(.is-active) { background: none; box-shadow: var(--neu-inset-sm); }
-html[data-theme="minimal"] .nav-rail-item.is-active::before { display: none; }
-html[data-theme="minimal"] .nav-rail-account { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
+html[data-theme="peachy"] .nav-rail-item.is-active { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
+html[data-theme="peachy"] .nav-rail-item:hover:not(.is-active) { background: none; box-shadow: var(--neu-inset-sm); }
+html[data-theme="peachy"] .nav-rail-item.is-active::before { display: none; }
+html[data-theme="peachy"] .nav-rail-account { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
 /* Raised: the things you press and the small cards. */
-[data-theme="minimal"] .btn-primary, [data-theme="minimal"] .btn-ghost, [data-theme="minimal"] .help-icon-btn, [data-theme="minimal"] .view-toggle,
-[data-theme="minimal"] .period-btn, [data-theme="minimal"] .qa-key, [data-theme="minimal"] .qa-chip, [data-theme="minimal"] .env-btn,
-[data-theme="minimal"] .cu-pay, [data-theme="minimal"] .theme-opt, [data-theme="minimal"] .layout-opt, [data-theme="minimal"] .cf-target {
+[data-theme="peachy"] .btn-primary, [data-theme="peachy"] .btn-ghost, [data-theme="peachy"] .help-icon-btn, [data-theme="peachy"] .view-toggle,
+[data-theme="peachy"] .period-btn, [data-theme="peachy"] .qa-key, [data-theme="peachy"] .qa-chip, [data-theme="peachy"] .env-btn,
+[data-theme="peachy"] .cu-pay, [data-theme="peachy"] .theme-opt, [data-theme="peachy"] .layout-opt, [data-theme="peachy"] .cf-target {
   background: var(--neu-bg); border-color: transparent; box-shadow: var(--neu-raise-sm); color: var(--text-primary);
 }
-[data-theme="minimal"] .btn-primary:hover { box-shadow: var(--neu-raise); }
-[data-theme="minimal"] .btn-primary:active, [data-theme="minimal"] .btn-ghost:active, [data-theme="minimal"] .qa-key:active,
-[data-theme="minimal"] .help-icon-btn:active, [data-theme="minimal"] .env-btn:active { box-shadow: var(--neu-inset-sm); transform: none; }
-[data-theme="minimal"] .help-icon-btn { border-radius: 50%; }
-[data-theme="minimal"] .section-header-actions > .help-icon-btn, [data-theme="minimal"] .view-toggle { border-radius: 50%; }
+[data-theme="peachy"] .btn-primary:hover { box-shadow: var(--neu-raise); }
+[data-theme="peachy"] .btn-primary:active, [data-theme="peachy"] .btn-ghost:active, [data-theme="peachy"] .qa-key:active,
+[data-theme="peachy"] .help-icon-btn:active, [data-theme="peachy"] .env-btn:active { box-shadow: var(--neu-inset-sm); transform: none; }
+[data-theme="peachy"] .help-icon-btn { border-radius: 50%; }
+[data-theme="peachy"] .section-header-actions > .help-icon-btn, [data-theme="peachy"] .view-toggle { border-radius: 50%; }
 /* Chosen, pressed in. */
-[data-theme="minimal"] .theme-setting-row .theme-opt.is-active, [data-theme="minimal"] .layout-setting-row .layout-opt.is-active,
-[data-theme="minimal"] .qa-chip.is-on, [data-theme="minimal"] .qa-type.is-on, [data-theme="minimal"] .cf-target.is-on {
+[data-theme="peachy"] .theme-setting-row .theme-opt.is-active, [data-theme="peachy"] .layout-setting-row .layout-opt.is-active,
+[data-theme="peachy"] .qa-chip.is-on, [data-theme="peachy"] .qa-type.is-on, [data-theme="peachy"] .cf-target.is-on {
   background: var(--neu-bg); color: var(--text-primary); border-color: transparent; box-shadow: var(--neu-inset);
 }
-[data-theme="minimal"] .dv-toggle { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
-[data-theme="minimal"] .dv-toggle .dv-opt.is-on { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .period-btn-ico { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .dv-toggle { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .dv-toggle .dv-opt.is-on { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .period-btn-ico { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-inset-sm); }
 /* Pressed in: where you type, and what fills. */
-[data-theme="minimal"] .input, [data-theme="minimal"] .select, [data-theme="minimal"] .date-field-styled,
-[data-theme="minimal"] textarea { background-color: var(--neu-bg); border-color: transparent; box-shadow: var(--neu-inset); }
-[data-theme="minimal"] .input:focus, [data-theme="minimal"] .select:focus { box-shadow: var(--neu-inset), 0 0 0 2px rgba(61, 65, 77, .25); }
-[data-theme="minimal"] .rec-toggle-track { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); border-color: transparent; }
-[data-theme="minimal"] .nl-track, [data-theme="minimal"] .prog-bar-wrap, [data-theme="minimal"] .psf-bar, [data-theme="minimal"] .gp-sum-bar,
-[data-theme="minimal"] .bud-sum-track, [data-theme="minimal"] .cf-prog-bar { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .input, [data-theme="peachy"] .select, [data-theme="peachy"] .date-field-styled,
+[data-theme="peachy"] textarea { background-color: var(--neu-bg); border-color: transparent; box-shadow: var(--neu-inset); }
+[data-theme="peachy"] .input:focus, [data-theme="peachy"] .select:focus { box-shadow: var(--neu-inset), 0 0 0 2px rgba(61, 65, 77, .25); }
+[data-theme="peachy"] .rec-toggle-track { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); border-color: transparent; }
+[data-theme="peachy"] .nl-track, [data-theme="peachy"] .prog-bar-wrap, [data-theme="peachy"] .psf-bar, [data-theme="peachy"] .gp-sum-bar,
+[data-theme="peachy"] .bud-sum-track, [data-theme="peachy"] .cf-prog-bar { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
 /* Tiles and rows. */
-[data-theme="minimal"] .nl-pill, [data-theme="minimal"] .bud-sum-fig, [data-theme="minimal"] .ch-stat, [data-theme="minimal"] .af-tile,
-[data-theme="minimal"] .cu-date, [data-theme="minimal"] .psf-tile { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
-[data-theme="minimal"] .ra-row, [data-theme="minimal"] .cal-ev-item { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .ch-gc { border-color: transparent; }
-[data-theme="minimal"] .btn.preset-active { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-inset); }
-[data-theme="minimal"] .ra-ico { box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .nl-pill, [data-theme="peachy"] .bud-sum-fig, [data-theme="peachy"] .ch-stat, [data-theme="peachy"] .af-tile,
+[data-theme="peachy"] .cu-date, [data-theme="peachy"] .psf-tile { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .ra-row, [data-theme="peachy"] .cal-ev-item { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .ch-gc { border-color: transparent; }
+[data-theme="peachy"] .btn.preset-active { background: var(--neu-bg); color: var(--text-primary); box-shadow: var(--neu-inset); }
+[data-theme="peachy"] .ra-ico { box-shadow: var(--neu-inset-sm); }
 /* The colour card is the one raised slab on the page. */
-[data-theme="minimal"] .nl-hero .nl-pill { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
-[data-theme="minimal"] .nl-hero .nl-track i { background: var(--text-primary); }
-[data-theme="minimal"] .nl-hero .nl-pill--today strong { color: #059669; }
-[data-theme="minimal"] .wordmark-icon, [data-theme="minimal"] .nra-avatar { background: #3d414d; }
-[data-theme="minimal"] #toast { background: var(--neu-bg); color: var(--text-primary); }
-[data-theme="minimal"] .modal, [data-theme="minimal"] .fk-dialog { background: var(--neu-bg); }
+[data-theme="peachy"] .nl-hero .nl-pill { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .nl-hero .nl-track i { background: var(--text-primary); }
+[data-theme="peachy"] .nl-hero .nl-pill--today strong { color: #059669; }
+[data-theme="peachy"] .wordmark-icon, [data-theme="peachy"] .nra-avatar { background: #3d414d; }
+[data-theme="peachy"] #toast { background: var(--neu-bg); color: var(--text-primary); }
+[data-theme="peachy"] .modal, [data-theme="peachy"] .fk-dialog { background: var(--neu-bg); }
 
 /* ═══════════════════════════════════════════════════════════════
    SOFT COLOUR, JOLLY, AND THE OPEN SEA
@@ -7971,15 +7971,15 @@ html[data-theme="minimal"] .nav-rail-account { background: var(--neu-bg); box-sh
 :root { --ui-feature-neg-ink: #ffd2da; }
 [data-theme="synthwave"] { --ui-feature-neg-ink: #ffe36e; }
 [data-theme="vintage-ledger"] { --ui-feature-neg-ink: #ffc9b3; }
-[data-theme="minimal"] { --ui-feature-neg-ink: #e11d48; }
+[data-theme="peachy"] { --ui-feature-neg-ink: #e11d48; }
 html[data-theme] .nl-hero.is-negative .nl-left .nl-value,
 html[data-theme] .nl-hero.is-negative .nl-left .nl-dec { color: var(--ui-feature-neg-ink); }
 
-/* ── Pop-ups float on a plain shadow in Minimal ──
+/* ── Pop-ups float on a plain shadow in Peachy ──
    The raised look uses a white highlight, which over the dimmed page
    reads as a glow. A pop-up is lifted off the page, not pressed out of it. */
-[data-theme="minimal"] .modal, [data-theme="minimal"] .fk-dialog, [data-theme="minimal"] .fk-up-card,
-[data-theme="minimal"] .guide-modal, [data-theme="minimal"] #toast, [data-theme="minimal"] .nav-menu {
+[data-theme="peachy"] .modal, [data-theme="peachy"] .fk-dialog, [data-theme="peachy"] .fk-up-card,
+[data-theme="peachy"] .guide-modal, [data-theme="peachy"] #toast, [data-theme="peachy"] .nav-menu {
   box-shadow: 0 28px 60px -26px rgba(22, 25, 34, .5), 0 2px 8px rgba(22, 25, 34, .08);
   border-color: rgba(255, 255, 255, .55);
 }
@@ -7988,9 +7988,9 @@ html[data-theme] .nl-hero.is-negative .nl-left .nl-dec { color: var(--ui-feature
 .psf-tile--in   { background: color-mix(in srgb, #10b981 12%, var(--surface-solid)); }
 .psf-tile--out  { background: color-mix(in srgb, #f43f5e 10%, var(--surface-solid)); }
 .psf-tile--kept { background: color-mix(in srgb, #8b5cf6 11%, var(--surface-solid)); }
-[data-theme="minimal"] .psf-tile--in   { background: color-mix(in srgb, #10b981 14%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .psf-tile--out  { background: color-mix(in srgb, #f43f5e 11%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .psf-tile--kept { background: color-mix(in srgb, #8b5cf6 12%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .psf-tile--in   { background: color-mix(in srgb, #10b981 14%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .psf-tile--out  { background: color-mix(in srgb, #f43f5e 11%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .psf-tile--kept { background: color-mix(in srgb, #8b5cf6 12%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
 
 /* ── Allocation: each bucket in a soft wash of its own colour ── */
 .alloc-card {
@@ -8004,289 +8004,211 @@ html[data-theme] .nl-hero.is-negative .nl-left .nl-dec { color: var(--ui-feature
   background: color-mix(in srgb, var(--bc, var(--grad-indigo)) 9%, var(--surface-solid));
   border-color: transparent; border-radius: var(--ui-tile-radius);
 }
-[data-theme="minimal"] .alloc-card { background: color-mix(in srgb, var(--bc) 12%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .alloc-editor .alloc-bucket-row { background: color-mix(in srgb, var(--bc, #3d414d) 10%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .alloc-editor .alloc-name-inp { background: transparent; box-shadow: none; }
+[data-theme="peachy"] .alloc-card { background: color-mix(in srgb, var(--bc) 12%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .alloc-editor .alloc-bucket-row { background: color-mix(in srgb, var(--bc, #3d414d) 10%, var(--neu-bg)); box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .alloc-editor .alloc-name-inp { background: transparent; box-shadow: none; }
 
 /* ── Settings: the Coin Flip range ── */
 .ch-range-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .ch-range-err { margin: 8px 0 0; font-size: 13px; color: #e11d48; }
 
-/* ═══ Jolly: matte clay ═════════════════════════════════════════════
+/* ═══ Jolly: lavender clay ══════════════════════════════════════════
    Everything is modelled in soft matte clay, lit from the top left:
      · a crisp bright rim where the light catches the top-left edge,
      · a broad soft glow inside that edge, a soft shade toward the
        bottom-right, and a darker rim along it,
-     · a warm, diffuse shadow under the piece and a tighter one where it
-       touches the page,
+     · a soft shadow under the piece in a deeper tone of its own colour,
+       and a tighter one where it touches the page,
      · a faint grain over the surface, so it reads as clay, not plastic.
-   Colour comes from a warm cream base with earthy pastels: sage,
-   terracotta, salmon, mustard, dusty blue, teal and lilac. Bars are shaded
-   round like cylinders; donuts, rings and lines go through an SVG lighting
-   filter (#clayFx, defined in the page) that bevels their edges. */
+   Colour: a lavender sidebar on a warm blush page, cream cards, and pastel
+   lavender, pink, butter, sky and mint. The charts share their treatment
+   with Peachy and Frosty (see SCULPTED CHARTS below). */
 [data-theme="jolly"] {
   color-scheme: light;
   --font-body: 'Nunito', 'Inter', system-ui, sans-serif;
   --font-display: 'Nunito', 'Inter', system-ui, sans-serif;
-  --grad-indigo: #e2875c;
-  --grad-indigo-rgb: 226, 135, 92;
-  --grad-purple: #efb35e;
-  --grad-pink: #f2a38a;
-  --grad-orange: #e98f5e;
-  --income: #6b9a52;
-  --expense: #d4664f;
-  --surface: #faf2e7;
-  --surface-strong: #f4e7d6;
-  --surface-solid: #faf2e7;
+  --grad-indigo: #8571ec;
+  --grad-indigo-rgb: 133, 113, 236;
+  --grad-purple: #b18bf4;
+  --grad-pink: #f08aa0;
+  --grad-orange: #f5a65a;
+  --income: #3fa96d;
+  --expense: #e65f7b;
+  --surface: #fbf3f1;
+  --surface-strong: #f5eae8;
+  --surface-solid: #fbf3f1;
   --border-soft: transparent;
-  --border-faint: rgba(140, 95, 55, .16);
-  --text-primary: #3d3226;
-  --text-secondary: #7b6a58;
-  --text-faint: #ac9a86;
-  --shadow-card: 0 20px 32px -18px rgba(140, 95, 55, .5), 0 6px 12px -4px rgba(140, 95, 55, .14);
-  --shadow-pop: 0 16px 28px -14px rgba(140, 95, 55, .55);
+  --border-faint: rgba(150, 110, 140, .16);
+  --text-primary: #33304a;
+  --text-secondary: #6f6a83;
+  --text-faint: #a49db4;
+  --shadow-card: 0 20px 32px -18px rgba(150, 110, 140, .5), 0 6px 12px -4px rgba(150, 110, 140, .14);
+  --shadow-pop: 0 16px 28px -14px rgba(150, 110, 140, .55);
   --radius-lg: 26px; --radius-md: 22px; --radius-sm: 16px;
   --ui-btn-radius: 999px; --ui-tile-radius: 22px;
-  --ui-page: radial-gradient(130% 90% at 25% 0%, #fbf3e7 0%, #f6e8d5 55%, #f0dcc3 100%);
-  --ui-side: linear-gradient(165deg, #bccaa6 0%, #a9bb90 55%, #99ad7f 100%);
+  --ui-page: radial-gradient(130% 90% at 25% 0%, #fcf5f4 0%, #f6ecea 55%, #f1e2e1 100%);
+  --ui-side: linear-gradient(165deg, #ad9ff4 0%, #9888ef 55%, #8a78ea 100%);
   --ui-divider: transparent;
-  --ui-tile: #f4e7d6;
+  --ui-tile: #f5eae8;
   --ui-card-shadow: none;
   --ui-row-shadow: none;
-  --ui-feature: #f5cdb1;
-  --ui-feature-ink: #43301f;
+  --ui-feature: #e6ddfa;
+  --ui-feature-ink: #33304a;
   --ui-feature-shadow: none;
-  --ui-btn: linear-gradient(160deg, #f2ab83 0%, #e48a5e 60%, #d6774a 100%);
+  --ui-btn: linear-gradient(160deg, #b9adf7 0%, #8a78ea 58%, #7462df 100%);
   --ui-btn-ink: #ffffff;
-  --ui-feature-neg-ink: #b83b2c;
-  --clay-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .3 0 0 0 0 .18 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  /* One light, one material: the base for any clay surface. --tc is its colour. */
-  --tc: #f8eddf;
+  --ui-feature-neg-ink: #d9455f;
+  --clay-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .38 0 0 0 0 .3 0 0 0 0 .4 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --tc: #fbf2f0;
 }
-[data-theme="jolly"] body { background: #f5e7d4; }
+[data-theme="jolly"] body { background: #f6ecea; }
 [data-theme="jolly"] .backdrop .blob { opacity: 0; }
 
 /* ── The clay recipe ──
-   Cards in cream; tiles and chips set their own --tc and inherit the same light. */
-[data-theme="jolly"] :is(.tool-shell .app-scroll .panel, .tool-shell .app-scroll .scard, .env-card, .stg-card, .ch-gc, .nl-hero--cu .coming-up,
+   Cards in cream; tiles and chips set their own --tc and take the same light. */
+[data-theme="jolly"] :is(.tool-shell .app-scroll .panel, .tool-shell .app-scroll .scard, .env-card, .stg-card, .ch-gc, .nl-hero--cu .coming-up, .st-kpi,
   .modal, .fk-dialog, .fk-up-card, .guide-modal) {
-  --tc: #f8eddf;
+  --tc: #fbf2f0;
   border: 0;
-  background: var(--clay-grain), linear-gradient(155deg, #fdf7ef 0%, var(--tc) 55%, #f3e3cf 100%);
+  background: var(--clay-grain), linear-gradient(155deg, #fffafa 0%, var(--tc) 55%, #f3e6e5 100%);
   box-shadow: inset 3px 3px 1.5px rgba(255, 255, 255, .85), inset 14px 16px 26px rgba(255, 255, 255, .42),
-    inset -3px -4px 2px rgba(150, 100, 60, .1), inset -14px -16px 28px rgba(150, 100, 60, .1),
-    0 22px 34px -20px rgba(140, 95, 55, .55), 0 6px 12px -5px rgba(140, 95, 55, .16);
+    inset -3px -4px 2px rgba(150, 105, 130, .1), inset -14px -16px 28px rgba(150, 105, 130, .1),
+    0 22px 34px -20px rgba(150, 110, 140, .55), 0 6px 12px -5px rgba(150, 110, 140, .16);
 }
 [data-theme="jolly"] .tool-shell .app-scroll .nl-hero { background: none; box-shadow: none; }
 [data-theme="jolly"] :is(.nl-hero .nl-left, .psf-tile, .bud-sum-fig, .ch-stat, .alloc-card, .cu-date, .nav-rail-account) {
   border: 0;
-  background: var(--clay-grain), linear-gradient(155deg, color-mix(in srgb, var(--tc) 50%, #fff) 0%, var(--tc) 52%, color-mix(in srgb, var(--tc) 86%, #7a4a20) 100%);
+  background: var(--clay-grain), linear-gradient(155deg, color-mix(in srgb, var(--tc) 50%, #fff) 0%, var(--tc) 52%, color-mix(in srgb, var(--tc) 86%, #5a3058) 100%);
   box-shadow: inset 3px 3px 1.5px rgba(255, 255, 255, .7), inset 12px 14px 22px rgba(255, 255, 255, .32),
-    inset -3px -4px 2px color-mix(in srgb, var(--tc) 55%, rgba(90, 50, 20, .35)), inset -12px -14px 24px color-mix(in srgb, var(--tc) 30%, rgba(90, 50, 20, .18)),
-    0 18px 28px -16px color-mix(in srgb, var(--tc) 55%, rgba(110, 65, 30, .6)), 0 5px 10px -4px rgba(120, 75, 35, .16);
+    inset -3px -4px 2px color-mix(in srgb, var(--tc) 55%, rgba(80, 40, 90, .35)), inset -12px -14px 24px color-mix(in srgb, var(--tc) 30%, rgba(80, 40, 90, .18)),
+    0 18px 28px -16px color-mix(in srgb, var(--tc) 55%, rgba(100, 60, 120, .6)), 0 5px 10px -4px rgba(110, 70, 120, .16);
 }
 /* Small clay: chips, pills, keys. */
 [data-theme="jolly"] :is(.btn-ghost, .help-icon-btn, .view-toggle, .period-btn, .dv-toggle, .cu-pay, .qa-chip, .qa-type, .env-btn, .theme-opt, .layout-opt,
   .link-btn.cu-all, .qa-key, .alloc-remove-btn, .cf-target, .lv-act, .modal-close) {
-  --tc: #fbf3e8;
+  --tc: #fbf3f1;
   color: var(--text-primary); border: 0;
-  background: var(--clay-grain), linear-gradient(160deg, #fffaf3 0%, var(--tc) 55%, #f3e5d2 100%);
-  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .9), inset -2px -3px 4px rgba(150, 100, 60, .14), 0 9px 14px -9px rgba(140, 95, 55, .6), 0 2px 3px rgba(140, 95, 55, .12);
+  background: var(--clay-grain), linear-gradient(160deg, #fffbfa 0%, var(--tc) 55%, #f2e6e4 100%);
+  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .9), inset -2px -3px 4px rgba(150, 105, 130, .14), 0 9px 14px -9px rgba(150, 110, 140, .6), 0 2px 3px rgba(150, 110, 140, .12);
 }
 [data-theme="jolly"] .link-btn.cu-all { padding: 6px 15px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; }
-/* The main action, and whatever is chosen: terracotta clay. */
+/* The main action, and whatever is chosen: lavender clay. */
 [data-theme="jolly"] :is(.btn-primary, .theme-setting-row .theme-opt.is-active, .layout-setting-row .layout-opt.is-active, .dv-toggle .dv-opt.is-on, .btn.preset-active, .qa-type.is-on, .budget-tabs .btab.is-active) {
   color: #fff; border: 0;
-  background: var(--clay-grain), linear-gradient(160deg, #f4b38c 0%, #e48a5e 58%, #d4744a 100%);
-  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .45), inset -3px -4px 6px rgba(120, 50, 20, .22), 0 12px 18px -10px rgba(200, 100, 55, .7), 0 2px 4px rgba(150, 70, 35, .18);
+  background: var(--clay-grain), linear-gradient(160deg, #b9adf7 0%, #8a78ea 58%, #7462df 100%);
+  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .45), inset -3px -4px 6px rgba(60, 30, 140, .22), 0 12px 18px -10px rgba(110, 84, 220, .65), 0 2px 4px rgba(80, 55, 170, .18);
 }
 [data-theme="jolly"] .btn-primary:hover { filter: brightness(1.04); }
 [data-theme="jolly"] .dv-toggle { padding: 4px; }
 [data-theme="jolly"] .dv-toggle .dv-opt:not(.is-on) { background: none; box-shadow: none; }
-[data-theme="jolly"] :is(.qa-chip.is-on, .cf-target.is-on) { --tc: #f9dcc8; color: #7a3f20; }
-[data-theme="jolly"] .period-btn-ico { background: linear-gradient(160deg, #f4b38c, #e48a5e); color: #fff; box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .5), 0 4px 8px -4px rgba(200, 100, 55, .7); }
+[data-theme="jolly"] :is(.qa-chip.is-on, .cf-target.is-on) { --tc: #ece6fd; color: #4b3c9c; }
+[data-theme="jolly"] .period-btn-ico { background: linear-gradient(160deg, #b9adf7, #8571ec); color: #fff; box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .5), 0 4px 8px -4px rgba(110, 84, 220, .7); }
 /* Fields: pressed into the clay. */
 [data-theme="jolly"] :is(.input, .select, .date-field-styled, textarea) {
-  background-color: #f3e5d3; border: 0;
-  box-shadow: inset 3px 3px 6px rgba(140, 95, 55, .26), inset -2px -2px 4px rgba(255, 255, 255, .8);
+  background-color: #f4e9e8; border: 0;
+  box-shadow: inset 3px 3px 6px rgba(150, 110, 140, .26), inset -2px -2px 4px rgba(255, 255, 255, .8);
 }
-[data-theme="jolly"] :is(.input, .select):focus { box-shadow: inset 3px 3px 6px rgba(140, 95, 55, .26), inset -2px -2px 4px rgba(255, 255, 255, .8), 0 0 0 3px rgba(226, 135, 92, .3); }
-[data-theme="jolly"] .rec-toggle-track { box-shadow: inset 2px 2px 4px rgba(90, 60, 30, .3); }
+[data-theme="jolly"] :is(.input, .select):focus { box-shadow: inset 3px 3px 6px rgba(150, 110, 140, .26), inset -2px -2px 4px rgba(255, 255, 255, .8), 0 0 0 3px rgba(133, 113, 236, .28); }
+[data-theme="jolly"] .rec-toggle-track { box-shadow: inset 2px 2px 4px rgba(80, 50, 110, .3); }
 
-/* ── Tiles: earthy pastels, each with a matte clay icon chip ── */
-[data-theme="jolly"] .nl-hero .nl-left { --tc: #f5cdb1; }
-[data-theme="jolly"] .nl-hero .nl-pill { --tc: #fcefe3; border: 0;
-  background: var(--clay-grain), linear-gradient(160deg, #fffaf4, var(--tc));
-  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .9), inset -2px -3px 5px rgba(180, 110, 70, .16), 0 10px 14px -9px rgba(170, 95, 55, .6);
+/* ── Tiles: pastels, each with a matte clay icon chip ── */
+[data-theme="jolly"] .nl-hero .nl-left { --tc: #e6ddfa; }
+[data-theme="jolly"] .nl-hero .nl-pill { --tc: #fff8f8; border: 0;
+  background: var(--clay-grain), linear-gradient(160deg, #ffffff, var(--tc));
+  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .9), inset -2px -3px 5px rgba(110, 90, 190, .14), 0 10px 14px -9px rgba(110, 90, 190, .55);
 }
-[data-theme="jolly"] .nl-hero .nl-label, [data-theme="jolly"] .nl-hero .nl-pill span, [data-theme="jolly"] .nl-hero .nl-track-cap { color: #8a5f43; }
+[data-theme="jolly"] .nl-hero .nl-label, [data-theme="jolly"] .nl-hero .nl-pill span, [data-theme="jolly"] .nl-hero .nl-track-cap { color: #6a5d8a; }
 [data-theme="jolly"] .nl-hero .nl-pill--today strong { color: var(--income); }
 [data-theme="jolly"] .psf-tile { padding: 16px 16px 14px; gap: 3px; }
-[data-theme="jolly"] .psf-tile--in   { --tc: #c9d8b2; --ic: #8fab72; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.4v9.4'/%3E%3Cpath d='M8.2 9 12 12.8 15.8 9'/%3E%3Cpath d='M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3'/%3E%3C/svg%3E"); }
-[data-theme="jolly"] .psf-tile--out  { --tc: #f6c4ad; --ic: #e3845d; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6'/%3E%3Ccircle cx='9.6' cy='19.6' r='1.3'/%3E%3Ccircle cx='17.4' cy='19.6' r='1.3'/%3E%3C/svg%3E"); }
-[data-theme="jolly"] .psf-tile--kept { --tc: #f4dc9f; --ic: #e2ad46; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 20.2s-7.6-4.6-7.6-10.4A4.3 4.3 0 0 1 12 7.1a4.3 4.3 0 0 1 7.6 2.7c0 5.8-7.6 10.4-7.6 10.4z'/%3E%3C/svg%3E"); }
+[data-theme="jolly"] .psf-tile--in   { --tc: #d9ecd0; --ic: #5fb672; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.4v9.4'/%3E%3Cpath d='M8.2 9 12 12.8 15.8 9'/%3E%3Cpath d='M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3'/%3E%3C/svg%3E"); }
+[data-theme="jolly"] .psf-tile--out  { --tc: #fbd5ce; --ic: #ef6a62; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6'/%3E%3Ccircle cx='9.6' cy='19.6' r='1.3'/%3E%3Ccircle cx='17.4' cy='19.6' r='1.3'/%3E%3C/svg%3E"); }
+[data-theme="jolly"] .psf-tile--kept { --tc: #e3daf9; --ic: #7d66e6; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 20.2s-7.6-4.6-7.6-10.4A4.3 4.3 0 0 1 12 7.1a4.3 4.3 0 0 1 7.6 2.7c0 5.8-7.6 10.4-7.6 10.4z'/%3E%3C/svg%3E"); }
 [data-theme="jolly"] .psf-tile::before {
   content: ""; display: block; flex: 0 0 auto; width: 46px; height: 46px; margin-bottom: 10px; border-radius: 15px;
-  background: var(--ico) center / 22px no-repeat, var(--clay-grain), radial-gradient(130% 130% at 28% 22%, color-mix(in srgb, var(--ic) 55%, #fff) 0%, var(--ic) 55%, color-mix(in srgb, var(--ic) 82%, #5a3010) 100%);
-  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .5), inset -3px -4px 6px rgba(80, 40, 10, .2), 0 9px 14px -7px color-mix(in srgb, var(--ic) 70%, rgba(90, 50, 20, .5));
+  background: var(--ico) center / 22px no-repeat, var(--clay-grain), radial-gradient(130% 130% at 28% 22%, color-mix(in srgb, var(--ic) 55%, #fff) 0%, var(--ic) 55%, color-mix(in srgb, var(--ic) 82%, #2a1040) 100%);
+  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .5), inset -3px -4px 6px rgba(40, 20, 60, .2), 0 9px 14px -7px color-mix(in srgb, var(--ic) 70%, rgba(60, 30, 90, .5));
 }
-[data-theme="jolly"] .psf-k { font-size: 15px; font-weight: 700; letter-spacing: 0; text-transform: none; color: #4a3d2e; }
-[data-theme="jolly"] .psf-tile strong { color: #3a2f22; }
-[data-theme="jolly"] .psf-tile em { color: #6e5d4b; }
-[data-theme="jolly"] .bud-sum-fig:nth-child(1) { --tc: #f4dc9f; }
-[data-theme="jolly"] .bud-sum-fig:nth-child(2) { --tc: #f6c4ad; }
-[data-theme="jolly"] .bud-sum-fig:nth-child(3) { --tc: #c9d8b2; }
-[data-theme="jolly"] .ch-stat:nth-child(1) { --tc: #c9d8b2; }
-[data-theme="jolly"] .ch-stat:nth-child(2) { --tc: #f4dc9f; }
-[data-theme="jolly"] .ch-stat:nth-child(3) { --tc: #c3d5e3; }
-[data-theme="jolly"] .cu-date { --tc: #f6dcc8; }
-[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+1) { --bc: #a6bd8c !important; }
-[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+2) { --bc: #f2a38a !important; }
-[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+3) { --bc: #efc263 !important; }
-[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+4) { --bc: #93b2cc !important; }
-[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+5) { --bc: #d5b1d4 !important; }
-[data-theme="jolly"] .alloc-card { --tc: color-mix(in srgb, var(--bc) 45%, #faf2e7); }
+[data-theme="jolly"] .psf-k { font-size: 15px; font-weight: 700; letter-spacing: 0; text-transform: none; color: #3e3a55; }
+[data-theme="jolly"] .psf-tile strong { color: #2f2b46; }
+[data-theme="jolly"] .psf-tile em { color: #6f6a83; }
+[data-theme="jolly"] .bud-sum-fig:nth-child(1) { --tc: #e3daf9; }
+[data-theme="jolly"] .bud-sum-fig:nth-child(2) { --tc: #fbd5ce; }
+[data-theme="jolly"] .bud-sum-fig:nth-child(3) { --tc: #fdedc4; }
+[data-theme="jolly"] .ch-stat:nth-child(1) { --tc: #d9ecd0; }
+[data-theme="jolly"] .ch-stat:nth-child(2) { --tc: #fdedc4; }
+[data-theme="jolly"] .ch-stat:nth-child(3) { --tc: #d8e4f8; }
+[data-theme="jolly"] .cu-date { --tc: #ede6fc; }
+[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+1) { --bc: #a998f2 !important; }
+[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+2) { --bc: #f4a3b6 !important; }
+[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+3) { --bc: #f6cc62 !important; }
+[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+4) { --bc: #8fb5ee !important; }
+[data-theme="jolly"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+5) { --bc: #a6d08c !important; }
+[data-theme="jolly"] .alloc-card { --tc: color-mix(in srgb, var(--bc) 42%, #fbf3f1); }
 [data-theme="jolly"] .alloc-editor .alloc-bucket-row {
-  border: 0; background: var(--clay-grain), linear-gradient(160deg, color-mix(in srgb, var(--bc) 22%, #fffaf3), color-mix(in srgb, var(--bc) 34%, #f6eadb));
-  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .8), inset -2px -3px 5px rgba(150, 100, 60, .14), 0 10px 14px -10px rgba(140, 95, 55, .6);
+  border: 0; background: var(--clay-grain), linear-gradient(160deg, color-mix(in srgb, var(--bc) 22%, #fffbfa), color-mix(in srgb, var(--bc) 34%, #f6ecea));
+  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .8), inset -2px -3px 5px rgba(150, 105, 130, .14), 0 10px 14px -10px rgba(150, 110, 140, .6);
 }
 
 /* ── Lists: plain rows on a fine rule ── */
 [data-theme="jolly"] .ra-list { gap: 0; }
-[data-theme="jolly"] :is(.ra-row, .cal-ev-item) { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 12px 4px; border-bottom: 1px solid rgba(140, 95, 55, .16); }
+[data-theme="jolly"] :is(.ra-row, .cal-ev-item) { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 12px 4px; border-bottom: 1px solid rgba(150, 110, 140, .18); }
 [data-theme="jolly"] :is(.ra-row, .cal-ev-item):last-child { border-bottom: 0; }
-[data-theme="jolly"] .ra-ico { border-radius: 14px; box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .7), inset -2px -3px 4px rgba(120, 70, 30, .12), 0 8px 12px -7px rgba(140, 95, 55, .55); }
+[data-theme="jolly"] .ra-ico { border-radius: 14px; box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .7), inset -2px -3px 4px rgba(80, 40, 90, .12), 0 8px 12px -7px rgba(150, 110, 140, .55); }
 
-/* ── Charts in clay ──
-   Bars are shaded round like cylinders, light on the left (or top) and
-   shade on the right (or bottom), with a soft shadow where they stand.
-   Grooves are pressed into the card. */
-[data-theme="jolly"] :is(.prog-bar-wrap, .flow-bar-wrap, .gp-sum-bar, .alloc-strip-wrap, .bud-sum-track, .nl-track, .cf-prog-bar) {
-  background: #efe0cb; border-radius: 99px;
-  box-shadow: inset 2px 2px 4px rgba(140, 95, 55, .3), inset -2px -2px 3px rgba(255, 255, 255, .75);
-}
-[data-theme="jolly"] .prog-bar-wrap, [data-theme="jolly"] .flow-bar-wrap, [data-theme="jolly"] .gp-sum-bar, [data-theme="jolly"] .bud-sum-track { height: 12px; }
-[data-theme="jolly"] .nl-track { height: 10px; }
-[data-theme="jolly"] :is(.prog-bar, .flow-bar, .psf-bar > span, .gp-sum-bar i, .alloc-strip, .bud-sum-fill, .nl-track i, .cf-prog-bar i) { position: relative; border-radius: 99px; }
-[data-theme="jolly"] :is(.prog-bar, .flow-bar, .psf-bar > span, .gp-sum-bar i, .alloc-strip, .bud-sum-fill, .nl-track i, .cf-prog-bar i)::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, .55) 0%, rgba(255, 255, 255, .12) 38%, rgba(255, 255, 255, 0) 55%, rgba(80, 45, 15, .2) 100%);
-  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .5), inset -1px -2px 2px rgba(80, 45, 15, .15);
-}
-[data-theme="jolly"] .psf-bar { height: 16px; gap: 6px; }
-[data-theme="jolly"] .psf-bar > span { box-shadow: 0 6px 8px -4px rgba(120, 75, 35, .35); }
-[data-theme="jolly"] .prog-bar--normal { background: linear-gradient(90deg, #f2a38a, #e48a5e); }
-[data-theme="jolly"] .prog-bar--income { background: linear-gradient(90deg, #b5c99a, #8fab72); }
-[data-theme="jolly"] .prog-bar--over { background: linear-gradient(90deg, #efb35e, #d4664f); }
-[data-theme="jolly"] .gp-sum-bar i { background: linear-gradient(90deg, #b5c99a, #82b8ab); }
-[data-theme="jolly"] .nl-hero .nl-track i { background: linear-gradient(90deg, #f2a38a, #e48a5e); }
-/* Standing bars: cylinders, each day in its own colour like the reference. */
-[data-theme="jolly"] .st-bar { position: relative; width: min(30px, 72%); border-radius: 999px; min-height: 8px; box-shadow: 4px 8px 10px -6px rgba(120, 75, 35, .45); }
-[data-theme="jolly"] .st-bar-pair .st-bar--in, [data-theme="jolly"] .st-bar-pair .st-bar--out { width: min(18px, 44%); }
-[data-theme="jolly"] .st-bar::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(90deg, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, .16) 30%, rgba(255, 255, 255, 0) 52%, rgba(80, 45, 15, .22) 100%);
-  box-shadow: inset 0 4px 3px -2px rgba(255, 255, 255, .55), inset 0 -4px 5px -2px rgba(80, 45, 15, .2);
-}
-[data-theme="jolly"] .st-bar--in { background: #a9c08f; }
-[data-theme="jolly"] .st-bar--out { background: #f2a38a; }
-[data-theme="jolly"] .st-bar--wk, [data-theme="jolly"] .st-bar--wk.is-max { opacity: 1; }
-[data-theme="jolly"] .st-bar-col:nth-child(7n+1) .st-bar--wk { background: #f4a58a; }
-[data-theme="jolly"] .st-bar-col:nth-child(7n+2) .st-bar--wk { background: #f2c35b; }
-[data-theme="jolly"] .st-bar-col:nth-child(7n+3) .st-bar--wk { background: #a6bd8c; }
-[data-theme="jolly"] .st-bar-col:nth-child(7n+4) .st-bar--wk { background: #e98f5e; }
-[data-theme="jolly"] .st-bar-col:nth-child(7n+5) .st-bar--wk { background: #93b2cc; }
-[data-theme="jolly"] .st-bar-col:nth-child(7n+6) .st-bar--wk { background: #82b8ab; }
-[data-theme="jolly"] .st-bar-col:nth-child(7n+7) .st-bar--wk { background: #d5b1d4; }
-/* Donuts, rings, gauges and lines: bevelled by the lighting filter. */
-[data-theme="jolly"] :is(.donut-svg, .pie-svg, .gp-ring, .gauge-svg, .radial-bars-svg) { filter: url(#clayFx) drop-shadow(0 7px 7px rgba(130, 85, 45, .28)); }
-[data-theme="jolly"] :is(.spend-line-svg, .st-svg) { filter: url(#clayFxThin) drop-shadow(0 5px 4px rgba(130, 85, 45, .25)); }
-[data-theme="jolly"] .spend-line-path { stroke-width: 6; }
-[data-theme="jolly"] .spend-line-dot {
-  width: 12px; height: 12px; border: 0;
-  background: radial-gradient(circle at 35% 30%, #fde3d4 0%, #f2a38a 50%, #d9805f 100%);
-  box-shadow: 0 3px 4px rgba(120, 70, 35, .35);
-}
-/* Category colours, in the same earthy order on the segments and their legends. */
-[data-theme="jolly"] :is(.dseg, .pie-seg)[data-idx="0"] { stroke: #f4a58a; }
-[data-theme="jolly"] :is(.dseg, .pie-seg)[data-idx="1"] { stroke: #f2c35b; }
-[data-theme="jolly"] :is(.dseg, .pie-seg)[data-idx="2"] { stroke: #a6bd8c; }
-[data-theme="jolly"] :is(.dseg, .pie-seg)[data-idx="3"] { stroke: #e98f5e; }
-[data-theme="jolly"] :is(.dseg, .pie-seg)[data-idx="4"] { stroke: #93b2cc; }
-[data-theme="jolly"] :is(.dseg, .pie-seg)[data-idx="5"] { stroke: #82b8ab; }
-[data-theme="jolly"] :is(.dseg, .pie-seg)[data-idx="6"] { stroke: #d5b1d4; }
-[data-theme="jolly"] .pie-seg[data-idx="0"] { fill: #f4a58a; } [data-theme="jolly"] .pie-seg[data-idx="1"] { fill: #f2c35b; }
-[data-theme="jolly"] .pie-seg[data-idx="2"] { fill: #a6bd8c; } [data-theme="jolly"] .pie-seg[data-idx="3"] { fill: #e98f5e; }
-[data-theme="jolly"] .pie-seg[data-idx="4"] { fill: #93b2cc; } [data-theme="jolly"] .pie-seg[data-idx="5"] { fill: #82b8ab; }
-[data-theme="jolly"] .pie-seg[data-idx="6"] { fill: #d5b1d4; }
-[data-theme="jolly"] .dleg-row[data-idx="0"] .dleg-swatch { background: #f4a58a !important; }
-[data-theme="jolly"] .dleg-row[data-idx="1"] .dleg-swatch { background: #f2c35b !important; }
-[data-theme="jolly"] .dleg-row[data-idx="2"] .dleg-swatch { background: #a6bd8c !important; }
-[data-theme="jolly"] .dleg-row[data-idx="3"] .dleg-swatch { background: #e98f5e !important; }
-[data-theme="jolly"] .dleg-row[data-idx="4"] .dleg-swatch { background: #93b2cc !important; }
-[data-theme="jolly"] .dleg-row[data-idx="5"] .dleg-swatch { background: #82b8ab !important; }
-[data-theme="jolly"] .dleg-row[data-idx="6"] .dleg-swatch { background: #d5b1d4 !important; }
-[data-theme="jolly"] .psf-bar > span:nth-child(7n+1), [data-theme="jolly"] .psf-legend > span:nth-child(7n+1) i { background: #f4a58a !important; }
-[data-theme="jolly"] .psf-bar > span:nth-child(7n+2), [data-theme="jolly"] .psf-legend > span:nth-child(7n+2) i { background: #f2c35b !important; }
-[data-theme="jolly"] .psf-bar > span:nth-child(7n+3), [data-theme="jolly"] .psf-legend > span:nth-child(7n+3) i { background: #a6bd8c !important; }
-[data-theme="jolly"] .psf-bar > span:nth-child(7n+4), [data-theme="jolly"] .psf-legend > span:nth-child(7n+4) i { background: #e98f5e !important; }
-[data-theme="jolly"] .psf-bar > span:nth-child(7n+5), [data-theme="jolly"] .psf-legend > span:nth-child(7n+5) i { background: #93b2cc !important; }
-[data-theme="jolly"] .psf-bar > span:nth-child(7n+6), [data-theme="jolly"] .psf-legend > span:nth-child(7n+6) i { background: #82b8ab !important; }
-[data-theme="jolly"] .psf-bar > span:nth-child(7n+7), [data-theme="jolly"] .psf-legend > span:nth-child(7n+7) i { background: #d5b1d4 !important; }
-[data-theme="jolly"] :is(.dleg-swatch, .psf-legend i) { box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .55), inset -1px -2px 2px rgba(80, 45, 15, .2), 0 2px 3px rgba(120, 75, 35, .3); }
-
-/* ── The coin, in clay: mustard on heads, sage on tails ── */
+/* ── The coin, in clay: butter on heads, lavender on tails ── */
 [data-theme="jolly"] .cf-face--heads {
-  color: #6b4a14; background: var(--clay-grain), radial-gradient(circle at 34% 28%, #fde9b6 0%, #f2c766 48%, #d9a142 100%);
+  color: #6b4a14; background: var(--clay-grain), radial-gradient(circle at 34% 28%, #fdeab3 0%, #f5c84f 48%, #dba63a 100%);
   box-shadow: inset 4px 5px 4px rgba(255, 255, 255, .55), inset -7px -9px 14px rgba(140, 85, 20, .3), inset 0 0 0 8px rgba(255, 255, 255, .12);
 }
 [data-theme="jolly"] .cf-face--tails {
-  color: #3d4e2c; background: var(--clay-grain), radial-gradient(circle at 34% 28%, #e3ecd4 0%, #aec395 48%, #8ea574 100%);
-  box-shadow: inset 4px 5px 4px rgba(255, 255, 255, .55), inset -7px -9px 14px rgba(70, 90, 40, .3), inset 0 0 0 8px rgba(255, 255, 255, .12);
+  color: #3d2f7a; background: var(--clay-grain), radial-gradient(circle at 34% 28%, #f0ebfe 0%, #b6a8f5 48%, #9483ec 100%);
+  box-shadow: inset 4px 5px 4px rgba(255, 255, 255, .55), inset -7px -9px 14px rgba(70, 40, 150, .3), inset 0 0 0 8px rgba(255, 255, 255, .12);
 }
-[data-theme="jolly"] .ch-mini-coin { background: var(--clay-grain), radial-gradient(circle at 34% 28%, #fde9b6 0%, #f2c766 48%, #d9a142 100%); box-shadow: inset 2px 3px 2px rgba(255, 255, 255, .55), inset -3px -4px 6px rgba(140, 85, 20, .3), 0 8px 12px -6px rgba(170, 110, 40, .6); }
-[data-theme="jolly"] .cf-slider::-webkit-slider-runnable-track { background: linear-gradient(90deg, #f2a38a 0, #e48a5e var(--fill), #efe0cb var(--fill)); box-shadow: inset 2px 2px 4px rgba(140, 95, 55, .3), inset -2px -2px 3px rgba(255, 255, 255, .75); }
-[data-theme="jolly"] .cf-slider::-webkit-slider-thumb { border: 0; background: var(--clay-grain), radial-gradient(circle at 34% 28%, #fffaf3 0%, #f6e8d6 60%, #e5cfb4 100%); box-shadow: inset 2px 2px 1px #fff, inset -2px -3px 4px rgba(140, 95, 55, .2), 0 6px 10px -4px rgba(120, 75, 35, .55); }
+[data-theme="jolly"] .ch-mini-coin { background: var(--clay-grain), radial-gradient(circle at 34% 28%, #fdeab3 0%, #f5c84f 48%, #dba63a 100%); box-shadow: inset 2px 3px 2px rgba(255, 255, 255, .55), inset -3px -4px 6px rgba(140, 85, 20, .3), 0 8px 12px -6px rgba(170, 110, 40, .6); }
+[data-theme="jolly"] .cf-slider::-webkit-slider-thumb { border: 0; background: var(--clay-grain), radial-gradient(circle at 34% 28%, #ffffff 0%, #f6eeec 60%, #e3d6d4 100%); box-shadow: inset 2px 2px 1px #fff, inset -2px -3px 4px rgba(150, 105, 130, .2), 0 6px 10px -4px rgba(110, 80, 120, .55); }
 
-/* ── The sidebar: a sage clay slab, lit along its edge ── */
+/* ── The sidebar: a lavender clay slab, lit along its edge ── */
 @media (min-width: 901px) {
   html[data-theme="jolly"][data-nav="left"] .tool-shell > .nav-rail {
     background: var(--clay-grain), var(--ui-side); border-radius: 0 34px 34px 0;
-    box-shadow: inset 3px 3px 2px rgba(255, 255, 255, .4), inset -4px -4px 3px rgba(60, 80, 35, .18), inset -18px 0 30px -18px rgba(60, 80, 35, .3), 14px 0 32px -16px rgba(110, 90, 50, .5);
+    box-shadow: inset 3px 3px 2px rgba(255, 255, 255, .35), inset -4px -4px 3px rgba(60, 30, 140, .18), inset -18px 0 30px -18px rgba(255, 255, 255, .35), 14px 0 32px -16px rgba(110, 84, 200, .5);
   }
   html[data-theme="jolly"][data-nav="right"] .tool-shell > .nav-rail {
     background: var(--clay-grain), var(--ui-side); border-radius: 34px 0 0 34px;
-    box-shadow: inset 3px 3px 2px rgba(255, 255, 255, .4), inset 18px 0 30px -18px rgba(60, 80, 35, .3), -14px 0 32px -16px rgba(110, 90, 50, .5);
+    box-shadow: inset 3px 3px 2px rgba(255, 255, 255, .35), inset 18px 0 30px -18px rgba(255, 255, 255, .35), -14px 0 32px -16px rgba(110, 84, 200, .5);
   }
 }
-html[data-theme="jolly"] .nav-rail, html[data-theme="jolly"] .nav-rail .wordmark, html[data-theme="jolly"] .nav-rail .app-title-editable { color: #2f3a24; }
-html[data-theme="jolly"] .nav-rail .app-title-editable { font-weight: 800; font-size: 18px; }
-html[data-theme="jolly"] .nav-rail-heading { color: rgba(47, 58, 36, .62); }
-html[data-theme="jolly"] .nav-rail-item { gap: 15px; padding: 10px 14px; border-radius: 18px; color: #2f3a24; font-size: 16px; font-weight: 700; text-shadow: 0 1px 0 rgba(255, 255, 255, .25); }
-html[data-theme="jolly"] .nav-rail-item .nav-rail-icon, html[data-theme="jolly"] .nav-rail-item.is-active .nav-rail-icon { width: 26px; height: 26px; flex-basis: 26px; color: #2f3a24; }
-html[data-theme="jolly"] .nav-rail-item .app-ico { width: 24px; height: 24px; stroke-width: 2.4; }
-html[data-theme="jolly"] .nav-rail-item:hover:not(.is-active) { background: rgba(255, 255, 255, .2); color: #22291a; }
+html[data-theme="jolly"] .nav-rail, html[data-theme="jolly"] .nav-rail .wordmark, html[data-theme="jolly"] .nav-rail .app-title-editable { color: #fff; }
+html[data-theme="jolly"] .nav-rail .app-title-editable { font-weight: 800; font-size: 18px; text-shadow: 0 1px 2px rgba(60, 30, 140, .3); }
+html[data-theme="jolly"] .nav-rail-heading { color: rgba(255, 255, 255, .75); }
+html[data-theme="jolly"] .nav-rail-item { gap: 15px; padding: 10px 14px; border-radius: 18px; color: #fff; font-size: 16px; font-weight: 700; text-shadow: 0 1px 2px rgba(60, 30, 140, .3); }
+html[data-theme="jolly"] .nav-rail-item .nav-rail-icon, html[data-theme="jolly"] .nav-rail-item.is-active .nav-rail-icon { width: 26px; height: 26px; flex-basis: 26px; color: #fff; }
+html[data-theme="jolly"] .nav-rail-item .app-ico { width: 24px; height: 24px; stroke-width: 2.5; filter: drop-shadow(0 2px 2px rgba(60, 30, 140, .35)); }
+html[data-theme="jolly"] .nav-rail-item:hover:not(.is-active) { background: rgba(255, 255, 255, .16); color: #fff; }
 html[data-theme="jolly"] .nav-rail-item.is-active {
-  color: #3d3226; font-weight: 800;
-  background: var(--clay-grain), linear-gradient(160deg, #fffaf3 0%, #f8eddf 55%, #efdfc9 100%);
-  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .9), inset -2px -3px 5px rgba(150, 100, 60, .16), 0 12px 18px -10px rgba(60, 70, 35, .55);
+  color: #4b3c9c; font-weight: 800; text-shadow: none;
+  background: var(--clay-grain), linear-gradient(160deg, #ffffff 0%, #fbf3f1 55%, #efe2e4 100%);
+  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .95), inset -2px -3px 5px rgba(110, 84, 200, .16), 0 12px 18px -10px rgba(60, 30, 140, .55);
 }
-html[data-theme="jolly"] .nav-rail-item.is-active .nav-rail-icon { color: #e2875c; }
+html[data-theme="jolly"] .nav-rail-item.is-active .nav-rail-icon { color: #7d66e6; }
+html[data-theme="jolly"] .nav-rail-item.is-active .app-ico { filter: none; }
 html[data-theme="jolly"] .nav-rail-item.is-active::before { display: none; }
-html[data-theme="jolly"] .nav-rail-sections + .nav-rail-sections, html[data-theme="jolly"] .nav-rail-extra { border-color: rgba(255, 255, 255, .35); }
-html[data-theme="jolly"] .nav-rail-account { --tc: #f5c3a6; color: #3d3226; }
-html[data-theme="jolly"] .nra-sub, html[data-theme="jolly"] .nra-go { color: #7a5a44; }
-html[data-theme="jolly"] .nra-avatar { background: radial-gradient(circle at 34% 28%, #f4b38c, #d4744a); box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .5); }
+html[data-theme="jolly"] .nav-rail-sections + .nav-rail-sections, html[data-theme="jolly"] .nav-rail-extra { border-color: rgba(255, 255, 255, .3); }
+html[data-theme="jolly"] .nav-rail .nav-badge { box-shadow: 0 0 0 2px rgba(255, 255, 255, .7); }
+/* The account at its foot: a pink clay card, like the reference's offer card. */
+html[data-theme="jolly"] .nav-rail-account { --tc: #f9d3cc; color: #33304a; text-shadow: none; }
+html[data-theme="jolly"] .nra-sub, html[data-theme="jolly"] .nra-go { color: #7a6475; }
+html[data-theme="jolly"] .nra-avatar { background: radial-gradient(circle at 34% 28%, #b9adf7, #7462df); box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .5); }
 @media (max-width: 1150px) { html[data-theme="jolly"] .nav-rail-account { background: none; box-shadow: none; } }
 
 /* Phone: the tab pill and the dock in cream clay. */
 [data-theme="jolly"] :is(.budget-tabs, .nav-dock-bar) {
-  border: 0; background: var(--clay-grain), linear-gradient(160deg, #fffaf3, #f6e9d8);
-  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .9), inset -3px -4px 8px rgba(150, 100, 60, .14), 0 16px 24px -14px rgba(140, 95, 55, .6);
+  border: 0; background: var(--clay-grain), linear-gradient(160deg, #fffbfa, #f6ecea);
+  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .9), inset -3px -4px 8px rgba(150, 105, 130, .14), 0 16px 24px -14px rgba(150, 110, 140, .6);
 }
-[data-theme="jolly"] .dash-fab { background: linear-gradient(160deg, #f4b38c, #d4744a); box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .45), 0 14px 22px -10px rgba(200, 100, 55, .75); }
-[data-theme="jolly"] .wordmark-icon { box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .45), 0 6px 12px -6px rgba(90, 60, 30, .5); }
-[data-theme="jolly"] .section-title .app-ico, [data-theme="jolly"] .module-section-title .app-ico { color: #e2875c; }
+[data-theme="jolly"] .dash-fab { background: linear-gradient(160deg, #b9adf7, #7462df); box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .45), 0 14px 22px -10px rgba(110, 84, 220, .75); }
+[data-theme="jolly"] .wordmark-icon { box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .45), 0 6px 12px -6px rgba(60, 30, 140, .5); }
+[data-theme="jolly"] .section-title .app-ico, [data-theme="jolly"] .module-section-title .app-ico { color: #8571ec; }
 
 /* ═══ Coin Flip: one card ═══════════════════════════════════════════
    The whole game in a single card: what tempts you, roughly what it
@@ -8329,16 +8251,16 @@ html[data-theme="jolly"] .nra-avatar { background: radial-gradient(circle at 34%
 .cf-slider:disabled { cursor: default; }
 .cf-slider-ends { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12.5px; font-weight: 700; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .cf-range-link { font-size: 12.5px; }
-[data-theme="minimal"] .cf-slider::-webkit-slider-runnable-track { box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .cf-slider::-webkit-slider-runnable-track { box-shadow: var(--neu-inset-sm); }
 
-/* ═══ Minimal: soft peach ═══════════════════════════════════════════
+/* ═══ Peachy: soft peach ═══════════════════════════════════════════
    Off-white cards on a blush-cream page, a peach sidebar, and warm
    accents: coral for actions, apricot for the main figure's card, peach
    and sand for tiles. Surfaces are lifted by a soft warm shadow below and
    a white highlight above, never by an outline, and pressed in where
    something is chosen or typed. It reuses the raised and pressed tokens
    from before, so every element already built on them follows. */
-[data-theme="minimal"] {
+[data-theme="peachy"] {
   --grad-indigo: #e4887a;
   --grad-indigo-rgb: 228, 136, 122;
   --grad-purple: #efa774;
@@ -8374,86 +8296,373 @@ html[data-theme="jolly"] .nra-avatar { background: radial-gradient(circle at 34%
   --ui-btn-ink: #ffffff;
   --ui-feature-neg-ink: #c2334f;
 }
-[data-theme="minimal"] body { background: #f8ebe4; }
-[data-theme="minimal"] .modal, [data-theme="minimal"] .fk-dialog, [data-theme="minimal"] #toast { background: var(--neu-bg); }
+[data-theme="peachy"] body { background: #f8ebe4; }
+[data-theme="peachy"] .modal, [data-theme="peachy"] .fk-dialog, [data-theme="peachy"] #toast { background: var(--neu-bg); }
+/* The cards themselves are pure white; what sits inside them (tiles, pills,
+   fields) keeps the warm off-white, so the two read apart. */
+[data-theme="peachy"] :is(.tool-shell .app-scroll .panel:not(.nl-hero), .tool-shell .app-scroll .scard, .env-card, .stg-card, .ch-gc, .nl-hero--cu .coming-up, .st-kpi,
+  .modal, .fk-dialog, .fk-up-card, .guide-modal) { background-color: #ffffff; }
 /* The main action is coral; what is chosen is pressed into a peach wash. */
-[data-theme="minimal"] .btn-primary {
+[data-theme="peachy"] .btn-primary {
   background: var(--ui-btn); color: #fff; border-color: transparent;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 12px 20px -10px rgba(228, 136, 122, .85);
 }
-[data-theme="minimal"] .btn-primary:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 24px -10px rgba(228, 136, 122, .95); }
-[data-theme="minimal"] .theme-setting-row .theme-opt.is-active, [data-theme="minimal"] .layout-setting-row .layout-opt.is-active,
-[data-theme="minimal"] .qa-chip.is-on, [data-theme="minimal"] .qa-type.is-on, [data-theme="minimal"] .cf-target.is-on, [data-theme="minimal"] .btn.preset-active {
+[data-theme="peachy"] .btn-primary:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 24px -10px rgba(228, 136, 122, .95); }
+[data-theme="peachy"] .theme-setting-row .theme-opt.is-active, [data-theme="peachy"] .layout-setting-row .layout-opt.is-active,
+[data-theme="peachy"] .qa-chip.is-on, [data-theme="peachy"] .qa-type.is-on, [data-theme="peachy"] .cf-target.is-on, [data-theme="peachy"] .btn.preset-active {
   background: #fbe5dc; color: #8a4436; box-shadow: var(--neu-inset);
 }
-[data-theme="minimal"] .dv-toggle .dv-opt.is-on { background: var(--ui-btn); color: #fff; box-shadow: 0 6px 12px -6px rgba(228, 136, 122, .8); }
-[data-theme="minimal"] .period-btn-ico { background: linear-gradient(180deg, #f6c08a, #efa774); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45); }
-[data-theme="minimal"] .rec-toggle-track { background: #f1e3dd; }
-[data-theme="minimal"] .recurring-toggle input:checked + .rec-toggle-track { background: linear-gradient(180deg, #f1a999, #e4887a); }
-[data-theme="minimal"] .link-btn { color: #c96e5c; }
+[data-theme="peachy"] .dv-toggle .dv-opt.is-on { background: var(--ui-btn); color: #fff; box-shadow: 0 6px 12px -6px rgba(228, 136, 122, .8); }
+[data-theme="peachy"] .period-btn-ico { background: linear-gradient(180deg, #f6c08a, #efa774); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45); }
+[data-theme="peachy"] .rec-toggle-track { background: #f1e3dd; }
+[data-theme="peachy"] .recurring-toggle input:checked + .rec-toggle-track { background: linear-gradient(180deg, #f1a999, #e4887a); }
+[data-theme="peachy"] .link-btn { color: #c96e5c; }
 
 /* The sidebar: a peach panel with a soft lit edge; dark warm labels, the
    chosen one on a raised white pill. */
 @media (min-width: 901px) {
-  html[data-theme="minimal"][data-nav="left"] .tool-shell > .nav-rail { border-radius: 0 30px 30px 0; box-shadow: inset -2px 0 0 rgba(255, 255, 255, .35), 10px 0 30px -16px rgba(176, 118, 100, .55); }
-  html[data-theme="minimal"][data-nav="right"] .tool-shell > .nav-rail { border-radius: 30px 0 0 30px; box-shadow: inset 2px 0 0 rgba(255, 255, 255, .35), -10px 0 30px -16px rgba(176, 118, 100, .55); }
+  html[data-theme="peachy"][data-nav="left"] .tool-shell > .nav-rail { border-radius: 0 30px 30px 0; box-shadow: inset -2px 0 0 rgba(255, 255, 255, .35), 10px 0 30px -16px rgba(176, 118, 100, .55); }
+  html[data-theme="peachy"][data-nav="right"] .tool-shell > .nav-rail { border-radius: 30px 0 0 30px; box-shadow: inset 2px 0 0 rgba(255, 255, 255, .35), -10px 0 30px -16px rgba(176, 118, 100, .55); }
 }
-html[data-theme="minimal"] .nav-rail, html[data-theme="minimal"] .nav-rail .wordmark { color: #4a302a; }
-html[data-theme="minimal"] .nav-rail-heading { color: rgba(90, 55, 45, .62); }
-html[data-theme="minimal"] .nav-rail-item { color: #5a3a32; font-weight: 600; }
-html[data-theme="minimal"] .nav-rail-item:hover:not(.is-active) { background: rgba(255, 255, 255, .32); box-shadow: none; color: #3a2420; }
-html[data-theme="minimal"] .nav-rail-item.is-active { background: #fbf7f5; color: #3a2420; font-weight: 700; box-shadow: 6px 8px 16px -8px rgba(150, 80, 60, .45), inset 0 1px 0 #fff; }
-html[data-theme="minimal"] .nav-rail-item.is-active .nav-rail-icon { color: #e4887a; }
-html[data-theme="minimal"] .nav-rail-sections + .nav-rail-sections, html[data-theme="minimal"] .nav-rail-extra { border-color: rgba(255, 255, 255, .45); }
-html[data-theme="minimal"] .nav-rail-account { background: #fbf7f5; color: #3a2e2b; box-shadow: 6px 8px 16px -8px rgba(150, 80, 60, .45), inset 0 1px 0 #fff; }
-html[data-theme="minimal"] .nra-avatar, [data-theme="minimal"] .wordmark-icon { background: linear-gradient(160deg, #f6c08a, #e4887a); }
-@media (max-width: 1150px) { html[data-theme="minimal"] .nav-rail-account { background: none; box-shadow: none; } }
+html[data-theme="peachy"] .nav-rail, html[data-theme="peachy"] .nav-rail .wordmark { color: #4a302a; }
+html[data-theme="peachy"] .nav-rail-heading { color: rgba(90, 55, 45, .62); }
+html[data-theme="peachy"] .nav-rail-item { color: #5a3a32; font-weight: 600; }
+html[data-theme="peachy"] .nav-rail-item:hover:not(.is-active) { background: rgba(255, 255, 255, .32); box-shadow: none; color: #3a2420; }
+html[data-theme="peachy"] .nav-rail-item.is-active { background: #fbf7f5; color: #3a2420; font-weight: 700; box-shadow: 6px 8px 16px -8px rgba(150, 80, 60, .45), inset 0 1px 0 #fff; }
+html[data-theme="peachy"] .nav-rail-item.is-active .nav-rail-icon { color: #e4887a; }
+html[data-theme="peachy"] .nav-rail-sections + .nav-rail-sections, html[data-theme="peachy"] .nav-rail-extra { border-color: rgba(255, 255, 255, .45); }
+html[data-theme="peachy"] .nav-rail-account { background: #fbf7f5; color: #3a2e2b; box-shadow: 6px 8px 16px -8px rgba(150, 80, 60, .45), inset 0 1px 0 #fff; }
+html[data-theme="peachy"] .nra-avatar, [data-theme="peachy"] .wordmark-icon { background: linear-gradient(160deg, #f6c08a, #e4887a); }
+@media (max-width: 1150px) { html[data-theme="peachy"] .nav-rail-account { background: none; box-shadow: none; } }
 
 /* Tiles in the warm family: apricot, blush and sand. */
-[data-theme="minimal"] .psf-tile--in   { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .psf-tile--out  { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .psf-tile--kept { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .bud-sum-fig:nth-child(1) { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .bud-sum-fig:nth-child(2) { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .bud-sum-fig:nth-child(3) { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .ch-stat:nth-child(1) { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .ch-stat:nth-child(2) { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .ch-stat:nth-child(3) { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .psf-tile--in   { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .psf-tile--out  { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .psf-tile--kept { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .bud-sum-fig:nth-child(1) { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .bud-sum-fig:nth-child(2) { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .bud-sum-fig:nth-child(3) { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .ch-stat:nth-child(1) { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .ch-stat:nth-child(2) { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .ch-stat:nth-child(3) { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
 /* Allocation keeps one colour per bucket, taken from the same family. */
-[data-theme="minimal"] .alloc-card:nth-child(5n+1), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+1) { --bc: #efa774 !important; }
-[data-theme="minimal"] .alloc-card:nth-child(5n+2), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+2) { --bc: #e4887a !important; }
-[data-theme="minimal"] .alloc-card:nth-child(5n+3), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+3) { --bc: #8fb98a !important; }
-[data-theme="minimal"] .alloc-card:nth-child(5n+4), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+4) { --bc: #c9a07a !important; }
-[data-theme="minimal"] .alloc-card:nth-child(5n+5), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+5) { --bc: #d99aa8 !important; }
-[data-theme="minimal"] .alloc-card { background: color-mix(in srgb, var(--bc) 18%, #faf7f5); }
-[data-theme="minimal"] .alloc-editor .alloc-bucket-row { background: color-mix(in srgb, var(--bc) 14%, #faf7f5); }
+[data-theme="peachy"] .alloc-card:nth-child(5n+1), [data-theme="peachy"] .alloc-bucket-row:nth-child(5n+1) { --bc: #efa774 !important; }
+[data-theme="peachy"] .alloc-card:nth-child(5n+2), [data-theme="peachy"] .alloc-bucket-row:nth-child(5n+2) { --bc: #e4887a !important; }
+[data-theme="peachy"] .alloc-card:nth-child(5n+3), [data-theme="peachy"] .alloc-bucket-row:nth-child(5n+3) { --bc: #8fb98a !important; }
+[data-theme="peachy"] .alloc-card:nth-child(5n+4), [data-theme="peachy"] .alloc-bucket-row:nth-child(5n+4) { --bc: #c9a07a !important; }
+[data-theme="peachy"] .alloc-card:nth-child(5n+5), [data-theme="peachy"] .alloc-bucket-row:nth-child(5n+5) { --bc: #d99aa8 !important; }
+[data-theme="peachy"] .alloc-card { background: color-mix(in srgb, var(--bc) 18%, #faf7f5); }
+[data-theme="peachy"] .alloc-editor .alloc-bucket-row { background: color-mix(in srgb, var(--bc) 14%, #faf7f5); }
 /* Free to spend on its apricot card: white pills pressed in, a coral track. */
-[data-theme="minimal"] .nl-hero .nl-pill { background: rgba(255, 255, 255, .6); box-shadow: inset 2px 2px 4px rgba(200, 130, 100, .18), inset -2px -2px 4px rgba(255, 255, 255, .7); }
-[data-theme="minimal"] .nl-hero .nl-track { background: rgba(255, 255, 255, .6); box-shadow: inset 1px 1px 3px rgba(200, 130, 100, .25); }
-[data-theme="minimal"] .nl-hero .nl-track i { background: linear-gradient(90deg, #f1a999, #e4887a); }
-[data-theme="minimal"] .nl-hero .nl-label, [data-theme="minimal"] .nl-hero .nl-pill span, [data-theme="minimal"] .nl-hero .nl-track-cap { color: #8a6352; }
-[data-theme="minimal"] .nl-hero .nl-pill--today strong { color: var(--income); }
+[data-theme="peachy"] .nl-hero .nl-pill { background: rgba(255, 255, 255, .6); box-shadow: inset 2px 2px 4px rgba(200, 130, 100, .18), inset -2px -2px 4px rgba(255, 255, 255, .7); }
+[data-theme="peachy"] .nl-hero .nl-track { background: rgba(255, 255, 255, .6); box-shadow: inset 1px 1px 3px rgba(200, 130, 100, .25); }
+[data-theme="peachy"] .nl-hero .nl-track i { background: linear-gradient(90deg, #f1a999, #e4887a); }
+[data-theme="peachy"] .nl-hero .nl-label, [data-theme="peachy"] .nl-hero .nl-pill span, [data-theme="peachy"] .nl-hero .nl-track-cap { color: #8a6352; }
+[data-theme="peachy"] .nl-hero .nl-pill--today strong { color: var(--income); }
 /* Rows: soft raised white strips. */
-[data-theme="minimal"] .ra-row { box-shadow: var(--neu-raise-sm); }
-[data-theme="minimal"] .ra-ico { box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .ra-row { box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .ra-ico { box-shadow: var(--neu-inset-sm); }
 /* Phone: the tab pill and the dock as white raised strips; the chosen tab coral. */
-[data-theme="minimal"] .budget-tabs, [data-theme="minimal"] .nav-dock-bar { background: #faf7f5; border-color: transparent; box-shadow: var(--neu-raise); }
-[data-theme="minimal"] .budget-tabs .btab.is-active { background: var(--ui-btn); color: #fff; box-shadow: 0 6px 12px -6px rgba(228, 136, 122, .8); }
+[data-theme="peachy"] .budget-tabs, [data-theme="peachy"] .nav-dock-bar { background: #faf7f5; border-color: transparent; box-shadow: var(--neu-raise); }
+[data-theme="peachy"] .budget-tabs .btab.is-active { background: var(--ui-btn); color: #fff; box-shadow: 0 6px 12px -6px rgba(228, 136, 122, .8); }
 
-/* Jolly, the chart view: the figures on top are clay cards too, and
-   Cash Flow's rows take the earthy palette in order. */
-[data-theme="jolly"] .st-kpi {
-  border: 0; border-radius: var(--radius-md);
-  background: var(--clay-grain), linear-gradient(155deg, #fdf7ef 0%, #f8eddf 55%, #f3e3cf 100%);
-  box-shadow: inset 3px 3px 1.5px rgba(255, 255, 255, .85), inset 10px 12px 20px rgba(255, 255, 255, .4),
-    inset -3px -4px 2px rgba(150, 100, 60, .1), inset -10px -12px 22px rgba(150, 100, 60, .1), 0 16px 26px -16px rgba(140, 95, 55, .5);
+/* ═══ SCULPTED CHARTS: Jolly, Peachy and Frosty ═════════════════════
+   One treatment for every chart in the three sculpted appearances, so
+   they stay consistent; each brings its own palette and shade:
+     --ch-1 … --ch-7   the series colours, in order
+     --ch-in, --ch-out income and spending bars
+     --ch-groove       the empty track, pressed into the card
+     --ch-groove-shade the shade inside that track
+     --ch-drop         the shadow a bar casts
+   Bars are shaded round like cylinders (light on the left or top, shade
+   on the right or bottom); grooves are pressed in; donuts, rings, gauges
+   and lines go through the page's lighting filter (#clayFx), which
+   bevels their edges from the top-left light. */
+[data-theme="jolly"] {
+  --ch-1: #a593f0; --ch-2: #f5a3b8; --ch-3: #f6a456; --ch-4: #f6cf63; --ch-5: #a5cf8a; --ch-6: #7fb1ee; --ch-7: #c9b8f7;
+  --ch-in: #a5cf8a; --ch-out: #f5a3b8;
+  --ch-groove: #f1e6e4; --ch-groove-shade: rgba(150, 110, 140, .3); --ch-drop: rgba(110, 80, 120, .4);
 }
-[data-theme="jolly"] .flow-row:nth-child(6n+1) .flow-bar { background: #a9c08f !important; }
-[data-theme="jolly"] .flow-row:nth-child(6n+2) .flow-bar { background: #f2a38a !important; }
-[data-theme="jolly"] .flow-row:nth-child(6n+3) .flow-bar { background: #efc263 !important; }
-[data-theme="jolly"] .flow-row:nth-child(6n+4) .flow-bar { background: #93b2cc !important; }
-[data-theme="jolly"] .flow-row:nth-child(6n+5) .flow-bar { background: #d5b1d4 !important; }
-[data-theme="jolly"] .flow-row:nth-child(6n+6) .flow-bar { background: #82b8ab !important; }
-[data-theme="jolly"] .st-sw--in { background: #a9c08f !important; }
-[data-theme="jolly"] .st-sw--out { background: #f2a38a !important; }
-[data-theme="jolly"] .st-sw--actual { background: #e48a5e !important; }
+[data-theme="peachy"] {
+  --ch-1: #ee9a88; --ch-2: #f4bb7c; --ch-3: #a9c49f; --ch-4: #f2d08a; --ch-5: #e7a5b6; --ch-6: #9fb8cf; --ch-7: #d9b89a;
+  --ch-in: #a9c49f; --ch-out: #ee9a88;
+  --ch-groove: #f1e4dd; --ch-groove-shade: rgba(190, 140, 124, .32); --ch-drop: rgba(176, 118, 100, .4);
+}
+[data-theme="frosty"] {
+  --ch-1: #9b7bf7; --ch-2: #f49cc8; --ch-3: #f7a96b; --ch-4: #6fd0b4; --ch-5: #6fb4f3; --ch-6: #c3b0fa; --ch-7: #f8c39e;
+  --ch-in: #6fd0b4; --ch-out: #f49cc8;
+  --ch-groove: rgba(255, 255, 255, .55); --ch-groove-shade: rgba(110, 100, 170, .2); --ch-drop: rgba(110, 90, 200, .32);
+}
+/* Grooves. */
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.prog-bar-wrap, .flow-bar-wrap, .gp-sum-bar, .alloc-strip-wrap, .bud-sum-track, .nl-track, .cf-prog-bar) {
+  background: var(--ch-groove); border-radius: 99px;
+  box-shadow: inset 2px 2px 4px var(--ch-groove-shade), inset -2px -2px 3px rgba(255, 255, 255, .75);
+}
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.prog-bar-wrap, .flow-bar-wrap, .gp-sum-bar, .bud-sum-track) { height: 12px; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .nl-track { height: 10px; }
+/* Bars lying down: lit along the top, shaded along the bottom. */
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.prog-bar, .flow-bar, .psf-bar > span, .gp-sum-bar i, .alloc-strip, .bud-sum-fill, .nl-track i, .cf-prog-bar i) { position: relative; border-radius: 99px; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.prog-bar, .flow-bar, .psf-bar > span, .gp-sum-bar i, .alloc-strip, .bud-sum-fill, .nl-track i, .cf-prog-bar i)::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .55) 0%, rgba(255, 255, 255, .12) 38%, rgba(255, 255, 255, 0) 55%, rgba(60, 30, 50, .18) 100%);
+  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .5), inset -1px -2px 2px rgba(60, 30, 50, .14);
+}
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .psf-bar { height: 16px; gap: 6px; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .psf-bar > span { box-shadow: 0 6px 8px -4px var(--ch-drop); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .prog-bar--normal { background: linear-gradient(90deg, var(--ch-7), var(--ch-1)); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .prog-bar--income { background: linear-gradient(90deg, color-mix(in srgb, var(--ch-in) 70%, #fff), var(--ch-in)); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .prog-bar--over { background: linear-gradient(90deg, var(--ch-3), var(--expense)); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .gp-sum-bar i { background: linear-gradient(90deg, color-mix(in srgb, var(--ch-in) 70%, #fff), var(--ch-in)); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .nl-hero .nl-track i { background: linear-gradient(90deg, var(--ch-7), var(--ch-1)); }
+/* Bars standing up: cylinders, each day in its own colour. */
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar { position: relative; width: min(30px, 72%); border-radius: 999px; min-height: 8px; box-shadow: 4px 8px 10px -6px var(--ch-drop); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-pair .st-bar--in,
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-pair .st-bar--out { width: min(18px, 44%); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, .16) 30%, rgba(255, 255, 255, 0) 52%, rgba(60, 30, 50, .2) 100%);
+  box-shadow: inset 0 4px 3px -2px rgba(255, 255, 255, .55), inset 0 -4px 5px -2px rgba(60, 30, 50, .18);
+}
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar--in { background: var(--ch-in); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar--out { background: var(--ch-out); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.st-bar--wk, .st-bar--wk.is-max) { opacity: 1; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-col:nth-child(7n+1) .st-bar--wk { background: var(--ch-1); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-col:nth-child(7n+2) .st-bar--wk { background: var(--ch-2); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-col:nth-child(7n+3) .st-bar--wk { background: var(--ch-3); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-col:nth-child(7n+4) .st-bar--wk { background: var(--ch-4); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-col:nth-child(7n+5) .st-bar--wk { background: var(--ch-5); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-col:nth-child(7n+6) .st-bar--wk { background: var(--ch-6); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-bar-col:nth-child(7n+7) .st-bar--wk { background: var(--ch-7); }
+/* Donuts, rings, gauges and lines: bevelled by the lighting filter. */
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.donut-svg, .pie-svg, .gp-ring, .gauge-svg, .radial-bars-svg) { filter: url(#clayFx) drop-shadow(0 7px 7px var(--ch-drop)); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.spend-line-svg, .st-svg) { filter: url(#clayFxThin) drop-shadow(0 5px 4px var(--ch-drop)); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .spend-line-path { stroke-width: 6; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .spend-line-dot {
+  width: 12px; height: 12px; border: 0;
+  background: radial-gradient(circle at 35% 30%, #fff 0%, color-mix(in srgb, var(--ch-1) 60%, #fff) 40%, var(--ch-1) 100%);
+  box-shadow: 0 3px 4px var(--ch-drop);
+}
+/* Series colours, the same on the segments and on their legends. */
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.dseg, .pie-seg)[data-idx="0"] { stroke: var(--ch-1); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.dseg, .pie-seg)[data-idx="1"] { stroke: var(--ch-2); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.dseg, .pie-seg)[data-idx="2"] { stroke: var(--ch-3); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.dseg, .pie-seg)[data-idx="3"] { stroke: var(--ch-4); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.dseg, .pie-seg)[data-idx="4"] { stroke: var(--ch-5); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.dseg, .pie-seg)[data-idx="5"] { stroke: var(--ch-6); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.dseg, .pie-seg)[data-idx="6"] { stroke: var(--ch-7); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .pie-seg[data-idx="0"] { fill: var(--ch-1); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .pie-seg[data-idx="1"] { fill: var(--ch-2); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .pie-seg[data-idx="2"] { fill: var(--ch-3); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .pie-seg[data-idx="3"] { fill: var(--ch-4); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .pie-seg[data-idx="4"] { fill: var(--ch-5); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .pie-seg[data-idx="5"] { fill: var(--ch-6); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .pie-seg[data-idx="6"] { fill: var(--ch-7); }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .dleg-row[data-idx="0"] .dleg-swatch { background: var(--ch-1) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .dleg-row[data-idx="1"] .dleg-swatch { background: var(--ch-2) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .dleg-row[data-idx="2"] .dleg-swatch { background: var(--ch-3) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .dleg-row[data-idx="3"] .dleg-swatch { background: var(--ch-4) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .dleg-row[data-idx="4"] .dleg-swatch { background: var(--ch-5) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .dleg-row[data-idx="5"] .dleg-swatch { background: var(--ch-6) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .dleg-row[data-idx="6"] .dleg-swatch { background: var(--ch-7) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.psf-bar > span:nth-child(7n+1), .psf-legend > span:nth-child(7n+1) i) { background: var(--ch-1) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.psf-bar > span:nth-child(7n+2), .psf-legend > span:nth-child(7n+2) i) { background: var(--ch-2) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.psf-bar > span:nth-child(7n+3), .psf-legend > span:nth-child(7n+3) i) { background: var(--ch-3) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.psf-bar > span:nth-child(7n+4), .psf-legend > span:nth-child(7n+4) i) { background: var(--ch-4) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.psf-bar > span:nth-child(7n+5), .psf-legend > span:nth-child(7n+5) i) { background: var(--ch-5) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.psf-bar > span:nth-child(7n+6), .psf-legend > span:nth-child(7n+6) i) { background: var(--ch-6) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.psf-bar > span:nth-child(7n+7), .psf-legend > span:nth-child(7n+7) i) { background: var(--ch-7) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) :is(.dleg-swatch, .psf-legend i) { box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .55), inset -1px -2px 2px rgba(60, 30, 50, .18), 0 2px 3px var(--ch-drop); }
+/* Cash flow, row by row; and the chart legends' swatches. */
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .flow-row:nth-child(6n+1) .flow-bar { background: var(--ch-in) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .flow-row:nth-child(6n+2) .flow-bar { background: var(--ch-out) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .flow-row:nth-child(6n+3) .flow-bar { background: var(--ch-4) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .flow-row:nth-child(6n+4) .flow-bar { background: var(--ch-6) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .flow-row:nth-child(6n+5) .flow-bar { background: var(--ch-1) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .flow-row:nth-child(6n+6) .flow-bar { background: var(--ch-3) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-sw--in { background: var(--ch-in) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-sw--out { background: var(--ch-out) !important; }
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .st-sw--actual { background: var(--ch-1) !important; }
+/* The coin's slider takes the same groove and a series-coloured fill. */
+:is([data-theme="jolly"], [data-theme="peachy"], [data-theme="frosty"]) .cf-slider::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--ch-7) 0, var(--ch-1) var(--fill), var(--ch-groove) var(--fill));
+  box-shadow: inset 2px 2px 4px var(--ch-groove-shade), inset -2px -2px 3px rgba(255, 255, 255, .75);
+}
+/* Peachy's figure cards in the chart view are raised like its other cards. */
+[data-theme="peachy"] .st-kpi { border-color: transparent; background: var(--neu-bg); box-shadow: var(--neu-raise); }
+
+/* ═══ Frosty: frosted glass ═════════════════════════════════════════
+   Soft pastel light drifts behind the page (the backdrop's own blobs,
+   recoloured lavender, sky and peach), and everything sits on panes of
+   frosted glass: translucent white that blurs what is behind it, a bright
+   hairline edge, a lit top edge and a soft violet shadow. The sidebar is
+   its own floating pane. Icons sit in glossy pastel chips; the accent is
+   violet. Charts take the shared sculpted treatment in glass colours. */
+[data-theme="frosty"] {
+  color-scheme: light;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --grad-indigo: #8b6cf6;
+  --grad-indigo-rgb: 139, 108, 246;
+  --grad-purple: #a78bfa;
+  --grad-pink: #f49cc8;
+  --grad-orange: #f7a96b;
+  --income: #23a873;
+  --expense: #e2557f;
+  --surface: rgba(255, 255, 255, .58);
+  --surface-strong: rgba(255, 255, 255, .62);
+  --surface-solid: rgba(255, 255, 255, .78);
+  --border-soft: rgba(255, 255, 255, .75);
+  --border-faint: rgba(90, 80, 150, .12);
+  --text-primary: #1e2240;
+  --text-secondary: #5c6185;
+  --text-faint: #979bb8;
+  --shadow-card: 0 24px 48px -28px rgba(90, 80, 170, .45);
+  --shadow-pop: 0 18px 36px -18px rgba(90, 80, 170, .5);
+  --radius-lg: 24px; --radius-md: 18px; --radius-sm: 14px;
+  --ui-btn-radius: 999px; --ui-tile-radius: 18px;
+  --ui-page: transparent;
+  --ui-side: rgba(255, 255, 255, .5);
+  --ui-divider: transparent;
+  --ui-tile: rgba(255, 255, 255, .5);
+  --ui-card-shadow: 0 24px 48px -28px rgba(90, 80, 170, .45), inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 0 0 1px rgba(255, 255, 255, .3);
+  --ui-row-shadow: 0 10px 22px -16px rgba(90, 80, 170, .4), inset 0 1px 0 rgba(255, 255, 255, .9);
+  --ui-feature: linear-gradient(150deg, rgba(221, 214, 254, .75) 0%, rgba(255, 255, 255, .5) 55%, rgba(207, 236, 252, .6) 100%);
+  --ui-feature-ink: #1e2240;
+  --ui-feature-shadow: 0 26px 50px -28px rgba(110, 90, 220, .5), inset 0 1px 0 rgba(255, 255, 255, .95);
+  --ui-btn: linear-gradient(160deg, #b8a5fb 0%, #8b6cf6 58%, #7651f0 100%);
+  --ui-btn-ink: #ffffff;
+  --ui-feature-neg-ink: #d4366b;
+  --glass-blur: blur(22px) saturate(150%);
+}
+/* The light behind the glass: three soft pastel pools that drift. */
+[data-theme="frosty"] body { background: #eceafb; }
+[data-theme="frosty"] .backdrop { background: linear-gradient(135deg, #ece8fd 0%, #e4f2f8 46%, #fdece6 100%); }
+[data-theme="frosty"] .backdrop .blob { opacity: .8; filter: blur(70px); }
+[data-theme="frosty"] .blob-a { background: radial-gradient(circle at 30% 30%, #c4b5fd, transparent 70%); }
+[data-theme="frosty"] .blob-b { background: radial-gradient(circle at 60% 40%, #a5dcf2, transparent 70%); }
+[data-theme="frosty"] .blob-c { background: radial-gradient(circle at 50% 50%, #fcc8b1, transparent 70%); opacity: .7; }
+
+/* ── Panes of frosted glass ──
+   Only the panes blur what is behind them. What sits on a pane (tiles,
+   pills, rows) is already on glass, so it gets the look without a blur of
+   its own: stacked blurs cost a layer each and can drop from the page. */
+[data-theme="frosty"] :is(.tool-shell .app-scroll .panel, .tool-shell .app-scroll .scard, .env-card, .stg-card, .ch-gc, .nl-hero--cu .coming-up, .st-kpi,
+  .modal, .fk-dialog, .fk-up-card, .guide-modal) {
+  background: linear-gradient(160deg, rgba(255, 255, 255, .7) 0%, rgba(255, 255, 255, .42) 100%);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, .75);
+  box-shadow: var(--ui-card-shadow);
+}
+[data-theme="frosty"] :is(.modal, .fk-dialog, .fk-up-card, .guide-modal) { background: linear-gradient(160deg, rgba(255, 255, 255, .88) 0%, rgba(255, 255, 255, .72) 100%); }
+[data-theme="frosty"] .tool-shell .app-scroll .nl-hero { background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+[data-theme="frosty"] .nl-hero .nl-left { -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255, 255, 255, .8); }
+/* Tinted glass for the figures: mint, blush and lilac. */
+[data-theme="frosty"] :is(.psf-tile, .bud-sum-fig, .ch-stat, .cu-date, .nl-pill) {
+  border: 1px solid rgba(255, 255, 255, .8);
+  background: rgba(255, 255, 255, .55); box-shadow: 0 12px 24px -18px rgba(90, 80, 170, .5), inset 0 1px 0 rgba(255, 255, 255, .95);
+}
+[data-theme="frosty"] .psf-tile { padding: 16px 16px 14px; gap: 3px; }
+[data-theme="frosty"] .psf-tile--in   { background: linear-gradient(160deg, rgba(209, 250, 229, .8), rgba(167, 243, 208, .42)); --ic: #45c79a; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.4v9.4'/%3E%3Cpath d='M8.2 9 12 12.8 15.8 9'/%3E%3Cpath d='M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3'/%3E%3C/svg%3E"); }
+[data-theme="frosty"] .psf-tile--out  { background: linear-gradient(160deg, rgba(252, 231, 243, .85), rgba(251, 207, 232, .45)); --ic: #ee7cb4; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6'/%3E%3Ccircle cx='9.6' cy='19.6' r='1.3'/%3E%3Ccircle cx='17.4' cy='19.6' r='1.3'/%3E%3C/svg%3E"); }
+[data-theme="frosty"] .psf-tile--kept { background: linear-gradient(160deg, rgba(237, 233, 254, .85), rgba(221, 214, 254, .5)); --ic: #8b6cf6; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 20.2s-7.6-4.6-7.6-10.4A4.3 4.3 0 0 1 12 7.1a4.3 4.3 0 0 1 7.6 2.7c0 5.8-7.6 10.4-7.6 10.4z'/%3E%3C/svg%3E"); }
+/* Glossy pastel chips: a bright highlight over the top half. */
+[data-theme="frosty"] .psf-tile::before {
+  content: ""; display: block; flex: 0 0 auto; width: 44px; height: 44px; margin-bottom: 10px; border-radius: 14px;
+  background: var(--ico) center / 21px no-repeat, linear-gradient(180deg, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, 0) 52%),
+    radial-gradient(120% 120% at 30% 20%, color-mix(in srgb, var(--ic) 55%, #fff) 0%, var(--ic) 65%, color-mix(in srgb, var(--ic) 85%, #2a1a6a) 100%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .7), inset 0 -3px 6px rgba(40, 20, 90, .15), 0 10px 16px -8px color-mix(in srgb, var(--ic) 75%, transparent);
+}
+[data-theme="frosty"] .psf-k { font-size: 14.5px; font-weight: 600; letter-spacing: 0; text-transform: none; color: #343858; }
+[data-theme="frosty"] .psf-tile strong { color: #1e2240; }
+[data-theme="frosty"] .bud-sum-fig:nth-child(1) { background: linear-gradient(160deg, rgba(237, 233, 254, .85), rgba(221, 214, 254, .5)); }
+[data-theme="frosty"] .bud-sum-fig:nth-child(2) { background: linear-gradient(160deg, rgba(252, 231, 243, .85), rgba(251, 207, 232, .45)); }
+[data-theme="frosty"] .bud-sum-fig:nth-child(3) { background: linear-gradient(160deg, rgba(224, 242, 254, .85), rgba(186, 230, 253, .45)); }
+[data-theme="frosty"] .ch-stat:nth-child(1) { background: linear-gradient(160deg, rgba(209, 250, 229, .8), rgba(167, 243, 208, .42)); }
+[data-theme="frosty"] .ch-stat:nth-child(2) { background: linear-gradient(160deg, rgba(254, 243, 199, .85), rgba(253, 230, 138, .4)); }
+[data-theme="frosty"] .ch-stat:nth-child(3) { background: linear-gradient(160deg, rgba(224, 242, 254, .85), rgba(186, 230, 253, .45)); }
+[data-theme="frosty"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+1) { --bc: #8b6cf6 !important; }
+[data-theme="frosty"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+2) { --bc: #f49cc8 !important; }
+[data-theme="frosty"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+3) { --bc: #45c79a !important; }
+[data-theme="frosty"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+4) { --bc: #6fb4f3 !important; }
+[data-theme="frosty"] :is(.alloc-card, .alloc-editor .alloc-bucket-row):nth-child(5n+5) { --bc: #f7a96b !important; }
+[data-theme="frosty"] :is(.alloc-card, .alloc-editor .alloc-bucket-row) {
+  border: 1px solid rgba(255, 255, 255, .8);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--bc) 14%, rgba(255, 255, 255, .8)), color-mix(in srgb, var(--bc) 24%, rgba(255, 255, 255, .35)));
+  box-shadow: 0 12px 24px -18px rgba(90, 80, 170, .5), inset 0 1px 0 rgba(255, 255, 255, .95);
+}
+[data-theme="frosty"] .nl-hero .nl-label, [data-theme="frosty"] .nl-hero .nl-pill span, [data-theme="frosty"] .nl-hero .nl-track-cap { color: #5c6185; }
+[data-theme="frosty"] .nl-hero .nl-pill--today strong { color: var(--income); }
+
+/* ── Controls: white glass pills; the main action glossy violet ── */
+[data-theme="frosty"] :is(.btn-ghost, .help-icon-btn, .view-toggle, .period-btn, .dv-toggle, .cu-pay, .qa-chip, .qa-type, .env-btn, .theme-opt, .layout-opt,
+  .link-btn.cu-all, .qa-key, .alloc-remove-btn, .cf-target, .lv-act, .modal-close) {
+  color: var(--text-primary); border: 1px solid rgba(255, 255, 255, .85);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .52));
+  box-shadow: 0 8px 18px -12px rgba(90, 80, 170, .5), inset 0 1px 0 #fff;
+}
+[data-theme="frosty"] .link-btn.cu-all { padding: 6px 15px; border-radius: 999px; font-size: 13px; font-weight: 600; text-decoration: none; color: var(--grad-indigo); }
+[data-theme="frosty"] :is(.btn-primary, .theme-setting-row .theme-opt.is-active, .layout-setting-row .layout-opt.is-active, .dv-toggle .dv-opt.is-on, .btn.preset-active, .qa-type.is-on, .budget-tabs .btab.is-active) {
+  color: #fff; border: 1px solid rgba(255, 255, 255, .35);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .28) 0%, rgba(255, 255, 255, 0) 50%), linear-gradient(160deg, #b8a5fb 0%, #8b6cf6 58%, #7651f0 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 12px 22px -12px rgba(124, 92, 240, .75);
+}
+[data-theme="frosty"] .dv-toggle { padding: 4px; }
+[data-theme="frosty"] .dv-toggle .dv-opt:not(.is-on) { background: none; border-color: transparent; box-shadow: none; }
+[data-theme="frosty"] :is(.qa-chip.is-on, .cf-target.is-on) { background: linear-gradient(180deg, rgba(237, 233, 254, .95), rgba(221, 214, 254, .6)); border-color: rgba(139, 108, 246, .4); color: #4c33c9; }
+[data-theme="frosty"] .period-btn-ico { background: linear-gradient(160deg, #b8a5fb, #8b6cf6); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5); }
+[data-theme="frosty"] :is(.input, .select, .date-field-styled, textarea) {
+  background-color: rgba(255, 255, 255, .58); border: 1px solid rgba(255, 255, 255, .85);
+  box-shadow: inset 0 1px 3px rgba(90, 80, 170, .12);
+}
+[data-theme="frosty"] :is(.input, .select):focus { border-color: rgba(139, 108, 246, .5); box-shadow: inset 0 1px 3px rgba(90, 80, 170, .12), 0 0 0 3px rgba(139, 108, 246, .2); }
+[data-theme="frosty"] .recurring-toggle input:checked + .rec-toggle-track { background: linear-gradient(160deg, #b8a5fb, #8b6cf6); }
+/* Rows: light glass strips. */
+[data-theme="frosty"] :is(.ra-row, .cal-ev-item) {
+  background: rgba(255, 255, 255, .5); border: 1px solid rgba(255, 255, 255, .8);
+  box-shadow: 0 10px 22px -16px rgba(90, 80, 170, .4), inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+[data-theme="frosty"] .ra-ico { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 6px 12px -6px rgba(90, 80, 170, .45); }
+
+/* ── The coin: pearly lilac heads, sky-blue tails ── */
+[data-theme="frosty"] .cf-face--heads {
+  color: #3b2a8a; background: radial-gradient(circle at 32% 24%, #ffffff 0%, #ebe4fe 26%, #b9a6fa 68%, #8b6cf6 100%);
+  box-shadow: inset 0 0 0 5px rgba(255, 255, 255, .45), inset 6px 8px 12px rgba(255, 255, 255, .6), inset -8px -10px 16px rgba(80, 50, 200, .3);
+}
+[data-theme="frosty"] .cf-face--tails {
+  color: #123b63; background: radial-gradient(circle at 32% 24%, #ffffff 0%, #e0f2fe 26%, #8ccbf5 68%, #4f9ee8 100%);
+  box-shadow: inset 0 0 0 5px rgba(255, 255, 255, .45), inset 6px 8px 12px rgba(255, 255, 255, .6), inset -8px -10px 16px rgba(30, 90, 170, .3);
+}
+[data-theme="frosty"] .ch-mini-coin { background: radial-gradient(circle at 32% 24%, #ffffff 0%, #ebe4fe 26%, #b9a6fa 68%, #8b6cf6 100%); color: #3b2a8a; box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .45), 0 8px 14px -6px rgba(110, 90, 220, .55); }
+[data-theme="frosty"] .cf-slider::-webkit-slider-thumb { border: 1px solid rgba(255, 255, 255, .9); background: radial-gradient(circle at 35% 30%, #ffffff, #ede9fe); box-shadow: 0 6px 12px -4px rgba(90, 80, 170, .5), 0 0 0 3px rgba(139, 108, 246, .55); }
+
+/* ── The sidebar: its own floating pane ── */
+@media (min-width: 901px) {
+  html[data-theme="frosty"][data-nav] .tool-shell > .nav-rail {
+    border: 1px solid rgba(255, 255, 255, .8); border-radius: 28px;
+    background: linear-gradient(170deg, rgba(255, 255, 255, .66), rgba(255, 255, 255, .42));
+    -webkit-backdrop-filter: blur(26px) saturate(150%); backdrop-filter: blur(26px) saturate(150%);
+    box-shadow: 0 24px 48px -28px rgba(90, 80, 170, .5), inset 0 1px 0 rgba(255, 255, 255, .95);
+  }
+  html[data-theme="frosty"][data-nav="left"] .tool-shell > .nav-rail { margin: 16px 0 16px 16px; }
+  html[data-theme="frosty"][data-nav="right"] .tool-shell > .nav-rail { margin: 16px 16px 16px 0; }
+}
+html[data-theme="frosty"] .nav-rail-item { color: #3a3f62; font-weight: 500; }
+html[data-theme="frosty"] .nav-rail-item:hover:not(.is-active) { background: rgba(255, 255, 255, .45); color: #1e2240; }
+html[data-theme="frosty"] .nav-rail-item.is-active {
+  color: #1e2240; font-weight: 700; background: rgba(255, 255, 255, .88);
+  box-shadow: 0 10px 22px -14px rgba(90, 80, 170, .55), inset 0 1px 0 #fff;
+}
+html[data-theme="frosty"] .nav-rail-item.is-active .nav-rail-icon { color: #8b6cf6; }
+html[data-theme="frosty"] .nav-rail-item.is-active::before { display: none; }
+html[data-theme="frosty"] .nav-rail-account { background: rgba(255, 255, 255, .62); border: 1px solid rgba(255, 255, 255, .85); box-shadow: 0 12px 24px -16px rgba(90, 80, 170, .5), inset 0 1px 0 #fff; }
+html[data-theme="frosty"] .nra-avatar, [data-theme="frosty"] .wordmark-icon { background: linear-gradient(160deg, #c4b5fd, #8b6cf6); }
+[data-theme="frosty"] .nra-sub { color: #8b6cf6; }
+/* Phone: the tab pill and the dock as glass. */
+[data-theme="frosty"] :is(.budget-tabs, .nav-dock-bar) {
+  border: 1px solid rgba(255, 255, 255, .8); background: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .5));
+  -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%);
+  box-shadow: 0 16px 32px -20px rgba(90, 80, 170, .55), inset 0 1px 0 #fff;
+}
+[data-theme="frosty"] .dash-fab { background: linear-gradient(180deg, rgba(255, 255, 255, .3), rgba(255, 255, 255, 0) 50%), linear-gradient(160deg, #b8a5fb, #7651f0); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 14px 26px -12px rgba(124, 92, 240, .75); }
+[data-theme="frosty"] .section-title .app-ico, [data-theme="frosty"] .module-section-title .app-ico { color: #8b6cf6; }
+[data-theme="frosty"] #toast { background: rgba(255, 255, 255, .82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, .9); color: var(--text-primary); }

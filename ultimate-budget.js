@@ -763,7 +763,7 @@ const TRANSLATIONS = {
     this_month:'This Month', this_week:'This Week', last_week:'Last Week', last_month:'Last Month', last_30_days:'Last 30 Days', this_quarter:'This Quarter', this_year:'This Year',
     currency:'Currency', rollover:'Rollover', appearance:'Appearance',
     language:'Language', reset_data:'Reset All Data',
-    light:'Light',theme_jolly:'Jolly',theme_minimal:'Minimal', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
+    light:'Light',theme_jolly:'Jolly',theme_peachy:'Peachy',theme_frosty:'Frosty', dark:'Dark', theme_synthwave:'Synthwave', theme_vintage_ledger:'Vintage', theme_terminal:'Terminal',
     auto_badge:'Auto', auto_badge_title:'Added automatically on this date. Pay it now to settle it early or by hand.',
     nw_calendar:'Calendar', nw_calendar_desc:'This month at a glance, with today and every due date marked.',
     nw_cal_due:'Due', nw_cal_spent:'Spent',
@@ -1473,7 +1473,7 @@ function enableDragScroll(el) {
   el.addEventListener('click',e=>{if(dragged){e.stopPropagation();dragged=false;}},true);
 }
 function applyTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem('evobudget_theme',t);document.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('is-active',b.dataset.themeVal===t));}
-function initTheme(){let th=localStorage.getItem('evobudget_theme')||'dark';if(th==='terminal')th='jolly';applyTheme(th);}
+function initTheme(){let th=localStorage.getItem('evobudget_theme')||'dark';if(th==='terminal')th='jolly';if(th==='minimal')th='peachy';applyTheme(th);}
 
 // ── Dashboard Layout picker (Settings) ─────────────────────────────────
 const DASHBOARD_LAYOUT_ICONS = {
@@ -6600,9 +6600,9 @@ function renderSettings(){
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               ${t('light')}
             </button>
-            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='minimal'?' is-active':''}" data-theme-val="minimal" type="button" title="${t('theme_minimal')}">
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='peachy'?' is-active':''}" data-theme-val="peachy" type="button" title="${t('theme_peachy')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M9 12h6"/></svg>
-              ${t('theme_minimal')}
+              ${t('theme_peachy')}
             </button>
             <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='dark'?' is-active':''}" data-theme-val="dark" type="button" title="${t('dark')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -6619,6 +6619,10 @@ function renderSettings(){
             <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='jolly'?' is-active':''}" data-theme-val="jolly" type="button" title="${t('theme_jolly')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.2a4.6 4.6 0 0 0 7 0"/><path d="M9 9.6h.01"/><path d="M15 9.6h.01"/></svg>
               ${t('theme_jolly')}
+            </button>
+            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='frosty'?' is-active':''}" data-theme-val="frosty" type="button" title="${t('theme_frosty')}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m4.9 6.5 14.2 11"/><path d="m19.1 6.5-14.2 11"/><path d="m9 3.5 3 2.5 3-2.5"/><path d="m9 20.5 3-2.5 3 2.5"/></svg>
+              ${t('theme_frosty')}
             </button>
           </div>
         </div>
