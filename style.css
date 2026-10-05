@@ -8012,88 +8012,181 @@ html[data-theme] .nl-hero.is-negative .nl-left .nl-dec { color: var(--ui-feature
 .ch-range-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .ch-range-err { margin: 8px 0 0; font-size: 13px; color: #e11d48; }
 
-/* ═══ Jolly: soft clay pastels ═════════════════════════════════════
-   A lavender sidebar, a warm blush page, cream cards that look pressed
-   from clay (a soft drop shadow and a bright top edge), pastel tiles and
-   a round, friendly typeface. */
+/* ═══ Jolly: clay pastels ═══════════════════════════════════════════
+   Everything looks pressed from soft clay. Each surface carries the same
+   recipe: a bright rim along its top-left edge, a soft inner light, an
+   inner shade toward the bottom-right, and a drop shadow in a deeper tone
+   of its own colour (never grey), so a lavender card casts lavender and
+   a peach tile casts peach. The sidebar is a lavender slab with a lit
+   edge; the stat tiles are pastel with a glossy icon chip; lists are
+   plain rows on a fine rule; pills are cream and raised. --clay-c is the
+   shade of whatever surface it is set on. */
 [data-theme="jolly"] {
   color-scheme: light;
   --font-body: 'Nunito', 'Inter', system-ui, sans-serif;
   --font-display: 'Nunito', 'Inter', system-ui, sans-serif;
-  --grad-indigo: #8a76ef;
-  --grad-indigo-rgb: 138, 118, 239;
-  --grad-purple: #b38bf5;
-  --grad-pink: #f08ba1;
-  --grad-orange: #f5a55a;
-  --income: #45ad76;
-  --expense: #e9617e;
-  --surface: #fffaf7;
-  --surface-strong: #f7eeec;
-  --surface-solid: #fffaf7;
-  --border-soft: rgba(255, 255, 255, .75);
-  --border-faint: rgba(92, 70, 112, .09);
-  --text-primary: #3a3050;
-  --text-secondary: #786d8f;
-  --text-faint: #a99fb9;
-  --shadow-card: 0 18px 36px -20px rgba(116, 84, 140, .5), inset 0 2px 0 rgba(255, 255, 255, .9);
-  --shadow-pop: 0 14px 28px -14px rgba(116, 84, 140, .55);
-  --radius-lg: 28px; --radius-md: 22px; --radius-sm: 16px;
-  --ui-btn-radius: 999px; --ui-tile-radius: 20px;
-  --ui-page: #f7ecec;
-  --ui-side: linear-gradient(180deg, #a898f5 0%, #8d7aec 100%);
+  --grad-indigo: #8571ec;
+  --grad-indigo-rgb: 133, 113, 236;
+  --grad-purple: #b18bf4;
+  --grad-pink: #f08aa0;
+  --grad-orange: #f5a75a;
+  --income: #3fa96d;
+  --expense: #e65f7b;
+  --surface: #fdf6f3;
+  --surface-strong: #f7ece9;
+  --surface-solid: #fdf6f3;
+  --border-soft: rgba(255, 255, 255, .7);
+  --border-faint: rgba(150, 110, 125, .14);
+  --text-primary: #33304a;
+  --text-secondary: #6f6a83;
+  --text-faint: #a49db4;
+  --clay-c: 176, 132, 146;
+  --shadow-card: 0 18px 30px -16px rgba(176, 132, 146, .5);
+  --shadow-pop: 0 14px 26px -12px rgba(176, 132, 146, .55);
+  --radius-lg: 26px; --radius-md: 22px; --radius-sm: 16px;
+  --ui-btn-radius: 999px; --ui-tile-radius: 22px;
+  --ui-page: radial-gradient(120% 80% at 70% 0%, #fbf3f1 0%, #f6eae8 55%, #f3e4e3 100%);
+  --ui-side: linear-gradient(180deg, #a898f2 0%, #9483ec 55%, #8a77e8 100%);
   --ui-divider: transparent;
-  --ui-tile: #f7eeec;
-  --ui-card-shadow: 0 18px 36px -22px rgba(116, 84, 140, .55), 0 2px 6px rgba(116, 84, 140, .07), inset 0 2px 0 rgba(255, 255, 255, .95), inset 0 -3px 8px rgba(150, 110, 140, .08);
-  --ui-row-shadow: 0 10px 22px -14px rgba(116, 84, 140, .5), inset 0 2px 0 rgba(255, 255, 255, .9);
-  --ui-feature: linear-gradient(160deg, #eee6ff 0%, #ddd1fc 100%);
-  --ui-feature-ink: #3a3050;
-  --ui-feature-shadow: 0 20px 40px -22px rgba(124, 104, 230, .7), inset 0 3px 0 rgba(255, 255, 255, .85), inset 0 -6px 14px rgba(124, 104, 230, .14);
-  --ui-btn: linear-gradient(180deg, #a596f4 0%, #8673ea 100%);
+  --ui-tile: #f7ece9;
+  --ui-card-shadow: inset 2px 2px 0 rgba(255, 255, 255, .7), inset 8px 8px 16px rgba(255, 255, 255, .5), inset -6px -8px 16px rgba(176, 132, 146, .16), 0 16px 26px -14px rgba(176, 132, 146, .55), 0 4px 10px -4px rgba(176, 132, 146, .2);
+  --ui-row-shadow: none;
+  --ui-feature: linear-gradient(160deg, #ece4fb 0%, #e2d8f8 100%);
+  --ui-feature-ink: #33304a;
+  --ui-feature-shadow: none;
+  --ui-btn: linear-gradient(180deg, #a898f2 0%, #8571ec 100%);
   --ui-btn-ink: #ffffff;
-  --ui-feature-neg-ink: #e0566f;
+  --ui-feature-neg-ink: #d9455f;
 }
-[data-theme="jolly"] body { background: var(--ui-page); }
+[data-theme="jolly"] body { background: #f6eae8; }
 [data-theme="jolly"] .backdrop .blob { opacity: 0; }
-[data-theme="jolly"] .panel, [data-theme="jolly"] .env-card, [data-theme="jolly"] .stg-card, [data-theme="jolly"] .ch-gc { border-color: transparent; }
-[data-theme="jolly"] .btn-primary { box-shadow: inset 0 2px 0 rgba(255, 255, 255, .35), 0 10px 20px -12px rgba(110, 84, 220, .8); }
-[data-theme="jolly"] .btn-ghost, [data-theme="jolly"] .help-icon-btn, [data-theme="jolly"] .view-toggle, [data-theme="jolly"] .period-btn {
-  background: var(--surface-solid); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9), 0 8px 16px -12px rgba(116, 84, 140, .55);
+
+/* The clay recipe, for every card and tile. */
+[data-theme="jolly"] :is(.tool-shell .app-scroll .panel, .tool-shell .app-scroll .scard, .env-card, .stg-card, .ch-gc, .nl-hero--cu .coming-up, .nl-hero .nl-left,
+  .psf-tile, .bud-sum-fig, .ch-stat, .nl-pill, .cu-date, .cf-target, .modal, .fk-dialog, .fk-up-card, .guide-modal, .nav-rail-account) {
+  border: 1.5px solid rgba(255, 255, 255, .6);
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .7), inset 8px 8px 16px rgba(255, 255, 255, .5),
+    inset -6px -8px 16px rgba(var(--clay-c), .17), 0 16px 26px -14px rgba(var(--clay-c), .55), 0 4px 10px -4px rgba(var(--clay-c), .2);
 }
-/* The sidebar: white on lavender. */
+/* The top row's wrapper is not a card of its own. */
+[data-theme="jolly"] .tool-shell .app-scroll .nl-hero { border: 0; box-shadow: none; }
+[data-theme="jolly"] .nl-pill, [data-theme="jolly"] .cu-date, [data-theme="jolly"] .cf-target {
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .8), inset -3px -4px 8px rgba(var(--clay-c), .14), 0 8px 14px -8px rgba(var(--clay-c), .55);
+}
+
+/* Free to spend: the lavender stat card, larger. */
+[data-theme="jolly"] .nl-hero .nl-left { --clay-c: 128, 104, 214; }
+[data-theme="jolly"] .nl-hero .nl-pill { --clay-c: 128, 104, 214; background: rgba(255, 255, 255, .55); }
+[data-theme="jolly"] .nl-hero .nl-track { background: rgba(255, 255, 255, .7); box-shadow: inset 1px 2px 3px rgba(128, 104, 214, .25); height: 6px; border-radius: 99px; }
+[data-theme="jolly"] .nl-hero .nl-track i { background: linear-gradient(90deg, #a898f2, #8571ec); border-radius: 99px; }
+[data-theme="jolly"] .nl-hero .nl-pill--today strong { color: var(--income); }
+[data-theme="jolly"] .nl-hero .nl-label, [data-theme="jolly"] .nl-hero .nl-pill span { color: #6f6a83; }
+
+/* Stat tiles: pastel, each with its glossy icon chip, a plain label, a dark figure. */
+[data-theme="jolly"] .psf-tile { padding: 16px 16px 14px; gap: 3px; }
+[data-theme="jolly"] .psf-tile--in   { background: #e1f0d9; --clay-c: 104, 160, 96;  --ic: #54b06a; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.4v9.4'/%3E%3Cpath d='M8.2 9 12 12.8 15.8 9'/%3E%3Cpath d='M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3'/%3E%3C/svg%3E"); }
+[data-theme="jolly"] .psf-tile--out  { background: #fbdcd5; --clay-c: 214, 120, 108; --ic: #ef6762; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6'/%3E%3Ccircle cx='9.6' cy='19.6' r='1.3'/%3E%3Ccircle cx='17.4' cy='19.6' r='1.3'/%3E%3C/svg%3E"); }
+[data-theme="jolly"] .psf-tile--kept { background: #e7def9; --clay-c: 128, 104, 214; --ic: #7b63e6; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 20.2s-7.6-4.6-7.6-10.4A4.3 4.3 0 0 1 12 7.1a4.3 4.3 0 0 1 7.6 2.7c0 5.8-7.6 10.4-7.6 10.4z'/%3E%3C/svg%3E"); }
+[data-theme="jolly"] .psf-tile::before {
+  content: ""; display: block; flex: 0 0 auto; width: 44px; height: 44px; margin-bottom: 10px; border-radius: 14px;
+  background: var(--ico) center / 22px no-repeat, linear-gradient(165deg, color-mix(in srgb, var(--ic) 62%, #fff) 0%, var(--ic) 62%);
+  box-shadow: inset 2px 2px 1px rgba(255, 255, 255, .45), inset -2px -4px 6px rgba(0, 0, 0, .14), 0 7px 12px -5px color-mix(in srgb, var(--ic) 75%, transparent);
+}
+[data-theme="jolly"] .psf-k { font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none; color: #3e3a55; }
+[data-theme="jolly"] .psf-tile strong { color: #2f2b46; }
+[data-theme="jolly"] .psf-tile em { color: #6f6a83; }
+[data-theme="jolly"] .bud-sum-fig:nth-child(1) { background: #e7def9; --clay-c: 128, 104, 214; }
+[data-theme="jolly"] .bud-sum-fig:nth-child(2) { background: #fbdcd5; --clay-c: 214, 120, 108; }
+[data-theme="jolly"] .bud-sum-fig:nth-child(3) { background: #fdefc9; --clay-c: 214, 170, 80; }
+[data-theme="jolly"] .ch-stat:nth-child(1) { background: #e1f0d9; --clay-c: 104, 160, 96; }
+[data-theme="jolly"] .ch-stat:nth-child(2) { background: #fdefc9; --clay-c: 214, 170, 80; }
+[data-theme="jolly"] .ch-stat:nth-child(3) { background: #dce6f7; --clay-c: 100, 130, 200; }
+[data-theme="jolly"] .cu-date { background: #efe7fb; --clay-c: 128, 104, 214; }
+[data-theme="jolly"] .alloc-card {
+  background: color-mix(in srgb, var(--bc) 20%, #fdf6f3); border: 1.5px solid rgba(255, 255, 255, .6);
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .7), inset 8px 8px 16px rgba(255, 255, 255, .45),
+    inset -6px -8px 16px color-mix(in srgb, var(--bc) 16%, transparent), 0 16px 26px -14px color-mix(in srgb, var(--bc) 55%, transparent);
+}
+[data-theme="jolly"] .alloc-editor .alloc-bucket-row { background: color-mix(in srgb, var(--bc, #8571ec) 16%, #fdf6f3); border: 1.5px solid rgba(255, 255, 255, .6); box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .8), 0 8px 14px -9px color-mix(in srgb, var(--bc, #8571ec) 60%, transparent); }
+
+/* Lists: plain rows on a fine rule, not cards. */
+[data-theme="jolly"] .ra-list { gap: 0; }
+[data-theme="jolly"] .ra-row, [data-theme="jolly"] .cal-ev-item {
+  background: none; border: 0; border-radius: 0; box-shadow: none; padding: 12px 4px; border-bottom: 1px solid rgba(176, 132, 146, .22);
+}
+[data-theme="jolly"] .ra-row:last-child, [data-theme="jolly"] .cal-ev-item:last-child { border-bottom: 0; }
+[data-theme="jolly"] .ra-ico { border-radius: 14px; box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .8), 0 7px 12px -7px rgba(176, 132, 146, .7); }
+[data-theme="jolly"] .lv-act { border-radius: 50%; background: #fdf7f4; box-shadow: inset 1px 1px 0 #fff, 0 6px 10px -6px rgba(176, 132, 146, .7); }
+
+/* Pills and buttons: cream and raised; the main action lavender clay. */
+[data-theme="jolly"] :is(.btn-ghost, .help-icon-btn, .view-toggle, .period-btn, .dv-toggle, .cu-pay, .qa-chip, .qa-type, .env-btn, .theme-opt, .layout-opt, .link-btn.cu-all, .qa-key, .alloc-remove-btn, .stepper-btn) {
+  background: #fdf7f4; color: var(--text-primary); border: 1px solid rgba(214, 180, 186, .55);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .95), inset -2px -3px 5px rgba(176, 132, 146, .1), 0 7px 12px -8px rgba(176, 132, 146, .7), 0 1px 2px rgba(176, 132, 146, .15);
+}
+[data-theme="jolly"] .link-btn.cu-all { padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; }
+[data-theme="jolly"] .link-btn.cu-all:hover { color: var(--grad-indigo); }
+[data-theme="jolly"] .btn-primary,
+[data-theme="jolly"] :is(.theme-setting-row .theme-opt.is-active, .layout-setting-row .layout-opt.is-active, .dv-toggle .dv-opt.is-on, .btn.preset-active) {
+  background: linear-gradient(180deg, #a898f2 0%, #8571ec 100%); color: #fff; border-color: rgba(255, 255, 255, .35);
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .35), inset -3px -4px 8px rgba(70, 40, 160, .2), 0 10px 18px -8px rgba(110, 84, 220, .65);
+}
+[data-theme="jolly"] .dv-toggle { padding: 4px; }
+[data-theme="jolly"] .dv-toggle .dv-opt:not(.is-on) { background: none; box-shadow: none; border-color: transparent; }
+[data-theme="jolly"] :is(.qa-chip.is-on, .qa-type.is-on, .cf-target.is-on) { background: #efe7fb; border-color: rgba(133, 113, 236, .45); --clay-c: 128, 104, 214; }
+[data-theme="jolly"] .period-btn-ico { box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .45), 0 4px 8px -4px rgba(110, 84, 220, .7); }
+/* Fields: cream, gently pressed in. */
+[data-theme="jolly"] :is(.input, .select, .date-field-styled, textarea) {
+  background-color: #fbf2ef; border: 1px solid rgba(214, 180, 186, .55); box-shadow: inset 2px 3px 6px rgba(176, 132, 146, .18);
+}
+[data-theme="jolly"] :is(.input, .select):focus { border-color: #a898f2; box-shadow: inset 2px 3px 6px rgba(176, 132, 146, .18), 0 0 0 3px rgba(133, 113, 236, .2); }
+[data-theme="jolly"] .rec-toggle-track { box-shadow: inset 1px 2px 4px rgba(90, 60, 120, .25); }
+/* Tracks: pressed-in cream. */
+[data-theme="jolly"] :is(.psf-bar, .gp-sum-bar, .prog-bar-wrap, .bud-sum-track, .cf-prog-bar) { background: #f3e6e3; box-shadow: inset 1px 2px 3px rgba(176, 132, 146, .3); border-radius: 99px; }
+
+/* The sidebar: a lavender slab with a lit edge, bold white labels, chunky white icons. */
+@media (min-width: 901px) {
+  html[data-theme="jolly"][data-nav="left"] .tool-shell > .nav-rail {
+    border-radius: 0 30px 30px 0;
+    box-shadow: inset -3px 0 0 rgba(255, 255, 255, .22), inset -16px 0 26px -14px rgba(255, 255, 255, .4), 8px 0 28px -10px rgba(110, 84, 200, .45);
+  }
+  html[data-theme="jolly"][data-nav="right"] .tool-shell > .nav-rail {
+    border-radius: 30px 0 0 30px;
+    box-shadow: inset 3px 0 0 rgba(255, 255, 255, .22), inset 16px 0 26px -14px rgba(255, 255, 255, .4), -8px 0 28px -10px rgba(110, 84, 200, .45);
+  }
+}
 html[data-theme="jolly"] .nav-rail, html[data-theme="jolly"] .nav-rail .wordmark, html[data-theme="jolly"] .nav-rail .app-title-editable { color: #fff; }
-html[data-theme="jolly"] .nav-rail-heading { color: rgba(255, 255, 255, .72); }
-html[data-theme="jolly"] .nav-rail-item { color: rgba(255, 255, 255, .9); font-weight: 700; }
+html[data-theme="jolly"] .nav-rail .app-title-editable { font-weight: 800; font-size: 18px; text-shadow: 0 1px 2px rgba(70, 40, 150, .25); }
+html[data-theme="jolly"] .nav-rail-heading { color: rgba(255, 255, 255, .75); }
+html[data-theme="jolly"] .nav-rail-item {
+  gap: 15px; padding: 10px 14px; border-radius: 18px; color: #fff; font-size: 16px; font-weight: 700; text-shadow: 0 1px 2px rgba(70, 40, 150, .25);
+}
+html[data-theme="jolly"] .nav-rail-item .nav-rail-icon, html[data-theme="jolly"] .nav-rail-item.is-active .nav-rail-icon { width: 26px; height: 26px; flex-basis: 26px; color: #fff; }
+html[data-theme="jolly"] .nav-rail-item .app-ico { width: 24px; height: 24px; stroke-width: 2.5; filter: drop-shadow(0 2px 2px rgba(70, 40, 150, .35)); }
 html[data-theme="jolly"] .nav-rail-item:hover:not(.is-active) { background: rgba(255, 255, 255, .14); color: #fff; }
 html[data-theme="jolly"] .nav-rail-item.is-active {
-  background: rgba(255, 255, 255, .24); color: #fff; font-weight: 800;
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .35), 0 10px 20px -12px rgba(60, 30, 140, .55);
+  background: rgba(255, 255, 255, .22); color: #fff; font-weight: 800;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .35), inset -3px -4px 8px rgba(70, 40, 150, .15), 0 10px 18px -10px rgba(60, 30, 140, .5);
 }
-html[data-theme="jolly"] .nav-rail-item.is-active .nav-rail-icon { color: #fff; }
 html[data-theme="jolly"] .nav-rail-item.is-active::before { display: none; }
 html[data-theme="jolly"] .nav-rail-sections + .nav-rail-sections, html[data-theme="jolly"] .nav-rail-extra { border-color: rgba(255, 255, 255, .28); }
-html[data-theme="jolly"] .nav-rail-account { background: rgba(255, 255, 255, .2); color: #fff; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .3); }
-html[data-theme="jolly"] .nra-sub, html[data-theme="jolly"] .nra-go { color: rgba(255, 255, 255, .78); }
-html[data-theme="jolly"] .nav-rail .nav-badge { box-shadow: 0 0 0 2px rgba(255, 255, 255, .6); }
-/* Pastel tiles, like coloured clay. */
-[data-theme="jolly"] .nl-pill, [data-theme="jolly"] .bud-sum-fig, [data-theme="jolly"] .ch-stat, [data-theme="jolly"] .psf-tile, [data-theme="jolly"] .cu-date, [data-theme="jolly"] .alloc-card {
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .8), 0 8px 16px -12px rgba(116, 84, 140, .45);
+html[data-theme="jolly"] .nav-rail .nav-badge { box-shadow: 0 0 0 2px rgba(255, 255, 255, .7); }
+/* The account at its foot: a pink clay card, like the reference's offer card. */
+html[data-theme="jolly"] .nav-rail-account { background: #fbd9d3; color: #33304a; --clay-c: 214, 120, 108; text-shadow: none; }
+html[data-theme="jolly"] .nra-sub, html[data-theme="jolly"] .nra-go { color: #7a6475; }
+@media (max-width: 1150px) { html[data-theme="jolly"] .nav-rail-account { background: none; box-shadow: none; border: 0; } }
+
+/* Phone: the tab pill and the dock in cream clay. */
+[data-theme="jolly"] .budget-tabs, [data-theme="jolly"] .nav-dock-bar {
+  background: #fdf6f3; border: 1.5px solid rgba(255, 255, 255, .6);
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .7), inset -4px -6px 12px rgba(176, 132, 146, .14), 0 14px 24px -14px rgba(176, 132, 146, .6);
 }
-[data-theme="jolly"] .psf-tile--in, [data-theme="jolly"] .bud-sum-fig:nth-child(3) { background: #dff1d6; }
-[data-theme="jolly"] .psf-tile--out, [data-theme="jolly"] .bud-sum-fig:nth-child(2) { background: #fbdcdc; }
-[data-theme="jolly"] .psf-tile--kept, [data-theme="jolly"] .bud-sum-fig:nth-child(1) { background: #e6defb; }
-[data-theme="jolly"] .ch-stat:nth-child(1) { background: #dff1d6; }
-[data-theme="jolly"] .ch-stat:nth-child(2) { background: #fdf0c6; }
-[data-theme="jolly"] .ch-stat:nth-child(3) { background: #d8e4fa; }
-[data-theme="jolly"] .alloc-card { background: color-mix(in srgb, var(--bc) 20%, #fffaf7); }
-[data-theme="jolly"] .nl-hero .nl-pill { background: rgba(255, 255, 255, .55); }
-[data-theme="jolly"] .nl-hero .nl-track i { background: var(--grad-indigo); }
-[data-theme="jolly"] .nl-hero .nl-pill--today strong { color: var(--income); }
-[data-theme="jolly"] .ra-row { background: var(--surface-solid); }
-[data-theme="jolly"] .wordmark-icon { box-shadow: inset 0 2px 0 rgba(255, 255, 255, .45); }
+[data-theme="jolly"] .budget-tabs .btab.is-active { background: linear-gradient(180deg, #a898f2 0%, #8571ec 100%); color: #fff; box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .35), 0 6px 12px -6px rgba(110, 84, 220, .7); }
+[data-theme="jolly"] .wordmark-icon { box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .45), 0 6px 12px -6px rgba(70, 40, 150, .5); }
+[data-theme="jolly"] .section-title .app-ico, [data-theme="jolly"] .module-section-title .app-ico { color: var(--grad-indigo); }
 
 /* ═══ Coin Flip: the open sea ═══════════════════════════════════════
-   The doubloon is tossed over a warm sky and a rolling sea; the bounty
-   hangs on a wanted poster beside the slider. */
+   The doubloon is tossed over a warm sky and a rolling sea, with the
+   amount and its slider right under it, in the same card. */
 html .cf-play .cf-stage {
   height: 280px; padding-bottom: 30px; margin-bottom: 4px; border-radius: var(--radius-md); overflow: hidden; isolation: isolate;
   background: linear-gradient(180deg, #ffeccc 0%, #ffd49d 48%, #f9b77b 60%, #5cb7df 60.4%, #2f88c3 80%, #1c5d92 100%);
@@ -8154,28 +8247,12 @@ html .cf-panel .cf-flip.btn-primary:hover { box-shadow: inset 0 2px 0 rgba(255, 
 .cf-rule--tails .cf-rule-side { background: rgba(184, 107, 51, .18); color: #7a3f17; }
 [data-theme="dark"] .cf-rule--heads .cf-rule-side, [data-theme="synthwave"] .cf-rule--heads .cf-rule-side { color: #fcd34d; }
 [data-theme="dark"] .cf-rule--tails .cf-rule-side, [data-theme="synthwave"] .cf-rule--tails .cf-rule-side { color: #f3c493; }
-/* The wanted poster and the slider beside it. */
-.cf-bounty { display: grid; grid-template-columns: 156px minmax(0, 1fr); gap: 20px; align-items: center; }
-.cf-poster {
-  position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0;
-  padding: 14px 10px 14px; border-radius: 5px; text-align: center; color: #4a2e12; font-family: 'Playfair Display', Georgia, serif;
-  background: radial-gradient(120% 90% at 50% 40%, #fbedcb 0%, #f1d9a6 70%, #e1be80 100%);
-  box-shadow: 0 12px 24px -14px rgba(74, 46, 18, .7), inset 0 0 0 1px rgba(110, 70, 20, .25), inset 0 0 24px rgba(150, 95, 30, .28);
-  transform: rotate(-2deg);
-}
-.cf-poster::before {
-  content: ""; position: absolute; top: 6px; left: 50%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ff9b9b, #b91c1c); box-shadow: 0 2px 3px rgba(0, 0, 0, .35);
-}
-.cf-poster-wanted { margin-top: 8px; font-size: 25px; font-weight: 900; line-height: 1; letter-spacing: .06em; text-transform: uppercase; }
-.cf-poster-pic {
-  width: 104px; height: 76px; margin: 7px 0 5px; display: flex; align-items: center; justify-content: center; font-size: 44px;
-  background: #ead3a2; border: 2px solid rgba(74, 46, 18, .55); box-shadow: inset 0 0 14px rgba(110, 70, 20, .3);
-}
-.cf-poster-name { max-width: 100%; font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cf-poster-bounty { margin-top: 3px; font-size: 10px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; opacity: .8; }
-.cf-poster-amt { font-size: 23px; font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.cf-slide { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+/* How much: the figure on the right, the slider under it. */
+.cf-amount { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 14px; transition: opacity .2s; }
+.cf-amount.is-locked { opacity: .6; }
+.cf-amount-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.cf-amount-k { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.cf-amount-v { font-family: var(--font-display); font-size: 30px; font-weight: 800; line-height: 1; letter-spacing: -.02em; color: var(--text-primary); font-variant-numeric: tabular-nums; }
 .cf-slider { --fill: 0%; -webkit-appearance: none; appearance: none; width: 100%; height: 36px; margin: 0; background: transparent; cursor: pointer; }
 .cf-slider::-webkit-slider-runnable-track {
   height: 12px; border-radius: 99px; box-shadow: inset 0 1px 3px rgba(0, 0, 0, .18);
@@ -8193,13 +8270,118 @@ html .cf-panel .cf-flip.btn-primary:hover { box-shadow: inset 0 2px 0 rgba(255, 
 .cf-slider::-moz-range-progress { height: 12px; border-radius: 99px; background: linear-gradient(90deg, #e09c22, #f6c344); }
 .cf-slider::-moz-range-thumb { width: 32px; height: 32px; border: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff4c4, #f6c344 45%, #b8740c); box-shadow: inset 0 0 0 2px #c8860f, 0 5px 12px -3px rgba(120, 70, 8, .65); }
 .cf-slider:disabled { cursor: default; opacity: .6; }
-.cf-slider-ends { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
-.cf-range-note { margin: 0; font-size: 12.5px; color: var(--text-secondary); }
+.cf-slider-ends { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12.5px; font-weight: 700; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.cf-range-link { font-size: 12.5px; }
 [data-theme="minimal"] .cf-slider::-webkit-slider-runnable-track { box-shadow: var(--neu-inset-sm); }
-@media (max-width: 480px) {
-  .cf-bounty { grid-template-columns: 1fr; justify-items: center; }
-  .cf-slide { width: 100%; }
-}
 @media (prefers-reduced-motion: reduce) {
   .cf-sun, .cf-gull, .cf-wave--back, .cf-wave--front { animation: none; }
 }
+
+/* ═══ Minimal: soft peach ═══════════════════════════════════════════
+   Off-white cards on a blush-cream page, a peach sidebar, and warm
+   accents: coral for actions, apricot for the main figure's card, peach
+   and sand for tiles. Surfaces are lifted by a soft warm shadow below and
+   a white highlight above, never by an outline, and pressed in where
+   something is chosen or typed. It reuses the raised and pressed tokens
+   from before, so every element already built on them follows. */
+[data-theme="minimal"] {
+  --grad-indigo: #e4887a;
+  --grad-indigo-rgb: 228, 136, 122;
+  --grad-purple: #efa774;
+  --grad-pink: #f2b4a2;
+  --grad-orange: #f2b46d;
+  --income: #4f9f6b;
+  --expense: #d9576d;
+  --neu-bg: #faf7f5;
+  --neu-hi: #ffffff;
+  --neu-lo: rgba(190, 140, 124, .42);
+  --neu-raise: 12px 14px 28px -12px rgba(176, 118, 100, .42), -6px -6px 14px rgba(255, 255, 255, .85), inset 0 1px 0 #fff;
+  --neu-raise-sm: 5px 7px 14px -6px rgba(176, 118, 100, .42), -3px -3px 8px rgba(255, 255, 255, .8), inset 0 1px 0 #fff;
+  --neu-inset: inset 3px 3px 7px rgba(190, 140, 124, .24), inset -3px -3px 7px rgba(255, 255, 255, .95);
+  --neu-inset-sm: inset 2px 2px 4px rgba(190, 140, 124, .22), inset -2px -2px 4px rgba(255, 255, 255, .95);
+  --surface: #faf7f5;
+  --surface-strong: #faf7f5;
+  --surface-solid: #faf7f5;
+  --border-faint: rgba(150, 100, 88, .12);
+  --text-primary: #3a2e2b;
+  --text-secondary: #86716b;
+  --text-faint: #b6a29c;
+  --shadow-card: var(--neu-raise);
+  --ui-page: linear-gradient(140deg, #f6dfd4 0%, #fbf1eb 42%, #f9ece4 70%, #f4ddd0 100%);
+  --ui-side: linear-gradient(180deg, #f2c9b8 0%, #ecb4a2 55%, #e7a592 100%);
+  --ui-divider: transparent;
+  --ui-tile: #faf7f5;
+  --ui-card-shadow: var(--neu-raise);
+  --ui-row-shadow: var(--neu-raise-sm);
+  --ui-feature: linear-gradient(168deg, #fae2b3 0%, #f8d5a8 52%, #f2b8a4 100%);
+  --ui-feature-ink: #4a3328;
+  --ui-feature-shadow: 0 24px 40px -22px rgba(214, 140, 100, .75), inset 0 2px 0 rgba(255, 255, 255, .6), inset 0 -10px 24px rgba(236, 150, 130, .18);
+  --ui-btn: linear-gradient(180deg, #f1a999 0%, #e4887a 100%);
+  --ui-btn-ink: #ffffff;
+  --ui-feature-neg-ink: #c2334f;
+}
+[data-theme="minimal"] body { background: #f8ebe4; }
+[data-theme="minimal"] .modal, [data-theme="minimal"] .fk-dialog, [data-theme="minimal"] #toast { background: var(--neu-bg); }
+/* The main action is coral; what is chosen is pressed into a peach wash. */
+[data-theme="minimal"] .btn-primary {
+  background: var(--ui-btn); color: #fff; border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 12px 20px -10px rgba(228, 136, 122, .85);
+}
+[data-theme="minimal"] .btn-primary:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 24px -10px rgba(228, 136, 122, .95); }
+[data-theme="minimal"] .theme-setting-row .theme-opt.is-active, [data-theme="minimal"] .layout-setting-row .layout-opt.is-active,
+[data-theme="minimal"] .qa-chip.is-on, [data-theme="minimal"] .qa-type.is-on, [data-theme="minimal"] .cf-target.is-on, [data-theme="minimal"] .btn.preset-active {
+  background: #fbe5dc; color: #8a4436; box-shadow: var(--neu-inset);
+}
+[data-theme="minimal"] .dv-toggle .dv-opt.is-on { background: var(--ui-btn); color: #fff; box-shadow: 0 6px 12px -6px rgba(228, 136, 122, .8); }
+[data-theme="minimal"] .period-btn-ico { background: linear-gradient(180deg, #f6c08a, #efa774); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45); }
+[data-theme="minimal"] .rec-toggle-track { background: #f1e3dd; }
+[data-theme="minimal"] .recurring-toggle input:checked + .rec-toggle-track { background: linear-gradient(180deg, #f1a999, #e4887a); }
+[data-theme="minimal"] .link-btn { color: #c96e5c; }
+
+/* The sidebar: a peach panel with a soft lit edge; dark warm labels, the
+   chosen one on a raised white pill. */
+@media (min-width: 901px) {
+  html[data-theme="minimal"][data-nav="left"] .tool-shell > .nav-rail { border-radius: 0 30px 30px 0; box-shadow: inset -2px 0 0 rgba(255, 255, 255, .35), 10px 0 30px -16px rgba(176, 118, 100, .55); }
+  html[data-theme="minimal"][data-nav="right"] .tool-shell > .nav-rail { border-radius: 30px 0 0 30px; box-shadow: inset 2px 0 0 rgba(255, 255, 255, .35), -10px 0 30px -16px rgba(176, 118, 100, .55); }
+}
+html[data-theme="minimal"] .nav-rail, html[data-theme="minimal"] .nav-rail .wordmark { color: #4a302a; }
+html[data-theme="minimal"] .nav-rail-heading { color: rgba(90, 55, 45, .62); }
+html[data-theme="minimal"] .nav-rail-item { color: #5a3a32; font-weight: 600; }
+html[data-theme="minimal"] .nav-rail-item:hover:not(.is-active) { background: rgba(255, 255, 255, .32); box-shadow: none; color: #3a2420; }
+html[data-theme="minimal"] .nav-rail-item.is-active { background: #fbf7f5; color: #3a2420; font-weight: 700; box-shadow: 6px 8px 16px -8px rgba(150, 80, 60, .45), inset 0 1px 0 #fff; }
+html[data-theme="minimal"] .nav-rail-item.is-active .nav-rail-icon { color: #e4887a; }
+html[data-theme="minimal"] .nav-rail-sections + .nav-rail-sections, html[data-theme="minimal"] .nav-rail-extra { border-color: rgba(255, 255, 255, .45); }
+html[data-theme="minimal"] .nav-rail-account { background: #fbf7f5; color: #3a2e2b; box-shadow: 6px 8px 16px -8px rgba(150, 80, 60, .45), inset 0 1px 0 #fff; }
+html[data-theme="minimal"] .nra-avatar, [data-theme="minimal"] .wordmark-icon { background: linear-gradient(160deg, #f6c08a, #e4887a); }
+@media (max-width: 1150px) { html[data-theme="minimal"] .nav-rail-account { background: none; box-shadow: none; } }
+
+/* Tiles in the warm family: apricot, blush and sand. */
+[data-theme="minimal"] .psf-tile--in   { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .psf-tile--out  { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .psf-tile--kept { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .bud-sum-fig:nth-child(1) { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .bud-sum-fig:nth-child(2) { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .bud-sum-fig:nth-child(3) { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .ch-stat:nth-child(1) { background: #fbe9cf; box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .ch-stat:nth-child(2) { background: #f9dcd4; box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .ch-stat:nth-child(3) { background: #efe6dc; box-shadow: var(--neu-raise-sm); }
+/* Allocation keeps one colour per bucket, taken from the same family. */
+[data-theme="minimal"] .alloc-card:nth-child(5n+1), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+1) { --bc: #efa774 !important; }
+[data-theme="minimal"] .alloc-card:nth-child(5n+2), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+2) { --bc: #e4887a !important; }
+[data-theme="minimal"] .alloc-card:nth-child(5n+3), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+3) { --bc: #8fb98a !important; }
+[data-theme="minimal"] .alloc-card:nth-child(5n+4), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+4) { --bc: #c9a07a !important; }
+[data-theme="minimal"] .alloc-card:nth-child(5n+5), [data-theme="minimal"] .alloc-bucket-row:nth-child(5n+5) { --bc: #d99aa8 !important; }
+[data-theme="minimal"] .alloc-card { background: color-mix(in srgb, var(--bc) 18%, #faf7f5); }
+[data-theme="minimal"] .alloc-editor .alloc-bucket-row { background: color-mix(in srgb, var(--bc) 14%, #faf7f5); }
+/* Free to spend on its apricot card: white pills pressed in, a coral track. */
+[data-theme="minimal"] .nl-hero .nl-pill { background: rgba(255, 255, 255, .6); box-shadow: inset 2px 2px 4px rgba(200, 130, 100, .18), inset -2px -2px 4px rgba(255, 255, 255, .7); }
+[data-theme="minimal"] .nl-hero .nl-track { background: rgba(255, 255, 255, .6); box-shadow: inset 1px 1px 3px rgba(200, 130, 100, .25); }
+[data-theme="minimal"] .nl-hero .nl-track i { background: linear-gradient(90deg, #f1a999, #e4887a); }
+[data-theme="minimal"] .nl-hero .nl-label, [data-theme="minimal"] .nl-hero .nl-pill span, [data-theme="minimal"] .nl-hero .nl-track-cap { color: #8a6352; }
+[data-theme="minimal"] .nl-hero .nl-pill--today strong { color: var(--income); }
+/* Rows: soft raised white strips. */
+[data-theme="minimal"] .ra-row { box-shadow: var(--neu-raise-sm); }
+[data-theme="minimal"] .ra-ico { box-shadow: var(--neu-inset-sm); }
+/* Phone: the tab pill and the dock as white raised strips; the chosen tab coral. */
+[data-theme="minimal"] .budget-tabs, [data-theme="minimal"] .nav-dock-bar { background: #faf7f5; border-color: transparent; box-shadow: var(--neu-raise); }
+[data-theme="minimal"] .budget-tabs .btab.is-active { background: var(--ui-btn); color: #fff; box-shadow: 0 6px 12px -6px rgba(228, 136, 122, .8); }

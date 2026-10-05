@@ -243,7 +243,7 @@ function chRange() {
 // slider never has more positions than a hand can land on.
 function chStep(r) { const s = r.max - r.min; return s <= 200 ? 1 : s <= 2000 ? 5 : s <= 20000 ? 50 : 100; }
 function chClamp(v, r) { r = r || chRange(); const n = Math.round(Number(v) || 0); return Math.min(r.max, Math.max(r.min, n)); }
-// A poster has no room for cents.
+// Whole amounts read best above the slider.
 const chBounty = v => fmt(v).replace(/\.00(?!\d)/, '');
 
 function chRangeCardHtml() {
@@ -278,9 +278,9 @@ function chWireRangeCard(el) {
 }
 
 // ── Coin Flip ────────────────────────────────────────────────────────
-// A pirate's call: the amount is the bounty on a wanted poster, the coin a
-// gold doubloon tossed over the sea. Heads, the treasure is stashed in a
-// goal or debt; tails, feast.
+// A pirate's call: the coin is a gold doubloon tossed over the sea, with
+// the amount and its slider in the same card. Heads, the treasure is
+// stashed in a goal or debt; tails, feast.
 const cfAmount = () => chRound(_cf.amount);
 function cfCurrentTarget() {
   const list = chTargetList();
@@ -311,22 +311,7 @@ function cfRender(el) {
         <div class="cf-presets" role="radiogroup" aria-label="${chAttr(t('ch_step_what'))}">${CH_PRESETS.map(p =>
           `<button class="qa-chip cf-preset" type="button" role="radio" data-cf-preset="${p.id}"><span aria-hidden="true">${p.emoji}</span>${esc(t('ch_p_' + p.id))}</button>`).join('')}</div>
         <input class="input cf-other" id="cfOther" type="text" maxlength="40" autocomplete="off" placeholder="${chAttr(t('ch_other_ph'))}" hidden>
-        <p class="cf-step"><b>2</b>${esc(t('ch_step_cost'))}</p>
-        <div class="cf-bounty">
-          <div class="cf-poster" aria-hidden="true">
-            <span class="cf-poster-wanted">${esc(t('ch_poster_wanted'))}</span>
-            <span class="cf-poster-pic" id="cfPosterPic"></span>
-            <span class="cf-poster-name" id="cfPosterName"></span>
-            <span class="cf-poster-bounty">${esc(t('ch_poster_bounty'))}</span>
-            <span class="cf-poster-amt" id="cfDisplay"></span>
-          </div>
-          <div class="cf-slide">
-            <input class="cf-slider" id="cfSlider" type="range" min="${r.min}" max="${r.max}" step="${chStep(r)}" value="${cfAmount()}" aria-label="${chAttr(t('ch_step_cost'))}">
-            <div class="cf-slider-ends"><span>${esc(chBounty(r.min))}</span><span>${esc(chBounty(r.max))}</span></div>
-            <p class="cf-range-note">${esc(t('ch_range_note'))} <button class="link-btn" type="button" data-cf-range>${esc(t('ch_range_link'))}</button></p>
-          </div>
-        </div>
-        <p class="cf-step"><b>3</b>${esc(t('ch_step_where'))}</p>
+        <p class="cf-step"><b>2</b>${esc(t('ch_step_where'))}</p>
         <div class="cf-targets" id="cfTargets" role="radiogroup" aria-label="${chAttr(t('ch_step_where'))}"></div>
       </div></section>
       <section class="panel cf-play"><div class="panel-inner-sm">
@@ -341,6 +326,11 @@ function cfRender(el) {
             </div>
           </div>
           <div class="cf-shadow" id="cfShadow"></div>
+        </div>
+        <div class="cf-amount" id="cfAmountBox">
+          <div class="cf-amount-top"><span class="cf-amount-k">${esc(t('ch_step_cost'))}</span><b class="cf-amount-v" id="cfDisplay"></b></div>
+          <input class="cf-slider" id="cfSlider" type="range" min="${r.min}" max="${r.max}" step="${chStep(r)}" value="${cfAmount()}" aria-label="${chAttr(t('ch_step_cost'))}">
+          <div class="cf-slider-ends"><span>${esc(chBounty(r.min))}</span><button class="link-btn cf-range-link" type="button" data-cf-range>${esc(t('ch_range_link'))}</button><span>${esc(chBounty(r.max))}</span></div>
         </div>
         <div class="cf-panel" id="cfPanel" aria-live="polite"></div>
       </div></section>
@@ -383,10 +373,6 @@ function cfPaintAmount() {
     if (Number(s.value) !== a) s.value = a;
     s.style.setProperty('--fill', ((a - r.min) / (r.max - r.min) * 100).toFixed(2) + '%');
   }
-  const p = CH_PRESETS.find(x => x.id === _cf.preset) || CH_PRESETS[0];
-  const pic = document.getElementById('cfPosterPic'), name = document.getElementById('cfPosterName');
-  if (pic) pic.textContent = p.emoji;
-  if (name) name.textContent = cfLabelNow();
 }
 function cfPaintSetup() {
   const setup = document.getElementById('cfSetup');
@@ -394,6 +380,8 @@ function cfPaintSetup() {
   const locked = _cf.phase !== 'setup';
   setup.classList.toggle('is-locked', locked);
   setup.querySelectorAll('button, input').forEach(x => { x.disabled = locked; });
+  document.querySelectorAll('#cfAmountBox input, #cfAmountBox button').forEach(x => { x.disabled = locked; });
+  document.getElementById('cfAmountBox')?.classList.toggle('is-locked', locked);
   setup.querySelectorAll('[data-cf-preset]').forEach(b => {
     const on = b.dataset.cfPreset === _cf.preset;
     b.classList.toggle('is-on', on); b.setAttribute('aria-checked', on);
@@ -507,8 +495,8 @@ function cfFlip() {
   _cf.err = !(amt > 0) ? t('ch_need_amount') : !tg ? t('ch_need_target') : '';
   if (_cf.err) {
     cfPaintPanel();
-    const poster = document.querySelector('.cf-poster');
-    if (poster) { poster.classList.remove('cf-shake'); void poster.offsetWidth; poster.classList.add('cf-shake'); }
+    const box = document.getElementById('cfAmountBox');
+    if (box) { box.classList.remove('cf-shake'); void box.offsetWidth; box.classList.add('cf-shake'); }
     return;
   }
   const side = chRandom() < 0.5 ? 'heads' : 'tails';
@@ -641,8 +629,8 @@ const CH_WORDS = {
     ch_back: 'All challenges',
     ch_cf_title: 'Coin Flip',
     ch_cf_desc: 'Torn between spending and saving? Let the doubloon decide. Heads, you skip it and the treasure goes to a goal or debt. Tails, you feast, guilt free.',
-    ch_step_what: 'What is tempting you?', ch_step_cost: 'Set the bounty: roughly what it would cost', ch_step_where: 'If it lands heads, the treasure goes to',
-    ch_poster_wanted: 'Wanted', ch_poster_bounty: 'Bounty', ch_range_note: 'The slider runs from your lowest to your highest bounty.', ch_range_link: 'Change the range',
+    ch_step_what: 'What is tempting you?', ch_step_cost: 'Roughly what would it cost?', ch_step_where: 'If it lands heads, the money goes to',
+    ch_range_link: 'Change the range',
     ch_p_takeout: 'Takeout', ch_p_coffee: 'Coffee', ch_p_treat: 'A treat', ch_p_shopping: 'Shopping', ch_p_night: 'Night out', ch_p_other: 'Something else',
     ch_other_ph: 'What is it?',
     ch_kind_goal: 'Goal', ch_kind_debt: 'Debt', ch_of: '{0} of {1}', ch_saved_sub: '{0} saved', ch_owed_sub: '{0} owed',
