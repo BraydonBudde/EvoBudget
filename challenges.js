@@ -22,8 +22,14 @@
    ===================================================================== */
 
 const CH_CATS = [
-  { id: 'decide', games: ['coinflip'] }
+  { id: 'decide', games: ['coinflip'] },
+  { id: 'fun', games: ['scratch'] }
 ];
+// How each game shows on its card in the lobby.
+const CH_GAMES = {
+  coinflip: { title: 'ch_cf_title', desc: 'ch_cf_desc', art: () => `<span class="ch-mini-coin"><span>${appIconSvg('sinking')}</span></span>` },
+  scratch: { title: 'ch_sc_title', desc: 'ch_sc_desc', art: () => `<span class="ch-mini-ticket" aria-hidden="true"><i></i></span>` }
+};
 // What tempts people most. `cat` is the row of DEFAULT_BUDGET's spending
 // list it would be logged under if the coin says go ahead.
 const CH_PRESETS = [
@@ -52,13 +58,13 @@ function chData() {
   return c;
 }
 function chTxOf(e) { return e && e.txId ? (state.transactions || []).find(x => x.id === e.txId) || null : null; }
-function chLabel(e) { return e.preset === 'other' ? (e.label || t('ch_p_other')) : t('ch_p_' + e.preset); }
+function chLabel(e) { return e.game === 'scratch' ? t('ch_sc_label') : e.preset === 'other' ? (e.label || t('ch_p_other')) : t('ch_p_' + e.preset); }
 function chStats(game) {
   const h = chData().history.filter(e => !game || e.game === game);
   const ps = state.settings.periodStart || '', pe = state.settings.periodEnd || '';
   let saved = 0, period = 0, wins = 0, skipped = 0;
   h.forEach(e => {
-    if (e.side === 'heads') skipped++;
+    if (e.side === 'heads' || (e.game === 'scratch' && e.saved > 0)) skipped++;
     const tx = chTxOf(e);
     if (!tx) return;
     const a = Number(tx.amount) || 0;
@@ -125,7 +131,7 @@ function chSave(entry, bonus) {
     if (b) alloc = b.id;
   }
   const tx = { id: uid(), date: today(), type: goal ? 'sinking_fund' : 'debt', category: goal ? goal.name : debt.name,
-    amount, description: tf(bonus ? 'ch_cf_tx_bonus' : 'ch_cf_tx_heads', chLabel(entry)), allocation: alloc };
+    amount, description: entry.game === 'scratch' ? t('ch_sc_tx') : tf(bonus ? 'ch_cf_tx_bonus' : 'ch_cf_tx_heads', chLabel(entry)), allocation: alloc };
   state.transactions.push(tx); noteAdded(tx);
   trialUse('transaction');
   applySinkingFundDelta(tx, +1);
@@ -147,6 +153,7 @@ function renderChallenges() {
   const el = document.getElementById('bview-challenges');
   if (!el) return;
   if (_ch.screen === 'coinflip') return cfRender(el);
+  if (_ch.screen === 'scratch') return scRender(el);
   chRenderLobby(el);
 }
 
@@ -157,9 +164,10 @@ function chRenderLobby(el) {
   const gameCard = g => {
     const s = chStats(g);
     const meta = s.plays ? `<span class="ch-gc-meta">${esc(tf(s.plays === 1 ? 'ch_plays_1' : 'ch_plays_n', s.plays))}${s.saved > 0 ? ` · <b>${esc(tf('ch_gc_saved', fmt(s.saved)))}</b>` : ''}</span>` : '';
+    const m = CH_GAMES[g];
     return `<button class="ch-gc" type="button" data-ch-play="${g}">
-      <span class="ch-gc-art" aria-hidden="true"><span class="ch-mini-coin"><span>${appIconSvg('sinking')}</span></span></span>
-      <span class="ch-gc-body"><b class="ch-gc-title">${esc(t('ch_cf_title'))}</b><span class="ch-gc-desc">${esc(t('ch_cf_desc'))}</span>${meta}</span>
+      <span class="ch-gc-art" aria-hidden="true">${m.art()}</span>
+      <span class="ch-gc-body"><b class="ch-gc-title">${esc(t(m.title))}</b><span class="ch-gc-desc">${esc(t(m.desc))}</span>${meta}</span>
       <span class="btn btn-primary btn-sm ch-gc-go">${esc(t('ch_play'))}</span>
     </button>`;
   };
@@ -193,17 +201,22 @@ function chStatus(e) {
   const tx = chTxOf(e);
   if (tx) return e.bonus ? 'bonus' : 'saved';
   if (e.txId) return 'undone';
+  if (e.game === 'scratch') return e.saved > 0 ? 'kept' : 'enjoyed';
   return e.side === 'heads' ? 'kept' : 'enjoyed';
 }
 function chHistRow(e) {
   const s = chStatus(e), tx = chTxOf(e), lbl = chLabel(e);
-  const title = s === 'saved' ? tf('ch_h_saved', lbl) : s === 'bonus' ? tf('ch_h_bonus', lbl) : s === 'kept' ? tf('ch_h_kept', lbl)
-    : s === 'undone' ? tf('ch_h_undone', lbl) : tf('ch_h_enjoyed', lbl);
-  const sub = [t('ch_cf_title'), formatDateShort(e.date)];
+  const sc = e.game === 'scratch';
+  const title = sc
+    ? (s === 'saved' ? tf('ch_sc_h_saved', fmt(e.fun), fmt(tx.amount)) : s === 'kept' ? tf('ch_sc_h_kept', fmt(e.fun), fmt(e.saved))
+      : s === 'undone' ? t('ch_sc_h_undone') : tf('ch_sc_h_all', fmt(e.fun)))
+    : (s === 'saved' ? tf('ch_h_saved', lbl) : s === 'bonus' ? tf('ch_h_bonus', lbl) : s === 'kept' ? tf('ch_h_kept', lbl)
+      : s === 'undone' ? tf('ch_h_undone', lbl) : tf('ch_h_enjoyed', lbl));
+  const sub = [t(sc ? 'ch_sc_title' : 'ch_cf_title'), formatDateShort(e.date)];
   if (tx) sub.push(tf('ch_h_to', tx.category));
   const preset = CH_PRESETS.find(p => p.id === e.preset) || CH_PRESETS[CH_PRESETS.length - 1];
   return `<div class="ch-h-row ch-h--${s}" data-ch-entry="${chAttr(e.id)}">
-    <span class="ch-h-ico" aria-hidden="true">${preset.emoji}</span>
+    <span class="ch-h-ico" aria-hidden="true">${sc ? '\uD83C\uDF9F\uFE0F' : preset.emoji}</span>
     <span class="ch-h-main"><b>${esc(title)}</b><small>${esc(sub.join(' · '))}</small></span>
     ${s === 'kept' ? `<button class="btn btn-ghost btn-sm ch-h-save" type="button" data-ch-save="${chAttr(e.id)}">${esc(t('ch_save_now'))}</button>` : ''}
     <span class="ch-h-amt">${tx ? '+' + fmt(tx.amount) : fmt(e.amount)}</span>
@@ -211,6 +224,11 @@ function chHistRow(e) {
 }
 
 function chOpenGame(id) {
+  if (id === 'scratch') {
+    scOpen(); _ch.screen = 'scratch'; renderChallenges();
+    document.querySelector('.app-scroll')?.scrollTo({ top: 0 });
+    return;
+  }
   if (id !== 'coinflip') return;
   const last = chData().last;
   const keep = _cf && _cf.phase !== 'flipping' ? _cf : null;
@@ -227,7 +245,12 @@ function chOpenGame(id) {
   renderChallenges();
   document.querySelector('.app-scroll')?.scrollTo({ top: 0 });
 }
-function chBackToLobby() { _ch.screen = 'lobby'; if (_cf && _cf.phase !== 'flipping') _cf.phase = 'setup'; renderChallenges(); }
+function chBackToLobby() {
+  _ch.screen = 'lobby';
+  if (_cf && _cf.phase !== 'flipping') _cf.phase = 'setup';
+  if (_sc && _sc.phase === 'result') { _sc.phase = 'setup'; _sc.entry = null; }
+  renderChallenges();
+}
 
 // ── The amount's range ───────────────────────────────────────────────
 // The lowest and highest amount the slider goes to, set in Settings.
@@ -379,28 +402,30 @@ function cfPaintSetup() {
   if (emoji) emoji.textContent = (CH_PRESETS.find(p => p.id === _cf.preset) || CH_PRESETS[0]).emoji;
   cfPaintTargets();
 }
-function cfPaintTargets() {
-  const box = document.getElementById('cfTargets');
-  if (!box) return;
+// The places a win can go, as a list to pick from. g is the game's own
+// state (its chosen target and its phase); onPick runs after a choice.
+function chPaintTargetBox(box, g, onPick) {
+  if (!box || !g) return;
   const list = chTargetList();
-  const cur = cfCurrentTarget();
-  if (cur) _cf.target = cur.key;
-  const locked = _cf.phase !== 'setup';
+  const cur = list.find(x => x.key === g.target) || list[0] || null;
+  if (cur) g.target = cur.key;
+  const locked = g.phase !== 'setup';
   const real = chTargets().length;
   box.innerHTML = list.map(x => `<button class="cf-target${cur && x.key === cur.key ? ' is-on' : ''}${x.kind === 'jar' ? ' cf-target--jar' : ''}" type="button" role="radio" aria-checked="${!!(cur && x.key === cur.key)}" data-cf-target="${chAttr(x.key)}"${locked ? ' disabled' : ''}>
       <span class="cf-t-ico" aria-hidden="true">${x.ico}</span>
-      <span class="cf-t-txt"><b>${esc(x.name)}</b><small>${esc((x.kind === 'jar' ? '' : t(x.kind === 'goal' ? 'ch_kind_goal' : 'ch_kind_debt') + ' · ') + x.sub)}</small></span>
+      <span class="cf-t-txt"><b>${esc(x.name)}</b><small>${esc((x.kind === 'jar' ? '' : t(x.kind === 'goal' ? 'ch_kind_goal' : 'ch_kind_debt') + ' \u00b7 ') + x.sub)}</small></span>
       <span class="cf-t-tick" aria-hidden="true">${DD_TICK}</span>
     </button>`).join('')
-    + (real ? '' : `<p class="cf-none">${esc(t('ch_none'))} <button class="link-btn" type="button" data-cf-new="goal"${locked ? ' disabled' : ''}>${esc(t('ch_new_goal'))}</button> · <button class="link-btn" type="button" data-cf-new="debt"${locked ? ' disabled' : ''}>${esc(t('ch_new_debt'))}</button></p>`);
-  box.querySelectorAll('[data-cf-target]').forEach(b => b.addEventListener('click', () => {
-    if (_cf.phase !== 'setup') return;
-    _cf.target = b.dataset.cfTarget; b.blur();
-    cfPaintTargets(); cfPaintPanel();
+    + (real ? '' : `<p class="cf-none">${esc(t('ch_none'))} <button class="link-btn" type="button" data-cf-new="goal"${locked ? ' disabled' : ''}>${esc(t('ch_new_goal'))}</button> \u00b7 <button class="link-btn" type="button" data-cf-new="debt"${locked ? ' disabled' : ''}>${esc(t('ch_new_debt'))}</button></p>`);
+  box.querySelectorAll('[data-cf-target]').forEach(btn => btn.addEventListener('click', () => {
+    if (g.phase !== 'setup') return;
+    g.target = btn.dataset.cfTarget; btn.blur();
+    chPaintTargetBox(box, g, onPick); if (onPick) onPick();
   }));
   box.querySelector('[data-cf-new="goal"]')?.addEventListener('click', () => { switchTab('goals'); openFundModal(); });
   box.querySelector('[data-cf-new="debt"]')?.addEventListener('click', () => { switchTab('debt'); if (typeof openDebtModal === 'function') openDebtModal(null); });
 }
+function cfPaintTargets() { chPaintTargetBox(document.getElementById('cfTargets'), _cf, () => cfPaintPanel()); }
 function cfPaintCoin() {
   const coin = document.getElementById('cfCoin');
   if (!coin) return;
@@ -539,8 +564,8 @@ function cfSaveNow(btn, bonus) {
   cfBurst();
 }
 // Coins thrown out from the coin, for a win.
-function cfBurst() {
-  const stage = document.getElementById('cfStage');
+function cfBurst(stageId) {
+  const stage = document.getElementById(stageId || 'cfStage');
   if (!stage || ddReduced() || !stage.animate) return;
   for (let i = 0; i < 14; i++) {
     const s = document.createElement('i');
@@ -569,15 +594,280 @@ function cfLogSpend(e) {
 
 // Enter flips; the slider takes the arrow keys itself.
 document.addEventListener('keydown', e => {
-  if (typeof currentTab === 'undefined' || currentTab !== 'challenges' || _ch.screen !== 'coinflip' || !_cf || _cf.phase !== 'setup') return;
-  if (!document.getElementById('cfSlider')) return;
+  if (typeof currentTab === 'undefined' || currentTab !== 'challenges') return;
+  const game = _ch.screen === 'coinflip' ? _cf : _ch.screen === 'scratch' ? _sc : null;
+  if (!game || game.phase !== 'setup') return;
+  const slider = _ch.screen === 'coinflip' ? 'cfSlider' : 'scSlider';
+  if (!document.getElementById(slider)) return;
   const ov = document.getElementById('tutorialOverlay');
   if ((ov && !ov.hidden) || document.getElementById('fkDialogOverlay')) return;
   const tag = document.activeElement?.tagName;
-  if (tag === 'TEXTAREA' || tag === 'SELECT' || (tag === 'INPUT' && document.activeElement.id !== 'cfSlider')) return;
+  if (tag === 'TEXTAREA' || tag === 'SELECT' || (tag === 'INPUT' && document.activeElement.id !== slider)) return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (e.key === 'Enter' && !(document.activeElement && document.activeElement.closest && document.activeElement.closest('button'))) { e.preventDefault(); cfFlip(); }
+  if (e.key === 'Enter' && !(document.activeElement && document.activeElement.closest && document.activeElement.closest('button'))) { e.preventDefault(); if (_ch.screen === 'coinflip') cfFlip(); else scAuto(); }
 });
+
+// ── Scratch Card ─────────────────────────────────────────────────────
+// Fun money for the weekend, without guilt and without overspending.
+// Set the most you would happily spend; the card reveals how much of it
+// is yours to enjoy. Whatever is left goes to the goal or debt you chose,
+// the same way a Coin Flip win does, so it is saved, undone and counted
+// exactly like one.
+const SC_TIERS = [
+  { share: 1, weight: 12 },
+  { share: .75, weight: 20 },
+  { share: .5, weight: 33 },
+  { share: .25, weight: 23 },
+  { share: 0, weight: 12 }
+];
+const SC_REVEAL_AT = .48;   // the share of foil scratched off before the rest falls away
+let _sc = null;
+
+function scPickShare() {
+  const total = SC_TIERS.reduce((s, x) => s + x.weight, 0);
+  let r = chRandom() * total;
+  for (const x of SC_TIERS) { if ((r -= x.weight) < 0) return x.share; }
+  return SC_TIERS[SC_TIERS.length - 1].share;
+}
+function scOpen() {
+  const last = chData().last, r = chRange();
+  const keep = _sc && _sc.phase === 'setup' ? _sc : null;
+  _sc = { phase: 'setup', max: chClamp(keep ? keep.max : (Number(last.scMax) > 0 ? Number(last.scMax) : 50), r),
+    target: keep ? keep.target : (last.target || ''), entry: null, err: '' };
+}
+const scAmount = () => chRound(_sc.max);
+function scCurrentTarget() { const list = chTargetList(); return list.find(x => x.key === _sc.target) || list[0] || null; }
+
+function scRender(el) {
+  const r = chRange();
+  el.innerHTML = `<div class="ch-game">
+    <button class="ch-back" type="button" data-ch-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>${esc(t('ch_back'))}</button>
+    <div class="ch-game-head">
+      <span class="ch-eyebrow">${esc(t('ch_cat_fun'))}</span>
+      <h2 class="section-title">${esc(t('ch_sc_title'))}</h2>
+      <p class="section-desc">${esc(t('ch_sc_desc'))}</p>
+    </div>
+    <section class="panel cf-card sc-card"><div class="cf-card-inner">
+      <div class="cf-setup" id="scSetup">
+        <div class="cf-step cf-step--amount"><b>1</b><span>${esc(t('ch_sc_step_max'))}</span><strong class="cf-amount-v" id="scDisplay"></strong></div>
+        <div class="cf-amount" id="scAmountBox">
+          <input class="cf-slider" id="scSlider" type="range" min="${r.min}" max="${r.max}" step="${chStep(r)}" value="${scAmount()}" aria-label="${chAttr(t('ch_sc_step_max'))}">
+          <div class="cf-slider-ends"><span>${esc(chBounty(r.min))}</span><button class="link-btn cf-range-link" type="button" data-sc-range>${esc(t('ch_range_link'))}</button><span>${esc(chBounty(r.max))}</span></div>
+        </div>
+        <p class="cf-step"><b>2</b>${esc(t('ch_sc_step_where'))}</p>
+        <div class="cf-targets" id="scTargets" role="radiogroup" aria-label="${chAttr(t('ch_sc_step_where'))}"></div>
+      </div>
+      <div class="cf-stage sc-stage" id="scStage">
+        <div class="sc-ticket">
+          <div class="sc-ticket-head"><span class="sc-brand">${esc(t('ch_sc_brand'))}</span><span class="sc-upto" id="scUpto"></span></div>
+          <div class="sc-field" id="scField">
+            <div class="sc-prize" id="scPrize" aria-live="polite"></div>
+            <canvas class="sc-foil" id="scFoil" aria-label="${chAttr(t('ch_sc_hint'))}" role="img"></canvas>
+          </div>
+          <div class="sc-ticket-foot">${esc(t('ch_sc_hint'))}</div>
+        </div>
+      </div>
+      <div class="cf-panel" id="scPanel" aria-live="polite"></div>
+    </div></section>
+  </div>`;
+  el.querySelector('[data-ch-back]').addEventListener('click', chBackToLobby);
+  document.getElementById('scSlider').addEventListener('input', e => {
+    if (_sc.phase !== 'setup') return;
+    _sc.max = chClamp(e.target.value); scPaintAmount(); scPaintPanel();
+  });
+  el.querySelector('[data-sc-range]').addEventListener('click', () => {
+    switchTab('settings');
+    const f = document.getElementById('cfMaxInput');
+    if (f) { f.scrollIntoView({ block: 'center' }); f.focus(); }
+  });
+  scPaintSetup(); scPaintAmount(); scPaintPanel();
+  // The foil is drawn once the card has its size.
+  scPaintPrize();
+  requestAnimationFrame(() => { scDrawFoil(_sc.phase !== 'setup'); if (_sc.phase === 'scratching') scReveal(); });
+}
+function scPaintAmount() {
+  const d = document.getElementById('scDisplay'); if (!d) return;
+  const r = chRange(), a = scAmount();
+  d.textContent = chBounty(a);
+  const up = document.getElementById('scUpto'); if (up) up.textContent = tf('ch_sc_upto', chBounty(a));
+  const s = document.getElementById('scSlider');
+  if (s) { if (Number(s.value) !== a) s.value = a; s.style.setProperty('--fill', ((a - r.min) / (r.max - r.min) * 100).toFixed(2) + '%'); }
+}
+function scPaintSetup() {
+  const setup = document.getElementById('scSetup'); if (!setup) return;
+  const locked = _sc.phase !== 'setup';
+  setup.classList.toggle('is-locked', locked);
+  setup.querySelectorAll('button, input').forEach(x => { x.disabled = locked; });
+  chPaintTargetBox(document.getElementById('scTargets'), _sc, () => scPaintPanel());
+}
+function scPaintPrize() {
+  const box = document.getElementById('scPrize'); if (!box) return;
+  const e = _sc.entry;
+  if (!e) { box.innerHTML = ''; return; }
+  box.innerHTML = e.fun > 0
+    ? `<span class="sc-prize-k">${esc(t('ch_sc_prize_k'))}</span><b class="sc-prize-v">${esc(chBounty(e.fun))}</b><span class="sc-prize-s">${esc(t('ch_sc_prize_s'))}</span>${e.saved > 0 ? `<span class="sc-prize-save">${esc(tf('ch_sc_prize_save', chBounty(e.saved)))}</span>` : ''}`
+    : `<span class="sc-prize-k">${esc(t('ch_sc_res_none'))}</span><b class="sc-prize-v">${esc(chBounty(0))}</b><span class="sc-prize-save">${esc(tf('ch_sc_prize_save', chBounty(e.saved)))}</span>`;
+}
+
+// ── The foil ──
+function scDrawFoil(cleared) {
+  const cv = document.getElementById('scFoil'); if (!cv) return;
+  const field = document.getElementById('scField');
+  const w = field.clientWidth, h = field.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = Math.max(1, Math.round(w * dpr)); cv.height = Math.max(1, Math.round(h * dpr));
+  cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  const ctx = cv.getContext('2d'); if (!ctx) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cv.classList.toggle('is-gone', !!cleared);
+  if (cleared) { ctx.clearRect(0, 0, w, h); return; }
+  // Brushed silver with a little sparkle, and the words on top.
+  const g = ctx.createLinearGradient(0, 0, w, h);
+  g.addColorStop(0, '#d9dde4'); g.addColorStop(.45, '#f4f6f9'); g.addColorStop(.55, '#c7ccd5'); g.addColorStop(1, '#e8ebf0');
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  for (let i = 0; i < 160; i++) {
+    ctx.fillStyle = i % 3 ? 'rgba(255,255,255,.55)' : 'rgba(120,128,145,.18)';
+    ctx.fillRect((i * 73) % w, (i * 37) % h, 1.5, 1.5);
+  }
+  ctx.fillStyle = 'rgba(92,98,114,.85)';
+  ctx.font = `800 ${Math.round(Math.min(22, w / 11))}px ${getComputedStyle(document.body).fontFamily}`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(t('ch_sc_foil').toUpperCase(), w / 2, h / 2);
+  scWireFoil(cv);
+}
+function scWireFoil(cv) {
+  if (cv._wired) return; cv._wired = true;
+  let down = false, last = null, moves = 0;
+  const ctx = cv.getContext('2d');
+  const pt = ev => { const r = cv.getBoundingClientRect(); return [ev.clientX - r.left, ev.clientY - r.top]; };
+  const scratch = (a, b) => {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 38;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    ctx.beginPath(); ctx.arc(b[0], b[1], 19, 0, Math.PI * 2); ctx.fill();
+    if (++moves % 5 === 0 && scCleared(cv) >= SC_REVEAL_AT) scReveal();
+  };
+  cv.addEventListener('pointerdown', ev => {
+    if (!_sc || _sc.phase === 'result' || cv.classList.contains('is-gone')) return;
+    if (_sc.phase === 'setup' && !scStart()) return;
+    down = true; last = pt(ev); cv.setPointerCapture?.(ev.pointerId); scratch(last, last);
+  });
+  cv.addEventListener('pointermove', ev => { if (!down) return; const p = pt(ev); scratch(last, p); last = p; });
+  const up = () => { down = false; if (_sc && _sc.phase === 'scratching' && scCleared(cv) >= SC_REVEAL_AT) scReveal(); };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); cv.addEventListener('pointerleave', () => { down = false; });
+}
+// How much of the foil has been scratched away, sampled on a coarse grid.
+function scCleared(cv) {
+  try {
+    const ctx = cv.getContext('2d'), d = ctx.getImageData(0, 0, cv.width, cv.height).data;
+    let clear = 0, n = 0;
+    for (let i = 3; i < d.length; i += 4 * 24) { n++; if (d[i] < 40) clear++; }
+    return n ? clear / n : 0;
+  } catch (e) { return 1; }
+}
+// The card is bought: the outcome is fixed now, before any foil comes off.
+function scStart() {
+  if (_sc.phase !== 'setup') return _sc.phase === 'scratching';
+  const max = scAmount(), tg = scCurrentTarget();
+  _sc.err = !(max > 0) ? t('ch_sc_need') : !tg ? t('ch_need_target') : '';
+  if (_sc.err) {
+    scPaintPanel();
+    const box = document.getElementById('scAmountBox');
+    if (box) { box.classList.remove('cf-shake'); void box.offsetWidth; box.classList.add('cf-shake'); }
+    return false;
+  }
+  const share = scPickShare();
+  const fun = Math.round(max * share), saved = chRound(max - fun);
+  _sc.entry = { id: uid(), game: 'scratch', at: Date.now(), date: today(), max, fun, saved, amount: saved, share,
+    target: { kind: tg.kind, id: tg.id, name: tg.name }, txId: null };
+  _sc.phase = 'scratching';
+  scPaintPrize(); scPaintSetup(); scPaintPanel();
+  return true;
+}
+// Scratch it for me: a few quick sweeps across the foil, then the rest falls away.
+function scAuto() {
+  if (!_sc || _sc.phase === 'result') return;
+  if (_sc.phase === 'setup' && !scStart()) return;
+  const cv = document.getElementById('scFoil');
+  if (!cv || ddReduced()) { scReveal(); return; }
+  const ctx = cv.getContext('2d'), w = cv.clientWidth, h = cv.clientHeight, rows = 4;
+  let k = 0;
+  const step = () => {
+    if (!_sc || _sc.phase !== 'scratching') return;
+    const y = h * ((k % rows) + .5) / rows, x0 = k % 2 ? w : 0, x1 = k % 2 ? 0 : w;
+    ctx.globalCompositeOperation = 'destination-out'; ctx.lineCap = 'round'; ctx.lineWidth = 44;
+    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+    if (++k < rows) setTimeout(step, 120); else setTimeout(scReveal, 120);
+  };
+  step();
+}
+function scReveal() {
+  if (!_sc || _sc.phase !== 'scratching') return;
+  const e = _sc.entry, c = chData();
+  c.history.unshift(e);
+  if (c.history.length > CH_HISTORY_MAX) c.history.length = CH_HISTORY_MAX;
+  c.last = { ...c.last, scMax: e.max, target: e.target.kind === 'jar' ? 'jar' : e.target.kind + ':' + e.target.id };
+  saveState();
+  _sc.phase = 'result';
+  const cv = document.getElementById('scFoil');
+  if (cv) cv.classList.add('is-gone');
+  scPaintPanel();
+  const stage = document.getElementById('scStage');
+  if (stage) { stage.classList.remove('is-landed'); void stage.offsetWidth; stage.classList.add('is-landed'); }
+  if (e.fun > 0) cfBurst('scStage');
+}
+
+function scPaintPanel() {
+  const p = document.getElementById('scPanel'); if (!p) return;
+  const max = scAmount(), tg = scCurrentTarget();
+  if (_sc.phase !== 'result') {
+    if (_sc.err && max > 0 && tg) _sc.err = '';
+    const busy = _sc.phase === 'scratching';
+    p.className = 'cf-panel';
+    p.innerHTML = `<div class="cf-rules"><div class="cf-rule sc-rule"><span>${esc(tf('ch_sc_rule', max > 0 ? fmt(max) : t('ch_the_money'), tg ? tg.name : '…'))}</span></div></div>
+      <button class="btn btn-primary cf-flip" id="scGoBtn" type="button">${esc(t(busy ? 'ch_sc_reveal' : 'ch_sc_auto'))}</button>
+      <p class="cf-err"${_sc.err ? '' : ' hidden'}>${esc(_sc.err)}</p>`;
+    p.querySelector('#scGoBtn').addEventListener('click', () => busy ? scReveal() : scAuto());
+    return;
+  }
+  const e = _sc.entry, tx = chTxOf(e), where = cfTargetName(e);
+  if (tx) {
+    const goal = e.target.kind === 'goal' ? (state.sinkingFunds || []).find(f => f.id === e.target.id) : null;
+    const has = goal && fundHasTarget(goal);
+    const now = has ? Math.min(100, Math.round((goal.currentSaved || 0) / goal.targetAmount * 100)) : 0;
+    const was = has ? Math.min(100, Math.max(0, Math.round(((goal.currentSaved || 0) - tx.amount) / goal.targetAmount * 100))) : 0;
+    p.className = 'cf-panel cf-panel--win is-in';
+    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge">${DD_TICK}</span><span class="cf-verdict-txt"><b>${esc(t('ch_saved_title'))}</b><span>${esc(tf('ch_saved_line', fmt(tx.amount), tx.category))}</span></span></div>
+      ${has ? `<div class="cf-prog"><div class="cf-prog-top"><span>${esc(goal.name)}</span><span>${esc(tf('ch_of', fmt(goal.currentSaved || 0), fmt(goal.targetAmount)))}</span></div><div class="cf-prog-bar"><i id="scProg" style="width:${was}%" data-to="${now}"></i></div></div>` : ''}
+      <div class="cf-acts"><button class="btn btn-primary" type="button" data-sc-again>${esc(t('ch_sc_again'))}</button><button class="btn btn-ghost" type="button" data-sc-open>${esc(tf('ch_open_target', tx.category))}</button></div>`;
+    const bar = p.querySelector('#scProg');
+    if (bar) requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = bar.dataset.to + '%'; }));
+    p.querySelector('[data-sc-open]').addEventListener('click', () => switchTab(e.target.kind === 'goal' ? 'goals' : 'debt'));
+  } else if (e.saved <= 0) {
+    p.className = 'cf-panel cf-panel--tails is-in';
+    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge cf-badge--emoji">🎉</span><span class="cf-verdict-txt"><b>${esc(tf('ch_sc_res_all', fmt(e.fun)))}</b><span>${esc(t('ch_sc_res_all_line'))}</span></span></div>
+      <div class="cf-acts"><button class="btn btn-primary" type="button" data-sc-again>${esc(t('ch_sc_again'))}</button></div>`;
+  } else {
+    const none = e.fun <= 0;
+    p.className = 'cf-panel cf-panel--heads is-in';
+    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge cf-badge--emoji">${none ? '🛋️' : '🎟️'}</span><span class="cf-verdict-txt"><b>${esc(none ? t('ch_sc_res_none') : tf('ch_sc_res_mix', fmt(e.fun)))}</b><span>${esc(none ? tf('ch_sc_res_none_line', fmt(e.saved), where) : tf('ch_sc_res_mix_line', fmt(e.fun), fmt(e.saved), where))}</span></span></div>
+      <div class="cf-acts"><button class="btn btn-primary" type="button" data-sc-save>${esc(tf('ch_save_btn', fmt(e.saved)))}</button><button class="btn btn-ghost" type="button" data-sc-again>${esc(t('ch_not_now'))}</button></div>`;
+  }
+  p.querySelector('[data-sc-again]')?.addEventListener('click', scAgain);
+  p.querySelector('[data-sc-save]')?.addEventListener('click', ev => {
+    const btn = ev.currentTarget; btn.disabled = true;
+    const tx = chSave(_sc.entry, false);
+    if (!tx) { btn.disabled = false; return; }
+    chPaintTargetBox(document.getElementById('scTargets'), _sc, () => scPaintPanel());
+    scPaintPanel(); cfBurst('scStage');
+  });
+}
+function scAgain() {
+  if (!_sc) return;
+  _sc.phase = 'setup'; _sc.entry = null; _sc.err = '';
+  scPaintPrize(); scPaintSetup(); scPaintAmount(); scPaintPanel();
+  scDrawFoil(false);
+}
 
 // ── On the dashboard ─────────────────────────────────────────────────
 // Only once something has been played: what challenges have saved in all,
@@ -606,7 +896,7 @@ function chDashHtml() {
 const CH_WORDS = {
   en: {
     tab_challenges: 'Challenges', stg_challenges: 'Challenges',
-    ch_set_title: 'Coin Flip range', ch_set_desc: 'The lowest and highest amount the Coin Flip slider goes to.', ch_set_min: 'Lowest', ch_set_max: 'Highest',
+    ch_set_title: 'Challenge range', ch_set_desc: 'The lowest and highest amount the challenge sliders go to, in Coin Flip and Scratch Card.', ch_set_min: 'Lowest', ch_set_max: 'Highest',
     ch_set_err_min: 'The lowest amount must be 0 or more.', ch_set_err_order: 'The highest amount must be more than the lowest.', ch_set_err_cap: 'The highest amount can be at most {0}.',
     ch_desc: 'Small games for the moment you are about to spend. When the money wins, what you would have spent goes to a goal or a debt instead.',
     ch_cat_decide: 'Quick decisions', ch_cat_decide_desc: 'Torn between two choices? Let a game decide, and let your savings win.',
@@ -618,6 +908,20 @@ const CH_WORDS = {
     ch_cf_desc: 'Torn between spending and saving? Let a coin decide. Heads, you skip it and the money goes to a goal or debt. Tails, enjoy it, guilt free.',
     ch_step_what: 'What is tempting you?', ch_step_cost: 'Roughly what would it cost?', ch_step_where: 'If it lands heads, the money goes to',
     ch_range_link: 'Change the range',
+    ch_cat_fun: 'Fun money', ch_cat_fun_desc: 'Set aside guilt-free spending, and let the rest work for you.',
+    ch_sc_title: 'Scratch Card',
+    ch_sc_desc: 'Planning a fun weekend? Set the most you would happily spend, then scratch the card. It reveals how much of that is yours to enjoy, guilt free. The rest goes to a goal or debt.',
+    ch_sc_step_max: 'The most you would happily spend this weekend', ch_sc_step_where: 'What you do not get to spend goes to',
+    ch_sc_brand: 'Weekend Fun', ch_sc_upto: 'Up to {0}', ch_sc_foil: 'Scratch here', ch_sc_hint: 'Scratch the silver to reveal your fun money',
+    ch_sc_rule: 'Scratch to find out how much of your {0} is yours to spend this weekend. What is left goes to {1}.',
+    ch_sc_auto: 'Scratch it for me', ch_sc_reveal: 'Reveal it all', ch_sc_need: 'Slide to the most you would happily spend first.',
+    ch_sc_prize_k: 'Your fun money', ch_sc_prize_s: 'to spend this weekend', ch_sc_prize_save: '{0} goes to savings',
+    ch_sc_res_mix: 'Your fun money: {0}', ch_sc_res_mix_line: 'Spend up to {0} this weekend, guilt free. The other {1} goes to {2}.',
+    ch_sc_res_all: 'Jackpot! The full {0} is yours', ch_sc_res_all_line: 'Enjoy every bit of it this weekend, guilt free.',
+    ch_sc_res_none: 'A cosy weekend', ch_sc_res_none_line: 'No splurge this time: all {0} goes to {1}.',
+    ch_sc_again: 'New card', ch_sc_tx: 'Scratch Card: weekend savings', ch_sc_label: 'Weekend fun',
+    ch_sc_h_saved: 'Weekend fun: {0} to spend, {1} saved', ch_sc_h_kept: 'Weekend fun: {0} to spend, {1} not saved yet',
+    ch_sc_h_all: 'Weekend fun: the full {0} to spend', ch_sc_h_undone: 'Weekend fun, taken back',
     ch_p_takeout: 'Takeout', ch_p_coffee: 'Coffee', ch_p_treat: 'A treat', ch_p_shopping: 'Shopping', ch_p_night: 'Night out', ch_p_other: 'Something else',
     ch_other_ph: 'What is it?',
     ch_kind_goal: 'Goal', ch_kind_debt: 'Debt', ch_of: '{0} of {1}', ch_saved_sub: '{0} saved', ch_owed_sub: '{0} owed',

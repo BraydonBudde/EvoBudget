@@ -1473,7 +1473,7 @@ function enableDragScroll(el) {
   el.addEventListener('click',e=>{if(dragged){e.stopPropagation();dragged=false;}},true);
 }
 function applyTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem('evobudget_theme',t);document.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('is-active',b.dataset.themeVal===t));}
-function initTheme(){let th=localStorage.getItem('evobudget_theme')||'dark';if(th==='terminal')th='jolly';if(th==='minimal')th='peachy';applyTheme(th);}
+function initTheme(){let th=localStorage.getItem('evobudget_theme')||'dark';if(th==='terminal')th='jolly';if(th==='minimal')th='peachy';if(th==='synthwave')th='dark';applyTheme(th);}
 
 // ── Dashboard Layout picker (Settings) ─────────────────────────────────
 const DASHBOARD_LAYOUT_ICONS = {
@@ -2977,9 +2977,8 @@ function comingUpHtml(committed) {
         <span class="cu-date"><b>${parseInt(i.date.slice(8, 10), 10)}</b><small>${esc(mon(i.date))}</small></span>
         <span class="cu-info">
           <span class="cu-name"><span class="cu-name-txt">${esc(i.label)}</span></span>
-          <span class="cu-when">${esc(cuRelative(i.date))}${i.paidSoFar > 0 ? ` \u00b7 ${esc(tf('nl_partial_of', fmt(i.paidSoFar), fmt(i.expected)))}` : ''}</span>
+          <span class="cu-sub"><span class="cu-amt">${fmt(i.amount)}</span><span class="cu-when">${esc(cuRelative(i.date))}${i.paidSoFar > 0 ? ` \u00b7 ${esc(tf('nl_partial_of', fmt(i.paidSoFar), fmt(i.expected)))}` : ''}</span></span>
         </span>
-        <span class="cu-amt">${fmt(i.amount)}</span>
         <button class="cu-pay" type="button" data-cu-type="${esc(i.type)}" data-cu-pay="${esc(i.id)}" data-cu-date="${esc(i.occDate || i.date)}">${t('pay_btn')}</button>
       </li>`;
   return `<section class="coming-up">
@@ -6607,10 +6606,6 @@ function renderSettings(){
             <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='dark'?' is-active':''}" data-theme-val="dark" type="button" title="${t('dark')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               ${t('dark')}
-            </button>
-            <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='synthwave'?' is-active':''}" data-theme-val="synthwave" type="button" title="${t('theme_synthwave')}">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 0 1 16 0"/><line x1="4" y1="16" x2="20" y2="16"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
-              ${t('theme_synthwave')}
             </button>
             <button class="theme-opt${(document.documentElement.dataset.theme||'light')==='vintage-ledger'?' is-active':''}" data-theme-val="vintage-ledger" type="button" title="${t('theme_vintage_ledger')}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5z"/><path d="M20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5z"/></svg>
