@@ -795,7 +795,7 @@ function pennyPickFemaleVoice() {
   if (!pennySpeechSupported()) return null;
   const voices = speechSynthesis.getVoices() || [];
   if (!voices.length) return null;
-  const localePrefix = { en: 'en', de: 'de', fr: 'fr', es: 'es', it: 'it', pl: 'pl' }[state?.settings?.language] || 'en';
+  const localePrefix = 'en';
   const femaleNamePattern = /female|zira|samantha|victoria|susan|karen|moira|tessa|allison|ava|serena|kyoko|amelie|anna|paulina|zosia/i;
   const scored = voices.map(v => {
     let score = 0;

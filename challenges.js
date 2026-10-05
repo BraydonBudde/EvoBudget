@@ -34,7 +34,6 @@ const CH_PRESETS = [
   { id: 'night', emoji: '🎟️', cat: 10 },
   { id: 'other', emoji: '✨', cat: -1 }
 ];
-const CH_PLUS = [5, 10, 25];
 const CH_HISTORY_MAX = 500;
 const CH_JAR_ICON = '🫙';
 const chAttr = s => esc(s).replace(/"/g, '&quot;');
@@ -159,7 +158,7 @@ function chRenderLobby(el) {
     const s = chStats(g);
     const meta = s.plays ? `<span class="ch-gc-meta">${esc(tf(s.plays === 1 ? 'ch_plays_1' : 'ch_plays_n', s.plays))}${s.saved > 0 ? ` · <b>${esc(tf('ch_gc_saved', fmt(s.saved)))}</b>` : ''}</span>` : '';
     return `<button class="ch-gc" type="button" data-ch-play="${g}">
-      <span class="ch-gc-art" aria-hidden="true"><span class="ch-mini-coin"><span>${appIconSvg('sinking')}</span></span></span>
+      <span class="ch-gc-art" aria-hidden="true"><span class="ch-mini-coin">${CF_SKULL}</span></span>
       <span class="ch-gc-body"><b class="ch-gc-title">${esc(t('ch_cf_title'))}</b><span class="ch-gc-desc">${esc(t('ch_cf_desc'))}</span>${meta}</span>
       <span class="btn btn-primary btn-sm ch-gc-go">${esc(t('ch_play'))}</span>
     </button>`;
@@ -215,11 +214,12 @@ function chOpenGame(id) {
   if (id !== 'coinflip') return;
   const last = chData().last;
   const keep = _cf && _cf.phase !== 'flipping' ? _cf : null;
+  const r = chRange();
   _cf = {
     phase: 'setup',
     preset: keep ? keep.preset : (CH_PRESETS.some(p => p.id === last.preset) ? last.preset : 'takeout'),
     label: keep ? keep.label : (last.label || ''),
-    buf: keep ? keep.buf : '',
+    amount: chClamp(keep ? keep.amount : (Number(last.amount) > 0 ? Number(last.amount) : 25), r),
     target: keep ? keep.target : (last.target || ''),
     entry: null, err: ''
   };
@@ -229,17 +229,75 @@ function chOpenGame(id) {
 }
 function chBackToLobby() { _ch.screen = 'lobby'; if (_cf && _cf.phase !== 'flipping') _cf.phase = 'setup'; renderChallenges(); }
 
+// ── The bounty's range ───────────────────────────────────────────────
+// The lowest and highest amount the slider goes to, set in Settings.
+const CH_RANGE_DEFAULT = { min: 0, max: 100 };
+const CH_RANGE_CAP = 1000000;
+function chRange() {
+  const r = (state.settings && state.settings.cfRange) || {};
+  const min = Number(r.min), max = Number(r.max);
+  if (!(min >= 0) || !(max > min) || max > CH_RANGE_CAP) return { ...CH_RANGE_DEFAULT };
+  return { min, max };
+}
+// Whole steps for a short range, larger ones for a long one, so the
+// slider never has more positions than a hand can land on.
+function chStep(r) { const s = r.max - r.min; return s <= 200 ? 1 : s <= 2000 ? 5 : s <= 20000 ? 50 : 100; }
+function chClamp(v, r) { r = r || chRange(); const n = Math.round(Number(v) || 0); return Math.min(r.max, Math.max(r.min, n)); }
+// A poster has no room for cents.
+const chBounty = v => fmt(v).replace(/\.00(?!\d)/, '');
+
+function chRangeCardHtml() {
+  const r = chRange();
+  return `<div class="panel"><div class="panel-inner">
+    <div class="settings-card-title">🏆 ${esc(t('ch_set_title'))}</div>
+    <p class="settings-desc">${esc(t('ch_set_desc'))}</p>
+    <div class="ch-range-fields">
+      <div class="field"><label class="field-label" for="cfMinInput">${esc(t('ch_set_min'))}</label><input class="input" id="cfMinInput" type="number" inputmode="numeric" min="0" step="1" value="${r.min}"></div>
+      <div class="field"><label class="field-label" for="cfMaxInput">${esc(t('ch_set_max'))}</label><input class="input" id="cfMaxInput" type="number" inputmode="numeric" min="1" step="1" value="${r.max}"></div>
+    </div>
+    <p class="ch-range-err" id="cfRangeErr" hidden></p>
+  </div></div>`;
+}
+function chWireRangeCard(el) {
+  const minI = el.querySelector('#cfMinInput'), maxI = el.querySelector('#cfMaxInput'), err = el.querySelector('#cfRangeErr');
+  if (!minI || !maxI) return;
+  const commit = () => {
+    const min = Math.round(Number(minI.value)), max = Math.round(Number(maxI.value));
+    const bad = minI.value === '' || maxI.value === '' || !(min >= 0) ? t('ch_set_err_min')
+      : !(max > min) ? t('ch_set_err_order') : max > CH_RANGE_CAP ? tf('ch_set_err_cap', fmt(CH_RANGE_CAP)) : '';
+    err.hidden = !bad; err.textContent = bad;
+    minI.classList.toggle('fk-invalid', !!bad && (bad === t('ch_set_err_min')));
+    maxI.classList.toggle('fk-invalid', !!bad && bad !== t('ch_set_err_min'));
+    if (bad) return;
+    state.settings.cfRange = { min, max };
+    if (_cf) _cf.amount = chClamp(_cf.amount, { min, max });
+    saveState();
+  };
+  minI.addEventListener('change', commit);
+  maxI.addEventListener('change', commit);
+}
+
 // ── Coin Flip ────────────────────────────────────────────────────────
-const cfAmount = () => { const v = parseFloat(_cf.buf); return isNaN(v) ? 0 : chRound(v); };
+// A pirate's call: the amount is the bounty on a wanted poster, the coin a
+// gold doubloon tossed over the sea. Heads, the treasure is stashed in a
+// goal or debt; tails, feast.
+const cfAmount = () => chRound(_cf.amount);
 function cfCurrentTarget() {
   const list = chTargetList();
   return list.find(x => x.key === _cf.target) || list[0] || null;
 }
 function cfLabelNow() { return _cf.preset === 'other' ? (_cf.label.trim() || t('ch_p_other')) : t('ch_p_' + _cf.preset); }
+// A plain skull and crossbones, drawn here: the doubloon's face.
+const CF_SKULL = `<svg class="cf-skull" viewBox="0 0 64 64" aria-hidden="true">
+  <g class="cf-skull-bone"><rect x="5" y="40" width="54" height="7" rx="3.5" transform="rotate(30 32 43.5)"/><rect x="5" y="40" width="54" height="7" rx="3.5" transform="rotate(-30 32 43.5)"/></g>
+  <path class="cf-skull-head" d="M32 6C20.4 6 12 13.9 12 24.3c0 6.4 3.2 11.2 8 14V44a3 3 0 0 0 3 3h18a3 3 0 0 0 3-3v-5.7c4.8-2.8 8-7.6 8-14C52 13.9 43.6 6 32 6z"/>
+  <g class="cf-skull-hole"><ellipse cx="24.5" cy="26" rx="5" ry="5.6"/><ellipse cx="39.5" cy="26" rx="5" ry="5.6"/><path d="M32 32.5l-3 5.5h6z"/>
+    <rect x="25.6" y="41" width="2.4" height="6" rx="1"/><rect x="30.8" y="41" width="2.4" height="6" rx="1"/><rect x="36" y="41" width="2.4" height="6" rx="1"/></g>
+</svg>`;
+const CF_WAVE = '<svg viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 Q 75 0 150 30 T 300 30 T 450 30 T 600 30 T 750 30 T 900 30 T 1050 30 T 1200 30 V 60 H 0 Z"/></svg>';
 
 function cfRender(el) {
-  const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'back'];
-  const BACK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="m16 9-5 5"/><path d="m11 9 5 5"/></svg>';
+  const r = chRange();
   el.innerHTML = `<div class="ch-game">
     <button class="ch-back" type="button" data-ch-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>${esc(t('ch_back'))}</button>
     <div class="ch-game-head">
@@ -254,20 +312,31 @@ function cfRender(el) {
           `<button class="qa-chip cf-preset" type="button" role="radio" data-cf-preset="${p.id}"><span aria-hidden="true">${p.emoji}</span>${esc(t('ch_p_' + p.id))}</button>`).join('')}</div>
         <input class="input cf-other" id="cfOther" type="text" maxlength="40" autocomplete="off" placeholder="${chAttr(t('ch_other_ph'))}" hidden>
         <p class="cf-step"><b>2</b>${esc(t('ch_step_cost'))}</p>
-        <div class="cf-pad">
-          <div class="qa-amount" aria-live="polite"><span class="qa-sym">${esc(SYM)}</span><span class="qa-num" id="cfDisplay">0</span></div>
-          <div class="qa-quick">${CH_PLUS.map(v => `<button class="qa-chip qa-plus" type="button" data-cf-plus="${v}">+${esc(SYM)}${v}</button>`).join('')}</div>
-          <div class="qa-keys cf-keys">${keys.map(k => `<button class="qa-key" type="button" data-cf-key="${k}" aria-label="${k === 'back' ? chAttr(t('qa_backspace')) : k}">${k === 'back' ? BACK : k}</button>`).join('')}</div>
-          <button class="link-btn qa-clear" type="button" data-cf-clear>${esc(t('qa_clear'))}</button>
+        <div class="cf-bounty">
+          <div class="cf-poster" aria-hidden="true">
+            <span class="cf-poster-wanted">${esc(t('ch_poster_wanted'))}</span>
+            <span class="cf-poster-pic" id="cfPosterPic"></span>
+            <span class="cf-poster-name" id="cfPosterName"></span>
+            <span class="cf-poster-bounty">${esc(t('ch_poster_bounty'))}</span>
+            <span class="cf-poster-amt" id="cfDisplay"></span>
+          </div>
+          <div class="cf-slide">
+            <input class="cf-slider" id="cfSlider" type="range" min="${r.min}" max="${r.max}" step="${chStep(r)}" value="${cfAmount()}" aria-label="${chAttr(t('ch_step_cost'))}">
+            <div class="cf-slider-ends"><span>${esc(chBounty(r.min))}</span><span>${esc(chBounty(r.max))}</span></div>
+            <p class="cf-range-note">${esc(t('ch_range_note'))} <button class="link-btn" type="button" data-cf-range>${esc(t('ch_range_link'))}</button></p>
+          </div>
         </div>
         <p class="cf-step"><b>3</b>${esc(t('ch_step_where'))}</p>
         <div class="cf-targets" id="cfTargets" role="radiogroup" aria-label="${chAttr(t('ch_step_where'))}"></div>
       </div></section>
       <section class="panel cf-play"><div class="panel-inner-sm">
         <div class="cf-stage" id="cfStage">
+          <i class="cf-sun" aria-hidden="true"></i>
+          <i class="cf-gull cf-gull--a" aria-hidden="true"></i><i class="cf-gull cf-gull--b" aria-hidden="true"></i>
+          <div class="cf-waves" aria-hidden="true"><div class="cf-wave cf-wave--back">${CF_WAVE}${CF_WAVE}</div><div class="cf-wave cf-wave--front">${CF_WAVE}${CF_WAVE}</div></div>
           <div class="cf-toss" id="cfToss">
             <div class="cf-coin is-idle" id="cfCoin">
-              <div class="cf-face cf-face--heads"><span class="cf-face-ico">${appIconSvg('sinking')}</span><span class="cf-face-word">${esc(t('ch_face_heads'))}</span></div>
+              <div class="cf-face cf-face--heads"><span class="cf-face-ico">${CF_SKULL}</span><span class="cf-face-word">${esc(t('ch_face_heads'))}</span></div>
               <div class="cf-face cf-face--tails"><span class="cf-face-ico cf-face-emoji" id="cfTailsEmoji"></span><span class="cf-face-word">${esc(t('ch_face_tails'))}</span></div>
             </div>
           </div>
@@ -282,20 +351,21 @@ function cfRender(el) {
   el.querySelectorAll('[data-cf-preset]').forEach(b => b.addEventListener('click', () => {
     if (_cf.phase !== 'setup') return;
     _cf.preset = b.dataset.cfPreset; b.blur();
-    cfPaintSetup();
+    cfPaintSetup(); cfPaintAmount();
     if (_cf.preset === 'other') $('cfOther').focus();
   }));
   $('cfOther').value = _cf.label;
-  $('cfOther').addEventListener('input', e => { _cf.label = e.target.value.slice(0, 40); cfPaintPanel(); });
-  el.querySelectorAll('[data-cf-key]').forEach(b => b.addEventListener('click', () => { cfPress(b.dataset.cfKey); b.blur(); }));
-  el.querySelectorAll('[data-cf-plus]').forEach(b => b.addEventListener('click', () => {
+  $('cfOther').addEventListener('input', e => { _cf.label = e.target.value.slice(0, 40); cfPaintAmount(); cfPaintPanel(); });
+  $('cfSlider').addEventListener('input', e => {
     if (_cf.phase !== 'setup') return;
-    const v = chRound(cfAmount() + Number(b.dataset.cfPlus));
-    if (v >= 1e7) return;
-    _cf.buf = Number.isInteger(v) ? String(v) : v.toFixed(2);
-    b.blur(); cfPaintAmount(); cfPaintPanel();
-  }));
-  el.querySelector('[data-cf-clear]').addEventListener('click', () => { if (_cf.phase !== 'setup') return; _cf.buf = ''; cfPaintAmount(); cfPaintPanel(); });
+    _cf.amount = chClamp(e.target.value);
+    cfPaintAmount(); cfPaintPanel();
+  });
+  el.querySelector('[data-cf-range]').addEventListener('click', () => {
+    switchTab('settings');
+    const f = document.getElementById('cfMaxInput');
+    if (f) { f.scrollIntoView({ block: 'center' }); f.focus(); }
+  });
   $('cfCoin').addEventListener('click', () => { if (_cf.phase === 'setup') cfFlip(); });
   cfPaintSetup();
   cfPaintAmount();
@@ -303,25 +373,20 @@ function cfRender(el) {
   cfPaintPanel();
 }
 
-function cfPress(k) {
-  if (!_cf || _cf.phase !== 'setup') return;
-  let buf = _cf.buf;
-  if (k === 'back') buf = buf.slice(0, -1);
-  else if (k === '.') { if (!buf.includes('.')) buf = (buf || '0') + '.'; }
-  else {
-    if (buf.includes('.') && buf.split('.')[1].length >= 2) return;
-    if (!buf.includes('.') && buf.replace(/^0+/, '').length >= 7) return;
-    buf = buf === '0' ? k : buf + k;
-  }
-  _cf.buf = buf;
-  cfPaintAmount(); cfPaintPanel();
-}
 function cfPaintAmount() {
   const d = document.getElementById('cfDisplay');
   if (!d) return;
-  const [i, f] = _cf.buf.split('.');
-  const whole = (parseInt(i || '0', 10) || 0).toLocaleString('en-US');
-  d.textContent = _cf.buf.includes('.') ? `${whole}.${f || ''}` : whole;
+  const r = chRange(), a = cfAmount();
+  d.textContent = chBounty(a);
+  const s = document.getElementById('cfSlider');
+  if (s) {
+    if (Number(s.value) !== a) s.value = a;
+    s.style.setProperty('--fill', ((a - r.min) / (r.max - r.min) * 100).toFixed(2) + '%');
+  }
+  const p = CH_PRESETS.find(x => x.id === _cf.preset) || CH_PRESETS[0];
+  const pic = document.getElementById('cfPosterPic'), name = document.getElementById('cfPosterName');
+  if (pic) pic.textContent = p.emoji;
+  if (name) name.textContent = cfLabelNow();
 }
 function cfPaintSetup() {
   const setup = document.getElementById('cfSetup');
@@ -391,7 +456,7 @@ function cfPaintPanel() {
   const e = _cf.entry;
   const tx = chTxOf(e);
   if (tx) {
-    // Saved: say where it went, and show the goal move when it has a bar.
+    // Stashed: say where it went, and show the goal move when it has a bar.
     const goal = e.target.kind === 'goal' ? (state.sinkingFunds || []).find(f => f.id === e.target.id) : null;
     const has = goal && fundHasTarget(goal);
     const now = has ? Math.min(100, Math.round((goal.currentSaved || 0) / goal.targetAmount * 100)) : 0;
@@ -410,7 +475,7 @@ function cfPaintPanel() {
     });
   } else if (e.side === 'heads') {
     p.className = 'cf-panel cf-panel--heads is-in';
-    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge">${appIconSvg('sinking')}</span><span class="cf-verdict-txt"><b>${esc(t('ch_res_heads'))}</b><span>${esc(tf('ch_res_heads_line', fmt(e.amount), cfTargetName(e)))}</span></span></div>
+    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge cf-badge--skull">${CF_SKULL}</span><span class="cf-verdict-txt"><b>${esc(t('ch_res_heads'))}</b><span>${esc(tf('ch_res_heads_line', fmt(e.amount), cfTargetName(e)))}</span></span></div>
       <div class="cf-acts">
         <button class="btn btn-primary" type="button" data-cf-save>${esc(tf('ch_save_btn', fmt(e.amount)))}</button>
         <button class="btn btn-ghost" type="button" data-cf-again>${esc(t('ch_not_now'))}</button>
@@ -442,8 +507,8 @@ function cfFlip() {
   _cf.err = !(amt > 0) ? t('ch_need_amount') : !tg ? t('ch_need_target') : '';
   if (_cf.err) {
     cfPaintPanel();
-    const pad = document.querySelector('.cf-pad .qa-amount');
-    if (pad) { pad.classList.remove('cf-shake'); void pad.offsetWidth; pad.classList.add('cf-shake'); }
+    const poster = document.querySelector('.cf-poster');
+    if (poster) { poster.classList.remove('cf-shake'); void poster.offsetWidth; poster.classList.add('cf-shake'); }
     return;
   }
   const side = chRandom() < 0.5 ? 'heads' : 'tails';
@@ -463,7 +528,7 @@ function cfFlip() {
     const c = chData();
     c.history.unshift(entry);
     if (c.history.length > CH_HISTORY_MAX) c.history.length = CH_HISTORY_MAX;
-    c.last = { preset: entry.preset, label: _cf.label, target: tg.key === 'jar' ? 'jar' : tg.key };
+    c.last = { preset: entry.preset, label: _cf.label, amount: amt, target: tg.key === 'jar' ? 'jar' : tg.key };
     saveState();
     if (!_cf || _cf.phase !== 'flipping') return;
     _cf.entry = entry; _cf.phase = 'result';
@@ -498,7 +563,7 @@ function cfSaveNow(btn, bonus) {
   cfPaintPanel();
   cfBurst();
 }
-// Coins thrown out from the coin, for a win.
+// Gold coins thrown out from the doubloon, for a win.
 function cfBurst() {
   const stage = document.getElementById('cfStage');
   if (!stage || ddReduced() || !stage.animate) return;
@@ -516,31 +581,27 @@ function cfBurst() {
 function cfAgain() {
   if (!_cf) return;
   _cf.phase = 'setup'; _cf.entry = null; _cf.err = '';
-  cfPaintSetup(); cfPaintCoin(); cfPaintPanel();
+  cfPaintSetup(); cfPaintCoin(); cfPaintAmount(); cfPaintPanel();
 }
 // Tails: the spend goes in the log like any other, through the keypad,
 // already filled in. Its category is guessed only when the planner has it.
 function cfLogSpend(e) {
   const p = CH_PRESETS.find(x => x.id === e.preset);
-  const lang = state.settings.language || 'en';
-  const names = p && p.cat >= 0 ? [DEFAULT_BUDGET[lang]?.expenses[p.cat], DEFAULT_BUDGET.en.expenses[p.cat]] : [];
-  const cat = (state.budgets.expenses || []).map(r => r.category).find(c => names.includes(c)) || '';
+  const name = p && p.cat >= 0 ? DEFAULT_BUDGET.en.expenses[p.cat] : '';
+  const cat = (state.budgets.expenses || []).map(r => r.category).find(c => c === name) || '';
   openQuickAddTx({ type: 'expense', amount: e.amount, category: cat, description: tf('ch_cf_tx_tails', chLabel(e)) });
 }
 
-// A physical keyboard types the amount and Enter flips.
+// Enter flips; the slider takes the arrow keys itself.
 document.addEventListener('keydown', e => {
   if (typeof currentTab === 'undefined' || currentTab !== 'challenges' || _ch.screen !== 'coinflip' || !_cf || _cf.phase !== 'setup') return;
-  if (!document.getElementById('cfDisplay')) return;
+  if (!document.getElementById('cfSlider')) return;
   const ov = document.getElementById('tutorialOverlay');
   if ((ov && !ov.hidden) || document.getElementById('fkDialogOverlay')) return;
   const tag = document.activeElement?.tagName;
-  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  if (tag === 'TEXTAREA' || tag === 'SELECT' || (tag === 'INPUT' && document.activeElement.id !== 'cfSlider')) return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (/^[0-9]$/.test(e.key)) { e.preventDefault(); cfPress(e.key); }
-  else if (e.key === '.' || e.key === ',') { e.preventDefault(); cfPress('.'); }
-  else if (e.key === 'Backspace') { e.preventDefault(); cfPress('back'); }
-  else if (e.key === 'Enter' && !(document.activeElement && document.activeElement.closest && document.activeElement.closest('button'))) { e.preventDefault(); cfFlip(); }
+  if (e.key === 'Enter' && !(document.activeElement && document.activeElement.closest && document.activeElement.closest('button'))) { e.preventDefault(); cfFlip(); }
 });
 
 // ── On the dashboard ─────────────────────────────────────────────────
@@ -569,7 +630,9 @@ function chDashHtml() {
 // ── Words ────────────────────────────────────────────────────────────
 const CH_WORDS = {
   en: {
-    tab_challenges: 'Challenges',
+    tab_challenges: 'Challenges', stg_challenges: 'Challenges',
+    ch_set_title: 'Coin Flip range', ch_set_desc: 'The lowest and highest bounty the Coin Flip slider goes to.', ch_set_min: 'Lowest', ch_set_max: 'Highest',
+    ch_set_err_min: 'The lowest bounty must be 0 or more.', ch_set_err_order: 'The highest bounty must be more than the lowest.', ch_set_err_cap: 'The highest bounty can be at most {0}.',
     ch_desc: 'Small games for the moment you are about to spend. When the money wins, what you would have spent goes to a goal or a debt instead.',
     ch_cat_decide: 'Quick decisions', ch_cat_decide_desc: 'Torn between two choices? Let a game decide, and let your savings win.',
     ch_play: 'Play', ch_plays_1: 'Played once', ch_plays_n: 'Played {0} times', ch_gc_saved: '{0} saved',
@@ -577,8 +640,9 @@ const CH_WORDS = {
     ch_hist_title: 'Your results', ch_hist_empty: 'Nothing played yet. Every result will show here.', ch_show_all: 'Show all ({0})', ch_show_less: 'Show less',
     ch_back: 'All challenges',
     ch_cf_title: 'Coin Flip',
-    ch_cf_desc: 'Torn between spending and saving? Let a coin decide. Heads, you skip it and the money goes to a goal or debt. Tails, enjoy it, guilt free.',
-    ch_step_what: 'What are you tempted by?', ch_step_cost: 'Roughly what would it cost?', ch_step_where: 'If it lands heads, the money goes to',
+    ch_cf_desc: 'Torn between spending and saving? Let the doubloon decide. Heads, you skip it and the treasure goes to a goal or debt. Tails, you feast, guilt free.',
+    ch_step_what: 'What is tempting you?', ch_step_cost: 'Set the bounty: roughly what it would cost', ch_step_where: 'If it lands heads, the treasure goes to',
+    ch_poster_wanted: 'Wanted', ch_poster_bounty: 'Bounty', ch_range_note: 'The slider runs from your lowest to your highest bounty.', ch_range_link: 'Change the range',
     ch_p_takeout: 'Takeout', ch_p_coffee: 'Coffee', ch_p_treat: 'A treat', ch_p_shopping: 'Shopping', ch_p_night: 'Night out', ch_p_other: 'Something else',
     ch_other_ph: 'What is it?',
     ch_kind_goal: 'Goal', ch_kind_debt: 'Debt', ch_of: '{0} of {1}', ch_saved_sub: '{0} saved', ch_owed_sub: '{0} owed',
@@ -586,13 +650,13 @@ const CH_WORDS = {
     ch_none: 'No goals or debts yet, so wins can go to a Challenge Jar. Or set up your own:', ch_new_goal: 'New goal', ch_new_debt: 'Add a debt',
     ch_heads: 'Heads', ch_tails: 'Tails', ch_face_heads: 'Save', ch_face_tails: 'Enjoy',
     ch_rule_heads: 'Skip it, and {0} goes to {1}.', ch_rule_tails: 'Enjoy it, guilt free.', ch_the_money: 'the money',
-    ch_flip: 'Flip the coin', ch_flipping: 'Flipping…',
-    ch_need_amount: 'Enter roughly what it would cost first.', ch_need_target: 'Choose where the money goes.',
-    ch_res_heads: 'Heads. Skip it.', ch_res_heads_line: 'Put the {0} you would have spent into {1}.',
-    ch_save_btn: 'Save {0}', ch_not_now: 'Not now',
-    ch_res_tails: 'Tails. Enjoy it.', ch_res_tails_line: 'The coin says yes, so enjoy it, guilt free.',
-    ch_log_spend: 'Log the spend', ch_save_anyway: 'Save {0} anyway', ch_again: 'Flip again',
-    ch_saved_title: 'Saved!', ch_saved_line: '{0} went to {1}.', ch_open_target: 'Open {0}',
+    ch_flip: 'Flip the doubloon', ch_flipping: 'The doubloon is in the air…',
+    ch_need_amount: 'Slide the bounty above zero first.', ch_need_target: 'Choose where the money goes.',
+    ch_res_heads: 'Heads! Treasure secured.', ch_res_heads_line: 'Skip it and stash the {0} you would have spent in {1}.',
+    ch_save_btn: 'Stash {0}', ch_not_now: 'Not now',
+    ch_res_tails: 'Tails! Feast away.', ch_res_tails_line: 'The doubloon says yes, so enjoy it, guilt free.',
+    ch_log_spend: 'Log the spend', ch_save_anyway: 'Stash {0} anyway', ch_again: 'Flip again',
+    ch_saved_title: 'Treasure stashed!', ch_saved_line: '{0} went to {1}.', ch_open_target: 'Open {0}',
     ch_cf_tx_heads: 'Coin Flip: skipped {0}', ch_cf_tx_bonus: 'Coin Flip: saved anyway ({0})', ch_cf_tx_tails: 'Coin Flip: {0}',
     ch_toast_saved: '{0} saved to {1}.',
     ch_h_saved: 'Skipped {0}', ch_h_bonus: 'Saved anyway: {0}', ch_h_kept: 'Skipped {0}, not saved yet', ch_h_undone: '{0}, taken back', ch_h_enjoyed: 'Enjoyed {0}',
@@ -600,166 +664,7 @@ const CH_WORDS = {
     ch_dash_fig: 'saved through challenges', ch_dash_skipped_1: '1 spend skipped', ch_dash_skipped_n: '{0} spends skipped', ch_dash_period: '{0} this period',
     ch_dot_saved: 'Saved', ch_dot_kept: 'Skipped, not saved yet', ch_dot_enjoyed: 'Enjoyed'
   },
-  de: {
-    tab_challenges: 'Challenges',
-    ch_desc: 'Kleine Spiele für den Moment, bevor du Geld ausgibst. Gewinnt das Geld, geht das, was du ausgegeben hättest, stattdessen an ein Sparziel oder eine Schuld.',
-    ch_cat_decide: 'Schnelle Entscheidungen', ch_cat_decide_desc: 'Hin- und hergerissen? Lass ein Spiel entscheiden, und lass dein Erspartes gewinnen.',
-    ch_play: 'Spielen', ch_plays_1: 'Einmal gespielt', ch_plays_n: '{0}-mal gespielt', ch_gc_saved: '{0} gespart',
-    ch_stat_saved: 'Mit Challenges gespart', ch_stat_period: 'In diesem Zeitraum gespart', ch_stat_skipped: 'Ausgaben ausgelassen',
-    ch_hist_title: 'Deine Ergebnisse', ch_hist_empty: 'Noch nichts gespielt. Jedes Ergebnis erscheint hier.', ch_show_all: 'Alle anzeigen ({0})', ch_show_less: 'Weniger anzeigen',
-    ch_back: 'Alle Challenges',
-    ch_cf_title: 'Münzwurf',
-    ch_cf_desc: 'Ausgeben oder sparen? Lass eine Münze entscheiden. Kopf: Du verzichtest, und das Geld geht an ein Ziel oder eine Schuld. Zahl: Gönn es dir, ohne schlechtes Gewissen.',
-    ch_step_what: 'Was reizt dich gerade?', ch_step_cost: 'Was würde es ungefähr kosten?', ch_step_where: 'Bei Kopf geht das Geld an',
-    ch_p_takeout: 'Essen bestellen', ch_p_coffee: 'Kaffee', ch_p_treat: 'Etwas Süßes', ch_p_shopping: 'Shopping', ch_p_night: 'Ausgehen', ch_p_other: 'Etwas anderes',
-    ch_other_ph: 'Was ist es?',
-    ch_kind_goal: 'Ziel', ch_kind_debt: 'Schuld', ch_of: '{0} von {1}', ch_saved_sub: '{0} gespart', ch_owed_sub: '{0} offen',
-    ch_jar: 'Challenge-Glas', ch_jar_sub: 'Ein neues Sparziel, angelegt bei deinem ersten Gewinn',
-    ch_none: 'Noch keine Ziele oder Schulden, also können Gewinne in ein Challenge-Glas gehen. Oder lege selbst etwas an:', ch_new_goal: 'Neues Ziel', ch_new_debt: 'Schuld hinzufügen',
-    ch_heads: 'Kopf', ch_tails: 'Zahl', ch_face_heads: 'Sparen', ch_face_tails: 'Gönnen',
-    ch_rule_heads: 'Verzichte, und {0} geht an {1}.', ch_rule_tails: 'Gönn es dir, ohne schlechtes Gewissen.', ch_the_money: 'das Geld',
-    ch_flip: 'Münze werfen', ch_flipping: 'Die Münze fliegt…',
-    ch_need_amount: 'Gib zuerst ungefähr ein, was es kosten würde.', ch_need_target: 'Wähle, wohin das Geld geht.',
-    ch_res_heads: 'Kopf. Verzichte.', ch_res_heads_line: 'Leg die {0}, die du ausgegeben hättest, in {1}.',
-    ch_save_btn: '{0} sparen', ch_not_now: 'Nicht jetzt',
-    ch_res_tails: 'Zahl. Gönn es dir.', ch_res_tails_line: 'Die Münze sagt ja, also genieße es ohne schlechtes Gewissen.',
-    ch_log_spend: 'Ausgabe erfassen', ch_save_anyway: '{0} trotzdem sparen', ch_again: 'Noch einmal werfen',
-    ch_saved_title: 'Gespart!', ch_saved_line: '{0} gingen an {1}.', ch_open_target: '{0} öffnen',
-    ch_cf_tx_heads: 'Münzwurf: verzichtet auf {0}', ch_cf_tx_bonus: 'Münzwurf: trotzdem gespart ({0})', ch_cf_tx_tails: 'Münzwurf: {0}',
-    ch_toast_saved: '{0} in {1} gespart.',
-    ch_h_saved: 'Verzichtet auf {0}', ch_h_bonus: 'Trotzdem gespart: {0}', ch_h_kept: 'Verzichtet auf {0}, noch nicht gespart', ch_h_undone: '{0}, zurückgenommen', ch_h_enjoyed: '{0} gegönnt',
-    ch_h_to: 'an {0}', ch_save_now: 'Jetzt sparen', ch_target_gone: 'Dieses Ziel oder diese Schuld gibt es nicht mehr. Wähle etwas anderes.',
-    ch_dash_fig: 'mit Challenges gespart', ch_dash_skipped_1: '1 Ausgabe ausgelassen', ch_dash_skipped_n: '{0} Ausgaben ausgelassen', ch_dash_period: '{0} in diesem Zeitraum',
-    ch_dot_saved: 'Gespart', ch_dot_kept: 'Verzichtet, noch nicht gespart', ch_dot_enjoyed: 'Gegönnt'
-  },
-  fr: {
-    tab_challenges: 'Défis',
-    ch_desc: 'De petits jeux pour le moment où vous allez dépenser. Quand l’argent gagne, ce que vous auriez dépensé va à un objectif ou à une dette.',
-    ch_cat_decide: 'Décisions rapides', ch_cat_decide_desc: 'Hésitant entre deux choix ? Laissez un jeu décider, et faites gagner votre épargne.',
-    ch_play: 'Jouer', ch_plays_1: 'Joué une fois', ch_plays_n: 'Joué {0} fois', ch_gc_saved: '{0} épargnés',
-    ch_stat_saved: 'Épargné grâce aux défis', ch_stat_period: 'Épargné sur la période', ch_stat_skipped: 'Dépenses évitées',
-    ch_hist_title: 'Vos résultats', ch_hist_empty: 'Aucune partie pour l’instant. Chaque résultat apparaîtra ici.', ch_show_all: 'Tout afficher ({0})', ch_show_less: 'Afficher moins',
-    ch_back: 'Tous les défis',
-    ch_cf_title: 'Pile ou face',
-    ch_cf_desc: 'Dépenser ou épargner ? Laissez une pièce décider. Face : vous y renoncez et l’argent va à un objectif ou à une dette. Pile : faites-vous plaisir, sans culpabilité.',
-    ch_step_what: 'Qu’est-ce qui vous tente ?', ch_step_cost: 'Combien cela coûterait-il, à peu près ?', ch_step_where: 'Si c’est face, l’argent va à',
-    ch_p_takeout: 'Plat à emporter', ch_p_coffee: 'Café', ch_p_treat: 'Une gourmandise', ch_p_shopping: 'Shopping', ch_p_night: 'Sortie', ch_p_other: 'Autre chose',
-    ch_other_ph: 'De quoi s’agit-il ?',
-    ch_kind_goal: 'Objectif', ch_kind_debt: 'Dette', ch_of: '{0} sur {1}', ch_saved_sub: '{0} épargnés', ch_owed_sub: '{0} dus',
-    ch_jar: 'Tirelire des défis', ch_jar_sub: 'Un nouvel objectif d’épargne, créé à votre première victoire',
-    ch_none: 'Pas encore d’objectif ni de dette : les gains peuvent aller dans une Tirelire des défis. Ou créez les vôtres :', ch_new_goal: 'Nouvel objectif', ch_new_debt: 'Ajouter une dette',
-    ch_heads: 'Face', ch_tails: 'Pile', ch_face_heads: 'Épargner', ch_face_tails: 'Profiter',
-    ch_rule_heads: 'Renoncez-y, et {0} va à {1}.', ch_rule_tails: 'Faites-vous plaisir, sans culpabilité.', ch_the_money: 'l’argent',
-    ch_flip: 'Lancer la pièce', ch_flipping: 'La pièce tourne…',
-    ch_need_amount: 'Indiquez d’abord ce que cela coûterait, à peu près.', ch_need_target: 'Choisissez où va l’argent.',
-    ch_res_heads: 'Face. On renonce.', ch_res_heads_line: 'Mettez les {0} que vous auriez dépensés dans {1}.',
-    ch_save_btn: 'Épargner {0}', ch_not_now: 'Pas maintenant',
-    ch_res_tails: 'Pile. Profitez-en.', ch_res_tails_line: 'La pièce dit oui : profitez-en, sans culpabilité.',
-    ch_log_spend: 'Noter la dépense', ch_save_anyway: 'Épargner {0} quand même', ch_again: 'Relancer',
-    ch_saved_title: 'Épargné !', ch_saved_line: '{0} sont allés à {1}.', ch_open_target: 'Ouvrir {0}',
-    ch_cf_tx_heads: 'Pile ou face : renoncé à {0}', ch_cf_tx_bonus: 'Pile ou face : épargné quand même ({0})', ch_cf_tx_tails: 'Pile ou face : {0}',
-    ch_toast_saved: '{0} épargnés dans {1}.',
-    ch_h_saved: 'Renoncé à {0}', ch_h_bonus: 'Épargné quand même : {0}', ch_h_kept: 'Renoncé à {0}, pas encore épargné', ch_h_undone: '{0}, annulé', ch_h_enjoyed: 'Profité : {0}',
-    ch_h_to: 'vers {0}', ch_save_now: 'Épargner', ch_target_gone: 'Cet objectif ou cette dette n’existe plus. Choisissez-en un autre.',
-    ch_dash_fig: 'épargnés grâce aux défis', ch_dash_skipped_1: '1 dépense évitée', ch_dash_skipped_n: '{0} dépenses évitées', ch_dash_period: '{0} sur la période',
-    ch_dot_saved: 'Épargné', ch_dot_kept: 'Renoncé, pas encore épargné', ch_dot_enjoyed: 'Profité'
-  },
-  es: {
-    tab_challenges: 'Retos',
-    ch_desc: 'Pequeños juegos para el momento justo antes de gastar. Cuando gana el dinero, lo que habrías gastado va a una meta o a una deuda.',
-    ch_cat_decide: 'Decisiones rápidas', ch_cat_decide_desc: '¿Dudas entre dos opciones? Deja que un juego decida y que ganen tus ahorros.',
-    ch_play: 'Jugar', ch_plays_1: 'Jugado una vez', ch_plays_n: 'Jugado {0} veces', ch_gc_saved: '{0} ahorrados',
-    ch_stat_saved: 'Ahorrado con retos', ch_stat_period: 'Ahorrado este periodo', ch_stat_skipped: 'Gastos evitados',
-    ch_hist_title: 'Tus resultados', ch_hist_empty: 'Aún no has jugado. Cada resultado aparecerá aquí.', ch_show_all: 'Ver todo ({0})', ch_show_less: 'Ver menos',
-    ch_back: 'Todos los retos',
-    ch_cf_title: 'Cara o cruz',
-    ch_cf_desc: '¿Gastar o ahorrar? Deja que decida una moneda. Cara: renuncias y el dinero va a una meta o deuda. Cruz: disfrútalo, sin culpa.',
-    ch_step_what: '¿Qué te tienta?', ch_step_cost: '¿Cuánto costaría, más o menos?', ch_step_where: 'Si sale cara, el dinero va a',
-    ch_p_takeout: 'Comida a domicilio', ch_p_coffee: 'Café', ch_p_treat: 'Un capricho', ch_p_shopping: 'Compras', ch_p_night: 'Salir', ch_p_other: 'Otra cosa',
-    ch_other_ph: '¿Qué es?',
-    ch_kind_goal: 'Meta', ch_kind_debt: 'Deuda', ch_of: '{0} de {1}', ch_saved_sub: '{0} ahorrados', ch_owed_sub: '{0} pendientes',
-    ch_jar: 'Hucha de retos', ch_jar_sub: 'Una nueva meta de ahorro, creada cuando ganes por primera vez',
-    ch_none: 'Aún no hay metas ni deudas, así que lo ganado puede ir a una Hucha de retos. O crea las tuyas:', ch_new_goal: 'Nueva meta', ch_new_debt: 'Añadir deuda',
-    ch_heads: 'Cara', ch_tails: 'Cruz', ch_face_heads: 'Ahorra', ch_face_tails: 'Disfruta',
-    ch_rule_heads: 'Renuncia, y {0} va a {1}.', ch_rule_tails: 'Disfrútalo, sin culpa.', ch_the_money: 'el dinero',
-    ch_flip: 'Lanzar la moneda', ch_flipping: 'La moneda gira…',
-    ch_need_amount: 'Primero indica cuánto costaría, más o menos.', ch_need_target: 'Elige adónde va el dinero.',
-    ch_res_heads: 'Cara. Renuncia.', ch_res_heads_line: 'Pon los {0} que habrías gastado en {1}.',
-    ch_save_btn: 'Ahorrar {0}', ch_not_now: 'Ahora no',
-    ch_res_tails: 'Cruz. Disfrútalo.', ch_res_tails_line: 'La moneda dice que sí: disfrútalo, sin culpa.',
-    ch_log_spend: 'Anotar el gasto', ch_save_anyway: 'Ahorrar {0} igualmente', ch_again: 'Lanzar otra vez',
-    ch_saved_title: '¡Ahorrado!', ch_saved_line: '{0} fueron a {1}.', ch_open_target: 'Abrir {0}',
-    ch_cf_tx_heads: 'Cara o cruz: renuncié a {0}', ch_cf_tx_bonus: 'Cara o cruz: ahorrado igualmente ({0})', ch_cf_tx_tails: 'Cara o cruz: {0}',
-    ch_toast_saved: '{0} ahorrados en {1}.',
-    ch_h_saved: 'Renunciaste a {0}', ch_h_bonus: 'Ahorrado igualmente: {0}', ch_h_kept: 'Renunciaste a {0}, aún sin ahorrar', ch_h_undone: '{0}, deshecho', ch_h_enjoyed: 'Disfrutaste: {0}',
-    ch_h_to: 'a {0}', ch_save_now: 'Ahorrar', ch_target_gone: 'Esa meta o deuda ya no existe. Elige otra.',
-    ch_dash_fig: 'ahorrados con retos', ch_dash_skipped_1: '1 gasto evitado', ch_dash_skipped_n: '{0} gastos evitados', ch_dash_period: '{0} este periodo',
-    ch_dot_saved: 'Ahorrado', ch_dot_kept: 'Renunciado, aún sin ahorrar', ch_dot_enjoyed: 'Disfrutado'
-  },
-  it: {
-    tab_challenges: 'Sfide',
-    ch_desc: 'Piccoli giochi per il momento prima di spendere. Quando vince il denaro, quello che avresti speso va a un obiettivo o a un debito.',
-    ch_cat_decide: 'Decisioni rapide', ch_cat_decide_desc: 'Indeciso tra due scelte? Lascia decidere a un gioco, e fai vincere i tuoi risparmi.',
-    ch_play: 'Gioca', ch_plays_1: 'Giocato una volta', ch_plays_n: 'Giocato {0} volte', ch_gc_saved: '{0} risparmiati',
-    ch_stat_saved: 'Risparmiato con le sfide', ch_stat_period: 'Risparmiato in questo periodo', ch_stat_skipped: 'Spese evitate',
-    ch_hist_title: 'I tuoi risultati', ch_hist_empty: 'Nessuna partita finora. Ogni risultato comparirà qui.', ch_show_all: 'Mostra tutto ({0})', ch_show_less: 'Mostra meno',
-    ch_back: 'Tutte le sfide',
-    ch_cf_title: 'Testa o croce',
-    ch_cf_desc: 'Spendere o risparmiare? Lascia decidere a una moneta. Testa: rinunci e il denaro va a un obiettivo o debito. Croce: goditela, senza sensi di colpa.',
-    ch_step_what: 'Cosa ti tenta?', ch_step_cost: 'Quanto costerebbe, più o meno?', ch_step_where: 'Se esce testa, il denaro va a',
-    ch_p_takeout: 'Cibo a domicilio', ch_p_coffee: 'Caffè', ch_p_treat: 'Uno sfizio', ch_p_shopping: 'Shopping', ch_p_night: 'Serata fuori', ch_p_other: 'Altro',
-    ch_other_ph: 'Che cos’è?',
-    ch_kind_goal: 'Obiettivo', ch_kind_debt: 'Debito', ch_of: '{0} di {1}', ch_saved_sub: '{0} risparmiati', ch_owed_sub: '{0} da pagare',
-    ch_jar: 'Salvadanaio delle sfide', ch_jar_sub: 'Un nuovo obiettivo di risparmio, creato alla tua prima vittoria',
-    ch_none: 'Ancora nessun obiettivo o debito, quindi le vincite possono andare in un Salvadanaio delle sfide. Oppure creane uno tuo:', ch_new_goal: 'Nuovo obiettivo', ch_new_debt: 'Aggiungi debito',
-    ch_heads: 'Testa', ch_tails: 'Croce', ch_face_heads: 'Risparmia', ch_face_tails: 'Goditela',
-    ch_rule_heads: 'Rinuncia, e {0} va a {1}.', ch_rule_tails: 'Goditela, senza sensi di colpa.', ch_the_money: 'il denaro',
-    ch_flip: 'Lancia la moneta', ch_flipping: 'La moneta gira…',
-    ch_need_amount: 'Prima indica quanto costerebbe, più o meno.', ch_need_target: 'Scegli dove va il denaro.',
-    ch_res_heads: 'Testa. Rinuncia.', ch_res_heads_line: 'Metti i {0} che avresti speso in {1}.',
-    ch_save_btn: 'Risparmia {0}', ch_not_now: 'Non ora',
-    ch_res_tails: 'Croce. Goditela.', ch_res_tails_line: 'La moneta dice sì: goditela, senza sensi di colpa.',
-    ch_log_spend: 'Registra la spesa', ch_save_anyway: 'Risparmia {0} lo stesso', ch_again: 'Lancia di nuovo',
-    ch_saved_title: 'Risparmiato!', ch_saved_line: '{0} sono andati a {1}.', ch_open_target: 'Apri {0}',
-    ch_cf_tx_heads: 'Testa o croce: rinunciato a {0}', ch_cf_tx_bonus: 'Testa o croce: risparmiato lo stesso ({0})', ch_cf_tx_tails: 'Testa o croce: {0}',
-    ch_toast_saved: '{0} risparmiati in {1}.',
-    ch_h_saved: 'Rinunciato a {0}', ch_h_bonus: 'Risparmiato lo stesso: {0}', ch_h_kept: 'Rinunciato a {0}, non ancora risparmiato', ch_h_undone: '{0}, annullato', ch_h_enjoyed: 'Goduto: {0}',
-    ch_h_to: 'a {0}', ch_save_now: 'Risparmia', ch_target_gone: 'Quell’obiettivo o debito non c’è più. Scegline un altro.',
-    ch_dash_fig: 'risparmiati con le sfide', ch_dash_skipped_1: '1 spesa evitata', ch_dash_skipped_n: '{0} spese evitate', ch_dash_period: '{0} in questo periodo',
-    ch_dot_saved: 'Risparmiato', ch_dot_kept: 'Rinunciato, non ancora risparmiato', ch_dot_enjoyed: 'Goduto'
-  },
-  pl: {
-    tab_challenges: 'Wyzwania',
-    ch_desc: 'Małe gry na chwilę przed wydaniem pieniędzy. Gdy wygrywają pieniądze, to, co byś wydał, trafia na cel lub spłatę długu.',
-    ch_cat_decide: 'Szybkie decyzje', ch_cat_decide_desc: 'Nie możesz się zdecydować? Niech zdecyduje gra, a wygrają twoje oszczędności.',
-    ch_play: 'Graj', ch_plays_1: 'Zagrano raz', ch_plays_n: 'Rozgrywki: {0}', ch_gc_saved: 'Odłożono {0}',
-    ch_stat_saved: 'Odłożone dzięki wyzwaniom', ch_stat_period: 'Odłożone w tym okresie', ch_stat_skipped: 'Pominięte wydatki',
-    ch_hist_title: 'Twoje wyniki', ch_hist_empty: 'Jeszcze nic nie rozegrano. Każdy wynik pojawi się tutaj.', ch_show_all: 'Pokaż wszystko ({0})', ch_show_less: 'Pokaż mniej',
-    ch_back: 'Wszystkie wyzwania',
-    ch_cf_title: 'Rzut monetą',
-    ch_cf_desc: 'Wydać czy odłożyć? Niech zdecyduje moneta. Orzeł: rezygnujesz, a pieniądze trafiają na cel lub dług. Reszka: ciesz się bez wyrzutów sumienia.',
-    ch_step_what: 'Na co masz ochotę?', ch_step_cost: 'Ile by to mniej więcej kosztowało?', ch_step_where: 'Jeśli wypadnie orzeł, pieniądze trafią na',
-    ch_p_takeout: 'Jedzenie na wynos', ch_p_coffee: 'Kawa', ch_p_treat: 'Coś słodkiego', ch_p_shopping: 'Zakupy', ch_p_night: 'Wyjście', ch_p_other: 'Coś innego',
-    ch_other_ph: 'Co to jest?',
-    ch_kind_goal: 'Cel', ch_kind_debt: 'Dług', ch_of: '{0} z {1}', ch_saved_sub: 'Odłożono {0}', ch_owed_sub: 'Do spłaty {0}',
-    ch_jar: 'Słoik wyzwań', ch_jar_sub: 'Nowy cel oszczędnościowy, tworzony przy pierwszej wygranej',
-    ch_none: 'Nie masz jeszcze celów ani długów, więc wygrane mogą trafić do Słoika wyzwań. Albo dodaj własne:', ch_new_goal: 'Nowy cel', ch_new_debt: 'Dodaj dług',
-    ch_heads: 'Orzeł', ch_tails: 'Reszka', ch_face_heads: 'Odłóż', ch_face_tails: 'Ciesz się',
-    ch_rule_heads: 'Zrezygnuj, a {0} trafi na {1}.', ch_rule_tails: 'Ciesz się bez wyrzutów sumienia.', ch_the_money: 'kwota',
-    ch_flip: 'Rzuć monetą', ch_flipping: 'Moneta w powietrzu…',
-    ch_need_amount: 'Najpierw wpisz, ile by to mniej więcej kosztowało.', ch_need_target: 'Wybierz, dokąd trafią pieniądze.',
-    ch_res_heads: 'Orzeł. Zrezygnuj.', ch_res_heads_line: 'Odłóż {0}, które byś wydał, na {1}.',
-    ch_save_btn: 'Odłóż {0}', ch_not_now: 'Nie teraz',
-    ch_res_tails: 'Reszka. Ciesz się.', ch_res_tails_line: 'Moneta mówi tak, więc ciesz się bez wyrzutów sumienia.',
-    ch_log_spend: 'Zapisz wydatek', ch_save_anyway: 'Mimo to odłóż {0}', ch_again: 'Rzuć jeszcze raz',
-    ch_saved_title: 'Odłożone!', ch_saved_line: '{0} trafiło na {1}.', ch_open_target: 'Otwórz {0}',
-    ch_cf_tx_heads: 'Rzut monetą: rezygnacja z {0}', ch_cf_tx_bonus: 'Rzut monetą: odłożone mimo to ({0})', ch_cf_tx_tails: 'Rzut monetą: {0}',
-    ch_toast_saved: 'Odłożono {0} na {1}.',
-    ch_h_saved: 'Rezygnacja: {0}', ch_h_bonus: 'Odłożone mimo to: {0}', ch_h_kept: 'Rezygnacja: {0}, jeszcze nie odłożone', ch_h_undone: '{0}, cofnięte', ch_h_enjoyed: 'Przyjemność: {0}',
-    ch_h_to: 'na {0}', ch_save_now: 'Odłóż', ch_target_gone: 'Tego celu lub długu już nie ma. Wybierz inny.',
-    ch_dash_fig: 'odłożone dzięki wyzwaniom', ch_dash_skipped_1: 'Pominięte wydatki: 1', ch_dash_skipped_n: 'Pominięte wydatki: {0}', ch_dash_period: '{0} w tym okresie',
-    ch_dot_saved: 'Odłożone', ch_dot_kept: 'Rezygnacja, jeszcze nie odłożone', ch_dot_enjoyed: 'Przyjemność'
-  }
+
 };
 (function chAddWords() {
   try { Object.keys(CH_WORDS).forEach(l => { if (TRANSLATIONS[l]) Object.assign(TRANSLATIONS[l], CH_WORDS[l]); }); } catch (e) {}

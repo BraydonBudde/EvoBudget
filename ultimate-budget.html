@@ -6,8 +6,8 @@
   <title>Ultimate Budget Planner — Ezzo Budget</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css?v=20261158"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css?v=20261159"/>
   <script>
     // Apply the saved theme before any content paints. init() also does this,
     // but only once the whole script has loaded and run - long enough for the
@@ -15,7 +15,8 @@
     // (including someone arriving from a themed demo link).
     (function () {
       try {
-        document.documentElement.setAttribute('data-theme', localStorage.getItem('evobudget_theme') || 'dark');
+        var th = localStorage.getItem('evobudget_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', th === 'terminal' ? 'jolly' : th);
       } catch (e) {}
     })();
   </script>
@@ -139,12 +140,12 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer onload="if(typeof syncPrewarmTokenClient==='function')syncPrewarmTokenClient();"></script>
-  <script src="sync.js?v=20261158"></script>
-  <script src="charts.js?v=20261158"></script>
-  <script src="analytics.js?v=20261158"></script>
-  <script src="penny.js?v=20261158"></script>
-  <script src="ultimate-budget.js?v=20261158"></script>
-  <script src="bank-import.js?v=20261158"></script>
-  <script src="challenges.js?v=20261158"></script>
+  <script src="sync.js?v=20261159"></script>
+  <script src="charts.js?v=20261159"></script>
+  <script src="analytics.js?v=20261159"></script>
+  <script src="penny.js?v=20261159"></script>
+  <script src="ultimate-budget.js?v=20261159"></script>
+  <script src="bank-import.js?v=20261159"></script>
+  <script src="challenges.js?v=20261159"></script>
 </body>
 </html>

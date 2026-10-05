@@ -2689,7 +2689,7 @@ const SITE_THEME = 'dark';
 // outside the app (a demo link's ?theme=, a value typed into the Styles
 // sheet) is checked against this first - an unrecognised name would leave
 // the page with no theme variables at all rather than just looking wrong.
-const VALID_THEMES = ['light', 'minimal', 'dark', 'synthwave', 'vintage-ledger', 'terminal'];
+const VALID_THEMES = ['light', 'minimal', 'dark', 'synthwave', 'vintage-ledger', 'terminal', 'jolly'];
 function savedTheme() { return localStorage.getItem('evobudget_theme') || SITE_THEME; }
 function displayThemeFor(view) { return view === 'hub' ? SITE_THEME : savedTheme(); }
 // Re-applies whichever theme the CURRENT view should be showing, without
