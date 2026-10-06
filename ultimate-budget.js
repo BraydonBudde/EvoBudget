@@ -87,7 +87,7 @@ const DEFAULT_BUDGET = {
 function defaultState() {
   const {start,end} = getMonthBounds();
   return {
-    settings: { currency:'USD', symbol:'$', periodStart:start, periodEnd:end, language:'en', pennyEnabled:false, upcomingDays:30, dashboardLayout:SLEEK_LAYOUT, dashboardAnimations:true, onboardingDone:false },
+    settings: { currency:'USD', symbol:'$', periodStart:start, periodEnd:end, language:'en', pennyEnabled:false, upcomingDays:30, dashboardLayout:SLEEK_LAYOUT, dashboardAnimations:true, onboardingDone:false, tools:{} },
     rollover: 0,
     budgets: {
       income:   DEFAULT_BUDGET.en.income.map(category => ({ id: uid(), category, expected: 0 })),
@@ -99,7 +99,7 @@ function defaultState() {
     sinkingFunds: [],
     bills: [],
     allocation: {
-      enabled: true,
+      enabled: false,
       buckets: [
         {id:'need', name:'Need', pct:50, color:'#6366f1'},
         {id:'want', name:'Want', pct:30, color:'#ec4899'},
@@ -271,7 +271,7 @@ function trialCount(kind, live) {
 function trialBlocks(kind){
   if(!isTrial()) return false;
   switch(kind){
-    case 'transaction':   return trialCount(kind, state.transactions.length) >= TRIAL_LIMITS.transactions;
+    case 'transaction':   return trialCount(kind, state.transactions.filter(x => !x.setup).length) >= TRIAL_LIMITS.transactions;
     case 'debts':         return trialCount(kind, (state.debts||[]).length) >= TRIAL_LIMITS.debts;
     case 'subscriptions': return trialCount(kind, (state.bills||[]).length) >= TRIAL_LIMITS.subscriptions;
     case 'sinkingFunds':  return trialCount(kind, (state.sinkingFunds||[]).length) >= TRIAL_LIMITS.sinkingFunds;
@@ -1930,7 +1930,7 @@ function buildNavRail() {
   const tabs = document.getElementById('ubpTabs');
   if (!rail || !tabs) return;
   rail.querySelector('#navRailSections').innerHTML =
-    [...tabs.querySelectorAll('.btab[data-btab]')].map(b => {
+    [...tabs.querySelectorAll('.btab[data-btab]:not([hidden])')].map(b => {
       // The tab carries its icon and its label as separate elements, so the
       // rail can take each of them rather than guessing where one ends. The
       // emoji-prefix split stays as the fallback for anything without them.
@@ -1946,6 +1946,8 @@ function buildNavRail() {
       <span class="nav-rail-icon" aria-hidden="true">${icon}</span><span class="nav-rail-label">${esc(label)}</span><b class="nav-badge" data-badge-for="${esc(b.dataset.btab)}" hidden></b>
     </button>`;
     }).join('');
+  if (typeof TOOLS !== 'undefined' && TOOLS.some(x => !toolOn(x.id))) rail.querySelector('#navRailSections').insertAdjacentHTML('beforeend',
+    `<button class="nav-rail-item nav-rail-item--tools" data-rail-act="toolsNavBtn" type="button" title="${esc(t('tools_more'))}"><span class="nav-rail-icon" aria-hidden="true">${appIconSvg('tools')}</span><span class="nav-rail-label">${esc(t('tools_more'))}</span></button>`);
   // Notifications carries the total; Settings sits under it. Both are
   // items like the sections, so the same click and the same highlight.
   const cur = typeof currentTab !== 'undefined' ? currentTab : '';
@@ -1957,7 +1959,7 @@ function buildNavRail() {
     </button>`;
   rail.querySelector('#navRailExtra').innerHTML = [['notifications', 'bell', t('nt_title'), '__total'],
     document.getElementById('pennyNavBtn') ? ['assistant', 'assistant', t('rail_assistant'), '', 'pennyNavBtn'] : null,
-    ['afford', 'afford', t('af_title'), '', 'affordNavBtn'],
+    (typeof toolOn !== 'function' || toolOn('afford')) ? ['afford', 'afford', t('af_title'), '', 'affordNavBtn'] : null,
     ['guide', 'guide', t('rail_guide'), '', 'guideNavBtn'],
     ['settings', 'settings', t('tab_settings'), '']].filter(Boolean).map(item).join('');
   // Guide sits with the tools now and Home is not in the sidebar, so the
@@ -2024,7 +2026,7 @@ function swipeInLiveField(el) {
 let _swX = 0, _swY = 0, _swT = 0, _swLive = false, _swTarget = null;
 
 function swipeSections() {
-  return [...document.querySelectorAll('#ubpTabs .btab[data-btab]')];
+  return [...document.querySelectorAll('#ubpTabs .btab[data-btab]:not([hidden])')];
 }
 
 function swipeStep(dir) {
@@ -2152,12 +2154,13 @@ function buildNavDock() {
 function navMenuOpen() { return !!document.getElementById('navMenu'); }
 function navMenuGroups() {
   const tabs = document.getElementById('ubpTabs');
-  const sections = tabs ? [...tabs.querySelectorAll('.btab[data-btab]')].map(b => ({
+  const sections = tabs ? [...tabs.querySelectorAll('.btab[data-btab]:not([hidden])')].map(b => ({
     tab: b.dataset.btab, ico: b.querySelector('.btab-ico')?.dataset.ico || b.dataset.btab,
     label: (b.querySelector('.btab-txt') || b).textContent.trim(), badge: b.dataset.btab })) : [];
+  if (typeof TOOLS !== 'undefined' && TOOLS.some(x => !toolOn(x.id))) sections.push({ act: 'toolsNavBtn', ico: 'tools', label: t('tools_more') });
   const extra = [{ tab: 'notifications', ico: 'bell', label: t('nt_title'), badge: '__total' },
     document.getElementById('pennyNavBtn') ? { act: 'pennyNavBtn', ico: 'assistant', label: t('rail_assistant') } : null,
-    { act: 'affordNavBtn', ico: 'afford', label: t('af_title') },
+    (typeof toolOn !== 'function' || toolOn('afford')) ? { act: 'affordNavBtn', ico: 'afford', label: t('af_title') } : null,
     { act: 'guideNavBtn', ico: 'guide', label: t('rail_guide') },
     { tab: 'settings', ico: 'settings', label: t('tab_settings') }].filter(Boolean);
   const foot = [{ act: 'backToHub', ico: 'home', label: t('rail_home') }];
@@ -2939,7 +2942,7 @@ const cuKeyOf = i => `${i.type}:${i.id}:${i.occDate || i.date}`;
 // bill already paid this period is not brought back as next month's row
 // the moment it is paid: that read as the payment not having worked.
 function cuWindowDays() { const d = parseInt(state.settings?.upcomingDays, 10); return d >= 1 && d <= 90 ? d : 30; }
-function comingUpItems(committed) {
+function comingUpItems(committed, limit) {
   const today = toLocalISO(new Date());
   const pEnd = state.settings.periodEnd || '';
   const start = state.settings.periodStart || '';
@@ -2967,14 +2970,14 @@ function comingUpItems(committed) {
       const src = `${i.type}:${i.id}`;
       // Each bill, debt or automation once, at its earliest date: a weekly
       // bill would otherwise fill the list on its own.
-      if (picked.length >= CU_LIMIT || shown.has(src)) return;
+      if (picked.length >= (limit || CU_LIMIT) || shown.has(src)) return;
       picked.push(i); shown.add(src);
     });
   return picked
     .sort((a, b) => (a.later ? 1 : 0) - (b.later ? 1 : 0) || String(a.date).localeCompare(String(b.date)));
 }
-function comingUpHtml(committed) {
-  const items = comingUpItems(committed);
+function comingUpHtml(committed, limit) {
+  const items = comingUpItems(committed, limit);
   const lang = 'en';
   const mon = iso => new Date(iso + 'T00:00:00').toLocaleString(lang, { month: 'short' }).replace('.', '').toUpperCase();
   const firstLater = items.findIndex(i => i.later);
@@ -3069,14 +3072,20 @@ function takeDashQuiet() { const q = _dashQuiet; _dashQuiet = false; return q; }
 // day to day: what is free, what is due, how the spending runs, what came
 // in and went out, where the goals stand, the latest activity, and anything
 // that looks wrong. Statistics is the long look: pace, trends and shares.
-function dashView() { return state.settings.dashView === 'stats' ? 'stats' : 'overview'; }
+function dashView() {
+  if (typeof toolOn === 'function' && !toolOn('insights')) return 'calm';
+  const v = state.settings.dashView;
+  return v === 'stats' || v === 'calm' ? v : 'overview';
+}
 const DV_ICONS = {
+  calm: '<circle cx="12" cy="12" r="8.5"/><path d="M8.6 13.6c1.9 1.7 4.9 1.7 6.8 0"/><path d="M9 9.8h.01"/><path d="M15 9.8h.01"/>',
   overview: '<rect x="3.5" y="3.5" width="7" height="9" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="5" rx="1.8"/><rect x="13.5" y="11.5" width="7" height="9" rx="1.8"/><rect x="3.5" y="15.5" width="7" height="5" rx="1.8"/>',
   stats: '<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/>'
 };
 function dashViewToggleHtml() {
+  if (typeof toolOn === 'function' && !toolOn('insights')) return '';
   const v = dashView();
-  return `<div class="dv-toggle" role="radiogroup" aria-label="${esc(t('dv_label'))}">${['overview', 'stats'].map(k =>
+  return `<div class="dv-toggle" role="radiogroup" aria-label="${esc(t('dv_label'))}">${['calm', 'overview', 'stats'].map(k =>
     `<button class="dv-opt${v === k ? ' is-on' : ''}" type="button" role="radio" aria-checked="${v === k}" data-dash-view="${k}" title="${esc(t('dv_' + k))}" aria-label="${esc(t('dv_' + k))}"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${DV_ICONS[k]}</svg></button>`).join('')}</div>`;
 }
 
@@ -3414,7 +3423,11 @@ function computeRedFlags(ctx) {
       const bills = (state.bills || []).filter(b => b.active !== false).reduce((s, b) => s + monthlySubAmt(b), 0);
       const debts = (state.debts || []).reduce((s, d) => s + (d.minimumPayment || 0), 0);
       const goals = (state.sinkingFunds || []).reduce((s, g) => s + (calcFund(g).requiredMonthly || 0), 0);
-      const out = planExp + bills + debts + goals;
+      // Bills, minimums and goals are monthly; the plan is per period. A
+      // period that is not a month (paid weekly or fortnightly) takes its
+      // share of them, or every short period would read as overspent.
+      const k = p.total >= 28 && p.total <= 31 ? 1 : p.total / 30.4375;
+      const out = planExp + (bills + debts + goals) * k;
       if (planInc > 0 && out > planInc * 1.02) add('plan', 'high', t('rf_plan'), tf('rf_plan_d', fmt(out), fmt(planInc)), t('rf_act_budget'), gf('budget', '.budget-summary, .section-header'));
     },
     // Income running short late in the period, or none at all.
@@ -3940,7 +3953,7 @@ function renderDashboardLayout1() {
       </div></div>
     </div>`;
   const view=dashView();
-  const rf=view==='overview'?headsUpCardItems():null;
+  const rf=view!=='stats'?headsUpCardItems():null;
   el.innerHTML=`
     <div class="section-header section-header--period">
       <h2 class="section-title">${appIconSvg('dashboard')} ${t('tab_dashboard')}</h2>
@@ -3952,9 +3965,10 @@ function renderDashboardLayout1() {
     ${dashFabHtml()}
     ${view==='stats'
       ? dashStatsHtml({act,sum,spendPoints,expOut,spendSegs,cashGridHtml,bottomRowHtml,allocHtml})
+      : view==='calm' ? calmDashHtml(sum, subMo, rf)
       : `${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
     ${spendPanelHtml(spendPoints)}
-    <div class="ov-grid"><div class="ov-col">${periodSoFarHtml(sum, spendSegs)}${goalProgressHtml()}${typeof chDashHtml === 'function' ? chDashHtml() : ''}</div>${recentActivityHtml()}</div>
+    <div class="ov-grid"><div class="ov-col">${periodSoFarHtml(sum, spendSegs)}${toolOn('goals')||(state.sinkingFunds||[]).length?goalProgressHtml():''}${typeof chDashHtml === 'function' && toolOn('challenges') ? chDashHtml() : ''}</div>${recentActivityHtml()}</div>
     ${allocHtml}
     ${redFlagsHtml(rf)}`}`;
   wireDashViews(el, rf);
@@ -3962,6 +3976,7 @@ function renderDashboardLayout1() {
   wireNlHero(el);
   wireDashLog(el);
   wireComingUp(el);
+  if (typeof wireCalmDash === 'function') wireCalmDash(el);
   requestAnimationFrame(()=>{
     if (!isCurrentRender()) return;
     initDonuts(el);
@@ -4965,11 +4980,11 @@ function renderTransactions() {
         <span class="tx-way-txt"><span class="tx-way-title">${t('tx_add_title')}</span><span class="tx-way-sub">${t('tx_way_manual_sub')}</span></span>
         <span class="tx-way-btns"><button class="btn btn-primary btn-sm" id="txOpenAddBtn" type="button">${t('tx_add_btn')}</button></span>
       </div>
-      <div class="tx-way tx-way--afford">
+      ${typeof toolOn === 'function' && !toolOn('afford') ? '' : `<div class="tx-way tx-way--afford">
         <span class="tx-way-ico" aria-hidden="true">\uD83D\uDECD\uFE0F</span>
         <span class="tx-way-txt"><span class="tx-way-title">${t('af_title')}</span><span class="tx-way-sub">${t('tx_way_afford_sub')}</span></span>
         <span class="tx-way-btns"><button class="btn btn-primary btn-sm" id="txAffordBtn" type="button">${t('tx_way_afford_btn')}</button></span>
-      </div>
+      </div>`}
     </div></div></div>
     <div class="panel tx-panel"><div class="tx-panel-inner">
       <div class="tx-toolbar">
@@ -5279,7 +5294,7 @@ function openQuickAddTx(prefill){
 
   document.getElementById('modalTitle').textContent = titleFor(type);
   document.getElementById('modalBody').innerHTML = `<div class="qa">
-    <div class="qa-types" role="radiogroup" aria-label="${esc(t('tx_type'))}">${QA_TYPES.map(ty =>
+    <div class="qa-types" role="radiogroup" aria-label="${esc(t('tx_type'))}">${QA_TYPES.filter(ty => typeof qaTypeShown !== 'function' || qaTypeShown(ty, type)).map(ty =>
       `<button class="qa-type${ty === type ? ' is-on' : ''}" type="button" role="radio" aria-checked="${ty === type}" data-qa-type="${ty}">${esc(t('qa_type_' + ty))}</button>`).join('')}</div>
     <div class="qa-grid">
       <section class="qa-pad">
@@ -6460,11 +6475,16 @@ function exportCSV(){
 // The cards are built as before and then sorted into titled groups, each
 // title's emoji traded for the app's own outline icon. Moving a card keeps
 // every listener it was given.
-const SET_CARDS = { '\ud83c\udfad': ['persona', 'general'], '\ud83c\udfc6': ['challenges', 'challenges'], '\ud83d\udcc5': ['calendar', 'budget'], '\ud83d\udcb1': ['coins', 'general'], '\ud83d\udd04': ['transactions', 'budget'],
+const SET_CARDS = { '\ud83e\uddf0': ['tools', 'general'], '\ud83c\udfad': ['persona', 'general'], '\ud83c\udfc6': ['challenges', 'challenges'], '\ud83d\udcc5': ['calendar', 'budget'], '\ud83d\udcb1': ['coins', 'general'], '\ud83d\udd04': ['transactions', 'budget'],
   '\u2728': ['assistant', 'assist'], '\u26a1': ['bolt', 'assist'], '\ud83e\udded': ['list', 'look'], '\ud83d\udcca': ['dashboard', 'look'],
   '\ud83c\udf19': ['moon', 'look'], '\u2601\ufe0f': ['cloud', 'data'], '\u2601': ['cloud', 'data'], '\ud83c\udf10': ['globe', 'general'],
   '\ud83c\udfaf': ['sinking', 'budget'], '\ud83c\udff7\ufe0f': ['tag', 'general'], '\ud83d\udc64': ['user', 'general'], '\ud83c\udff7': ['tag', 'general'], '\ud83d\udd11': ['key', 'data'], '\ud83d\udce4': ['upload', 'data'], '\u26a0\ufe0f': ['alert', 'data'], '\u26a0': ['alert', 'data'] };
 const SET_GROUPS = ['general', 'budget', 'challenges', 'look', 'assist', 'data', 'more'];
+// The cards most people need. Everything else waits behind "Show all
+// settings", which is remembered while the planner stays open.
+// A switched-on tool's own setting counts as essential too.
+const STG_ESSENTIAL = '[data-tool], #settStart, #settCurrency, .theme-opt, [data-sync-mode], #exportCsvBtn, .persona-grid, #cfMinInput';
+let _stgAll = false;
 function applyWidthPref() {
   document.documentElement.dataset.width = state?.settings?.fullWidth === false ? 'fixed' : 'full';
 }
@@ -6494,11 +6514,12 @@ function enhanceSettings(el) {
       if (icon === 'alert') card.classList.add('stg-card--danger');
     }
     card.classList.add('stg-card');
+    if (!card.querySelector(STG_ESSENTIAL + (typeof toolOn === 'function' && toolOn('alloc') ? ', #allocEnabled' : ''))) card.classList.add('stg-card--more');
     groups[group].querySelector('.stg-grid').appendChild(card);
   });
   // Layout width: the whole window by default, or the fixed column.
   const wcard = document.createElement('div');
-  wcard.className = 'panel stg-card';
+  wcard.className = 'panel stg-card stg-card--more';
   wcard.innerHTML = `<div class="panel-inner"><div class="settings-card-title"><span class="sct-ico" aria-hidden="true">${appIconSvg('width')}</span>${t('set_width_title')}</div>
     <p class="settings-desc">${t('set_width_desc')}</p>
     <label class="stg-switch"><span class="recurring-toggle"><input type="checkbox" id="settFullWidth" ${state.settings.fullWidth === false ? '' : 'checked'}><span class="rec-toggle-track"></span></span><span>${t('set_width_full')}</span></label></div>`;
@@ -6509,6 +6530,16 @@ function enhanceSettings(el) {
   grid.innerHTML = '';
   SET_GROUPS.forEach(g => { if (groups[g].querySelector('.stg-card')) grid.appendChild(groups[g]); });
   grid.dataset.arranged = '1';
+  const more = grid.querySelectorAll('.stg-card--more').length;
+  if (more) {
+    grid.classList.toggle('is-all', _stgAll);
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'btn btn-secondary stg-all-btn';
+    const label = () => { btn.textContent = _stgAll ? t('stg_show_less') : tf('stg_show_all', more); btn.setAttribute('aria-expanded', String(_stgAll)); };
+    label();
+    btn.addEventListener('click', () => { _stgAll = !_stgAll; grid.classList.toggle('is-all', _stgAll); label(); });
+    grid.after(btn);
+  }
 }
 
 function renderSettings(){
@@ -6521,6 +6552,7 @@ function renderSettings(){
     </div>
 
     <div class="settings-grid">
+      ${typeof toolsCardHtml === 'function' ? toolsCardHtml() : ''}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🏷️ ${t('set_name_title')}</div>
         <p class="settings-desc">${t('set_name_desc')}</p>
@@ -6652,7 +6684,7 @@ function renderSettings(){
         <p class="sync-error" id="syncSettError" hidden>${t('sync_error_generic')}</p>
       </div></div>
       ${typeof personaCardHtml === 'function' ? personaCardHtml() : ''}
-      ${typeof chRangeCardHtml === 'function' ? chRangeCardHtml() : ''}
+      ${typeof chRangeCardHtml === 'function' && toolOn('challenges') ? chRangeCardHtml() : ''}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">${t('alloc_sett_title')}</div>
         <p class="settings-desc">${t('alloc_desc')}</p>
@@ -6712,6 +6744,7 @@ function renderSettings(){
   wireNavPositionPicker(el);
   if (typeof chWireRangeCard === 'function') chWireRangeCard(el);
   if (typeof personaWireCard === 'function') personaWireCard(el);
+  if (typeof wireToolRows === 'function') wireToolRows(el);
   wireDashboardLayoutPicker(el);
 
   el.querySelectorAll('[data-sync-mode]').forEach(btn => {
@@ -7677,6 +7710,7 @@ function nlDueRowHtml(i) {
 // The hero's own controls. Re-rendering the whole dashboard is what every
 // other write on this screen does, so paying keeps the figures in step.
 function wireNlHero(scope) {
+  scope.querySelectorAll('[data-nl-explain]').forEach(b => b.addEventListener('click', () => openFreeExplain()));
   scope.querySelector('#nlDueToggle')?.addEventListener('click', () => {
     state.settings.nlDueOpen = state.settings.nlDueOpen !== true;
     saveState();
@@ -7730,7 +7764,7 @@ function nlHeroHtml(leftover, opts) {
   // there is nothing free to spend the sub-line has the more urgent thing
   // to say instead.
   const rate = (p.left > 0 && free > 0) ? tf('nl_free_rate', fmt(free / p.left), p.left) : '';
-  const sub = !o.income
+  const sub = !o.income && !((state.rollover || 0) > 0)
     ? t('nl_empty')
     : neg
       ? tf('nl_over_by', fmt(Math.abs(free)), p.left)
@@ -7755,11 +7789,12 @@ function nlHeroHtml(leftover, opts) {
       <div class="nl-label">${t('nl_free_to_spend')}</div>
       <div class="nl-value leftover-value" style="--nl-len:${figLen}" data-nl-value="${free}">${neg ? '\u2212' : ''}${nlAmountHtml(free)}</div>
       ${sub ? `<div class="nl-sub">${sub}</div>` : ''}
+      ${o.income || state.rollover ? `<button class="nl-explain" type="button" data-nl-explain>${t('nl_explain')}</button>` : ''}
       <div class="nl-meta">${pills}</div>
       <div class="nl-track"><i style="width:${p.pct}%"></i></div>
       <div class="nl-track-cap">${tf('nl_day_of', p.dayOf, p.total)}</div>
     </div>
-    <div class="nl-right">${comingUpHtml(c)}</div>
+    <div class="nl-right">${comingUpHtml(c, o.cuLimit)}</div>
   </div>`;
 }
 
@@ -8305,6 +8340,8 @@ async function init(){
     console.error('[init] error during startup setup (rendering the dashboard anyway):', e);
   }
 
+  try { if (typeof applyTools === 'function') applyTools(); }
+  catch (e) { console.error('[init] tools setup failed:', e); }
   try { switchTab('dashboard'); }
   catch (e) { console.error('[init] switchTab(dashboard) failed - this is why the page can appear blank:', e); }
 
@@ -8317,258 +8354,7 @@ async function init(){
   try { if (!document.getElementById('sbpBanner')) maybeStartOnboarding(); }
   catch (e) { console.error('[init] onboarding start failed:', e); }
 }
-// ══════════════════════════════════════════════════════════════════════
-//  ONBOARDING WALKTHROUGH
-//  Runs once, the first time a brand-new user reaches the dashboard with
-//  no real data yet (state.settings.onboardingDone gates it for good).
-//  Step 1 collects currency/period with a dedicated setup UI that writes
-//  straight into state.settings (the real Settings tab is never touched/
-//  navigated to). Steps 2-3 spotlight the actual live dashboard UI and
-//  wait for the user to perform the real action. Step 4 is a short
-//  "what else you can do" wrap-up. Skipped entirely when an SBP-import
-//  banner is offering real data instead (see checkSBPImport).
-// ══════════════════════════════════════════════════════════════════════
-let onbActive = false;
-let onbPollTimer = null;
-let onbResizeHandler = null;
-const ONB_TOTAL_STEPS = 4;
-
-function onbHasAnyData() {
-  if (state.transactions.length > 0 || state.debts.length > 0 || (state.sinkingFunds||[]).length > 0 || (state.bills||[]).length > 0) return true;
-  return Object.values(state.budgets).some(arr => arr.some(r => (r.expected || 0) > 0));
-}
-
-function maybeStartOnboarding() {
-  if (onbActive || onbHasAnyData() || state.settings.onboardingDone) return;
-  onbActive = true;
-  onbShowSetup();
-}
-
-function onbClearOverlay() {
-  document.getElementById('onbOverlay')?.remove();
-  document.getElementById('onbMask')?.remove();
-  document.getElementById('onbCoach')?.remove();
-  if (onbPollTimer) { clearInterval(onbPollTimer); onbPollTimer = null; }
-  if (onbResizeHandler) { window.removeEventListener('resize', onbResizeHandler); window.removeEventListener('scroll', onbResizeHandler, true); onbResizeHandler = null; }
-}
-
-// tab: where to land afterwards. The wrap-up can send the reader to
-// Settings, which is the one place the tutorial points at by name.
-function onbFinish(tab) {
-  onbClearOverlay();
-  state.settings.onboardingDone = true;
-  saveState();
-  onbActive = false;
-  switchTab(tab || 'dashboard');
-}
-
-function onbSkipAll() {
-  onbClearOverlay();
-  state.settings.onboardingDone = true;
-  saveState();
-  onbActive = false;
-  switchTab('dashboard');
-}
-
-function onbCloseOverlayEl(ov, then) {
-  ov.classList.add('is-leaving');
-  setTimeout(() => { ov.remove(); then?.(); }, 200);
-}
-
-// ── Step 1: setup (currency + budget period) ────────────────────────────
-function onbPeriodPresets() {
-  const now = new Date(), d = now.getDay();
-  const thisMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (d === 0 ? 6 : d - 1));
-  const q = Math.floor(now.getMonth() / 3);
-  return {
-    week:    [toLocalISO(thisMonday), toLocalISO(new Date(thisMonday.getFullYear(), thisMonday.getMonth(), thisMonday.getDate() + 6))],
-    month:   [toLocalISO(new Date(now.getFullYear(), now.getMonth(), 1)), toLocalISO(new Date(now.getFullYear(), now.getMonth() + 1, 0))],
-    quarter: [toLocalISO(new Date(now.getFullYear(), q * 3, 1)), toLocalISO(new Date(now.getFullYear(), q * 3 + 3, 0))],
-    year:    [toLocalISO(new Date(now.getFullYear(), 0, 1)), toLocalISO(new Date(now.getFullYear(), 11, 31))],
-  };
-}
-
-function onbShowSetup() {
-  const presets = onbPeriodPresets();
-  const currencies = [['USD','$'],['EUR','€'],['GBP','£'],['PLN','zł'],['JPY','¥'],['CAD','$'],
-    ['AUD','$'],['CHF','CHF'],['SEK','kr'],['NOK','kr'],['DKK','kr'],
-    ['INR','₹'],['BRL','R$'],['MXN','$'],['ZAR','R']];
-  const periodLabels = { week:'this_week', month:'this_month', quarter:'this_quarter', year:'this_year' };
-  let selectedPeriod = 'month';
-
-  const ov = document.createElement('div');
-  ov.className = 'onb-overlay';
-  ov.id = 'onbOverlay';
-  ov.setAttribute('role', 'dialog');
-  ov.setAttribute('aria-modal', 'true');
-  ov.setAttribute('aria-label', t('onb_setup_title'));
-  ov.innerHTML = `
-    <div class="onb-card" role="document">
-      <div class="onb-progress">${[0,1,2,3].map(i => `<span class="onb-progress-dot${i===0?' is-active':''}"></span>`).join('')}</div>
-      <div class="onb-step-label">${tf('onb_step_x_of_y', 1, ONB_TOTAL_STEPS)}</div>
-      <div class="onb-icon">👋</div>
-      <h2 class="onb-title">${t('onb_setup_title')}</h2>
-      <p class="onb-sub">${t('onb_setup_sub')}</p>
-      <div class="onb-section">
-        <label class="onb-field-label" for="onbCurrency">${t('select_currency')}</label>
-        <select class="select" id="onbCurrency">
-          ${currencies.map(([c,s]) => `<option value="${c}|${s}" ${state.settings.currency===c?'selected':''}>${c} (${s})</option>`).join('')}
-        </select>
-      </div>
-      <div class="onb-section">
-        <span class="onb-field-label">${t('budget_period')}</span>
-        <div class="onb-period-grid" id="onbPeriodGrid">
-          ${['week','month','quarter','year'].map(k => `<button class="onb-period-chip${k===selectedPeriod?' is-active':''}" data-period="${k}" type="button">${t(periodLabels[k])}</button>`).join('')}
-        </div>
-      </div>
-      <div class="onb-actions">
-        <button class="btn btn-primary" id="onbSetupContinue" type="button">${t('onb_continue_btn')}</button>
-        <button class="onb-skip-link" id="onbSkipBtn" type="button">${t('onb_skip_link')}</button>
-      </div>
-    </div>`;
-  document.body.appendChild(ov);
-
-  ov.querySelectorAll('.onb-period-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      selectedPeriod = btn.dataset.period;
-      ov.querySelectorAll('.onb-period-chip').forEach(b => b.classList.toggle('is-active', b === btn));
-    });
-  });
-  ov.querySelector('#onbSetupContinue').addEventListener('click', () => {
-    const [currency, symbol] = document.getElementById('onbCurrency').value.split('|');
-    const [start, end] = presets[selectedPeriod];
-    state.settings.currency = currency;
-    state.settings.symbol = symbol;
-    state.settings.periodStart = start;
-    state.settings.periodEnd = end;
-    syncSymbol();
-    saveState();
-    onbCloseOverlayEl(ov, () => onbStartSpotlight(0));
-  });
-  ov.querySelector('#onbSkipBtn').addEventListener('click', () => onbCloseOverlayEl(ov, onbSkipAll));
-  requestAnimationFrame(() => ov.classList.add('is-in'));
-}
-
-// ── Steps 2-3: spotlight the real UI, wait for the real action ─────────
-const ONB_SPOTLIGHT_STEPS = [
-  {
-    tab: 'budget', selector: '.mod-exp[data-type="income"]',
-    titleKey: 'onb_spot_budget_title', bodyKey: 'onb_spot_budget_body',
-    isDone: () => state.budgets.income.some(r => (r.expected || 0) > 0),
-  },
-  {
-    tab: 'transactions', selector: '.tx-ways',
-    titleKey: 'onb_spot_tx_title', bodyKey: 'onb_spot_tx_body',
-    isDone: () => state.transactions.length > 0,
-  },
-];
-
-function onbStartSpotlight(idx) {
-  const cfg = ONB_SPOTLIGHT_STEPS[idx];
-  if (!cfg) { onbShowTips(); return; }
-  switchTab(cfg.tab); // synchronous DOM replacement - the target is queryable immediately after
-  onbRenderSpotlight(cfg, idx);
-}
-
-function onbRenderSpotlight(cfg, idx) {
-  onbClearOverlay();
-  const target = document.querySelector(cfg.selector);
-  if (!target) { onbAdvanceSpotlight(idx); return; }
-
-  const mask = document.createElement('div');
-  mask.className = 'onb-mask';
-  mask.id = 'onbMask';
-  mask.innerHTML = `<div class="onb-mask-hole" id="onbHole"><div class="onb-mask-ring"></div></div>`;
-  document.body.appendChild(mask);
-
-  const coach = document.createElement('div');
-  coach.className = 'onb-coach';
-  coach.id = 'onbCoach';
-  coach.setAttribute('role', 'dialog');
-  coach.innerHTML = `
-    <div class="onb-coach-step">${tf('onb_step_x_of_y', idx + 2, ONB_TOTAL_STEPS)}</div>
-    <div class="onb-coach-title">${t(cfg.titleKey)}</div>
-    <div class="onb-coach-body">${t(cfg.bodyKey)}</div>
-    <div class="onb-coach-actions">
-      <button class="onb-skip-link" id="onbCoachSkip" type="button">${t('onb_skip_link')}</button>
-      <button class="btn btn-primary btn-sm" id="onbCoachNext" type="button">${t('onb_next_btn')}</button>
-    </div>`;
-  document.body.appendChild(coach);
-
-  const position = () => {
-    const hole = document.getElementById('onbHole');
-    const coachEl = document.getElementById('onbCoach');
-    if (!hole || !coachEl || !document.body.contains(target)) return;
-    const r = target.getBoundingClientRect(), pad = 8;
-    hole.style.top = `${r.top - pad}px`;
-    hole.style.left = `${r.left - pad}px`;
-    hole.style.width = `${r.width + pad * 2}px`;
-    hole.style.height = `${r.height + pad * 2}px`;
-
-    const cw = coachEl.offsetWidth || 300, ch = coachEl.offsetHeight || 140;
-    let top = r.bottom + pad + 12;
-    if (top + ch > window.innerHeight - 16) top = Math.max(16, r.top - pad - 12 - ch);
-    const left = Math.min(Math.max(16, r.left), window.innerWidth - cw - 16);
-    coachEl.style.top = `${top}px`;
-    coachEl.style.left = `${left}px`;
-  };
-  position();
-  onbResizeHandler = position;
-  window.addEventListener('resize', onbResizeHandler);
-  window.addEventListener('scroll', onbResizeHandler, true);
-  requestAnimationFrame(() => coach.classList.add('is-in'));
-
-  document.getElementById('onbCoachNext').addEventListener('click', () => onbAdvanceSpotlight(idx));
-  document.getElementById('onbCoachSkip').addEventListener('click', onbSkipAll);
-
-  onbPollTimer = setInterval(() => { if (cfg.isDone()) onbAdvanceSpotlight(idx, true); }, 600);
-}
-
-function onbAdvanceSpotlight(idx, completed) {
-  onbClearOverlay();
-  if (completed) showToast(t('onb_nice_toast'));
-  onbStartSpotlight(idx + 1);
-}
-
-// ── Step 4: wrap-up tips ─────────────────────────────────────────────────
-function onbShowTips() {
-  const ov = document.createElement('div');
-  ov.className = 'onb-overlay';
-  ov.id = 'onbOverlay';
-  ov.setAttribute('role', 'dialog');
-  ov.setAttribute('aria-modal', 'true');
-  ov.setAttribute('aria-label', t('onb_tips_title'));
-  ov.innerHTML = `
-    <div class="onb-card" role="document">
-      <div class="onb-progress">${[0,1,2,3].map(() => `<span class="onb-progress-dot is-done"></span>`).join('')}</div>
-      <div class="onb-step-label">${tf('onb_step_x_of_y', ONB_TOTAL_STEPS, ONB_TOTAL_STEPS)}</div>
-      <div class="onb-icon">🎉</div>
-      <h2 class="onb-title">${t('onb_tips_title')}</h2>
-      <p class="onb-sub">${t('onb_tips_sub')}</p>
-      <div class="onb-tips-list">
-        <div class="onb-tip"><span class="onb-tip-icon">📖</span><span><strong>${t('onb_tip1_h')}</strong> ${t('onb_tip1_b')}</span></div>
-        <div class="onb-tip"><span class="onb-tip-icon">🎨</span><span><strong>${t('onb_tip2_h')}</strong> ${t('onb_tip2_b')}</span></div>
-        <div class="onb-tip"><span class="onb-tip-icon">⚡</span><span><strong>${t('onb_tip3_h')}</strong> ${t('onb_tip3_b')}</span></div>
-      </div>
-      <div class="onb-sync">
-        <span class="onb-sync-icon" aria-hidden="true">☁️</span>
-        <span class="onb-sync-text">
-          <strong>${t('onb_tip4_h')}</strong>
-          <span>${t('onb_tip4_b')}</span>
-        </span>
-        <button class="btn btn-ghost btn-sm onb-sync-btn" id="onbSyncBtn" type="button">${t('tab_settings')}</button>
-      </div>
-      <div class="onb-actions">
-        <button class="btn btn-primary" id="onbFinishBtn" type="button">${t('onb_finish_btn')}</button>
-      </div>
-    </div>`;
-  document.body.appendChild(ov);
-  ov.querySelector('#onbFinishBtn').addEventListener('click', () => onbCloseOverlayEl(ov, onbFinish));
-  // Straight to the switch rather than to the dashboard, so the offer can
-  // be taken up in the moment it is made.
-  ov.querySelector('#onbSyncBtn')?.addEventListener('click', () => onbCloseOverlayEl(ov, () => onbFinish('settings')));
-  requestAnimationFrame(() => ov.classList.add('is-in'));
-}
+// The first-run setup lives in simple.js (maybeStartOnboarding).
 
 document.addEventListener('DOMContentLoaded',init);
 
