@@ -137,6 +137,88 @@ function qaTypeShown(ty, current) {
   return true;
 }
 
+// ── Dropdown ─────────────────────────────────────────────────────────────
+// The app's own list in place of the browser's, so it wears the theme like
+// everything else. It opens over the page rather than inside its card, so a
+// card that scrolls never cuts it off.
+const SM_DD_CHEV = '<svg class="dd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+const SM_DD_TICK = '<svg class="dd-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+function ddHtml(id, opts, value, placeholder, cls, label) {
+  const cur = opts.find(o => String(o.v) === String(value ?? ''));
+  return `<div class="dd${cls ? ' ' + cls : ''}" data-dd="${id}" data-value="${esc(value ?? '')}">
+    <button class="dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false"${label ? ` aria-label="${esc(label)}"` : ''}><span class="dd-val${cur ? '' : ' is-ph'}">${esc(cur ? cur.l : placeholder)}</span>${SM_DD_CHEV}</button>
+  </div>`;
+}
+function ddClose(focusBtn) {
+  const m = document.getElementById('ddMenu');
+  if (!m) return;
+  const btn = m._btn;
+  m.remove();
+  document.removeEventListener('pointerdown', ddOutside, true);
+  window.removeEventListener('resize', ddCloseNow);
+  if (m._onScroll) document.removeEventListener('scroll', m._onScroll, true);
+  if (btn) { btn.setAttribute('aria-expanded', 'false'); btn.closest('.dd')?.classList.remove('is-open'); if (focusBtn) btn.focus(); }
+}
+const ddCloseNow = () => ddClose(false);
+function ddOutside(e) {
+  const m = document.getElementById('ddMenu');
+  if (m && !m.contains(e.target) && !m._btn.contains(e.target)) ddClose(false);
+}
+function ddBind(el, opts, onPick, o) {
+  const btn = el.querySelector('.dd-btn');
+  const grid = o && o.grid;
+  const pick = v => {
+    const hit = opts.find(x => String(x.v) === String(v));
+    el.dataset.value = v;
+    const val = btn.querySelector('.dd-val');
+    val.textContent = hit ? hit.l : '';
+    val.classList.toggle('is-ph', !hit);
+    ddClose(true);
+    if (onPick) onPick(v);
+  };
+  btn.addEventListener('click', () => {
+    if (document.getElementById('ddMenu')?._btn === btn) { ddClose(true); return; }
+    ddClose(false);
+    const cur = el.dataset.value ?? '';
+    const m = document.createElement('div');
+    m.id = 'ddMenu';
+    m.className = 'dd-menu' + (grid ? ' dd-menu--grid' : '');
+    m.setAttribute('role', 'listbox');
+    if (grid) m.style.gridTemplateColumns = `repeat(${grid}, minmax(0, 1fr))`;
+    m.innerHTML = opts.map(x => `<button class="dd-opt${String(x.v) === String(cur) ? ' is-on' : ''}${x.wide ? ' dd-opt--wide' : ''}" type="button" role="option" aria-selected="${String(x.v) === String(cur)}" data-v="${esc(x.v)}"><span>${esc(x.l)}</span>${grid ? '' : SM_DD_TICK}</button>`).join('');
+    m._btn = btn;
+    document.body.appendChild(m);
+    const r = btn.getBoundingClientRect();
+    m.style.minWidth = Math.max(r.width, grid ? 280 : 180) + 'px';
+    const h = m.offsetHeight, w = m.offsetWidth;
+    const below = window.innerHeight - r.bottom - 12;
+    m.style.top = (below >= h || below >= r.top - 12 ? r.bottom + 6 : Math.max(8, r.top - 6 - h)) + 'px';
+    m.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)) + 'px';
+    if (below < h && below >= r.top - 12) m.style.maxHeight = Math.max(160, below) + 'px';
+    el.classList.add('is-open');
+    btn.setAttribute('aria-expanded', 'true');
+    m.addEventListener('click', e => { const b = e.target.closest('.dd-opt'); if (b) pick(b.dataset.v); });
+    m.addEventListener('keydown', e => {
+      const items = [...m.querySelectorAll('.dd-opt')], i = items.indexOf(document.activeElement);
+      const step = grid && (e.key === 'ArrowUp' || e.key === 'ArrowDown') ? grid : 1;
+      if (e.key === 'Escape') { e.preventDefault(); ddClose(true); }
+      else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); items[Math.min(items.length - 1, i + step)]?.focus(); }
+      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); items[Math.max(0, i - step)]?.focus(); }
+      else if (e.key === 'Tab') ddClose(false);
+    });
+    const on = m.querySelector('.dd-opt.is-on') || m.querySelector('.dd-opt');
+    on.scrollIntoView({ block: 'nearest' });
+    on.focus({ preventScroll: true });
+    setTimeout(() => {
+      document.addEventListener('pointerdown', ddOutside, true);
+      window.addEventListener('resize', ddCloseNow);
+      m._onScroll = e => { if (!m.contains(e.target)) ddCloseNow(); };
+      document.addEventListener('scroll', m._onScroll, true);
+    }, 0);
+  });
+  btn.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && !document.getElementById('ddMenu')) { e.preventDefault(); btn.click(); } });
+}
+
 // ── Dates ────────────────────────────────────────────────────────────────
 const smToday = () => toLocalISO(new Date());
 function smDaysBetween(a, b) {
@@ -314,15 +396,11 @@ const SETUP_HELP = [
 ];
 let _setup = null;
 
-function setupCurrencyGuess() {
-  try {
-    const region = (new Intl.Locale(navigator.language)).maximize().region;
-    return ({ US: 'USD', GB: 'GBP', IE: 'EUR', DE: 'EUR', FR: 'EUR', ES: 'EUR', IT: 'EUR', NL: 'EUR', BE: 'EUR', AT: 'EUR', PT: 'EUR', FI: 'EUR',
-      PL: 'PLN', JP: 'JPY', CA: 'CAD', AU: 'AUD', CH: 'CHF', SE: 'SEK', NO: 'NOK', DK: 'DKK', IN: 'INR', BR: 'BRL', MX: 'MXN', ZA: 'ZAR' })[region] || null;
-  } catch (e) { return null; }
-}
 const SETUP_CURRENCIES = [['USD', '$'], ['EUR', '€'], ['GBP', '£'], ['PLN', 'zł'], ['JPY', '¥'], ['CAD', '$'], ['AUD', '$'], ['CHF', 'CHF'],
   ['SEK', 'kr'], ['NOK', 'kr'], ['DKK', 'kr'], ['INR', '₹'], ['BRL', 'R$'], ['MXN', '$'], ['ZAR', 'R']];
+const setupFreqOpts = () => SETUP_FREQS.map(f => ({ v: f, l: t('setup_freq_' + f) }));
+const setupCurOpts = () => SETUP_CURRENCIES.map(([c, s]) => ({ v: c + '|' + s, l: `${c} (${s})` }));
+const setupDayOpts = () => [{ v: '', l: t('setup_day_unsure'), wide: true }].concat(Array.from({ length: 31 }, (_, d) => ({ v: String(d + 1), l: String(d + 1) })));
 
 function setupHasData() {
   if ((state.transactions || []).length || (state.debts || []).length || (state.sinkingFunds || []).length || (state.bills || []).length) return true;
@@ -335,9 +413,9 @@ function maybeStartOnboarding() {
   setupOpen();
 }
 function setupOpen() {
-  const cur = setupCurrencyGuess();
-  const pick = SETUP_CURRENCIES.find(c => c[0] === (state.settings.onboardingDone ? state.settings.currency : (cur || state.settings.currency))) || SETUP_CURRENCIES[0];
-  _setup = { step: 0, freq: 'month', last: smToday(), pay: '', bal: '', cur: pick[0] + '|' + pick[1],
+  // US dollars unless this planner has already been set to something else.
+  const pick = SETUP_CURRENCIES.find(c => c[0] === state.settings.currency) || SETUP_CURRENCIES[0];
+  _setup = { step: 0, freq: '', last: smToday(), pay: '', bal: '', cur: pick[0] + '|' + pick[1],
     bills: [], plan: SETUP_PLAN.map(n => ({ name: n, amount: '' })), help: new Set() };
   const ov = document.createElement('div');
   ov.className = 'onb-overlay setup-ov';
@@ -350,6 +428,7 @@ function setupOpen() {
   requestAnimationFrame(() => ov.classList.add('is-in'));
 }
 function setupClose(then) {
+  ddClose(false);
   const ov = document.getElementById('onbOverlay');
   _setup = null;
   if (!ov) { if (then) then(); return; }
@@ -415,20 +494,14 @@ function setupStepHtml() {
   if (step === 'pay') return `${setupDots()}
     <h2 class="onb-title">${t('setup_pay_title')}</h2>
     <p class="onb-sub">${t('setup_pay_sub')}</p>
-    <div class="setup-chips setup-chips--2" role="radiogroup">${SETUP_FREQS.map(f => `<button class="setup-chip${S.freq === f ? ' is-on' : ''}${f === 'varies' ? ' setup-chip--wide' : ''}" type="button" role="radio" aria-checked="${S.freq === f}" data-freq="${f}">${t('setup_freq_' + f)}</button>`).join('')}</div>
-    ${S.freq === 'varies' ? `<p class="setup-note">${t('setup_varies_note')}</p>` : `
-    <div class="setup-q">${t('setup_last_q')}</div>
-    <div class="setup-last">
-      <button class="setup-chip${S.last === smToday() ? ' is-on' : ''}" type="button" data-last="0">${t('cu_today_cap')}</button>
-      <button class="setup-chip${S.last === toLocalISO(new Date(Date.now() - 86400000)) ? ' is-on' : ''}" type="button" data-last="1">${t('cu_yesterday_cap')}</button>
-      ${styledDateField('setupLast', 'setupLastWrap', S.last)}
-    </div>`}
-    <label class="setup-cur"><span>${t('currency')}</span><select class="select" id="setupCur">${SETUP_CURRENCIES.map(([c, s]) => `<option value="${c}|${s}"${S.cur === c + '|' + s ? ' selected' : ''}>${c} (${s})</option>`).join('')}</select></label>
+    <div class="setup-field"><span class="setup-label">${t('setup_freq_label')}</span>${ddHtml('freq', setupFreqOpts(), S.freq, t('setup_freq_ph'), '', t('setup_freq_label'))}</div>
+    ${S.freq === 'varies' ? `<p class="setup-note">${t('setup_varies_note')}</p>`
+      : S.freq ? `<div class="setup-field"><span class="setup-label">${t('setup_last_q')}</span>${styledDateField('setupLast', 'setupLastWrap', S.last)}</div>` : ''}
     ${setupNav()}`;
   if (step === 'amount') return `${setupDots()}
     <h2 class="onb-title">${t(S.freq === 'varies' ? 'setup_amt_title_v' : 'setup_amt_title')}</h2>
     <p class="onb-sub">${t('setup_amt_sub')}</p>
-    ${setupAmountField('setupPay', S.pay, t('setup_amt_title'))}
+    <div class="setup-amt">${setupAmountField('setupPay', S.pay, t('setup_amt_title'))}${ddHtml('cur', setupCurOpts(), S.cur, '', 'dd--cur', t('currency'))}</div>
     ${setupNav()}`;
   if (step === 'now') return `${setupDots()}
     <h2 class="onb-title">${t('setup_now_title')}</h2>
@@ -450,7 +523,7 @@ function setupStepHtml() {
       ${S.bills.map((b, i) => `<div class="setup-row" data-bill="${i}">
         <input class="input" type="text" data-bf="name" value="${esc(b.name)}" placeholder="${esc(t('setup_bill_ph'))}" aria-label="${esc(t('setup_col_name'))}" maxlength="40">
         ${setupAmountField('setupBillAmt' + i, b.amount, t('setup_col_amount'))}
-        <select class="select" data-bf="day" aria-label="${esc(t('setup_col_day'))}"><option value="">${t('setup_day_unsure')}</option>${Array.from({ length: 31 }, (_, d) => `<option value="${d + 1}"${String(b.day) === String(d + 1) ? ' selected' : ''}>${d + 1}</option>`).join('')}</select>
+        ${ddHtml('day', setupDayOpts(), b.day || '', t('setup_day_unsure'), 'dd--day', t('setup_col_day'))}
         <button class="btn-icon setup-x" type="button" data-rmbill="${i}" aria-label="${esc(t('nw_remove'))}">×</button>
       </div>`).join('')}
     </div>
@@ -511,6 +584,7 @@ function setupStepHtml() {
 }
 
 function setupPaint() {
+  ddClose(false);
   const card = document.querySelector('#onbOverlay .setup-card');
   if (!card || !_setup) return;
   card.innerHTML = setupStepHtml();
@@ -532,7 +606,7 @@ function setupRead(card) {
     const b = S.bills[+row.dataset.bill]; if (!b) return;
     b.name = row.querySelector('[data-bf="name"]').value;
     b.amount = row.querySelector('.setup-money-in').value;
-    b.day = row.querySelector('[data-bf="day"]').value;
+    b.day = row.querySelector('.dd[data-dd="day"]').dataset.value || '';
   });
   card.querySelectorAll('[data-plan]').forEach(row => {
     const r = S.plan[+row.dataset.plan]; if (!r) return;
@@ -541,7 +615,6 @@ function setupRead(card) {
   });
   const pay = card.querySelector('#setupPay'); if (pay) S.pay = pay.value;
   const bal = card.querySelector('#setupBal'); if (bal) S.bal = bal.value;
-  const cur = card.querySelector('#setupCur'); if (cur) S.cur = cur.value;
   const last = card.querySelector('#setupLast'); if (last && last.value) S.last = last.value;
 }
 function setupWire(card) {
@@ -551,12 +624,13 @@ function setupWire(card) {
   card.querySelector('[data-setup-skip]')?.addEventListener('click', setupSkip);
   card.querySelector('[data-setup-back]')?.addEventListener('click', () => go(-1));
   card.querySelector('[data-setup-go]')?.addEventListener('click', () => setupClose(() => { switchTab('dashboard'); }));
-  card.querySelectorAll('[data-freq]').forEach(b => b.addEventListener('click', () => { setupRead(card); S.freq = b.dataset.freq; setupPaint(); }));
-  card.querySelectorAll('[data-last]').forEach(b => b.addEventListener('click', () => {
-    setupRead(card); S.last = toLocalISO(new Date(Date.now() - (+b.dataset.last) * 86400000)); setupPaint();
-  }));
+  card.querySelectorAll('.dd').forEach(el => {
+    const id = el.dataset.dd;
+    if (id === 'freq') ddBind(el, setupFreqOpts(), v => { setupRead(card); S.freq = v; setupPaint(); });
+    else if (id === 'cur') ddBind(el, setupCurOpts(), v => { setupRead(card); S.cur = v; setupPaint(); });
+    else if (id === 'day') ddBind(el, setupDayOpts(), null, { grid: 7 });
+  });
   if (card.querySelector('#setupLast')) bindDateField('setupLast', 'setupLastWrap', () => { setupRead(card); setupPaint(); });
-  card.querySelector('#setupCur')?.addEventListener('change', repaint);
   card.querySelectorAll('[data-addbill]').forEach(b => b.addEventListener('click', () => {
     setupRead(card);
     if (S.bills.length >= setupBillRoom()) return;
@@ -612,6 +686,7 @@ function setupWire(card) {
   card.querySelector('[data-setup-next]')?.addEventListener('click', () => {
     setupRead(card);
     const step = SETUP_STEPS[S.step];
+    if (step === 'pay' && !S.freq) { setupErr(card, 'setup_err_freq'); return; }
     if (step === 'pay' && S.freq !== 'varies' && (!S.last || S.last > smToday())) { setupErr(card, 'setup_err_last'); return; }
     if (step === 'amount' && !setupNum(S.pay)) { setupErr(card, 'setup_err_pay'); card.querySelector('#setupPay')?.focus(); return; }
     if (step === 'bills') {
@@ -739,9 +814,10 @@ const SIMPLE_WORDS = {
   setup_w_sub: 'A few quick questions, about two minutes, and you will see exactly how much you can spend, with your bills already set aside.',
   setup_w_1: 'When you get paid, and how much', setup_w_2: 'The bills that come out regularly', setup_w_3: 'A rough plan for everyday spending',
   setup_w_go: "Let's go", setup_w_skip: "Skip, I'll set it up myself",
-  setup_pay_title: 'How often do you get paid?', setup_pay_sub: 'Your budget runs from one payday to the next, so it always matches your money.',
-  setup_freq_month: 'Every month', setup_freq_w2: 'Every 2 weeks', setup_freq_w1: 'Every week', setup_freq_w4: 'Every 4 weeks', setup_freq_varies: 'It changes, or I am self-employed',
-  setup_varies_note: 'No problem. Your budget will run by calendar month.',
+  setup_pay_title: 'How often do you get paid?', setup_pay_sub: 'Your budget will run from payday to payday.',
+  setup_freq_label: 'How often', setup_freq_ph: 'Choose one',
+  setup_freq_month: 'Every month', setup_freq_w2: 'Every 2 weeks', setup_freq_w1: 'Every week', setup_freq_w4: 'Every 4 weeks', setup_freq_varies: 'It varies',
+  setup_varies_note: 'Self-employed or paid at different times? No problem: your budget will run by calendar month.',
   setup_last_q: 'When did you last get paid?',
   setup_amt_title: 'How much is one pay?', setup_amt_title_v: 'Roughly how much comes in each month?',
   setup_amt_sub: 'After tax: the amount that actually lands in your account. A rough number is fine.',
@@ -779,7 +855,7 @@ const SIMPLE_WORDS = {
   setup_done_go: 'Go to my dashboard',
   setup_done_nodate_1: '1 bill has no due day yet, so it is not set aside. Add its day on the Bills page and your number will allow for it.',
   setup_done_nodate: '{0} bills have no due day yet, so they are not set aside. Add their days on the Bills page and your number will allow for them.',
-  setup_err_last: 'Pick the day you were last paid.', setup_err_pay: 'Enter roughly how much you get paid.',
+  setup_err_freq: 'Choose how often you get paid.', setup_err_last: 'Pick the day you were last paid.', setup_err_pay: 'Enter roughly how much you get paid.',
   setup_err_bill: 'Give each bill a name and an amount, or remove it.',
   setup_tx_pay: 'Pay'
 };

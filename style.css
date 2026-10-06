@@ -9154,13 +9154,73 @@ html[data-theme="dark"] .nav-rail-account { background: rgba(255, 255, 255, .07)
   .setup-card { padding: 26px 18px 18px; border-radius: 22px; max-height: calc(100dvh - 20px); }
   .setup-card .onb-title { font-size: 21px; }
   .setup-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 30px; }
-  .setup-row > .select { grid-column: 1 / 3; }
+  .setup-row > .select, .setup-row > .dd { grid-column: 1 / 3; }
   .setup-row--head { display: none; }
   .setup-row--plan { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 30px; }
   .setup-sum { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 10px; }
   .setup-last { grid-template-columns: 1fr 1fr; }
   .setup-last .date-field-styled { grid-column: 1 / -1; }
 }
-[data-theme="dark"] .setup-card { background: linear-gradient(180deg, rgba(44, 32, 82, .97), rgba(30, 22, 58, .97)); }
 .setup-note--warn { margin: -4px 0 16px; padding: 10px 12px; border-radius: 12px; text-align: center; color: var(--text-primary); background: rgba(245, 158, 11, .14); }
-[data-theme="frosty"] .setup-card { background: rgba(255, 255, 255, .96); }
+
+/* ═══ Pop-ups: solid in every appearance ═════════════════════════════
+   Dark and Frosty build their panes from see-through glass, and the pop-ups
+   inherited it: the date picker in Dark was 90% transparent. Anything that
+   opens over the page now sits on one opaque colour per appearance, so its
+   contents are as legible as the page under it. */
+:root { --popup-bg: var(--surface-solid); --popup-border: var(--border-faint); }
+[data-theme="dark"] { --popup-bg: #271d4c; --popup-border: rgba(255, 255, 255, .14); }
+[data-theme="frosty"] { --popup-bg: #ffffff; --popup-border: rgba(139, 108, 246, .16); }
+.fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .chart-tooltip, .onb-coach, .dd-menu { background: var(--popup-bg); }
+[data-theme="dark"] :is(.fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .chart-tooltip, .onb-coach, .onb-card, .dd-menu),
+[data-theme="frosty"] :is(.fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .chart-tooltip, .onb-coach, .onb-card, .dd-menu) {
+  background: var(--popup-bg); border-color: var(--popup-border); -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+/* The page panes' glass rule names these too, with a stronger selector, so the solid colour has to insist. */
+[data-theme="dark"] :is(.modal, .fk-dialog, .fk-up-card, .guide-modal) { background: linear-gradient(160deg, #2c2152 0%, #231947 100%) !important; }
+[data-theme="dark"] #toast { background: #2c2152; }
+[data-theme="dark"] .setup-card { background: linear-gradient(180deg, #2c2152, #231947); }
+[data-theme="frosty"] :is(.modal, .fk-dialog, .fk-up-card, .guide-modal, .setup-card) { background: linear-gradient(160deg, #ffffff 0%, #f8f6ff 100%) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+[data-theme="frosty"] #toast { background: #ffffff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+/* ═══ Dropdown: the app's own list ═══════════════════════════════════ */
+.dd { position: relative; min-width: 0; }
+.dd-btn {
+  appearance: none; width: 100%; min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 0 14px; border-radius: var(--ui-tile-radius, 14px); border: 1.5px solid transparent; background: var(--ui-tile);
+  font: inherit; font-size: 14.5px; font-weight: 600; color: var(--text-primary); text-align: left; cursor: pointer; transition: border-color .15s;
+}
+.dd-btn:hover { border-color: rgba(var(--grad-indigo-rgb), .35); }
+.dd.is-open .dd-btn, .dd-btn:focus-visible { border-color: var(--grad-indigo); outline: none; }
+.dd-val { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-val.is-ph { color: var(--text-faint); font-weight: 500; }
+.dd-chev { width: 16px; height: 16px; flex: 0 0 auto; color: var(--text-secondary); transition: transform .18s var(--ease); }
+.dd.is-open .dd-chev { transform: rotate(180deg); }
+.dd-menu {
+  position: fixed; z-index: 3600; max-height: 300px; overflow-y: auto; padding: 6px; display: grid; gap: 2px;
+  border: 1px solid var(--popup-border); border-radius: 16px; box-shadow: 0 22px 48px -14px rgba(20, 10, 50, .38), 0 2px 6px rgba(20, 10, 50, .08);
+  animation: fk-dp-in .14s var(--ease, ease);
+}
+.dd-opt {
+  appearance: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
+  padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; font: inherit; font-size: 14px; font-weight: 500;
+  color: var(--text-primary); text-align: left; cursor: pointer;
+}
+.dd-opt:hover, .dd-opt:focus-visible { background: rgba(var(--grad-indigo-rgb), .1); outline: none; }
+.dd-opt.is-on { font-weight: 700; color: var(--grad-indigo); }
+.dd-tick { width: 16px; height: 16px; flex: 0 0 auto; opacity: 0; }
+.dd-opt.is-on .dd-tick { opacity: 1; }
+.dd-menu--grid { gap: 4px; }
+.dd-menu--grid .dd-opt { justify-content: center; padding: 9px 0; font-variant-numeric: tabular-nums; }
+.dd-menu--grid .dd-opt.is-on { background: var(--grad-indigo); color: #fff; }
+.dd-opt--wide { grid-column: 1 / -1; }
+[data-theme="peachy"] .dd-btn { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="jolly"] .dd-menu--grid .dd-opt.is-on, [data-theme="frosty"] .dd-menu--grid .dd-opt.is-on { background: var(--ui-btn); }
+
+/* Setup: a labelled field per question, and the currency beside the pay. */
+.setup-field { display: grid; gap: 8px; margin-bottom: 16px; }
+.setup-label { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
+.setup-field .date-field-styled { min-height: 46px; }
+.setup-amt { display: grid; grid-template-columns: minmax(0, 1fr) 128px; gap: 8px; align-items: stretch; }
+.setup-amt .dd-btn { height: 100%; }
+.setup-row .dd-btn { min-height: 42px; }

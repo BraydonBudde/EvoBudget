@@ -3965,10 +3965,10 @@ function renderDashboardLayout1() {
     ${dashFabHtml()}
     ${view==='stats'
       ? dashStatsHtml({act,sum,spendPoints,expOut,spendSegs,cashGridHtml,bottomRowHtml,allocHtml})
-      : view==='calm' ? calmDashHtml(sum, subMo, rf)
+      : view==='calm' && typeof calmDashHtml==='function' ? calmDashHtml(sum, subMo, rf)
       : `${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo })}
     ${spendPanelHtml(spendPoints)}
-    <div class="ov-grid"><div class="ov-col">${periodSoFarHtml(sum, spendSegs)}${toolOn('goals')||(state.sinkingFunds||[]).length?goalProgressHtml():''}${typeof chDashHtml === 'function' && toolOn('challenges') ? chDashHtml() : ''}</div>${recentActivityHtml()}</div>
+    <div class="ov-grid"><div class="ov-col">${periodSoFarHtml(sum, spendSegs)}${typeof toolOn!=='function'||toolOn('goals')||(state.sinkingFunds||[]).length?goalProgressHtml():''}${typeof chDashHtml === 'function' && (typeof toolOn!=='function'||toolOn('challenges')) ? chDashHtml() : ''}</div>${recentActivityHtml()}</div>
     ${allocHtml}
     ${redFlagsHtml(rf)}`}`;
   wireDashViews(el, rf);
@@ -6684,7 +6684,7 @@ function renderSettings(){
         <p class="sync-error" id="syncSettError" hidden>${t('sync_error_generic')}</p>
       </div></div>
       ${typeof personaCardHtml === 'function' ? personaCardHtml() : ''}
-      ${typeof chRangeCardHtml === 'function' && toolOn('challenges') ? chRangeCardHtml() : ''}
+      ${typeof chRangeCardHtml === 'function' && (typeof toolOn !== 'function' || toolOn('challenges')) ? chRangeCardHtml() : ''}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">${t('alloc_sett_title')}</div>
         <p class="settings-desc">${t('alloc_desc')}</p>
