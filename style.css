@@ -8959,3 +8959,43 @@ html[data-theme="dark"] .nav-rail-account { background: rgba(255, 255, 255, .07)
 [data-theme="frosty"] .persona-opt.is-active { background: linear-gradient(180deg, rgba(237, 233, 254, .95), rgba(221, 214, 254, .6)); border-color: rgba(139, 108, 246, .45); }
 [data-theme="dark"] .persona-opt { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .1); }
 [data-theme="dark"] .persona-opt.is-active { background: rgba(167, 139, 250, .18); border-color: rgba(167, 139, 250, .55); }
+
+/* ═══ This period so far: In, Out and Kept beside their icons ═════════
+   Every appearance gets the tile icon; the label and the amount sit to
+   its right, one under the other, and the note runs under the amount. */
+.psf-tile--in   { --ic: #10b981; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.4v9.4'/%3E%3Cpath d='M8.2 9 12 12.8 15.8 9'/%3E%3Cpath d='M4 16.4v2.3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2.3'/%3E%3C/svg%3E"); }
+.psf-tile--out  { --ic: #f43f5e; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.8 3.2h2.2l2.4 11.1a1.7 1.7 0 0 0 1.7 1.3h8.1a1.7 1.7 0 0 0 1.7-1.3L20.6 7.1H6'/%3E%3Ccircle cx='9.6' cy='19.6' r='1.3'/%3E%3Ccircle cx='17.4' cy='19.6' r='1.3'/%3E%3C/svg%3E"); }
+.psf-tile--kept { --ic: #8b5cf6; --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 20.2s-7.6-4.6-7.6-10.4A4.3 4.3 0 0 1 12 7.1a4.3 4.3 0 0 1 7.6 2.7c0 5.8-7.6 10.4-7.6 10.4z'/%3E%3C/svg%3E"); }
+[data-theme="peachy"] .psf-tile--in   { --ic: #e8a24f; }
+[data-theme="peachy"] .psf-tile--out  { --ic: #e4887a; }
+[data-theme="peachy"] .psf-tile--kept { --ic: #b98f78; }
+.psf-tile::before {
+  content: ""; display: block; width: 44px; height: 44px; border-radius: 13px;
+  background: var(--ico) center / 21px no-repeat, var(--ic); box-shadow: 0 8px 16px -9px var(--ic);
+}
+[data-theme="peachy"] .psf-tile::before {
+  background: var(--ico) center / 21px no-repeat, linear-gradient(145deg, color-mix(in srgb, var(--ic) 72%, #fff), var(--ic));
+  box-shadow: 4px 4px 9px rgba(176, 118, 100, .3), -3px -3px 8px rgba(255, 255, 255, .85);
+}
+.psf-tiles .psf-tile {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto auto;
+  column-gap: 14px; row-gap: 2px; align-items: center; align-content: center;
+}
+.psf-tiles .psf-tile::before { grid-column: 1; grid-row: 1 / span 2; align-self: center; margin: 0; }
+.psf-tiles .psf-k { grid-column: 2; grid-row: 1; align-self: end; font-size: 14.5px; font-weight: 600; letter-spacing: 0; text-transform: none; }
+.psf-tiles .psf-tile strong { grid-column: 2; grid-row: 2; align-self: start; min-width: 0; font-size: clamp(1.05rem, 2.6cqi, 1.55rem); line-height: 1.2; }
+.psf-tiles .psf-tile em { grid-column: 2; grid-row: 3; margin-top: 2px; }
+/* Three narrow tiles (a short dashboard column): the label stays beside
+   the icon and the amount takes the tile's full width beneath them. */
+@media (min-width: 561px) {
+  @container (max-width: 600px) {
+    .psf-tiles .psf-tile { column-gap: 10px; row-gap: 6px; align-content: start; }
+    .psf-tiles .psf-tile::before { grid-row: 1; width: 38px; height: 38px; border-radius: 11px; background-size: 18px, auto; }
+    .psf-tiles .psf-k { grid-row: 1; align-self: center; }
+    .psf-tiles .psf-tile strong { grid-column: 1 / -1; grid-row: 2; margin-top: 4px; font-size: clamp(1rem, 3.8cqi, 1.55rem); }
+    .psf-tiles .psf-tile em { grid-column: 1 / -1; grid-row: 3; margin-top: 0; }
+  }
+}
+@media (max-width: 560px) {
+  .psf-tiles .psf-tile strong { font-size: clamp(1.15rem, 6cqi, 1.5rem); }
+}
