@@ -381,16 +381,15 @@ document.addEventListener('click', e => {
 // offers itself again next time.
 const SETUP_STEPS = ['welcome', 'pay', 'amount', 'now', 'bills', 'plan', 'help', 'done'];
 const SETUP_FREQS = ['month', 'w2', 'w1', 'w4', 'varies'];
-const SETUP_BILLS = ['Rent', 'Mortgage', 'Electricity', 'Water', 'Phone', 'Internet', 'Insurance', 'Car payment', 'Streaming', 'Gym'];
+const SETUP_BILLS = ['Rent', 'Phone', 'Internet', 'Insurance', 'Car payment', 'Netflix', 'Gym'];
 const SETUP_PLAN = ['Groceries', 'Eating out', 'Transport', 'Shopping', 'Entertainment'];
-// A starting point for anyone who would rather edit than invent: shares of
-// what is left after bills, leaving some of it unplanned on purpose.
-const SETUP_SPLIT = { 'Groceries': .3, 'Eating out': .1, 'Transport': .15, 'Shopping': .1, 'Entertainment': .08 };
+// Pays in a month, for turning one pay into the monthly figure budgets use.
+const SETUP_PER_MONTH = { month: 1, w2: 26 / 12, w1: 52 / 12, w4: 13 / 12, varies: 1 };
 const SETUP_HELP = [
   { id: 'goals', tools: ['goals'], ico: 'sinking' },
   { id: 'debt', tools: ['debt'], ico: 'debt' },
   { id: 'calendar', tools: ['calendar'], ico: 'calendar' },
-  { id: 'impulse', tools: ['challenges', 'afford'], ico: 'challenges' },
+  { id: 'impulse', tools: ['challenges'], ico: 'challenges' },
   { id: 'alloc', tools: ['alloc'], ico: 'tag' },
   { id: 'insights', tools: ['insights'], ico: 'dashboard' }
 ];
@@ -445,13 +444,10 @@ function setupSkip() {
 const setupSym = () => (_setup.cur.split('|')[1] || '$');
 const setupNum = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return n > 0 ? Math.round(n * 100) / 100 : 0; };
 const setupMoney = n => { const s = setupSym(); return s.length > 1 && /^[A-Za-z]/.test(s) ? `${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${s}` : `${s}${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; };
-function setupPeriodWord() { return t('setup_per_' + (_setup.freq === 'varies' ? 'month' : _setup.freq)); }
-// Bills are monthly here, so a shorter pay cycle carries its share of them.
-function setupBillsPerPeriod() {
-  const monthly = _setup.bills.reduce((s, b) => s + setupNum(b.amount), 0);
-  const days = { w1: 7, w2: 14, w4: 28 }[_setup.freq];
-  return days ? Math.round(monthly * days / 30.4375 * 100) / 100 : monthly;
-}
+// Everything on the plan screen is monthly: the pay as a month of pay, the
+// bills, and the budgets, which are monthly wherever they are used.
+const setupMonthlyPay = () => Math.round(setupNum(_setup.pay) * (SETUP_PER_MONTH[_setup.freq] || 1) * 100) / 100;
+const setupBillsMonthly = () => _setup.bills.reduce((s, b) => s + setupNum(b.amount), 0);
 function setupBillRoom() {
   if (!isTrial()) return Infinity;
   return Math.max(0, TRIAL_LIMITS.subscriptions - trialCount('subscriptions', (state.bills || []).length));
@@ -470,10 +466,8 @@ function setupNav(nextLabel, opts) {
   const o = opts || {};
   return `<div class="setup-nav">
     ${_setup.step > 1 && _setup.step < SETUP_STEPS.length - 1 ? `<button class="btn btn-ghost setup-back" type="button" data-setup-back>${t('setup_back')}</button>` : '<span></span>'}
-    <div class="setup-nav-r">
-      ${o.skip ? `<button class="link-btn setup-skip-step" type="button" data-setup-skipstep>${t(o.skip)}</button>` : ''}
-      <button class="btn btn-primary setup-next" type="button" data-setup-next>${t(nextLabel || 'setup_next')}</button>
-    </div>
+    ${o.skip ? `<button class="link-btn setup-skip-step" type="button" data-setup-skipstep>${t(o.skip)}</button>` : '<span></span>'}
+    <button class="btn btn-primary setup-next" type="button" data-setup-next>${t(nextLabel || 'setup_next')}</button>
   </div>
   <p class="setup-err" id="setupErr" hidden></p>`;
 }
@@ -505,9 +499,8 @@ function setupStepHtml() {
     ${setupNav()}`;
   if (step === 'now') return `${setupDots()}
     <h2 class="onb-title">${t('setup_now_title')}</h2>
-    <p class="onb-sub">${t(S.freq === 'varies' ? 'setup_now_sub_v' : 'setup_now_sub')}</p>
+    <p class="onb-sub">${t('setup_now_sub')}</p>
     ${setupAmountField('setupBal', S.bal, t('setup_now_title'))}
-    <p class="setup-note">${t('setup_now_note')}</p>
     ${setupNav('setup_next', { skip: 'setup_skip_q' })}`;
   if (step === 'bills') {
     const room = setupBillRoom(), full = S.bills.length >= room;
@@ -532,14 +525,14 @@ function setupStepHtml() {
     ${setupNav(S.bills.length ? 'setup_next' : 'setup_no_bills')}`;
   }
   if (step === 'plan') {
-    const pay = setupNum(S.pay), bills = setupBillsPerPeriod();
+    const pay = setupMonthlyPay(), bills = setupBillsMonthly();
     const planned = S.plan.reduce((s, r) => s + setupNum(r.amount), 0);
     const left = Math.round((pay - bills - planned) * 100) / 100;
     return `${setupDots()}
     <h2 class="onb-title">${t('setup_plan_title')}</h2>
-    <p class="onb-sub">${tf('setup_plan_sub', setupPeriodWord())}</p>
+    <p class="onb-sub">${t('setup_plan_sub')}</p>
     <div class="setup-sum">
-      <span><em>${t(S.freq === 'varies' ? 'setup_sum_in_v' : 'setup_sum_pay')}</em><b>${setupMoney(pay)}</b></span>
+      <span><em>${t(S.freq === 'varies' ? 'setup_sum_in_v' : S.freq === 'month' ? 'setup_sum_pay' : 'setup_sum_pay_m')}</em><b>${setupMoney(pay)}</b></span>
       <span><em>${t('setup_sum_bills')}</em><b>− ${setupMoney(bills)}</b></span>
       <span><em>${t('setup_sum_planned')}</em><b id="setupPlanned">− ${setupMoney(planned)}</b></span>
       <span class="setup-sum-left${left < 0 ? ' is-neg' : ''}"><em>${t(left < 0 ? 'setup_sum_over' : 'setup_sum_left')}</em><b id="setupLeft">${setupMoney(Math.abs(left))}</b></span>
@@ -551,9 +544,7 @@ function setupStepHtml() {
     </div>`).join('')}</div>
     <div class="setup-plan-acts">
       <button class="link-btn" type="button" data-addplan>+ ${t('setup_add_cat')}</button>
-      ${pay > bills ? `<button class="link-btn" type="button" data-suggest>${t('setup_suggest')}</button>` : ''}
     </div>
-    <p class="setup-note">${t('setup_plan_note')}</p>
     ${setupNav('setup_next', { skip: 'setup_plan_later' })}`;
   }
   if (step === 'help') return `${setupDots()}
@@ -561,7 +552,7 @@ function setupStepHtml() {
     <p class="onb-sub">${t('setup_help_sub')}</p>
     <div class="setup-help">${SETUP_HELP.map(h => `<button class="setup-help-card${S.help.has(h.id) ? ' is-on' : ''}" type="button" aria-pressed="${S.help.has(h.id)}" data-help-pick="${h.id}">
       <span class="tool-ico" aria-hidden="true">${appIconSvg(h.ico)}</span>
-      <span class="setup-help-txt"><b>${t('setup_help_' + h.id)}</b><em>${esc(tf('setup_adds', h.tools.map(toolName).join(t('setup_and'))))}</em></span>
+      <span class="setup-help-txt"><b>${t('setup_help_' + h.id)}</b><em>${t('setup_help_' + h.id + '_d')}</em></span>
       <span class="setup-help-tick" aria-hidden="true"></span>
     </button>`).join('')}</div>
     <p class="setup-note">${t('setup_help_note')}</p>
@@ -647,20 +638,11 @@ function setupWire(card) {
     const rows = document.querySelectorAll('#onbOverlay [data-plan]');
     rows[rows.length - 1]?.querySelector('[data-pf="name"]').focus();
   });
-  card.querySelector('[data-suggest]')?.addEventListener('click', () => {
-    setupRead(card);
-    const room = setupNum(S.pay) - setupBillsPerPeriod();
-    S.plan.forEach(r => {
-      const share = SETUP_SPLIT[r.name.trim()];
-      if (share && !setupNum(r.amount)) r.amount = String(Math.max(5, Math.round(room * share / 5) * 5));
-    });
-    setupPaint();
-  });
   // The running totals follow every keystroke without a redraw.
   card.querySelectorAll('[data-plan] .setup-money-in').forEach(inp => inp.addEventListener('input', () => {
     setupRead(card);
     const planned = S.plan.reduce((s, r) => s + setupNum(r.amount), 0);
-    const left = Math.round((setupNum(S.pay) - setupBillsPerPeriod() - planned) * 100) / 100;
+    const left = Math.round((setupMonthlyPay() - setupBillsMonthly() - planned) * 100) / 100;
     card.querySelector('#setupPlanned').textContent = '− ' + setupMoney(planned);
     const box = card.querySelector('.setup-sum-left');
     box.classList.toggle('is-neg', left < 0);
@@ -726,7 +708,7 @@ function setupCommit() {
   const income = state.budgets.income = state.budgets.income || [];
   let row = income.find(x => x.category === 'Salary');
   if (!row) { row = { id: uid(), category: 'Salary', expected: 0 }; income.unshift(row); }
-  row.expected = pay;
+  row.expected = Math.round(pay * (SETUP_PER_MONTH[S.freq] || 1) * 100) / 100;
   const hasIncome = (state.transactions || []).some(x => x.type === 'income' && x.date >= ps && x.date <= pe);
   rolloverMaps();
   if (S.freq !== 'varies') {
@@ -819,33 +801,34 @@ const SIMPLE_WORDS = {
   setup_freq_month: 'Every month', setup_freq_w2: 'Every 2 weeks', setup_freq_w1: 'Every week', setup_freq_w4: 'Every 4 weeks', setup_freq_varies: 'It varies',
   setup_varies_note: 'Self-employed or paid at different times? No problem: your budget will run by calendar month.',
   setup_last_q: 'When did you last get paid?',
-  setup_amt_title: 'How much is one pay?', setup_amt_title_v: 'Roughly how much comes in each month?',
-  setup_amt_sub: 'After tax: the amount that actually lands in your account. A rough number is fine.',
-  setup_now_title: 'How much is in your account right now?',
-  setup_now_sub: 'The account your pay goes into. Check your banking app.',
-  setup_now_sub_v: 'The account you spend from. Check your banking app.',
-  setup_now_note: 'This makes your number right from today, even if you have spent some of your pay already.',
-  setup_bills_title: 'What comes out regularly?',
-  setup_bills_sub: 'Rent, phone, insurance, subscriptions: anything that leaves on a schedule. Add the main ones now; the rest can wait.',
+  setup_amt_title: 'How much is a single Paycheck?', setup_amt_title_v: 'Roughly how much comes in each month?',
+  setup_amt_sub: 'The rough amount that lands in your bank account after taxes.',
+  setup_now_title: 'What\u2019s your current bank balance?',
+  setup_now_sub: 'Open your banking app to view how much you have.',
+  setup_bills_title: 'What are your recurring bills?',
+  setup_bills_sub: 'These are scheduled payments like a Netflix subscription. You can always add more later.',
   setup_other: 'Something else', setup_col_name: 'Bill', setup_col_amount: 'Amount', setup_col_day: 'Due day',
   setup_bill_ph: 'Name', setup_day_unsure: 'Not sure',
   setup_bills_total: 'Bills: {0} a month', setup_bills_empty: 'Tap a bill above to add it.', setup_no_bills: 'I have no bills',
   setup_bills_trial: 'Your free trial includes {0} bill. Unlock the full planner to add the rest.',
   setup_bills_trial_none: 'Your free trial has room for no more bills. Unlock the full planner to add them.',
-  setup_plan_title: 'Plan your everyday spending',
-  setup_plan_sub: 'How much do you want to allow {0} for the things you buy day to day? Rough numbers are fine, and you can change them any time on the Budget page.',
-  setup_sum_pay: 'Your pay', setup_sum_in_v: 'Comes in', setup_sum_bills: 'Bills', setup_sum_planned: 'Planned',
-  setup_sum_left: 'Not planned yet', setup_sum_over: 'Planned over by',
-  setup_cat_ph: 'Category', setup_add_cat: 'Add a category', setup_suggest: 'Suggest a starting point',
-  setup_plan_note: 'Anything you leave unplanned is still yours to spend. It shows up in Free to spend.',
+  setup_plan_title: 'Set your monthly budgets',
+  setup_plan_sub: 'A rough monthly total of what you expect to spend for each category. Change it anytime on the Budget page.',
+  setup_sum_pay: 'Monthly pay', setup_sum_pay_m: 'Pay a month', setup_sum_in_v: 'Comes in', setup_sum_bills: 'Bills', setup_sum_planned: 'Budgeted',
+  setup_sum_left: 'Not budgeted yet', setup_sum_over: 'Budgeted over by',
+  setup_cat_ph: 'Category', setup_add_cat: 'Add a category',
   setup_plan_later: 'Plan this later',
-  setup_per_month: 'every month', setup_per_w1: 'every week', setup_per_w2: 'every two weeks', setup_per_w4: 'every four weeks',
-  setup_help_title: 'What would you like help with?',
-  setup_help_sub: 'Pick any, or none. The planner stays simple and only adds what you choose.',
-  setup_help_goals: 'Saving for something', setup_help_debt: 'Paying off debt', setup_help_calendar: 'Seeing my month ahead',
-  setup_help_impulse: 'Stopping impulse buys', setup_help_alloc: 'Splitting needs, wants and savings', setup_help_insights: 'Charts and the full picture',
-  setup_adds: 'Adds {0}', setup_and: ' and ',
-  setup_help_note: 'You can add or remove any of these later from Add tools.',
+  setup_help_title: 'Need extra budgeting tools?',
+  setup_help_sub: 'Select any that would be useful for you.',
+  setup_help_goals: 'Saving for something?', setup_help_goals_d: 'Adds Savings Goals',
+  setup_help_debt: 'Paying off debt?', setup_help_debt_d: 'Adds Debt Payoff',
+  setup_help_calendar: 'Want a monthly overview?', setup_help_calendar_d: 'Adds Calendar',
+  setup_help_impulse: 'Need to stop impulse buys?', setup_help_impulse_d: 'Adds Challenges',
+  setup_help_alloc: 'Want to allocate your budget?', setup_help_alloc_d: 'Adds Need, Want and Save',
+  setup_help_insights: 'The full picture', setup_help_insights_d: 'Adds a more detailed dashboard',
+  setup_help_note: 'You can add or remove these later.',
+  bud_monthly_label: 'Monthly budget',
+  bud_share_note: 'Budgets are monthly amounts. This period is {0} days long, so each one counts {1}% of its monthly amount here.',
   setup_done_title: "You're all set",
   setup_done_rate: 'until {0}, about {1} a day',
   setup_done_until: 'until {0}',

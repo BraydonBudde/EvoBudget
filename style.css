@@ -9143,8 +9143,10 @@ html[data-theme="dark"] .nav-rail-account { background: rgba(255, 255, 255, .07)
 .setup-free strong.is-neg { color: var(--expense); }
 .setup-free em { font-style: normal; font-size: 14px; color: var(--text-secondary); }
 .setup-card .onb-sub:last-of-type { text-align: center; }
-.setup-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 22px; }
-.setup-nav-r { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+.setup-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-top: 22px; }
+.setup-nav > :first-child { justify-self: start; }
+.setup-nav > .setup-skip-step { justify-self: center; white-space: nowrap; }
+.setup-nav > .setup-next { justify-self: end; }
 .setup-next { min-width: 130px; }
 .setup-err { color: var(--expense); font-size: 13px; font-weight: 600; text-align: right; margin: 10px 0 0; }
 .setup-card .onb-progress { justify-content: center; margin-bottom: 18px; }
@@ -9224,3 +9226,4 @@ html[data-theme="dark"] .nav-rail-account { background: rgba(255, 255, 255, .07)
 .setup-amt { display: grid; grid-template-columns: minmax(0, 1fr) 128px; gap: 8px; align-items: stretch; }
 .setup-amt .dd-btn { height: 100%; }
 .setup-row .dd-btn { min-height: 42px; }
+.bud-share-note { margin: -4px 0 14px; padding: 10px 14px; border-radius: var(--ui-tile-radius, 14px); background: rgba(var(--grad-indigo-rgb), .08); font-size: 13px; color: var(--text-secondary); }
