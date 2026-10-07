@@ -164,58 +164,61 @@ function ddOutside(e) {
   const m = document.getElementById('ddMenu');
   if (m && !m.contains(e.target) && !m._btn.contains(e.target)) ddClose(false);
 }
+// Opens the list for a dropdown. el is the .dd holding the button; pick
+// gets the chosen value. Shared by setup's dropdowns and by every select
+// in the planner (controls.js).
+function ddOpen(el, opts, pick, o) {
+  const btn = el.querySelector('.dd-btn, .dd-btn--native');
+  const grid = o && o.grid;
+  if (document.getElementById('ddMenu')?._btn === btn) { ddClose(true); return; }
+  ddClose(false);
+  const cur = el.dataset.value ?? '';
+  const m = document.createElement('div');
+  m.id = 'ddMenu';
+  m.className = 'dd-menu' + (grid ? ' dd-menu--grid' : '');
+  m.setAttribute('role', 'listbox');
+  if (grid) m.style.gridTemplateColumns = `repeat(${grid}, minmax(0, 1fr))`;
+  m.innerHTML = opts.map(x => `<button class="dd-opt${String(x.v) === String(cur) ? ' is-on' : ''}${x.wide ? ' dd-opt--wide' : ''}" type="button" role="option" aria-selected="${String(x.v) === String(cur)}"${x.disabled ? ' disabled' : ''} data-v="${esc(x.v)}"><span>${esc(x.l)}</span>${grid ? '' : SM_DD_TICK}</button>`).join('');
+  m._btn = btn;
+  document.body.appendChild(m);
+  const r = btn.getBoundingClientRect();
+  m.style.minWidth = Math.max(r.width, grid ? 280 : 180) + 'px';
+  m.style.maxWidth = Math.max(r.width, Math.min(360, window.innerWidth - 16)) + 'px';
+  const h = m.offsetHeight, w = m.offsetWidth;
+  const below = window.innerHeight - r.bottom - 12;
+  m.style.top = (below >= h || below >= r.top - 12 ? r.bottom + 6 : Math.max(8, r.top - 6 - h)) + 'px';
+  m.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)) + 'px';
+  if (below < h && below >= r.top - 12) m.style.maxHeight = Math.max(160, below) + 'px';
+  el.classList.add('is-open');
+  btn.setAttribute('aria-expanded', 'true');
+  m.addEventListener('click', e => { const b = e.target.closest('.dd-opt'); if (b && !b.disabled) { const v = b.dataset.v; ddClose(true); pick(v); } });
+  m.addEventListener('keydown', e => {
+    const items = [...m.querySelectorAll('.dd-opt:not(:disabled)')], i = items.indexOf(document.activeElement);
+    const step = grid && (e.key === 'ArrowUp' || e.key === 'ArrowDown') ? grid : 1;
+    if (e.key === 'Escape') { e.preventDefault(); ddClose(true); }
+    else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); items[Math.min(items.length - 1, i + step)]?.focus(); }
+    else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); items[Math.max(0, i - step)]?.focus(); }
+    else if (e.key === 'Tab') ddClose(false);
+  });
+  const on = m.querySelector('.dd-opt.is-on') || m.querySelector('.dd-opt');
+  if (on) { on.scrollIntoView({ block: 'nearest' }); on.focus({ preventScroll: true }); }
+  setTimeout(() => {
+    document.addEventListener('pointerdown', ddOutside, true);
+    window.addEventListener('resize', ddCloseNow);
+    m._onScroll = e => { if (!m.contains(e.target)) ddCloseNow(); };
+    document.addEventListener('scroll', m._onScroll, true);
+  }, 0);
+}
 function ddBind(el, opts, onPick, o) {
   const btn = el.querySelector('.dd-btn');
-  const grid = o && o.grid;
-  const pick = v => {
+  btn.addEventListener('click', () => ddOpen(el, opts, v => {
     const hit = opts.find(x => String(x.v) === String(v));
     el.dataset.value = v;
     const val = btn.querySelector('.dd-val');
     val.textContent = hit ? hit.l : '';
     val.classList.toggle('is-ph', !hit);
-    ddClose(true);
     if (onPick) onPick(v);
-  };
-  btn.addEventListener('click', () => {
-    if (document.getElementById('ddMenu')?._btn === btn) { ddClose(true); return; }
-    ddClose(false);
-    const cur = el.dataset.value ?? '';
-    const m = document.createElement('div');
-    m.id = 'ddMenu';
-    m.className = 'dd-menu' + (grid ? ' dd-menu--grid' : '');
-    m.setAttribute('role', 'listbox');
-    if (grid) m.style.gridTemplateColumns = `repeat(${grid}, minmax(0, 1fr))`;
-    m.innerHTML = opts.map(x => `<button class="dd-opt${String(x.v) === String(cur) ? ' is-on' : ''}${x.wide ? ' dd-opt--wide' : ''}" type="button" role="option" aria-selected="${String(x.v) === String(cur)}" data-v="${esc(x.v)}"><span>${esc(x.l)}</span>${grid ? '' : SM_DD_TICK}</button>`).join('');
-    m._btn = btn;
-    document.body.appendChild(m);
-    const r = btn.getBoundingClientRect();
-    m.style.minWidth = Math.max(r.width, grid ? 280 : 180) + 'px';
-    const h = m.offsetHeight, w = m.offsetWidth;
-    const below = window.innerHeight - r.bottom - 12;
-    m.style.top = (below >= h || below >= r.top - 12 ? r.bottom + 6 : Math.max(8, r.top - 6 - h)) + 'px';
-    m.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)) + 'px';
-    if (below < h && below >= r.top - 12) m.style.maxHeight = Math.max(160, below) + 'px';
-    el.classList.add('is-open');
-    btn.setAttribute('aria-expanded', 'true');
-    m.addEventListener('click', e => { const b = e.target.closest('.dd-opt'); if (b) pick(b.dataset.v); });
-    m.addEventListener('keydown', e => {
-      const items = [...m.querySelectorAll('.dd-opt')], i = items.indexOf(document.activeElement);
-      const step = grid && (e.key === 'ArrowUp' || e.key === 'ArrowDown') ? grid : 1;
-      if (e.key === 'Escape') { e.preventDefault(); ddClose(true); }
-      else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); items[Math.min(items.length - 1, i + step)]?.focus(); }
-      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); items[Math.max(0, i - step)]?.focus(); }
-      else if (e.key === 'Tab') ddClose(false);
-    });
-    const on = m.querySelector('.dd-opt.is-on') || m.querySelector('.dd-opt');
-    on.scrollIntoView({ block: 'nearest' });
-    on.focus({ preventScroll: true });
-    setTimeout(() => {
-      document.addEventListener('pointerdown', ddOutside, true);
-      window.addEventListener('resize', ddCloseNow);
-      m._onScroll = e => { if (!m.contains(e.target)) ddCloseNow(); };
-      document.addEventListener('scroll', m._onScroll, true);
-    }, 0);
-  });
+  }, o));
   btn.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && !document.getElementById('ddMenu')) { e.preventDefault(); btn.click(); } });
 }
 

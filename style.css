@@ -9004,9 +9004,6 @@ html[data-theme="dark"] .nav-rail-account { background: rgba(255, 255, 255, .07)
    Everything here is drawn from the appearance's own tokens (tiles,
    radius, accent), so it reads as part of whichever theme is on. */
 .btab[hidden], .nav-rail-item[hidden] { display: none !important; }
-.btab--tools { opacity: .75; }
-.btab--tools:hover { opacity: 1; }
-.nav-rail-item--tools .nav-rail-label { color: var(--text-secondary); }
 
 /* Tools: one row each, the switch on the right. */
 .tool-list { display: grid; gap: 8px; margin-top: 12px; }
@@ -9227,3 +9224,147 @@ html[data-theme="dark"] .nav-rail-account { background: rgba(255, 255, 255, .07)
 .setup-amt .dd-btn { height: 100%; }
 .setup-row .dd-btn { min-height: 42px; }
 .bud-share-note { margin: -4px 0 14px; padding: 10px 14px; border-radius: var(--ui-tile-radius, 14px); background: rgba(var(--grad-indigo-rgb), .08); font-size: 13px; color: var(--text-secondary); }
+
+/* ═══ Controls drawn by the app (controls.js) ════════════════════════
+   Every select is shown as the app's dropdown; the real one stays hidden
+   and keeps its value. The button wears the select's own classes, so it
+   looks exactly like the select each appearance already styles. */
+select.fk-native { display: none !important; }
+.dd--native { display: block; width: 100%; min-width: 0; }
+.dd-btn--native { display: flex; align-items: center; width: 100%; text-align: left; cursor: pointer; font-family: inherit; font-weight: 500; color: var(--text-primary); line-height: 1.4; -webkit-appearance: none; appearance: none; }
+.dd-btn--native .dd-val { flex: 1; }
+.dd-btn--native:disabled { opacity: .55; cursor: not-allowed; }
+.dd--native.is-open .dd-btn--native { border-color: var(--grad-purple); box-shadow: 0 0 0 3px rgba(var(--grad-indigo-rgb), .15); }
+.dd--native.is-invalid .dd-btn--native { border-color: #f43f5e; box-shadow: 0 0 0 3px rgba(244, 63, 94, .14); }
+/* Selects that sat inline (filters, small pickers) keep their width. */
+.dd--native:has(> .select-sm), .tx-toolbar .dd--native, .flow-legend .dd--native { display: inline-block; width: auto; }
+.dd-opt:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ═══ Pop-up skins, one per appearance ═══════════════════════════════
+   The dropdown list, the date and colour pickers, the phone menu, field
+   tips and the number pad share one look per appearance. */
+:is(.dd-menu, .fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .kp-sheet) { background: var(--popup-bg); border: 1px solid var(--popup-border); }
+[data-theme="light"] :is(.dd-menu, .fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .kp-sheet) { box-shadow: 0 24px 54px -18px rgba(30, 27, 46, .32), 0 2px 6px rgba(30, 27, 46, .06); }
+[data-theme="peachy"] :is(.dd-menu, .fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .kp-sheet) { background: var(--neu-bg); border-color: rgba(255, 255, 255, .7); box-shadow: 10px 12px 26px rgba(176, 118, 100, .26), -8px -8px 20px rgba(255, 255, 255, .9); }
+[data-theme="peachy"] :is(.dd-opt.is-on, .fk-dp-day.is-sel) { background: var(--neu-bg); color: #c66a5b; box-shadow: var(--neu-inset-sm); }
+[data-theme="peachy"] .dd-menu--grid .dd-opt.is-on { background: var(--neu-bg); color: #c66a5b; }
+[data-theme="dark"] :is(.dd-menu, .fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .kp-sheet) { box-shadow: 0 0 0 1px rgba(167, 139, 250, .12), 0 26px 60px -18px rgba(0, 0, 0, .75), 0 0 34px -10px rgba(167, 139, 250, .35); }
+[data-theme="dark"] :is(.dd-opt:hover, .dd-opt:focus-visible) { background: rgba(167, 139, 250, .16); }
+[data-theme="vintage-ledger"] :is(.dd-menu, .fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .kp-sheet) { background: #fbf4e2; border: 1.5px solid #6b5338; border-radius: 6px; box-shadow: 4px 4px 0 rgba(59, 42, 26, .28); }
+[data-theme="vintage-ledger"] .dd-opt { border-radius: 3px; border-bottom: 1px dashed rgba(107, 83, 56, .25); }
+[data-theme="vintage-ledger"] :is(.dd-opt.is-on, .dd-menu--grid .dd-opt.is-on, .fk-dp-day.is-sel) { background: #3b2a1a; color: #fbf4e2; }
+[data-theme="jolly"] :is(.dd-menu, .fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .kp-sheet) {
+  background: var(--clay-grain), linear-gradient(160deg, #fffbfa, #f4e9e7); border-color: rgba(255, 255, 255, .8);
+  box-shadow: inset 2px 2px 1px #fff, inset -3px -4px 8px rgba(150, 105, 130, .14), 0 22px 40px -16px rgba(120, 80, 120, .5);
+}
+[data-theme="jolly"] :is(.dd-opt.is-on, .dd-menu--grid .dd-opt.is-on, .fk-dp-day.is-sel) { background: var(--ui-btn); color: #fff; }
+[data-theme="frosty"] :is(.dd-menu, .fk-datepop, .fk-colorpop, .nav-menu, .cc-tip-pop, .kp-sheet) { box-shadow: 0 24px 56px -18px rgba(76, 52, 160, .35), 0 0 0 1px rgba(255, 255, 255, .9) inset; }
+[data-theme="frosty"] :is(.dd-opt.is-on) { background: linear-gradient(180deg, rgba(237, 233, 254, .95), rgba(221, 214, 254, .6)); }
+
+/* The number pad: the app's keys instead of the phone's keyboard. */
+.kp-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 3700; padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0; border-bottom: 0; transform: translateY(110%); transition: transform .22s var(--ease);
+}
+.kp-sheet.is-open { transform: translateY(0); }
+.kp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+.kp-key {
+  appearance: none; height: 50px; border: 0; border-radius: var(--ui-tile-radius, 14px); background: var(--ui-tile);
+  font: inherit; font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-primary); cursor: pointer;
+  display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+}
+.kp-key:active { transform: scale(.96); background: rgba(var(--grad-indigo-rgb), .16); }
+.kp-key--fn svg { width: 24px; height: 24px; }
+.kp-done { width: 100%; height: 48px; }
+body.kp-open .app-scroll, body.kp-open .modal-body, body.kp-open .setup-card { padding-bottom: 300px; }
+[data-theme="peachy"] .kp-key { background: var(--neu-bg); box-shadow: var(--neu-raise-sm); }
+[data-theme="jolly"] .kp-key { background: var(--clay-grain), linear-gradient(160deg, #fffbfa, #f2e6e4); box-shadow: inset 2px 2px 1px #fff, inset -2px -3px 4px rgba(150, 105, 130, .14), 0 6px 10px -6px rgba(150, 110, 140, .5); }
+[data-theme="vintage-ledger"] .kp-key { border: 1px solid rgba(107, 83, 56, .35); border-radius: 4px; }
+
+/* Your own colour, as a hue slider. */
+.fk-colorpop-custom { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px 10px; margin-top: 12px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+.fk-colorpop-custom > span { grid-column: 1 / -1; }
+.fk-hue { -webkit-appearance: none; appearance: none; width: 100%; height: 14px; border-radius: 99px; outline: none; cursor: pointer;
+  background: linear-gradient(90deg, #f00, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00); }
+.fk-hue::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid rgba(0, 0, 0, .25); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
+.fk-hue::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid rgba(0, 0, 0, .25); }
+.fk-hue-swatch { width: 26px; height: 26px; border-radius: 8px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
+
+/* Settings: Tools has a row of its own, its switches side by side. */
+.stg-grid { align-items: stretch; }
+.stg-grid > .stg-card:has([data-tool]) { grid-column: 1 / -1; }
+.stg-card .tool-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+
+/* Personas: just the names. */
+.persona-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 8px; }
+.persona-opt { align-items: center; justify-content: center; text-align: center; min-height: 52px; padding: 10px 12px; }
+/* With the keypad up, a pop-up centres in the room above it. */
+body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var(--ease); }
+
+/* ═══ Ezzo asleep (ezzo-offline.js) ═══════════════════════════════════
+   The same badge and face, eyes shut, z's drifting up from his head, and
+   a slower float, like breathing. */
+.ez-avatar--asleep { overflow: visible; }
+.ez-avatar--asleep.ez-avatar--xl { animation: ez-breathe 5.5s ease-in-out infinite; }
+@keyframes ez-breathe { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(2px) scale(.985); } }
+.ez-zzz { position: absolute; right: -6px; top: -10px; width: 30px; height: 34px; pointer-events: none; }
+.ez-zzz i {
+  position: absolute; left: 0; bottom: 0; font-style: normal; font-family: var(--font-display); font-weight: 800; font-size: 11px; line-height: 1;
+  color: var(--grad-purple, #a855f7); opacity: 0; animation: ez-z 3.6s ease-in infinite;
+}
+.ez-zzz i:nth-child(2) { animation-delay: 1.2s; font-size: 13px; }
+.ez-zzz i:nth-child(3) { animation-delay: 2.4s; font-size: 16px; }
+@keyframes ez-z {
+  0% { opacity: 0; transform: translate(0, 0) rotate(-8deg); }
+  15% { opacity: .95; }
+  80% { opacity: .7; }
+  100% { opacity: 0; transform: translate(14px, -24px) rotate(12deg); }
+}
+.ez-avatar--xl .ez-zzz { right: -18px; top: -26px; width: 52px; height: 60px; }
+.ez-avatar--xl .ez-zzz i { font-size: 18px; }
+.ez-avatar--xl .ez-zzz i:nth-child(2) { font-size: 22px; }
+.ez-avatar--xl .ez-zzz i:nth-child(3) { font-size: 28px; }
+@keyframes ez-z-xl { 0% { opacity: 0; transform: translate(0, 0) rotate(-8deg); } 15% { opacity: .95; } 80% { opacity: .7; } 100% { opacity: 0; transform: translate(26px, -44px) rotate(12deg); } }
+.ez-avatar--xl .ez-zzz i { animation-name: ez-z-xl; }
+.penny-msg-avatar .ez-face--asleep { width: 80%; height: 80%; }
+.ez-off .ez-wake { margin-top: 4px; }
+.ez-off .ez-off-welcome.is-gone { display: none; }
+
+/* Two suggestions, full width, one above the other. */
+.ez-pills { display: grid; gap: 8px; padding: 10px 18px 0; flex-shrink: 0; }
+.ez-pill {
+  appearance: none; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px; border-radius: 999px; border: 1.5px solid rgba(var(--grad-indigo-rgb), .35);
+  background: rgba(var(--grad-indigo-rgb), .08); color: var(--text-primary);
+  font: inherit; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer; transition: background .15s, border-color .15s, transform .1s;
+}
+.ez-pill span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ez-pill svg { width: 16px; height: 16px; flex: 0 0 auto; color: var(--grad-indigo); }
+.ez-pill:hover, .ez-pill:focus-visible { background: rgba(var(--grad-indigo-rgb), .16); border-color: var(--grad-indigo); outline: none; }
+.ez-pill:active { transform: scale(.99); }
+.ez-pill:first-child { border-color: var(--grad-indigo); }
+.ez-off .penny-input-row { border-top: 0; padding-top: 10px; }
+.ez-off .penny-input { padding-right: 16px; }
+.ez-go { margin-top: 10px; }
+[data-theme="peachy"] .ez-pill { background: var(--neu-bg); border-color: transparent; box-shadow: var(--neu-raise-sm); }
+[data-theme="peachy"] .ez-pill:first-child { box-shadow: var(--neu-raise-sm), inset 0 0 0 1.5px rgba(228, 136, 122, .55); }
+[data-theme="jolly"] .ez-pill { background: var(--clay-grain), linear-gradient(160deg, #fffbfa, #f2e6e4); border-color: rgba(255, 255, 255, .8); box-shadow: inset 2px 2px 1px #fff, inset -2px -3px 4px rgba(150, 105, 130, .12), 0 8px 12px -8px rgba(150, 110, 140, .5); }
+[data-theme="vintage-ledger"] .ez-pill { border-radius: 6px; border: 1.5px solid #6b5338; background: #fbf4e2; }
+[data-theme="dark"] .ez-pill { background: rgba(167, 139, 250, .12); border-color: rgba(167, 139, 250, .35); }
+[data-theme="frosty"] .ez-pill { background: rgba(255, 255, 255, .85); border-color: rgba(139, 108, 246, .35); }
+@media (prefers-reduced-motion: reduce) { .ez-zzz i { animation: none; opacity: .8; } .ez-zzz i:nth-child(2) { transform: translate(8px, -12px); } .ez-zzz i:nth-child(3) { transform: translate(16px, -24px); } .ez-avatar--asleep.ez-avatar--xl { animation: none; } }
+/* Ezzo's chat sits on a solid surface too, awake or asleep. */
+[data-theme="dark"] .penny-drawer .penny-drawer-panel { background: linear-gradient(170deg, #2c2152 0%, #231947 100%) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+[data-theme="frosty"] .penny-drawer .penny-drawer-panel { background: linear-gradient(170deg, #ffffff 0%, #f8f6ff 100%) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.ez-zzz i { color: #c084fc; text-shadow: 0 1px 0 rgba(255, 255, 255, .6), 0 0 6px rgba(168, 85, 247, .45); font-size: 13px; }
+.ez-zzz i:nth-child(2) { font-size: 15px; }
+.ez-zzz i:nth-child(3) { font-size: 18px; }
+.ez-avatar--xl .ez-zzz { right: -26px; top: -34px; width: 62px; height: 70px; }
+.ez-avatar--xl .ez-zzz i { font-size: 22px; }
+.ez-avatar--xl .ez-zzz i:nth-child(2) { font-size: 27px; }
+.ez-avatar--xl .ez-zzz i:nth-child(3) { font-size: 34px; }
+.penny-drawer .penny-drawer-panel { background: var(--popup-bg) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+[data-theme="jolly"] .penny-drawer .penny-drawer-panel { background: var(--clay-grain), linear-gradient(170deg, #fffbfa, #f4ebe9) !important; }
+.ez-zzz { right: -16px; top: -26px; }
+.ez-avatar--xl .ez-zzz { right: -40px; top: -66px; }
+.penny-msg-avatar .ez-zzz { display: none; }

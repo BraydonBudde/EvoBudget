@@ -46,8 +46,6 @@ function personaCardHtml() {
     <div class="persona-grid" role="radiogroup" aria-label="${esc(t('persona_title'))}">${PERSONAS.map(p => `
       <button class="persona-opt${p.id === cur ? ' is-active' : ''}" type="button" role="radio" aria-checked="${p.id === cur}" data-persona="${p.id}">
         <span class="persona-name">${esc(p.name)}</span>
-        <span class="persona-blurb">${esc(p.blurb)}</span>
-        <span class="persona-sample">“${esc(p.sample.replace('{0}', fmt(1171.5)))}”</span>
       </button>`).join('')}
     </div>
   </div></div>`;

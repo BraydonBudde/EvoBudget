@@ -1137,9 +1137,9 @@ const TRANSLATIONS = {
     sett_penny_key_error_short:"That doesn't look like a valid key. Please check and try again.",
     confirm_penny_remove_key:'Remove your saved Gemini API key? Ezzo will be turned off until you add a new one.',
     toast_penny_key_saved:'Gemini key saved securely.',
-    penny_nav_pill_off:'Enable Ezzo',
+    penny_nav_pill_off:'Ask Ezzo',
     penny_nav_pill_on:'Ask Ezzo',
-    penny_nav_aria_off:'Enable Ezzo',
+    penny_nav_aria_off:'Ask Ezzo',
     penny_nav_aria_on:'Ask Ezzo',
     penny_chat_title:'Ask Ezzo',
     penny_input_placeholder:'Ask about your budget\u2026',
@@ -7548,13 +7548,22 @@ function openRenameDialog(current, defaultTitle, onSave){
   ov.addEventListener('click',e=>{if(e.target===ov)close();});
 }
 
+// The hue of a #rrggbb colour, for setting the slider where the colour is.
+function fkHexHue(hex){
+  const m=/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex||'');
+  if(!m) return 240;
+  const [r,g,b]=[m[1],m[2],m[3]].map(x=>parseInt(x,16)/255), mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn;
+  if(!d) return 0;
+  const h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;
+  return Math.round((h*60+360)%360);
+}
 // ── Custom color picker (allocation buckets), styled like the date picker ──
 function openColorPicker(anchor, current, onPick){
   document.getElementById('fkColorPop')?.remove();
   const cur=(current||'').toLowerCase();
   const pop=document.createElement('div'); pop.className='fk-colorpop'; pop.id='fkColorPop';
   pop.innerHTML=`<div class="fk-colorpop-grid">${BUCKET_COLORS.map(c=>`<button type="button" class="fk-color-swatch${c.toLowerCase()===cur?' is-sel':''}" style="background:${c}" data-c="${c}" title="${c}"></button>`).join('')}</div>
-    <label class="fk-colorpop-custom">${t('alloc_custom_color')}<input type="color" class="fk-colorpop-input" value="${/^#[0-9a-f]{6}$/i.test(current||'')?current:'#6366f1'}"></label>`;
+    <div class="fk-colorpop-custom"><span>${t('alloc_custom_color')}</span><input type="range" class="fk-hue" min="0" max="359" step="1" value="${fkHexHue(current)}" aria-label="${esc(t('alloc_custom_color'))}"><i class="fk-hue-swatch" style="background:${/^#[0-9a-f]{6}$/i.test(current||'')?current:'#6366f1'}"></i></div>`;
   document.body.appendChild(pop);
   if(!window.matchMedia('(max-width:480px)').matches){
     const r=anchor.getBoundingClientRect(), pw=pop.offsetWidth, ph=pop.offsetHeight, vw=document.documentElement.clientWidth, vh=window.innerHeight;
@@ -7567,8 +7576,10 @@ function openColorPicker(anchor, current, onPick){
   function outside(e){ if(!pop.contains(e.target)&&e.target!==anchor) close(); }
   function onKey(e){ if(e.key==='Escape'){e.preventDefault();close();} }
   pop.querySelectorAll('.fk-color-swatch').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();onPick(b.dataset.c);close();}));
-  const ci=pop.querySelector('.fk-colorpop-input');
-  ci.addEventListener('input',ev=>onPick(ev.target.value));
+  // Your own colour: a hue slider drawn by the app, never the device's
+  // colour chooser.
+  const ci=pop.querySelector('.fk-hue'), sw=pop.querySelector('.fk-hue-swatch');
+  ci.addEventListener('input',ev=>{const c=fkHslHex(+ev.target.value,72,56);sw.style.background=c;onPick(c);});
   ci.addEventListener('change',()=>close());
   setTimeout(()=>{document.addEventListener('mousedown',outside,true);document.addEventListener('keydown',onKey,true);window.addEventListener('resize',close);},0);
 }
