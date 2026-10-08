@@ -74,7 +74,10 @@ function calDeckHtml(evs, y, m, daysInMo, loc) {
     <button class="cal-deck-nav cal-deck-prev" type="button" data-deck-step="-1" aria-label="${esc(t('cal_card_prev'))}">${chev('m15 18-6-6 6-6')}</button>
     <div class="cal-deck-stage">${Array.from({ length: daysInMo }, (_, i) => calDeckCardHtml(y, m, i + 1, evs[i + 1] || [], loc)).join('')}</div>
     <button class="cal-deck-nav cal-deck-next" type="button" data-deck-step="1" aria-label="${esc(t('cal_card_next'))}">${chev('m9 18 6-6-6-6')}</button>
-    <p class="cal-deck-count" aria-live="polite"></p>
+    <div class="cal-deck-foot">
+      <p class="cal-deck-count" aria-live="polite"></p>
+      <button class="cal-today-btn" type="button" data-deck-today hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>${t('cal_today_btn')}</button>
+    </div>
   </section>`;
 }
 
@@ -104,7 +107,10 @@ function calDeckLayout(deck, pos, instant) {
     c.style.zIndex = String(100 - Math.round(a * 10));
   });
   const cnt = deck.querySelector('.cal-deck-count');
-  if (cnt) cnt.textContent = tf('cal_card_count', Math.round(pos), cards.length);
+  if (cnt) cnt.textContent = tf(deck.classList.contains('is-phone') ? 'cal_card_count_short' : 'cal_card_count', Math.round(pos), cards.length);
+  // Today appears once the day in focus is any other day.
+  const now = new Date(), tb = deck.querySelector('[data-deck-today]');
+  if (tb) tb.hidden = calDeckMonth === now.getFullYear() * 12 + now.getMonth() && Math.round(pos) === now.getDate();
   deck.querySelector('.cal-deck-prev').disabled = false;
   deck.querySelector('.cal-deck-next').disabled = false;
 }
@@ -118,6 +124,17 @@ function calDeckGo(deck, day) {
   calDeckLayout(deck, day, false);
 }
 
+function calDeckToday(deck) {
+  const now = new Date(), key = now.getFullYear() * 12 + now.getMonth();
+  if (calDeckMonth !== key) {
+    calYear = now.getFullYear(); calMonth = now.getMonth();
+    calDeckFocus = now.getDate(); calDeckMonth = key; calSelectedDay = null;
+    renderCalendar();
+    return;
+  }
+  calDeckGo(deck, now.getDate());
+}
+
 function calDeckWire(root) {
   const deck = root.querySelector('#calDeck');
   if (!deck) return;
@@ -125,12 +142,15 @@ function calDeckWire(root) {
   calDeckLayout(deck, calDeckFocus, true);
   requestAnimationFrame(() => deck.classList.remove('is-dragging'));
   deck.querySelectorAll('[data-deck-step]').forEach(b => b.addEventListener('click', () => calDeckGo(deck, calDeckFocus + (+b.dataset.deckStep))));
+  deck.querySelector('[data-deck-today]')?.addEventListener('click', () => calDeckToday(deck));
   // Dragging: the cards follow the finger, then settle on the nearest day.
   // A press that barely moves stays a tap, so buttons and side cards work.
   let start = null;
   stage.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
-    start = { x: e.clientX, y: e.clientY, t: Date.now(), size: (stage.querySelector('.cal-card').offsetWidth * .64) || 300, moved: false, id: e.pointerId };
+    const list = e.target.closest && e.target.closest('.cal-card-list');
+    if (list && e.target === list && e.offsetX > list.clientWidth) return;
+    start = { x: e.clientX, y: e.clientY, t: Date.now(), size: (stage.querySelector('.cal-card').offsetWidth * .64) || 300, moved: false, id: e.pointerId, touch: e.pointerType !== 'mouse' };
   });
   stage.addEventListener('pointermove', e => {
     if (!start || e.pointerId !== start.id) return;
@@ -142,7 +162,9 @@ function calDeckWire(root) {
     }
     e.preventDefault();
     const n = deck.querySelectorAll('.cal-card').length;
-    calDeckLayout(deck, Math.max(.6, Math.min(n + .4, calDeckFocus - d / start.size)), true);
+    let at = calDeckFocus - d / start.size;
+    if (start.touch) at = Math.max(calDeckFocus - 1.15, Math.min(calDeckFocus + 1.15, at));
+    calDeckLayout(deck, Math.max(.6, Math.min(n + .4, at)), true);
   });
   const end = e => {
     if (!start || e.pointerId !== start.id) return;
@@ -151,6 +173,7 @@ function calDeckWire(root) {
     const d = e.clientX - s.x, v = d / Math.max(1, Date.now() - s.t);
     let steps = -Math.round(d / s.size);
     if (!steps && (Math.abs(d) > 40 || Math.abs(v) > .45)) steps = d < 0 ? 1 : -1;
+    if (s.touch) steps = Math.max(-1, Math.min(1, steps));
     deck.classList.remove('is-dragging');
     calDeckGo(deck, calDeckFocus + steps);
     // The release of a drag is not a tap on whatever it ended over.
@@ -160,15 +183,18 @@ function calDeckWire(root) {
   };
   stage.addEventListener('pointerup', end);
   stage.addEventListener('pointercancel', end);
-  // A trackpad's sideways swipe moves a day at a time.
-  let wheelAt = 0;
+  let wheelUsed = false, wheelSum = 0, wheelIdle = 0;
   stage.addEventListener('wheel', e => {
     const d = e.deltaX;
-    if (Math.abs(d) < 18 || Math.abs(e.deltaY) > Math.abs(d)) return;
+    if (Math.abs(e.deltaY) >= Math.abs(d)) return;
     e.preventDefault();
-    if (Date.now() - wheelAt < 380) return;
-    wheelAt = Date.now();
-    calDeckGo(deck, calDeckFocus + (d > 0 ? 1 : -1));
+    clearTimeout(wheelIdle);
+    wheelIdle = setTimeout(() => { wheelUsed = false; wheelSum = 0; }, 240);
+    if (wheelUsed) return;
+    wheelSum += d;
+    if (Math.abs(wheelSum) < 30) return;
+    wheelUsed = true;
+    calDeckGo(deck, calDeckFocus + (wheelSum > 0 ? 1 : -1));
   }, { passive: false });
   // Tapping a card beside the one in focus brings it forward.
   stage.addEventListener('click', e => {
@@ -193,7 +219,7 @@ function calDeckWire(root) {
     cal_card_due: 'Due', cal_card_spent: 'Spent', cal_card_paid: 'Paid',
     cal_card_none: 'Nothing due or spent on this day.', cal_card_add: 'Log a spend on this day',
     cal_card_prev: 'Previous day', cal_card_next: 'Next day', cal_card_aria: 'Days of the month', cal_card_role: 'day',
-    cal_card_count: 'Day {0} of {1}'
+    cal_card_count: 'Day {0} of {1}', cal_card_count_short: '{0} / {1}', cal_today_btn: 'Today'
   }); } catch (e) {}
 })();
 
