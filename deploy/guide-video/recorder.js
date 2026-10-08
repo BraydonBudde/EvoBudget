@@ -10,7 +10,7 @@ const W = 390, H = 844, DPR = 2;
 // The page runs this many times slower while it is filmed (its animations
 // through the DevTools clock, the film's own pauses by hand), and the
 // frames are played back at full speed, so a heavy page still moves smoothly.
-const SLOW = 3.5;
+const SLOW = process.env.DM_FAST ? 1 : 3.5;   // DM_FAST=1: a quick dry run at normal speed, nothing recorded
 // Any ffmpeg built with libx264. Set FFMPEG to its path, or have it on PATH.
 // (pip install imageio-ffmpeg bundles one; see README.md.)
 const FFMPEG = process.env.FFMPEG || 'ffmpeg';
@@ -62,6 +62,7 @@ async function launch(seed, theme) {
     localStorage.setItem('evobudget_ubp_checked', String(Date.now())); localStorage.setItem('evobudget_theme', th); localStorage.setItem('evobudget_ubp_v1', JSON.stringify(sd));
   }, [seed, theme]);
   const page = await ctx.newPage();
+  if (process.env.DM_FAST) page.setDefaultTimeout(6000);
   const errs = [];
   page.on('pageerror', e => errs.push(e.message));
   await page.route(/google|gstatic|googleapis/, r => r.abort());
@@ -70,6 +71,13 @@ async function launch(seed, theme) {
   await page.addStyleTag({ content: OVERLAY_CSS });
   await page.evaluate(SLOW => {
     window.__dmSlow = SLOW;
+    // The page's clock, and the time its animation frames are handed, run at
+    // the film's pace together. (The DevTools clock slows frame times but not
+    // performance.now, and a count-up that mixes the two shows nonsense.)
+    const realNow = performance.now.bind(performance), base = realNow(), raf = window.requestAnimationFrame.bind(window);
+    window.__dmRealNow = realNow;
+    performance.now = () => base + (realNow() - base) / SLOW;
+    window.requestAnimationFrame = cb => raf(() => cb(performance.now()));
     // Scrolls like a hand would, at the film's pace.
     window.__dmScroll = (el, block, ms) => new Promise(done => {
       let box = el.parentElement;
@@ -79,10 +87,10 @@ async function launch(seed, theme) {
       const want = block === 'start' ? Math.max(view.top, 0) + 78 : view.top + view.height / 2 - r.height / 2;
       const from = box.scrollTop, to = Math.max(0, Math.min(box.scrollHeight - box.clientHeight, from + r.top - want));
       // Timed by the wall clock: a frame's own timestamp runs on the slowed animation clock.
-      const t0 = performance.now(), len = ms * SLOW;
+      const t0 = window.__dmRealNow(), len = ms * SLOW;
       let over = false;
       const finish = () => { if (over) return; over = true; box.scrollTop = to; done(); };
-      const step = () => { if (over) return; const k = Math.min(1, (performance.now() - t0) / len), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; box.scrollTop = from + (to - from) * e; k < 1 ? setTimeout(step, 16) : finish(); };
+      const step = () => { if (over) return; const k = Math.min(1, (window.__dmRealNow() - t0) / len), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; box.scrollTop = from + (to - from) * e; k < 1 ? setTimeout(step, 16) : finish(); };
       if (Math.abs(to - from) < 2) return finish();
       step(); setTimeout(finish, len + 400);
     });
@@ -160,11 +168,54 @@ function director(page) {
   };
   const typeText = async (loc, text, delay = 110) => { for (const ch of text) { await loc.press(ch === ' ' ? 'Space' : ch); await wait(delay); } };
   const scrollTo = async (loc, block = 'start', ms = 900) => { log('scroll', String(loc)); await loc.first().evaluate((el, [block, ms]) => window.__dmScroll(el, block, ms), [block, ms]); await wait(60); };
-  return { wait, finger, hideFinger, tap, reveal, caption, hideCaption, card, cardOut, typeText, center, scrollTo };
+  // Types an amount on the app's own keypad, then Done.
+  const keypad = async (digits, { done = true } = {}) => {
+    for (const k of String(digits)) await tap(page.locator(`#kpSheet [data-kp="${k}"]`), { move: 260, hold: 140, reveal: false });
+    if (done) await tap(page.locator('#kpSheet [data-kp="done"]'), { move: 300, hold: 400, reveal: false });
+  };
+  // Picks a day in the app's date picker, paging months forward to reach it.
+  const datePick = async iso => {
+    for (let i = 0; i < 24 && !(await page.locator(`.fk-dp-day[data-iso="${iso}"]`).count()); i++) await tap(page.locator('.fk-dp-nav[data-nav="1"]'), { move: 200, hold: 110, reveal: false });
+    await tap(page.locator(`.fk-dp-day[data-iso="${iso}"]`), { move: 320, hold: 450, reveal: false });
+  };
+  // Opens one of the app's dropdowns and picks the option with this text.
+  const ddPick = async (btn, text) => {
+    await tap(btn, { hold: 450 });
+    await tap(page.locator('#ddMenu .dd-opt').filter({ hasText: text }), { move: 380, hold: 450, reveal: false });
+  };
+  // A finger swipe across an element (dx < 0 is towards the left).
+  const swipe = async (loc, dx, ms = 420) => {
+    const b = await loc.first().boundingBox(), y = b.y + b.height * .5, x0 = b.x + b.width * (dx < 0 ? .78 : .22);
+    await finger(x0, y, 420);
+    log('swipe', String(loc), dx);
+    await page.evaluate(([x0, y]) => {
+      document.querySelector('.dm-finger').classList.add('is-press');
+      document.elementFromPoint(x0, y).dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 7, pointerType: 'touch', clientX: x0, clientY: y, button: 0, isPrimary: true }));
+    }, [x0, y]);
+    const steps = 12;
+    for (let i = 1; i <= steps; i++) {
+      const x = x0 + dx * i / steps;
+      await page.evaluate(([x, y]) => {
+        document.querySelector('.dm-finger').style.setProperty('--dm-move', '0ms');
+        document.querySelector('.dm-finger').style.transform = `translate(${x}px, ${y}px)`;
+        document.elementFromPoint(x, y)?.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 7, pointerType: 'touch', clientX: x, clientY: y, button: 0, isPrimary: true }));
+      }, [x, y]);
+      await wait(ms / steps);
+    }
+    await page.evaluate(([x, y]) => {
+      const el = document.elementFromPoint(x, y) || document.body;
+      el.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 7, pointerType: 'touch', clientX: x, clientY: y, button: 0, isPrimary: true }));
+      document.querySelector('.dm-finger').classList.remove('is-press');
+    }, [x0 + dx, y]);
+    at = { x: x0 + dx, y };
+    await wait(500);
+  };
+  return { wait, finger, hideFinger, tap, reveal, caption, hideCaption, card, cardOut, typeText, center, scrollTo, keypad, datePick, ddPick, swipe, log };
 }
 
 // Records whatever `film` does, from the moment it starts to the moment it ends.
 async function record(page, outDir, name, film) {
+  if (process.env.DM_FAST) { await film(); return { mp4: null, frames: 0, seconds: 0, fps: 0 }; }
   const cdp = await page.context().newCDPSession(page);
   const frames = [];
   cdp.on('Page.screencastFrame', ({ data, metadata, sessionId }) => {

@@ -7397,9 +7397,14 @@ function closeGuide() {
 // A short film of a section being used, recorded on the real app. The
 // guide shows a card for it under "See it in action"; the player is the
 // app's own, shaped like the phone it was filmed on.
-const GUIDE_VIDEOS = {
-  transactions: { src: 'media/guide/transactions.mp4', poster: 'media/guide/transactions.jpg', secs: 34 }
+// Each section's film and its length in seconds; the film and its poster
+// are media/guide/<section>.mp4 and .jpg (made by deploy/guide-video).
+const GUIDE_VIDEO_SECS = {
+  dashboard: 27, transactions: 33, budget: 28, debt: 33, sinking: 40,
+  subscriptions: 36, calendar: 25, rollover: 26, penny: 34, settings: 34
 };
+const GUIDE_VIDEOS = Object.fromEntries(Object.entries(GUIDE_VIDEO_SECS).map(([id, secs]) =>
+  [id, { src: `media/guide/${id}.mp4`, poster: `media/guide/${id}.jpg`, secs }]));
 const gvTime = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const GV_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" fill="currentColor"/></svg>';
 const GV_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1.2" fill="currentColor"/></svg>';

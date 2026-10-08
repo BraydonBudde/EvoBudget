@@ -14,9 +14,16 @@ back at full speed, so the app's heavier screens still come out smooth.
 2. Have Playwright for Node (`npm i playwright`) and an ffmpeg with libx264.
    `pip install imageio-ffmpeg` bundles one; point `FFMPEG` at it:
    `FFMPEG=$(python -c "import imageio_ffmpeg as f; print(f.get_ffmpeg_exe())")`
-3. Run a film: `node deploy/guide-video/film_transactions.js`
-   It writes `media/guide/transactions.mp4` and the poster `transactions.jpg`.
-4. List it in `GUIDE_VIDEOS` in `ultimate-budget.js` with its length in seconds.
+3. Run a film: `node deploy/guide-video/film.js <section>`, for example
+   `film.js budget`. It writes `media/guide/<section>.mp4` and its poster
+   `<section>.jpg`. `DM_FAST=1` does a quick dry run at normal speed with
+   nothing recorded, and `DM_LOG=1` prints each step as it happens.
+4. Put its length in seconds in `GUIDE_VIDEO_SECS` in `ultimate-budget.js`.
+
+Each section's storyboard is a short file in `films/`: a title, an end line,
+and the taps and captions in between. The recorder's helpers type on the
+app's own keypad, pick dates and dropdown options, and swipe, so a film
+reads like the steps a person would take.
 
 `demo_seed.js` is the believable month the films are shot on. Nothing touches
 real data: the browser is a fresh one with only that seed in it.

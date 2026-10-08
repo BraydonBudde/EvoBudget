@@ -9643,3 +9643,11 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
 /* A small dropdown keeps room for its arrow: the small size's padding
    otherwise let the arrow sit on top of the words ("All types"). */
 .dd-btn--native.select-sm { padding-right: 26px; background-position: right 9px center; }
+/* A sheet's title wraps before its close button instead of running under it. */
+.modal-title { padding-right: 40px; }
+/* On a phone a page's title is never cut short ("Bu..."): when it and its
+   buttons do not fit on one row, the buttons move to a row of their own. */
+@media (max-width: 560px) {
+  .section-header { flex-wrap: wrap; row-gap: 10px; }
+  .section-header > .section-title { flex: 1 0 auto; max-width: 100%; }
+}
