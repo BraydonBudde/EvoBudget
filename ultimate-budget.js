@@ -7818,10 +7818,10 @@ function nlHeroHtml(leftover, opts) {
   const figLen = fmt(Math.abs(free)).length + (neg ? 1 : 0);
   return `<div class="panel nl-hero nl-hero--cu${neg ? ' is-negative' : ''}">
     <div class="nl-left">
+      ${o.income || state.rollover ? `<button class="help-icon-btn nl-explain" type="button" data-nl-explain aria-label="${esc(t('nl_explain'))}" title="${esc(t('nl_explain'))}">?</button>` : ''}
       <div class="nl-label">${t('nl_free_to_spend')}</div>
       <div class="nl-value leftover-value" style="--nl-len:${figLen}" data-nl-value="${free}">${neg ? '\u2212' : ''}${nlAmountHtml(free)}</div>
       ${sub ? `<div class="nl-sub">${sub}</div>` : ''}
-      ${o.income || state.rollover ? `<button class="nl-explain" type="button" data-nl-explain>${t('nl_explain')}</button>` : ''}
       <div class="nl-meta">${pills}</div>
       <div class="nl-track"><i style="width:${p.pct}%"></i></div>
       <div class="nl-track-cap">${tf('nl_day_of', p.dayOf, p.total)}</div>
