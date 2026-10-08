@@ -9559,3 +9559,87 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
 .dd-btn.fk-invalid { border-color: #f43f5e !important; box-shadow: 0 0 0 3px rgba(244, 63, 94, .14); }
 .dd-opt .dd-dot { display: inline-block; margin-right: 9px; vertical-align: 1px; }
 .qa-cat-dd { margin-top: -4px; }
+/* The toast sizes to its words: pinned at the middle of the screen it was
+   otherwise only allowed half its width, so on a phone the message broke
+   mid-word beside Undo. It still never runs wider than the screen. */
+#toast { width: max-content; }
+
+/* ═══ Guide videos ══════════════════════════════════════════════════
+   A card under "See it in action" with a still from the film, and a
+   player shaped like the phone it was filmed on: tap to pause, a bar to
+   move through it, Watch again at the end. */
+.gv-card {
+  appearance: none; width: 100%; display: flex; align-items: center; gap: 14px; margin: 0 0 12px; padding: 10px 16px 10px 10px;
+  border-radius: var(--radius-lg); border: 1px solid var(--border-faint); background: var(--surface-solid);
+  font: inherit; color: var(--text-primary); text-align: left; cursor: pointer; transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.gv-card:hover, .gv-card:focus-visible { border-color: rgba(var(--grad-indigo-rgb), .5); box-shadow: 0 10px 26px -14px rgba(var(--grad-indigo-rgb), .6); transform: translateY(-1px); outline: none; }
+.gv-thumb { position: relative; flex: 0 0 auto; width: 54px; height: 96px; border-radius: 12px; overflow: hidden; background: #1b1238; box-shadow: 0 8px 18px -10px rgba(20, 10, 50, .6); }
+.gv-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.gv-thumb-play { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(var(--grad-indigo-rgb), .92); box-shadow: 0 4px 12px rgba(0, 0, 0, .35); }
+.gv-thumb-play svg { width: 15px; height: 15px; margin-left: 2px; }
+.gv-txt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.gv-txt b { font-family: var(--font-display); font-size: 15.5px; font-weight: 800; }
+.gv-txt small { font-size: 13px; line-height: 1.4; color: var(--text-secondary); }
+.gv-dur { flex: 0 0 auto; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--grad-indigo); background: rgba(var(--grad-indigo-rgb), .12); }
+[data-theme="peachy"] .gv-card { background: var(--neu-bg); box-shadow: var(--neu-raised-sm, none); }
+[data-theme="dark"] .gv-dur { color: #c4b5fd; }
+
+.gv-overlay {
+  position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: rgba(8, 5, 20, .82); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  animation: gv-in .2s ease both;
+}
+.gv-overlay.is-leaving { animation: gv-out .18s ease both; }
+@keyframes gv-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes gv-out { to { opacity: 0; } }
+.gv-stage { display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: max-content; max-width: calc(100vw - 40px); animation: gv-rise .3s cubic-bezier(.2, .8, .2, 1) both; }
+.gv-frame {
+  position: relative; height: min(calc(90vh - 76px), 760px); aspect-ratio: 390 / 844; max-width: 100%; border-radius: 30px; overflow: hidden;
+  background: #0f0a22; box-shadow: 0 0 0 6px #1d1533, 0 0 0 7px rgba(255, 255, 255, .12), 0 40px 80px -20px rgba(0, 0, 0, .7);
+}
+@keyframes gv-rise { from { transform: translateY(16px) scale(.98); } to { transform: none; } }
+.gv-video { display: block; width: 100%; height: 100%; object-fit: contain; background: #0f0a22; }
+.gv-tap { position: absolute; inset: 0; display: grid; place-items: center; border: 0; padding: 0; background: transparent; cursor: pointer; }
+.gv-big { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(15, 10, 34, .62); border: 1px solid rgba(255, 255, 255, .25);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); opacity: 0; transform: scale(.85); transition: opacity .18s, transform .18s; }
+.gv-big svg { width: 30px; height: 30px; margin-left: 4px; }
+.gv-overlay.is-paused .gv-big { opacity: 1; transform: none; }
+.gv-tap:focus-visible .gv-big { opacity: 1; outline: 3px solid rgba(196, 181, 253, .8); outline-offset: 3px; }
+.gv-end { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(15, 10, 34, .55); }
+.gv-end[hidden] { display: none; }
+.gv-again { display: inline-flex; align-items: center; gap: 9px; padding: 13px 22px; border-radius: 99px; border: 0; cursor: pointer;
+  font: 800 15px/1 var(--font-display, inherit); color: #fff; background: linear-gradient(135deg, #a78bfa, #7c3aed); box-shadow: 0 14px 30px -10px rgba(124, 58, 237, .9); }
+.gv-again svg { width: 18px; height: 18px; }
+.gv-bar {
+  display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 12px; border-radius: 18px; color: #fff;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12);
+}
+.gv-pp { flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%; border: 0; display: grid; place-items: center; cursor: pointer; color: #fff; background: rgba(255, 255, 255, .14); }
+.gv-pp svg { width: 18px; height: 18px; }
+.gv-pp:focus-visible, .gv-close:focus-visible, .gv-again:focus-visible { outline: 3px solid rgba(196, 181, 253, .8); outline-offset: 2px; }
+.gv-track { position: relative; flex: 1 1 auto; min-width: 60px; height: 28px; cursor: pointer; touch-action: none; outline: none; }
+.gv-track::before, .gv-fill { content: ""; position: absolute; left: 0; top: 50%; height: 4px; margin-top: -2px; border-radius: 99px; }
+.gv-track::before { right: 0; background: rgba(255, 255, 255, .22); }
+.gv-fill { width: 0; background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+.gv-knob { position: absolute; top: 50%; left: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .4); transition: transform .12s; }
+.gv-track:hover .gv-knob, .gv-track:focus-visible .gv-knob { transform: scale(1.25); }
+.gv-clock { flex: 0 0 auto; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, .85); }
+.gv-close { display: grid; place-items: center; border-radius: 50%; cursor: pointer; color: #fff; }
+.gv-close svg { width: 20px; height: 20px; }
+.gv-close--top { position: absolute; top: 18px; right: 18px; width: 42px; height: 42px; border: 1px solid rgba(255, 255, 255, .2); background: rgba(255, 255, 255, .12); }
+.gv-close--top:hover { background: rgba(255, 255, 255, .22); }
+.gv-close--bar { display: none; flex: 0 0 auto; width: 36px; height: 36px; border: 0; background: rgba(255, 255, 255, .14); }
+/* A phone: the film fills the screen, the controls along the bottom, close among them. */
+@media (max-width: 640px) {
+  .gv-overlay { padding: 0; background: #0f0a22; }
+  .gv-stage { width: 100vw; max-width: 100vw; height: 100dvh; gap: 0; }
+  .gv-frame { flex: 1 1 auto; min-height: 0; height: auto; width: 100%; aspect-ratio: auto; border-radius: 0; box-shadow: none; }
+  .gv-bar { height: auto; padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px)); border-radius: 0; border: 0; border-top: 1px solid rgba(255, 255, 255, .1); background: #0f0a22; }
+  .gv-close--top { display: none; }
+  .gv-close--bar { display: grid; }
+}
+@media (prefers-reduced-motion: reduce) { .gv-overlay, .gv-overlay.is-leaving, .gv-stage { animation: none; } }
+/* A small dropdown keeps room for its arrow: the small size's padding
+   otherwise let the arrow sit on top of the words ("All types"). */
+.dd-btn--native.select-sm { padding-right: 26px; background-position: right 9px center; }

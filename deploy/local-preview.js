@@ -17,7 +17,8 @@ const PORT = Number(process.env.PORT) || 5500;
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp',
-  '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.woff2': 'font/woff2', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml'
+  '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.woff2': 'font/woff2', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml',
+  '.mp4': 'video/mp4', '.webm': 'video/webm'
 };
 
 http.createServer((req, res) => {
@@ -32,7 +33,17 @@ http.createServer((req, res) => {
     // Never serve anything outside the project folder.
     if (!fp.startsWith(ROOT)) break;
     if (fs.existsSync(fp) && fs.statSync(fp).isFile()) {
-      res.writeHead(200, { 'Content-Type': MIME[path.extname(fp).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+      const type = MIME[path.extname(fp).toLowerCase()] || 'application/octet-stream', size = fs.statSync(fp).size;
+      // Byte ranges, as nginx answers them, so a video can be scrubbed.
+      const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+      if (range && (range[1] || range[2])) {
+        const start = range[1] ? Number(range[1]) : Math.max(0, size - Number(range[2]));
+        const end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+        if (start > end || start >= size) { res.writeHead(416, { 'Content-Range': `bytes */${size}` }); return res.end(); }
+        res.writeHead(206, { 'Content-Type': type, 'Content-Range': `bytes ${start}-${end}/${size}`, 'Accept-Ranges': 'bytes', 'Content-Length': end - start + 1, 'Cache-Control': 'no-store' });
+        return fs.createReadStream(fp, { start, end }).pipe(res);
+      }
+      res.writeHead(200, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Content-Length': size, 'Cache-Control': 'no-store' });
       return fs.createReadStream(fp).pipe(res);
     }
   }
