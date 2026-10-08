@@ -178,7 +178,7 @@ function ddOpen(el, opts, pick, o) {
   m.className = 'dd-menu' + (grid ? ' dd-menu--grid' : '');
   m.setAttribute('role', 'listbox');
   if (grid) m.style.gridTemplateColumns = `repeat(${grid}, minmax(0, 1fr))`;
-  m.innerHTML = opts.map(x => `<button class="dd-opt${String(x.v) === String(cur) ? ' is-on' : ''}${x.wide ? ' dd-opt--wide' : ''}" type="button" role="option" aria-selected="${String(x.v) === String(cur)}"${x.disabled ? ' disabled' : ''} data-v="${esc(x.v)}"><span>${esc(x.l)}</span>${grid ? '' : SM_DD_TICK}</button>`).join('');
+  m.innerHTML = opts.map(x => `<button class="dd-opt${String(x.v) === String(cur) ? ' is-on' : ''}${x.wide ? ' dd-opt--wide' : ''}" type="button" role="option" aria-selected="${String(x.v) === String(cur)}"${x.disabled ? ' disabled' : ''} data-v="${esc(x.v)}"><span>${x.dot ? `<i class="qa-dot dd-dot" style="background:${x.dot}"></i>` : ''}${esc(x.l)}</span>${grid ? '' : SM_DD_TICK}</button>`).join('');
   m._btn = btn;
   document.body.appendChild(m);
   const r = btn.getBoundingClientRect();

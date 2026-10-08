@@ -9552,3 +9552,10 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
   .ch-gc { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto; }
   .ch-gc-art { justify-content: flex-start; min-height: 56px; align-items: center; }
 }
+/* Log spend: the category is one dropdown, the chosen one with its dot. */
+.qa-cat-dd .dd-val { display: inline-flex; align-items: center; gap: 8px; }
+.qa-cat-dd .dd-val .qa-dot { flex: 0 0 auto; }
+.qa-cat-dd[hidden] { display: none; }
+.dd-btn.fk-invalid { border-color: #f43f5e !important; box-shadow: 0 0 0 3px rgba(244, 63, 94, .14); }
+.dd-opt .dd-dot { display: inline-block; margin-right: 9px; vertical-align: 1px; }
+.qa-cat-dd { margin-top: -4px; }
