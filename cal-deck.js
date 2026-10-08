@@ -2,12 +2,12 @@
 /* =====================================================================
    cal-deck.js - the calendar, one day at a time.
 
-   The calendar's second view. Every day of the month is a card, and one is
-   in focus. On a computer they stand in a row like pictures in a gallery:
-   the day in focus faces you and the days either side turn away from it.
-   On a phone they are a stack: the day in focus on top, the next days
-   peeking out underneath. Swipe, drag, click a neighbour or use the arrow
-   keys to move; past the last day of the month the next month carries on.
+   The calendar's main view. Every day of the month is a card, and one is
+   in focus. They stand in a row like pictures in a gallery: the day in
+   focus faces you and the days either side turn away from it. A phone has
+   the same gallery, narrower, with the neighbours peeking in at the edges.
+   Swipe, drag, tap a neighbour or use the arrow keys to move; past the last
+   day of the month the next month carries on.
 
    Each card holds the same things in both: the date, what is due and what
    was spent, and that day's bills, debts, spending and goal dates, with a
@@ -81,13 +81,12 @@ function calDeckHtml(evs, y, m, daysInMo, loc) {
 // Lays the cards out around a position, which can sit between two days
 // while a finger is dragging.
 function calDeckLayout(deck, pos, instant) {
-  const vertical = window.matchMedia(CAL_DECK_MQ).matches;
-  deck.classList.toggle('is-vertical', vertical);
+  deck.classList.toggle('is-phone', window.matchMedia(CAL_DECK_MQ).matches);
   deck.classList.toggle('is-dragging', !!instant);
   const cards = [...deck.querySelectorAll('.cal-card')];
   cards.forEach((c, i) => {
     const o = i + 1 - pos, a = Math.abs(o);
-    const shown = vertical ? (o > -1.2 && o < 3.2) : a < 3.2;
+    const shown = a < 3.2;
     // Which card is in focus is settled first, for every card, so a card
     // that has moved far off never keeps the flag.
     const focus = Math.round(pos) === i + 1;
@@ -96,23 +95,13 @@ function calDeckLayout(deck, pos, instant) {
     c.style.visibility = shown ? '' : 'hidden';
     c.style.pointerEvents = shown ? '' : 'none';
     if (!shown) return;
-    let tr, op;
-    if (vertical) {
-      // The stack: the next days sit underneath, a step lower and smaller;
-      // the day before slides up and away.
-      if (o >= 0) { tr = `translate3d(0, ${o * 14}px, 0) scale(${1 - o * .06})`; op = o < 2.6 ? 1 : 3.2 - o; }
-      else { tr = `translate3d(0, ${o * 110}%, 0) scale(1)`; op = 1 + o; }
-    } else {
-      // The gallery: the day in focus faces you, the others turn away.
-      const rot = Math.max(-42, Math.min(42, -o * 34));
-      tr = `translate3d(${o * 64}%, 0, ${-a * 140}px) rotateY(${rot}deg) scale(${1 - Math.min(a, 2) * .06})`;
-      // Solid, so the card behind never shows through; dimmed instead.
-      op = a < 2.4 ? 1 : 3.2 - a;
-    }
-    c.style.transform = tr;
-    c.style.opacity = String(Math.max(0, op));
-    c.style.filter = vertical ? '' : `brightness(${1 - Math.min(a, 2) * .05})`;
-    c.style.zIndex = String(100 - Math.round(a * 10) - (o < 0 && vertical ? 50 : 0));
+    // The day in focus faces you, the others turn away from it. They are
+    // solid, so the card behind never shows through; dimmed instead.
+    const rot = Math.max(-42, Math.min(42, -o * 34));
+    c.style.transform = `translate3d(${o * 64}%, 0, ${-a * 140}px) rotateY(${rot}deg) scale(${1 - Math.min(a, 2) * .06})`;
+    c.style.opacity = String(Math.max(0, a < 2.4 ? 1 : 3.2 - a));
+    c.style.filter = `brightness(${1 - Math.min(a, 2) * .05})`;
+    c.style.zIndex = String(100 - Math.round(a * 10));
   });
   const cnt = deck.querySelector('.cal-deck-count');
   if (cnt) cnt.textContent = tf('cal_card_count', Math.round(pos), cards.length);
@@ -141,12 +130,11 @@ function calDeckWire(root) {
   let start = null;
   stage.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
-    const vertical = deck.classList.contains('is-vertical');
-    start = { x: e.clientX, y: e.clientY, t: Date.now(), vertical, size: (vertical ? stage.clientHeight * .55 : stage.querySelector('.cal-card').offsetWidth * .64) || 300, moved: false, id: e.pointerId };
+    start = { x: e.clientX, y: e.clientY, t: Date.now(), size: (stage.querySelector('.cal-card').offsetWidth * .64) || 300, moved: false, id: e.pointerId };
   });
   stage.addEventListener('pointermove', e => {
     if (!start || e.pointerId !== start.id) return;
-    const d = start.vertical ? e.clientY - start.y : e.clientX - start.x, cross = start.vertical ? e.clientX - start.x : e.clientY - start.y;
+    const d = e.clientX - start.x, cross = e.clientY - start.y;
     if (!start.moved) {
       if (Math.abs(d) < 8 || Math.abs(d) < Math.abs(cross)) return;
       start.moved = true;
@@ -160,7 +148,7 @@ function calDeckWire(root) {
     if (!start || e.pointerId !== start.id) return;
     const s = start; start = null;
     if (!s.moved) return;
-    const d = s.vertical ? e.clientY - s.y : e.clientX - s.x, v = d / Math.max(1, Date.now() - s.t);
+    const d = e.clientX - s.x, v = d / Math.max(1, Date.now() - s.t);
     let steps = -Math.round(d / s.size);
     if (!steps && (Math.abs(d) > 40 || Math.abs(v) > .45)) steps = d < 0 ? 1 : -1;
     deck.classList.remove('is-dragging');
@@ -175,8 +163,8 @@ function calDeckWire(root) {
   // A trackpad's sideways swipe moves a day at a time.
   let wheelAt = 0;
   stage.addEventListener('wheel', e => {
-    const d = deck.classList.contains('is-vertical') ? e.deltaY : e.deltaX;
-    if (Math.abs(d) < 18 || Math.abs(deck.classList.contains('is-vertical') ? e.deltaX : e.deltaY) > Math.abs(d)) return;
+    const d = e.deltaX;
+    if (Math.abs(d) < 18 || Math.abs(e.deltaY) > Math.abs(d)) return;
     e.preventDefault();
     if (Date.now() - wheelAt < 380) return;
     wheelAt = Date.now();
@@ -210,16 +198,14 @@ function calDeckWire(root) {
 })();
 
 // With the day cards on screen, the arrow keys move a day at a time, ahead
-// of the calendar's own month keys. Up and down do the same as left and
-// right, so the phone's stack and the gallery behave alike.
+// of the calendar's own month keys.
 document.addEventListener('keydown', e => {
   const deck = document.getElementById('calDeck');
   if (!deck || !document.getElementById('bview-calendar')?.classList.contains('is-active')) return;
   if (e.target.closest && e.target.closest('input, textarea, select, .modal-overlay, .dd-menu, .fk-datepop')) return;
   if (!document.getElementById('tutorialOverlay')?.hidden) return;
-  const back = e.key === 'ArrowLeft' || e.key === 'ArrowUp', fwd = e.key === 'ArrowRight' || e.key === 'ArrowDown';
+  const back = e.key === 'ArrowLeft', fwd = e.key === 'ArrowRight';
   if (!back && !fwd) return;
-  if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && !deck.contains(e.target)) return;
   e.preventDefault(); e.stopImmediatePropagation();
   calDeckGo(deck, calDeckFocus + (fwd ? 1 : -1));
 }, true);

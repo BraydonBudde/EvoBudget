@@ -9381,7 +9381,7 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
    A gallery on a computer (the day in focus faces you, its neighbours turn
    away) and a stack on a phone (the next days peek out underneath). The
    cards are panels, so each appearance draws them its own way. */
-.cal-deck { position: relative; margin-top: 18px; outline: none; user-select: none; -webkit-user-select: none; }
+.cal-deck { position: relative; margin-top: 18px; outline: none; user-select: none; -webkit-user-select: none; overflow-x: clip; }   /* the outer days tuck away at the edge, never widening the page */
 .cal-deck:focus-visible .cal-card.is-focus { box-shadow: 0 0 0 3px rgba(var(--grad-indigo-rgb), .35); }
 .cal-deck-stage { --cw: min(440px, 58%); position: relative; height: 480px; perspective: 1400px; perspective-origin: 50% 40%; touch-action: pan-y; }
 .cal-card {
@@ -9403,10 +9403,6 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
 .cal-deck-next { right: 4px; }
 .cal-deck-count { margin: 12px 0 0; text-align: center; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
 
-/* The phone: a stack you swipe up and down. */
-.cal-deck.is-vertical .cal-deck-stage { --cw: 100%; height: clamp(420px, calc(100dvh - 290px), 580px); perspective: none; touch-action: none; }
-.cal-deck.is-vertical .cal-card { height: calc(100% - 34px); transform-origin: 50% 100%; padding: 20px 18px 14px; }
-.cal-deck.is-vertical .cal-deck-nav { display: none; }
 
 /* The card. */
 .cal-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
@@ -9456,6 +9452,13 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
    them, so the glass appearances give them a solid surface. */
 [data-theme="dark"] .tool-shell .app-scroll .cal-card { background: linear-gradient(170deg, #2c2152 0%, #231947 100%) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border: 1px solid rgba(255, 255, 255, .12); }
 [data-theme="frosty"] .tool-shell .app-scroll .cal-card { background: linear-gradient(170deg, #ffffff 0%, #f8f6ff 100%) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-.cal-deck.is-vertical .cal-card:not(.is-focus) { box-shadow: 0 -6px 20px -14px rgba(20, 10, 50, .4); }
-.cal-deck.is-vertical .cal-card:not(.is-focus) .cal-card-foot { visibility: hidden; }
-.cal-deck.is-vertical .cal-card:not(.is-focus) { filter: brightness(.95); }
+/* The phone: the same gallery, narrower, the neighbours peeking in at the
+   edges, and the arrows under the cards either side of the count. */
+.cal-deck.is-phone .cal-deck-stage { --cw: 80%; height: clamp(360px, calc(100dvh - 420px), 520px); perspective: 900px; }
+.cal-deck.is-phone .cal-card { padding: 20px 18px 14px; }
+.cal-deck.is-phone .cal-deck-nav { top: auto; bottom: 0; margin: 0; width: 38px; height: 38px; }
+.cal-deck.is-phone .cal-deck-prev { left: calc(50% - 112px); }
+.cal-deck.is-phone .cal-deck-next { right: calc(50% - 112px); left: auto; }
+.cal-deck.is-phone .cal-deck-count { margin-top: 10px; line-height: 38px; }
+/* The outer days fade out at the edges rather than stopping at a line. */
+.cal-deck-stage { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); }

@@ -4506,7 +4506,7 @@ function paintTabIcons(){
 
 // Each section remembers whether it is shown as cards or as a list. The
 // button shows the view it would switch to, so it reads as an offer.
-const VIEW_DEFAULTS = { notifications: 'list' };
+const VIEW_DEFAULTS = { notifications: 'list', calendar: 'list' };   // the calendar's "list" is its day cards
 function viewMode(sec){ const v=(state.settings.viewModes||{})[sec]; return v ? (v==='list'?'list':'cards') : (VIEW_DEFAULTS[sec]||'cards'); }
 function viewToggleBtn(sec){
   const toList=viewMode(sec)!=='list';
