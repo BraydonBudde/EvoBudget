@@ -9475,3 +9475,80 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
 @keyframes cal-today-in { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
 [data-theme="peachy"] .cal-today-btn, [data-theme="jolly"] .cal-today-btn, [data-theme="frosty"] .cal-today-btn, [data-theme="dark"] .cal-today-btn { background: var(--ui-btn); color: var(--ui-btn-ink, #fff); }
 [data-theme="vintage-ledger"] .cal-today-btn { border-radius: 4px; background: #3b2a1a; color: #fbf4e2; box-shadow: none; }
+
+/* ═══ Spin to Win ═══════════════════════════════════════════════════
+   A prize wheel in the theme's own accents: five coloured slices and the
+   0 in the card's colour, a dark rim with pegs, a pointer at the top that
+   the pegs knock aside as they pass, and Spin in the middle. */
+.sp-card { --sp-rim: color-mix(in srgb, var(--grad-indigo) 55%, #1a1330); --sp-zero: var(--surface-solid); --sp-zero-ink: var(--text-primary); }
+.sp-stage { height: auto; min-height: 300px; padding: 4px 0 16px; align-items: center; perspective: none; }
+.sp-stage.is-landed::after { display: none; }
+.sp-wheel-wrap { position: relative; width: min(100%, 300px); aspect-ratio: 1; margin-top: 16px; }
+.sp-wheel { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 18px 24px rgba(var(--grad-indigo-rgb), .3)); }
+.sp-rim { fill: var(--sp-rim); }
+.sp-rim-line { fill: none; stroke: rgba(255, 255, 255, .5); stroke-width: 1.4; }
+.sp-peg { fill: #fff; stroke: rgba(0, 0, 0, .18); stroke-width: .8; }
+.sp-slice path { stroke: rgba(255, 255, 255, .55); stroke-width: 1.2; transition: opacity .35s ease; }
+.sp-slice text {
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -.01em; fill: #fff; font-variant-numeric: tabular-nums;
+  paint-order: stroke; stroke: rgba(25, 12, 45, .26); stroke-width: 2.4px; stroke-linejoin: round; pointer-events: none; transition: opacity .35s ease;
+}
+.sp-slice--a path { fill: var(--grad-indigo); }
+.sp-slice--b path { fill: var(--grad-purple); }
+.sp-slice--c path { fill: var(--grad-pink); }
+.sp-slice--zero path { fill: var(--sp-zero); }
+.sp-slice--zero text { fill: var(--sp-zero-ink); stroke: none; }
+/* Once it stops, the winning slice stays bright and the rest step back. */
+.sp-wheel.is-done .sp-slice:not(.is-win) path, .sp-wheel.is-done .sp-slice:not(.is-win) text { opacity: .38; }
+.sp-wheel.is-done .sp-slice.is-win path { stroke: #fff; stroke-width: 3; }
+.sp-pointer {
+  position: absolute; z-index: 3; left: 50%; top: -18px; width: 34px; margin-left: -17px; transform-origin: 50% 32%;
+  filter: drop-shadow(0 4px 4px rgba(20, 10, 40, .3)); pointer-events: none;
+}
+.sp-pointer svg { display: block; width: 100%; height: auto; }
+.sp-pointer path { fill: var(--sp-rim); stroke: #fff; stroke-width: 2.2; stroke-linejoin: round; }
+.sp-pointer circle { fill: #fff; }
+.sp-hub {
+  position: absolute; z-index: 2; left: 50%; top: 50%; width: 27%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
+  display: grid; place-items: center; padding: 0; cursor: pointer; border: 4px solid #fff;
+  font: 800 15px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase;
+  background: var(--ui-btn, var(--grad-indigo)); color: var(--ui-btn-ink, #fff);
+  box-shadow: 0 8px 18px -6px rgba(20, 10, 40, .45), inset 0 1px 0 rgba(255, 255, 255, .35); transition: transform .15s;
+}
+.sp-hub:not(:disabled) { animation: sp-breathe 2.4s ease-in-out infinite; }
+.sp-hub:not(:disabled):hover { animation: none; transform: translate(-50%, -50%) scale(1.06); }
+.sp-hub:disabled { cursor: default; opacity: 1; }
+.sp-hub:focus-visible { outline: 3px solid rgba(var(--grad-indigo-rgb), .5); outline-offset: 3px; }
+@keyframes sp-breathe { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.05); } }
+.sp-stage.is-landed .sp-wheel-wrap { animation: sc-pop .55s cubic-bezier(.3, 1.5, .5, 1); }
+.sp-stage .cf-spark { top: 50%; }
+@media (max-width: 900px) { .sp-wheel-wrap { width: min(100%, 270px); } }
+/* The lobby card's art: a little wheel that gives a turn on hover. */
+.ch-mini-wheel {
+  --sp-rim: color-mix(in srgb, var(--grad-indigo) 55%, #1a1330);
+  position: relative; display: block; width: 54px; height: 54px; border-radius: 50%; box-sizing: border-box; border: 4px solid var(--sp-rim);
+  background: conic-gradient(var(--surface-solid) 0 60deg, var(--grad-indigo) 60deg 120deg, var(--grad-purple) 120deg 180deg, var(--grad-pink) 180deg 240deg, var(--grad-indigo) 240deg 300deg, var(--grad-purple) 300deg 360deg);
+  box-shadow: 0 8px 14px -8px rgba(var(--grad-indigo-rgb), .8);
+}
+.ch-mini-wheel i { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); }
+.ch-gc:hover .ch-mini-wheel { animation: sp-mini 1s cubic-bezier(.2, .7, .3, 1); }
+@keyframes sp-mini { from { transform: rotate(0); } to { transform: rotate(420deg); } }
+@media (prefers-reduced-motion: reduce) { .sp-hub:not(:disabled), .ch-gc:hover .ch-mini-wheel, .sp-stage.is-landed .sp-wheel-wrap { animation: none; } }
+/* Each appearance keeps the wheel in its own key. */
+[data-theme="vintage-ledger"] .sp-card, [data-theme="vintage-ledger"] .ch-mini-wheel { --sp-rim: #3b2a1a; --sp-zero: #f6ecd7; --sp-zero-ink: #3b2a1a; }
+[data-theme="vintage-ledger"] .sp-hub { border-radius: 50%; }
+[data-theme="terminal"] .sp-slice text { fill: #04140a; stroke: none; }
+[data-theme="terminal"] .sp-card, [data-theme="terminal"] .ch-mini-wheel { --sp-rim: #0c2a17; }
+[data-theme="synthwave"] .sp-card, [data-theme="synthwave"] .ch-mini-wheel { --sp-rim: #1a0b2e; }
+[data-theme="dark"] .sp-card, [data-theme="dark"] .ch-mini-wheel { --sp-rim: #120c24; }
+/* On a phone the result and Spin sit right under the wheel, the choices below. */
+@media (max-width: 900px) {
+  .sp-card .cf-card-inner { grid-template-areas: "stage" "panel" "setup"; }
+  .sp-card .cf-setup { padding: 18px 0 0; border-bottom: 0; border-top: 1px solid var(--border-faint); }
+}
+/* The lobby's games side by side, each card art, words, then Play. */
+.ch-games { grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
+@media (min-width: 641px) {
+  .ch-gc { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto; }
+  .ch-gc-art { justify-content: flex-start; min-height: 56px; align-items: center; }
+}

@@ -18,17 +18,18 @@
    from its transaction, so editing or deleting that transaction is always
    reflected in the totals here and on the dashboard.
 
-   Games are grouped by category. Only categories with games are shown.
+   Every game sits in one section of the lobby; each keeps a category of
+   its own, shown above its title once it is open.
    ===================================================================== */
 
 const CH_CATS = [
-  { id: 'decide', games: ['coinflip'] },
-  { id: 'fun', games: ['scratch'] }
+  { id: 'all', games: ['coinflip', 'scratch', 'spin'] }
 ];
 // How each game shows on its card in the lobby.
 const CH_GAMES = {
   coinflip: { title: 'ch_cf_title', desc: 'ch_cf_desc', art: () => `<span class="ch-mini-coin"><span>${appIconSvg('sinking')}</span></span>` },
-  scratch: { title: 'ch_sc_title', desc: 'ch_sc_desc', art: () => `<span class="ch-mini-ticket" aria-hidden="true"><i></i></span>` }
+  scratch: { title: 'ch_sc_title', desc: 'ch_sc_desc', art: () => `<span class="ch-mini-ticket" aria-hidden="true"><i></i></span>` },
+  spin: { title: 'ch_sp_title', desc: 'ch_sp_desc', art: () => `<span class="ch-mini-wheel" aria-hidden="true"><i></i></span>` }
 };
 // What tempts people most. `cat` is the row of DEFAULT_BUDGET's spending
 // list it would be logged under if the coin says go ahead.
@@ -58,7 +59,7 @@ function chData() {
   return c;
 }
 function chTxOf(e) { return e && e.txId ? (state.transactions || []).find(x => x.id === e.txId) || null : null; }
-function chLabel(e) { return e.game === 'scratch' ? t('ch_sc_label') : e.preset === 'other' ? (e.label || t('ch_p_other')) : t('ch_p_' + e.preset); }
+function chLabel(e) { return e.game === 'scratch' ? t('ch_sc_label') : e.game === 'spin' ? t('ch_sp_title') : e.preset === 'other' ? (e.label || t('ch_p_other')) : t('ch_p_' + e.preset); }
 function chStats(game) {
   const h = chData().history.filter(e => !game || e.game === game);
   const ps = state.settings.periodStart || '', pe = state.settings.periodEnd || '';
@@ -131,7 +132,7 @@ function chSave(entry, bonus) {
     if (b) alloc = b.id;
   }
   const tx = { id: uid(), date: today(), type: goal ? 'sinking_fund' : 'debt', category: goal ? goal.name : debt.name,
-    amount, description: entry.game === 'scratch' ? t('ch_sc_tx') : tf(bonus ? 'ch_cf_tx_bonus' : 'ch_cf_tx_heads', chLabel(entry)), allocation: alloc };
+    amount, description: entry.game === 'scratch' ? t('ch_sc_tx') : entry.game === 'spin' ? t(bonus ? 'ch_sp_tx_bonus' : 'ch_sp_tx') : tf(bonus ? 'ch_cf_tx_bonus' : 'ch_cf_tx_heads', chLabel(entry)), allocation: alloc };
   state.transactions.push(tx); noteAdded(tx);
   trialUse('transaction');
   applySinkingFundDelta(tx, +1);
@@ -154,6 +155,7 @@ function renderChallenges() {
   if (!el) return;
   if (_ch.screen === 'coinflip') return cfRender(el);
   if (_ch.screen === 'scratch') return scRender(el);
+  if (_ch.screen === 'spin') return spRender(el);
   chRenderLobby(el);
 }
 
@@ -202,21 +204,25 @@ function chStatus(e) {
   if (tx) return e.bonus ? 'bonus' : 'saved';
   if (e.txId) return 'undone';
   if (e.game === 'scratch') return e.saved > 0 ? 'kept' : 'enjoyed';
+  if (e.game === 'spin') return e.landed > 0 ? 'kept' : 'enjoyed';
   return e.side === 'heads' ? 'kept' : 'enjoyed';
 }
 function chHistRow(e) {
   const s = chStatus(e), tx = chTxOf(e), lbl = chLabel(e);
-  const sc = e.game === 'scratch';
-  const title = sc
+  const sc = e.game === 'scratch', sp = e.game === 'spin';
+  const title = sp
+    ? (s === 'saved' ? tf('ch_sp_h_saved', fmt(tx.amount)) : s === 'bonus' ? tf('ch_sp_h_bonus', fmt(tx.amount)) : s === 'kept' ? tf('ch_sp_h_kept', fmt(e.landed))
+      : s === 'undone' ? t('ch_sp_h_undone') : t('ch_sp_h_zero'))
+    : sc
     ? (s === 'saved' ? tf('ch_sc_h_saved', fmt(e.fun), fmt(tx.amount)) : s === 'kept' ? tf('ch_sc_h_kept', fmt(e.fun), fmt(e.saved))
       : s === 'undone' ? t('ch_sc_h_undone') : tf('ch_sc_h_all', fmt(e.fun)))
     : (s === 'saved' ? tf('ch_h_saved', lbl) : s === 'bonus' ? tf('ch_h_bonus', lbl) : s === 'kept' ? tf('ch_h_kept', lbl)
       : s === 'undone' ? tf('ch_h_undone', lbl) : tf('ch_h_enjoyed', lbl));
-  const sub = [t(sc ? 'ch_sc_title' : 'ch_cf_title'), formatDateShort(e.date)];
+  const sub = [t(sp ? 'ch_sp_title' : sc ? 'ch_sc_title' : 'ch_cf_title'), formatDateShort(e.date)];
   if (tx) sub.push(tf('ch_h_to', tx.category));
   const preset = CH_PRESETS.find(p => p.id === e.preset) || CH_PRESETS[CH_PRESETS.length - 1];
   return `<div class="ch-h-row ch-h--${s}" data-ch-entry="${chAttr(e.id)}">
-    <span class="ch-h-ico" aria-hidden="true">${sc ? '\uD83C\uDF9F\uFE0F' : preset.emoji}</span>
+    <span class="ch-h-ico" aria-hidden="true">${sp ? '\uD83C\uDFA1' : sc ? '\uD83C\uDF9F\uFE0F' : preset.emoji}</span>
     <span class="ch-h-main"><b>${esc(title)}</b><small>${esc(sub.join(' · '))}</small></span>
     ${s === 'kept' ? `<button class="btn btn-ghost btn-sm ch-h-save" type="button" data-ch-save="${chAttr(e.id)}">${esc(t('ch_save_now'))}</button>` : ''}
     <span class="ch-h-amt">${tx ? '+' + fmt(tx.amount) : fmt(e.amount)}</span>
@@ -224,8 +230,9 @@ function chHistRow(e) {
 }
 
 function chOpenGame(id) {
-  if (id === 'scratch') {
-    scOpen(); _ch.screen = 'scratch'; renderChallenges();
+  if (id === 'scratch' || id === 'spin') {
+    if (id === 'scratch') scOpen(); else spOpen();
+    _ch.screen = id; renderChallenges();
     document.querySelector('.app-scroll')?.scrollTo({ top: 0 });
     return;
   }
@@ -249,6 +256,7 @@ function chBackToLobby() {
   _ch.screen = 'lobby';
   if (_cf && _cf.phase !== 'flipping') _cf.phase = 'setup';
   if (_sc && _sc.phase === 'result') { _sc.phase = 'setup'; _sc.entry = null; }
+  if (_sp && _sp.phase === 'result') { _sp.phase = 'setup'; _sp.entry = null; }
   renderChallenges();
 }
 
@@ -592,19 +600,19 @@ function cfLogSpend(e) {
   openQuickAddTx({ type: 'expense', amount: e.amount, category: cat, description: tf('ch_cf_tx_tails', chLabel(e)) });
 }
 
-// Enter flips; the slider takes the arrow keys itself.
+// Enter flips, scratches or spins; the slider takes the arrow keys itself.
 document.addEventListener('keydown', e => {
   if (typeof currentTab === 'undefined' || currentTab !== 'challenges') return;
-  const game = _ch.screen === 'coinflip' ? _cf : _ch.screen === 'scratch' ? _sc : null;
+  const game = _ch.screen === 'coinflip' ? _cf : _ch.screen === 'scratch' ? _sc : _ch.screen === 'spin' ? _sp : null;
   if (!game || game.phase !== 'setup') return;
-  const slider = _ch.screen === 'coinflip' ? 'cfSlider' : 'scSlider';
+  const slider = _ch.screen === 'coinflip' ? 'cfSlider' : _ch.screen === 'spin' ? 'spSlider' : 'scSlider';
   if (!document.getElementById(slider)) return;
   const ov = document.getElementById('tutorialOverlay');
   if ((ov && !ov.hidden) || document.getElementById('fkDialogOverlay')) return;
   const tag = document.activeElement?.tagName;
   if (tag === 'TEXTAREA' || tag === 'SELECT' || (tag === 'INPUT' && document.activeElement.id !== slider)) return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (e.key === 'Enter' && !(document.activeElement && document.activeElement.closest && document.activeElement.closest('button'))) { e.preventDefault(); if (_ch.screen === 'coinflip') cfFlip(); else scAuto(); }
+  if (e.key === 'Enter' && !(document.activeElement && document.activeElement.closest && document.activeElement.closest('button'))) { e.preventDefault(); if (_ch.screen === 'coinflip') cfFlip(); else if (_ch.screen === 'spin') spSpin(); else scAuto(); }
 });
 
 // ── Scratch Card ─────────────────────────────────────────────────────
@@ -869,6 +877,243 @@ function scAgain() {
   scDrawFoil(false);
 }
 
+// ── Spin to Win ──────────────────────────────────────────────────────
+// A little saving, left to chance. Set the most you could put aside
+// today; the wheel splits it into six amounts that add up to it, one of
+// them nothing. Wherever it stops is what goes to the goal or debt you
+// chose, saved, undone and counted exactly like any other win. Every
+// slice is the same size, so each is as likely as the next.
+const SP_SHARES = [0, .05, .1, .15, .25, .45];   // smallest to largest; they add up to 1
+const SP_ORDER = [0, 4, 1, 5, 2, 3];             // round the wheel: small and large take turns, the top prize opposite the 0
+const SP_DUR = 2000;
+const SP_TURNS = 4;
+let _sp = null;
+
+// The six amounts, smallest first, each a round figure for its size and
+// all of them adding up to max exactly.
+function spValues(max) {
+  max = chRound(max);
+  if (!(max > 0)) return SP_SHARES.map(() => 0);
+  const unit = max >= 400 ? 10 : max >= 200 ? 5 : max >= 20 ? 1 : max >= 10 ? .5 : .01;
+  const v = SP_SHARES.map(s => chRound(Math.round(max * s / unit) * unit));
+  v[5] = chRound(max - v.slice(0, 5).reduce((a, b) => a + b, 0));
+  return v;
+}
+// Round the wheel, starting at the top and going clockwise.
+const spWheelValues = max => { const v = spValues(max); return SP_ORDER.map(i => v[i]); };
+
+function spOpen() {
+  const last = chData().last, r = chRange();
+  const keep = _sp && _sp.phase === 'setup' ? _sp : null;
+  _sp = { phase: 'setup', max: chClamp(keep ? keep.max : (Number(last.spMax) > 0 ? Number(last.spMax) : 50), r),
+    target: keep ? keep.target : (last.target || ''), entry: null, err: '', rot: _sp ? _sp.rot : 0 };
+}
+const spAmount = () => chRound(_sp.max);
+function spCurrentTarget() { const list = chTargetList(); return list.find(x => x.key === _sp.target) || list[0] || null; }
+
+function spRender(el) {
+  const r = chRange();
+  el.innerHTML = `<div class="ch-game">
+    <button class="ch-back" type="button" data-ch-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>${esc(t('ch_back'))}</button>
+    <div class="ch-game-head">
+      <span class="ch-eyebrow">${esc(t('ch_cat_boost'))}</span>
+      <h2 class="section-title">${esc(t('ch_sp_title'))}</h2>
+      <p class="section-desc">${esc(t('ch_sp_desc'))}</p>
+    </div>
+    <section class="panel cf-card sp-card"><div class="cf-card-inner">
+      <div class="cf-setup" id="spSetup">
+        <div class="cf-step cf-step--amount"><b>1</b><span>${esc(t('ch_sp_step_max'))}</span><strong class="cf-amount-v" id="spDisplay"></strong></div>
+        <div class="cf-amount" id="spAmountBox">
+          <input class="cf-slider" id="spSlider" type="range" min="${r.min}" max="${r.max}" step="${chStep(r)}" value="${spAmount()}" aria-label="${chAttr(t('ch_sp_step_max'))}">
+          <div class="cf-slider-ends"><span>${esc(chBounty(r.min))}</span><button class="link-btn cf-range-link" type="button" data-sp-range>${esc(t('ch_range_link'))}</button><span>${esc(chBounty(r.max))}</span></div>
+        </div>
+        <p class="cf-step"><b>2</b>${esc(t('ch_sp_step_where'))}</p>
+        <div class="cf-targets" id="spTargets" role="radiogroup" aria-label="${chAttr(t('ch_sp_step_where'))}"></div>
+      </div>
+      <div class="cf-stage sp-stage" id="spStage">
+        <div class="sp-wheel-wrap">
+          <div class="sp-pointer" id="spPointer" aria-hidden="true"><svg viewBox="0 0 32 44"><path d="M16 42 4.6 19.5A13 13 0 1 1 27.4 19.5Z"/><circle cx="16" cy="14" r="4.2"/></svg></div>
+          <svg class="sp-wheel" id="spWheel" viewBox="-100 -100 200 200" role="img"></svg>
+          <button class="sp-hub" id="spHub" type="button">${esc(t('ch_sp_hub'))}</button>
+        </div>
+      </div>
+      <div class="cf-panel" id="spPanel" aria-live="polite"></div>
+    </div></section>
+  </div>`;
+  el.querySelector('[data-ch-back]').addEventListener('click', chBackToLobby);
+  document.getElementById('spSlider').addEventListener('input', e => {
+    if (_sp.phase !== 'setup') return;
+    _sp.max = chClamp(e.target.value); spPaintAmount(); spPaintWheel(); spPaintPanel();
+  });
+  el.querySelector('[data-sp-range]').addEventListener('click', () => {
+    switchTab('settings');
+    const f = document.getElementById('cfMaxInput');
+    if (f) { f.scrollIntoView({ block: 'center' }); f.focus(); }
+  });
+  document.getElementById('spHub').addEventListener('click', () => { if (_sp.phase === 'setup') spSpin(); });
+  spPaintSetup(); spPaintAmount(); spPaintWheel(); spPaintPanel();
+}
+function spPaintAmount() {
+  const d = document.getElementById('spDisplay'); if (!d) return;
+  const r = chRange(), a = spAmount();
+  d.textContent = chBounty(a);
+  const s = document.getElementById('spSlider');
+  if (s) { if (Number(s.value) !== a) s.value = a; s.style.setProperty('--fill', ((a - r.min) / (r.max - r.min) * 100).toFixed(2) + '%'); }
+}
+function spPaintSetup() {
+  const setup = document.getElementById('spSetup'); if (!setup) return;
+  const locked = _sp.phase !== 'setup';
+  setup.classList.toggle('is-locked', locked);
+  setup.querySelectorAll('button, input').forEach(x => { x.disabled = locked; });
+  const hub = document.getElementById('spHub'); if (hub) hub.disabled = locked;
+  chPaintTargetBox(document.getElementById('spTargets'), _sp, () => spPaintPanel());
+}
+
+// ── The wheel ──
+// Six slices, drawn from the top going clockwise, with a peg on the rim
+// between each pair for the pointer to catch on.
+function spPaintWheel() {
+  const svg = document.getElementById('spWheel'); if (!svg) return;
+  const e = _sp.entry, vals = e ? e.values : spWheelValues(spAmount());
+  const R = 92, pt = (deg, r) => { const a = deg * Math.PI / 180; return [(r * Math.sin(a)).toFixed(2), (-r * Math.cos(a)).toFixed(2)]; };
+  const tone = ['zero', 'a', 'b', 'c', 'a', 'b'];
+  const slices = vals.map((v, i) => {
+    const [x0, y0] = pt(i * 60, R), [x1, y1] = pt((i + 1) * 60, R), mid = i * 60 + 30;
+    const txt = chBounty(v), fs = txt.length <= 4 ? 19 : txt.length <= 6 ? 16 : txt.length <= 8 ? 13 : 11;
+    const win = e && _sp.phase === 'result' && e.idx === i;
+    return `<g class="sp-slice sp-slice--${tone[i]}${win ? ' is-win' : ''}" data-sp-slice="${i}">
+      <path d="M0 0L${x0} ${y0}A${R} ${R} 0 0 1 ${x1} ${y1}Z"/>
+      <text transform="rotate(${mid}) translate(0 -58)" font-size="${fs}" text-anchor="middle" dominant-baseline="central">${esc(txt)}</text>
+    </g>`;
+  }).join('');
+  const pegs = [0, 1, 2, 3, 4, 5].map(i => { const [x, y] = pt(i * 60, R - 1); return `<circle class="sp-peg" cx="${x}" cy="${y}" r="3.6"/>`; }).join('');
+  svg.innerHTML = `<circle class="sp-rim" r="99"/><g class="sp-rot" id="spRot" transform="rotate(${(_sp.rot % 360).toFixed(2)})">${slices}<circle class="sp-rim-line" r="${R}"/>${pegs}</g>`;
+  svg.classList.toggle('is-done', _sp.phase === 'result');
+  svg.setAttribute('aria-label', e && _sp.phase === 'result' ? tf('ch_sp_aria_landed', chBounty(e.landed)) : tf('ch_sp_aria', vals.map(chBounty).join(', ')));
+}
+// The pointer is knocked aside by each peg that passes it and swings back.
+function spTick(ptr) {
+  if (!ptr || !ptr.animate) return;
+  if (ptr._tick) { try { ptr._tick.cancel(); } catch (e) {} }
+  ptr._tick = ptr.animate([{ transform: 'rotate(-26deg)' }, { transform: 'rotate(4deg)', offset: .7 }, { transform: 'rotate(0deg)' }], { duration: 190, easing: 'ease-out' });
+}
+
+function spSpin() {
+  if (!_sp || _sp.phase !== 'setup') return;
+  const max = spAmount(), tg = spCurrentTarget();
+  _sp.err = !(max > 0) ? t('ch_sp_need') : !tg ? t('ch_need_target') : '';
+  if (_sp.err) {
+    spPaintPanel();
+    const box = document.getElementById('spAmountBox');
+    if (box) { box.classList.remove('cf-shake'); void box.offsetWidth; box.classList.add('cf-shake'); }
+    return;
+  }
+  // Where it stops is settled now, fairly, before the wheel moves.
+  const values = spWheelValues(max), idx = Math.min(5, Math.floor(chRandom() * 6)), within = .18 + chRandom() * .64;
+  const landed = values[idx];
+  _sp.entry = { id: uid(), game: 'spin', at: Date.now(), date: today(), max, values, idx, landed, amount: landed,
+    target: { kind: tg.kind, id: tg.id, name: tg.name }, txId: null };
+  _sp.phase = 'spinning';
+  spPaintSetup(); spPaintPanel(); spPaintWheel();
+  document.getElementById('spStage')?.scrollIntoView?.({ block: 'center', behavior: ddReduced() ? 'auto' : 'smooth' });
+  // The slice under the pointer at the top is the one the wheel has turned
+  // back past: for slice idx to stop there, the wheel ends on -(idx + within) slices.
+  const from = _sp.rot, aim = ((360 - (idx + within) * 60) % 360 + 360) % 360;
+  const to = from + SP_TURNS * 360 + ((aim - from % 360) + 360) % 360;
+  const g = document.getElementById('spRot'), ptr = document.getElementById('spPointer');
+  let done = false;
+  const land = () => {
+    if (done) return;
+    done = true;
+    _sp.rot = to % 360;
+    const c = chData();
+    c.history.unshift(_sp.entry);
+    if (c.history.length > CH_HISTORY_MAX) c.history.length = CH_HISTORY_MAX;
+    c.last = { ...c.last, spMax: max, target: tg.key === 'jar' ? 'jar' : tg.key };
+    saveState();
+    if (_sp.phase !== 'spinning') return;
+    _sp.phase = 'result';
+    if (!document.getElementById('spPanel')) return;
+    spPaintSetup(); spPaintWheel(); spPaintPanel();
+    const stage = document.getElementById('spStage');
+    if (stage) { stage.classList.remove('is-landed'); void stage.offsetWidth; stage.classList.add('is-landed'); }
+    if (landed > 0) cfBurst('spStage');
+  };
+  if (ddReduced() || !g) { land(); return; }
+  // Quick off the mark, then a long slow-down, so the last few pegs click
+  // past one at a time.
+  const ease = x => 1 - Math.pow(1 - x, 3.2);
+  const t0 = performance.now();
+  let lastPeg = Math.floor(from / 60);
+  const frame = now => {
+    if (done) return;
+    const k = Math.min(1, (now - t0) / SP_DUR), at = from + (to - from) * ease(k);
+    g.setAttribute('transform', `rotate(${(at % 360).toFixed(2)})`);
+    const peg = Math.floor(at / 60);
+    if (peg !== lastPeg) { lastPeg = peg; spTick(ptr); }
+    if (k < 1) requestAnimationFrame(frame); else setTimeout(land, 160);
+  };
+  requestAnimationFrame(frame);
+  // In case the browser holds the frames back (a hidden tab, a busy device).
+  setTimeout(land, SP_DUR + 1200);
+}
+
+function spPaintPanel() {
+  const p = document.getElementById('spPanel'); if (!p) return;
+  const max = spAmount(), tg = spCurrentTarget();
+  if (_sp.phase !== 'result') {
+    if (_sp.err && max > 0 && tg) _sp.err = '';
+    const busy = _sp.phase === 'spinning';
+    p.className = 'cf-panel';
+    p.innerHTML = `<div class="cf-rules"><div class="cf-rule sc-rule"><span>${esc(tf('ch_sp_rule', max > 0 ? fmt(max) : t('ch_the_money'), tg ? tg.name : '…'))}</span></div></div>
+      <button class="btn btn-primary cf-flip" id="spGoBtn" type="button"${busy ? ' disabled' : ''}>${esc(t(busy ? 'ch_sp_spinning' : 'ch_sp_spin'))}</button>
+      <p class="cf-err"${_sp.err ? '' : ' hidden'}>${esc(_sp.err)}</p>`;
+    p.querySelector('#spGoBtn').addEventListener('click', spSpin);
+    return;
+  }
+  const e = _sp.entry, tx = chTxOf(e), where = cfTargetName(e);
+  if (tx) {
+    const goal = e.target.kind === 'goal' ? (state.sinkingFunds || []).find(f => f.id === e.target.id) : null;
+    const has = goal && fundHasTarget(goal);
+    const now = has ? Math.min(100, Math.round((goal.currentSaved || 0) / goal.targetAmount * 100)) : 0;
+    const was = has ? Math.min(100, Math.max(0, Math.round(((goal.currentSaved || 0) - tx.amount) / goal.targetAmount * 100))) : 0;
+    p.className = 'cf-panel cf-panel--win is-in';
+    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge">${DD_TICK}</span><span class="cf-verdict-txt"><b>${esc(t('ch_saved_title'))}</b><span>${esc(tf('ch_saved_line', fmt(tx.amount), tx.category))}</span></span></div>
+      ${has ? `<div class="cf-prog"><div class="cf-prog-top"><span>${esc(goal.name)}</span><span>${esc(tf('ch_of', fmt(goal.currentSaved || 0), fmt(goal.targetAmount)))}</span></div><div class="cf-prog-bar"><i id="spProg" style="width:${was}%" data-to="${now}"></i></div></div>` : ''}
+      <div class="cf-acts"><button class="btn btn-primary" type="button" data-sp-again>${esc(t('ch_sp_again'))}</button><button class="btn btn-ghost" type="button" data-sp-open>${esc(tf('ch_open_target', tx.category))}</button></div>`;
+    const bar = p.querySelector('#spProg');
+    if (bar) requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = bar.dataset.to + '%'; }));
+    p.querySelector('[data-sp-open]').addEventListener('click', () => switchTab(e.target.kind === 'goal' ? 'goals' : 'debt'));
+  } else if (e.landed > 0) {
+    const top = e.landed === Math.max(...e.values);
+    p.className = 'cf-panel cf-panel--heads is-in';
+    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge cf-badge--emoji">${top ? '🏆' : '🎡'}</span><span class="cf-verdict-txt"><b>${esc(tf(top ? 'ch_sp_res_top' : 'ch_sp_res_win', fmt(e.landed)))}</b><span>${esc(tf('ch_sp_res_win_line', fmt(e.landed), where))}</span></span></div>
+      <div class="cf-acts"><button class="btn btn-primary" type="button" data-sp-save>${esc(tf('ch_save_btn', fmt(e.landed)))}</button><button class="btn btn-ghost" type="button" data-sp-again>${esc(t('ch_not_now'))}</button></div>`;
+  } else {
+    // Off the hook. The smallest slice is offered, for anyone who would like to save a little anyway.
+    const small = Math.min(...e.values.filter(v => v > 0));
+    p.className = 'cf-panel cf-panel--tails is-in';
+    p.innerHTML = `<div class="cf-verdict"><span class="cf-badge cf-badge--emoji">😌</span><span class="cf-verdict-txt"><b>${esc(t('ch_sp_res_zero'))}</b><span>${esc(t('ch_sp_res_zero_line'))}</span></span></div>
+      <div class="cf-acts"><button class="btn btn-primary" type="button" data-sp-again>${esc(t('ch_sp_again'))}</button>${small > 0 ? `<button class="btn btn-ghost" type="button" data-sp-bonus="${small}">${esc(tf('ch_save_anyway', fmt(small)))}</button>` : ''}</div>`;
+  }
+  p.querySelector('[data-sp-again]')?.addEventListener('click', spAgain);
+  const save = (btn, bonus) => {
+    btn.disabled = true;
+    if (bonus) _sp.entry.amount = Number(btn.dataset.spBonus);
+    const tx = chSave(_sp.entry, bonus);
+    if (!tx) { btn.disabled = false; if (bonus) _sp.entry.amount = _sp.entry.landed; return; }
+    chPaintTargetBox(document.getElementById('spTargets'), _sp, () => spPaintPanel());
+    spPaintPanel(); cfBurst('spStage');
+  };
+  p.querySelector('[data-sp-save]')?.addEventListener('click', ev => save(ev.currentTarget, false));
+  p.querySelector('[data-sp-bonus]')?.addEventListener('click', ev => save(ev.currentTarget, true));
+}
+function spAgain() {
+  if (!_sp) return;
+  _sp.phase = 'setup'; _sp.entry = null; _sp.err = '';
+  spPaintSetup(); spPaintAmount(); spPaintWheel(); spPaintPanel();
+}
+
 // ── On the dashboard ─────────────────────────────────────────────────
 // Only once something has been played: what challenges have saved in all,
 // how many spends were skipped, this period's share, and the last flips.
@@ -896,9 +1141,10 @@ function chDashHtml() {
 const CH_WORDS = {
   en: {
     tab_challenges: 'Challenges', stg_challenges: 'Challenges',
-    ch_set_title: 'Challenge range', ch_set_desc: 'The lowest and highest amount the challenge sliders go to, in Coin Flip and Scratch Card.', ch_set_min: 'Lowest', ch_set_max: 'Highest',
+    ch_set_title: 'Challenge range', ch_set_desc: 'The lowest and highest amount the challenge sliders go to, in Coin Flip, Scratch Card and Spin to Win.', ch_set_min: 'Lowest', ch_set_max: 'Highest',
     ch_set_err_min: 'The lowest amount must be 0 or more.', ch_set_err_order: 'The highest amount must be more than the lowest.', ch_set_err_cap: 'The highest amount can be at most {0}.',
     ch_desc: 'Small games for the moment you are about to spend. When the money wins, what you would have spent goes to a goal or a debt instead.',
+    ch_cat_all: 'Games', ch_cat_all_desc: 'Pick one for the moment you are about to spend, or whenever your savings could use a boost.',
     ch_cat_decide: 'Quick decisions', ch_cat_decide_desc: 'Torn between two choices? Let a game decide, and let your savings win.',
     ch_play: 'Play', ch_plays_1: 'Played once', ch_plays_n: 'Played {0} times', ch_gc_saved: '{0} saved',
     ch_stat_saved: 'Saved through challenges', ch_stat_period: 'Saved this period', ch_stat_skipped: 'Spends skipped',
@@ -922,6 +1168,18 @@ const CH_WORDS = {
     ch_sc_again: 'New card', ch_sc_tx: 'Scratch Card: weekend savings', ch_sc_label: 'Weekend fun',
     ch_sc_h_saved: 'Weekend fun: {0} to spend, {1} saved', ch_sc_h_kept: 'Weekend fun: {0} to spend, {1} not saved yet',
     ch_sc_h_all: 'Weekend fun: the full {0} to spend', ch_sc_h_undone: 'Weekend fun, taken back',
+    ch_cat_boost: 'Savings boost',
+    ch_sp_title: 'Spin to Win',
+    ch_sp_desc: 'Up for a little saving today? Set the most you could put aside, then spin. Wherever the wheel stops is what goes to a goal or debt. Land on 0 and you are off the hook.',
+    ch_sp_step_max: 'The most you could put aside today', ch_sp_step_where: 'What you win goes to',
+    ch_sp_rule: 'Six amounts that add up to {0}. Spin, and whatever it lands on goes to {1}.',
+    ch_sp_spin: 'Spin the wheel', ch_sp_spinning: 'Spinning…', ch_sp_hub: 'Spin', ch_sp_need: 'Slide to the most you could put aside first.',
+    ch_sp_aria: 'A wheel of six amounts: {0}', ch_sp_aria_landed: 'The wheel stopped on {0}',
+    ch_sp_res_win: 'It landed on {0}!', ch_sp_res_top: 'Top prize! {0}', ch_sp_res_win_line: 'Put {0} into {1}. Every little bit adds up.',
+    ch_sp_res_zero: 'It landed on 0', ch_sp_res_zero_line: 'You are off the hook this time. Spin again, or save a little anyway.',
+    ch_sp_again: 'Spin again', ch_sp_tx: 'Spin to Win', ch_sp_tx_bonus: 'Spin to Win: saved anyway',
+    ch_sp_h_saved: 'Spun and saved {0}', ch_sp_h_bonus: 'Landed on 0, saved {0} anyway', ch_sp_h_kept: 'Spun {0}, not saved yet',
+    ch_sp_h_zero: 'Landed on 0', ch_sp_h_undone: 'Spin to Win, taken back',
     ch_p_takeout: 'Takeout', ch_p_coffee: 'Coffee', ch_p_treat: 'A treat', ch_p_shopping: 'Shopping', ch_p_night: 'Night out', ch_p_other: 'Something else',
     ch_other_ph: 'What is it?',
     ch_kind_goal: 'Goal', ch_kind_debt: 'Debt', ch_of: '{0} of {1}', ch_saved_sub: '{0} saved', ch_owed_sub: '{0} owed',
