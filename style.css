@@ -9418,7 +9418,7 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
 .cal-card-sum > div { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: var(--ui-tile-radius, 14px); background: var(--ui-tile); }
 .cal-card-sum em { font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
 .cal-card-sum b { font-family: var(--font-display); font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-primary); }
-.cal-card-list { list-style: none; margin: 6px 0 0; padding: 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; }
+.cal-card-list { list-style: none; margin: 6px 0 0; padding: 0; flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
 .cal-card-ev { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 10px; padding: 11px 2px; border-top: 1px solid var(--border-faint); }
 .cal-card-ev:first-child { border-top: 0; }
 .cal-card-ev .cal-dot { width: 9px; height: 9px; }

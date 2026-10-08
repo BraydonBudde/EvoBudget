@@ -135,6 +135,9 @@ function calDeckToday(deck) {
   calDeckGo(deck, now.getDate());
 }
 
+// Where a trackpad scroll has got to, until it settles on a day.
+const calDeckWheel = { pos: null, from: 0, idle: 0 };
+
 function calDeckWire(root) {
   const deck = root.querySelector('#calDeck');
   if (!deck) return;
@@ -150,7 +153,7 @@ function calDeckWire(root) {
     if (e.button !== 0) return;
     const list = e.target.closest && e.target.closest('.cal-card-list');
     if (list && e.target === list && e.offsetX > list.clientWidth) return;
-    start = { x: e.clientX, y: e.clientY, t: Date.now(), size: (stage.querySelector('.cal-card').offsetWidth * .64) || 300, moved: false, id: e.pointerId, touch: e.pointerType !== 'mouse' };
+    start = { x: e.clientX, y: e.clientY, t: Date.now(), size: (stage.querySelector('.cal-card').offsetWidth * .64) || 300, moved: false, id: e.pointerId, trail: [] };
   });
   stage.addEventListener('pointermove', e => {
     if (!start || e.pointerId !== start.id) return;
@@ -162,18 +165,20 @@ function calDeckWire(root) {
     }
     e.preventDefault();
     const n = deck.querySelectorAll('.cal-card').length;
-    let at = calDeckFocus - d / start.size;
-    if (start.touch) at = Math.max(calDeckFocus - 1.15, Math.min(calDeckFocus + 1.15, at));
-    calDeckLayout(deck, Math.max(.6, Math.min(n + .4, at)), true);
+    start.trail.push({ x: e.clientX, t: performance.now() });
+    if (start.trail.length > 12) start.trail.shift();
+    calDeckLayout(deck, Math.max(.6, Math.min(n + .4, calDeckFocus - d / start.size)), true);
   });
   const end = e => {
     if (!start || e.pointerId !== start.id) return;
     const s = start; start = null;
     if (!s.moved) return;
     const d = e.clientX - s.x, v = d / Math.max(1, Date.now() - s.t);
-    let steps = -Math.round(d / s.size);
+    // How fast the finger was going as it let go (over its last 100ms).
+    const now = performance.now(), recent = s.trail.filter(p => now - p.t < 100);
+    const fling = recent.length ? (e.clientX - recent[0].x) / Math.max(16, now - recent[0].t) : 0;
+    let steps = -Math.round((d + fling * 160) / s.size);
     if (!steps && (Math.abs(d) > 40 || Math.abs(v) > .45)) steps = d < 0 ? 1 : -1;
-    if (s.touch) steps = Math.max(-1, Math.min(1, steps));
     deck.classList.remove('is-dragging');
     calDeckGo(deck, calDeckFocus + steps);
     // The release of a drag is not a tap on whatever it ended over.
@@ -183,18 +188,28 @@ function calDeckWire(root) {
   };
   stage.addEventListener('pointerup', end);
   stage.addEventListener('pointercancel', end);
-  let wheelUsed = false, wheelSum = 0, wheelIdle = 0;
   stage.addEventListener('wheel', e => {
-    const d = e.deltaX;
-    if (Math.abs(e.deltaY) >= Math.abs(d)) return;
+    const w = calDeckWheel, sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+    if (w.pos === null && !sideways) return;   // up and down is the card's own list
     e.preventDefault();
-    clearTimeout(wheelIdle);
-    wheelIdle = setTimeout(() => { wheelUsed = false; wheelSum = 0; }, 240);
-    if (wheelUsed) return;
-    wheelSum += d;
-    if (Math.abs(wheelSum) < 30) return;
-    wheelUsed = true;
-    calDeckGo(deck, calDeckFocus + (wheelSum > 0 ? 1 : -1));
+    const n = deck.querySelectorAll('.cal-card').length;
+    if (w.pos === null) { w.pos = calDeckFocus; w.from = calDeckFocus; }
+    if (e.deltaX) {   // once it is moving, all of the sideways part counts
+      const size = (stage.querySelector('.cal-card').offsetWidth * .64) || 300;
+      w.pos = Math.max(.4, Math.min(n + .6, w.pos + e.deltaX * (e.deltaMode === 1 ? 16 : 1) / size));
+      // Past either end the days give a little, then the next month waits.
+      const shown = w.pos < 1 ? 1 - (1 - w.pos) * .5 : w.pos > n ? n + (w.pos - n) * .5 : w.pos;
+      calDeckLayout(deck, shown, true);
+    }
+    clearTimeout(w.idle);
+    w.idle = setTimeout(() => {
+      const at = w.pos, from = w.from;
+      w.pos = null;
+      if (!deck.isConnected) return;
+      let day = Math.round(at);
+      if (day === from && Math.abs(at - from) > .2) day += at > from ? 1 : -1;
+      calDeckGo(deck, day);
+    }, 160);
   }, { passive: false });
   // Tapping a card beside the one in focus brings it forward.
   stage.addEventListener('click', e => {
