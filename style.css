@@ -9376,3 +9376,86 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
 .ez-zzz { right: -16px; top: -26px; }
 .ez-avatar--xl .ez-zzz { right: -40px; top: -66px; }
 .penny-msg-avatar .ez-zzz { display: none; }
+
+/* ═══ Calendar: one day at a time (cal-deck.js) ═══════════════════════
+   A gallery on a computer (the day in focus faces you, its neighbours turn
+   away) and a stack on a phone (the next days peek out underneath). The
+   cards are panels, so each appearance draws them its own way. */
+.cal-deck { position: relative; margin-top: 18px; outline: none; user-select: none; -webkit-user-select: none; }
+.cal-deck:focus-visible .cal-card.is-focus { box-shadow: 0 0 0 3px rgba(var(--grad-indigo-rgb), .35); }
+.cal-deck-stage { --cw: min(440px, 58%); position: relative; height: 480px; perspective: 1400px; perspective-origin: 50% 40%; touch-action: pan-y; }
+.cal-card {
+  position: absolute; top: 0; left: 50%; width: var(--cw); margin: 0 0 0 calc(var(--cw) / -2); height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; padding: 22px 22px 16px; overflow: hidden;
+  transform-origin: 50% 50%; backface-visibility: hidden; will-change: transform, opacity;
+  transition: transform .5s cubic-bezier(.2, .8, .2, 1), opacity .4s ease;
+}
+.cal-card:not(.is-focus) { cursor: pointer; }
+.cal-deck.is-dragging .cal-card { transition: none; }
+.cal-deck-nav {
+  position: absolute; top: 240px; z-index: 200; width: 44px; height: 44px; margin-top: -22px; border-radius: 50%;
+  display: grid; place-items: center; border: 1px solid var(--border-faint); background: var(--popup-bg); color: var(--text-primary);
+  box-shadow: 0 10px 24px -12px rgba(20, 10, 50, .35); cursor: pointer; transition: transform .15s, border-color .15s;
+}
+.cal-deck-nav svg { width: 20px; height: 20px; }
+.cal-deck-nav:hover { border-color: var(--grad-indigo); transform: scale(1.06); }
+.cal-deck-prev { left: 4px; }
+.cal-deck-next { right: 4px; }
+.cal-deck-count { margin: 12px 0 0; text-align: center; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+
+/* The phone: a stack you swipe up and down. */
+.cal-deck.is-vertical .cal-deck-stage { --cw: 100%; height: clamp(420px, calc(100dvh - 290px), 580px); perspective: none; touch-action: none; }
+.cal-deck.is-vertical .cal-card { height: calc(100% - 34px); transform-origin: 50% 100%; padding: 20px 18px 14px; }
+.cal-deck.is-vertical .cal-deck-nav { display: none; }
+
+/* The card. */
+.cal-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.cal-card-date { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.cal-card-num { font-family: var(--font-display); font-size: 46px; font-weight: 800; line-height: 1; letter-spacing: -.03em; color: var(--text-primary); }
+.cal-card-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cal-card-txt b { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.cal-card-txt em { font-style: normal; font-size: 12.5px; color: var(--text-secondary); }
+.cal-card-rel { flex: 0 0 auto; padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--grad-indigo); background: rgba(var(--grad-indigo-rgb), .12); }
+.cal-card.is-today .cal-card-rel { color: #fff; background: var(--grad-indigo); }
+.cal-card.is-past .cal-card-num { opacity: .6; }
+.cal-card-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 18px 0 6px; }
+.cal-card-sum > div { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: var(--ui-tile-radius, 14px); background: var(--ui-tile); }
+.cal-card-sum em { font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
+.cal-card-sum b { font-family: var(--font-display); font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+.cal-card-list { list-style: none; margin: 6px 0 0; padding: 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; }
+.cal-card-ev { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 10px; padding: 11px 2px; border-top: 1px solid var(--border-faint); }
+.cal-card-ev:first-child { border-top: 0; }
+.cal-card-ev .cal-dot { width: 9px; height: 9px; }
+.cal-card-ev-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.cal-card-ev-txt b { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-card-ev-txt em { font-style: normal; font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-card-amt { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+.cal-card-ev.is-settled .cal-card-ev-txt, .cal-card-ev.is-settled .cal-card-amt { opacity: .6; }
+.cal-card-pay {
+  appearance: none; border: 0; padding: 6px 13px; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 12.5px; font-weight: 700; color: var(--grad-indigo); background: rgba(var(--grad-indigo-rgb), .12);
+  transition: background .15s, color .15s;
+}
+.cal-card-pay:hover, .cal-card-pay:focus-visible { background: var(--grad-indigo); color: #fff; outline: none; }
+.cal-card-done { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--income); }
+.cal-card-done::before { content: ""; width: 12px; height: 12px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat; }
+.cal-card-empty { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-faint); text-align: center; }
+.cal-card-empty .app-ico { width: 30px; height: 30px; opacity: .7; }
+.cal-card-empty p { margin: 0; font-size: 13.5px; color: var(--text-secondary); }
+.cal-card-foot { display: flex; justify-content: flex-end; padding-top: 10px; }
+.cal-card-add {
+  appearance: none; width: 42px; height: 42px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
+  background: var(--ui-btn); color: var(--ui-btn-ink, #fff); box-shadow: 0 10px 20px -10px rgba(var(--grad-indigo-rgb), .8); transition: transform .15s;
+}
+.cal-card-add svg { width: 20px; height: 20px; }
+.cal-card-add:hover { transform: scale(1.06); }
+[data-theme="peachy"] .cal-card-sum > div { background: var(--neu-bg); box-shadow: var(--neu-inset-sm); }
+[data-theme="vintage-ledger"] .cal-card-rel, [data-theme="vintage-ledger"] .cal-card-pay { border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { .cal-card { transition: opacity .2s; } }
+/* Stacked and turned, the day cards must never show the card behind
+   them, so the glass appearances give them a solid surface. */
+[data-theme="dark"] .tool-shell .app-scroll .cal-card { background: linear-gradient(170deg, #2c2152 0%, #231947 100%) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border: 1px solid rgba(255, 255, 255, .12); }
+[data-theme="frosty"] .tool-shell .app-scroll .cal-card { background: linear-gradient(170deg, #ffffff 0%, #f8f6ff 100%) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.cal-deck.is-vertical .cal-card:not(.is-focus) { box-shadow: 0 -6px 20px -14px rgba(20, 10, 50, .4); }
+.cal-deck.is-vertical .cal-card:not(.is-focus) .cal-card-foot { visibility: hidden; }
+.cal-deck.is-vertical .cal-card:not(.is-focus) { filter: brightness(.95); }

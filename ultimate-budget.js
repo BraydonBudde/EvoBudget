@@ -2029,7 +2029,7 @@ function swipeOwnsGesture(el, dir) {
 // form, and excluding them left the gesture working only in the gaps, which
 // is the same as it not working. A drag of this length never becomes a tap,
 // so nothing is triggered on the way past.
-const SWIPE_KEEP = 'input[type="range"], [contenteditable], .budget-tabs, .nav-rail, .nw-mg-row, .nw-note, [draggable="true"], dialog, .modal-card, .onb-card, .tutorial-card';
+const SWIPE_KEEP = '.cal-deck, input[type="range"], [contenteditable], .budget-tabs, .nav-rail, .nw-mg-row, .nw-note, [draggable="true"], dialog, .modal-card, .onb-card, .tutorial-card';
 
 // A field being typed in keeps its drag, so moving the caret still works.
 function swipeInLiveField(el) {
@@ -4510,8 +4510,11 @@ const VIEW_DEFAULTS = { notifications: 'list' };
 function viewMode(sec){ const v=(state.settings.viewModes||{})[sec]; return v ? (v==='list'?'list':'cards') : (VIEW_DEFAULTS[sec]||'cards'); }
 function viewToggleBtn(sec){
   const toList=viewMode(sec)!=='list';
-  const label=toList?t('view_as_list'):t('view_as_cards');
-  return `<button class="help-icon-btn view-toggle" type="button" data-view-toggle="${sec}" title="${esc(label)}" aria-label="${esc(label)}" aria-pressed="${!toList}">${appIconSvg(toList?'list':'dashboard')}</button>`;
+  // The calendar's second view is its day cards rather than a list.
+  const cal=sec==='calendar';
+  const label=cal?(toList?t('cal_view_cards'):t('cal_view_grid')):(toList?t('view_as_list'):t('view_as_cards'));
+  const ico=cal?(toList?'daycards':'calendar'):(toList?'list':'dashboard');
+  return `<button class="help-icon-btn view-toggle" type="button" data-view-toggle="${sec}" title="${esc(label)}" aria-label="${esc(label)}" aria-pressed="${!toList}">${appIconSvg(ico)}</button>`;
 }
 function wireViewToggle(scope, sec, rerender){
   scope.querySelector(`[data-view-toggle="${sec}"]`)?.addEventListener('click',()=>{
@@ -6219,8 +6222,11 @@ function renderCalendar(){
   const calList=viewMode('calendar')==='list';
   el.classList.toggle('cal-as-list',calList);
   if(selPanel&&!calList) el.insertAdjacentHTML('beforeend', selPanel);
-  el.insertAdjacentHTML('beforeend', monthList);
+  // The second view is the day cards (cal-deck.js), one day at a time.
+  if(calList&&typeof calDeckHtml==='function') el.insertAdjacentHTML('beforeend', calDeckHtml(evs,y,m,daysInMo,loc));
+  else el.insertAdjacentHTML('beforeend', monthList);
   wireViewToggle(el,'calendar',renderCalendar);
+  if(calList&&typeof calDeckWire==='function') calDeckWire(el);
 
   el.querySelectorAll('.cal-cell[data-day]').forEach(cell=>{
     cell.addEventListener('click',()=>{
