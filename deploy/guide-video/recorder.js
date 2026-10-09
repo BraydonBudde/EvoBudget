@@ -10,7 +10,7 @@ const W = 390, H = 844, DPR = 2;
 // The page runs this many times slower while it is filmed (its animations
 // through the DevTools clock, the film's own pauses by hand), and the
 // frames are played back at full speed, so a heavy page still moves smoothly.
-const SLOW = process.env.DM_FAST ? 1 : 3.5;   // DM_FAST=1: a quick dry run at normal speed, nothing recorded
+const SLOW = process.env.DM_FAST ? 1 : (Number(process.env.DM_SLOW) || 3.5);   // DM_FAST=1: a quick dry run at normal speed, nothing recorded
 // Any ffmpeg built with libx264. Set FFMPEG to its path, or have it on PATH.
 // (pip install imageio-ffmpeg bundles one; see README.md.)
 const FFMPEG = process.env.FFMPEG || 'ffmpeg';
@@ -53,9 +53,25 @@ const OVERLAY_CSS = `
 html { scrollbar-width: none; } ::-webkit-scrollbar { display: none; }
 `;
 
-async function launch(seed, theme) {
-  const browser = await chromium.launch();
-  const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: DPR, hasTouch: true, isMobile: true });
+// opts.desktop: a 1280x800 window at 1.5x, with a mouse pointer that clicks.
+// On a desktop the pointer is an arrow whose tip is the point, and a click squeezes it.
+const DESKTOP_CSS = `
+.dm-finger { width: 30px; height: 40px; margin: -3px 0 0 -5px; border: 0; border-radius: 0; box-shadow: none;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 40'><path d='M4 3 L4 31 L11 24.5 L16 36 L21 33.8 L16 22.6 L25.5 22.6 Z' fill='white' stroke='black' stroke-width='2' stroke-linejoin='round'/></svg>") no-repeat 0 0 / contain;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,.45)); }
+.dm-finger.is-press { scale: .88; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 40'><path d='M4 3 L4 31 L11 24.5 L16 36 L21 33.8 L16 22.6 L25.5 22.6 Z' fill='white' stroke='black' stroke-width='2' stroke-linejoin='round'/></svg>") no-repeat 0 0 / contain; }
+.dm-ripple { width: 40px; height: 40px; margin: -20px 0 0 -20px; border-color: rgba(196, 181, 253, .95); }
+`;
+
+// The browser's own scale factor (not only the page's), and the GPU: without
+// them the screencast arrives at CSS-pixel size, not the device pixels asked for.
+const hiDpiArgs = dsf => [`--force-device-scale-factor=${dsf}`, '--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-gpu-rasterization'];
+
+async function launch(seed, theme, opts = {}) {
+  const browser = await chromium.launch({ args: hiDpiArgs(opts.desktop ? 1.5 : DPR) });
+  const ctx = await browser.newContext(opts.desktop
+    ? { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1.5 }
+    : { viewport: { width: W, height: H }, deviceScaleFactor: DPR, hasTouch: true, isMobile: true });
   await ctx.addInitScript(([sd, th]) => {
     if (sessionStorage.getItem('dm')) return; sessionStorage.setItem('dm', '1');
     localStorage.setItem('evobudget_ubp_mode', 'full'); localStorage.setItem('evobudget_ubp_unlocked', '1'); localStorage.setItem('evobudget_ubp_key', 'DEMOKEY01');
@@ -68,9 +84,26 @@ async function launch(seed, theme) {
   await page.route(/google|gstatic|googleapis/, r => r.abort());
   await page.goto('http://127.0.0.1:5500/ultimate-budget');
   await page.waitForTimeout(2500);
-  await page.addStyleTag({ content: OVERLAY_CSS });
-  await page.evaluate(SLOW => {
+  await prepare(page, opts);
+  return { browser, ctx, page, errs };
+}
+
+// The overlays and the slowed clock, on a page that is already open.
+async function prepare(page, opts = {}) {
+  await page.addStyleTag({ content: OVERLAY_CSS + (opts.desktop ? DESKTOP_CSS : '') });
+  page.__dmDesktop = !!opts.desktop;
+  await page.evaluate(([SLOW, slowTimers]) => {
     window.__dmSlow = SLOW;
+    // The recorder's own delays are written in film time; with the page's
+    // timers slowed (opts.slowTimers) they are slowed already.
+    window.__dmT = slowTimers ? 1 : SLOW;
+    // opts.slowTimers: the app's own timers run at the film's pace too, so a
+    // message that shows for three seconds shows for three seconds in the film.
+    if (slowTimers) {
+      const st = window.setTimeout.bind(window), si = window.setInterval.bind(window);
+      window.setTimeout = (fn, ms, ...a) => st(fn, (ms || 0) * SLOW, ...a);
+      window.setInterval = (fn, ms, ...a) => si(fn, (ms || 0) * SLOW, ...a);
+    }
     // The page's clock, and the time its animation frames are handed, run at
     // the film's pace together. (The DevTools clock slows frame times but not
     // performance.now, and a count-up that mixes the two shows nonsense.)
@@ -92,11 +125,10 @@ async function launch(seed, theme) {
       const finish = () => { if (over) return; over = true; box.scrollTop = to; done(); };
       const step = () => { if (over) return; const k = Math.min(1, (window.__dmRealNow() - t0) / len), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; box.scrollTop = from + (to - from) * e; k < 1 ? setTimeout(step, 16) : finish(); };
       if (Math.abs(to - from) < 2) return finish();
-      step(); setTimeout(finish, len + 400);
+      step(); setTimeout(finish, (len + 400) / (SLOW / window.__dmT));
     });
     for (const c of ['dm-finger', 'dm-cap']) { const d = document.createElement('div'); d.className = c; document.body.appendChild(d); }
-  }, SLOW);
-  return { browser, ctx, page, errs };
+  }, [SLOW, !!opts.slowTimers]);
 }
 
 // Everything the film does goes through here, so taps look like taps.
@@ -133,10 +165,10 @@ function director(page) {
       document.querySelector('.dm-finger').classList.add('is-press');
       const r = document.createElement('div'); r.className = 'dm-ripple';
       r.style.setProperty('--dm-at', `translate(${x}px, ${y}px)`); r.style.left = '0'; r.style.top = '0';
-      document.body.appendChild(r); setTimeout(() => r.remove(), 700 * window.__dmSlow);
+      document.body.appendChild(r); setTimeout(() => r.remove(), 700 * window.__dmT);
     }, [c.x, c.y]);
     await wait(110);
-    await loc.tap({ force: true });
+    if (page.__dmDesktop) await loc.click({ force: true }); else await loc.tap({ force: true });
     await page.evaluate(() => document.querySelector('.dm-finger').classList.remove('is-press'));
     await wait(hold);
   };
@@ -151,7 +183,7 @@ function director(page) {
         c.style.bottom = where === 'top' ? 'auto' : '24px';
         c.style.setProperty('--dm-from', where === 'top' ? '-10px' : '10px');
         c.classList.add('is-on');
-      }, c.textContent ? 220 * window.__dmSlow : 0);
+      }, c.textContent ? 220 * window.__dmT : 0);
     }, [n, text, where]);
     await wait(380);
   };
@@ -163,15 +195,15 @@ function director(page) {
     await wait(ms);
   };
   const cardOut = async () => {
-    await page.evaluate(() => { const c = document.querySelector('.dm-card'); c.classList.add('is-off'); setTimeout(() => c.remove(), 600 * window.__dmSlow); });
+    await page.evaluate(() => { const c = document.querySelector('.dm-card'); c.classList.add('is-off'); setTimeout(() => c.remove(), 600 * window.__dmT); });
     await wait(560);
   };
   const typeText = async (loc, text, delay = 110) => { for (const ch of text) { await loc.press(ch === ' ' ? 'Space' : ch); await wait(delay); } };
   const scrollTo = async (loc, block = 'start', ms = 900) => { log('scroll', String(loc)); await loc.first().evaluate((el, [block, ms]) => window.__dmScroll(el, block, ms), [block, ms]); await wait(60); };
   // Types an amount on the app's own keypad, then Done.
-  const keypad = async (digits, { done = true } = {}) => {
-    for (const k of String(digits)) await tap(page.locator(`#kpSheet [data-kp="${k}"]`), { move: 260, hold: 140, reveal: false });
-    if (done) await tap(page.locator('#kpSheet [data-kp="done"]'), { move: 300, hold: 400, reveal: false });
+  const keypad = async (digits, { done = true, move = 260, hold = 140 } = {}) => {
+    for (const k of String(digits)) await tap(page.locator(`#kpSheet [data-kp="${k}"]`), { move, hold, reveal: false });
+    if (done) await tap(page.locator('#kpSheet [data-kp="done"]'), { move: move + 40, hold: hold * 2.5, reveal: false });
   };
   // Picks a day in the app's date picker, paging months forward to reach it.
   const datePick = async iso => {
@@ -255,4 +287,4 @@ function poster(mp4, at, out, width = 360) {
   execFileSync(FFMPEG, ['-y', '-hide_banner', '-loglevel', 'error', '-ss', String(at), '-i', mp4, '-frames:v', '1', '-vf', `scale=${width}:-2:flags=lanczos`, '-q:v', '4', out]);
 }
 
-module.exports = { launch, director, record, poster, W, H, FFMPEG };
+module.exports = { launch, prepare, director, record, poster, hiDpiArgs, W, H, FFMPEG, SLOW };
