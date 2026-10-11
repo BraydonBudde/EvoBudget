@@ -513,7 +513,7 @@ function setupStepHtml() {
     <p class="onb-sub">${t('setup_bills_sub')}</p>
     <div class="setup-pills">${SETUP_BILLS.filter(n => !used.has(n)).map(n => `<button class="setup-pill" type="button" data-addbill="${esc(n)}"${full ? ' disabled' : ''}>+ ${esc(n)}</button>`).join('')}
       <button class="setup-pill setup-pill--other" type="button" data-addbill=""${full ? ' disabled' : ''}>+ ${t('setup_other')}</button></div>
-    ${room !== Infinity ? `<p class="setup-note">${room > 0 ? tf('setup_bills_trial', room) : t('setup_bills_trial_none')}</p>` : ''}
+    ${room !== Infinity ? `<p class="setup-note">${room > 1 ? tf('setup_bills_trial', room) : room === 1 ? t('setup_bills_trial_one') : t('setup_bills_trial_none')}</p>` : ''}
     ${S.bills.length ? `<div class="setup-rows">
       <div class="setup-row setup-row--head"><span>${t('setup_col_name')}</span><span>${t('setup_col_amount')}</span><span>${t('setup_col_day')}</span><span></span></div>
       ${S.bills.map((b, i) => `<div class="setup-row" data-bill="${i}">
@@ -813,7 +813,8 @@ const SIMPLE_WORDS = {
   setup_other: 'Something else', setup_col_name: 'Bill', setup_col_amount: 'Amount', setup_col_day: 'Due day',
   setup_bill_ph: 'Name', setup_day_unsure: 'Not sure',
   setup_bills_total: 'Bills: {0} a month', setup_bills_empty: 'Tap a bill above to add it.', setup_no_bills: 'I have no bills',
-  setup_bills_trial: 'Your free trial includes {0} bill. Unlock the full planner to add the rest.',
+  setup_bills_trial: 'Your free trial includes {0} bills. Unlock the full planner to add the rest.',
+  setup_bills_trial_one: 'Your free trial has room for 1 more bill. Unlock the full planner to add the rest.',
   setup_bills_trial_none: 'Your free trial has room for no more bills. Unlock the full planner to add them.',
   setup_plan_title: 'Set your monthly budgets',
   setup_plan_sub: 'A rough monthly total of what you expect to spend for each category. Change it anytime on the Budget page.',

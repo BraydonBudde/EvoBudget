@@ -202,7 +202,7 @@ function syncSymbol() { SYM=state.settings.symbol; }
 //  Entering via "TRY FOR FREE" caps usage; entering via "Open" is full.
 // ══════════════════════════════════════════════════════════════════════
 const UBP_MODE_KEY = 'evobudget_ubp_mode';                 // 'trial' | 'full'
-const TRIAL_LIMITS = { transactions:3, income:3, expenses:3, bills:3, savings:3, subscriptions:1, sinkingFunds:1, debts:1 };
+const TRIAL_LIMITS = { transactions:10, income:5, expenses:5, bills:5, savings:5, subscriptions:3, sinkingFunds:3, debts:3 };
 
 // ▼▼ EDIT THESE: drop in your real checkout links + prices ▼▼
 // TEST MODE links (ezzohub.lemonsqueezy.com store is not yet activated) -
@@ -1296,9 +1296,9 @@ const TRANSLATIONS = {
     guide_settings_tip:'Set up Currency, Budget Period, and Data & Sync first, before anything else - they are the foundation everything else in the app is built on.',guide_settings_usecase_h:'See it in action',guide_settings_usecase_p:'<p>When <strong>Ben</strong> switches to freelance work, his income no longer lines up with the calendar month. He opens Settings and changes his Budget Period to a custom date range that matches his actual pay cycle.</p><p>He picks USD as his currency, and turns off the Automation master switch temporarily while he re-plans his budget from scratch.</p>',
     upg_chip_tx:'{0} / {0} free transactions used',
     upg_chip_recurring:'{0} / {0} free automatic transactions used',
-    upg_chip_subs:'{0} / {0} free subscription used',
-    upg_chip_sinking:'{0} / {0} free savings goal used',
-    upg_chip_debts:'{0} / {0} free debt used',
+    upg_chip_subs:'{0} / {0} free bills and subscriptions used',
+    upg_chip_sinking:'{0} / {0} free savings goals used',
+    upg_chip_debts:'{0} / {0} free debts used',
     upg_chip_cat:'{0} / {0} free {1} categories used',
     upg_chip_limit:'Free trial limit reached',
     upg_aria_label:'Upgrade to unlock the full planner',
