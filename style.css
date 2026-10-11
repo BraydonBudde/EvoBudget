@@ -2094,6 +2094,14 @@ input[type="number"].expected-input {
   box-shadow: 0 4px 12px var(--brand-glow) !important;
 }
 .ubp-logo { display: block; width: 78%; height: 78%; object-fit: contain; pointer-events: none; user-select: none; }
+/* In the sidebar the mark leads at full size. */
+.nav-rail-brand .ubp-icon { width: 64px; height: 64px; flex: 0 0 64px; border-radius: 17px; box-shadow: 0 8px 20px var(--brand-glow) !important; }
+.nav-rail-brand .wordmark:has(.ubp-icon) { gap: 14px; }
+/* The tablet's icon-only sidebar is narrower: the mark fills its column. */
+@media (max-width: 1150px) {
+  .nav-rail-brand .wordmark:has(.ubp-icon) { gap: 0; }
+  .nav-rail-brand .ubp-icon { width: 52px; height: 52px; flex-basis: 52px; border-radius: 15px; }
+}
 [data-theme="dark"] .ubp-icon { --brand-tile: linear-gradient(160deg, #b9a3fc, #8b5cf6); --brand-glow: rgba(139, 92, 246, .45); }
 [data-theme="peachy"] .ubp-icon { --brand-tile: linear-gradient(160deg, #f6c08a, #e4887a); --brand-glow: rgba(228, 136, 122, .45); }
 [data-theme="vintage-ledger"] .ubp-icon { --brand-tile: linear-gradient(160deg, #5a4128, #3b2a1a); --brand-glow: rgba(59, 42, 26, .35); }
