@@ -2085,11 +2085,22 @@ input[type="number"].expected-input {
    ULTIMATE BUDGET PLANNER - specific styles
 ═══════════════════════════════════════════════════════════════ */
 
-/* UBP lightning bolt wordmark icon */
+/* The EzzoHub mark: always white, on a tile in the theme's own button
+   colour, so it changes with the theme. */
 .ubp-icon {
-  background: linear-gradient(135deg, #f59e0b, #f97316) !important;
-  box-shadow: 0 4px 12px rgba(245,158,11,.35) !important;
+  --brand-tile: linear-gradient(160deg, #3a3655, #1c1a2b);
+  --brand-glow: rgba(28, 26, 43, .3);
+  background: var(--brand-tile) !important;
+  box-shadow: 0 4px 12px var(--brand-glow) !important;
 }
+.ubp-logo { display: block; width: 78%; height: 78%; object-fit: contain; pointer-events: none; user-select: none; }
+[data-theme="dark"] .ubp-icon { --brand-tile: linear-gradient(160deg, #b9a3fc, #8b5cf6); --brand-glow: rgba(139, 92, 246, .45); }
+[data-theme="peachy"] .ubp-icon { --brand-tile: linear-gradient(160deg, #f6c08a, #e4887a); --brand-glow: rgba(228, 136, 122, .45); }
+[data-theme="vintage-ledger"] .ubp-icon { --brand-tile: linear-gradient(160deg, #5a4128, #3b2a1a); --brand-glow: rgba(59, 42, 26, .35); }
+[data-theme="jolly"] .ubp-icon { --brand-tile: linear-gradient(160deg, #b9adf7 0%, #8a78ea 58%, #7462df 100%); --brand-glow: rgba(110, 84, 220, .45); }
+[data-theme="frosty"] .ubp-icon { --brand-tile: linear-gradient(160deg, #b8a5fb 0%, #8b6cf6 58%, #7651f0 100%); --brand-glow: rgba(124, 92, 240, .45); }
+[data-theme="synthwave"] .ubp-icon { --brand-tile: linear-gradient(135deg, #ff2e97, #b829ea); --brand-glow: rgba(255, 46, 151, .4); }
+[data-theme="terminal"] .ubp-icon { --brand-tile: linear-gradient(160deg, #22c55e, #15803d); --brand-glow: rgba(34, 197, 94, .35); }
 
 /* ── Pro Dashboard ─────────────────────────────────────────── */
 .pro-stats-row {
