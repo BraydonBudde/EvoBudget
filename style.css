@@ -9792,3 +9792,29 @@ body.kp-open .modal-overlay { padding-bottom: 250px; }
 .qa-amount { container-type: inline-size; padding: 0 64px; box-sizing: border-box; }
 .qa-num { font-size: min(3rem, calc((100cqi - 18px) / (var(--len, 1) * .62))); }
 @media (max-width: 700px) { .qa-num { font-size: min(2.5rem, calc((100cqi - 18px) / (var(--len, 1) * .62))); } }
+
+/* ══ Keeping the budget safe ════════════════════════════════════════
+   The dashboard's sync reminder wears Google's mark; the end of setup
+   offers the same in a quiet row; the sidebar card says "Only on this
+   device" beside a small amber dot until sync is on. */
+.sync-ask-ico { background: #fff; box-shadow: 0 0 0 1px var(--border-faint); }
+.sync-ask-ico svg { width: 20px; height: 20px; }
+.nl-hero ~ .sync-ask { margin-top: 16px; }
+.setup-sync {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px;
+  margin: 16px 0 4px; padding: 12px 14px; border-radius: var(--radius-md); text-align: left;
+  background: color-mix(in srgb, var(--text-primary) 4%, transparent); border: 1px solid var(--border-faint);
+}
+.setup-sync-ico { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: #fff; box-shadow: 0 0 0 1px var(--border-faint); }
+.setup-sync-ico svg { width: 20px; height: 20px; }
+.setup-sync-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.setup-sync-txt b { font-size: 14px; color: var(--text-primary); }
+.setup-sync-txt em { font-style: normal; font-size: 12.5px; line-height: 1.4; color: var(--text-secondary); }
+.setup-sync .btn { white-space: nowrap; }
+.setup-sync.is-on { border-color: rgba(16, 185, 129, .35); background: rgba(16, 185, 129, .08); }
+@media (max-width: 520px) {
+  .setup-sync { grid-template-columns: auto minmax(0, 1fr); }
+  .setup-sync .btn { grid-column: 1 / -1; width: 100%; justify-content: center; }
+}
+.nra-sub--local { display: inline-flex; align-items: center; gap: 6px; }
+.nra-sub--local::before { content: ''; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; }

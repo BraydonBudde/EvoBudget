@@ -266,9 +266,8 @@ function fwItems() {
     { id: 'spend', done: tx.some(x => x.type === 'expense' && !x.setup), btn: 'fw_spend_btn' }
   ];
   if ((state.bills || []).length) items.push({ id: 'bill', done: tx.some(x => (x.type === 'bill' || x.type === 'debt') && !x.setup), btn: 'fw_bill_btn' });
-  let synced = false;
-  try { synced = syncGetMode('ubp') === 'google'; } catch (e) {}
-  items.push({ id: 'safe', done: synced || !!state.settings.exportedOn, btn: 'fw_safe_btn' });
+  // Sync is part of the full planner, so the demo's list leaves it out.
+  if (syncOffered()) items.push({ id: 'safe', done: syncIsOn() || !!state.settings.exportedOn, btn: 'fw_safe_btn' });
   items.push({ id: 'back', done: !!state.settings.firstSeen && smToday() > state.settings.firstSeen });
   return items;
 }
@@ -293,13 +292,65 @@ function fwHtml() {
     </li>`).join('')}</ul>
   </div></section>`;
 }
-function fwGo(id) {
+function fwGo(id, btn) {
   if (id === 'setup') setupOpen();
   else if (id === 'spend') openQuickAddTx();
   else if (id === 'bill') switchTab('bills');
-  else if (id === 'safe') {
-    switchTab('settings');
-    requestAnimationFrame(() => document.querySelector('#bview-settings [data-sync-mode]')?.closest('.stg-card')?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+  else if (id === 'safe') syncTurnOn('first_week', btn);
+}
+
+// ── Keeping the budget safe ──────────────────────────────────────────────
+// Saved only in this browser, a budget is one "clear browsing data" away
+// from gone. Sync is offered where it fits: at the end of setup, in the
+// first-week list, and after that on the dashboard now and then, with what
+// there is to lose. "Not now" waits 3 days, then a week, two, then a month,
+// so it is never a nag and never quite forgotten. Sync belongs to the full
+// planner: the demo is never asked.
+const SYNC_ASK_WAIT = [3, 7, 14, 30];
+function syncIsOn() { try { return syncGetMode('ubp') === 'google'; } catch (e) { return false; } }
+function syncOffered() { return typeof syncSwitchToGoogle === 'function' && !(typeof isTrial === 'function' && isTrial()); }
+function syncAtStake() { return (state.transactions || []).filter(x => !x.setup).length; }
+function syncAskNow() {
+  if (syncIsOn() || !syncOffered()) return false;
+  const s = state.settings, today = smToday();
+  if (!s.setupDone || !s.firstSeen || s.firstSeen >= today) return false;
+  if (s.syncAskNext && today < s.syncAskNext) return false;
+  return syncAtStake() > 0;
+}
+function syncAskHtml() {
+  if (!syncAskNow()) return '';
+  const n = syncAtStake();
+  return `<section class="panel nudge sync-ask"><div class="panel-inner-sm">
+    <span class="tool-ico sync-ask-ico" aria-hidden="true">${SYNC_ICON_GOOGLE}</span>
+    <span class="nudge-txt"><b>${n === 1 ? t('sync_ask_title_1') : tf('sync_ask_title', n)}</b><em>${t('sync_ask_d')}</em></span>
+    <span class="nudge-acts"><button class="btn btn-primary btn-sm" type="button" data-sync-ask>${t('sync_ask_on')}</button>
+      <button class="link-btn" type="button" data-sync-later>${t('sync_ask_later')}</button></span>
+  </div></section>`;
+}
+function syncAskLater() {
+  const s = state.settings, n = Number(s.syncAskCount) || 0;
+  const d = new Date(smToday() + 'T00:00:00');
+  d.setDate(d.getDate() + SYNC_ASK_WAIT[Math.min(n, SYNC_ASK_WAIT.length - 1)]);
+  s.syncAskNext = toLocalISO(d); s.syncAskCount = n + 1;
+  saveState();
+}
+// One tap from any of them: Google's sign-in, then everything on this
+// device goes up to the person's own Drive, the same way Settings does it.
+async function syncTurnOn(from, btn) {
+  if (btn) btn.disabled = true;
+  try {
+    saveState();
+    await syncSwitchToGoogle('ubp');
+    try { trackEvent('sync_mode_chosen', { mode: 'google', from }); } catch (e) {}
+    state = loadState() || defaultState(); syncSymbol(); settingsCatchUp();
+    showToast(t('toast_synced_google'));
+    try { paintRailAccount(navRailEl()); } catch (e) {}
+    dispatchRender(currentTab);
+    return true;
+  } catch (e) {
+    showToast(syncFriendlyError(e));
+    if (btn) btn.disabled = false;
+    return false;
   }
 }
 
@@ -351,11 +402,13 @@ function calmDashHtml(sum, subMo, rf) {
   const fw = fwHtml();
   return `${nlHeroHtml(sum.leftover, { income: sum.totalIncome, subsMonthly: subMo, cuLimit: 3 })}
     ${calmAlertHtml(rf)}
-    ${fw || nudgeHtml()}
+    ${fw || syncAskHtml() || nudgeHtml()}
     <div class="calm-foot"><button class="calm-more" type="button" data-calm-more>${t('calm_more')}</button></div>`;
 }
 function wireCalmDash(el) {
-  el.querySelectorAll('[data-fw]').forEach(b => b.addEventListener('click', () => fwGo(b.dataset.fw)));
+  el.querySelectorAll('[data-fw]').forEach(b => b.addEventListener('click', () => fwGo(b.dataset.fw, b)));
+  el.querySelector('[data-sync-ask]')?.addEventListener('click', e => syncTurnOn('dashboard', e.currentTarget));
+  el.querySelector('[data-sync-later]')?.addEventListener('click', () => { syncAskLater(); dashQuietNext(); renderDashboard(); });
   el.querySelector('[data-fw-hide]')?.addEventListener('click', () => { state.settings.fwHidden = true; saveState(); dashQuietNext(); renderDashboard(); });
   el.querySelectorAll('[data-nudge-on]').forEach(b => b.addEventListener('click', () => {
     toolSet(b.dataset.nudgeOn, true); toolsChanged();
@@ -574,6 +627,11 @@ function setupStepHtml() {
     <p class="onb-sub">${t(c.total > 0 ? 'setup_done_bills' : 'setup_done_sub')}</p>
     ${(() => { const n = (state.bills || []).filter(b => b.active !== false && !b.nextBillingDate).length;
       return n ? `<p class="setup-note setup-note--warn">${n === 1 ? t('setup_done_nodate_1') : tf('setup_done_nodate', n)}</p>` : ''; })()}
+    ${syncIsOn() || !syncOffered() ? '' : `<div class="setup-sync" id="setupSync">
+      <span class="setup-sync-ico" aria-hidden="true">${SYNC_ICON_GOOGLE}</span>
+      <span class="setup-sync-txt"><b>${t('setup_sync_title')}</b><em>${t('setup_sync_d')}</em></span>
+      <button class="btn btn-ghost btn-sm" type="button" data-setup-sync>${t('setup_sync_btn')}</button>
+    </div>`}
     <div class="onb-actions"><button class="btn btn-primary" type="button" data-setup-go>${t('setup_done_go')}</button></div>`;
 }
 
@@ -618,6 +676,12 @@ function setupWire(card) {
   card.querySelector('[data-setup-skip]')?.addEventListener('click', setupSkip);
   card.querySelector('[data-setup-back]')?.addEventListener('click', () => go(-1));
   card.querySelector('[data-setup-go]')?.addEventListener('click', () => setupClose(() => { switchTab('dashboard'); }));
+  card.querySelector('[data-setup-sync]')?.addEventListener('click', async e => {
+    const btn = e.currentTarget;
+    if (!(await syncTurnOn('setup', btn))) return;
+    const box = card.querySelector('#setupSync');
+    if (box) { box.classList.add('is-on'); box.querySelector('.setup-sync-txt').innerHTML = `<b>${t('setup_sync_on')}</b><em>${esc(tf('setup_sync_on_d', syncGetEmail('ubp')))}</em>`; btn.remove(); }
+  });
   card.querySelectorAll('.dd').forEach(el => {
     const id = el.dataset.dd;
     if (id === 'freq') ddBind(el, setupFreqOpts(), v => { setupRead(card); S.freq = v; setupPaint(); });
@@ -787,7 +851,12 @@ const SIMPLE_WORDS = {
   fw_setup: 'Set up your pay and bills', fw_setup_d: 'Two minutes, and your number is right.', fw_setup_btn: 'Start',
   fw_spend: 'Log something you spend', fw_spend_d: 'Coffee counts. The + button is always there.', fw_spend_btn: 'Log it',
   fw_bill: 'Pay a bill when it goes out', fw_bill_d: 'Tap Pay in Coming up once it has left your account.', fw_bill_btn: 'See bills',
-  fw_safe: 'Keep your budget safe', fw_safe_d: 'Turn on sync, or save a copy, so it is never lost.', fw_safe_btn: 'Set it up',
+  fw_safe: 'Back up your budget', fw_safe_d: 'It only lives in this browser for now. Sync with Google to keep it safe and use it on any device.', fw_safe_btn: 'Turn on sync',
+  sync_ask_title: 'Your {0} entries are only in this browser', sync_ask_title_1: 'Your first entry is only in this browser',
+  sync_ask_d: 'Clearing your browser would erase them. Sync with Google to back them up and use them on any device. Free and private.',
+  sync_ask_on: 'Turn on sync', sync_ask_later: 'Not now',
+  setup_sync_title: 'Keep it safe', setup_sync_d: 'Back it up to your own Google Drive, and use it on your phone and computer.',
+  setup_sync_btn: 'Sync with Google', setup_sync_on: 'Backed up', setup_sync_on_d: 'Synced with {0}',
   fw_back: 'Check in again tomorrow', fw_back_d: 'A quick look at your number each day is the whole habit.',
   nudge_on: 'Turn it on', nudge_no: 'Not now',
   nudge_debt: 'Paying something off? See the order to clear it in, and the date you will be free.',
