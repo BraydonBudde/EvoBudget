@@ -117,8 +117,8 @@ function kpSheet() {
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'back'];
   k.innerHTML = `<div class="kp-grid">${keys.map(x => x === 'back'
     ? `<button type="button" class="kp-key kp-key--fn" data-kp="back" aria-label="${esc(t('qa_backspace'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12z"/><path d="m14 10 4 4"/><path d="m18 10-4 4"/></svg></button>`
-    : `<button type="button" class="kp-key" data-kp="${x}">${x}</button>`).join('')}</div>
-    <button type="button" class="btn btn-primary kp-done" data-kp="done">${esc(t('tools_done'))}</button>`;
+    : `<button type="button" class="kp-key" data-kp="${x}">${x}</button>`).join('')}
+    <button type="button" class="btn btn-primary kp-done" data-kp="done">${esc(t('tools_done'))}</button></div>`;
   document.body.appendChild(k);
   // Keys never take the focus, so the field keeps its caret and stays live.
   k.addEventListener('pointerdown', e => e.preventDefault());
@@ -149,6 +149,8 @@ function kpOpen(inp) {
   // A number field cannot show "12." while it is being typed, so it is
   // plain text while the keypad is up and a number again afterwards.
   if (inp.type === 'number') { inp.dataset.kpNum = '1'; inp.type = 'text'; }
+  // A whole-number field has no use for the point.
+  k.classList.toggle('is-int', inp.dataset.kpMode === 'numeric');
   k.classList.add('is-open');
   document.body.classList.add('kp-open');
   requestAnimationFrame(() => inp.scrollIntoView({ block: 'center', behavior: 'smooth' }));

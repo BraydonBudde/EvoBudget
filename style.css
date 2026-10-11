@@ -7076,7 +7076,7 @@ html[data-width="full"][data-nav] .view.tool-shell.is-active { max-width: none; 
 @media (max-width: 700px) {
   .af-ask, .af-side { display: contents; }
   .af-label { order: 1; } .af-amount { order: 2; } .af-quick { order: 3; } .af-out { order: 4; }
-  .af-keys { order: 5; align-self: center; } .af-clear { order: 6; align-self: center; }
+  .af-keys { order: 5; align-self: center; }
   .af-actions { order: 7; } .af-foot { order: 8; }
   /* Kept to one screen: the label stays for screen readers, the bullet
      points and the footnote give way, everything else tightens a little. */
@@ -9651,3 +9651,144 @@ body.kp-open .modal-overlay { padding-bottom: 300px; transition: padding .2s var
   .section-header { flex-wrap: wrap; row-gap: 10px; }
   .section-header > .section-title { flex: 1 0 auto; max-width: 100%; }
 }
+
+/* ══ The keypads: Log spend and Can I afford it? ═══════════════════
+   A phone gets a sheet from the bottom with everything in thumb order and
+   nothing to scroll: the amount, what it is for, the quick amounts, the
+   keys and Save. A tablet or a desktop gets the keys in a panel of their
+   own on the left, the details on the right, and Save level with the
+   bottom row of keys. Clear sits in the amount, and only once there is one. */
+.qa-amount { position: relative; width: 100%; }
+.qa-clear {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  appearance: none; cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; line-height: 1;
+  padding: 7px 12px; border-radius: var(--radius-pill); border: 1px solid var(--border-faint);
+  background: transparent; color: var(--text-secondary); transition: color .15s, border-color .15s;
+}
+.qa-clear:hover { color: var(--text-primary); border-color: rgba(var(--grad-indigo-rgb), .45); }
+.qa-clear[hidden] { display: none; }
+.qa-cat-row { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.qa-cat-row .qa-cat-dd { margin-top: 0; }
+.qa-meta-chip { justify-content: center; }
+.qa-actions--log { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+/* A long label takes a second line rather than being cut. */
+.qa-actions--log .btn {
+  display: flex; align-items: center; justify-content: center; height: 50px; padding: 0 14px;
+  text-align: center; white-space: normal; line-height: 1.15; overflow: hidden; min-width: 0;
+}
+.qa-actions--log .qa-go { font-size: 15px; }
+.qa-actions--log .qa-go.is-done { overflow: visible; }
+@keyframes qaSheetIn { from { transform: translateY(100%); } to { transform: none; } }
+
+@media (min-width: 701px) {
+  .qa-grid { grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 26px; align-items: stretch; }
+  /* The keys, the amount and the quick amounts as one calm panel. */
+  .qa-pad, .af-ask {
+    padding: 18px 18px 20px; border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--text-primary) 3.5%, transparent); border: 1px solid var(--border-faint);
+  }
+  .qa-pad .qa-keys, .af-ask .qa-keys { max-width: none; }
+  .qa-pad .qa-amount, .af-ask .qa-amount { min-height: 60px; align-items: center; }
+  .qa-side { gap: 12px; }
+  .qa-after.is-blank { display: none; }
+  /* Side by side where there is room, Save under its partner where there is not. */
+  .qa-actions--log { margin-top: auto; padding-top: 6px; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); }
+  .af-quick { justify-content: center; }
+}
+@media (min-width: 768px) {
+  .modal:has(> .modal-body > .qa) { max-width: 860px; }
+}
+
+@media (max-width: 700px) {
+  /* The sheet. */
+  .modal-overlay:has(> .modal > .modal-body > :is(.qa, .af)) { padding: 0; align-items: flex-end; }
+  .modal:has(> .modal-body > :is(.qa, .af)) {
+    width: 100%; max-width: none; margin: auto 0 0; border-radius: 24px 24px 0 0;
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+    animation: qaSheetIn .28s var(--ease);
+  }
+  .modal:has(> .modal-body > :is(.qa, .af)) .modal-title { font-size: 17px; line-height: 32px; margin-bottom: 10px; }
+  .modal:has(> .modal-body > :is(.qa, .af)) .modal-close { top: 13px; right: 14px; width: 32px; height: 32px; }
+  .modal:has(> .modal-body > .af) .af-eyebrow { display: none; }
+
+  /* Log spend, top to bottom in the order it is filled in. */
+  .qa { gap: 10px; }
+  .qa-grid { display: flex; flex-direction: column; gap: 10px; }
+  .qa-pad, .qa-side { display: contents; }
+  .qa .qa-amount { order: 1; min-height: 48px; align-items: center; }
+  .qa .qa-after { order: 2; }
+  #qaCatLabel { order: 3; }
+  .qa-cat-row { order: 4; flex-direction: row; gap: 8px; align-items: stretch; }
+  .qa-note { order: 5; }
+  .qa-alloc { order: 6; }
+  .qa-side .tx-error { order: 7; margin: 0; }
+  .qa .qa-quick { order: 8; }
+  .qa .qa-keys { order: 9; }
+  .qa-actions--log { order: 10; margin-top: 2px; }
+  .qa-actions--log .btn { padding: 0 10px; font-size: 14px; }
+  .qa-actions--log .qa-go { font-size: 14.5px; }
+  .qa-num { font-size: 2.5rem; }
+  /* The label still names the dropdown for screen readers; it shows when
+     there is nothing to choose and it carries the reason instead. */
+  .qa-side:has(.qa-cat-dd:not([hidden])) #qaCatLabel {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .qa-cat-row .qa-cat-dd { flex: 1 1 auto; min-width: 0; }
+  .qa-cat-row .qa-meta { flex: 0 0 auto; flex-wrap: nowrap; gap: 8px; }
+  .qa-cat-row .qa-cat-dd[hidden] + .qa-meta { flex: 1 1 auto; }
+  .qa-cat-row .qa-meta-chip { height: 46px; padding: 0 13px; border-radius: var(--ui-tile-radius, 14px); }
+  #qaNoteChip .qa-meta-txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .qa-after {
+    margin: -4px 0 0; padding: 0; background: none; border: 0; border-radius: 0;
+    text-align: center; font-size: 12.5px; line-height: 1.35; color: var(--text-secondary);
+  }
+  .qa-after.is-short { background: none; color: #f43f5e; }
+  .qa-after.is-blank { visibility: hidden; }
+  .qa-alloc { flex-direction: row; align-items: center; gap: 10px; }
+  .qa-alloc > .qa-label { flex: 0 0 auto; }
+  .qa-alloc .qa-cats { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .qa-quick { flex-wrap: nowrap; width: 100%; gap: 8px; }
+  .qa-quick .qa-chip { flex: 1 1 0; justify-content: center; padding: 8px 4px; }
+  .qa-keys { max-width: none; gap: 7px; }
+  .qa-key { height: 50px; }
+
+  /* Can I afford it?: the same sheet. */
+  .af { gap: 10px; }
+  .af-quick { flex-wrap: nowrap; }
+  .af-quick .qa-chip { flex: 1 1 0; justify-content: center; padding: 8px 4px; }
+  .af-keys { width: 100%; max-width: none; }
+  .af-keys .qa-key { height: 48px; }
+}
+
+/* The number pad, the way a phone lays one out: Delete beside the top row,
+   Done down the side, a wide 0. A quarter shorter than three rows of three
+   with Done underneath, and on a tablet a neat panel rather than keys the
+   width of the screen. */
+.kp-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-areas: "k1 k2 k3 bk" "k4 k5 k6 dn" "k7 k8 k9 dn" "k0 k0 dt dn";
+  gap: 8px; margin-bottom: 0;
+}
+.kp-key { height: 48px; }
+.kp-key[data-kp="1"] { grid-area: k1; } .kp-key[data-kp="2"] { grid-area: k2; } .kp-key[data-kp="3"] { grid-area: k3; }
+.kp-key[data-kp="4"] { grid-area: k4; } .kp-key[data-kp="5"] { grid-area: k5; } .kp-key[data-kp="6"] { grid-area: k6; }
+.kp-key[data-kp="7"] { grid-area: k7; } .kp-key[data-kp="8"] { grid-area: k8; } .kp-key[data-kp="9"] { grid-area: k9; }
+.kp-key[data-kp="0"] { grid-area: k0; } .kp-key[data-kp="."] { grid-area: dt; } .kp-key[data-kp="back"] { grid-area: bk; }
+.kp-grid .kp-done { grid-area: dn; width: auto; height: auto; border-radius: var(--ui-tile-radius, 14px); font-size: 16px; justify-content: center; }
+.kp-sheet.is-int .kp-key[data-kp="."] { opacity: .3; pointer-events: none; }
+body.kp-open .app-scroll, body.kp-open .modal-body, body.kp-open .setup-card { padding-bottom: 250px; }
+body.kp-open .modal-overlay { padding-bottom: 250px; }
+@media (min-width: 701px) {
+  .kp-sheet {
+    left: 50%; right: auto; bottom: 16px; width: 440px; padding: 12px;
+    border-radius: 22px; border-bottom: 1px solid var(--popup-border);
+    transform: translate(-50%, calc(100% + 32px));
+  }
+  .kp-sheet.is-open { transform: translate(-50%, 0); }
+  .kp-key { height: 52px; }
+}
+/* The amount sizes itself to the room between the edge and Clear, so a
+   long one steps down rather than running into it. */
+.qa-amount { container-type: inline-size; padding: 0 64px; box-sizing: border-box; }
+.qa-num { font-size: min(3rem, calc((100cqi - 18px) / (var(--len, 1) * .62))); }
+@media (max-width: 700px) { .qa-num { font-size: min(2.5rem, calc((100cqi - 18px) / (var(--len, 1) * .62))); } }

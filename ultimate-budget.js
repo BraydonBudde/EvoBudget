@@ -5188,12 +5188,12 @@ function openAffordCheck() {
   document.getElementById('modalBody').innerHTML = `<div class="af">
     <section class="af-ask">
       <p class="qa-label af-label">${t('af_how_much')}</p>
-      <div class="qa-amount af-amount" aria-live="polite"><span class="qa-sym">${esc(SYM)}</span><span class="qa-num" id="afDisplay">0</span></div>
+      <div class="qa-amount af-amount" aria-live="polite"><span class="qa-sym">${esc(SYM)}</span><span class="qa-num" id="afDisplay">0</span>
+        <button class="qa-clear af-clear" id="afClear" type="button" hidden>${t('qa_clear')}</button></div>
       <div class="qa-quick af-quick">${AF_CHIPS.map(v => `<button class="qa-chip qa-plus" type="button" data-af-plus="${v}">+${esc(SYM)}${v}</button>`).join('')}</div>
       <div class="qa-keys af-keys">${['1','2','3','4','5','6','7','8','9','.','0','back'].map(k =>
         `<button class="qa-key" type="button" data-af-key="${k}" aria-label="${k === 'back' ? esc(t('qa_backspace')) : k}">${k === 'back'
           ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="m16 9-5 5"/><path d="m11 9 5 5"/></svg>' : k}</button>`).join('')}</div>
-      <button class="link-btn qa-clear af-clear" id="afClear" type="button">${t('qa_clear')}</button>
     </section>
     <section class="af-side">
       <div class="af-out" id="afOut" aria-live="polite"></div>
@@ -5216,6 +5216,8 @@ function openAffordCheck() {
     const [i, d] = buf.split('.');
     const whole = (parseInt(i || '0', 10) || 0).toLocaleString('en-US');
     $('afDisplay').textContent = buf.includes('.') ? `${whole}.${d || ''}` : whole;
+    $('afDisplay').style.setProperty('--len', $('afDisplay').textContent.length);
+    $('afClear').hidden = !buf;
     const log = $('afLog');
     log.disabled = !(a > 0);
     const out = $('afOut');
@@ -5322,34 +5324,35 @@ function openQuickAddTx(prefill){
       `<button class="qa-type${ty === type ? ' is-on' : ''}" type="button" role="radio" aria-checked="${ty === type}" data-qa-type="${ty}">${esc(t('qa_type_' + ty))}</button>`).join('')}</div>
     <div class="qa-grid">
       <section class="qa-pad">
-        <div class="qa-amount" aria-live="polite"><span class="qa-sym">${esc(SYM)}</span><span class="qa-num" id="qaDisplay">0</span></div>
+        <div class="qa-amount" aria-live="polite"><span class="qa-sym">${esc(SYM)}</span><span class="qa-num" id="qaDisplay">0</span>
+          <button class="qa-clear" id="qaClear" type="button" hidden>${t('qa_clear')}</button></div>
         <div class="qa-quick">${[1, 5, 10, 20].map(v => `<button class="qa-chip qa-plus" type="button" data-qa-plus="${v}">+${esc(SYM)}${v}</button>`).join('')}</div>
         <div class="qa-keys">${['1','2','3','4','5','6','7','8','9','.','0','back'].map(k =>
           `<button class="qa-key" type="button" data-qa-key="${k}" aria-label="${k === 'back' ? esc(t('qa_backspace')) : k}">${k === 'back'
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="m16 9-5 5"/><path d="m11 9 5 5"/></svg>' : k}</button>`).join('')}</div>
-        <button class="link-btn qa-clear" id="qaClear" type="button">${t('qa_clear')}</button>
       </section>
       <section class="qa-side">
         <p class="qa-label" id="qaCatLabel"></p>
-        <div class="dd qa-cat-dd" id="qaCatDd" data-value="">
-          <button class="dd-btn" id="qaCatBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="qaCatLabel"><span class="dd-val is-ph" id="qaCatVal"></span>${SM_DD_CHEV}</button>
-        </div>
-        <div class="qa-alloc" id="qaAllocWrap" hidden><p class="qa-label">${t('alloc_label')}</p><div class="qa-cats" id="qaAllocChips"></div><input type="hidden" id="qaAlloc" value=""></div>
-        <div class="qa-meta">
-          <button class="qa-chip qa-meta-chip" id="qaDateWrap" type="button"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/></svg><span id="qaDateLabel"></span></button>
-          <input type="date" id="qaDate" value="${today0}" class="qa-hidden-date" tabindex="-1" aria-hidden="true">
-          <button class="qa-chip qa-meta-chip" id="qaNoteChip" type="button"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>${t('qa_add_note')}</button>
+        <div class="qa-cat-row">
+          <div class="dd qa-cat-dd" id="qaCatDd" data-value="">
+            <button class="dd-btn" id="qaCatBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="qaCatLabel"><span class="dd-val is-ph" id="qaCatVal"></span>${SM_DD_CHEV}</button>
+          </div>
+          <div class="qa-meta">
+            <button class="qa-chip qa-meta-chip" id="qaDateWrap" type="button"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="4.9" width="17.6" height="15.9" rx="2.4"/><path d="M16 3.2v3.5"/><path d="M8 3.2v3.5"/><path d="M3.2 10.2h17.6"/></svg><span id="qaDateLabel"></span></button>
+            <input type="date" id="qaDate" value="${today0}" class="qa-hidden-date" tabindex="-1" aria-hidden="true">
+            <button class="qa-chip qa-meta-chip" id="qaNoteChip" type="button" aria-label="${esc(t('qa_add_note'))}"><svg class="app-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg><span class="qa-meta-txt">${t('qa_add_note')}</span></button>
+          </div>
         </div>
         <input class="input qa-note" type="text" id="qaDesc" maxlength="120" placeholder="${esc(t('tx_desc_ph'))}" hidden>
+        <div class="qa-alloc" id="qaAllocWrap" hidden><p class="qa-label">${t('alloc_label')}</p><div class="qa-cats" id="qaAllocChips"></div><input type="hidden" id="qaAlloc" value=""></div>
         <p class="qa-after" id="qaAfter" hidden></p>
         <div class="tx-error" id="qaError" hidden></div>
+        <div class="qa-actions qa-actions--log">
+          <button class="btn btn-ghost" id="qaAgainBtn" type="button">${t('qa_again')}</button>
+          <button class="btn btn-primary qa-go" id="qaSaveBtn" type="button"></button>
+        </div>
       </section>
     </div>
-    <div class="qa-actions">
-      <button class="btn btn-ghost" id="qaCancelBtn" type="button">${t('cancel')}</button>
-      <button class="btn btn-ghost" id="qaAgainBtn" type="button">${t('qa_again')}</button>
-    </div>
-    <button class="btn btn-primary qa-go" id="qaSaveBtn" type="button"></button>
     <input type="hidden" id="qaType" value="${type}">
     <input type="hidden" id="qaCategory" value="">
     <input type="hidden" id="qaAmount" value="">
@@ -5364,18 +5367,22 @@ function openQuickAddTx(prefill){
     const [i, d] = buf.split('.');
     const whole = (parseInt(i || '0', 10) || 0).toLocaleString('en-US');
     $('qaDisplay').textContent = buf.includes('.') ? `${whole}.${d || ''}` : whole;
+    $('qaDisplay').style.setProperty('--len', $('qaDisplay').textContent.length);
     $('qaAmount').value = buf;
     const a = amount();
     $('qaSaveBtn').textContent = a > 0 ? `${goFor(type)} ${fmt(a)}` : goFor(type);
+    $('qaClear').hidden = !buf;
     // What is left to spend once this is gone. Only for everyday spending:
     // a bill or a debt payment is already counted as spoken for, so paying
-    // it leaves this figure where it was.
+    // it leaves this figure where it was. Before an amount is typed its line
+    // keeps its place unseen, so the sheet does not jump at the first digit.
     const after = $('qaAfter');
-    if (type === 'expense' && a > 0) {
+    if (type === 'expense') {
       const free = computeSummary(computeActuals()).leftover - nlCommitted().total - a;
       const left = nlDaysInPeriod().left + 1;
       after.textContent = tf('qa_after', fmt(free), formatDateShort(state.settings.periodEnd), fmt(Math.max(0, free) / Math.max(1, left)));
-      after.classList.toggle('is-short', free < 0);
+      after.classList.toggle('is-short', a > 0 && free < 0);
+      after.classList.toggle('is-blank', !(a > 0));
       after.hidden = false;
     } else after.hidden = true;
   };
@@ -5402,7 +5409,7 @@ function openQuickAddTx(prefill){
     buf = Number.isInteger(v) ? String(v) : v.toFixed(2);
     paint(); b.blur();
   }));
-  $('qaClear').addEventListener('click', () => { buf = ''; paint(); });
+  $('qaClear').addEventListener('click', () => { hideErr(); buf = ''; paint(); });
   // A physical keyboard drives the same keypad. The listener lets itself go
   // once this modal is no longer on screen.
   const onKey = e => {
@@ -5503,7 +5510,6 @@ function openQuickAddTx(prefill){
   const trySave = again => { if (!cat && !$('qaCatDd').hidden) $('qaCatBtn').classList.add('fk-invalid'); save(again); };
   $('qaSaveBtn').addEventListener('click', () => trySave(false));
   $('qaAgainBtn').addEventListener('click', () => trySave(true));
-  $('qaCancelBtn').addEventListener('click', closeModal);
 
   // Every chip and key lets go of focus once tapped, so Enter saves the
   // entry instead of pressing whatever was tapped last a second time.
