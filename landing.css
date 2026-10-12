@@ -215,24 +215,66 @@
 .lx-h2 { font-size: clamp(32px, 4vw, 52px); line-height: 1.06; font-weight: 800; letter-spacing: -.04em; margin-top: 14px; }
 .lx-sec-sub { margin-top: 18px; font-size: 18px; color: var(--lx-ink-2); }
 
-/* Pain points: tap or hover a card and it turns over to the answer. */
+/* Pain points: the problem, and right under it, the fix. */
 .lx-pains { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(18px, 1.6vw, 30px); }
-.lx-pain { perspective: 1200px; min-height: 270px; cursor: pointer; background: none; border: 0; padding: 0; text-align: left; color: inherit; }
-.lx-pain-in { position: relative; height: 100%; min-height: 270px; transform-style: preserve-3d; transition: transform .8s var(--lx-ease); }
-.lx-pain:hover .lx-pain-in, .lx-pain.is-on .lx-pain-in { transform: rotateY(180deg); }
-.lx-pain-face {
-  position: absolute; inset: 0; border-radius: var(--lx-radius); padding: 32px; display: flex; flex-direction: column;
-  border: 1px solid var(--lx-line); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+.lx-pain {
+  position: relative; display: flex; flex-direction: column; border-radius: var(--lx-radius); overflow: hidden;
+  background: var(--lx-glass); border: 1px solid var(--lx-line);
+  transition: transform .5s var(--lx-ease), border-color .4s, box-shadow .5s var(--lx-ease);
 }
-.lx-pain-front { background: var(--lx-glass); }
-.lx-pain-back { background: var(--lx-grad-soft), #150f29; border-color: rgba(185, 163, 252, .3); transform: rotateY(180deg); }
-.lx-pain-emoji { font-size: 30px; line-height: 1; }
-.lx-pain-q { font-family: var(--lx-display); font-weight: 700; font-size: 22px; line-height: 1.25; letter-spacing: -.02em; margin-top: 18px; }
-.lx-pain-hint { margin-top: auto; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--lx-muted); }
-.lx-pain-hint svg { width: 16px; height: 16px; }
-.lx-pain-tag { font-size: 11.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--lx-green); }
-.lx-pain-a { font-family: var(--lx-display); font-weight: 700; font-size: 19px; line-height: 1.3; margin-top: 12px; }
-.lx-pain-d { font-size: 14.5px; color: var(--lx-ink-2); margin-top: 10px; line-height: 1.55; }
+.lx-pain:hover { transform: translateY(-6px); border-color: rgba(185, 163, 252, .3); box-shadow: 0 30px 60px -34px rgba(139, 92, 246, .55); }
+.lx-pain-top { padding: clamp(26px, 2.2vw, 36px) clamp(24px, 2vw, 34px) 26px; flex: 1; }
+.lx-pain-emoji {
+  width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 26px; line-height: 1;
+  background: rgba(255, 255, 255, .06); border: 1px solid var(--lx-line-2);
+}
+.lx-pain-q { font-family: var(--lx-display); font-weight: 700; font-size: clamp(19px, 1.35vw, 23px); line-height: 1.3; letter-spacing: -.02em; margin-top: 20px; color: var(--lx-ink); }
+.lx-pain-fix {
+  position: relative; display: flex; gap: 14px; align-items: flex-start;
+  padding: 24px clamp(24px, 2vw, 34px) clamp(26px, 2.2vw, 34px);
+  background: linear-gradient(180deg, rgba(52, 211, 153, .07), rgba(52, 211, 153, .02)); border-top: 1px solid rgba(52, 211, 153, .16);
+}
+.lx-pain-check { width: 30px; height: 30px; flex: 0 0 30px; border-radius: 50%; display: grid; place-items: center; background: #10b981; color: #fff; box-shadow: 0 8px 18px -8px rgba(16, 185, 129, .9); }
+.lx-pain-check svg { width: 16px; height: 16px; }
+.lx-pain-a { font-family: var(--lx-display); font-weight: 700; font-size: 16.5px; line-height: 1.3; color: var(--lx-green); }
+.lx-pain-d { font-size: 14.5px; color: var(--lx-ink-2); margin-top: 6px; line-height: 1.55; }
+
+/* See it in action: feature list on one side, the real app on the other. */
+.lx-film { display: grid; grid-template-columns: minmax(0, 560px) auto; justify-content: center; gap: clamp(40px, 6vw, 140px); align-items: center; margin: 0 auto; }
+.lx-film-tabs { display: grid; gap: 10px; }
+.lx-film-tab {
+  position: relative; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; text-align: left;
+  padding: 18px 22px 20px; border-radius: 18px; border: 1px solid transparent; background: none; color: var(--lx-ink); cursor: pointer; overflow: hidden;
+  transition: background .3s, border-color .3s;
+}
+.lx-film-tab:hover { background: rgba(255, 255, 255, .03); }
+.lx-film-tab.is-on { background: var(--lx-glass-2); border-color: var(--lx-line-2); }
+.lx-film-n { font-family: var(--lx-display); font-weight: 700; font-size: 14px; color: var(--lx-muted); width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(255, 255, 255, .05); transition: background .3s, color .3s; }
+.lx-film-tab.is-on .lx-film-n { background: var(--lx-grad); color: #fff; }
+.lx-film-t b { display: block; font-family: var(--lx-display); font-size: 18px; font-weight: 700; letter-spacing: -.01em; color: var(--lx-ink-2); transition: color .3s; }
+.lx-film-tab.is-on .lx-film-t b { color: var(--lx-ink); }
+.lx-film-t em { display: block; font-style: normal; font-size: 14.5px; color: var(--lx-muted); margin-top: 3px; max-height: 0; opacity: 0; overflow: hidden; transition: max-height .4s var(--lx-ease), opacity .3s; }
+.lx-film-tab.is-on .lx-film-t em { max-height: 44px; opacity: 1; }
+.lx-film-bar { position: absolute; left: 22px; right: 22px; bottom: 9px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .08); opacity: 0; transition: opacity .3s; }
+.lx-film-tab.is-on .lx-film-bar { opacity: 1; }
+.lx-film-bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--lx-grad); }
+.lx-film-stage { position: relative; }
+.lx-film-phone {
+  width: clamp(250px, 17vw, 300px); aspect-ratio: 195 / 422; border-radius: 46px; padding: 11px;
+  background: linear-gradient(160deg, #2a2342, #120d22 60%);
+  box-shadow: 0 60px 120px -40px rgba(0, 0, 0, .85), 0 0 0 1px rgba(255, 255, 255, .1), inset 0 1px 0 rgba(255, 255, 255, .14), 0 0 100px -20px rgba(139, 92, 246, .45);
+}
+.lx-film-phone video { width: 100%; height: 100%; display: block; border-radius: 36px; object-fit: cover; background: #120b26; }
+.lx-film-sound {
+  position: absolute; right: -18px; bottom: 40px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  background: rgba(22, 16, 42, .85); border: 1px solid var(--lx-line-2); color: var(--lx-ink); backdrop-filter: blur(10px);
+  transition: transform .2s, background .2s;
+}
+.lx-film-sound:hover { transform: scale(1.06); background: rgba(40, 30, 72, .9); }
+.lx-film-sound svg { width: 18px; height: 18px; }
+.lx-film-sound .is-play { display: none; }
+.lx-film-sound.is-paused .is-play { display: block; }
+.lx-film-sound.is-paused .is-pause { display: none; }
 
 /* Find your number: the calculator. */
 .lx-calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-radius: 30px; overflow: hidden; border: 1px solid var(--lx-line-2); background: var(--lx-glass); }
@@ -468,7 +510,6 @@
   .lx-lead { margin-inline: auto; }
   .lx-cta-row, .lx-cta-note { justify-content: center; }
   .lx-stage { height: 600px; }
-  .lx-pains { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lx-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lx-tile, .lx-tile--wide, .lx-tile--big { grid-column: span 1; }
   .lx-tile--big { grid-column: span 2; }
@@ -508,8 +549,6 @@
   .lx-float { display: none; }
   .lx-sec { padding-top: 88px; }
   .lx-sec-head { margin-bottom: 36px; }
-  .lx-pains { grid-template-columns: 1fr; }
-  .lx-pain, .lx-pain-in { min-height: 210px; }
   .lx-bento { grid-template-columns: 1fr; }
   .lx-tile, .lx-tile--big { grid-column: span 1; min-height: 0; padding: 24px; }
   .lx-wheel-wrap { flex-direction: column; align-items: flex-start; }
@@ -612,4 +651,23 @@ body:has(#view-hub.is-active) .backdrop { display: none; }
   .lx-feature { padding: 28px 22px; gap: 28px; }
   .lx-feature-visual { transform: none; }
   .lx-tools, .lx-values { grid-template-columns: 1fr; }
+}
+
+/* See it in action and the pain cards on smaller screens. */
+@media (max-width: 1080px) {
+  .lx-pains { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lx-film { grid-template-columns: 1fr; justify-items: center; }
+  .lx-film-tabs { display: flex; gap: 8px; overflow-x: auto; width: 100%; padding-bottom: 6px; scrollbar-width: none; order: 2; }
+  .lx-film-tabs::-webkit-scrollbar { display: none; }
+  .lx-film-tab { flex: 0 0 auto; grid-template-columns: auto; padding: 10px 16px 14px; border-color: var(--lx-line); }
+  .lx-film-n { display: none; }
+  .lx-film-t b { font-size: 15px; white-space: nowrap; }
+  .lx-film-t em { display: none; }
+  .lx-film-bar { left: 14px; right: 14px; bottom: 6px; }
+  .lx-film-stage { order: 1; }
+}
+@media (max-width: 640px) {
+  .lx-pains { grid-template-columns: 1fr; }
+  .lx-film-phone { width: min(78vw, 300px); }
+  .lx-film-sound { right: -8px; }
 }

@@ -126,6 +126,7 @@
             <span>Ezzo Budget<small>Ultimate Budget Planner</small></span>
           </a>
           <nav class="lx-nav-links" aria-label="Page sections">
+            <a href="#demo">Demo</a>
             <a href="#features">Features</a>
             <a href="#how">How it works</a>
             <a href="#pricing">Pricing</a>
@@ -140,6 +141,7 @@
           </div>
         </div>
         <div class="lx-sheet" id="lxSheet">
+          <a href="#demo">Demo</a>
           <a href="#features">Features</a>
           <a href="#how">How it works</a>
           <a href="#pricing">Pricing</a>
@@ -226,71 +228,115 @@
         </div>
       </section>
 
+
+      <!-- ── See it in action: the real app, filmed ── -->
+      <section class="lx-sec" id="demo" aria-labelledby="lxDemoTitle">
+        <div class="lx-wrap">
+          <div class="lx-sec-head" data-reveal>
+            <span class="lx-kicker">See it in action</span>
+            <h2 class="lx-h2" id="lxDemoTitle">The real app. <span class="lx-grad-text">No mock-ups.</span></h2>
+            <p class="lx-sec-sub">Pick a feature and watch it work.</p>
+          </div>
+          <div class="lx-film" data-reveal>
+            <div class="lx-film-tabs" role="tablist" aria-label="Features">
+              <button class="lx-film-tab is-on" type="button" role="tab" aria-selected="true" data-film="dashboard">
+                <span class="lx-film-n">01</span>
+                <span class="lx-film-t"><b>Your dashboard</b><em>Free to spend, bills due and heads-ups.</em></span>
+                <i class="lx-film-bar" aria-hidden="true"><i></i></i>
+              </button>
+              <button class="lx-film-tab" type="button" role="tab" aria-selected="false" data-film="transactions">
+                <span class="lx-film-n">02</span>
+                <span class="lx-film-t"><b>Log in seconds</b><em>Type an amount, pick a category, done.</em></span>
+                <i class="lx-film-bar" aria-hidden="true"><i></i></i>
+              </button>
+              <button class="lx-film-tab" type="button" role="tab" aria-selected="false" data-film="subscriptions">
+                <span class="lx-film-n">03</span>
+                <span class="lx-film-t"><b>Bills and subscriptions</b><em>Every payment, and what it costs a year.</em></span>
+                <i class="lx-film-bar" aria-hidden="true"><i></i></i>
+              </button>
+              <button class="lx-film-tab" type="button" role="tab" aria-selected="false" data-film="sinking">
+                <span class="lx-film-n">04</span>
+                <span class="lx-film-t"><b>Savings goals</b><em>A goal, a date, and what to save each month.</em></span>
+                <i class="lx-film-bar" aria-hidden="true"><i></i></i>
+              </button>
+              <button class="lx-film-tab" type="button" role="tab" aria-selected="false" data-film="debt">
+                <span class="lx-film-n">05</span>
+                <span class="lx-film-t"><b>Debt payoff</b><em>Your plan and your debt-free date.</em></span>
+                <i class="lx-film-bar" aria-hidden="true"><i></i></i>
+              </button>
+              <button class="lx-film-tab" type="button" role="tab" aria-selected="false" data-film="calendar">
+                <span class="lx-film-n">06</span>
+                <span class="lx-film-t"><b>Money calendar</b><em>Every day at a glance.</em></span>
+                <i class="lx-film-bar" aria-hidden="true"><i></i></i>
+              </button>
+              <button class="lx-film-tab" type="button" role="tab" aria-selected="false" data-film="penny">
+                <span class="lx-film-n">07</span>
+                <span class="lx-film-t"><b>Ask Ezzo</b><em>Questions about your money, in plain words.</em></span>
+                <i class="lx-film-bar" aria-hidden="true"><i></i></i>
+              </button>
+            </div>
+            <div class="lx-film-stage">
+              <div class="lx-film-phone">
+                <video id="lxFilm" muted playsinline preload="none" poster="media/guide/dashboard.jpg" aria-label="The Ultimate Budget Planner in use"></video>
+              </div>
+              <button class="lx-film-sound" id="lxFilmPause" type="button" aria-label="Pause">
+                <svg class="is-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
+                <svg class="is-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ── Pain points ── -->
       <section class="lx-sec" id="why" aria-labelledby="lxPainTitle">
         <div class="lx-wrap">
           <div class="lx-sec-head" data-reveal>
             <span class="lx-kicker">Sound familiar?</span>
             <h2 class="lx-h2" id="lxPainTitle">Budgeting shouldn't <span class="lx-grad-text">feel like work.</span></h2>
-            <p class="lx-sec-sub">Tap a card to see the fix.</p>
+            <p class="lx-sec-sub">Here's how it fixes them.</p>
           </div>
           <div class="lx-pains">
-            <button class="lx-pain" type="button" data-reveal style="--d:0" aria-label="Payday feels great. Day 20 doesn't. Tap for the fix.">
-              <div class="lx-pain-in">
-                <div class="lx-pain-face lx-pain-front">
-                  <span class="lx-pain-emoji" aria-hidden="true">😮‍💨</span>
-                  <p class="lx-pain-q">"Payday feels great. Day 20 doesn't."</p>
-                  <span class="lx-pain-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>See the fix</span>
-                </div>
-                <div class="lx-pain-face lx-pain-back">
-                  <span class="lx-pain-tag">The fix</span>
-                  <p class="lx-pain-a">A daily amount that lasts.</p>
-                  <p class="lx-pain-d">Your money is spread across every day until payday. Spend less today, get more tomorrow.</p>
-                </div>
+            <article class="lx-pain" data-reveal style="--d:0">
+              <div class="lx-pain-top">
+                <span class="lx-pain-emoji" aria-hidden="true">😮‍💨</span>
+                <p class="lx-pain-q">"Payday feels great. Day 20 doesn't."</p>
               </div>
-            </button>
-            <button class="lx-pain" type="button" data-reveal style="--d:1" aria-label="A bill I forgot just came out. Tap for the fix.">
-              <div class="lx-pain-in">
-                <div class="lx-pain-face lx-pain-front">
-                  <span class="lx-pain-emoji" aria-hidden="true">😬</span>
-                  <p class="lx-pain-q">"A bill I forgot just came out."</p>
-                  <span class="lx-pain-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>See the fix</span>
-                </div>
-                <div class="lx-pain-face lx-pain-back">
-                  <span class="lx-pain-tag">The fix</span>
-                  <p class="lx-pain-a">Bills come off first.</p>
-                  <p class="lx-pain-d">Every bill is set aside before you see your number. Pay it with one tap.</p>
-                </div>
+              <div class="lx-pain-fix">
+                <span class="lx-pain-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+                <div><p class="lx-pain-a">A daily amount that lasts.</p><p class="lx-pain-d">Spread across every day until payday. Spend less today, get more tomorrow.</p></div>
               </div>
-            </button>
-            <button class="lx-pain" type="button" data-reveal style="--d:2" aria-label="Apps want my bank login and $10 a month. Tap for the fix.">
-              <div class="lx-pain-in">
-                <div class="lx-pain-face lx-pain-front">
-                  <span class="lx-pain-emoji" aria-hidden="true">🔐</span>
-                  <p class="lx-pain-q">"Apps want my bank login and $10 a month."</p>
-                  <span class="lx-pain-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>See the fix</span>
-                </div>
-                <div class="lx-pain-face lx-pain-back">
-                  <span class="lx-pain-tag">The fix</span>
-                  <p class="lx-pain-a">No bank login. One payment.</p>
-                  <p class="lx-pain-d">Your data stays on your device. Pay once and keep it.</p>
-                </div>
+            </article>
+            <article class="lx-pain" data-reveal style="--d:1">
+              <div class="lx-pain-top">
+                <span class="lx-pain-emoji" aria-hidden="true">😬</span>
+                <p class="lx-pain-q">"A bill I forgot just came out."</p>
               </div>
-            </button>
-            <button class="lx-pain" type="button" data-reveal style="--d:3" aria-label="I always give up by week two. Tap for the fix.">
-              <div class="lx-pain-in">
-                <div class="lx-pain-face lx-pain-front">
-                  <span class="lx-pain-emoji" aria-hidden="true">📉</span>
-                  <p class="lx-pain-q">"I always give up by week two."</p>
-                  <span class="lx-pain-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>See the fix</span>
-                </div>
-                <div class="lx-pain-face lx-pain-back">
-                  <span class="lx-pain-tag">The fix</span>
-                  <p class="lx-pain-a">It does the maths for you.</p>
-                  <p class="lx-pain-d">Log a spend in seconds. Your number, goals and bills update on their own.</p>
-                </div>
+              <div class="lx-pain-fix">
+                <span class="lx-pain-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+                <div><p class="lx-pain-a">Bills come off first.</p><p class="lx-pain-d">Every bill is set aside before you see your number. Pay it in one tap.</p></div>
               </div>
-            </button>
+            </article>
+            <article class="lx-pain" data-reveal style="--d:2">
+              <div class="lx-pain-top">
+                <span class="lx-pain-emoji" aria-hidden="true">🔐</span>
+                <p class="lx-pain-q">"Apps want my bank login and $10 a month."</p>
+              </div>
+              <div class="lx-pain-fix">
+                <span class="lx-pain-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+                <div><p class="lx-pain-a">No bank login. One payment.</p><p class="lx-pain-d">Your data stays on your device. Pay once and keep it.</p></div>
+              </div>
+            </article>
+            <article class="lx-pain" data-reveal style="--d:3">
+              <div class="lx-pain-top">
+                <span class="lx-pain-emoji" aria-hidden="true">📉</span>
+                <p class="lx-pain-q">"I always give up by week two."</p>
+              </div>
+              <div class="lx-pain-fix">
+                <span class="lx-pain-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+                <div><p class="lx-pain-a">It does the maths for you.</p><p class="lx-pain-d">Log a spend in seconds. Your number, goals and bills update on their own.</p></div>
+              </div>
+            </article>
           </div>
         </div>
       </section>

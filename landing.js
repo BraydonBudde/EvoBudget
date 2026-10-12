@@ -131,8 +131,35 @@
     });
   }
 
-  // ── Pain cards turn over on tap (hover does it on a computer) ──
-  $$('.lx-pain').forEach(card => card.addEventListener('click', () => card.classList.toggle('is-on')));
+  // ── See it in action: the real app, one feature after another ──
+  const film = $('#lxFilm'), filmTabs = $$('.lx-film-tab'), pauseBtn = $('#lxFilmPause');
+  if (film && filmTabs.length) {
+    let at = 0, inView = false, userPaused = still;
+    const bar = i => filmTabs[i].querySelector('.lx-film-bar i');
+    const show = (i, autoplay) => {
+      at = i;
+      filmTabs.forEach((t, k) => { t.classList.toggle('is-on', k === i); t.setAttribute('aria-selected', String(k === i)); bar(k).style.width = '0%'; });
+      const id = filmTabs[i].dataset.film;
+      film.poster = 'media/guide/' + id + '.jpg';
+      film.src = 'media/guide/' + id + '.mp4';
+      if (autoplay) film.play().catch(() => {});
+    };
+    const setPaused = p => { userPaused = p; pauseBtn.classList.toggle('is-paused', p); pauseBtn.setAttribute('aria-label', p ? 'Play' : 'Pause'); };
+    film.addEventListener('timeupdate', () => { if (film.duration) bar(at).style.width = (film.currentTime / film.duration * 100) + '%'; });
+    film.addEventListener('ended', () => show((at + 1) % filmTabs.length, inView && !userPaused));
+    filmTabs.forEach((t, i) => t.addEventListener('click', () => { setPaused(false); show(i, true); }));
+    pauseBtn.addEventListener('click', () => {
+      if (!film.currentSrc) { setPaused(false); show(at, true); return; }
+      if (film.paused) { setPaused(false); film.play().catch(() => {}); } else { setPaused(true); film.pause(); }
+    });
+    // Nothing loads until the section is close, and it rests when scrolled away.
+    new IntersectionObserver(es => es.forEach(e => {
+      inView = e.isIntersecting;
+      if (inView && !userPaused) { if (!film.currentSrc) show(at, true); else film.play().catch(() => {}); }
+      else if (!inView) film.pause();
+    }), { threshold: .35 }).observe(film);
+    setPaused(userPaused);
+  }
 
   // ── Sliders paint their own fill ──
   const paint = r => r.style.setProperty('--fill', ((r.value - r.min) / (r.max - r.min) * 100) + '%');
