@@ -20,8 +20,113 @@
       } catch (e) {}
     })();
   </script>
+
+  <style>
+    /* ── The opening: the EzzoHub mark, while the planner gets ready ──
+       Painted before anything else, so the planner is only ever seen
+       finished. Coloured for whichever theme was last chosen. */
+    .ez-splash {
+      --ezs-bg: #0f0a24; --ezs-tile: linear-gradient(160deg, #b9a3fc, #8b5cf6 62%, #6d3fe0); --ezs-ink: #f5f2ff; --ezs-sub: rgba(245, 242, 255, .55);
+      --ezs-r1: #c4b5fd; --ezs-r2: #ec4899; --ezs-glow: rgba(139, 92, 246, .5);
+      position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center; align-content: center; gap: 26px;
+      background: var(--ezs-bg); overflow: hidden;
+    }
+    .ez-splash[hidden] { display: none; }
+    html[data-theme="light"] .ez-splash { --ezs-bg: #f6f4fb; --ezs-tile: linear-gradient(160deg, #3a3655, #1c1a2b); --ezs-ink: #1c1a2b; --ezs-sub: rgba(28, 26, 43, .5); --ezs-r1: #8b5cf6; --ezs-r2: #1c1a2b; --ezs-glow: rgba(99, 70, 200, .22); }
+    html[data-theme="peachy"] .ez-splash { --ezs-bg: #f4e8e3; --ezs-tile: linear-gradient(160deg, #f6c08a, #e4887a); --ezs-ink: #3d2a26; --ezs-sub: rgba(61, 42, 38, .55); --ezs-r1: #f6c08a; --ezs-r2: #e4887a; --ezs-glow: rgba(228, 136, 122, .45); }
+    html[data-theme="vintage-ledger"] .ez-splash { --ezs-bg: #f4ead3; --ezs-tile: linear-gradient(160deg, #5a4128, #3b2a1a); --ezs-ink: #3b2a1a; --ezs-sub: rgba(59, 42, 26, .55); --ezs-r1: #a67c52; --ezs-r2: #3b2a1a; --ezs-glow: rgba(90, 65, 40, .28); }
+    html[data-theme="jolly"] .ez-splash { --ezs-bg: #f7eff4; --ezs-tile: linear-gradient(160deg, #b9adf7, #8a78ea 58%, #7462df); --ezs-ink: #3a2b5c; --ezs-sub: rgba(58, 43, 92, .55); --ezs-r1: #b9adf7; --ezs-r2: #f2a7c3; --ezs-glow: rgba(110, 84, 220, .38); }
+    html[data-theme="frosty"] .ez-splash { --ezs-bg: #eef0fb; --ezs-tile: linear-gradient(160deg, #b8a5fb, #8b6cf6 58%, #7651f0); --ezs-ink: #2a1f66; --ezs-sub: rgba(42, 31, 102, .55); --ezs-r1: #c4b5fd; --ezs-r2: #7dd3fc; --ezs-glow: rgba(124, 92, 240, .38); }
+    .ez-splash-glow { position: absolute; width: 520px; height: 520px; left: 50%; top: 50%; margin: -300px 0 0 -260px; border-radius: 50%; background: radial-gradient(circle, var(--ezs-glow), transparent 62%); opacity: 0; }
+    .ez-splash-stage { position: relative; width: 156px; height: 156px; display: grid; place-items: center; }
+    .ez-splash-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+    .ez-splash-ring circle { fill: none; stroke: url(#ezsRing); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .ez-splash-tile {
+      position: relative; width: 104px; height: 104px; border-radius: 30px; overflow: hidden; display: grid; place-items: center;
+      background: var(--ezs-tile); box-shadow: 0 30px 60px -24px var(--ezs-glow), inset 0 1px 0 rgba(255, 255, 255, .35); opacity: 0;
+    }
+    .ez-splash-tile img { width: 66%; height: 66%; object-fit: contain; clip-path: inset(100% 0 0 0); }
+    .ez-splash-sheen { position: absolute; inset: -20%; background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .55) 50%, transparent 62%); transform: translateX(-120%); }
+    .ez-splash-word { text-align: center; opacity: 0; font-family: 'Sora', 'Inter', system-ui, sans-serif; }
+    .ez-splash-word b { display: block; font-size: 19px; font-weight: 700; letter-spacing: .02em; color: var(--ezs-ink); }
+    .ez-splash-word span { display: block; margin-top: 4px; font-family: 'Inter', system-ui, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--ezs-sub); }
+
+    .ez-splash.is-play .ez-splash-glow { animation: ezsGlow 1.1s cubic-bezier(.22, 1, .36, 1) forwards; }
+    .ez-splash.is-play .ez-splash-tile { animation: ezsTile .78s cubic-bezier(.22, 1.2, .36, 1) forwards; }
+    .ez-splash.is-play .ez-splash-tile img { animation: ezsMark .55s cubic-bezier(.22, 1, .36, 1) .28s forwards; }
+    .ez-splash.is-play .ez-splash-ring circle { animation: ezsRing .95s cubic-bezier(.65, 0, .35, 1) .12s forwards; }
+    .ez-splash.is-play .ez-splash-ring { animation: ezsSpin 6s linear infinite; }
+    .ez-splash.is-play .ez-splash-sheen { animation: ezsSheen .7s ease-in-out .72s forwards; }
+    .ez-splash.is-play .ez-splash-word { animation: ezsWord .6s cubic-bezier(.22, 1, .36, 1) .55s forwards; }
+    .ez-splash.is-replay { animation: ezsIn .32s ease-out; }
+    .ez-splash.is-out { animation: ezsOut .5s cubic-bezier(.65, 0, .35, 1) forwards; }
+    .ez-splash.is-out .ez-splash-stage { animation: ezsLift .5s cubic-bezier(.65, 0, .35, 1) forwards; }
+    .ez-splash.is-out .ez-splash-word { opacity: 1; animation: ezsWordOut .35s ease-in forwards; }
+    @keyframes ezsGlow { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
+    @keyframes ezsTile { 0% { opacity: 0; transform: scale(.42) rotate(-16deg); filter: blur(10px); } 62% { opacity: 1; transform: scale(1.07) rotate(2deg); filter: blur(0); } 100% { opacity: 1; transform: none; filter: none; } }
+    @keyframes ezsMark { from { clip-path: inset(100% 0 0 0); transform: translateY(12px); } to { clip-path: inset(0 0 0 0); transform: none; } }
+    @keyframes ezsRing { to { stroke-dashoffset: 0; } }
+    @keyframes ezsSpin { to { transform: rotate(270deg); } }
+    @keyframes ezsSheen { to { transform: translateX(120%); } }
+    @keyframes ezsWord { from { opacity: 0; transform: translateY(10px); letter-spacing: .4em; } to { opacity: 1; transform: none; } }
+    @keyframes ezsIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes ezsOut { 0% { opacity: 1; } 30% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+    @keyframes ezsLift { to { transform: scale(1.14); opacity: 0; filter: blur(6px); } }
+    @keyframes ezsWordOut { to { opacity: 0; transform: translateY(-6px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .ez-splash *, .ez-splash { animation-duration: .01ms !important; animation-delay: 0s !important; }
+      .ez-splash-tile, .ez-splash-word { opacity: 1; }
+      .ez-splash-tile img { clip-path: none; }
+    }
+  </style>
 </head>
 <body>
+
+  <!-- The opening: shown until the planner is ready (see ezzoSplash below). -->
+  <div class="ez-splash is-play" id="ezSplash" role="status" aria-label="Opening Ultimate Budget Planner">
+    <div class="ez-splash-glow" aria-hidden="true"></div>
+    <div class="ez-splash-stage" aria-hidden="true">
+      <svg class="ez-splash-ring" viewBox="0 0 160 160">
+        <defs><linearGradient id="ezsRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--ezs-r1)"/><stop offset="1" stop-color="var(--ezs-r2)"/></linearGradient></defs>
+        <circle cx="80" cy="80" r="76" pathLength="100"/>
+      </svg>
+      <div class="ez-splash-tile"><img src="branding/ezzo-mark-white.png" alt="" width="68" height="68" /><i class="ez-splash-sheen"></i></div>
+    </div>
+    <div class="ez-splash-word" aria-hidden="true"><b>Ultimate Budget</b><span>by Ezzo</span></div>
+  </div>
+  <script>
+    // The opening stays at least long enough to finish (about 1.2s), and
+    // lifts away as soon as the planner says it is ready. play() runs it
+    // again over a change of screen, such as the end of setup.
+    (function () {
+      var el = document.getElementById('ezSplash');
+      if (!el) return;
+      var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var MIN = still ? 150 : 1250, t0 = Date.now(), gone = false, safety;
+      function hide() {
+        if (gone) return;
+        gone = true; clearTimeout(safety);
+        setTimeout(function () {
+          el.classList.add('is-out');
+          setTimeout(function () { el.hidden = true; el.classList.remove('is-out', 'is-replay'); }, still ? 0 : 520);
+        }, Math.max(0, MIN - (Date.now() - t0)));
+      }
+      window.ezzoSplash = {
+        done: hide,
+        play: function (under) {
+          gone = false; t0 = Date.now();
+          el.hidden = false;
+          el.classList.remove('is-out', 'is-play', 'is-replay');
+          void el.offsetWidth;
+          el.classList.add('is-play', 'is-replay');
+          // Change the screen underneath once it is covered, then lift.
+          setTimeout(function () { try { under && under(); } catch (e) {} hide(); }, still ? 0 : 340);
+        }
+      };
+      // Never leave anyone staring at the logo if something upstream stalls.
+      safety = setTimeout(hide, 6000);
+    })();
+  </script>
 
   <!-- Lighting for the sculpted appearances (Jolly, Peachy, Frosty): bevels charts,
        lit from the top left. Referenced by CSS as url(#clayFx). -->

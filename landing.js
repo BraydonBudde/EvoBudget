@@ -163,9 +163,9 @@
   // ── Can I afford it? (the sample: $1,240.50 free, $62.03 of it today, 20 days left) ──
   const verdict = $('#lxVerdict');
   const VERDICTS = {
-    35: ['yes', '✓', 'Yes, go for it', "It fits inside today's $62.03, so nothing else moves."],
-    350: ['cau', '!', 'Yes, but it costs your days', 'Your daily amount drops from $62.03 to $44.53 until payday.'],
-    1500: ['wait', '⏳', 'Wait for your next period', 'You would be $259.50 short. Saving $65 a week gets you there in a month.']
+    35: ['yes', '✓', 'Yes, go for it', "It fits inside today's $62.03."],
+    350: ['cau', '!', 'Yes, but it costs your days', 'Your daily amount drops to $44.53.'],
+    1500: ['wait', '⏳', 'Wait for your next period', "You'd be $259.50 short. Save $65 a week and it's yours in a month."]
   };
   $$('[data-afford]').forEach(chip => chip.addEventListener('click', () => {
     $$('[data-afford]').forEach(c => c.classList.toggle('is-on', c === chip));
@@ -223,7 +223,7 @@
       wheelMsg.innerHTML = '<b>Spinning…</b>Fingers crossed.';
       setTimeout(() => {
         const s = SAVES[slice];
-        wheelMsg.innerHTML = s ? `<b>You saved $${s}!</b>It goes straight to your goal.` : '<b>Enjoy the full $20.</b>Treat yourself, guilt free.';
+        wheelMsg.innerHTML = s ? `<b>You saved $${s}!</b>Straight to your goal.` : '<b>Enjoy the full $20.</b>Guilt free.';
         spinning = false;
       }, still ? 0 : 2650);
     });
@@ -232,7 +232,7 @@
   // ── Ezzo types an answer when the card comes into view ──
   const chat = $('#lxChatTile'), ezzo = $('#lxEzzo');
   if (chat && ezzo) {
-    const answer = 'You have <b>$124.06</b> free for Saturday and Sunday together. Spend a little less on Saturday and Sunday gets the rest.';
+    const answer = 'You have <b>$124.06</b> for the weekend. Whatever you save on Saturday rolls into Sunday.';
     const type = async () => {
       if (still) { ezzo.innerHTML = answer; return; }
       await wait(500);

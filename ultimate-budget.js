@@ -8539,6 +8539,9 @@ async function init(){
   // re-triggers this check (see checkSBPImport's dismiss handler).
   try { if (!document.getElementById('sbpBanner')) maybeStartOnboarding(); }
   catch (e) { console.error('[init] onboarding start failed:', e); }
+
+  // Everything is drawn: the opening logo can lift away.
+  try { if (window.ezzoSplash) window.ezzoSplash.done(); } catch (e) {}
 }
 // The first-run setup lives in simple.js (maybeStartOnboarding).
 

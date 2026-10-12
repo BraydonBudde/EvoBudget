@@ -531,7 +531,7 @@ function setupNav(nextLabel, opts) {
 function setupStepHtml() {
   const S = _setup, step = SETUP_STEPS[S.step];
   if (step === 'welcome') return `
-    <div class="setup-hero-ico" aria-hidden="true">${appIconSvg('dashboard')}</div>
+    <div class="setup-hero-ico setup-hero-ico--brand" aria-hidden="true"><img src="branding/ezzo-mark-white.png" alt="" width="30" height="30" /></div>
     <h2 class="onb-title">${t('setup_w_title')}</h2>
     <p class="onb-sub">${t('setup_w_sub')}</p>
     <ul class="setup-w-list">
@@ -675,7 +675,11 @@ function setupWire(card) {
   const repaint = () => { setupRead(card); setupPaint(); };
   card.querySelector('[data-setup-skip]')?.addEventListener('click', setupSkip);
   card.querySelector('[data-setup-back]')?.addEventListener('click', () => go(-1));
-  card.querySelector('[data-setup-go]')?.addEventListener('click', () => setupClose(() => { switchTab('dashboard'); }));
+  // The end of setup: the opening logo plays over the change to the dashboard.
+  card.querySelector('[data-setup-go]')?.addEventListener('click', () => {
+    const go = () => setupClose(() => { switchTab('dashboard'); });
+    if (window.ezzoSplash && window.ezzoSplash.play) window.ezzoSplash.play(go); else go();
+  });
   card.querySelector('[data-setup-sync]')?.addEventListener('click', async e => {
     const btn = e.currentTarget;
     if (!(await syncTurnOn('setup', btn))) return;

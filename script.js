@@ -2227,9 +2227,10 @@ const DODO_PRODUCT_TOOL = {
 };
 // Checkout links, ready for when Dodo replaces the temporary Etsy links in
 // PURCHASE_URLS. A test-mode product only exists on the test host.
+// After paying, the buyer is sent straight to the key prompt; the key itself
+// arrives by email from Dodo.
 const DODO_CHECKOUT_URLS = {
-  ubp: `https://${DODO_MODE === 'live' ? '' : 'test.'}checkout.dodopayments.com/buy/pdt_0NpX69EmC20ESFfJv1rBw?quantity=1`,
-  sbp: `https://${DODO_MODE === 'live' ? '' : 'test.'}checkout.dodopayments.com/buy/pdt_0NpX69MrqOl0s171bu7rM?quantity=1`,
+  ubp: `https://${DODO_MODE === 'live' ? '' : 'test.'}checkout.dodopayments.com/buy/pdt_0NpX69EmC20ESFfJv1rBw?quantity=1&redirect_url=${encodeURIComponent('https://ezzohub.com/budgetplanner?redeem=ubp')}`,
 };
 // ▲▲ ──────────────────────────────────────────────────────────────────── ▲▲
 const DODO_INSTANCE_STORE = { sbp: 'evobudget_sbp_dodo_instance', ubp: 'evobudget_ubp_dodo_instance' };

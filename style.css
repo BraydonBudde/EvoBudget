@@ -9837,3 +9837,11 @@ body.kp-open .modal-overlay { padding-bottom: 250px; }
 }
 .nra-sub--local { display: inline-flex; align-items: center; gap: 6px; }
 .nra-sub--local::before { content: ''; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; }
+/* The setup welcome wears the EzzoHub mark, on the same theme tile as the sidebar. */
+.setup-hero-ico--brand { background: linear-gradient(160deg, #3a3655, #1c1a2b); }
+[data-theme="dark"] .setup-hero-ico--brand { background: linear-gradient(160deg, #b9a3fc, #8b5cf6); }
+[data-theme="peachy"] .setup-hero-ico--brand { background: linear-gradient(160deg, #f6c08a, #e4887a); }
+[data-theme="vintage-ledger"] .setup-hero-ico--brand { background: linear-gradient(160deg, #5a4128, #3b2a1a); }
+[data-theme="jolly"] .setup-hero-ico--brand { background: linear-gradient(160deg, #b9adf7, #7462df); }
+[data-theme="frosty"] .setup-hero-ico--brand { background: linear-gradient(160deg, #b8a5fb, #7651f0); }
+.setup-hero-ico--brand img { width: 62%; height: 62%; object-fit: contain; }
