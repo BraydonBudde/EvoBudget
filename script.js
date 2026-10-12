@@ -4044,7 +4044,8 @@ const TOOLS = [
 ];
 
 function renderHub() {
-  document.getElementById('toolGrid').innerHTML = TOOLS.map(t => `
+  const toolGrid = document.getElementById('toolGrid');
+  if (toolGrid) toolGrid.innerHTML = TOOLS.map(t => `
     <div class="tool-card-wrap">
       ${t.id === 'ubp' ? '<span class="tool-card-popular-pill">Most Popular</span>' : ''}
       <div class="tool-card tool-card--${t.color}${t.status === 'live' ? ' is-live' : ''}">
@@ -4102,6 +4103,16 @@ function renderHub() {
   // Scenario + banner CTA buttons (start the relevant tool's free demo)
   document.querySelectorAll('[data-try]').forEach(btn => {
     btn.addEventListener('click', () => enterTrial(btn.dataset.try));
+  });
+
+  // "I have a key" / Open: the full planner, asking for the key if needed.
+  document.querySelectorAll('[data-open]').forEach(btn => {
+    btn.addEventListener('click', () => openFull(btn.dataset.open));
+  });
+
+  // Buy buttons anywhere on the landing.
+  document.querySelectorAll('[data-buy]:not(.cc-buy-btn)').forEach(btn => {
+    btn.addEventListener('click', () => goToPurchase(btn.dataset.buy));
   });
 
   initFeatureTips();
@@ -7376,29 +7387,8 @@ function init() {
 }
 
 // ── Review carousel ────────────────────────────────────────────────────
-const REVIEWS = [
-  {name:'Megan T.',title:'Freelance Graphic Designer & Illustrator',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/44.jpg',text:'I tried every app out there and they all wanted $10 a month just to see my own spending. Ezzo Budget was the first tool that actually felt like mine. Paid off $3,200 in credit card debt in five months.'},
-  {name:'Daniel K.',title:'Full-Stack Software Engineer at a Startup',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/32.jpg',text:'The savings goals feature changed how I save. I set a target for a trip to Japan and the planner calculated exactly how much I needed each month.'},
-  {name:'James R.',title:'Senior Account Manager in Advertising',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/75.jpg',text:'My wife and I used spreadsheets for years but always fell off after a month. Ezzo Budget is just clean enough that we actually stick with it. We can see our bills, track subscriptions, and it all lives in the browser.'},
-  {name:'Priya S.',title:'Recent Business Graduate & Job Seeker',stars:4,tool:'SBP',img:'https://randomuser.me/api/portraits/women/65.jpg',text:'As a recent graduate I needed something dead simple. The Simple planner lets me see income vs. expenses in one screen. I caught a gym membership I forgot to cancel on day one.'},
-  {name:'Carlos M.',title:'Independent Restaurant Owner & Operator',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/46.jpg',text:'I run a small restaurant and the subscription tracker alone saves me from forgetting about services I signed up for months ago. The calendar view is perfect for seeing what is due and when.'},
-  {name:'Sarah L.',title:'Registered Nurse Working Night Shifts',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/17.jpg',text:'I work 12-hour shifts and have zero energy left for complicated finance apps. This one took me two minutes to set up and I have not missed a bill payment since. Exactly what I needed.'},
-  {name:'Tom W.',title:'High School History Teacher & Coach',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/22.jpg',text:'The debt payoff calculator gave me a clear timeline for paying off my student loans. Seeing the numbers update in real time keeps me motivated. Down $8,000 in seven months.'},
-  {name:'Aisha N.',title:'Digital Marketing Manager at an Agency',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/90.jpg',text:'I love that nothing leaves my device. Every other app wanted my bank login and I was never comfortable with that. Ezzo Budget gave me real budgeting without the privacy trade-off.'},
-  {name:'Ryan P.',title:'Licensed Electrician & Small Business Owner',stars:4,tool:'UBP',img:'https://randomuser.me/api/portraits/men/55.jpg',text:'I set up savings goals for my tools, truck insurance, and license renewals. No more scrambling when a big expense hits.'},
-  {name:'Emily C.',title:'Stay-at-Home Parent Managing Family Finances',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/33.jpg',text:'With three kids, every dollar matters. The Simple planner helped me find over $400 in monthly spending I did not even realize we had. We are finally putting real money into savings.'},
-  {name:'Marco D.',title:'PhD Candidate in Applied Mathematics',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/men/86.jpg',text:'I budgeted on paper for years. Ezzo Budget is basically the digital version of that but with better math. CSV export means I can still pull data into my own spreadsheets when I want to.'},
-  {name:'Jenny H.',title:'Senior Product Designer at a Tech Company',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/women/26.jpg',text:'The allocation buckets were a game changer. I split everything into needs, wants, and savings and now every transaction goes into the right bucket automatically. So satisfying.'},
-  {name:'David B.',title:'Regional Sales Representative in Pharma',stars:4,tool:'UBP',img:'https://randomuser.me/api/portraits/men/41.jpg',text:'I bought this for the debt payoff calculator and ended up using every single feature. The subscription tracker found three services I was double-paying for.'},
-  {name:'Olivia F.',title:'Yoga Instructor & Wellness Studio Owner',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/49.jpg',text:'I run a small studio and my personal finances were always tangled up with business. The Simple planner helped me separate everything. Clear categories, simple progress bars, done.'},
-  {name:'Kevin Z.',title:'IT Consultant Working with Enterprise Clients',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/29.jpg',text:'I have used YNAB, Monarch, and Mint before it shut down. This is the first tool where I do not feel like the product. My data stays local, I paid once, and I actually use it daily.'},
-  {name:'Rachel A.',title:'Dental Hygienist Saving for a First Home',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/58.jpg',text:'I have never been good with money but this made it almost impossible to lose track. The dashboard shows me exactly where I stand and the progress bars turn red before I overspend.'},
-  {name:'Chris G.',title:'Rideshare Driver & Gig Economy Worker',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/64.jpg',text:'My income changes every week. The Ultimate planner lets me adjust on the fly and the calendar shows me exactly when bills hit so I can plan my driving hours around it.'},
-  {name:'Natalie V.',title:'Professional Event Planner & Coordinator',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/women/12.jpg',text:'Savings goals are perfect for my work. I create one for each upcoming event and watch the progress bars fill up. When the event arrives, the money is already there. No stress.'},
-  {name:'Alex J.',title:'Computer Science Major & Part-Time Tutor',stars:4,tool:'SBP',img:'https://randomuser.me/api/portraits/men/18.jpg',text:'I showed this to my roommates and now all four of us use it. It runs in the browser so there is nothing to install. We each have our own budget on our own laptop. Simple and private.'},
-  {name:'Linda M.',title:'Retired Public School Teacher on a Pension',stars:5,tool:'SBP',img:'https://randomuser.me/api/portraits/women/79.jpg',text:'At 63 I did not want another app to learn. This took me five minutes. I track my pension, Social Security, and monthly expenses. The CSV export lets my financial advisor review everything.'},
-  {name:'Hassan E.',title:'Civil Engineer & First-Generation Homeowner',stars:5,tool:'UBP',img:'https://randomuser.me/api/portraits/men/94.jpg',text:'Bought a house last year and suddenly had a dozen new bills to track. The Ultimate planner keeps my mortgage, insurance, utilities, and maintenance funds all organized. Wish I had found it sooner.'},
-];
+// Reviews appear here once there are real customers to quote. Never invented.
+const REVIEWS = [];
 
 function renderCarousel() {
   const track = document.getElementById('rcTrack');

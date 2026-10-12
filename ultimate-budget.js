@@ -337,10 +337,6 @@ function showUpgradeModal(ctx = {}){
           <span class="fk-up-price-note">${t('upg_price_note')}</span>
         </div>
         <button class="fk-up-cta" id="fkUpBuyUbp" type="button">${tf('upg_cta_ubp',esc(PRICES.ubp))}</button>
-        <button class="fk-up-upsell" id="fkUpBuySbp" type="button">
-          <span class="fk-up-upsell-lead">${t('upg_upsell_lead')}</span>
-          <span class="fk-up-upsell-cta">${tf('upg_upsell_cta',esc(PRICES.sbp))}</span>
-        </button>
         <div class="fk-up-foot">
           <button class="fk-up-later" id="fkUpLater" type="button">${t('upg_later')}</button>
         </div>
@@ -355,7 +351,6 @@ function showUpgradeModal(ctx = {}){
   ov.querySelector('#fkUpClose')?.addEventListener('click', close);
   ov.querySelector('#fkUpLater')?.addEventListener('click', close);
   ov.querySelector('#fkUpBuyUbp')?.addEventListener('click', () => goToPurchase('ubp'));
-  ov.querySelector('#fkUpBuySbp')?.addEventListener('click', () => goToPurchase('sbp'));
   requestAnimationFrame(() => ov.classList.add('is-in'));
 }
 // Next occurrence (>= today) of a given day-of-month

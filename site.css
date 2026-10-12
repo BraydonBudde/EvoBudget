@@ -1,0 +1,16 @@
+/* Blog, legal and key-claim pages: the same family as the redesigned home
+   and product pages. A deep ink background with quieter aurora light, and
+   the EzzoHub mark in place of the old grid logo. Content styles are left
+   exactly as they were. */
+html[data-theme] body, body { background: #0a0714; }
+html[data-theme] .backdrop { background: #0a0714; }
+html[data-theme] .backdrop::before { display: none; }
+html[data-theme] .blob { opacity: .32; filter: blur(110px); }
+html[data-theme] .blob-a { background: radial-gradient(circle at 30% 30%, #6d28d9, transparent 70%); }
+html[data-theme] .blob-b { background: radial-gradient(circle at 60% 40%, #be185d, transparent 70%); }
+html[data-theme] .blob-c { background: radial-gradient(circle at 50% 50%, #4338ca, transparent 70%); }
+.wordmark-icon.site-mark {
+  background: linear-gradient(160deg, #b9a3fc, #8b5cf6) !important;
+  box-shadow: 0 8px 20px -8px rgba(139, 92, 246, .8), inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+}
+.site-mark img { width: 74%; height: 74%; object-fit: contain; display: block; }

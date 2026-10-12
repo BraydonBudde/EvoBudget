@@ -7,11 +7,11 @@ keep working exactly as before, and the buy buttons still point at Etsy for now.
 
 - **Two products in Dodo test mode**, matching Lemon Squeezy:
   - Ultimate Budget Planner, $49.99, product `pdt_0NpX69EmC20ESFfJv1rBw`
-  - Simple Budget Planner, $19.99, product `pdt_0NpX69MrqOl0s171bu7rM`
+  - Simple Budget Planner was archived on 12 October 2026, when it was retired.
 
   Both are a one-time payment. Each issues a license key that works on up to 3
   devices. Dodo emails the key to the buyer with a link that opens the key
-  prompt (`/budgetplanner?redeem=ubp` or `?redeem=sbp`).
+  prompt (`/budgetplanner?redeem=ubp`).
 
 - **The app accepts Dodo keys** (script.js, "Dodo Payments keys"):
   - A key is tried on Lemon Squeezy first, then on Dodo.

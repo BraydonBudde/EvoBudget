@@ -89,9 +89,9 @@ const BLOG_POSTS = [
 
 <p>You can do all of this on paper, and for a couple of months it's fine. It gets tedious around the point where you're re-typing the same twenty categories every month, recalculating what's left after every purchase, and trying to remember whether you already logged that coffee.</p>
 
-<p>That's the job <a href="/budgetplanner">Ezzo Budget's Simple Budget Planner</a> does. You set your categories and expected amounts once, log transactions as they happen, and it shows you the gap between planned and actual per category, live. The "how much is left in groceries" question you'd otherwise be answering with mental arithmetic in a supermarket aisle becomes a number you can look at. One payment, no subscription, and there's a free version so you can see whether the method suits you before you spend anything.</p>
+<p>That's the job the <a href="/budgetplanner">Ultimate Budget Planner</a> does. You set your categories and expected amounts once, log transactions as they happen, and it shows you the gap between planned and actual per category, live. The "how much is left in groceries" question you'd otherwise be answering with mental arithmetic in a supermarket aisle becomes a number you can look at. One payment, no subscription, and there's a free version so you can see whether the method suits you before you spend anything.</p>
 
-<p>If your money situation has more moving parts (debt across several cards, sinking funds, subscriptions you've lost track of, an irregular income) the <a href="/ultimate-budget">Ultimate Budget Planner</a> adds the debt payoff calculator, sinking fund tracker, subscription tracker and calendar view on top of the same core.</p>
+<p>If your money situation has more moving parts (debt across several cards, sinking funds, subscriptions you've lost track of, an irregular income) the <a href="/budgetplanner">Ultimate Budget Planner</a> handles that too, with a debt payoff planner, savings goals, a subscription tracker and a calendar view.</p>
 
 <h2>Give it two months, not two weeks</h2>
 
@@ -183,7 +183,7 @@ const BLOG_POSTS = [
 
 <h2>Seeing it laid out</h2>
 
-<p>The <a href="/ultimate-budget">Ultimate Budget Planner</a> has the debt payoff calculator built in: enter your balances, rates and minimums, put in what you can add on top, and it shows you both strategies side by side with your actual payoff date and total interest for each. Rather than trusting the example above, you get your own numbers, which is the only version that should decide anything. It also tracks the payments against your budget as you make them, so the plan and the reality stay in the same place.</p>
+<p>The <a href="/budgetplanner">Ultimate Budget Planner</a> has the debt payoff calculator built in: enter your balances, rates and minimums, put in what you can add on top, and it shows you both strategies side by side with your actual payoff date and total interest for each. Rather than trusting the example above, you get your own numbers, which is the only version that should decide anything. It also tracks the payments against your budget as you make them, so the plan and the reality stay in the same place.</p>
 
 <p>Whichever you pick, pick one this week and start. The ordering debate has cost more people more money than the ordering ever did.</p>
 `,
@@ -326,7 +326,7 @@ const BLOG_POSTS = [
 
 <p>The one weakness of a three-bucket budget is that "am I still inside my wants budget?" is genuinely hard to answer from a bank app, because your bank doesn't know which of your transactions were wants.</p>
 
-<p>Set the three buckets as categories in <a href="/budgetplanner">Ezzo Budget's Simple Budget Planner</a>, put your monthly figure against each, and log transactions as they happen. It's about ten seconds per purchase and it gives you the one number that keeps this working: how much of the wants budget is left. No bank connection, no subscription, and free to try, so you can find out in a month whether the method suits you.</p>
+<p>Set the three buckets as categories in the <a href="/budgetplanner">Ultimate Budget Planner</a>, put your monthly figure against each, and log transactions as they happen. It's about ten seconds per purchase and it gives you the one number that keeps this working: how much of the wants budget is left. No bank connection, no subscription, and free to try, so you can find out in a month whether the method suits you.</p>
 
 <p>Then check in once a month. If a bucket is consistently wrong by more than about 10%, the bucket is wrong, not you. Adjust it.</p>
 
@@ -403,7 +403,7 @@ const BLOG_POSTS = [
 
 <p>Single-income budgets have more moving parts than people expect: tiered categories, several sinking funds running at once, a survival number to check against, and two adults who both need to see it. That's exactly the point where a shared spreadsheet starts producing two versions of the truth.</p>
 
-<p>The <a href="/ultimate-budget">Ultimate Budget Planner</a> handles this shape well: sinking funds tracked separately from your monthly categories so Christmas money doesn't look like spare money, a calendar view so you can see the uniform bill and the car tax landing in the same fortnight before it happens, and subscription tracking for the recurring costs that quietly accumulate. If you want to start simpler, the <a href="/budgetplanner">Simple Budget Planner</a> covers the tiers and the monthly categories on their own, and it's free to try.</p>
+<p>The <a href="/budgetplanner">Ultimate Budget Planner</a> handles this shape well: sinking funds tracked separately from your monthly categories so Christmas money doesn't look like spare money, a calendar view so you can see the uniform bill and the car tax landing in the same fortnight before it happens, and subscription tracking for the recurring costs that quietly accumulate. It's free to try, so you can set up the tiers and see how it feels first.</p>
 
 <h2>Expect the first three months to be wrong</h2>
 
@@ -480,7 +480,7 @@ const BLOG_POSTS = [
 
 <p><a href="/budgetplanner">Ezzo Budget</a> is built around that number: set an expected amount per category, log spending as it happens, and every category shows planned against actual with what's left. There's no bank connection to set up and nothing to log into every time, which sounds minor until you compare it to the alternative at a till. It's free to try, so you can see whether the digital half holds up for you before committing.</p>
 
-<p>If you want the envelope feel with the digital record, the <a href="/ultimate-budget">Ultimate Budget Planner</a> adds allocation tagging, so every bit of spending gets tagged to a bucket. It's the closest digital equivalent to physically taking money out of a specific envelope, with the history intact.</p>
+<p>If you want the envelope feel with the digital record, the <a href="/budgetplanner">Ultimate Budget Planner</a> adds allocation tagging, so every bit of spending gets tagged to a bucket. It's the closest digital equivalent to physically taking money out of a specific envelope, with the history intact.</p>
 
 <h2>The honest answer</h2>
 
@@ -553,7 +553,7 @@ const BLOG_POSTS = [
 
 <p>One separate savings account for all your sinking funds is enough, as long as you track the balances separately. You don't need eight accounts. You need one account and an honest ledger of what portion belongs to which fund, because "I have £1,400 saved" is a very different statement from "I have £1,400 saved, of which £600 is Christmas, £480 is car insurance and £320 is the boiler".</p>
 
-<p>That distinction is exactly where sinking funds fall apart on a spreadsheet, and it's why the <a href="/ultimate-budget">Ultimate Budget Planner</a> tracks them as their own thing rather than as budget categories. You set a target and a due date, it works out the monthly contribution, and it shows each fund's progress separately from your spending money. So the answer to "can I afford this?" doesn't accidentally include next December's presents.</p>
+<p>That distinction is exactly where sinking funds fall apart on a spreadsheet, and it's why the <a href="/budgetplanner">Ultimate Budget Planner</a> tracks them as their own thing rather than as budget categories. You set a target and a due date, it works out the monthly contribution, and it shows each fund's progress separately from your spending money. So the answer to "can I afford this?" doesn't accidentally include next December's presents.</p>
 
 <h2>Doing the sum honestly</h2>
 
@@ -646,7 +646,7 @@ const BLOG_POSTS = [
 
 <p>Progress you can't see is progress you stop making. A savings account balance you check twice a year does not motivate anyone.</p>
 
-<p>Both <a href="/budgetplanner">Ezzo Budget</a> planners let you set an emergency fund as its own goal with a target, so it shows up next to everything else rather than living in a bank app you avoid opening. The <a href="/ultimate-budget">Ultimate Budget Planner</a> tracks it alongside your sinking funds, which keeps the distinction between the two obvious, and that distinction is most of the battle.</p>
+<p>Both <a href="/budgetplanner">Ezzo Budget</a> planners let you set an emergency fund as its own goal with a target, so it shows up next to everything else rather than living in a bank app you avoid opening. The <a href="/budgetplanner">Ultimate Budget Planner</a> tracks it alongside your sinking funds, which keeps the distinction between the two obvious, and that distinction is most of the battle.</p>
 
 <h2>The bit worth hearing</h2>
 
@@ -728,7 +728,7 @@ const BLOG_POSTS = [
 
 <p><strong>Use a card with a spending cap for free trials,</strong> or at minimum diarise the trial end date the same hour you sign up.</p>
 
-<p>The <a href="/ultimate-budget">Ultimate Budget Planner</a> has a subscription tracker built for exactly this: every subscription listed with its cost and billing cycle, an annual total so the real number stays in front of you, and renewals on the calendar view so they arrive as a plan rather than a surprise. It's the difference between doing this audit once and never needing to do it again.</p>
+<p>The <a href="/budgetplanner">Ultimate Budget Planner</a> has a subscription tracker built for exactly this: every subscription listed with its cost and billing cycle, an annual total so the real number stays in front of you, and renewals on the calendar view so they arrive as a plan rather than a surprise. It's the difference between doing this audit once and never needing to do it again.</p>
 
 <h2>Then send the money somewhere</h2>
 
@@ -822,7 +822,7 @@ const BLOG_POSTS = [
 
 <p>The mental load here is real: separating tax from buffer from salary from spending, tracking uneven income against a steady outflow, and staying honest about which pot a balance actually belongs to.</p>
 
-<p>The <a href="/ultimate-budget">Ultimate Budget Planner</a> fits this shape better than a standard monthly budget does. Your salary transfer is a single steady income line so the budget side stays stable, sinking funds handle tax and the buffer as separate tracked pots rather than one blurry savings figure, and the calendar view shows what's due against when money actually lands, which is the specific question irregular earners ask most. If your setup is simpler, the <a href="/budgetplanner">Simple Budget Planner</a> handles the salary-and-categories half on its own and is free to try.</p>
+<p>The <a href="/budgetplanner">Ultimate Budget Planner</a> fits this shape better than a standard monthly budget does. Your salary transfer is a single steady income line so the budget side stays stable, sinking funds handle tax and the buffer as separate tracked pots rather than one blurry savings figure, and the calendar view shows what's due against when money actually lands, which is the specific question irregular earners ask most. It's free to try, so you can see how it fits your income before you decide.</p>
 
 <h2>The real payoff</h2>
 

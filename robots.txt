@@ -4,3 +4,4 @@ Disallow: /admin
 Disallow: /admin.html
 Disallow: /claim
 
+Sitemap: https://ezzohub.com/sitemap.xml
