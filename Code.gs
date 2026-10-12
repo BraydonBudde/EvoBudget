@@ -457,9 +457,19 @@ function _handleDodoWebhook(e) {
 
     const cart = Array.isArray(d.product_cart) ? d.product_cart : [];
     const product = cart.map(function (c) { return DODO_PRODUCT_NAMES[c.product_id] || String(c.product_id || ''); }).join(', ') || 'Ezzo Budget';
-    const cents = event === 'refund.succeeded' ? (d.amount != null ? d.amount : d.total_amount) : d.total_amount;
+    // A buyer abroad pays in their own currency, tax included (250.48 PLN for
+    // a $49.99 planner in Poland). What lands with you is the settlement:
+    // recorded in your currency without the tax, so every sale reads the
+    // same and the totals add up.
+    var cents, currency;
+    if (event === 'payment.succeeded' && d.settlement_amount != null) {
+      cents = Number(d.settlement_amount) - Number(d.settlement_tax || 0);
+      currency = String(d.settlement_currency || 'USD');
+    } else {
+      cents = event === 'refund.succeeded' ? (d.amount != null ? d.amount : d.total_amount) : d.total_amount;
+      currency = String(d.currency || 'USD');
+    }
     const total = Number(cents || 0) / 100;
-    const currency = String(d.currency || 'USD');
     const cust = d.customer || {};
     const testMode = (props.getProperty('DODO_MODE') || 'test') !== 'live';
 
