@@ -22,13 +22,17 @@
   </script>
 
   <style>
-    /* ── The opening: the EzzoHub mark, while the planner gets ready ──
-       Painted before anything else, so the planner is only ever seen
-       finished. Coloured for whichever theme was last chosen. */
+    /* ── The opening: the EzzoHub mark builds itself while the planner gets ready ──
+       Painted before anything else, so the planner is only ever seen finished.
+       Coloured for whichever theme was last chosen. The story, in about 1.8s:
+       a drop falls into a hexagon and becomes the tile, a shockwave rings out,
+       the E and H faces spin in with motion trails, the four top tiles land one
+       by one, sparks fly, and the name types in. It leaves by closing in on the logo. */
     .ez-splash {
       --ezs-bg: #0f0a24; --ezs-tile: linear-gradient(160deg, #b9a3fc, #8b5cf6 62%, #6d3fe0); --ezs-ink: #f5f2ff; --ezs-sub: rgba(245, 242, 255, .55);
       --ezs-r1: #c4b5fd; --ezs-r2: #ec4899; --ezs-glow: rgba(139, 92, 246, .5);
-      position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center; align-content: center; gap: 26px;
+      --ezs-in: cubic-bezier(.22, 1, .36, 1); --ezs-pop: cubic-bezier(.3, 1.45, .5, 1);
+      position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center; align-content: center; gap: 46px;
       background: var(--ezs-bg); overflow: hidden;
     }
     .ez-splash[hidden] { display: none; }
@@ -37,46 +41,119 @@
     html[data-theme="vintage-ledger"] .ez-splash { --ezs-bg: #f4ead3; --ezs-tile: linear-gradient(160deg, #5a4128, #3b2a1a); --ezs-ink: #3b2a1a; --ezs-sub: rgba(59, 42, 26, .55); --ezs-r1: #a67c52; --ezs-r2: #3b2a1a; --ezs-glow: rgba(90, 65, 40, .28); }
     html[data-theme="jolly"] .ez-splash { --ezs-bg: #f7eff4; --ezs-tile: linear-gradient(160deg, #b9adf7, #8a78ea 58%, #7462df); --ezs-ink: #3a2b5c; --ezs-sub: rgba(58, 43, 92, .55); --ezs-r1: #b9adf7; --ezs-r2: #f2a7c3; --ezs-glow: rgba(110, 84, 220, .38); }
     html[data-theme="frosty"] .ez-splash { --ezs-bg: #eef0fb; --ezs-tile: linear-gradient(160deg, #b8a5fb, #8b6cf6 58%, #7651f0); --ezs-ink: #2a1f66; --ezs-sub: rgba(42, 31, 102, .55); --ezs-r1: #c4b5fd; --ezs-r2: #7dd3fc; --ezs-glow: rgba(124, 92, 240, .38); }
-    .ez-splash-glow { position: absolute; width: 520px; height: 520px; left: 50%; top: 50%; margin: -300px 0 0 -260px; border-radius: 50%; background: radial-gradient(circle, var(--ezs-glow), transparent 62%); opacity: 0; }
+    .ez-splash-glow { position: absolute; width: 560px; height: 560px; left: 50%; top: 50%; margin: -320px 0 0 -280px; border-radius: 50%; background: radial-gradient(circle, var(--ezs-glow), transparent 62%); opacity: 0; }
     .ez-splash-stage { position: relative; width: 156px; height: 156px; display: grid; place-items: center; }
-    .ez-splash-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
-    .ez-splash-ring circle { fill: none; stroke: url(#ezsRing); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .ez-splash-fx { position: absolute; inset: -40px; width: calc(100% + 80px); height: calc(100% + 80px); overflow: visible; pointer-events: none; }
+    .ez-splash-fx * { fill: none; stroke-linecap: round; stroke-linejoin: round; transform-box: fill-box; transform-origin: center; }
+    .ezs-target { stroke: var(--ezs-r1); stroke-width: 2.4; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .ezs-wave { stroke: var(--ezs-r1); stroke-width: 1.6; opacity: 0; }
+    .ezs-frame { stroke: url(#ezsRing); stroke-width: 2.2; stroke-dasharray: 100; stroke-dashoffset: 100; }
+    .ezs-sparks line { stroke: var(--ezs-r1); stroke-width: 2.6; stroke-dasharray: 26 100; stroke-dashoffset: 26; opacity: 0; }
+    .ezs-sparks line:nth-child(even) { stroke: var(--ezs-r2); stroke-width: 2; }
     .ez-splash-tile {
-      position: relative; width: 104px; height: 104px; border-radius: 30px; overflow: hidden; display: grid; place-items: center;
+      position: relative; width: 104px; height: 104px; border-radius: 28.8%; overflow: hidden;
       background: var(--ezs-tile); box-shadow: 0 30px 60px -24px var(--ezs-glow), inset 0 1px 0 rgba(255, 255, 255, .35); opacity: 0;
     }
-    .ez-splash-tile img { width: 66%; height: 66%; object-fit: contain; clip-path: inset(100% 0 0 0); }
     .ez-splash-sheen { position: absolute; inset: -20%; background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .55) 50%, transparent 62%); transform: translateX(-120%); }
-    .ez-splash-word { text-align: center; opacity: 0; font-family: 'Sora', 'Inter', system-ui, sans-serif; }
-    .ez-splash-word b { display: block; font-size: 19px; font-weight: 700; letter-spacing: .02em; color: var(--ezs-ink); }
-    .ez-splash-word span { display: block; margin-top: 4px; font-family: 'Inter', system-ui, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--ezs-sub); }
+    /* The mark, cut into the six pieces it is drawn from. */
+    .ezs-mark { position: absolute; left: 50%; top: 50%; width: 69px; height: 69px; margin: -34.5px 0 0 -34.5px; }
+    .ezs-p { position: absolute; inset: 0; background: url(branding/ezzo-mark-white.png) center / 100% 100% no-repeat; opacity: 0; }
+    .ezs-p--t1 { clip-path: polygon(50% -2%, 72.7% 12.1%, 50% 24.2%, 27.3% 12.1%); }
+    .ezs-p--t2 { clip-path: polygon(27.3% 12.1%, 50% 24.2%, 28.1% 35.9%, 5.5% 24.2%); }
+    .ezs-p--t3 { clip-path: polygon(72.7% 12.1%, 94.5% 24.2%, 71.9% 35.9%, 50% 24.2%); }
+    .ezs-p--t4 { clip-path: polygon(50% 24.2%, 71.9% 35.9%, 50% 47.7%, 28.1% 35.9%); }
+    .ezs-p--e { clip-path: polygon(0 21.9%, 50% 46.9%, 50% 100%, 0 100%); }
+    .ezs-p--h { clip-path: polygon(50% 46.9%, 100% 21.9%, 100% 100%, 50% 100%); }
+    .ez-splash-word { text-align: center; font-family: 'Sora', 'Inter', system-ui, sans-serif; }
+    .ez-splash-word b { display: block; font-size: 19px; font-weight: 700; letter-spacing: .02em; color: var(--ezs-ink); overflow: hidden; padding: 2px 0; white-space: pre; }
+    .ez-splash-word b i { display: inline-block; font-style: normal; opacity: 0; }
+    .ez-splash-word span { display: block; margin-top: 4px; font-family: 'Inter', system-ui, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--ezs-sub); opacity: 0; }
 
-    .ez-splash.is-play .ez-splash-glow { animation: ezsGlow 1.1s cubic-bezier(.22, 1, .36, 1) forwards; }
-    .ez-splash.is-play .ez-splash-tile { animation: ezsTile .78s cubic-bezier(.22, 1.2, .36, 1) forwards; }
-    .ez-splash.is-play .ez-splash-tile img { animation: ezsMark .55s cubic-bezier(.22, 1, .36, 1) .28s forwards; }
-    .ez-splash.is-play .ez-splash-ring circle { animation: ezsRing .95s cubic-bezier(.65, 0, .35, 1) .12s forwards; }
-    .ez-splash.is-play .ez-splash-ring { animation: ezsSpin 6s linear infinite; }
-    .ez-splash.is-play .ez-splash-sheen { animation: ezsSheen .7s ease-in-out .72s forwards; }
-    .ez-splash.is-play .ez-splash-word { animation: ezsWord .6s cubic-bezier(.22, 1, .36, 1) .55s forwards; }
+    .ez-splash.is-play .ez-splash-glow { animation: ezsGlow 1.3s var(--ezs-in) .3s forwards; }
+    .ez-splash.is-play .ez-splash-tile { animation: ezsTile 1s linear forwards; }
+    .ez-splash.is-play .ezs-target { animation: ezsTarget .9s linear forwards; }
+    .ez-splash.is-play .ezs-wave--1 { animation: ezsWave .75s var(--ezs-in) .44s forwards; }
+    .ez-splash.is-play .ezs-wave--2 { animation: ezsWave .8s var(--ezs-in) 1.12s forwards; }
+    .ez-splash.is-play .ezs-frame { animation: ezsFrame .9s var(--ezs-in) .7s forwards; }
+    .ez-splash.is-play .ezs-sparks line { animation: ezsSpark .55s var(--ezs-in) 1.14s forwards; }
+    .ez-splash.is-play .ezs-p--e { animation: ezsFaceL .62s var(--ezs-in) .5s forwards; }
+    .ez-splash.is-play .ezs-p--h { animation: ezsFaceR .62s var(--ezs-in) .56s forwards; }
+    .ez-splash.is-play .ezs-ghost.ezs-p--e { animation-name: ezsGhostL; }
+    .ez-splash.is-play .ezs-ghost.ezs-p--h { animation-name: ezsGhostR; }
+    .ez-splash.is-play .ezs-ghost--1 { animation-delay: .56s; }
+    .ez-splash.is-play .ezs-ghost--2 { animation-delay: .62s; }
+    .ez-splash.is-play .ezs-ghost--1.ezs-p--h { animation-delay: .62s; }
+    .ez-splash.is-play .ezs-ghost--2.ezs-p--h { animation-delay: .68s; }
+    .ez-splash.is-play .ezs-p--t1, .ez-splash.is-play .ezs-p--t2, .ez-splash.is-play .ezs-p--t3, .ez-splash.is-play .ezs-p--t4 { animation: ezsTop .5s var(--ezs-pop) forwards; }
+    .ez-splash.is-play .ezs-p--t2 { animation-delay: .84s; }
+    .ez-splash.is-play .ezs-p--t1 { animation-delay: .9s; }
+    .ez-splash.is-play .ezs-p--t4 { animation-delay: .96s; }
+    .ez-splash.is-play .ezs-p--t3 { animation-delay: 1.02s; }
+    .ez-splash.is-play .ez-splash-sheen { animation: ezsSheen .7s ease-in-out 1.22s forwards; }
+    .ez-splash.is-play .ez-splash-word b i { animation: ezsChar .5s var(--ezs-in) calc(.98s + var(--i) * 22ms) forwards; }
+    .ez-splash.is-play .ez-splash-word span { animation: ezsBy .6s var(--ezs-in) 1.34s forwards; }
     .ez-splash.is-replay { animation: ezsIn .32s ease-out; }
-    .ez-splash.is-out { animation: ezsOut .5s cubic-bezier(.65, 0, .35, 1) forwards; }
-    .ez-splash.is-out .ez-splash-stage { animation: ezsLift .5s cubic-bezier(.65, 0, .35, 1) forwards; }
-    .ez-splash.is-out .ez-splash-word { opacity: 1; animation: ezsWordOut .35s ease-in forwards; }
+    .ez-splash.is-out { animation: ezsClose .62s cubic-bezier(.7, 0, .2, 1) forwards; }
+    .ez-splash.is-out .ez-splash-stage { animation: ezsShrink .62s cubic-bezier(.7, 0, .2, 1) forwards; }
+    .ez-splash.is-out .ez-splash-word { animation: ezsWordOut .3s ease-in forwards; }
+
     @keyframes ezsGlow { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
-    @keyframes ezsTile { 0% { opacity: 0; transform: scale(.42) rotate(-16deg); filter: blur(10px); } 62% { opacity: 1; transform: scale(1.07) rotate(2deg); filter: blur(0); } 100% { opacity: 1; transform: none; filter: none; } }
-    @keyframes ezsMark { from { clip-path: inset(100% 0 0 0); transform: translateY(12px); } to { clip-path: inset(0 0 0 0); transform: none; } }
-    @keyframes ezsRing { to { stroke-dashoffset: 0; } }
-    @keyframes ezsSpin { to { transform: rotate(270deg); } }
+    /* A drop falls, stretches, squashes on landing, then swells into the tile. */
+    @keyframes ezsTile {
+      0% { opacity: 0; transform: translateY(-150px) scale(.13); border-radius: 50%; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
+      6% { opacity: 1; }
+      30% { transform: translateY(0) scale(.1, .22); border-radius: 50%; animation-timing-function: cubic-bezier(0, 0, .3, 1); }
+      38% { transform: translateY(5px) scale(.23, .09); border-radius: 50%; animation-timing-function: cubic-bezier(.3, 0, .3, 1); }
+      47% { opacity: 1; transform: translateY(0) scale(.14); border-radius: 50%; animation-timing-function: cubic-bezier(.3, 1.3, .5, 1); }
+      74% { transform: scale(1.07) rotate(-4deg); border-radius: 26%; animation-timing-function: ease-in-out; }
+      86% { transform: scale(.985) rotate(1deg); }
+      100% { opacity: 1; transform: none; border-radius: 28.8%; }
+    }
+    /* The little hexagon the drop lands in, which then bursts outward. */
+    @keyframes ezsTarget {
+      0% { stroke-dashoffset: 100; opacity: 1; transform: scale(1); }
+      38% { stroke-dashoffset: 0; transform: scale(1); }
+      47% { transform: scale(.78); opacity: 1; }
+      100% { stroke-dashoffset: 0; transform: scale(4.6) rotate(30deg); opacity: 0; }
+    }
+    @keyframes ezsWave { 0% { opacity: .9; transform: scale(.5); stroke-width: 4; } 100% { opacity: 0; transform: scale(1.9) rotate(-20deg); stroke-width: .5; } }
+    @keyframes ezsFrame { from { stroke-dashoffset: 100; transform: rotate(-90deg) scale(.9); opacity: 0; } 20% { opacity: 1; } to { stroke-dashoffset: 0; transform: none; opacity: .55; } }
+    @keyframes ezsSpark { 0% { opacity: 1; stroke-dashoffset: 26; } 100% { opacity: 0; stroke-dashoffset: -74; } }
+    @keyframes ezsFaceL {
+      0% { opacity: 0; transform: translate(-74px, 44px) rotate(-48deg) scale(.55); }
+      18% { opacity: 1; }
+      68% { transform: translate(2px, -1px) rotate(3deg) scale(1.03); }
+      100% { opacity: 1; transform: none; }
+    }
+    @keyframes ezsFaceR {
+      0% { opacity: 0; transform: translate(74px, 44px) rotate(48deg) scale(.55); }
+      18% { opacity: 1; }
+      68% { transform: translate(-2px, -1px) rotate(-3deg) scale(1.03); }
+      100% { opacity: 1; transform: none; }
+    }
+    @keyframes ezsGhostL {
+      0% { opacity: 0; transform: translate(-74px, 44px) rotate(-48deg) scale(.55); }
+      18% { opacity: .38; }
+      68% { opacity: 0; transform: translate(2px, -1px) rotate(3deg) scale(1.03); }
+      100% { opacity: 0; transform: none; }
+    }
+    @keyframes ezsGhostR {
+      0% { opacity: 0; transform: translate(74px, 44px) rotate(48deg) scale(.55); }
+      18% { opacity: .38; }
+      68% { opacity: 0; transform: translate(-2px, -1px) rotate(-3deg) scale(1.03); }
+      100% { opacity: 0; transform: none; }
+    }
+    @keyframes ezsTop { 0% { opacity: 0; transform: translateY(-30px) scale(.35); } 40% { opacity: 1; } 100% { opacity: 1; transform: none; } }
     @keyframes ezsSheen { to { transform: translateX(120%); } }
-    @keyframes ezsWord { from { opacity: 0; transform: translateY(10px); letter-spacing: .4em; } to { opacity: 1; transform: none; } }
+    @keyframes ezsChar { from { opacity: 0; transform: translateY(105%) rotate(10deg); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+    @keyframes ezsBy { from { opacity: 0; letter-spacing: .85em; } to { opacity: 1; letter-spacing: .3em; } }
     @keyframes ezsIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes ezsOut { 0% { opacity: 1; } 30% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
-    @keyframes ezsLift { to { transform: scale(1.14); opacity: 0; filter: blur(6px); } }
-    @keyframes ezsWordOut { to { opacity: 0; transform: translateY(-6px); } }
+    /* Leaving: the screen closes in on the logo, uncovering the planner around it. */
+    @keyframes ezsClose { 0% { clip-path: circle(150% at 50% 46%); } 100% { clip-path: circle(0% at 50% 46%); visibility: hidden; } }
+    @keyframes ezsShrink { 0% { transform: none; } 30% { transform: scale(1.06); } 100% { transform: scale(.35) rotate(-12deg); opacity: 0; } }
+    @keyframes ezsWordOut { to { opacity: 0; transform: translateY(-8px); filter: blur(4px); } }
     @media (prefers-reduced-motion: reduce) {
       .ez-splash *, .ez-splash { animation-duration: .01ms !important; animation-delay: 0s !important; }
-      .ez-splash-tile, .ez-splash-word { opacity: 1; }
-      .ez-splash-tile img { clip-path: none; }
     }
   </style>
 </head>
@@ -86,29 +163,38 @@
   <div class="ez-splash is-play" id="ezSplash" role="status" aria-label="Opening Ultimate Budget Planner">
     <div class="ez-splash-glow" aria-hidden="true"></div>
     <div class="ez-splash-stage" aria-hidden="true">
-      <svg class="ez-splash-ring" viewBox="0 0 160 160">
+      <svg class="ez-splash-fx" viewBox="0 0 236 236">
         <defs><linearGradient id="ezsRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--ezs-r1)"/><stop offset="1" stop-color="var(--ezs-r2)"/></linearGradient></defs>
-        <circle cx="80" cy="80" r="76" pathLength="100"/>
+        <polygon class="ezs-frame" points="118.0,26.0 197.7,72.0 197.7,164.0 118.0,210.0 38.3,164.0 38.3,72.0" pathLength="100"/>
+        <polygon class="ezs-wave ezs-wave--1" points="118.0,52.0 175.2,85.0 175.2,151.0 118.0,184.0 60.8,151.0 60.8,85.0"/>
+        <polygon class="ezs-wave ezs-wave--2" points="118.0,38.0 187.3,78.0 187.3,158.0 118.0,198.0 48.7,158.0 48.7,78.0"/>
+        <polygon class="ezs-target" points="118.0,101.0 132.7,109.5 132.7,126.5 118.0,135.0 103.3,126.5 103.3,109.5" pathLength="100"/>
+        <g class="ezs-sparks"><line x1="204.0" y1="118.0" x2="230.0" y2="118.0" pathLength="100"/><line x1="192.5" y1="161.0" x2="215.0" y2="174.0" pathLength="100"/><line x1="161.0" y1="192.5" x2="174.0" y2="215.0" pathLength="100"/><line x1="118.0" y1="204.0" x2="118.0" y2="230.0" pathLength="100"/><line x1="75.0" y1="192.5" x2="62.0" y2="215.0" pathLength="100"/><line x1="43.5" y1="161.0" x2="21.0" y2="174.0" pathLength="100"/><line x1="32.0" y1="118.0" x2="6.0" y2="118.0" pathLength="100"/><line x1="43.5" y1="75.0" x2="21.0" y2="62.0" pathLength="100"/><line x1="75.0" y1="43.5" x2="62.0" y2="21.0" pathLength="100"/><line x1="118.0" y1="32.0" x2="118.0" y2="6.0" pathLength="100"/><line x1="161.0" y1="43.5" x2="174.0" y2="21.0" pathLength="100"/><line x1="192.5" y1="75.0" x2="215.0" y2="62.0" pathLength="100"/></g>
       </svg>
-      <div class="ez-splash-tile"><img src="branding/ezzo-mark-white.png" alt="" width="68" height="68" /><i class="ez-splash-sheen"></i></div>
+      <div class="ez-splash-tile"><i class="ez-splash-sheen"></i></div>
+      <div class="ezs-mark">
+        <i class="ezs-p ezs-p--e ezs-ghost ezs-ghost--2"></i><i class="ezs-p ezs-p--e ezs-ghost ezs-ghost--1"></i><i class="ezs-p ezs-p--e"></i>
+        <i class="ezs-p ezs-p--h ezs-ghost ezs-ghost--2"></i><i class="ezs-p ezs-p--h ezs-ghost ezs-ghost--1"></i><i class="ezs-p ezs-p--h"></i>
+        <i class="ezs-p ezs-p--t1"></i><i class="ezs-p ezs-p--t2"></i><i class="ezs-p ezs-p--t3"></i><i class="ezs-p ezs-p--t4"></i>
+      </div>
     </div>
-    <div class="ez-splash-word" aria-hidden="true"><b>Ultimate Budget</b><span>by Ezzo</span></div>
+    <div class="ez-splash-word" aria-hidden="true"><b><i style="--i:0">U</i><i style="--i:1">l</i><i style="--i:2">t</i><i style="--i:3">i</i><i style="--i:4">m</i><i style="--i:5">a</i><i style="--i:6">t</i><i style="--i:7">e</i><i style="--i:8"> </i><i style="--i:9">B</i><i style="--i:10">u</i><i style="--i:11">d</i><i style="--i:12">g</i><i style="--i:13">e</i><i style="--i:14">t</i></b><span>by Ezzo</span></div>
   </div>
   <script>
-    // The opening stays at least long enough to finish (about 1.2s), and
-    // lifts away as soon as the planner says it is ready. play() runs it
-    // again over a change of screen, such as the end of setup.
+    // The opening stays until it has finished building (about 1.9s), and
+    // leaves as soon as the planner says it is ready. play() runs it again
+    // over a change of screen, such as the end of setup.
     (function () {
       var el = document.getElementById('ezSplash');
       if (!el) return;
       var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var MIN = still ? 150 : 1250, t0 = Date.now(), gone = false, safety;
+      var MIN = still ? 150 : 1900, t0 = Date.now(), gone = false, safety;
       function hide() {
         if (gone) return;
         gone = true; clearTimeout(safety);
         setTimeout(function () {
           el.classList.add('is-out');
-          setTimeout(function () { el.hidden = true; el.classList.remove('is-out', 'is-replay'); }, still ? 0 : 520);
+          setTimeout(function () { el.hidden = true; el.classList.remove('is-out', 'is-replay'); }, still ? 0 : 640);
         }, Math.max(0, MIN - (Date.now() - t0)));
       }
       window.ezzoSplash = {
@@ -119,7 +205,7 @@
           el.classList.remove('is-out', 'is-play', 'is-replay');
           void el.offsetWidth;
           el.classList.add('is-play', 'is-replay');
-          // Change the screen underneath once it is covered, then lift.
+          // Change the screen underneath once it is covered, then leave.
           setTimeout(function () { try { under && under(); } catch (e) {} hide(); }, still ? 0 : 340);
         }
       };

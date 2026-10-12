@@ -313,3 +313,172 @@
   const year = $('#lxYear');
   if (year) year.textContent = new Date().getFullYear();
 })();
+
+// ── Scroll motion: the horizon, the ticker, the paycheck story, and the light ──
+// Everything here reads the scroll position once per frame and eases toward
+// it, so it glides rather than jumps. With reduced motion, it all shows its
+// finished state and nothing follows the scroll or the pointer.
+(function () {
+  'use strict';
+  const root = document.getElementById('lx');
+  if (!root) return;
+  const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = v => Math.max(0, Math.min(1, v));
+  const money = v => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  let vh = window.innerHeight;
+
+  // ── The horizon: the planner rises and flattens as you scroll to it ──
+  const scene = root.querySelector('.lx-rise-scene');
+  const fit = root.querySelector('.lx-dash-fit');
+  const dash = root.querySelector('.lx-dash');
+  const sizeDash = () => { if (dash && fit) dash.style.setProperty('--s', String(fit.clientWidth / 1280)); };
+  sizeDash();
+  let riseNow = still ? 1 : 0, riseTo = riseNow, live = false;
+  function goLive() {
+    if (live || !dash) return;
+    live = true;
+    dash.classList.add('is-live');
+    dash.querySelectorAll('[data-dash-count]').forEach(el => {
+      const to = Number(el.dataset.dashCount), dec = Number(el.dataset.dec || 0);
+      const fmt = v => v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+      if (still) { el.textContent = fmt(to); return; }
+      const t0 = performance.now();
+      const step = now => { const k = Math.min(1, (now - t0) / 1600); el.textContent = fmt(to * (1 - Math.pow(1 - k, 4))); if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    });
+  }
+
+  // ── The paycheck story ──
+  const track = root.querySelector('.lx-story-track');
+  const card = track && track.querySelector('.lx-story-card');
+  const PAY = 2400, LABELS = ['Paycheck', 'After bills', 'After goals and debt', 'Free to spend'];
+  // When each line comes off, as a share of the way through the story.
+  const WIN = [[.1, .2], [.18, .28], [.26, .36], [.34, .44], [.5, .6], [.58, .68]];
+  const items = track ? [...track.querySelectorAll('[data-amt]')] : [];
+  const steps = track ? [...track.querySelectorAll('.lx-story-steps li')] : [];
+  const segs = {};
+  if (track) track.querySelectorAll('[data-seg]').forEach(el => { segs[el.dataset.seg] = el; });
+  const num = track && track.querySelector('[data-story-num]');
+  const label = track && track.querySelector('[data-story-label]');
+  const daily = track && track.querySelector('.lx-story-daily');
+  const dailyNum = track && track.querySelector('[data-story-daily]');
+  const days = track ? [...track.querySelectorAll('.lx-story-days i')] : [];
+  let qNow = still ? 1 : 0, qTo = qNow, lastStep = -1;
+  function paintStory(q) {
+    if (!track) return;
+    let left = PAY;
+    const sums = { b: 0, g: 0, d: 0 };
+    items.forEach((li, i) => {
+      const [a, b] = WIN[i] || [0, 0];
+      const f = clamp((q - a) / (b - a)), amt = Number(li.dataset.amt) * f;
+      li.style.setProperty('--f', f.toFixed(3));
+      sums[li.dataset.kind] += amt; left -= amt;
+    });
+    num.textContent = money(Math.round(left * 100) / 100);
+    ['b', 'g', 'd'].forEach(k => { if (segs[k]) segs[k].style.width = (sums[k] / PAY * 100).toFixed(2) + '%'; });
+    if (segs.f) segs.f.style.width = (left / PAY * 100).toFixed(2) + '%';
+    const step = q < .1 ? 0 : q < .47 ? 1 : q < .72 ? 2 : 3;
+    if (step !== lastStep) {
+      lastStep = step;
+      steps.forEach((li, i) => { li.classList.toggle('is-on', i === step); li.classList.toggle('is-done', i < step); });
+      label.textContent = LABELS[step];
+      card.classList.toggle('is-free', step === 3);
+    }
+    daily.style.setProperty('--f4', clamp((q - .72) / .08).toFixed(3));
+    dailyNum.textContent = money(Math.round(left / 20 * 100) / 100);
+    const lit = Math.round(clamp((q - .78) / .16) * days.length);
+    days.forEach((d, i) => d.classList.toggle('is-on', i < lit));
+  }
+
+  // ── One frame loop for the scroll-driven parts ──
+  let raf = 0;
+  function measure() {
+    if (scene) { const r = scene.getBoundingClientRect(); riseTo = still ? 1 : clamp((vh - r.top) / (vh * .82)); }
+    if (track) { const r = track.getBoundingClientRect(); qTo = still ? 1 : clamp(-r.top / Math.max(1, r.height - vh)); }
+  }
+  let tPrev = 0;
+  function frame(now) {
+    raf = 0;
+    measure();
+    // Ease by elapsed time, not frame count, so a slow device settles just as soon.
+    const dt = tPrev ? Math.min(250, now - tPrev) : 16.7; tPrev = now;
+    const k1 = 1 - Math.pow(.88, dt / 16.7), k2 = 1 - Math.pow(.84, dt / 16.7);
+    riseNow += (riseTo - riseNow) * k1; if (Math.abs(riseTo - riseNow) < .0008) riseNow = riseTo;
+    qNow += (qTo - qNow) * k2; if (Math.abs(qTo - qNow) < .0005) qNow = qTo;
+    if (scene) scene.style.setProperty('--p', riseNow.toFixed(4));
+    if (riseNow > .72) goLive();
+    paintStory(qNow);
+    if (riseNow !== riseTo || qNow !== qTo) kick(); else tPrev = 0;
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  window.addEventListener('scroll', kick, { passive: true });
+  window.addEventListener('resize', () => { vh = window.innerHeight; sizeDash(); kick(); });
+  if (still) { if (scene) scene.style.setProperty('--p', '1'); goLive(); paintStory(1); }
+  else kick();
+
+  // ── The ticker: drifts on its own, rushes when you scroll, turns when you turn ──
+  const rows = [...root.querySelectorAll('.lx-ticker-row')].map(row => {
+    const t = row.querySelector('.lx-ticker-track');
+    t.innerHTML += t.innerHTML;   // Twice over, so the loop has no seam.
+    return { t, dir: Number(row.dataset.dir) || 1, x: 0, w: 0 };
+  });
+  if (rows.length && !still) {
+    let drive = 1, aim = 1, lastY = window.scrollY, on = false, tr = 0;
+    const measureRows = () => rows.forEach(r => { r.w = r.t.scrollWidth / 2; });
+    measureRows();
+    window.addEventListener('resize', measureRows);
+    window.addEventListener('scroll', () => {
+      const dy = window.scrollY - lastY; lastY = window.scrollY;
+      if (dy) aim = Math.sign(dy) * Math.min(9, 1 + Math.abs(dy) * .22);
+    }, { passive: true });
+    let tLast = 0;
+    const tick = now => {
+      tr = 0;
+      if (!on) { tLast = 0; return; }
+      const f = tLast ? Math.min(250, now - tLast) / 16.7 : 1; tLast = now;
+      drive += (aim - drive) * (1 - Math.pow(.92, f));
+      aim += (Math.sign(aim) - aim) * (1 - Math.pow(.95, f));   // settle back to a gentle drift
+      rows.forEach(r => {
+        r.x -= r.dir * drive * .55 * f;
+        if (r.w) { if (r.x <= -r.w) r.x += r.w; if (r.x > 0) r.x -= r.w; }
+        r.t.style.transform = `translate3d(${r.x.toFixed(2)}px, 0, 0)`;
+      });
+      tr = requestAnimationFrame(tick);
+    };
+    new IntersectionObserver(es => {
+      on = es[0].isIntersecting;
+      if (on && !tr) { measureRows(); tr = requestAnimationFrame(tick); }
+    }).observe(root.querySelector('.lx-ticker'));
+  }
+
+  // ── Light: a soft glow follows the pointer, and card edges catch it ──
+  const fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (fine && !still) {
+    const CARDS = '.lx-pain, .lx-tile, .lx-tool, .lx-value, .lx-price-card, .lx-demo-card, .lx-feature, .lx-privacy, .lx-story-card, .lx-dc, .lx-proof-in';
+    root.querySelectorAll(CARDS).forEach(el => {
+      el.classList.add('lx-glow');
+      const spot = document.createElement('i');
+      spot.className = 'lx-spot'; spot.setAttribute('aria-hidden', 'true');
+      spot.appendChild(document.createElement('i'));
+      el.appendChild(spot);
+    });
+    const glow = document.createElement('i');
+    glow.className = 'lx-cursor'; glow.setAttribute('aria-hidden', 'true');
+    root.appendChild(glow);
+    let cx = 0, cy = 0, tx = 0, ty = 0, seen = false, gr = 0;
+    const follow = () => {
+      gr = 0;
+      cx += (tx - cx) * .14; cy += (ty - cy) * .14;
+      glow.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
+      if (Math.abs(tx - cx) + Math.abs(ty - cy) > .4) gr = requestAnimationFrame(follow);
+    };
+    root.addEventListener('pointermove', e => {
+      tx = e.clientX; ty = e.clientY;
+      if (!seen) { seen = true; cx = tx; cy = ty; glow.classList.add('is-on'); }
+      if (!gr) gr = requestAnimationFrame(follow);
+      const c = e.target.closest && e.target.closest('.lx-glow');
+      if (c) { const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); }
+    }, { passive: true });
+    document.documentElement.addEventListener('mouseleave', () => { seen = false; glow.classList.remove('is-on'); });
+  }
+})();

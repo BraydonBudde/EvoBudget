@@ -32,7 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="landing.css?v=20261212" />
+  <link rel="stylesheet" href="landing.css?v=20261213" />
   <style>html, body { margin: 0; background: #0a0714; } body { min-height: 100vh; }</style>
 </head>
 <body>
@@ -107,6 +107,84 @@
     </div>
   </section>
 
+  <!-- ── The horizon: the planner rises into view as you scroll ── -->
+  <section class="lx-rise" aria-labelledby="lxRiseTitle">
+    <div class="lx-wrap lx-sec-head lx-rise-head" data-reveal>
+      <span class="lx-kicker">Live now</span>
+      <h2 class="lx-h2" id="lxRiseTitle">Start with your money. <span class="lx-grad-text">See it all at once.</span></h2>
+      <p class="lx-sec-sub">The Ultimate Budget Planner: today's number, bills, goals and debt.</p>
+    </div>
+    <div class="lx-rise-scene">
+      <div class="lx-horizon" aria-hidden="true"><i class="lx-horizon-glow"></i><i class="lx-horizon-disc"></i><i class="lx-horizon-rim"></i></div>
+      <div class="lx-wrap">
+        <div class="lx-rise-tilt" aria-hidden="true">
+          <div class="lx-dash-fit">
+            <div class="lx-dash">
+              <aside class="lx-dash-side">
+                <div class="lx-dash-brand"><span class="lx-dash-logo"><img src="branding/ezzo-mark-white.png" alt="" width="22" height="22" loading="lazy" /></span><b>Ultimate Budget</b></div>
+                <nav class="lx-dash-nav"><i class="is-on">Dashboard</i><i>Budget</i><i>Transactions</i><i>Bills</i><i>Savings goals</i><i>Debt payoff</i><i>Calendar</i><i>Insights</i></nav>
+                <div class="lx-dash-safe"><b>Saved on this device</b><span>No bank login</span></div>
+              </aside>
+              <div class="lx-dash-main">
+                <div class="lx-dash-top"><div><small>Your month at a glance</small><b>Good morning</b></div><span class="lx-dash-pill">1 Oct to 31 Oct</span><span class="lx-dash-btn">+ Add</span></div>
+                <div class="lx-dash-grid">
+                  <div class="lx-dc lx-dc--free">
+                    <div class="lx-dc-k">Free to spend <span class="lx-dc-tag">Bills already set aside</span></div>
+                    <div class="lx-dc-big">$<span data-dash-count="1240.50" data-dec="2">1,240.50</span></div>
+                    <div class="lx-dc-s">$62.03 a day for 20 days</div>
+                    <div class="lx-dc-pills"><span>Free today <b>$62.03</b></span><span>Spent today <b>$4.50</b></span></div>
+                    <svg class="lx-dc-spark" viewBox="0 0 600 160" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="lxSparkG" x1="0" x2="1"><stop offset="0" stop-color="#c4b5fd"/><stop offset=".6" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ec4899"/></linearGradient>
+                        <linearGradient id="lxSparkA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(139,92,246,.35)"/><stop offset="1" stop-color="rgba(139,92,246,0)"/></linearGradient>
+                      </defs>
+                      <path class="a" d="M0 40 C60 44 90 70 140 66 S230 92 280 88 S360 104 410 100 S500 118 540 112 S590 116 600 114 V160 H0Z"/>
+                      <path class="l" pathLength="100" d="M0 40 C60 44 90 70 140 66 S230 92 280 88 S360 104 410 100 S500 118 540 112 S590 116 600 114"/>
+                    </svg>
+                  </div>
+                  <div class="lx-dc lx-dc--soon">
+                    <div class="lx-dc-k">Coming up <span>before payday</span></div>
+                    <div class="lx-dc-bill"><span class="lx-dc-date"><b>12</b>OCT</span><span class="lx-dc-n">Electric<em>in 2 days</em></span><b>$87.40</b></div>
+                    <div class="lx-dc-bill"><span class="lx-dc-date"><b>15</b>OCT</span><span class="lx-dc-n">Netflix<em>in 5 days</em></span><b>$15.49</b></div>
+                    <div class="lx-dc-bill"><span class="lx-dc-date"><b>21</b>OCT</span><span class="lx-dc-n">Phone<em>in 11 days</em></span><b>$45.00</b></div>
+                    <div class="lx-dc-bill is-paid"><span class="lx-dc-date"><b>01</b>OCT</span><span class="lx-dc-n">Rent<em>paid</em></span><b>$1,200.00</b></div>
+                  </div>
+                  <div class="lx-dc lx-dc--spend">
+                    <div class="lx-dc-k">Spending by week <span>$<span data-dash-count="486.20" data-dec="2">486.20</span></span></div>
+                    <div class="lx-dc-bars"><i style="--h:42%;--i:0"></i><i style="--h:68%;--i:1"></i><i style="--h:55%;--i:2"></i><i style="--h:80%;--i:3" class="is-hi"></i><i style="--h:36%;--i:4"></i><i style="--h:61%;--i:5"></i><i style="--h:47%;--i:6"></i><i style="--h:72%;--i:7"></i></div>
+                  </div>
+                  <div class="lx-dc lx-dc--goal">
+                    <div class="lx-dc-k">Japan trip</div>
+                    <svg class="lx-dc-ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" pathLength="100"/><circle class="on" cx="60" cy="60" r="50" pathLength="100"/></svg>
+                    <div class="lx-dc-ring-v"><span data-dash-count="56">56</span>%</div>
+                    <div class="lx-dc-s">$1,666 of $3,000</div>
+                  </div>
+                  <div class="lx-dc lx-dc--cats">
+                    <div class="lx-dc-k">Budget left</div>
+                    <div class="lx-dc-cat" style="--w:62%;--c:#a78bfa"><span>Groceries</span><em>$312 of $500</em><i><i></i></i></div>
+                    <div class="lx-dc-cat" style="--w:64%;--c:#f472b6"><span>Eating out</span><em>$96 of $150</em><i><i></i></i></div>
+                    <div class="lx-dc-cat" style="--w:53%;--c:#34d399"><span>Transport</span><em>$64 of $120</em><i><i></i></i></div>
+                    <div class="lx-dc-cat" style="--w:30%;--c:#fbbf24"><span>Fun money</span><em>$24 of $80</em><i><i></i></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lx-pop lx-pop--1" style="--y:150px"><span class="lx-pop-in"><i class="lx-pop-ico" style="--c:rgba(52,211,153,.18)">💸</i><span><b>+$2,400.00</b>Payday landed</span></span></div>
+          <div class="lx-pop lx-pop--2" style="--y:230px"><span class="lx-pop-in"><i class="lx-pop-ico" style="--c:rgba(139,92,246,.22)">🏠</i><span><b>Rent set aside</b>$1,200.00, before you spend</span></span></div>
+          <div class="lx-pop lx-pop--3" style="--y:90px"><span class="lx-pop-in"><i class="lx-pop-ico" style="--c:rgba(236,72,153,.2)">🎯</i><span><b>Japan trip +$200</b>On track for April</span></span></div>
+          <div class="lx-pop lx-pop--4" style="--y:180px"><span class="lx-pop-in"><i class="lx-pop-ico" style="--c:rgba(251,191,36,.18)">📉</i><span><b>Debt-free March 2028</b>7 months sooner</span></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── A live ticker of the little wins, moving with your scroll ── -->
+  <section class="lx-ticker" aria-label="Things the planner keeps track of">
+    <div class="lx-ticker-row" data-dir="1" aria-hidden="true"><div class="lx-ticker-track"><span class="lx-chip"><i style="--c:#34d399">✓</i>Rent set aside<b>$1,200.00</b></span><span class="lx-chip"><i style="--c:#a78bfa">☕</i>Coffee logged<b>$4.50</b></span><span class="lx-chip"><i style="--c:#f472b6">🎯</i>Japan trip<b>56%</b></span><span class="lx-chip"><i style="--c:#fbbf24">📉</i>Debt-free<b>Mar 2028</b></span><span class="lx-chip"><i style="--c:#34d399">💡</i>Free today<b>$62.03</b></span><span class="lx-chip"><i style="--c:#a78bfa">🔔</i>Netflix<b>in 5 days</b></span><span class="lx-chip"><i style="--c:#f472b6">💸</i>Payday<b>+$2,400.00</b></span></div></div>
+    <div class="lx-ticker-row" data-dir="-1" aria-hidden="true"><div class="lx-ticker-track"><span class="lx-chip"><i style="--c:#a78bfa">🔐</i>Bank login<b>never</b></span><span class="lx-chip"><i style="--c:#34d399">🧾</i>Bills before payday<b>$1,347.89</b></span><span class="lx-chip"><i style="--c:#fbbf24">🛒</i>Groceries left<b>$188.00</b></span><span class="lx-chip"><i style="--c:#f472b6">📅</i>Days to payday<b>20</b></span><span class="lx-chip"><i style="--c:#34d399">💰</i>Saved this month<b>$420.00</b></span><span class="lx-chip"><i style="--c:#a78bfa">💳</i>Monthly fee<b>$0</b></span><span class="lx-chip"><i style="--c:#fbbf24">🏖️</i>Emergency fund<b>71%</b></span></div></div>
+  </section>
+
   <!-- ── The live product ── -->
   <section class="lx-sec" id="budget" aria-labelledby="lxBudgetTitle">
     <div class="lx-wrap">
@@ -142,6 +220,47 @@
           </div>
         </div>
       </article>
+    </div>
+  </section>
+
+  <!-- ── The paycheck story: pinned, and played by your scroll ── -->
+  <section class="lx-sec lx-story" id="paycheck" aria-labelledby="lxStoryTitle">
+    <div class="lx-wrap">
+      <div class="lx-sec-head" data-reveal>
+        <span class="lx-kicker">How your number is made</span>
+        <h2 class="lx-h2" id="lxStoryTitle">Watch a paycheck <span class="lx-grad-text">get planned.</span></h2>
+        <p class="lx-sec-sub">Keep scrolling. This is the maths it does for you.</p>
+      </div>
+    </div>
+    <div class="lx-story-track">
+      <div class="lx-story-pin">
+        <div class="lx-wrap lx-story-grid">
+          <ol class="lx-story-steps">
+            <li class="is-on" data-n="01"><b>Payday lands</b><span>Your pay comes in. Say $2,400.</span></li>
+            <li data-n="02"><b>Bills come off first</b><span>Rent and every bill due before payday, set aside.</span></li>
+            <li data-n="03"><b>Goals and debt get their share</b><span>Your trip fund and card payment, paid in.</span></li>
+            <li data-n="04"><b>The rest is yours</b><span>Spread across every day until next payday.</span></li>
+          </ol>
+          <div class="lx-story-card" aria-live="off">
+            <div class="lx-story-k" data-story-label>Paycheck</div>
+            <div class="lx-story-v" data-story-num>$2,400.00</div>
+            <div class="lx-story-bar" aria-hidden="true"><i data-seg="b"></i><i data-seg="g"></i><i data-seg="d"></i><i data-seg="f" style="width:100%"></i></div>
+            <div class="lx-story-legend" aria-hidden="true"><span style="--c:#8b5cf6">Bills</span><span style="--c:#34d399">Goals</span><span style="--c:#fbbf24">Debt</span><span style="--c:#f472b6">Yours to spend</span></div>
+            <ul class="lx-story-items">
+              <li data-kind="b" data-amt="1200" style="--c:#8b5cf6"><span class="lx-story-ico">🏠</span><span class="lx-story-n">Rent</span><b>−$1,200.00</b></li>
+              <li data-kind="b" data-amt="87.40" style="--c:#8b5cf6"><span class="lx-story-ico">⚡</span><span class="lx-story-n">Electric</span><b>−$87.40</b></li>
+              <li data-kind="b" data-amt="45" style="--c:#8b5cf6"><span class="lx-story-ico">📱</span><span class="lx-story-n">Phone</span><b>−$45.00</b></li>
+              <li data-kind="b" data-amt="15.49" style="--c:#8b5cf6"><span class="lx-story-ico">🎬</span><span class="lx-story-n">Netflix</span><b>−$15.49</b></li>
+              <li data-kind="g" data-amt="200" style="--c:#34d399"><span class="lx-story-ico">🎯</span><span class="lx-story-n">Japan trip</span><b>−$200.00</b></li>
+              <li data-kind="d" data-amt="150" style="--c:#fbbf24"><span class="lx-story-ico">💳</span><span class="lx-story-n">Card payment</span><b>−$150.00</b></li>
+            </ul>
+            <div class="lx-story-daily">
+              <div><b data-story-daily>$35.11</b><small>a day for 20 days</small></div>
+              <div class="lx-story-days" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -259,7 +378,7 @@
   })();
 </script>
 <script src="analytics.js?v=20261190"></script>
-<script src="landing.js?v=20261212"></script>
+<script src="landing.js?v=20261213"></script>
 <script>
   // "Notify me" on each coming tool: an address is recorded (submitNotifyEmail,
   // analytics.js) and only then remembered here, under the same keys the old
