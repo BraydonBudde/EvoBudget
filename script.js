@@ -2211,6 +2211,82 @@ async function validateLemonSqueezyKey(licenseKey) {
   }
 }
 
+// ── Dodo Payments keys ─────────────────────────────────────────────────
+// Sold alongside Lemon Squeezy, not instead of it. Dodo issues the key and
+// emails it to the buyer. Its licence endpoints are public (no merchant
+// secret) and answer browsers directly, so like Lemon Squeezy this needs no
+// backend. Unlike Lemon Squeezy, a Dodo key is ACTIVATED per device: the
+// product allows 3, and the activation id is kept to re-check this browser.
+// ▼▼ EDIT: 'live' once the Dodo store is approved and the two products are
+// made again in live mode; then swap in their live product ids below. ▼▼
+const DODO_MODE = 'test';
+const DODO_API = DODO_MODE === 'live' ? 'https://live.dodopayments.com' : 'https://test.dodopayments.com';
+const DODO_PRODUCT_TOOL = {
+  'pdt_0NpX69EmC20ESFfJv1rBw': 'ubp',   // Ultimate Budget Planner (test mode)
+  'pdt_0NpX69MrqOl0s171bu7rM': 'sbp',   // Simple Budget Planner (test mode)
+};
+// Checkout links, ready for when Dodo replaces the temporary Etsy links in
+// PURCHASE_URLS. A test-mode product only exists on the test host.
+const DODO_CHECKOUT_URLS = {
+  ubp: `https://${DODO_MODE === 'live' ? '' : 'test.'}checkout.dodopayments.com/buy/pdt_0NpX69EmC20ESFfJv1rBw?quantity=1`,
+  sbp: `https://${DODO_MODE === 'live' ? '' : 'test.'}checkout.dodopayments.com/buy/pdt_0NpX69MrqOl0s171bu7rM?quantity=1`,
+};
+// ▲▲ ──────────────────────────────────────────────────────────────────── ▲▲
+const DODO_INSTANCE_STORE = { sbp: 'evobudget_sbp_dodo_instance', ubp: 'evobudget_ubp_dodo_instance' };
+
+function dodoDeviceName() {
+  const ua = navigator.userAgent || '';
+  const os = /iPhone|iPad/.test(ua) ? 'iPhone or iPad' : /Android/.test(ua) ? 'Android' : /Mac/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : /CrOS/.test(ua) ? 'Chromebook' : /Linux/.test(ua) ? 'Linux' : 'a device';
+  const br = /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'a browser';
+  return `Budget planner, ${br} on ${os}`.slice(0, 80);
+}
+
+// Activates a Dodo key on this browser. The key is checked exactly as typed:
+// Dodo keys are case-sensitive. Re-entering a key this browser already holds
+// re-checks the existing activation instead of spending another device slot.
+// Returns { tool, instanceId, orderId }, { error } for a genuine key that is
+// blocked or unreachable, or null when it is simply not a Dodo key of ours.
+async function validateDodoKey(licenseKey) {
+  try {
+    for (const tool of ['ubp', 'sbp']) {
+      const inst = localStorage.getItem(DODO_INSTANCE_STORE[tool]);
+      if (inst && localStorage.getItem(UNLOCK_KEY_STORE[tool]) === licenseKey && (await checkDodoActivation(licenseKey, inst)) === true) {
+        return { tool, instanceId: inst, orderId: '' };
+      }
+    }
+    const res = await fetch(`${DODO_API}/licenses/activate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ license_key: licenseKey, name: dodoDeviceName() }),
+    });
+    if (res.status === 422) return { error: 'device_limit' };
+    if (!res.ok) return null;
+    const data = await res.json();
+    const tool = DODO_PRODUCT_TOOL[String((data && data.product && data.product.product_id) || '')];
+    // Fail safe: a genuine key for some other Dodo seller's product is not ours.
+    if (!tool || !data.id) return null;
+    return { tool, instanceId: String(data.id), orderId: String(data.license_key_id || '') };
+  } catch {
+    return { error: 'busy' };
+  }
+}
+// true: still valid on this browser. false: definitely not (refunded,
+// disabled, or this activation removed). null: could not tell.
+async function checkDodoActivation(licenseKey, instanceId) {
+  try {
+    const res = await fetch(`${DODO_API}/licenses/validate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ license_key: licenseKey, license_key_instance_id: instanceId }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data && typeof data.valid === 'boolean' ? data.valid : null;
+  } catch {
+    return null;
+  }
+}
+
 // ── Etsy keys (ETSY-xxxx-xxxx-xxxx-xxxxxxxxxxxx) ──────────────────────
 // Etsy can't issue a unique key per buyer, so buyers claim one at /claim
 // and it's recorded in the owner's Sheet. Unlike a launch code (one fixed
@@ -2294,6 +2370,7 @@ function clearUnlock(tool) {
     localStorage.removeItem(UNLOCK_KEYS[tool]);
     localStorage.removeItem(UNLOCK_KEY_STORE[tool]);
     localStorage.removeItem(UNLOCK_CHECK_STORE[tool]);
+    localStorage.removeItem(DODO_INSTANCE_STORE[tool]);
   } catch (e) {}
 }
 
@@ -2318,6 +2395,12 @@ async function revalidateUnlock(tool) {
       const r = await validateLaunchCode(key);
       if (r && r.tool) verdict = 'ok';
       else if (r === null) verdict = null;              // network or retired, treat as inconclusive
+    } else if (localStorage.getItem(DODO_INSTANCE_STORE[tool])) {
+      // A definite "not valid" means refunded, disabled, or this device's
+      // activation was removed. Anything unclear leaves the unlock alone.
+      const v = await checkDodoActivation(key, localStorage.getItem(DODO_INSTANCE_STORE[tool]));
+      if (v === true) verdict = 'ok';
+      else if (v === false) verdict = 'gone';
     } else {
       const r = await validateLemonSqueezyKey(key);
       if (r && r.tool) verdict = 'ok';
@@ -2473,8 +2556,18 @@ function showAccessCodeModal(tool) {
     syncSetMode(lsResult.tool, 'local');
     enterFull(lsResult.tool);
   };
+  const redeemDodoKey = (dodo, keyVal) => {
+    setUnlocked(dodo.tool);
+    rememberUnlockKey(dodo.tool, keyVal);
+    try { localStorage.setItem(DODO_INSTANCE_STORE[dodo.tool], dodo.instanceId); } catch (e) {}
+    trackEvent('launch_code_redeemed', { code: keyVal, tool: dodo.tool, orderId: dodo.orderId || '', source: 'dodo' });
+    close();
+    syncSetMode(dodo.tool, 'local');
+    enterFull(dodo.tool);
+  };
   const submit = async () => {
-    const codeVal = input.value.trim().toUpperCase();
+    const rawVal = input.value.trim();
+    const codeVal = rawVal.toUpperCase();
     // The key is the only thing a buyer types. Etsy and Lemon Squeezy keys
     // each already know their own order and hand it back on validation, so
     // the dashboard still shows an order per redemption without asking the
@@ -2532,6 +2625,16 @@ function showAccessCodeModal(tool) {
     submitBtn.textContent = originalLabel;
 
     if (lsResult) { redeemLemonSqueezyKey(lsResult, codeVal, lsResult.orderId || ''); return; }
+
+    // Not a Lemon Squeezy key: perhaps a Dodo one. Dodo keys are case-sensitive.
+    submitBtn.disabled = true;
+    submitBtn.textContent = t('code_checking');
+    const dodo = await validateDodoKey(rawVal);
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+    if (dodo && dodo.tool) { redeemDodoKey(dodo, rawVal); return; }
+    if (dodo && dodo.error === 'device_limit') { fail('code_error_devices'); return; }
+    if (dodo && dodo.error === 'busy') { fail('code_error_busy'); return; }
     fail();
   };
   document.addEventListener('keydown', onKey);

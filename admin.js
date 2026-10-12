@@ -320,7 +320,7 @@ async function adminFetchSales(token) {
       ts: r[0] || '', event: r[1] || '', orderId: r[2] || '', email: r[3] || '', name: r[4] || '',
       product: r[5] || '', variant: r[6] || '', total: Number(r[7] || 0), currency: r[8] || 'USD',
       mode: r[9] || 'live', status: r[10] || '', orderNumber: r[11] || ''
-    })).filter(r => r.event === 'order_created');
+    })).filter(r => r.event === 'order_created' || r.event === 'payment.succeeded');
   } catch (e) { return []; }
 }
 
@@ -1159,7 +1159,7 @@ const ETSY_DEVICE_LIMIT = 5;
 // Keys are told apart by shape, not by a list. The list used to be here as
 // well as in script.js, which meant the launch codes were readable from two
 // public files rather than one.
-const SOURCE_LABEL = { etsy: 'Etsy', lemonsqueezy: 'Lemon Squeezy', launch: 'Launch code' };
+const SOURCE_LABEL = { etsy: 'Etsy', lemonsqueezy: 'Lemon Squeezy', dodo: 'Dodo Payments', launch: 'Launch code' };
 
 function keySource(key) {
   const k = String(key || '').trim().toUpperCase();
@@ -1168,7 +1168,7 @@ function keySource(key) {
   // letters and digits.
   if (/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/.test(k)) return 'lemonsqueezy';
   if (/^[0-9A-Z]{4,12}$/.test(k)) return 'launch';
-  return 'lemonsqueezy';
+  return 'dodo';
 }
 
 function redemptionActivityRows() {
@@ -1279,7 +1279,7 @@ function activityTableHtml(rows) {
       // Launch codes are one shared list baked into the app, so revoking one
       // would lock out every buyer who was ever sent it. Offering the button
       // would only invite doing real damage by accident.
-      const canRevoke = r.source !== 'launch';
+      const canRevoke = r.source !== 'launch' && r.source !== 'dodo';
       return `<tr class="admin-activity-row${revoked ? ' admin-row-muted' : ''}">
         <td class="admin-col-expand"><button class="admin-expand-btn" type="button" data-expand="${id}" aria-expanded="false" aria-label="Show details for ${esc(r.key)}">▸</button></td>
         <td class="admin-table-strong">${r.orderId ? esc(r.orderId) : '<span class="admin-table-muted">—</span>'}${r.testOrder ? ' <span class="admin-src-badge">TEST</span>' : ''}${r.reused ? ` <span class="admin-reuse-badge" title="This order ID was used by ${r.reuseCount} different visitors">⚠ ×${r.reuseCount}</span>` : ''}</td>
@@ -1287,7 +1287,9 @@ function activityTableHtml(rows) {
         <td class="admin-key-cell">${esc(r.key)} <span class="admin-src-badge">${esc(SOURCE_LABEL[r.source])}</span></td>
         <td class="admin-col-action">${canRevoke
           ? `<button class="btn btn-ghost btn-sm admin-key-toggle" type="button" data-key="${esc(r.key)}" data-source="${r.source}" data-tool="${esc(r.tool)}" data-order="${esc(r.orderId)}" data-row="${r.sheetRow || ''}" data-next="${revoked ? 'active' : 'revoked'}">${revoked ? 'Restore' : 'Revoke'}</button>`
-          : `<span class="admin-table-muted" title="Launch codes are shared by every buyer who received one, so revoking would lock all of them out">shared code</span>`}</td>
+          : r.source === 'dodo'
+            ? `<span class="admin-table-muted" title="Disable this key in the Dodo Payments dashboard. Every device that used it is locked out at its next daily check.">revoke in Dodo</span>`
+            : `<span class="admin-table-muted" title="Launch codes are shared by every buyer who received one, so revoking would lock all of them out">shared code</span>`}</td>
       </tr>
       <tr class="admin-activity-detail" data-detail="${id}" hidden><td colspan="5">
         <div class="admin-detail-grid">

@@ -76,6 +76,8 @@ function doPost(e) {
     // Lemon Squeezy's webhook is the only POST that carries ?wh=, and its
     // payloads are far larger than the analytics cap below allows.
     if (e.parameter && e.parameter.wh) return _handleLsWebhook(e);
+    // Dodo Payments' webhook carries ?dwh= the same way.
+    if (e.parameter && e.parameter.dwh) return _handleDodoWebhook(e);
     if (e.postData.contents.length > MAX_BODY_BYTES) return _ok();
     if (!_underRateLimit()) return _ok();
 
@@ -417,6 +419,63 @@ function _handleLsWebhook(e) {
   } catch (err) { return _ok(); }
 }
 
+// ── Dodo Payments sales ───────────────────────────────────────────────
+// Sold alongside Lemon Squeezy. Dodo signs its webhooks with headers
+// (webhook-signature), which Apps Script cannot read either, so the shared
+// secret rides in the callback URL (?dwh=...) exactly like Lemon Squeezy's.
+// Recorded in the same Sales sheet, so orders and buyers show up together.
+// Script Properties: DODO_WEBHOOK_SECRET (required), DODO_MODE ('test' or
+// 'live', defaults to 'test').
+// Dodo's payment payload names products by id only, so ids are mapped here.
+var DODO_PRODUCT_NAMES = {
+  'pdt_0NpX69EmC20ESFfJv1rBw': 'Ultimate Budget Planner',   // test mode
+  'pdt_0NpX69MrqOl0s171bu7rM': 'Simple Budget Planner'      // test mode
+};
+function _handleDodoWebhook(e) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const want = props.getProperty('DODO_WEBHOOK_SECRET') || '';
+    const got = String((e.parameter && e.parameter.dwh) || '');
+    if (!want || got !== want) return _ok();
+    const body = e.postData.contents;
+    if (!body || body.length > WEBHOOK_MAX_BODY_BYTES) return _ok();
+
+    const p = JSON.parse(body);
+    const event = String(p.type || '').toLowerCase();
+    if (event !== 'payment.succeeded' && event !== 'refund.succeeded') return _ok();
+    const d = p.data || {};
+    // A payment is matched on its payment id; a refund on its own refund id.
+    const orderId = String(event === 'refund.succeeded' ? (d.refund_id || d.payment_id || '') : (d.payment_id || ''));
+    if (!orderId) return _ok();
+
+    // Dodo retries on failure, so the same event can arrive more than once.
+    const sh = _salesSheet();
+    const rows = sh.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][1]) === event && String(rows[i][2]) === orderId) return _ok();
+    }
+
+    const cart = Array.isArray(d.product_cart) ? d.product_cart : [];
+    const product = cart.map(function (c) { return DODO_PRODUCT_NAMES[c.product_id] || String(c.product_id || ''); }).join(', ') || 'Ezzo Budget';
+    const cents = event === 'refund.succeeded' ? (d.amount != null ? d.amount : d.total_amount) : d.total_amount;
+    const total = Number(cents || 0) / 100;
+    const currency = String(d.currency || 'USD');
+    const cust = d.customer || {};
+    const testMode = (props.getProperty('DODO_MODE') || 'test') !== 'live';
+
+    sh.appendRow([new Date(), event, orderId, String(cust.email || ''), String(cust.name || ''),
+                  product, 'Dodo Payments', total, currency, testMode ? 'test' : 'live', String(d.status || ''), String(d.payment_id || '')]);
+
+    const amount = (currency === 'USD' ? '$' : currency + ' ') + total.toFixed(2);
+    if (event === 'payment.succeeded') {
+      _push('💰 Cha-ching!', product + ', ' + amount + ' (Dodo)' + (testMode ? ' [TEST]' : ''), 'cashregister');
+    } else {
+      _push('↩️ Refund', product + ', ' + amount + ' (Dodo)' + (testMode ? ' [TEST]' : ''), 'falling');
+    }
+    return _ok();
+  } catch (err) { return _ok(); }
+}
+
 // Sends to whichever services are configured. Both may be set at once.
 // Nothing here throws: a notification failing must never make Lemon Squeezy
 // think the webhook failed, because it would then retry the whole thing.
@@ -481,6 +540,30 @@ function simulateSale() {
   doPost({ parameter: { wh: secret }, postData: { contents: JSON.stringify(payload) } });
   console.log('Simulated a sale. Your phone should ring, and a row should appear on the Sales sheet.');
   console.log('It is marked [TEST] because test_mode is set, exactly as a Lemon Squeezy test purchase would be.');
+  return 'sent';
+}
+
+// The same for Dodo Payments: pretends Dodo has just posted a sale, so the
+// secret check, the Sales sheet row and the phone alert can all be proven
+// before anyone buys. Run it from the editor and check your phone. It writes
+// a real row with a SIM- payment id; delete it afterwards if you like.
+function simulateDodoSale() {
+  const secret = PropertiesService.getScriptProperties().getProperty('DODO_WEBHOOK_SECRET');
+  if (!secret) {
+    console.log('DODO_WEBHOOK_SECRET is not set, so a real Dodo webhook would be rejected too.');
+    return 'no secret';
+  }
+  const payload = {
+    business_id: 'sim', type: 'payment.succeeded', timestamp: new Date().toISOString(),
+    data: {
+      payload_type: 'Payment', payment_id: 'SIM-' + Date.now().toString().slice(-6), status: 'succeeded',
+      total_amount: 4999, currency: 'USD',
+      customer: { customer_id: 'sim', email: 'simulated.buyer@example.com', name: 'Simulated Buyer' },
+      product_cart: [{ product_id: Object.keys(DODO_PRODUCT_NAMES)[0], quantity: 1 }]
+    }
+  };
+  doPost({ parameter: { dwh: secret }, postData: { contents: JSON.stringify(payload) } });
+  console.log('Simulated a Dodo sale. Your phone should ring, and a row should appear on the Sales sheet.');
   return 'sent';
 }
 
