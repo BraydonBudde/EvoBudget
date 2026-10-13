@@ -289,7 +289,7 @@ function goToPurchase(product){
   // Middle step of the dashboard's conversion funnel - see the matching
   // comment in script.js.
   trackEvent('purchase_initiated', { tool: product });
-  if(url){ window.open(url,'_blank','noopener'); }
+  if(url){ window.open(typeof window.ezzoWithAffiliate==='function' ? window.ezzoWithAffiliate(url) : url,'_blank','noopener'); }
   else { showToast('Add your checkout link in PURCHASE_URLS.'+product); }
 }
 
@@ -2932,12 +2932,12 @@ function sleekDateLine() {
 
 // What is still owed this period, soonest first, with anything overdue at
 // the top. It reads the same list Free to spend subtracts, so the figure
-// and the rows beside it can never disagree. Five rows at most, and bills
+// and the rows beside it can never disagree. Three rows at most, and bills
 // take the places first: an unpaid bill is the thing this list is for, so
 // a run of smaller scheduled items cannot push one out of view. Every Pay
 // opens the same sheet as everywhere else, so each payment is a real
 // transaction linked to what it paid.
-const CU_LIMIT = 5;
+const CU_LIMIT = 3;
 function cuRelative(iso) {
   const a = new Date(iso + 'T00:00:00'), now = new Date();
   now.setHours(0, 0, 0, 0);

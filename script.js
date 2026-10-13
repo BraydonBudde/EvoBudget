@@ -2016,7 +2016,7 @@ function goToPurchase(product) {
   // happens on Lemon Squeezy, so this is the last moment the site can see
   // intent - everything after it has to come from Lemon Squeezy's own data.
   trackEvent('purchase_initiated', { tool: product });
-  if (url) { window.open(url, '_blank', 'noopener'); }
+  if (url) { window.open(typeof window.ezzoWithAffiliate === 'function' ? window.ezzoWithAffiliate(url) : url, '_blank', 'noopener'); }
   else { showToast('Add your checkout link in PURCHASE_URLS.' + product); }
 }
 
