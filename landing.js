@@ -601,24 +601,10 @@
       spot.appendChild(document.createElement('i'));
       el.appendChild(spot);
     });
-    const glow = document.createElement('i');
-    glow.className = 'lx-cursor'; glow.setAttribute('aria-hidden', 'true');
-    root.appendChild(glow);
-    let cx = 0, cy = 0, tx = 0, ty = 0, seen = false, gr = 0;
-    const follow = () => {
-      gr = 0;
-      cx += (tx - cx) * .14; cy += (ty - cy) * .14;
-      glow.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
-      if (Math.abs(tx - cx) + Math.abs(ty - cy) > .4) gr = requestAnimationFrame(follow);
-    };
     root.addEventListener('pointermove', e => {
-      tx = e.clientX; ty = e.clientY;
-      if (!seen) { seen = true; cx = tx; cy = ty; glow.classList.add('is-on'); }
-      if (!gr) gr = requestAnimationFrame(follow);
       const c = e.target.closest && e.target.closest('.lx-glow');
       if (c) { const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); }
     }, { passive: true });
-    document.documentElement.addEventListener('mouseleave', () => { seen = false; glow.classList.remove('is-on'); });
   }
 })();
 
@@ -687,3 +673,31 @@
 })();
 
 // ══ World: end ══
+
+// ══ Dawn: start ══
+// Smooth scrolling, and room for real reviews.
+(function () {
+  'use strict';
+  const root = document.getElementById('lx');
+  if (!root) return;
+
+  // ── Nothing animates while it's off screen ──
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-paused', !e.isIntersecting)), { rootMargin: '150px 0px' });
+    root.querySelectorAll('.lx-hero, .lx-sec, .pd-day, .lx-final, .wd-scene, .lx-proof').forEach(s => io.observe(s));
+  }
+
+  // ── Real reviews ──
+  // Add reviews here exactly as customers wrote them, with their permission,
+  // and the section appears on its own. Never add made-up reviews.
+  //   { quote: 'What they said.', name: 'First name and initial', detail: 'Verified buyer, Etsy' }
+  const REVIEWS = [];
+  const box = root.querySelector('[data-reviews]');
+  if (box && REVIEWS.length) {
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    box.innerHTML = REVIEWS.map(r => `<figure class="pd-review"><blockquote>${esc(r.quote)}</blockquote><figcaption><b>${esc(r.name)}</b>${r.detail ? `<span>${esc(r.detail)}</span>` : ''}</figcaption></figure>`).join('');
+    box.closest('section').hidden = false;
+  }
+})();
+
+// ══ Dawn: end ══
