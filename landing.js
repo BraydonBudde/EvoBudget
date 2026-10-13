@@ -701,3 +701,30 @@
 })();
 
 // ══ Dawn: end ══
+
+// ══ Clean: start ══
+// The receipt: every monthly app you tap prints a line, three years at a time.
+(function () {
+  'use strict';
+  const root = document.getElementById('lx');
+  if (!root) return;
+  root.querySelectorAll('.lx-rent').forEach(rent => {
+    const list = rent.querySelector('[data-receipt]');
+    if (!list) return;
+    const money = v => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const draw = () => {
+      const on = [...rent.querySelectorAll('button[data-app]')].filter(b => b.getAttribute('aria-pressed') === 'true');
+      list.innerHTML = on.length
+        ? on.map(b => {
+            const name = b.childNodes[1] ? b.childNodes[1].textContent.trim() : b.dataset.app;
+            const p = Number(b.dataset.price);
+            return `<li><span>${name}</span><span>${money(p)} × 36</span><b>${money(p * 36)}</b></li>`;
+          }).join('')
+        : '<li class="is-empty">Nothing yet. Tap an app.</li>';
+    };
+    rent.addEventListener('click', e => { if (e.target.closest('button[data-app]')) setTimeout(draw, 0); });
+    draw();
+  });
+})();
+
+// ══ Clean: end ══
