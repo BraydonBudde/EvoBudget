@@ -1951,4 +1951,19 @@ body:has(#view-hub.is-active) { background: #eceafb; }
 .lx-tour-screen { text-align: left; }
 .lx--light .sc-go { color: #fff; }
 
+/* Pop-ups over the product page (key prompt, upgrade, dialogs, toast):
+   solid Frosty white cards, whatever the planner's own theme is. */
+body:has(#view-hub.is-active) :is(.fk-code-overlay, .fk-up-overlay, .fk-dialog-overlay, #toast) {
+  --surface-solid: #ffffff; --surface-strong: #f5f3fd; --surface: #ffffff;
+  --text-primary: #1e2240; --text-secondary: #5c6185; --text-faint: #868aab;
+  --border-faint: rgba(90, 80, 150, .18); --border-soft: rgba(90, 80, 150, .14);
+}
+body:has(#view-hub.is-active) :is(.fk-code-overlay, .fk-up-overlay, .fk-dialog-overlay) { background: rgba(30, 34, 64, .38); }
+body:has(#view-hub.is-active) :is(.fk-code-card, .fk-up-card, .fk-dialog) { background: #ffffff; border: 1px solid rgba(90, 80, 150, .1); box-shadow: 0 40px 90px -30px rgba(60, 40, 140, .55); color: #1e2240; }
+body:has(#view-hub.is-active) .fk-code-input { background: #f5f3fd; color: #1e2240; }
+body:has(#view-hub.is-active) .fk-code-x { background: #f1eefb; color: #5c6185; }
+body:has(#view-hub.is-active) .fk-code-x:hover { background: #e6e0fa; }
+body:has(#view-hub.is-active) .fk-code-link { color: #6b6f92; }
+body:has(#view-hub.is-active) .fk-code-link:hover { color: #7651f0; }
+
 /* ══ Clean: end ══ */
