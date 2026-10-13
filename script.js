@@ -2009,7 +2009,9 @@ function trialBlocks(kind) {
 }
 
 function goToPurchase(product) {
-  const url = PURCHASE_URLS[product];
+  // Dodo checkout first. The Simple planner is retired, so it sells the
+  // Ultimate one; the Etsy links in PURCHASE_URLS are only a fallback.
+  const url = (typeof DODO_CHECKOUT_URLS !== 'undefined' && (DODO_CHECKOUT_URLS[product] || DODO_CHECKOUT_URLS.ubp)) || PURCHASE_URLS[product];
   // The middle step of the dashboard's conversion funnel. Checkout itself
   // happens on Lemon Squeezy, so this is the last moment the site can see
   // intent - everything after it has to come from Lemon Squeezy's own data.
@@ -2217,20 +2219,20 @@ async function validateLemonSqueezyKey(licenseKey) {
 // secret) and answer browsers directly, so like Lemon Squeezy this needs no
 // backend. Unlike Lemon Squeezy, a Dodo key is ACTIVATED per device: the
 // product allows 3, and the activation id is kept to re-check this browser.
-// ▼▼ EDIT: 'live' once the Dodo store is approved and the two products are
-// made again in live mode; then swap in their live product ids below. ▼▼
-const DODO_MODE = 'test';
+// ▼▼ EDIT: 'test' to go back to Dodo's test store (test products below). ▼▼
+const DODO_MODE = 'live';
 const DODO_API = DODO_MODE === 'live' ? 'https://live.dodopayments.com' : 'https://test.dodopayments.com';
 const DODO_PRODUCT_TOOL = {
+  'pdt_0NpfcVEjfoHA9e1xPYwYe': 'ubp',   // Ultimate Budget Planner (live)
   'pdt_0NpX69EmC20ESFfJv1rBw': 'ubp',   // Ultimate Budget Planner (test mode)
-  'pdt_0NpX69MrqOl0s171bu7rM': 'sbp',   // Simple Budget Planner (test mode)
+  'pdt_0NpX69MrqOl0s171bu7rM': 'sbp',   // Simple Budget Planner (test mode, retired)
 };
-// Checkout links, ready for when Dodo replaces the temporary Etsy links in
-// PURCHASE_URLS. A test-mode product only exists on the test host.
-// After paying, the buyer is sent straight to the key prompt; the key itself
-// arrives by email from Dodo.
+const DODO_UBP_PRODUCT = DODO_MODE === 'live' ? 'pdt_0NpfcVEjfoHA9e1xPYwYe' : 'pdt_0NpX69EmC20ESFfJv1rBw';
+// Checkout links: the Buy buttons open these (see goToPurchase). A test-mode
+// product only exists on the test host. After paying, the buyer is sent
+// straight to the key prompt; the key itself arrives by email from Dodo.
 const DODO_CHECKOUT_URLS = {
-  ubp: `https://${DODO_MODE === 'live' ? '' : 'test.'}checkout.dodopayments.com/buy/pdt_0NpX69EmC20ESFfJv1rBw?quantity=1&redirect_url=${encodeURIComponent('https://ezzohub.com/budgetplanner?redeem=ubp')}`,
+  ubp: `https://${DODO_MODE === 'live' ? '' : 'test.'}checkout.dodopayments.com/buy/${DODO_UBP_PRODUCT}?quantity=1&redirect_url=${encodeURIComponent('https://ezzohub.com/budgetplanner?redeem=ubp')}`,
 };
 // ▲▲ ──────────────────────────────────────────────────────────────────── ▲▲
 const DODO_INSTANCE_STORE = { sbp: 'evobudget_sbp_dodo_instance', ubp: 'evobudget_ubp_dodo_instance' };

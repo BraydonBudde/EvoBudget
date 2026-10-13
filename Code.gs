@@ -428,6 +428,7 @@ function _handleLsWebhook(e) {
 // 'live', defaults to 'test').
 // Dodo's payment payload names products by id only, so ids are mapped here.
 var DODO_PRODUCT_NAMES = {
+  'pdt_0NpfcVEjfoHA9e1xPYwYe': 'Ultimate Budget Planner',   // live
   'pdt_0NpX69EmC20ESFfJv1rBw': 'Ultimate Budget Planner',   // test mode
   'pdt_0NpX69MrqOl0s171bu7rM': 'Simple Budget Planner'      // test mode
 };
