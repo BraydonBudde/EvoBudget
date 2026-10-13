@@ -621,3 +621,69 @@
     document.documentElement.addEventListener('mouseleave', () => { seen = false; glow.classList.remove('is-on'); });
   }
 })();
+
+// ══ World: start ══
+// The home page as a journey: the scene rail, the carousel of coming tools,
+// and the lanterns that float away when an app is let go.
+(function () {
+  'use strict';
+  const root = document.querySelector('.lx-world');
+  if (!root) return;
+  const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── The rail: which scene you are in ──
+  const links = [...root.querySelectorAll('.wd-rail a')];
+  if (links.length) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) links.forEach(a => a.classList.toggle('is-on', a.dataset.scene === e.target.id));
+    }), { rootMargin: '-45% 0px -45% 0px' });
+    root.querySelectorAll('.wd-scene').forEach(s => io.observe(s));
+  }
+
+  // ── The carousel: swipe, arrows, dots, keys; the middle card is the one in focus ──
+  root.querySelectorAll('.wd-carousel').forEach(car => {
+    const track = car.querySelector('.wd-cards');
+    const cards = [...track.children];
+    const dots = [...car.querySelectorAll('[data-go]')];
+    let at = 0, raf = 0;
+    const left = c => c.offsetLeft - (track.clientWidth - c.offsetWidth) / 2;
+    const go = i => {
+      i = Math.max(0, Math.min(cards.length - 1, i));
+      track.scrollTo({ left: left(cards[i]), behavior: still ? 'auto' : 'smooth' });
+    };
+    const mark = () => {
+      raf = 0;
+      const mid = track.scrollLeft + track.clientWidth / 2;
+      let best = 0, bd = Infinity;
+      cards.forEach((c, i) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = i; } });
+      at = best;
+      cards.forEach((c, i) => c.classList.toggle('is-center', i === best));
+      dots.forEach((d, i) => { d.classList.toggle('is-on', i === best); d.setAttribute('aria-current', String(i === best)); });
+    };
+    track.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(mark); }, { passive: true });
+    car.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => go(at + Number(b.dataset.step))));
+    dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+    cards.forEach((c, i) => c.addEventListener('click', e => { if (i !== at && !e.target.closest('button, input, form, a')) go(i); }));
+    track.addEventListener('keydown', e => {
+      if (e.target !== track) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(at + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(at - 1); }
+    });
+    // Open on the middle card, with neighbours either side.
+    const start = Math.floor(cards.length / 2);
+    requestAnimationFrame(() => { track.scrollLeft = left(cards[start]); mark(); });
+    window.addEventListener('resize', () => { track.scrollLeft = left(cards[at]); });
+  });
+
+  // ── Lanterns: one per monthly app; let the app go and its lantern floats off ──
+  root.querySelectorAll('.lx-rent').forEach(rent => {
+    const sync = () => rent.querySelectorAll('button[data-app]').forEach(b => {
+      const l = rent.querySelector(`.wd-lantern[data-app="${b.dataset.app}"]`);
+      if (l) l.classList.toggle('is-off', b.getAttribute('aria-pressed') !== 'true');
+    });
+    rent.addEventListener('click', e => { if (e.target.closest('button[data-app]')) setTimeout(sync, 0); });
+    sync();
+  });
+})();
+
+// ══ World: end ══

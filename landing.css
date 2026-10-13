@@ -1030,3 +1030,166 @@ body:has(#view-hub.is-active) .backdrop { display: none; }
   .ezl-frame { stroke-dashoffset: 0; opacity: .6; }
   .lx-mo-line, .lx-mo-pin { transition: none !important; }
 }
+
+/* ══ World: start ══ */
+/* The home page as a journey: full-screen illustrated scenes, one after
+   another, joined by a stream of light from the hero's mountains to the
+   sunset at the end. The page scrolls normally; each scene lives on its own. */
+.lx-world { background: #0a0714; }
+.wd-scene { position: relative; isolation: isolate; min-height: 100svh; display: grid; align-items: center; padding: clamp(100px, 9vw, 150px) 0; overflow: hidden; }
+.wd-scene > .lx-wrap { position: relative; z-index: 1; }
+.wd-bg { position: absolute; inset: 0; z-index: -2; }
+.wd-stars { position: absolute; left: 0; top: 0; width: 100%; height: 62%; }
+.wd-stars circle { fill: #fff; animation: dkTwinkle 4.5s ease-in-out infinite; }
+.wd-land { position: absolute; left: 0; bottom: 0; width: 100%; height: 64%; }
+.wd-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 8vw, 160px); align-items: center; }
+.wd-grid--flip > :first-child { order: 2; }
+.wd-copy .lx-sec-sub { max-width: 32em; }
+.wd-copy .lx-h2 { margin-top: 12px; }
+
+/* The stream of light. */
+.wd-river { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: visible; }
+.wd-river path { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.wd-river .r1 { stroke: rgba(167, 139, 250, .035); stroke-width: 70px; }
+.wd-river .r2 { stroke: rgba(196, 181, 253, .08); stroke-width: 24px; }
+.wd-river .r3 { stroke: rgba(233, 213, 255, .3); stroke-width: 11px; }
+.wd-river .r4 { stroke: rgba(255, 255, 255, .7); stroke-width: 2.5px; }
+.wd-river .r5 { stroke: #fff; stroke-width: 4px; stroke-dasharray: 0 3.2; opacity: .85; animation: wdFlow 14s linear infinite; }
+@keyframes wdFlow { to { stroke-dashoffset: -32; } }
+.wd-river--hero { top: auto; bottom: 0; height: 9%; }
+.wd-river--hide { -webkit-mask: linear-gradient(#000 0, transparent 9%, transparent 82%, #000 94%); mask: linear-gradient(#000 0, transparent 9%, transparent 82%, #000 94%); }
+.wd-river--end { height: 36%; z-index: 0; -webkit-mask: linear-gradient(#000 50%, transparent); mask: linear-gradient(#000 50%, transparent); }
+
+/* Fireflies. */
+.wd-flies { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.wd-flies i { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #fde68a; box-shadow: 0 0 12px 3px rgba(253, 230, 138, .55); animation: wdFly 9s ease-in-out infinite alternate, wdBlink 4s ease-in-out infinite; }
+@keyframes wdFly { to { transform: translate(var(--dx), var(--dy)); } }
+@keyframes wdBlink { 0%, 100% { opacity: .15; } 50% { opacity: 1; } }
+
+/* Scene 1: the hero. */
+.wd-hero { min-height: min(100svh, 1100px); padding: 40px 0 clamp(170px, 20vw, 380px); }
+.wd-hero .lx-dusk { --land: 40%; }
+.wd-hero .lx-h1 { font-size: clamp(44px, 5.4vw, 96px); margin: 0 0 24px; }
+.wd-hero .lx-lead { color: #ddd5f5; max-width: 28em; }
+.wd-hero-mark { display: grid; place-items: center; }
+.wd-hero-mark .ezl { --k: 2.15; }
+.wd-down { position: absolute; left: 50%; bottom: clamp(18px, 3vh, 40px); width: 28px; height: 44px; margin-left: -14px; border-radius: 99px; border: 2px solid rgba(255, 255, 255, .5); z-index: 2; }
+.wd-down i { position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; margin-left: -2px; border-radius: 4px; background: #fff; animation: wdDown 1.8s ease-in-out infinite; }
+@keyframes wdDown { 0% { opacity: 0; transform: none; } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(14px); } }
+
+/* Scene 2: the valley. */
+.wd-valley { background: linear-gradient(180deg, #0a0714 0%, #130b2e 50%, #1a1140 100%); }
+.wd-pines { fill: #0b071c; }
+.wd-pines--far { fill: #1c1244; }
+.wd-plinth { position: relative; display: grid; justify-items: center; }
+.wd-beam { position: absolute; top: -18%; left: 50%; width: 560px; height: 120%; margin-left: -280px; z-index: 0; pointer-events: none; background: linear-gradient(180deg, rgba(196, 181, 253, 0), rgba(196, 181, 253, .14) 55%, rgba(196, 181, 253, 0)); clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%); animation: wdBeam 7s ease-in-out infinite alternate; }
+@keyframes wdBeam { from { opacity: .55; } to { opacity: 1; } }
+.wd-plinth .lx-tour { position: relative; z-index: 1; }
+.wd-rock { position: absolute; left: 50%; bottom: -74px; width: 440px; margin-left: -220px; z-index: 0; }
+.wd-plinth .lx-tour-stage::after { content: ''; position: absolute; bottom: -40px; left: 50%; width: 420px; height: 60px; margin-left: -210px; border-radius: 50%; background: radial-gradient(closest-side, rgba(196, 181, 253, .4), transparent); z-index: 0; }
+.wd-plinth .lx-tour--compact .lx-tour-tabs { margin-top: 70px; }
+
+/* Scene 3: the lake and its lanterns. */
+.wd-lake { background: linear-gradient(180deg, #1a1140 0%, #120b2c 40%, #1a1140 100%); }
+.wd-moon { position: absolute; right: 9%; top: 12%; width: clamp(70px, 6vw, 120px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 40% 38%, #fbf8ff, #ddd2ff 60%, #b9a3fc); box-shadow: 0 0 60px 20px rgba(196, 181, 253, .3), 0 0 200px 60px rgba(139, 92, 246, .2); animation: wdMoon 8s ease-in-out infinite alternate; }
+@keyframes wdMoon { from { opacity: .9; } to { opacity: 1; } }
+.wd-streak { fill: rgba(237, 233, 254, .5); animation: wdShimmer 4s ease-in-out infinite alternate; }
+@keyframes wdShimmer { from { opacity: .2; transform: translateX(-8px); } to { opacity: .7; transform: translateX(8px); } }
+.wd-rent-side { position: relative; }
+.wd-lanterns { position: absolute; left: -4%; right: -4%; bottom: calc(100% + 10px); height: 190px; pointer-events: none; }
+.wd-lantern { position: absolute; left: var(--x); top: var(--y); display: grid; justify-items: center; animation: wdBob 5s ease-in-out infinite alternate; animation-delay: var(--d); transition: translate 1.8s cubic-bezier(.5, 0, .75, 0), scale 1.8s, opacity 1.6s; }
+.wd-lantern i { width: 46px; height: 56px; border-radius: 16px 16px 22px 22px; display: grid; place-items: center; font-style: normal; font-size: 21px; background: radial-gradient(circle at 50% 38%, #ffe2b8, #fb923c 55%, #c2410c); box-shadow: 0 0 34px 8px rgba(251, 146, 60, .4), inset 0 -6px 10px rgba(124, 45, 18, .4); }
+.wd-lantern i::before { content: ''; position: absolute; width: 2px; height: 14px; top: -14px; background: rgba(254, 215, 170, .5); }
+.wd-lantern em { font-style: normal; font-size: 11.5px; font-weight: 700; color: #fed7aa; margin-top: 6px; }
+.wd-lantern.is-off { opacity: 0; translate: 0 -180px; scale: .55; }
+@keyframes wdBob { from { transform: translateY(-6px) rotate(-3deg); } to { transform: translateY(6px) rotate(3deg); } }
+
+/* Scene 4: the crystal forest and the carousel of coming tools. */
+.wd-crystal { background: linear-gradient(180deg, #1a1140 0%, #140c32 45%, #0f0a24 100%); }
+.wd-cry { animation: wdCry 5s ease-in-out infinite alternate; }
+.wd-cry--a path { fill: #6d3fd0; } .wd-cry--a .f { fill: #4a2a9c; }
+.wd-cry--b path { fill: #b83a8c; } .wd-cry--b .f { fill: #852866; }
+.wd-cry--c path { fill: #9b7be0; } .wd-cry--c .f { fill: #6c52b4; }
+@keyframes wdCry { from { opacity: .55; } to { opacity: .95; } }
+.wd-stack { display: grid; grid-template-columns: minmax(0, 1fr); }
+.wd-stack .lx-sec-head { margin-bottom: 10px; }
+.wd-cards { position: relative; display: flex; gap: 26px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 26px calc(50% - 180px) 34px; scrollbar-width: none; overscroll-behavior-x: contain; outline: none; }
+.wd-cards::-webkit-scrollbar { display: none; }
+.wd-card.lx-tool {
+  flex: 0 0 360px; scroll-snap-align: center; padding: 0 0 28px; overflow: hidden; border-radius: 26px;
+  background: linear-gradient(180deg, rgba(31, 21, 60, .96), rgba(15, 10, 32, .96)); border: 1px solid var(--lx-line-2);
+  transform: scale(.84); opacity: .5; transition: transform .6s var(--lx-ease), opacity .6s, border-color .4s, box-shadow .6s; cursor: pointer;
+}
+.wd-card.lx-tool:hover { transform: scale(.86); }
+.wd-card.is-center { transform: none; opacity: 1; cursor: auto; border-color: rgba(196, 181, 253, .4); box-shadow: 0 40px 90px -40px rgba(139, 92, 246, .85); }
+.wd-card.is-center:hover { transform: translateY(-4px); }
+.wd-card-art { position: relative; height: 220px; display: grid; place-items: center; background: radial-gradient(circle at 50% 25%, rgba(255, 255, 255, .22), transparent 60%), linear-gradient(150deg, var(--c1), var(--c2)); }
+.wd-card-ico { position: absolute; top: 18px; left: 20px; font-size: 30px; line-height: 1; }
+.wd-card .lx-tool-mini { width: 76%; margin: 24px 0 0; background: rgba(10, 7, 20, .35); border-color: rgba(255, 255, 255, .18); }
+.wd-card .lx-soon { top: 18px; right: 18px; background: rgba(10, 7, 20, .35); }
+.wd-card h3, .wd-card p, .wd-card .lx-notify { padding-left: 26px; padding-right: 26px; }
+.wd-card h3 { margin-top: 22px; }
+.wd-car-nav { display: flex; justify-content: center; align-items: center; gap: 18px; }
+.wd-arrow { width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--lx-line-2); background: var(--lx-glass); color: var(--lx-ink); display: grid; place-items: center; cursor: pointer; transition: background .2s, transform .2s; }
+.wd-arrow:hover { background: rgba(139, 92, 246, .25); transform: scale(1.06); }
+.wd-arrow svg { width: 20px; height: 20px; }
+.wd-dots { display: flex; gap: 8px; }
+.wd-dots button { width: 8px; height: 8px; padding: 0; border-radius: 99px; border: 0; background: rgba(255, 255, 255, .25); cursor: pointer; transition: width .4s var(--lx-ease), background .4s; }
+.wd-dots button.is-on { width: 30px; background: var(--lx-grad); }
+
+/* Scene 5: the meadow. */
+.wd-meadow { background: linear-gradient(180deg, #0f0a24 0%, #150d33 50%, #1b1240 100%); }
+.wd-grass { fill: #0b071c; }
+
+/* Scene 6: through the arch, the sunset over the lake. */
+.wd-end { min-height: min(100svh, 1000px); align-items: start; padding-top: clamp(150px, 20vh, 230px); text-align: center; }
+.wd-end .lx-dusk { --land: 42%; }
+.wd-water { position: absolute; left: 0; right: 0; bottom: 0; height: 16%; background: linear-gradient(180deg, #3b2270, #120b27 70%, #0a0714); }
+.wd-water::after { content: ''; position: absolute; left: 50%; top: 6%; width: 340px; height: 70%; margin-left: -170px; background: repeating-linear-gradient(180deg, rgba(255, 196, 150, .55) 0 2px, transparent 2px 11px); -webkit-mask: radial-gradient(closest-side, #000, transparent); mask: radial-gradient(closest-side, #000, transparent); animation: wdShimmer 4s ease-in-out infinite alternate; }
+.wd-arch { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.wd-end-in h2 { font-size: clamp(36px, 4.6vw, 76px); line-height: 1.05; font-weight: 800; letter-spacing: -.04em; color: #fff; }
+.wd-end-in p { color: #ece6ff; font-size: 18px; margin-top: 18px; }
+.wd-end-in .lx-cta-row { justify-content: center; }
+
+/* The scene rail. */
+.wd-rail { position: fixed; right: clamp(14px, 1.8vw, 30px); top: 50%; transform: translateY(-50%); z-index: 40; display: grid; gap: 14px; }
+.wd-rail a { display: flex; align-items: center; justify-content: flex-end; gap: 12px; text-decoration: none; }
+.wd-rail i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, .45); transition: transform .4s, background .4s, border-color .4s, box-shadow .4s; }
+.wd-rail span { font-size: 12.5px; font-weight: 600; color: var(--lx-ink-2); opacity: 0; transform: translateX(8px); transition: opacity .3s, transform .3s; white-space: nowrap; padding: 4px 10px; border-radius: 99px; background: rgba(10, 7, 20, .7); }
+.wd-rail a:hover span { opacity: 1; transform: none; }
+.wd-rail a.is-on i { background: var(--lx-grad); border-color: transparent; transform: scale(1.35); box-shadow: 0 0 12px rgba(196, 181, 253, .8); }
+
+@media (max-width: 1400px) { .wd-hero-mark .ezl { --k: 1.75; } }
+@media (max-width: 1080px) {
+  .wd-rail { display: none; }
+  .wd-scene { min-height: 0; }
+  .wd-grid { grid-template-columns: 1fr; text-align: center; }
+  .wd-grid--flip > :first-child { order: 0; }
+  .wd-copy .lx-sec-sub, .wd-hero .lx-lead { margin-inline: auto; }
+  .wd-copy .lx-cta-row, .wd-copy .lx-cta-note, .wd-copy .lx-spot-price, .lx-rent-apps { justify-content: center; }
+  .wd-copy .lx-mini-list { display: inline-grid; text-align: left; }
+  .wd-hero-mark { order: -1; }
+  .wd-hero-mark .ezl { --k: 1.2; }
+  .wd-river { display: none; }
+  .wd-river--hero { display: block; }
+  .wd-rent-side { margin-top: 200px; }
+}
+@media (max-width: 640px) {
+  .wd-scene { padding: 84px 0; }
+  .wd-hero { padding: 30px 0 300px; }
+  .wd-hero .lx-dusk, .wd-end .lx-dusk { --land: 32%; }
+  .wd-moon { top: 3%; right: 5%; width: 52px; }
+  .wd-hero-mark .ezl { --k: .95; }
+  .wd-card.lx-tool { flex-basis: 290px; }
+  .wd-cards { padding-inline: calc(50% - 145px); gap: 16px; }
+  .wd-card-art { height: 180px; }
+  .wd-rock { width: 340px; margin-left: -170px; }
+  .wd-beam { width: 380px; margin-left: -190px; }
+  .wd-end { padding: 96px 0 280px; }
+  .wd-lantern i { width: 38px; height: 46px; font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wd-flies i, .wd-river path, .wd-lantern, .wd-stars circle, .wd-cry, .wd-down i, .wd-streak, .wd-water::after, .wd-beam { animation: none !important; }
+}
+
+/* ══ World: end ══ */
