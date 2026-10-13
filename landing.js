@@ -332,7 +332,8 @@
     screen.querySelectorAll('.lx-sc').forEach(s => { scenes[s.dataset.sc] = s; });
     const V = (sc, k) => scenes[sc].querySelector(`[data-v="${k}"]`);
     const tap = screen.querySelector('[data-v="tap"]');
-    const DUR = 7200;
+    // How long each scene runs, including a short pause to read the result.
+    const SCENE_MS = { log: 6900, bill: 5400, goal: 5000, debt: 5200, ask: 6400 };
     let run = 0, at = 0, inView = false, waiting = false, started = false;
     const sleep = (ms, id) => new Promise((res, rej) => setTimeout(() => (id === run ? res() : rej(new Error('stop'))), still ? 0 : ms));
     function tapOn(el) {
@@ -447,7 +448,7 @@
       if (!still) {
         const bar = tabs[i].querySelector('.lx-tour-bar i');
         void bar.offsetWidth;
-        bar.style.transition = `width ${DUR}ms linear`; bar.style.width = '100%';
+        bar.style.transition = `width ${SCENE_MS[key]}ms linear`; bar.style.width = '100%';
       }
       const t0 = Date.now();
       RUN[key](id).catch(() => {}).then(() => {
@@ -455,7 +456,7 @@
         setTimeout(() => {
           if (id !== run) return;
           if (inView) show((at + 1) % tabs.length); else waiting = true;
-        }, Math.max(400, DUR - (Date.now() - t0)));
+        }, Math.max(900, SCENE_MS[key] - (Date.now() - t0)));
       });
     }
     tabs.forEach((t, i) => t.addEventListener('click', () => { started = true; show(i); }));
