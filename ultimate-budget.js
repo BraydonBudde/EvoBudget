@@ -214,9 +214,14 @@ const TRIAL_LIMITS = { transactions:10, income:5, expenses:5, bills:5, savings:5
 //   ubp: 'https://ezzohub.lemonsqueezy.com/checkout/buy/82d76580-b132-4c74-8d1c-2a383087510c'
 // Nothing else needs changing: the tracking and the funnel do not care
 // where the link points.
+// Since 13 October 2026 both buttons open the live Dodo Payments checkout
+// (the same link as DODO_CHECKOUT_URLS in script.js). The Simple planner is
+// retired, so it sells the Ultimate one. After paying, the buyer lands on the
+// key prompt; the key arrives by email from Dodo.
+const DODO_UBP_CHECKOUT = 'https://checkout.dodopayments.com/buy/pdt_0NpfcVEjfoHA9e1xPYwYe?quantity=1&redirect_url=' + encodeURIComponent('https://ezzohub.com/budgetplanner?redeem=ubp');
 const PURCHASE_URLS = {
-  sbp: 'https://www.etsy.com/listing/4579311708/adhd-budget-planner-app-paycheck-budget',
-  ubp: 'https://www.etsy.com/listing/4579311708/adhd-budget-planner-app-paycheck-budget',
+  sbp: DODO_UBP_CHECKOUT,
+  ubp: DODO_UBP_CHECKOUT,
 };
 const PRICES        = { sbp:'$19.99', ubp:'$49.99' };
 // ▲▲ ─────────────────────────────────────────────────────── ▲▲
