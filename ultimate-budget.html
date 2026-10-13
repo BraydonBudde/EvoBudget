@@ -24,7 +24,7 @@
   <style>
     /* ── The opening: the EzzoHub mark builds itself while the planner gets ready ──
        Painted before anything else, so the planner is only ever seen finished.
-       Coloured for whichever theme was last chosen. The story, in about 1.8s:
+       Always on the dark sky, whatever the theme. The story, in about 1.8s:
        a drop falls into a hexagon and becomes the tile, a shockwave rings out,
        the E and H faces spin in with motion trails, the four top tiles land one
        by one, sparks fly, and the name types in. It leaves by closing in on the logo. */
@@ -36,11 +36,6 @@
       background: var(--ezs-bg); overflow: hidden;
     }
     .ez-splash[hidden] { display: none; }
-    html[data-theme="light"] .ez-splash { --ezs-bg: #f6f4fb; --ezs-tile: linear-gradient(160deg, #3a3655, #1c1a2b); --ezs-ink: #1c1a2b; --ezs-sub: rgba(28, 26, 43, .5); --ezs-r1: #8b5cf6; --ezs-r2: #1c1a2b; --ezs-glow: rgba(99, 70, 200, .22); }
-    html[data-theme="peachy"] .ez-splash { --ezs-bg: #f4e8e3; --ezs-tile: linear-gradient(160deg, #f6c08a, #e4887a); --ezs-ink: #3d2a26; --ezs-sub: rgba(61, 42, 38, .55); --ezs-r1: #f6c08a; --ezs-r2: #e4887a; --ezs-glow: rgba(228, 136, 122, .45); }
-    html[data-theme="vintage-ledger"] .ez-splash { --ezs-bg: #f4ead3; --ezs-tile: linear-gradient(160deg, #5a4128, #3b2a1a); --ezs-ink: #3b2a1a; --ezs-sub: rgba(59, 42, 26, .55); --ezs-r1: #a67c52; --ezs-r2: #3b2a1a; --ezs-glow: rgba(90, 65, 40, .28); }
-    html[data-theme="jolly"] .ez-splash { --ezs-bg: #f7eff4; --ezs-tile: linear-gradient(160deg, #b9adf7, #8a78ea 58%, #7462df); --ezs-ink: #3a2b5c; --ezs-sub: rgba(58, 43, 92, .55); --ezs-r1: #b9adf7; --ezs-r2: #f2a7c3; --ezs-glow: rgba(110, 84, 220, .38); }
-    html[data-theme="frosty"] .ez-splash { --ezs-bg: #eef0fb; --ezs-tile: linear-gradient(160deg, #b8a5fb, #8b6cf6 58%, #7651f0); --ezs-ink: #2a1f66; --ezs-sub: rgba(42, 31, 102, .55); --ezs-r1: #c4b5fd; --ezs-r2: #7dd3fc; --ezs-glow: rgba(124, 92, 240, .38); }
     .ez-splash-glow { position: absolute; width: 560px; height: 560px; left: 50%; top: 50%; margin: -320px 0 0 -280px; border-radius: 50%; background: radial-gradient(circle, var(--ezs-glow), transparent 62%); opacity: 0; }
     .ez-splash-stage { position: relative; width: 156px; height: 156px; display: grid; place-items: center; }
     .ez-splash-fx { position: absolute; inset: -40px; width: calc(100% + 80px); height: calc(100% + 80px); overflow: visible; pointer-events: none; }

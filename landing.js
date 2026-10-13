@@ -131,36 +131,6 @@
     });
   }
 
-  // ── See it in action: the real app, one feature after another ──
-  const film = $('#lxFilm'), filmTabs = $$('.lx-film-tab'), pauseBtn = $('#lxFilmPause');
-  if (film && filmTabs.length) {
-    let at = 0, inView = false, userPaused = still;
-    const bar = i => filmTabs[i].querySelector('.lx-film-bar i');
-    const show = (i, autoplay) => {
-      at = i;
-      filmTabs.forEach((t, k) => { t.classList.toggle('is-on', k === i); t.setAttribute('aria-selected', String(k === i)); bar(k).style.width = '0%'; });
-      const id = filmTabs[i].dataset.film;
-      film.poster = 'media/guide/' + id + '.jpg';
-      film.src = 'media/guide/' + id + '.mp4';
-      if (autoplay) film.play().catch(() => {});
-    };
-    const setPaused = p => { userPaused = p; pauseBtn.classList.toggle('is-paused', p); pauseBtn.setAttribute('aria-label', p ? 'Play' : 'Pause'); };
-    film.addEventListener('timeupdate', () => { if (film.duration) bar(at).style.width = (film.currentTime / film.duration * 100) + '%'; });
-    film.addEventListener('ended', () => show((at + 1) % filmTabs.length, inView && !userPaused));
-    filmTabs.forEach((t, i) => t.addEventListener('click', () => { setPaused(false); show(i, true); }));
-    pauseBtn.addEventListener('click', () => {
-      if (!film.currentSrc) { setPaused(false); show(at, true); return; }
-      if (film.paused) { setPaused(false); film.play().catch(() => {}); } else { setPaused(true); film.pause(); }
-    });
-    // Nothing loads until the section is close, and it rests when scrolled away.
-    new IntersectionObserver(es => es.forEach(e => {
-      inView = e.isIntersecting;
-      if (inView && !userPaused) { if (!film.currentSrc) show(at, true); else film.play().catch(() => {}); }
-      else if (!inView) film.pause();
-    }), { threshold: .35 }).observe(film);
-    setPaused(userPaused);
-  }
-
   // ── Sliders paint their own fill ──
   const paint = r => r.style.setProperty('--fill', ((r.value - r.min) / (r.max - r.min) * 100) + '%');
 
@@ -314,147 +284,316 @@
   if (year) year.textContent = new Date().getFullYear();
 })();
 
-// ── Scroll motion: the horizon, the ticker, the paycheck story, and the light ──
-// Everything here reads the scroll position once per frame and eases toward
-// it, so it glides rather than jumps. With reduced motion, it all shows its
-// finished state and nothing follows the scroll or the pointer.
+
+// ── Dusk: the tour, the month switch, Ask Ezzo, the rent calculator, and light ──
+// Nothing here follows the scroll bar. Each piece starts when it comes into
+// view and then plays on its own. With reduced motion, each shows its result.
 (function () {
   'use strict';
   const root = document.getElementById('lx');
   if (!root) return;
   const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const clamp = v => Math.max(0, Math.min(1, v));
-  const money = v => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  let vh = window.innerHeight;
-
-  // ── The horizon: the planner rises and flattens as you scroll to it ──
-  const scene = root.querySelector('.lx-rise-scene');
-  const fit = root.querySelector('.lx-dash-fit');
-  const dash = root.querySelector('.lx-dash');
-  const sizeDash = () => { if (dash && fit) dash.style.setProperty('--s', String(fit.clientWidth / 1280)); };
-  sizeDash();
-  let riseNow = still ? 1 : 0, riseTo = riseNow, live = false;
-  function goLive() {
-    if (live || !dash) return;
-    live = true;
-    dash.classList.add('is-live');
-    dash.querySelectorAll('[data-dash-count]').forEach(el => {
-      const to = Number(el.dataset.dashCount), dec = Number(el.dataset.dec || 0);
-      const fmt = v => v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
-      if (still) { el.textContent = fmt(to); return; }
-      const t0 = performance.now();
-      const step = now => { const k = Math.min(1, (now - t0) / 1600); el.textContent = fmt(to * (1 - Math.pow(1 - k, 4))); if (k < 1) requestAnimationFrame(step); };
-      requestAnimationFrame(step);
-    });
-  }
-
-  // ── The paycheck story ──
-  const track = root.querySelector('.lx-story-track');
-  const card = track && track.querySelector('.lx-story-card');
-  const PAY = 2400, LABELS = ['Paycheck', 'After bills', 'After goals and debt', 'Free to spend'];
-  // When each line comes off, as a share of the way through the story.
-  const WIN = [[.1, .2], [.18, .28], [.26, .36], [.34, .44], [.5, .6], [.58, .68]];
-  const items = track ? [...track.querySelectorAll('[data-amt]')] : [];
-  const steps = track ? [...track.querySelectorAll('.lx-story-steps li')] : [];
-  const segs = {};
-  if (track) track.querySelectorAll('[data-seg]').forEach(el => { segs[el.dataset.seg] = el; });
-  const num = track && track.querySelector('[data-story-num]');
-  const label = track && track.querySelector('[data-story-label]');
-  const daily = track && track.querySelector('.lx-story-daily');
-  const dailyNum = track && track.querySelector('[data-story-daily]');
-  const days = track ? [...track.querySelectorAll('.lx-story-days i')] : [];
-  let qNow = still ? 1 : 0, qTo = qNow, lastStep = -1;
-  function paintStory(q) {
-    if (!track) return;
-    let left = PAY;
-    const sums = { b: 0, g: 0, d: 0 };
-    items.forEach((li, i) => {
-      const [a, b] = WIN[i] || [0, 0];
-      const f = clamp((q - a) / (b - a)), amt = Number(li.dataset.amt) * f;
-      li.style.setProperty('--f', f.toFixed(3));
-      sums[li.dataset.kind] += amt; left -= amt;
-    });
-    num.textContent = money(Math.round(left * 100) / 100);
-    ['b', 'g', 'd'].forEach(k => { if (segs[k]) segs[k].style.width = (sums[k] / PAY * 100).toFixed(2) + '%'; });
-    if (segs.f) segs.f.style.width = (left / PAY * 100).toFixed(2) + '%';
-    const step = q < .1 ? 0 : q < .47 ? 1 : q < .72 ? 2 : 3;
-    if (step !== lastStep) {
-      lastStep = step;
-      steps.forEach((li, i) => { li.classList.toggle('is-on', i === step); li.classList.toggle('is-done', i < step); });
-      label.textContent = LABELS[step];
-      card.classList.toggle('is-free', step === 3);
-    }
-    daily.style.setProperty('--f4', clamp((q - .72) / .08).toFixed(3));
-    dailyNum.textContent = money(Math.round(left / 20 * 100) / 100);
-    const lit = Math.round(clamp((q - .78) / .16) * days.length);
-    days.forEach((d, i) => d.classList.toggle('is-on', i < lit));
-  }
-
-  // ── One frame loop for the scroll-driven parts ──
-  let raf = 0;
-  function measure() {
-    if (scene) { const r = scene.getBoundingClientRect(); riseTo = still ? 1 : clamp((vh - r.top) / (vh * .82)); }
-    if (track) { const r = track.getBoundingClientRect(); qTo = still ? 1 : clamp(-r.top / Math.max(1, r.height - vh)); }
-  }
-  let tPrev = 0;
-  function frame(now) {
-    raf = 0;
-    measure();
-    // Ease by elapsed time, not frame count, so a slow device settles just as soon.
-    const dt = tPrev ? Math.min(250, now - tPrev) : 16.7; tPrev = now;
-    const k1 = 1 - Math.pow(.88, dt / 16.7), k2 = 1 - Math.pow(.84, dt / 16.7);
-    riseNow += (riseTo - riseNow) * k1; if (Math.abs(riseTo - riseNow) < .0008) riseNow = riseTo;
-    qNow += (qTo - qNow) * k2; if (Math.abs(qTo - qNow) < .0005) qNow = qTo;
-    if (scene) scene.style.setProperty('--p', riseNow.toFixed(4));
-    if (riseNow > .72) goLive();
-    paintStory(qNow);
-    if (riseNow !== riseTo || qNow !== qTo) kick(); else tPrev = 0;
-  }
-  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
-  window.addEventListener('scroll', kick, { passive: true });
-  window.addEventListener('resize', () => { vh = window.innerHeight; sizeDash(); kick(); });
-  if (still) { if (scene) scene.style.setProperty('--p', '1'); goLive(); paintStory(1); }
-  else kick();
-
-  // ── The ticker: drifts on its own, rushes when you scroll, turns when you turn ──
-  const rows = [...root.querySelectorAll('.lx-ticker-row')].map(row => {
-    const t = row.querySelector('.lx-ticker-track');
-    t.innerHTML += t.innerHTML;   // Twice over, so the loop has no seam.
-    return { t, dir: Number(row.dataset.dir) || 1, x: 0, w: 0 };
-  });
-  if (rows.length && !still) {
-    let drive = 1, aim = 1, lastY = window.scrollY, on = false, tr = 0;
-    const measureRows = () => rows.forEach(r => { r.w = r.t.scrollWidth / 2; });
-    measureRows();
-    window.addEventListener('resize', measureRows);
-    window.addEventListener('scroll', () => {
-      const dy = window.scrollY - lastY; lastY = window.scrollY;
-      if (dy) aim = Math.sign(dy) * Math.min(9, 1 + Math.abs(dy) * .22);
-    }, { passive: true });
-    let tLast = 0;
-    const tick = now => {
-      tr = 0;
-      if (!on) { tLast = 0; return; }
-      const f = tLast ? Math.min(250, now - tLast) / 16.7 : 1; tLast = now;
-      drive += (aim - drive) * (1 - Math.pow(.92, f));
-      aim += (Math.sign(aim) - aim) * (1 - Math.pow(.95, f));   // settle back to a gentle drift
-      rows.forEach(r => {
-        r.x -= r.dir * drive * .55 * f;
-        if (r.w) { if (r.x <= -r.w) r.x += r.w; if (r.x > 0) r.x -= r.w; }
-        r.t.style.transform = `translate3d(${r.x.toFixed(2)}px, 0, 0)`;
-      });
-      tr = requestAnimationFrame(tick);
+  const fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const money = (v, dec = 2) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  const ease = t => 1 - Math.pow(1 - t, 4);
+  const onView = (el, fn, threshold = .35) => {
+    if (!el) return;
+    new IntersectionObserver((es, ob) => es.forEach(e => fn(e.isIntersecting, ob)), { threshold }).observe(el);
+  };
+  function countTo(el, from, to, ms, fmt) {
+    if (still) { el.textContent = fmt(to); return; }
+    const t0 = performance.now();
+    cancelAnimationFrame(el._ezRaf);
+    const step = now => {
+      const k = Math.min(1, (now - t0) / ms);
+      el.textContent = fmt(from + (to - from) * ease(k));
+      if (k < 1) el._ezRaf = requestAnimationFrame(step);
     };
-    new IntersectionObserver(es => {
-      on = es[0].isIntersecting;
-      if (on && !tr) { measureRows(); tr = requestAnimationFrame(tick); }
-    }).observe(root.querySelector('.lx-ticker'));
+    el._ezRaf = requestAnimationFrame(step);
   }
+
+  // ── The dusk scene leans away from the pointer, nearest ranges most ──
+  if (fine && !still) root.querySelectorAll('.lx-hero--dusk, .lx-home-hero, .lx-final--night').forEach(hero => {
+    const layers = [...hero.querySelectorAll('.dk-layer')];
+    if (!layers.length) return;
+    hero.addEventListener('pointermove', e => {
+      const r = hero.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      layers.forEach(l => { const d = Number(l.dataset.depth); l.style.transform = `translate(${(-x * d).toFixed(1)}px, ${(-y * d * .4).toFixed(1)}px)`; });
+    });
+    hero.addEventListener('pointerleave', () => layers.forEach(l => { l.style.transform = ''; }));
+  });
+
+  // ── The tour: a simple phone acting out each feature, one after another ──
+  root.querySelectorAll('.lx-tour').forEach(tour => {
+    const tabs = [...tour.querySelectorAll('.lx-tour-tab')];
+    const screen = tour.querySelector('.lx-tour-screen');
+    const scenes = {};
+    screen.querySelectorAll('.lx-sc').forEach(s => { scenes[s.dataset.sc] = s; });
+    const V = (sc, k) => scenes[sc].querySelector(`[data-v="${k}"]`);
+    const tap = screen.querySelector('[data-v="tap"]');
+    const DUR = 7200;
+    let run = 0, at = 0, inView = false, waiting = false, started = false;
+    const sleep = (ms, id) => new Promise((res, rej) => setTimeout(() => (id === run ? res() : rej(new Error('stop'))), still ? 0 : ms));
+    function tapOn(el) {
+      if (!el || still) return;
+      const r = el.getBoundingClientRect(), s = screen.getBoundingClientRect();
+      tap.style.left = (r.left - s.left + r.width / 2) + 'px';
+      tap.style.top = (r.top - s.top + r.height / 2) + 'px';
+      tap.classList.remove('is-tap'); void tap.offsetWidth; tap.classList.add('is-tap');
+      el.classList.add('is-press'); setTimeout(() => el.classList.remove('is-press'), 220);
+    }
+    // Debt: a $6,800 card at 19.9% with a $180 minimum, as in the feature tile.
+    const payoff = add => {
+      let b = 6800, months = 0, interest = 0;
+      while (b > .005 && months < 600) { const i = b * .199 / 12; interest += i; b = b + i - (180 + add); months++; }
+      return { months, interest };
+    };
+    const monthOut = n => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + n); return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); };
+    const RUN = {
+      async log(id) {
+        const today = V('log', 'today'), amt = V('log', 'amt'), cat = V('log', 'cat'), go = V('log', 'go'), toast = V('log', 'toast');
+        today.textContent = '$62.03'; amt.textContent = '$0'; cat.classList.remove('is-sel'); toast.classList.remove('is-in');
+        await sleep(800, id);
+        let typed = '';
+        for (const k of ['4', '.', '5', '0']) {
+          tapOn(scenes.log.querySelector(`[data-k="${k}"]`));
+          typed += k; amt.textContent = '$' + typed;
+          await sleep(430, id);
+        }
+        await sleep(200, id); tapOn(cat); cat.classList.add('is-sel');
+        await sleep(700, id); tapOn(go);
+        await sleep(260, id); toast.classList.add('is-in');
+        countTo(today, 62.03, 57.53, 900, v => money(v));
+        await sleep(2000, id); toast.classList.remove('is-in');
+      },
+      async bill(id) {
+        const b1 = V('bill', 'b1'), pay = V('bill', 'pay'), note = V('bill', 'note');
+        b1.classList.remove('is-paid', 'is-gone'); pay.textContent = 'Pay'; note.classList.remove('is-in');
+        await sleep(1200, id); tapOn(pay);
+        await sleep(220, id); b1.classList.add('is-paid'); pay.textContent = 'Paid ✓';
+        await sleep(700, id); note.classList.add('is-in');
+        await sleep(2000, id); b1.classList.add('is-gone');
+      },
+      async goal(id) {
+        const ring = V('goal', 'ring'), pct = V('goal', 'pct'), gv = V('goal', 'gv'), add = V('goal', 'add'), coin = V('goal', 'coin'), note = V('goal', 'note');
+        ring.style.strokeDashoffset = '51'; pct.textContent = '49%'; gv.textContent = '$1,466 of $3,000';
+        add.classList.remove('is-sel'); note.classList.remove('is-in'); coin.classList.remove('is-drop');
+        await sleep(1000, id); tapOn(add); add.classList.add('is-sel');
+        void coin.offsetWidth; coin.classList.add('is-drop');
+        await sleep(820, id);
+        ring.style.strokeDashoffset = '44';
+        countTo(pct, 49, 56, 1300, v => Math.round(v) + '%');
+        countTo(gv, 1466, 1666, 1300, v => money(Math.round(v), 0) + ' of $3,000');
+        await sleep(1400, id); note.classList.add('is-in');
+      },
+      async debt(id) {
+        const date = V('debt', 'date'), extra = V('debt', 'extra'), knob = V('debt', 'knob'), fill = V('debt', 'rfill'), note = V('debt', 'note');
+        const base = payoff(0), plus = payoff(150);
+        [knob, fill].forEach(el => { el.style.transition = 'none'; });
+        knob.style.left = '0%'; fill.style.width = '0%'; extra.textContent = '$0'; date.textContent = monthOut(base.months);
+        note.classList.remove('is-in');
+        const bars = [...scenes.debt.querySelectorAll('.sc-timeline i')];
+        bars.forEach(b => b.classList.remove('is-cut'));
+        void knob.offsetWidth;
+        [knob, fill].forEach(el => { el.style.transition = 'left 1.3s cubic-bezier(.22,1,.36,1), width 1.3s cubic-bezier(.22,1,.36,1)'; });
+        await sleep(1000, id); tapOn(knob);
+        await sleep(200, id);
+        knob.style.left = '60%'; fill.style.width = '60%';
+        countTo(extra, 0, 150, 1300, v => money(Math.round(v / 10) * 10, 0));
+        await sleep(1350, id);
+        date.textContent = monthOut(plus.months);
+        if (!still) date.animate([{ transform: 'translateY(10px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)' });
+        const cut = Math.round((base.months - plus.months) / base.months * bars.length);
+        bars.slice(bars.length - cut).forEach((b, i) => setTimeout(() => b.classList.add('is-cut'), still ? 0 : i * 90));
+        V('debt', 'sooner').textContent = (base.months - plus.months) + ' months sooner.';
+        V('debt', 'saved').textContent = money(Math.round(base.interest - plus.interest), 0) + ' less interest.';
+        await sleep(500, id); note.classList.add('is-in');
+      },
+      async ask(id) {
+        const chat = V('ask', 'chat'), typing = V('ask', 'typing'), face = scenes.ask.querySelector('.lx-orb');
+        const send = scenes.ask.querySelector('.sc-input i');
+        chat.innerHTML = ''; typing.textContent = 'Ask anything…'; typing.classList.remove('is-typing');
+        face.classList.remove('is-think', 'is-talk');
+        const q = 'Can I afford a $35 dinner tonight?';
+        await sleep(700, id);
+        typing.classList.add('is-typing');
+        for (let i = 1; i <= q.length; i++) { typing.textContent = q.slice(0, i); await sleep(34, id); }
+        await sleep(260, id); tapOn(send);
+        const me = document.createElement('p'); me.className = 'me'; me.textContent = q; chat.appendChild(me);
+        typing.textContent = 'Ask anything…'; typing.classList.remove('is-typing');
+        await sleep(380, id);
+        const ez = document.createElement('p'); ez.className = 'ez'; ez.innerHTML = '<span class="sc-dots"><i></i><i></i><i></i></span>'; chat.appendChild(ez);
+        face.classList.add('is-think');
+        await sleep(1100, id);
+        face.classList.remove('is-think'); face.classList.add('is-talk');
+        const words = "Yes, go for it. It fits inside today's $62.03, and you'd still have $27.03 left for today.".split(' ');
+        for (let i = 1; i <= words.length; i++) {
+          ez.innerHTML = words.slice(0, i).join(' ').replace('$62.03', '<b>$62.03</b>').replace('$27.03', '<b>$27.03</b>');
+          await sleep(70, id);
+        }
+        face.classList.remove('is-talk');
+      }
+    };
+    function show(i) {
+      at = i; waiting = false;
+      const id = ++run;
+      tabs.forEach((t, k) => {
+        t.classList.toggle('is-on', k === i); t.setAttribute('aria-pressed', String(k === i));
+        const bar = t.querySelector('.lx-tour-bar i'); bar.style.transition = 'none'; bar.style.width = '0%';
+      });
+      const key = tabs[i].dataset.tour;
+      Object.values(scenes).forEach(s => s.classList.toggle('is-on', s.dataset.sc === key));
+      if (!still) {
+        const bar = tabs[i].querySelector('.lx-tour-bar i');
+        void bar.offsetWidth;
+        bar.style.transition = `width ${DUR}ms linear`; bar.style.width = '100%';
+      }
+      const t0 = Date.now();
+      RUN[key](id).catch(() => {}).then(() => {
+        if (id !== run || still) return;
+        setTimeout(() => {
+          if (id !== run) return;
+          if (inView) show((at + 1) % tabs.length); else waiting = true;
+        }, Math.max(400, DUR - (Date.now() - t0)));
+      });
+    }
+    tabs.forEach((t, i) => t.addEventListener('click', () => { started = true; show(i); }));
+    onView(tour, vis => {
+      inView = vis;
+      if (vis && !started) { started = true; show(0); }
+      else if (vis && waiting) show((at + 1) % tabs.length);
+    }, .3);
+  });
+
+  // ── The month, two ways: it starts as winging it, then flips to Ezzo ──
+  root.querySelectorAll('.lx-month').forEach(mo => {
+    let touched = false;
+    const set = m => {
+      mo.dataset.mode = m;
+      mo.querySelectorAll('.lx-flip button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+    };
+    mo.querySelectorAll('.lx-flip button').forEach(b => b.addEventListener('click', () => { touched = true; set(b.dataset.mode); }));
+    mo.addEventListener('lx:in', () => {
+      if (still) { set('ezzo'); return; }
+      setTimeout(() => { if (!touched) set('ezzo'); }, 3200);
+    });
+  });
+
+  // ── Ask Ezzo: answers from the page's own questions, no connection needed ──
+  root.querySelectorAll('.lx-ask-chat').forEach(chat => {
+    const sec = chat.closest('section') || root;
+    const items = [...sec.querySelectorAll('.lx-ask-all details')].map(d => ({
+      q: d.querySelector('summary').textContent.trim(),
+      a: d.querySelector('.lx-faq-a').textContent.trim(),
+      chip: d.dataset.chip || d.querySelector('summary').textContent.trim(),
+      keys: (d.dataset.keys || '').toLowerCase().split(',').map(s => s.trim()).filter(Boolean)
+    }));
+    const log = chat.querySelector('.lx-ask-log'), chips = chat.querySelector('.lx-ask-chips');
+    const form = chat.querySelector('form'), input = form.querySelector('input');
+    const orbs = [...sec.querySelectorAll('.lx-orb')];
+    const asked = new Set();
+    let busy = false;
+    const wait = ms => new Promise(r => setTimeout(r, still ? 0 : ms));
+    const mood = c => orbs.forEach(o => { o.classList.remove('is-think', 'is-talk'); if (c) o.classList.add(c); });
+    const add = (cls, text) => {
+      const m = document.createElement('div'); m.className = 'lx-msg ' + cls;
+      if (text != null) m.textContent = text;
+      log.appendChild(m); log.scrollTop = log.scrollHeight; return m;
+    };
+    async function say(text) {
+      mood('is-think');
+      const m = add('lx-msg--ez');
+      m.innerHTML = '<span class="sc-dots"><i></i><i></i><i></i></span>';
+      log.scrollTop = log.scrollHeight;
+      await wait(650 + Math.random() * 450);
+      mood('is-talk');
+      const words = text.split(' ');
+      for (let i = 1; i <= words.length; i++) {
+        m.textContent = words.slice(0, i).join(' ');
+        if (i % 3 === 0) log.scrollTop = log.scrollHeight;
+        await wait(38);
+      }
+      log.scrollTop = log.scrollHeight;
+      mood(null);
+    }
+    function offer() {
+      let left = items.filter(it => !asked.has(it));
+      if (!left.length) { asked.clear(); left = items; }
+      chips.innerHTML = '';
+      left.slice(0, 4).forEach((it, i) => {
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = it.chip;
+        b.style.animationDelay = (i * 70) + 'ms';
+        b.addEventListener('click', () => ask(it.q, it));
+        chips.appendChild(b);
+      });
+      log.scrollTop = log.scrollHeight;
+    }
+    const STOP = new Set('a an the i im my me is it its to do does can how what where when which of for in on and or you your with be are am if get there this that will would should could much many any'.split(' '));
+    const words = s => s.toLowerCase().replace(/[^a-z0-9$ ]/g, ' ').split(/\s+/).filter(w => w && !STOP.has(w));
+    function match(text) {
+      const t = text.toLowerCase(), ws = words(text);
+      let best = null, score = 0;
+      items.forEach(it => {
+        let s = 0;
+        it.keys.forEach(k => { if (t.includes(k)) s += 3; });
+        const qw = words(it.q);
+        ws.forEach(w => { if (qw.includes(w)) s += 1; });
+        if (s > score) { score = s; best = it; }
+      });
+      return score >= 2 ? best : null;
+    }
+    async function ask(q, it) {
+      if (busy) return;
+      busy = true; chips.innerHTML = '';
+      add('lx-msg--me', q);
+      const hit = it || match(q);
+      if (hit) asked.add(hit);
+      await say(hit ? hit.a : "I'm not sure about that one yet. Try one of these, or open the free demo and see for yourself.");
+      offer(); busy = false;
+    }
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const q = input.value.trim();
+      if (!q || busy) return;
+      input.value = ''; ask(q);
+    });
+    let greeted = false;
+    onView(chat, async (vis, ob) => {
+      if (!vis || greeted) return;
+      greeted = true; ob.disconnect();
+      busy = true; await say(chat.dataset.greeting); busy = false; offer();
+    }, .4);
+  });
+
+  // ── Stop renting your apps: what monthly apps cost over three years ──
+  root.querySelectorAll('.lx-rent').forEach(rent => {
+    const btns = [...rent.querySelectorAll('[data-price]')];
+    const total = rent.querySelector('[data-rent="total"]'), month = rent.querySelector('[data-rent="month"]');
+    const subsBar = rent.querySelector('.lx-rent-bar--subs > i > i'), ezBar = rent.querySelector('.lx-rent-bar--ezzo > i > i');
+    const subsV = rent.querySelector('[data-rent="subs"]'), foot = rent.querySelector('[data-rent="foot"]');
+    let last = 0, live = false;
+    const update = () => {
+      const m = btns.filter(b => b.getAttribute('aria-pressed') === 'true').reduce((s, b) => s + Number(b.dataset.price), 0);
+      const t = Math.round(m * 36 * 100) / 100;
+      countTo(total, last, t, 800, v => money(v, 2)); last = t;
+      month.textContent = m ? money(m, 2) + ' a month, every month' : 'Tap an app to add it';
+      subsV.textContent = money(t, 2);
+      subsBar.style.width = live && t ? '100%' : '0%';
+      ezBar.style.width = live ? Math.min(100, Math.max(3, t ? 49.99 / t * 100 : 100)) + '%' : '0%';
+      const budget = btns.find(b => b.dataset.app === 'budget');
+      foot.innerHTML = budget && budget.getAttribute('aria-pressed') === 'true'
+        ? 'Swap just the budget app and keep <b>$309.65</b> over three years.'
+        : 'Every Ezzo tool is free to try, and paid for once.';
+    };
+    btns.forEach(b => b.addEventListener('click', () => { b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); update(); }));
+    onView(rent, vis => { if (vis && !live) { live = true; update(); } }, .3);
+    update();
+  });
 
   // ── Light: a soft glow follows the pointer, and card edges catch it ──
-  const fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (fine && !still) {
-    const CARDS = '.lx-pain, .lx-tile, .lx-tool, .lx-value, .lx-price-card, .lx-demo-card, .lx-feature, .lx-privacy, .lx-story-card, .lx-dc, .lx-proof-in';
+    const CARDS = '.lx-tile, .lx-tool, .lx-price-card, .lx-demo-card, .lx-privacy, .lx-month-chart, .lx-rent-card, .lx-spot-card, .lx-ask-chat, .lx-proof-in';
     root.querySelectorAll(CARDS).forEach(el => {
       el.classList.add('lx-glow');
       const spot = document.createElement('i');
