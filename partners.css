@@ -404,3 +404,14 @@
   .pt-band-stats > div:nth-last-child(-n+2) { border-bottom: 0; }
   .pt-band-stats svg { grid-row: auto; margin-bottom: 10px; width: 40px; height: 40px; padding: 9px; }
 }
+
+/* ── Calmer flow (Oct 17): one panel for perks, terms tucked under the form ── */
+.pt-perks { gap: 0; padding: clamp(6px, 1vw, 12px); border-radius: 30px; background: var(--pt-card); border: 1px solid var(--pt-edge); box-shadow: var(--pt-shadow); }
+.pt-perk { background: none; border: 0; box-shadow: none; border-radius: 22px; padding: clamp(20px, 2.2vw, 30px); }
+.pt-perk:hover { transform: none; box-shadow: none; background: var(--pt-soft); }
+.pt-perk i { width: 46px; height: 46px; border-radius: 14px; margin-bottom: 14px; }
+.pt-perk i svg { width: 23px; height: 23px; }
+.pt-form .pt-terms-full { margin-top: 2px; background: var(--pt-soft); border: 1px solid var(--pt-edge); border-radius: 16px; }
+.pt-form .pt-terms-full summary { padding: 14px 18px; font: 600 14.5px var(--lx-body); color: var(--lx-ink); }
+.pt-form .pt-terms-full > div { padding: 0 18px 16px; font-size: 14px; }
+.pt-sec#apply { padding-bottom: clamp(24px, 3vw, 48px); }

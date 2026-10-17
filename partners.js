@@ -126,6 +126,8 @@
   function wirePublic() {
     $('#ptCalcRange') && $('#ptCalcRange').addEventListener('input', calc);
     $$('[data-signin]').forEach(function (b) { b.addEventListener('click', openSignin); });
+    // "Program terms" in the agree box opens the full terms just below it.
+    $$('a[href="#terms"]').forEach(function (l) { l.addEventListener('click', function () { var d = $('#terms'); if (d) d.open = true; }); });
     var modal = $('#ptSignin');
     modal.addEventListener('click', function (e) { if (e.target === modal || e.target.closest('[data-close]')) closeSignin(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeSignin(); });
