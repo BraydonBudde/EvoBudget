@@ -6,6 +6,7 @@
   'use strict';
   var ENDPOINT = 'https://script.google.com/macros/s/AKfycbzill8JQ1BwGzjBMmVm8ucbco-lF1ouvZr6KmDe_CyfloJCzy69Xi-ZSheARQtR0InO/exec';
   var SESSION_STORE = 'ezzo_partner_session';
+  var VIEW_STORE = 'ezzo_partner_view';   // admin "view as partner", this tab only
   var CODE_STORE = 'ezzo_partner_code';
   var SITE = 'https://ezzohub.com';
   var THEMES = [['frosty', 'Frosty'], ['light', 'Light'], ['peachy', 'Peachy'], ['dark', 'Dark'], ['vintage-ledger', 'Vintage Ledger'], ['jolly', 'Jolly']];
@@ -20,7 +21,11 @@
   var VIDEOS = [['safe-to-spend', 'Safe to spend'], ['same-paycheck', 'Same paycheck'], ['stop-renting', 'Stop renting your budget']];
   var KIT = 'marketing/affiliate-kit/';
 
-  var program = { commissionRate: 30, customerDiscount: 10, cookieDays: 30, holdDays: 30, minPayout: 50, bonusSales: 10, bonusRate: 35, tier2Rate: 0, open: true, payoutSchedule: 'Monthly, in the first week', price: 49.99 };
+  // The terms on show: the program new partners join (public page) or the
+  // partner's own program (dashboard). Same shape as the Apps Script sends.
+  var program = { name: 'Standard', type: 'percent', amount: 30, buyerDiscount: 10, cookieDays: 30, holdDays: 30, approval: 'auto', minPayout: 50,
+                  tiers: [{ min: 10, amount: 35 }], tierMetric: 'sales', tier2Rate: 0, open: true, payoutSchedule: 'Monthly, in the first week', price: 49.99 };
+  var readOnly = false;
   var me = null;
   var tab = 'overview';
   var creativeTheme = 'frosty';
@@ -71,13 +76,35 @@
   }
 
   // ── Public page ──────────────────────────────────────────────────────
-  function perSale(rate) { return (program.price * (1 - program.customerDiscount / 100) * (rate || program.commissionRate) / 100); }
+  function rateText(type, amount) { return type === 'flat' ? '$' + Number(amount).toFixed(Number(amount) % 1 ? 2 : 0) : Number(amount) + '%'; }
+  function netPrice() { return program.price * (1 - (Number(program.buyerDiscount) || 0) / 100); }
+  function perSale(amount, type) {
+    type = type || program.type; amount = amount == null ? program.amount : amount;
+    return type === 'flat' ? Math.min(Number(amount), netPrice()) : netPrice() * Number(amount) / 100;
+  }
+  // The rate for the n-th sale (1-based) under the program's tiers.
+  function rateForSale(n) {
+    var amt = program.amount;
+    (program.tiers || []).forEach(function (t) {
+      var reached = program.tierMetric === 'revenue' ? (n - 1) * netPrice() >= t.min : n - 1 >= t.min;
+      if (reached) amt = t.amount;
+    });
+    return amt;
+  }
+  function tierText(t) { return program.tierMetric === 'revenue' ? '$' + whole(t.min) + ' in sales' : t.min + ' sale' + (t.min === 1 ? '' : 's'); }
   function fillProgram() {
+    var top = (program.tiers || []).slice(-1)[0];
     var vals = Object.assign({}, program, {
+      customerDiscount: program.buyerDiscount,
+      rateText: rateText(program.type, program.amount),
+      rateLong: program.type === 'flat' ? rateText('flat', program.amount) + ' for every sale' : program.amount + '% of what they pay',
+      rateTermsText: program.type === 'flat' ? 'for every sale your link or code brings in' : 'of each sale, worked out on the price paid after the discount and before tax',
+      bonusRate: top ? rateText(program.type, top.amount) : '', bonusSales: top ? tierText(top) : '',
       perSale: perSale().toFixed(2),
       payoutScheduleLower: String(program.payoutSchedule || 'monthly').replace(/^./, function (c) { return c.toLowerCase(); }).replace(/,.*$/, '')
     });
     $$('[data-p]').forEach(function (el) { var k = el.getAttribute('data-p'); if (vals[k] != null) el.textContent = vals[k]; });
+    $$('[data-show="tiers"]').forEach(function (el) { el.hidden = !top; });
     if (!program.open) {
       var f = $('#ptApplyForm');
       if (f) f.innerHTML = '<p class="pt-closed">Applications are closed for now. Please check back soon.</p>';
@@ -88,7 +115,7 @@
     var r = $('#ptCalcRange'); if (!r) return;
     var n = Number(r.value) || 0;
     var month = 0;
-    for (var i = 1; i <= n; i++) month += perSale(program.bonusSales && i > program.bonusSales && program.bonusRate > program.commissionRate ? program.bonusRate : program.commissionRate);
+    for (var i = 1; i <= n; i++) month += perSale(rateForSale(i));
     $('#ptCalcSales').textContent = n;
     $('#ptCalcMonth').textContent = '$' + Math.round(month).toLocaleString('en-US');
     $('#ptCalcYear').textContent = '$' + Math.round(month * 12).toLocaleString('en-US');
@@ -147,7 +174,11 @@
   }
 
   // ── Signed in ────────────────────────────────────────────────────────
-  function session() { return read(SESSION_STORE); }
+  function session() {
+    try { var v = sessionStorage.getItem(VIEW_STORE); if (v) return v; } catch (e) {}
+    return read(SESSION_STORE);
+  }
+  function isAdminView() { try { return !!sessionStorage.getItem(VIEW_STORE); } catch (e) { return false; } }
   function showApp(on) {
     $('#ptPublic').hidden = on; $('#ptApp').hidden = !on;
     $$('[data-public]').forEach(function (el) { el.hidden = on; });
@@ -155,6 +186,7 @@
     document.title = on ? 'Partner dashboard | Ezzo Hub' : document.title;
   }
   function signOut() {
+    if (isAdminView()) { try { sessionStorage.removeItem(VIEW_STORE); } catch (e) {} me = null; showApp(false); window.close(); return; }
     call({ action: 'aff_logout', s: session() });
     write(SESSION_STORE, null); write(CODE_STORE, null);
     me = null; showApp(false); window.scrollTo(0, 0);
@@ -164,14 +196,18 @@
     if (!quiet) app.innerHTML = '<div class="pt-loading"><span></span>Loading your dashboard…</div>';
     return call({ action: 'aff_me', s: session() }).then(function (res) {
       if (!res.ok) {
-        if (res.error === 'signed_out') { write(SESSION_STORE, null); showApp(false); openSignin(); $('#ptSigninMsg').textContent = 'Your session ended. Sign in again with your email.'; return; }
+        if (res.error === 'signed_out') {
+          if (isAdminView()) { try { sessionStorage.removeItem(VIEW_STORE); } catch (e) {} app.innerHTML = '<div class="pt-loading">This admin view has expired. Open it again from the dashboard.</div>'; return; }
+          write(SESSION_STORE, null); showApp(false); openSignin(); $('#ptSigninMsg').textContent = 'Your session ended. Sign in again with your email.'; return;
+        }
         app.innerHTML = '<div class="pt-loading">Could not load your dashboard. <button class="lx-btn lx-btn--small" type="button" id="ptRetry">Try again</button></div>';
         $('#ptRetry').addEventListener('click', function () { load(); });
         return;
       }
       me = res;
+      readOnly = !!res.readOnly;
       Object.assign(program, res.program || {});
-      write(CODE_STORE, JSON.stringify(res.profile.code));
+      if (!readOnly) write(CODE_STORE, JSON.stringify(res.profile.code));
       render();
     });
   }
@@ -191,6 +227,7 @@
     app.innerHTML =
       '<div class="pt-app-head"><div><p class="pt-app-hi">Hi ' + esc(String(p.name).split(' ')[0]) + ' 👋</p><h1>Your partner dashboard</h1></div>' +
       '<div class="pt-app-code"><span>Your code</span><b>' + esc(p.discountCode || p.code) + '</b><button type="button" class="pt-icon-btn" data-copy="' + esc(p.discountCode || p.code) + '" aria-label="Copy code">⧉</button></div></div>' +
+      (readOnly ? '<div class="pt-banner pt-banner--admin">👁 Admin view of ' + esc(p.name) + '\'s dashboard. Read-only: nothing can be changed from here.</div>' : '') +
       (p.status === 'paused' ? '<div class="pt-banner">Your partnership is paused, so new clicks and sales are not being credited right now. Reply to any of our emails if you have questions.</div>' : '') +
       '<nav class="pt-tabs" role="tablist">' + tabs.map(function (t) { return '<button type="button" role="tab" data-tab="' + t[0] + '" class="' + (tab === t[0] ? 'is-on' : '') + '">' + t[1] + '</button>'; }).join('') + '</nav>' +
       '<div id="ptTab"></div>';
@@ -221,31 +258,48 @@
       '<line x1="' + pad + '" x2="' + (w - pad) + '" y1="' + (h - pad) + '" y2="' + (h - pad) + '" class="pt-chart-axis"/>' +
       '<text x="' + pad + '" y="' + (h - 5) + '" class="pt-chart-label">' + first + '</text><text x="' + (w - pad) + '" y="' + (h - 5) + '" text-anchor="end" class="pt-chart-label">' + last + '</text></svg>';
   }
+  function nextTier(s) {
+    var val = program.tierMetric === 'revenue' ? s.lifetimeRevenue : s.lifetimeSales;
+    var next = (program.tiers || []).filter(function (t) { return t.min > val; })[0];
+    return next ? { tier: next, val: val } : null;
+  }
   function renderOverview(el) {
     var s = me.stats, pr = program;
     var conv = s.visitors ? (s.sales / s.visitors * 100) : 0;
     var due = s.earnings.available;
-    var toBonus = pr.bonusSales && pr.bonusRate > pr.commissionRate ? Math.max(0, pr.bonusSales - s.lifetimeSales) : 0;
     var steps = [['Clicks', s.visitors, '#7651f0'], ['Tried the demo', s.demos, '#06b6d4'], ['Pressed buy', s.checkouts, '#d46fb0'], ['Bought', s.sales, '#23a873']];
     var top = Math.max(1, s.visitors);
+    var nt = s.rate.source === 'custom' ? null : nextTier(s);
+    var held = s.earnings.pending + (s.earnings.review || 0);
     el.innerHTML =
       '<div class="pt-stats">' +
         stat('Clicks', whole(s.clicks), whole(s.visitors) + ' people', '#7651f0') +
         stat('Sales', whole(s.sales), conv.toFixed(conv && conv < 1 ? 2 : 1) + '% of people who clicked', '#23a873') +
-        stat('Ready to pay', money(due), due >= pr.minPayout ? 'Included in the next payout' : money(Math.max(0, pr.minPayout - due)) + ' to the $' + pr.minPayout + ' minimum', '#c2730f') +
-        stat('On hold', money(s.earnings.pending), 'Waiting out the ' + pr.holdDays + '-day refund window', '#d46fb0') +
+        stat('Ready to pay', money(due), due >= pr.minPayout ? 'Included in the next payout' : money(Math.max(0, pr.minPayout - due)) + ' to the ' + money(pr.minPayout) + ' minimum', '#c2730f') +
+        stat('On hold', money(held), (s.earnings.review ? money(s.earnings.review) + ' being reviewed · ' : '') + pr.holdDays + '-day refund window', '#d46fb0') +
       '</div>' +
       '<div class="pt-grid">' +
         '<div class="pt-card pt-card--wide"><div class="pt-card-head"><h2>Last 30 days</h2><span class="pt-legend"><i class="b"></i>Clicks <i class="s"></i>Sales</span></div>' + chart(s.days) + '</div>' +
         '<div class="pt-card"><h2>Your funnel</h2><div class="pt-funnel">' + steps.map(function (st) {
           return '<div><div class="pt-funnel-row"><span>' + st[0] + '</span><b>' + whole(st[1]) + '</b></div><div class="pt-funnel-track"><i style="width:' + Math.max(st[1] ? 3 : 0, Math.round(st[1] / top * 100)) + '%;background:' + st[2] + '"></i></div></div>';
         }).join('') + '</div><p class="pt-note">All time. People are counted once a day per link.</p></div>' +
-        '<div class="pt-card"><h2>Your rate</h2><div class="pt-rate"><b>' + s.rate + '%</b><span>of every sale</span></div>' +
-          (toBonus ? '<div class="pt-progress"><div class="pt-progress-head"><span>' + (pr.bonusSales - toBonus) + ' of ' + pr.bonusSales + ' sales</span><span>' + pr.bonusRate + '% bonus rate</span></div><div class="pt-progress-track"><i style="width:' + Math.round((pr.bonusSales - toBonus) / pr.bonusSales * 100) + '%"></i></div><p class="pt-note">' + toBonus + ' more sale' + (toBonus === 1 ? '' : 's') + ' and every sale after pays ' + pr.bonusRate + '%.</p></div>'
-                   : (pr.bonusSales && s.rate >= pr.bonusRate ? '<p class="pt-note">You have reached the bonus rate. Thank you!</p>' : '')) +
+        '<div class="pt-card"><h2>Your rate</h2><div class="pt-rate"><b>' + rateText(s.rate.type, s.rate.amount) + '</b><span>' + (s.rate.type === 'flat' ? 'per sale' : 'of every sale') + '</span></div>' +
+          (s.rate.source === 'custom' ? '<p class="pt-note">A personal rate, just for you.</p>' : '') +
+          (nt ? '<div class="pt-progress"><div class="pt-progress-head"><span>' + (pr.tierMetric === 'revenue' ? money(nt.val) + ' of ' + money(nt.tier.min) : nt.val + ' of ' + nt.tier.min + ' sales') + '</span><span>' + rateText(pr.type, nt.tier.amount) + ' next</span></div>' +
+            '<div class="pt-progress-track"><i style="width:' + Math.min(100, Math.round(nt.val / nt.tier.min * 100)) + '%"></i></div><p class="pt-note">Reach ' + tierText(nt.tier) + ' and every sale after pays ' + rateText(pr.type, nt.tier.amount) + '.</p></div>'
+              : (s.rate.source === 'tier' ? '<p class="pt-note">You have reached a bonus tier. Thank you!</p>' : '')) +
         '</div>' +
-        '<div class="pt-card"><h2>Earned so far</h2><div class="pt-earned"><div><span>Paid to you</span><b>' + money(s.earnings.paid) + '</b></div><div><span>Ready</span><b>' + money(s.earnings.available) + '</b></div><div><span>On hold</span><b>' + money(s.earnings.pending) + '</b></div></div>' +
-          '<p class="pt-note">Paid ' + esc(String(pr.payoutSchedule || 'monthly').toLowerCase()) + ' by ' + esc(me.profile.method === 'wise' ? 'Wise' : 'PayPal') + ' to ' + esc(me.profile.payoutEmail || me.profile.email) + '.</p></div>' +
+        '<div class="pt-card"><h2>Earned so far</h2><div class="pt-earned"><div><span>Paid to you</span><b>' + money(s.earnings.paid) + '</b></div><div><span>Ready</span><b>' + money(s.earnings.available) + '</b></div><div><span>On hold</span><b>' + money(held) + '</b></div></div>' +
+          '<p class="pt-note">Paid ' + esc(String(pr.payoutSchedule || 'monthly').toLowerCase()) + ' by ' + esc({ wise: 'Wise', bank: 'bank transfer' }[me.profile.method] || 'PayPal') + (me.profile.method === 'bank' ? '' : ' to ' + esc(me.profile.payoutEmail || me.profile.email)) + '.</p></div>' +
+        '<div class="pt-card"><h2>Your program</h2><dl class="pt-terms-list">' +
+          '<div><dt>Program</dt><dd>' + esc(pr.name || 'Standard') + '</dd></div>' +
+          '<div><dt>Commission</dt><dd>' + rateText(pr.type, pr.amount) + (pr.type === 'flat' ? ' per sale' : ' of each sale') + '</dd></div>' +
+          ((pr.tiers || []).length ? '<div><dt>Bonus tiers</dt><dd>' + pr.tiers.map(function (t) { return rateText(pr.type, t.amount) + ' from ' + tierText(t); }).join('<br>') + '</dd></div>' : '') +
+          '<div><dt>Your audience</dt><dd>' + (pr.buyerDiscount ? pr.buyerDiscount + '% off with your code' : 'Full price') + '</dd></div>' +
+          '<div><dt>Link window</dt><dd>' + pr.cookieDays + ' days</dd></div>' +
+          '<div><dt>Refund window</dt><dd>' + pr.holdDays + ' days' + (pr.approval === 'manual' ? ', then each sale is reviewed' : '') + '</dd></div>' +
+          '<div><dt>Minimum payout</dt><dd>' + money(pr.minPayout) + '</dd></div>' +
+        '</dl>' + (pr.description ? '<p class="pt-note">' + esc(pr.description) + '</p>' : '') + '</div>' +
         (pr.tier2Rate > 0 ? '<div class="pt-card"><h2>Invite other creators</h2><p>Earn <b>' + pr.tier2Rate + '%</b> of every sale made by partners you bring in, on top of your own. ' + (s.recruits ? 'You have brought in <b>' + s.recruits + '</b> so far.' : '') + '</p>' +
           '<div class="pt-linkbox"><input readonly value="' + esc(SITE + '/partners?ref=' + me.profile.code) + '"><button class="lx-btn lx-btn--small" type="button" data-copy="' + esc(SITE + '/partners?ref=' + me.profile.code) + '" data-copy-label="Invite link copied">Copy</button></div></div>' : '') +
       '</div>';
@@ -260,10 +314,11 @@
           '<label>Campaign tag (optional)<input id="ptLinkSub" placeholder="e.g. tiktok-oct" maxlength="40"></label></div>' +
           '<div class="pt-linkbox"><input id="ptLinkOut" readonly><button class="lx-btn lx-btn--primary lx-btn--small" type="button" id="ptLinkCopy">Copy link</button></div>' +
           '<div class="pt-share" id="ptShare"></div></div>' +
-        '<div class="pt-card"><h2>Your discount code</h2>' + (p.discountCode
-          ? '<div class="pt-code"><b>' + esc(p.discountCode) + '</b><button class="lx-btn lx-btn--small" type="button" data-copy="' + esc(p.discountCode) + '" data-copy-label="Code copied">Copy</button></div><p>' + pr.customerDiscount + '% off for your audience. Any sale with this code is yours, even without your link, so it is perfect for videos, podcasts and stories. Your links apply it automatically.</p>'
+        '<div class="pt-card"><h2>Your discount code' + ((me.coupons || []).length > 1 ? 's' : '') + '</h2>' + ((me.coupons || []).length
+          ? me.coupons.map(function (c) { return '<div class="pt-code"><div><b>' + esc(c.code) + '</b><small>' + c.percent + '% off' + (c.usageLimit ? ' · up to ' + whole(c.usageLimit) + ' uses' : '') + (c.expiresAt ? ' · until ' + date(c.expiresAt) : '') + '</small></div><button class="lx-btn lx-btn--small" type="button" data-copy="' + esc(c.code) + '" data-copy-label="Code copied">Copy</button></div>'; }).join('') +
+            '<p>Any sale with your code is yours, even without your link, so codes are perfect for videos, podcasts and stories. Your links apply ' + esc(p.discountCode || me.coupons[0].code) + ' automatically.</p>'
           : '<p>Your code is being set up. Your links already track every sale in the meantime.</p>') + '</div>' +
-        '<div class="pt-card"><h2>Ready-to-post caption</h2><p class="pt-caption" id="ptCaption">I finally found a budget app I actually keep using. The Ultimate Budget Planner tells me exactly what I can spend each day, no bank login and no subscription. ' + (p.discountCode ? 'Use my code ' + esc(p.discountCode) + ' for ' + pr.customerDiscount + '% off: ' : 'Try it free: ') + esc(link('/budgetplanner')) + ' #ad</p>' +
+        '<div class="pt-card"><h2>Ready-to-post caption</h2><p class="pt-caption" id="ptCaption">I finally found a budget app I actually keep using. The Ultimate Budget Planner tells me exactly what I can spend each day, no bank login and no subscription. ' + (p.discountCode ? 'Use my code ' + esc(p.discountCode) + ' for ' + (((me.coupons || []).filter(function (c) { return c.code === p.discountCode; })[0] || {}).percent || pr.buyerDiscount) + '% off: ' : 'Try it free: ') + esc(link('/budgetplanner')) + ' #ad</p>' +
           '<button class="lx-btn lx-btn--small" type="button" id="ptCaptionCopy">Copy caption</button><p class="pt-note">More captions are in the swipe file on the Creatives tab.</p></div>' +
         '<div class="pt-card pt-card--wide"><h2>Campaign tags</h2>' + subsTable(me.stats.subs) + '</div>' +
       '</div>';
@@ -318,23 +373,36 @@
   }
   function renderEarnings(el) {
     var s = me.stats, pr = program;
-    var label = { pending: 'On hold', available: 'Ready', approved: 'Ready', paid: 'Paid', reversed: 'Refunded', rejected: 'Not eligible' };
+    var label = { pending: 'On hold', review: 'Being reviewed', available: 'Ready', approved: 'Ready', paid: 'Paid', reversed: 'Refunded', rejected: 'Not eligible' };
     el.innerHTML =
       '<div class="pt-stats">' + stat('Paid to you', money(s.earnings.paid), s.payouts.length + ' payout' + (s.payouts.length === 1 ? '' : 's'), '#23a873') +
-        stat('Ready to pay', money(s.earnings.available), 'Minimum $' + pr.minPayout, '#c2730f') + stat('On hold', money(s.earnings.pending), pr.holdDays + '-day refund window', '#d46fb0') +
+        stat('Ready to pay', money(s.earnings.available), 'Minimum ' + money(pr.minPayout), '#c2730f') + stat('On hold', money(s.earnings.pending + (s.earnings.review || 0)), pr.holdDays + '-day refund window', '#d46fb0') +
         stat('Sales revenue', money(s.revenue), 'what your buyers paid', '#7651f0') + '</div>' +
       '<div class="pt-card pt-card--flat"><div class="pt-card-head"><h2>Commissions</h2>' + (s.commissions.length ? '<button class="lx-btn lx-btn--small" type="button" id="ptCsv">Download CSV</button>' : '') + '</div>' +
         (s.commissions.length ? '<div class="pt-table-wrap"><table class="pt-table"><thead><tr><th>Date</th><th>Order</th><th>From</th><th class="num">Sale</th><th class="num">Rate</th><th class="num">You earn</th><th>Status</th></tr></thead><tbody>' +
           s.commissions.map(function (c) {
             var st = c.status;
-            return '<tr><td>' + date(c.date) + '</td><td class="mono">' + esc(c.order) + '</td><td>' + (c.type === 'tier2' ? 'Invited partner' : c.type === 'clawback' ? 'Refund after payout' : c.via === 'code' ? 'Your code' : 'Your link') + (c.sub ? ' <small>' + esc(c.sub) + '</small>' : '') + '</td>' +
-              '<td class="num">' + (c.sale ? money(c.sale) : '-') + '</td><td class="num">' + (c.rate ? c.rate + '%' : '-') + '</td><td class="num"><b>' + money(c.amount) + '</b></td>' +
-              '<td><span class="pt-pill pt-pill--' + st + '" title="' + esc(st === 'pending' ? 'Ready on ' + date(c.availableAt) : c.note || '') + '">' + (label[st] || st) + '</span>' + (st === 'pending' ? '<small> until ' + date(c.availableAt) + '</small>' : '') + '</td></tr>';
+            return '<tr><td>' + date(c.date) + '</td><td class="mono">' + esc(c.order) + '</td><td>' + (c.type === 'tier2' ? 'Invited partner' : c.type === 'clawback' ? 'Refund after payout' : c.via === 'code' ? 'Your code' : c.via === 'manual' ? 'Added for you' : 'Your link') + (c.sub ? ' <small>' + esc(c.sub) + '</small>' : '') + '</td>' +
+              '<td class="num">' + (c.sale ? money(c.sale) : '-') + '</td><td class="num">' + (c.rate ? rateText(c.rateType, c.rate) : '-') + '</td><td class="num"><b>' + money(c.amount) + '</b></td>' +
+              '<td><span class="pt-pill pt-pill--' + st + '" title="' + esc(st === 'pending' ? 'Ready on ' + date(c.availableAt) : c.note || '') + '">' + (label[st] || st) + '</span>' + (st === 'pending' ? '<small> until ' + date(c.availableAt) + '</small>' : '') + (c.note && st !== 'pending' && !/^Code /.test(c.note) ? '<br><small>' + esc(c.note) + '</small>' : '') + '</td></tr>';
           }).join('') + '</tbody></table></div>' : '<p class="pt-note">Your first sale will appear here the moment it happens.</p>') +
       '</div>' +
-      '<div class="pt-card pt-card--flat"><h2>Payouts</h2>' + (s.payouts.length ? '<div class="pt-table-wrap"><table class="pt-table"><thead><tr><th>Date</th><th>Payout</th><th>Method</th><th class="num">Amount</th><th>Reference</th></tr></thead><tbody>' +
-        s.payouts.map(function (p) { return '<tr><td>' + date(p.date) + '</td><td class="mono">' + esc(p.id) + '</td><td>' + esc(p.method === 'wise' ? 'Wise' : 'PayPal') + '</td><td class="num"><b>' + money(p.amount) + '</b></td><td>' + esc(p.reference || '-') + '</td></tr>'; }).join('') +
-        '</tbody></table></div>' : '<p class="pt-note">No payouts yet. Once your ready balance passes $' + pr.minPayout + ', it is paid ' + esc(String(pr.payoutSchedule || 'monthly').toLowerCase()) + '.</p>') + '</div>';
+      '<div class="pt-card pt-card--flat"><h2>Payouts</h2>' + (s.payouts.length ? '<div class="pt-table-wrap"><table class="pt-table"><thead><tr><th>Date</th><th>Payout</th><th>Method</th><th class="num">Referrals</th><th class="num">Amount</th><th>Reference</th><th>Received?</th></tr></thead><tbody>' +
+        s.payouts.map(function (p) {
+          var conf = p.status === 'void' ? '<span class="pt-pill pt-pill--reversed">Cancelled</span>' : p.confirmedAt ? '<span class="pt-pill pt-pill--paid">✓ ' + date(p.confirmedAt) + '</span>'
+            : (readOnly ? '<span class="pt-pill pt-pill--pending">Not yet confirmed</span>' : '<button class="lx-btn lx-btn--small" type="button" data-confirm="' + esc(p.id) + '">I received it</button>');
+          return '<tr><td>' + date(p.date) + '</td><td class="mono">' + esc(p.id) + '</td><td>' + esc({ wise: 'Wise', bank: 'Bank transfer' }[p.method] || 'PayPal') + '</td><td class="num">' + whole(p.referrals) + '</td><td class="num"><b>' + money(p.amount) + '</b></td><td>' + esc(p.reference || '-') + '</td><td>' + conf + '</td></tr>';
+        }).join('') +
+        '</tbody></table></div><p class="pt-note">Please press "I received it" once a payment arrives, so we both know it landed.</p>' : '<p class="pt-note">No payouts yet. Once your ready balance passes ' + money(pr.minPayout) + ', it is paid ' + esc(String(pr.payoutSchedule || 'monthly').toLowerCase()) + '.</p>') + '</div>';
+    $$('[data-confirm]', el).forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.disabled = true; b.textContent = 'Saving…';
+        call({ action: 'aff_confirm', s: session(), id: b.dataset.confirm }).then(function (res) {
+          if (res.ok) { toast('Thanks, payment confirmed'); load(true); }
+          else { b.disabled = false; b.textContent = 'I received it'; toast('Could not confirm just now. Please try again.'); }
+        });
+      });
+    });
     var csv = $('#ptCsv');
     csv && csv.addEventListener('click', function () {
       var rows = [['Date', 'Order', 'Type', 'Via', 'Tag', 'Sale', 'Rate', 'Commission', 'Status']].concat(s.commissions.map(function (c) {
@@ -351,17 +419,20 @@
       '<div class="pt-grid"><form class="pt-card pt-form" id="ptSettings" novalidate><h2>Payout and profile</h2>' +
         '<label>Name<input name="name" value="' + esc(p.name) + '" maxlength="80"></label>' +
         '<label>Website or main profile<input name="site" value="' + esc(p.website || '') + '" maxlength="200"></label>' +
-        '<div class="pt-form-row"><label>Payout method<select name="method"><option value="paypal"' + (p.method !== 'wise' ? ' selected' : '') + '>PayPal</option><option value="wise"' + (p.method === 'wise' ? ' selected' : '') + '>Wise</option></select></label>' +
+        '<div class="pt-form-row"><label>Payout method<select name="method"><option value="paypal"' + (p.method === 'paypal' ? ' selected' : '') + '>PayPal</option><option value="wise"' + (p.method === 'wise' ? ' selected' : '') + '>Wise</option><option value="bank"' + (p.method === 'bank' ? ' selected' : '') + '>Bank transfer</option></select></label>' +
         '<label>Payout email<input name="payout" type="email" value="' + esc(p.payoutEmail || p.email) + '" maxlength="120"></label></div>' +
+        '<label>Bank details (for bank transfers)<textarea name="details" rows="3" maxlength="500" placeholder="Account name, IBAN or account number, SWIFT/BIC, bank name">' + esc(p.payoutDetails || '') + '</textarea></label>' +
         '<button class="lx-btn lx-btn--primary" type="submit">Save changes</button><p class="pt-form-msg" id="ptSettingsMsg" role="status"></p></form>' +
       '<div class="pt-card"><h2>Account</h2><p>Signed in as <b>' + esc(p.email) + '</b>. Partner since ' + date(p.since) + '.</p><p class="pt-note">Questions or changes to your sign-in email? Reply to any email from us.</p>' +
         '<button class="lx-btn" type="button" id="ptSignOut">Sign out</button></div></div>';
     $('#ptSignOut').addEventListener('click', signOut);
+    if (readOnly) { $$('#ptSettings input, #ptSettings select, #ptSettings textarea, #ptSettings button').forEach(function (x) { x.disabled = true; }); $('#ptSettingsMsg').textContent = 'Read-only admin view.'; }
     $('#ptSettings').addEventListener('submit', function (e) {
       e.preventDefault();
       var f = this, msg = $('#ptSettingsMsg'), btn = f.querySelector('button');
       btn.disabled = true;
-      call({ action: 'aff_update', s: session(), name: f.name.value.trim(), site: f.site.value.trim(), method: f.method.value, payout: f.payout.value.trim() }).then(function (res) {
+      if (f.method.value === 'bank' && !f.details.value.trim()) { msg.textContent = 'Please add your bank details for bank transfers.'; btn.disabled = false; return; }
+      call({ action: 'aff_update', s: session(), name: f.name.value.trim(), site: f.site.value.trim(), method: f.method.value, payout: f.payout.value.trim(), details: f.details.value }).then(function (res) {
         btn.disabled = false;
         if (res.ok) { msg.textContent = 'Saved.'; load(true); }
         else msg.textContent = res.error === 'bad_email' ? 'That payout email does not look right.' : 'Could not save just now. Please try again.';
@@ -377,11 +448,16 @@
   wirePublic();
   fillProgram();
   animateMock();
-  call({ action: 'aff_program' }).then(function (res) { if (res && res.ok) { Object.assign(program, res); fillProgram(); } });
+  call({ action: 'aff_program' }).then(function (res) { if (res && res.ok && res.type) { Object.assign(program, res); fillProgram(); } });
 
   var params = new URLSearchParams(location.search);
   var loginToken = params.get('login');
-  if (loginToken) {
+  var viewToken = params.get('as');
+  if (viewToken) {
+    try { sessionStorage.setItem(VIEW_STORE, viewToken); } catch (e) {}
+    try { params.delete('as'); history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params : '')); } catch (e) {}
+    showApp(true); load();
+  } else if (loginToken) {
     try { params.delete('login'); history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params : '')); } catch (e) {}
     showApp(true);
     $('#ptApp').innerHTML = '<div class="pt-loading"><span></span>Signing you in…</div>';
@@ -394,5 +470,5 @@
     showApp(true); load();
   }
   // Exposed for tests and for the admin preview.
-  window.ezzoPartners = { render: function (data) { me = data; Object.assign(program, data.program || {}); showApp(true); render(); }, setTab: function (t) { tab = t; render(); } };
+  window.ezzoPartners = { render: function (data) { me = data; readOnly = !!data.readOnly; Object.assign(program, data.program || {}); showApp(true); render(); }, setTab: function (t) { tab = t; render(); } };
 })();

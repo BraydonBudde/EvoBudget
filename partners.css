@@ -251,3 +251,14 @@
   .pt-toast, .pt-mock-line, .pt-mock-big.is-bump { animation: none !important; }
   .pt-mock-line { stroke-dashoffset: 0; }
 }
+
+/* ── Programs: terms list, coupons, admin view ── */
+.pt-terms-list { margin: 0; display: grid; gap: 8px; }
+.pt-terms-list div { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--pt-edge); font-size: 14px; }
+.pt-terms-list div:last-child { border-bottom: 0; }
+.pt-terms-list dt { color: var(--lx-ink-2); }
+.pt-terms-list dd { margin: 0; text-align: right; font-weight: 600; color: var(--lx-ink); }
+.pt-code > div { display: flex; flex-direction: column; }
+.pt-code small { font-size: 12.5px; color: var(--lx-muted); margin-top: 2px; }
+.pt-banner--admin { background: #eef0ff; border-color: #c9bcfb; color: #3b2a8f; }
+.pt-form textarea { min-height: 70px; }

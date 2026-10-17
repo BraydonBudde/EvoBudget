@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="landing.css?v=20261218" />
-  <link rel="stylesheet" href="partners.css?v=20261230" />
+  <link rel="stylesheet" href="partners.css?v=20261232" />
   <style>html, body { margin: 0; background: #f3f1fd; } body { min-height: 100vh; }</style>
 </head>
 <body>
@@ -48,7 +48,7 @@
   <main id="ptPublic">
     <section class="pt-hero lx-wrap">
       <div class="pt-hero-copy">
-        <h1 class="pt-h1">Share a planner people love.<span class="lx-grad-text">Earn <b data-p="commissionRate">30</b>% of every sale.</span></h1>
+        <h1 class="pt-h1">Share a planner people love.<span class="lx-grad-text">Earn <b data-p="rateText">30%</b> on every sale.</span></h1>
         <p class="pt-lead">The Ultimate Budget Planner shows people exactly what they can spend each day, without a bank login or a subscription. Recommend it to your audience, give them <b data-p="customerDiscount">10</b>% off, and earn on every sale your link or code brings in.</p>
         <div class="pt-hero-cta">
           <a class="lx-btn lx-btn--primary" href="#apply">Apply in two minutes</a>
@@ -93,8 +93,8 @@
       <div class="pt-calc">
         <div class="pt-calc-copy">
           <h2 class="pt-h2">What could you earn?<span class="lx-grad-text">Slide to see.</span></h2>
-          <p>The planner is $<span data-p="price">49.99</span>, paid once. Your audience gets <span data-p="customerDiscount">10</span>% off with your code and you earn <span data-p="commissionRate">30</span>% of what they pay, rising to <span data-p="bonusRate">35</span>% after <span data-p="bonusSales">10</span> sales.</p>
-          <p class="pt-fine">An example, not a promise: what you earn depends on your audience. Commission is worked out on the price paid after the discount and before sales tax.</p>
+          <p>The planner is $<span data-p="price">49.99</span>, paid once. Your audience gets <span data-p="customerDiscount">10</span>% off with your code and you earn <span data-p="rateLong">30% of what they pay</span><span data-show="tiers">, rising to <span data-p="bonusRate">35%</span> after <span data-p="bonusSales">10 sales</span></span>.</p>
+          <p class="pt-fine">An example, not a promise: what you earn depends on your audience. Commission is worked out on the price paid after the discount and before sales tax. Partners can be offered other programs.</p>
         </div>
         <div class="pt-calc-card">
           <label for="ptCalcRange">Sales you refer each month: <b id="ptCalcSales">20</b></label>
@@ -110,7 +110,7 @@
     <section class="pt-sec lx-wrap" id="perks">
       <div class="pt-sec-head"><h2 class="pt-h2">Everything you need.<span class="lx-grad-text">Nothing you don't.</span></h2></div>
       <div class="pt-perks">
-        <div class="pt-perk"><i>💰</i><h3><span data-p="commissionRate">30</span>% commission</h3><p>On every sale for <span data-p="cookieDays">30</span> days after a click, with a bonus rate of <span data-p="bonusRate">35</span>% once you pass <span data-p="bonusSales">10</span> sales.</p></div>
+        <div class="pt-perk"><i>💰</i><h3><span data-p="rateText">30%</span> commission</h3><p>On every sale for <span data-p="cookieDays">30</span> days after a click<span data-show="tiers">, with a bonus rate of <span data-p="bonusRate">35%</span> once you pass <span data-p="bonusSales">10 sales</span></span>.</p></div>
         <div class="pt-perk"><i>🎁</i><h3><span data-p="customerDiscount">10</span>% off for your audience</h3><p>Your code is applied at checkout automatically when they use your link. Easier to say yes to.</p></div>
         <div class="pt-perk"><i>🎙️</i><h3>A code that works anywhere</h3><p>Say it in a video, a podcast or a story. Any sale with your code is yours, link or no link.</p></div>
         <div class="pt-perk"><i>📈</i><h3>A live dashboard</h3><p>Clicks, demo starts, checkouts, sales and earnings by day, with campaign tags to see which post worked.</p></div>
@@ -148,7 +148,7 @@
           <label>How will you share it?<textarea name="promo" rows="3" maxlength="600" placeholder="A YouTube review, a blog post, my newsletter..."></textarea></label>
           <div class="pt-form-row">
             <label>Payout method
-              <select name="method"><option value="paypal">PayPal</option><option value="wise">Wise</option></select>
+              <select name="method"><option value="paypal">PayPal</option><option value="wise">Wise</option><option value="bank">Bank transfer</option></select>
             </label>
             <label>Payout email<input name="payout" type="email" placeholder="Same as above if empty" maxlength="120" /></label>
           </div>
@@ -162,7 +162,7 @@
     <section class="pt-sec lx-wrap" id="terms">
       <div class="pt-sec-head"><h2 class="pt-h2">The terms.<span class="lx-grad-text">In plain English.</span></h2></div>
       <div class="pt-terms">
-        <div><b><span data-p="commissionRate">30</span>%</b><span>of each sale, worked out on the price paid after the discount and before tax</span></div>
+        <div><b><span data-p="rateText">30%</span></b><span data-p="rateTermsText">of each sale, worked out on the price paid after the discount and before tax</span></div>
         <div><b><span data-p="cookieDays">30</span> days</b><span>a click counts for, and the latest partner link before the purchase gets the sale</span></div>
         <div><b><span data-p="holdDays">30</span> days</b><span>each commission waits before it can be paid, so refunds can settle</span></div>
         <div><b>$<span data-p="minPayout">50</span></b><span>minimum payout, paid <span data-p="payoutScheduleLower">monthly</span> by PayPal or Wise</span></div>
@@ -226,6 +226,6 @@
 
 <script src="analytics.js?v=20261230"></script>
 <script src="affiliate.js?v=20261230"></script>
-<script src="partners.js?v=20261230"></script>
+<script src="partners.js?v=20261232"></script>
 </body>
 </html>
