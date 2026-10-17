@@ -67,6 +67,7 @@ function doGet(e) {
   if (p.action === 'sales')    return _jsonp(p.cb, _handleSales(p));
   if (p.action === 'lsrevoke') return _jsonp(p.cb, _handleLsRevoke(p));
   if (p.action === 'posts')    return _jsonp(p.cb, _handleBlogPosts(p));
+  if (String(p.action || '').indexOf('aff_') === 0) return _jsonp(p.cb, _handleAffiliate(p));
   return ContentService.createTextOutput('EzzoBudget analytics endpoint.');
 }
 
@@ -481,6 +482,8 @@ function _handleDodoWebhook(e) {
     const total = Number(cents || 0) / 100;
     const cust = d.customer || {};
     const testMode = (props.getProperty('DODO_MODE') || 'test') !== 'live';
+    // The partner behind a sale, if any (their code, else their link).
+    const affHit = event === 'payment.succeeded' ? _affResolve(d) : null;
 
     // What the buyer actually paid, in their own currency with tax, so the
     // dashboard can work out what share of a sale a later refund returned.
@@ -488,12 +491,25 @@ function _handleDodoWebhook(e) {
     sh.appendRow([new Date(), event, orderId, String(cust.email || ''), String(cust.name || ''),
                   product, 'Dodo Payments', total, currency, testMode ? 'test' : 'live', String(d.status || ''), String(d.payment_id || ''),
                   event === 'payment.succeeded' ? _dodoDiscountCodes(d) : '',
-                  event === 'payment.succeeded' ? _dodoAffiliate(d) : '',
+                  affHit ? _affNormCode(affHit.a.Code) : '',
                   event === 'payment.succeeded' ? gross : (d.amount != null ? (Number(d.amount) / 100).toFixed(2) + ' ' + String(d.currency || '') : '')]);
+
+    if (affHit) _affCredit(affHit, d, orderId, total, currency, testMode);
+    if (event === 'refund.succeeded' && d.payment_id) {
+      // The share of the sale that came back, from what the buyer paid.
+      var fraction = 1;
+      for (var j = 1; j < rows.length; j++) {
+        if (String(rows[j][1]) !== 'payment.succeeded' || String(rows[j][2]) !== String(d.payment_id)) continue;
+        const m = /^([\d.]+)\s*([A-Za-z]{3})$/.exec(String(rows[j][14] || '').trim());
+        if (m && String(d.currency || '').toUpperCase() === m[2].toUpperCase() && Number(m[1]) > 0 && d.amount != null) fraction = (Number(d.amount) / 100) / Number(m[1]);
+        break;
+      }
+      _affRefund(String(d.payment_id), fraction);
+    }
 
     const amount = (currency === 'USD' ? '$' : currency + ' ') + total.toFixed(2);
     if (event === 'payment.succeeded') {
-      _push('💰 Cha-ching!', product + ', ' + amount + ' (Dodo)' + (testMode ? ' [TEST]' : ''), 'cashregister');
+      _push('💰 Cha-ching!', product + ', ' + amount + ' (Dodo)' + (affHit ? ' via ' + _affNormCode(affHit.a.Code) : '') + (testMode ? ' [TEST]' : ''), 'cashregister');
     } else {
       _push('↩️ Refund', product + ', ' + amount + ' (Dodo)' + (testMode ? ' [TEST]' : ''), 'falling');
     }
@@ -1075,4 +1091,653 @@ function resetEverything() {
   const s = resetSales();
   const k = resetRedemptions();
   Logger.log('Done. Events ' + e + ', Sales ' + s + ', Keys reset ' + k + '.');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// AFFILIATE PROGRAM
+// ══════════════════════════════════════════════════════════════════════
+// The whole program runs here and in this spreadsheet: no third-party
+// affiliate service, no monthly fee.
+//
+//   Affiliates   one row per partner: code, contact, status, rate, discount
+//   AffClicks    one row per referred visitor per code per day
+//   AffEvents    funnel steps a referred visitor took (demo, checkout)
+//   Commissions  one row per credited sale, refund clawback or adjustment
+//   Payouts      one row per payment sent to a partner
+//   AffSettings  the program's terms (rate, discount, cookie, hold, ...)
+//
+// A sale is credited from the Dodo webhook. The partner is whoever's
+// discount code was used, otherwise whoever's link the buyer last arrived
+// through (carried in the checkout metadata). Commission is a share of what
+// actually reached you (after tax), held for the refund window, and reversed
+// if the order is refunded inside it.
+//
+// Script Properties used here:
+//   DODO_API_KEY   lets the program create each partner's discount code and
+//                  build checkouts with that code already applied. Without
+//                  it, links still track and pay; buyers just type the code.
+//   ADMIN_EMAIL    optional; defaults to the account that owns this script.
+//
+// Run setupAffiliates() once from the editor after pasting this file: it
+// creates the sheets and asks for the email permission the program needs.
+const AFF_SHEETS = {
+  affiliates: ['Code', 'Email', 'Name', 'Status', 'Rate', 'DiscountCode', 'DiscountId', 'PayoutMethod', 'PayoutEmail',
+               'Website', 'Audience', 'Application', 'RecruitedBy', 'CreatedAt', 'ApprovedAt', 'LoginHash', 'LoginExpires',
+               'SessionHash', 'SessionExpires', 'LastLogin', 'Notes'],
+  clicks: ['Timestamp', 'Code', 'VisitorId', 'Landing', 'Referrer', 'SubId', 'Timezone'],
+  events: ['Timestamp', 'Code', 'VisitorId', 'Type', 'SubId'],
+  commissions: ['Timestamp', 'Code', 'OrderId', 'Type', 'SaleAmount', 'Rate', 'Commission', 'Currency', 'Status',
+                'AvailableAt', 'PaidAt', 'PayoutId', 'Attribution', 'SubId', 'Note', 'Test'],
+  payouts: ['Timestamp', 'PayoutId', 'Code', 'Amount', 'Currency', 'Method', 'PayoutEmail', 'Reference', 'Note'],
+  settings: ['Key', 'Value', 'About']
+};
+const AFF_SHEET_NAMES = { affiliates: 'Affiliates', clicks: 'AffClicks', events: 'AffEvents', commissions: 'Commissions', payouts: 'Payouts', settings: 'AffSettings' };
+const AFF_DEFAULTS = {
+  commissionRate: [30, 'Percent of each sale (after tax) paid to the partner'],
+  customerDiscount: [10, 'Percent off for buyers using a partner code (0 = no discount)'],
+  cookieDays: [30, 'How long a referral link is remembered'],
+  holdDays: [30, 'Days a commission waits before it can be paid (covers refunds)'],
+  minPayout: [50, 'Smallest balance paid out'],
+  bonusSales: [10, 'Lifetime sales that unlock the bonus rate (0 = no bonus tier)'],
+  bonusRate: [35, 'Commission percent once the bonus tier is reached'],
+  tier2Rate: [0, 'Percent of each sale paid to the partner who recruited the seller (0 = off)'],
+  autoApprove: ['no', 'yes = applications are approved straight away'],
+  programOpen: ['yes', 'no = the application form is closed'],
+  payoutSchedule: ['Monthly, in the first week', 'Shown to partners']
+};
+const AFF_LOGIN_MINUTES = 30;
+const AFF_SESSION_DAYS = 60;
+const AFF_SITE = 'https://ezzohub.com';
+
+function setupAffiliates() {
+  Object.keys(AFF_SHEETS).forEach(function (k) { _affSheet(k); });
+  _affSettings(true);
+  // Touching MailApp here is what makes the editor ask for the permission
+  // to send the program's emails, once, instead of failing on the first one.
+  console.log('Emails left today: ' + MailApp.getRemainingDailyQuota());
+  console.log('Affiliate sheets are ready. Admin: ' + _affAdminEmail());
+  return 'ok';
+}
+
+function _affSheet(kind) {
+  const sh = _sheet(AFF_SHEET_NAMES[kind], AFF_SHEETS[kind]);
+  if (kind === 'settings' && sh.getLastRow() < 2) {
+    Object.keys(AFF_DEFAULTS).forEach(function (k) { sh.appendRow([k, AFF_DEFAULTS[k][0], AFF_DEFAULTS[k][1]]); });
+  }
+  return sh;
+}
+function _affRows(kind) {
+  const sh = _affSheet(kind);
+  const vals = sh.getDataRange().getValues();
+  const head = AFF_SHEETS[kind];
+  const out = [];
+  for (var i = 1; i < vals.length; i++) {
+    const o = { _row: i + 1 };
+    head.forEach(function (h, c) { o[h] = vals[i][c]; });
+    out.push(o);
+  }
+  return out;
+}
+function _affSet(kind, row, field, value) {
+  const c = AFF_SHEETS[kind].indexOf(field);
+  if (c < 0) throw new Error('no field ' + field);
+  _affSheet(kind).getRange(row, c + 1).setValue(value);
+}
+function _affSettings(fresh) {
+  const cache = CacheService.getScriptCache();
+  if (!fresh) { const hit = cache.get('aff_settings'); if (hit) return JSON.parse(hit); }
+  const s = {};
+  Object.keys(AFF_DEFAULTS).forEach(function (k) { s[k] = AFF_DEFAULTS[k][0]; });
+  _affRows('settings').forEach(function (r) {
+    const k = String(r.Key || '').trim();
+    if (!k || !Object.prototype.hasOwnProperty.call(s, k)) return;
+    if (typeof AFF_DEFAULTS[k][0] === 'number') s[k] = Number(r.Value) || 0;
+    else if (k === 'payoutSchedule') s[k] = String(r.Value || AFF_DEFAULTS[k][0]).trim();
+    else s[k] = String(r.Value).trim().toLowerCase();
+  });
+  cache.put('aff_settings', JSON.stringify(s), 120);
+  return s;
+}
+function _affAdminEmail() {
+  return _normEmail(PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL') || Session.getEffectiveUser().getEmail());
+}
+function _affHash(s) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(s)).map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join('');
+}
+function _affToken() { return (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, ''); }
+function _affNormCode(v) { return String(v || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16); }
+function _affTime(v) { return v instanceof Date ? v.getTime() : (Date.parse(v) || 0); }
+function _affMoney(n) { return Math.round((Number(n) || 0) * 100) / 100; }
+function _affFind(code) {
+  const c = _affNormCode(code);
+  if (!c) return null;
+  const rows = _affRows('affiliates');
+  for (var i = 0; i < rows.length; i++) if (_affNormCode(rows[i].Code) === c) return rows[i];
+  return null;
+}
+function _affByDiscount(code) {
+  const c = _affNormCode(code);
+  if (!c) return null;
+  const rows = _affRows('affiliates');
+  for (var i = 0; i < rows.length; i++) if (_affNormCode(rows[i].DiscountCode || rows[i].Code) === c) return rows[i];
+  return null;
+}
+function _affBySession(token) {
+  const t = String(token || '');
+  if (t.length < 32) return null;
+  const h = _affHash(t);
+  const rows = _affRows('affiliates');
+  for (var i = 0; i < rows.length; i++) {
+    if (rows[i].SessionHash === h && _affTime(rows[i].SessionExpires) > Date.now()) return rows[i];
+  }
+  return null;
+}
+
+// ── Email ──────────────────────────────────────────────────────────────
+// Plain, branded, short. Every one also works as plain text.
+function _affMail(to, subject, lines, button) {
+  try {
+    if (!to || MailApp.getRemainingDailyQuota() < 1) return false;
+    const html = '<div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:28px 24px;color:#1e2240">' +
+      '<div style="font-weight:800;font-size:18px;margin-bottom:18px"><span style="color:#7651f0">Ezzo</span> Hub Partners</div>' +
+      lines.map(function (l) { return '<p style="font-size:15px;line-height:1.6;margin:0 0 14px">' + l + '</p>'; }).join('') +
+      (button ? '<p style="margin:22px 0"><a href="' + button[1] + '" style="display:inline-block;background:#7651f0;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:999px">' + button[0] + '</a></p>' : '') +
+      '<p style="font-size:12.5px;color:#868aab;margin-top:26px">Ezzo Hub, ezzohub.com/partners</p></div>';
+    const text = lines.join('\n\n').replace(/<[^>]+>/g, '') + (button ? '\n\n' + button[0] + ': ' + button[1] : '');
+    MailApp.sendEmail({ to: to, subject: subject, body: text, htmlBody: html, name: 'Ezzo Hub Partners' });
+    return true;
+  } catch (err) { return false; }
+}
+function _affEsc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+// ── Dodo API ───────────────────────────────────────────────────────────
+function _dodoApi(method, path, body) {
+  const props = PropertiesService.getScriptProperties();
+  const key = props.getProperty('DODO_API_KEY');
+  if (!key) return { ok: false, error: 'no_api_key' };
+  const host = (props.getProperty('DODO_MODE') || 'test') === 'live' ? 'https://live.dodopayments.com' : 'https://test.dodopayments.com';
+  const res = UrlFetchApp.fetch(host + path, {
+    method: method, contentType: 'application/json', muteHttpExceptions: true,
+    headers: { Authorization: 'Bearer ' + key }, payload: body ? JSON.stringify(body) : undefined
+  });
+  const code = res.getResponseCode();
+  let data = {};
+  try { data = JSON.parse(res.getContentText() || '{}'); } catch (e) {}
+  return code >= 200 && code < 300 ? { ok: true, data: data } : { ok: false, error: 'dodo_' + code, data: data };
+}
+function _dodoProductId() {
+  const live = (PropertiesService.getScriptProperties().getProperty('DODO_MODE') || 'test') === 'live';
+  return live ? 'pdt_0NpfcVEjfoHA9e1xPYwYe' : 'pdt_0NpX69EmC20ESFfJv1rBw';   // Ultimate Budget Planner
+}
+// Creates (or re-creates) the partner's discount code in Dodo.
+function _affEnsureDiscount(a) {
+  const s = _affSettings();
+  if (!s.customerDiscount) return { ok: true, skipped: true };
+  if (a.DiscountId) return { ok: true, id: a.DiscountId };
+  const code = _affNormCode(a.DiscountCode || a.Code);
+  const r = _dodoApi('post', '/discounts', {
+    type: 'percentage', amount: Math.round(s.customerDiscount * 100), code: code,
+    name: 'Partner ' + code, restricted_to: [_dodoProductId()], metadata: { affiliate: code }
+  });
+  if (!r.ok) return r;
+  _affSet('affiliates', a._row, 'DiscountCode', r.data.code || code);
+  _affSet('affiliates', a._row, 'DiscountId', r.data.discount_id || '');
+  return { ok: true, id: r.data.discount_id };
+}
+
+// ── Public endpoints (JSONP) ───────────────────────────────────────────
+function _handleAffiliate(p) {
+  try {
+    switch (p.action) {
+      case 'aff_program':  return _affProgram();
+      case 'aff_check':    return _affCheck(p);
+      case 'aff_click':    return _affClick(p);
+      case 'aff_event':    return _affEvent(p);
+      case 'aff_checkout': return _affCheckout(p);
+      case 'aff_apply':    return _affApply(p);
+      case 'aff_login':    return _affLogin(p);
+      case 'aff_verify':   return _affVerify(p);
+      case 'aff_me':       return _affMe(p);
+      case 'aff_update':   return _affUpdate(p);
+      case 'aff_logout':   return _affLogout(p);
+      case 'aff_admin':    return _affAdmin(p);
+    }
+    return { ok: false, error: 'unknown' };
+  } catch (err) { return { ok: false, error: 'server' }; }
+}
+
+// The program's public terms, for the partners page.
+function _affProgram() {
+  const s = _affSettings();
+  return { ok: true, commissionRate: s.commissionRate, customerDiscount: s.customerDiscount, cookieDays: s.cookieDays, holdDays: s.holdDays,
+           minPayout: s.minPayout, bonusSales: s.bonusSales, bonusRate: s.bonusRate, tier2Rate: s.tier2Rate, open: s.programOpen !== 'no',
+           payoutSchedule: s.payoutSchedule, price: 49.99 };
+}
+// Is this a live partner code? Used for the "10% off from Mia" note.
+function _affCheck(p) {
+  if (!_bucketOk('ac', 240)) return { ok: false, error: 'busy' };
+  const a = _affFind(p.ref);
+  const s = _affSettings();
+  if (!a || String(a.Status) !== 'approved') return { ok: false, error: 'not_found' };
+  return { ok: true, code: _affNormCode(a.Code), name: String(a.Name || '').split(' ')[0], discount: a.DiscountId ? s.customerDiscount : 0,
+           discountCode: a.DiscountId ? String(a.DiscountCode || a.Code) : '', cookieDays: s.cookieDays };
+}
+// One click per visitor per code per day, so a refresh-happy visitor or a
+// bot hammering a link counts once.
+function _affClick(p) {
+  if (!_bucketOk('ak', 300)) return { ok: false, error: 'busy' };
+  const a = _affFind(p.ref);
+  if (!a || String(a.Status) !== 'approved') return { ok: false, error: 'not_found' };
+  const code = _affNormCode(a.Code);
+  const vid = String(p.vid || '').slice(0, 64);
+  const cache = CacheService.getScriptCache();
+  const k = 'affc_' + code + '_' + vid;
+  if (vid && cache.get(k)) return { ok: true, dup: true };
+  if (vid) cache.put(k, '1', 21600);
+  _affSheet('clicks').appendRow([new Date(), code, vid, String(p.lp || '').slice(0, 80), String(p.rf || '').slice(0, 200),
+                                 String(p.sub || '').slice(0, 40), String(p.tz || '').slice(0, 64)]);
+  return { ok: true };
+}
+function _affEvent(p) {
+  if (!_bucketOk('ae', 300)) return { ok: false, error: 'busy' };
+  const type = p.type === 'demo' || p.type === 'checkout' ? p.type : '';
+  const a = _affFind(p.ref);
+  if (!type || !a || String(a.Status) !== 'approved') return { ok: false };
+  const vid = String(p.vid || '').slice(0, 64);
+  const cache = CacheService.getScriptCache();
+  const k = 'affe_' + type + '_' + _affNormCode(a.Code) + '_' + vid;
+  if (vid && cache.get(k)) return { ok: true, dup: true };
+  if (vid) cache.put(k, '1', 21600);
+  _affSheet('events').appendRow([new Date(), _affNormCode(a.Code), vid, type, String(p.sub || '').slice(0, 40)]);
+  return { ok: true };
+}
+// A checkout with the partner's code already applied and the partner named
+// in the payment's metadata. Each one is single-use and lasts 24 hours, so
+// the site asks for a fresh one as needed.
+function _affCheckout(p) {
+  if (!_bucketOk('ao', 120)) return { ok: false, error: 'busy' };
+  const a = _affFind(p.ref);
+  if (!a || String(a.Status) !== 'approved') return { ok: false, error: 'not_found' };
+  const code = _affNormCode(a.Code);
+  const body = {
+    product_cart: [{ product_id: _dodoProductId(), quantity: 1 }],
+    metadata: { affiliate: code, affiliate_sub: String(p.sub || '').slice(0, 40) },
+    return_url: AFF_SITE + '/budgetplanner?redeem=ubp'
+  };
+  if (a.DiscountId && a.DiscountCode) body.discount_codes = [String(a.DiscountCode)];
+  let r = _dodoApi('post', '/checkouts', body);
+  if (!r.ok && body.discount_codes) { delete body.discount_codes; r = _dodoApi('post', '/checkouts', body); }
+  if (!r.ok || !r.data.checkout_url) return { ok: false, error: r.error || 'no_url' };
+  return { ok: true, url: r.data.checkout_url, discounted: !!body.discount_codes };
+}
+
+function _affApply(p) {
+  if (!_bucketOk('ap', 20)) return { ok: false, error: 'busy' };
+  const s = _affSettings();
+  if (s.programOpen === 'no') return { ok: false, error: 'closed' };
+  const email = _normEmail(p.email);
+  if (!_looksLikeEmail(email)) return { ok: false, error: 'bad_email' };
+  const name = String(p.name || '').trim().slice(0, 80);
+  if (!name) return { ok: false, error: 'bad_name' };
+  const rows = _affRows('affiliates');
+  for (var i = 0; i < rows.length; i++) if (_normEmail(rows[i].Email) === email) return { ok: false, error: 'exists' };
+  // The code doubles as the discount code, so it should read well: the one
+  // they asked for if it is free, otherwise one made from their name.
+  const taken = {};
+  rows.forEach(function (r) { taken[_affNormCode(r.Code)] = 1; });
+  let code = _affNormCode(p.code);
+  if (code.length < 3 || taken[code] || /^(EZZO|ADMIN|TEST)/.test(code)) {
+    const base = (_affNormCode(name.split(' ')[0]) || 'PARTNER').slice(0, 10);
+    code = base; var n = 2;
+    while (taken[code] || code.length < 3) { code = base + n; n++; }
+  }
+  const recruiter = _affFind(p.recruiter);
+  const auto = s.autoApprove === 'yes';
+  _affSheet('affiliates').appendRow([code, email, name, auto ? 'approved' : 'pending', '', code, '',
+    String(p.method || 'paypal').slice(0, 20), _normEmail(p.payout) || email, String(p.site || '').slice(0, 200),
+    String(p.audience || '').slice(0, 40), String(p.promo || '').slice(0, 600),
+    recruiter && String(recruiter.Status) !== 'rejected' ? _affNormCode(recruiter.Code) : '', new Date(), auto ? new Date() : '',
+    '', '', '', '', '', '']);
+  if (auto) {
+    const a = _affFind(code);
+    _affEnsureDiscount(a);
+    _affWelcome(_affFind(code));
+  } else {
+    _affMail(email, 'We got your Ezzo Hub partner application', [
+      'Hi ' + _affEsc(name.split(' ')[0]) + ',',
+      'Thanks for applying to the Ezzo Hub partner program. We read every application and usually reply within two working days.',
+      'Your requested code is <b>' + code + '</b>. We will confirm it when you are approved.'
+    ]);
+  }
+  _affMail(_affAdminEmail(), 'New partner application: ' + name, [
+    _affEsc(name) + ' (' + _affEsc(email) + ') applied as <b>' + code + '</b>.',
+    'Website: ' + _affEsc(p.site || '-') + '<br>Audience: ' + _affEsc(p.audience || '-'),
+    _affEsc(p.promo || '')
+  ], ['Review in the dashboard', AFF_SITE + '/admin']);
+  _push('🤝 New partner application', name + ' (' + code + ')', 'magic');
+  return { ok: true, code: code, approved: auto };
+}
+function _affWelcome(a) {
+  const s = _affSettings();
+  const code = _affNormCode(a.Code);
+  const lines = [
+    'Hi ' + _affEsc(String(a.Name || '').split(' ')[0]) + ', you are in!',
+    'Your link: <b>' + AFF_SITE + '/?ref=' + code + '</b>',
+    a.DiscountId && s.customerDiscount ? 'Your code: <b>' + _affEsc(a.DiscountCode || code) + '</b> gives your audience ' + s.customerDiscount + '% off, and every sale with it is yours, even without the link.' : '',
+    'You earn ' + (Number(a.Rate) || s.commissionRate) + '% of every sale for ' + s.cookieDays + ' days after someone clicks your link. Sign in to your dashboard any time for links, banners, videos and your earnings.'
+  ].filter(Boolean);
+  _affMail(a.Email, 'Welcome to the Ezzo Hub partner program', lines, ['Open your dashboard', AFF_SITE + '/partners']);
+}
+
+// ── Sign-in: a one-time link by email, then a long-lived session ───────
+function _affLogin(p) {
+  if (!_bucketOk('al', 30)) return { ok: false, error: 'busy' };
+  const email = _normEmail(p.email);
+  // Always answers the same way, so the form cannot be used to find out
+  // who is a partner.
+  const reply = { ok: true };
+  if (!_looksLikeEmail(email)) return reply;
+  const cache = CacheService.getScriptCache();
+  if (cache.get('afl_' + email)) return reply;
+  cache.put('afl_' + email, '1', 60);
+  const rows = _affRows('affiliates');
+  for (var i = 0; i < rows.length; i++) {
+    if (_normEmail(rows[i].Email) !== email) continue;
+    const a = rows[i];
+    if (String(a.Status) === 'rejected') return reply;
+    const token = _affToken();
+    _affSet('affiliates', a._row, 'LoginHash', _affHash(token));
+    _affSet('affiliates', a._row, 'LoginExpires', new Date(Date.now() + AFF_LOGIN_MINUTES * 60000));
+    _affMail(email, 'Your Ezzo Hub partner sign-in link', [
+      'Here is your sign-in link. It works once and expires in ' + AFF_LOGIN_MINUTES + ' minutes.',
+      'If you did not ask for this, you can ignore this email.'
+    ], ['Sign in', AFF_SITE + '/partners?login=' + token]);
+    return reply;
+  }
+  return reply;
+}
+function _affVerify(p) {
+  if (!_bucketOk('av', 60)) return { ok: false, error: 'busy' };
+  const t = String(p.token || '');
+  if (t.length < 32) return { ok: false, error: 'bad_link' };
+  const h = _affHash(t);
+  const rows = _affRows('affiliates');
+  for (var i = 0; i < rows.length; i++) {
+    const a = rows[i];
+    if (a.LoginHash !== h) continue;
+    if (_affTime(a.LoginExpires) < Date.now()) return { ok: false, error: 'expired' };
+    const session = _affToken();
+    _affSet('affiliates', a._row, 'LoginHash', '');
+    _affSet('affiliates', a._row, 'SessionHash', _affHash(session));
+    _affSet('affiliates', a._row, 'SessionExpires', new Date(Date.now() + AFF_SESSION_DAYS * 86400000));
+    _affSet('affiliates', a._row, 'LastLogin', new Date());
+    return { ok: true, session: session };
+  }
+  return { ok: false, error: 'bad_link' };
+}
+function _affLogout(p) {
+  const a = _affBySession(p.s);
+  if (a) _affSet('affiliates', a._row, 'SessionHash', '');
+  return { ok: true };
+}
+function _affUpdate(p) {
+  if (!_bucketOk('au', 30)) return { ok: false, error: 'busy' };
+  const a = _affBySession(p.s);
+  if (!a) return { ok: false, error: 'signed_out' };
+  if (p.name) _affSet('affiliates', a._row, 'Name', String(p.name).trim().slice(0, 80));
+  if (p.method) _affSet('affiliates', a._row, 'PayoutMethod', String(p.method).slice(0, 20));
+  if (p.payout) {
+    const pe = _normEmail(p.payout);
+    if (!_looksLikeEmail(pe)) return { ok: false, error: 'bad_email' };
+    _affSet('affiliates', a._row, 'PayoutEmail', pe);
+  }
+  if (p.site != null) _affSet('affiliates', a._row, 'Website', String(p.site).slice(0, 200));
+  return { ok: true };
+}
+
+// Status as the partner sees it: a pending commission becomes available
+// once its hold is over.
+function _affCommissionState(c, now) {
+  const st = String(c.Status);
+  if (st === 'pending' && _affTime(c.AvailableAt) <= now) return 'available';
+  return st;
+}
+// Everything one partner's dashboard shows. Buyer details are never sent:
+// an order is shown by the end of its id only.
+function _affStats(a, s) {
+  const code = _affNormCode(a.Code);
+  const now = Date.now(), DAY = 86400000;
+  const clicks = _affRows('clicks').filter(function (r) { return _affNormCode(r.Code) === code; });
+  const events = _affRows('events').filter(function (r) { return _affNormCode(r.Code) === code; });
+  const comms = _affRows('commissions').filter(function (r) { return _affNormCode(r.Code) === code && String(r.Test) !== 'test'; });
+  const payouts = _affRows('payouts').filter(function (r) { return _affNormCode(r.Code) === code; });
+  const sales = comms.filter(function (c) { return c.Type === 'sale' && c.Status !== 'reversed' && c.Status !== 'rejected'; });
+  const money = { pending: 0, available: 0, paid: 0, reversed: 0 };
+  comms.forEach(function (c) {
+    const st = _affCommissionState(c, now);
+    const v = Number(c.Commission) || 0;
+    if (st === 'pending') money.pending += v;
+    else if (st === 'available' || st === 'approved') money.available += v;
+    else if (st === 'paid') money.paid += v;
+    else if (st === 'reversed') money.reversed += v;
+  });
+  // 30 days of clicks and sales, oldest first, for the chart.
+  const days = [];
+  const d0 = new Date(); d0.setHours(0, 0, 0, 0);
+  for (var i = 29; i >= 0; i--) {
+    const start = d0.getTime() - i * DAY;
+    days.push({
+      day: Utilities.formatDate(new Date(start), Session.getScriptTimeZone(), 'yyyy-MM-dd'),
+      clicks: clicks.filter(function (c) { const t = _affTime(c.Timestamp); return t >= start && t < start + DAY; }).length,
+      sales: sales.filter(function (c) { const t = _affTime(c.Timestamp); return t >= start && t < start + DAY; }).length
+    });
+  }
+  const subs = {};
+  clicks.forEach(function (c) { const k = String(c.SubId || '') || '(none)'; subs[k] = subs[k] || { sub: k, clicks: 0, sales: 0, earned: 0 }; subs[k].clicks++; });
+  sales.forEach(function (c) { const k = String(c.SubId || '') || '(none)'; subs[k] = subs[k] || { sub: k, clicks: 0, sales: 0, earned: 0 }; subs[k].sales++; subs[k].earned += Number(c.Commission) || 0; });
+  const lifetimeSales = sales.length;
+  const rate = Number(a.Rate) || (s.bonusSales && lifetimeSales >= s.bonusSales && s.bonusRate > s.commissionRate ? s.bonusRate : s.commissionRate);
+  const uniq = {};
+  clicks.forEach(function (c) { uniq[c.VisitorId || c._row] = 1; });
+  const recruits = _affRows('affiliates').filter(function (r) { return _affNormCode(r.RecruitedBy) === code && String(r.Status) === 'approved'; }).length;
+  return {
+    code: code, rate: rate, lifetimeSales: lifetimeSales,
+    clicks: clicks.length, visitors: Object.keys(uniq).length,
+    demos: events.filter(function (e) { return e.Type === 'demo'; }).length,
+    checkouts: events.filter(function (e) { return e.Type === 'checkout'; }).length,
+    sales: lifetimeSales, revenue: _affMoney(sales.reduce(function (t, c) { return t + (Number(c.SaleAmount) || 0); }, 0)),
+    earnings: { pending: _affMoney(money.pending), available: _affMoney(money.available), paid: _affMoney(money.paid), reversed: _affMoney(money.reversed) },
+    days: days, subs: Object.keys(subs).map(function (k) { subs[k].earned = _affMoney(subs[k].earned); return subs[k]; }),
+    recruits: recruits,
+    commissions: comms.slice(-150).reverse().map(function (c) {
+      return { date: _affTime(c.Timestamp), order: '…' + String(c.OrderId || '').slice(-6), type: c.Type, sale: _affMoney(c.SaleAmount), rate: Number(c.Rate) || 0,
+               amount: _affMoney(c.Commission), currency: c.Currency || 'USD', status: _affCommissionState(c, now), availableAt: _affTime(c.AvailableAt),
+               via: c.Attribution, sub: c.SubId || '', note: c.Note || '' };
+    }),
+    payouts: payouts.slice().reverse().map(function (p) { return { date: _affTime(p.Timestamp), id: p.PayoutId, amount: _affMoney(p.Amount), currency: p.Currency || 'USD', method: p.Method, reference: p.Reference || '' }; })
+  };
+}
+function _affMe(p) {
+  if (!_bucketOk('am', 120)) return { ok: false, error: 'busy' };
+  const a = _affBySession(p.s);
+  if (!a) return { ok: false, error: 'signed_out' };
+  const s = _affSettings();
+  const out = {
+    ok: true,
+    profile: { code: _affNormCode(a.Code), name: a.Name, email: a.Email, status: a.Status, method: a.PayoutMethod, payoutEmail: a.PayoutEmail,
+               website: a.Website, discountCode: a.DiscountId ? String(a.DiscountCode || a.Code) : '', since: _affTime(a.ApprovedAt || a.CreatedAt) },
+    program: { commissionRate: s.commissionRate, customerDiscount: s.customerDiscount, cookieDays: s.cookieDays, holdDays: s.holdDays, minPayout: s.minPayout,
+               bonusSales: s.bonusSales, bonusRate: s.bonusRate, tier2Rate: s.tier2Rate, payoutSchedule: s.payoutSchedule, price: 49.99 }
+  };
+  if (String(a.Status) === 'approved' || String(a.Status) === 'paused') out.stats = _affStats(a, s);
+  return out;
+}
+
+// ── Crediting sales (called from the Dodo webhook) ─────────────────────
+// Returns the partner for a payment, and how they were found.
+function _affResolve(d) {
+  const codes = String(_dodoDiscountCodes(d) || '').split(',').map(function (c) { return c.trim(); }).filter(Boolean);
+  for (var i = 0; i < codes.length; i++) {
+    const a = _affByDiscount(codes[i]);
+    if (a && String(a.Status) === 'approved') return { a: a, via: 'code' };
+  }
+  const ref = _dodoAffiliate(d);
+  if (ref) {
+    const a = _affFind(ref);
+    if (a && String(a.Status) === 'approved') return { a: a, via: 'link' };
+  }
+  return null;
+}
+function _affCredit(hit, d, orderId, amount, currency, testMode) {
+  try {
+    const a = hit.a, s = _affSettings(true);
+    const code = _affNormCode(a.Code);
+    const existing = _affRows('commissions').some(function (c) { return String(c.OrderId) === orderId && c.Type === 'sale'; });
+    if (existing) return;
+    const cust = d.customer || {};
+    // A partner buying through their own link or code earns nothing on it.
+    const self = _normEmail(cust.email) && _normEmail(cust.email) === _normEmail(a.Email);
+    const lifetime = _affRows('commissions').filter(function (c) { return _affNormCode(c.Code) === code && c.Type === 'sale' && c.Status !== 'reversed' && c.Status !== 'rejected' && String(c.Test) !== 'test'; }).length;
+    const rate = Number(a.Rate) || (s.bonusSales && lifetime >= s.bonusSales && s.bonusRate > s.commissionRate ? s.bonusRate : s.commissionRate);
+    const commission = _affMoney(amount * rate / 100);
+    const available = new Date(Date.now() + s.holdDays * 86400000);
+    const sub = String((d.metadata && d.metadata.affiliate_sub) || '').slice(0, 40);
+    _affSheet('commissions').appendRow([new Date(), code, orderId, 'sale', _affMoney(amount), rate, self ? 0 : commission, currency,
+      self ? 'rejected' : 'pending', available, '', '', hit.via, sub, self ? 'Self-referral: the buyer is the partner' : '', testMode ? 'test' : '']);
+    if (!self && !testMode) {
+      _affMail(a.Email, 'You made a sale! +$' + commission.toFixed(2), [
+        'Nice work, ' + _affEsc(String(a.Name || '').split(' ')[0]) + '. Someone just bought the Ultimate Budget Planner through your ' + (hit.via === 'code' ? 'code' : 'link') + '.',
+        'Commission: <b>$' + commission.toFixed(2) + '</b> (' + rate + '%). It becomes available to pay out on ' + Utilities.formatDate(available, Session.getScriptTimeZone(), 'd MMM yyyy') + ', after the refund window.'
+      ], ['See your dashboard', AFF_SITE + '/partners']);
+    }
+    // The partner who brought this one in, if second-tier rewards are on.
+    if (!self && s.tier2Rate > 0 && a.RecruitedBy) {
+      const up = _affFind(a.RecruitedBy);
+      if (up && String(up.Status) === 'approved') {
+        _affSheet('commissions').appendRow([new Date(), _affNormCode(up.Code), orderId, 'tier2', _affMoney(amount), s.tier2Rate,
+          _affMoney(amount * s.tier2Rate / 100), currency, 'pending', available, '', '', 'tier2', '', 'From ' + code + '\'s sale', testMode ? 'test' : '']);
+      }
+    }
+  } catch (err) {}
+}
+// A refund takes the same share back. Unpaid commission is reduced or
+// reversed; one already paid out is clawed back from the next payout.
+function _affRefund(paymentId, fraction) {
+  try {
+    const f = Math.max(0, Math.min(1, Number(fraction) || 1));
+    _affRows('commissions').forEach(function (c) {
+      if (String(c.OrderId) !== String(paymentId) || (c.Type !== 'sale' && c.Type !== 'tier2')) return;
+      const st = String(c.Status);
+      if (st === 'reversed' || st === 'rejected') return;
+      const take = _affMoney((Number(c.Commission) || 0) * f);
+      if (st === 'paid') {
+        _affSheet('commissions').appendRow([new Date(), c.Code, paymentId, 'clawback', 0, c.Rate, -take, c.Currency, 'approved', new Date(), '', '', '', '', 'Refund after payout', c.Test]);
+      } else if (f >= 0.999) {
+        _affSet('commissions', c._row, 'Status', 'reversed');
+        _affSet('commissions', c._row, 'Note', 'Order refunded');
+      } else {
+        _affSet('commissions', c._row, 'Commission', _affMoney((Number(c.Commission) || 0) - take));
+        _affSet('commissions', c._row, 'Note', 'Part refunded (' + Math.round(f * 100) + '%)');
+      }
+    });
+  } catch (err) {}
+}
+
+// ── Admin actions ──────────────────────────────────────────────────────
+// The dashboard sends the owner's own Google sign-in token, which Google
+// confirms here, so nobody else can approve partners or move money.
+function _affAdminOk(token) {
+  if (!token) return false;
+  const cache = CacheService.getScriptCache();
+  const ck = 'affadm_' + _affHash(token).slice(0, 40);
+  if (cache.get(ck)) return true;
+  const res = UrlFetchApp.fetch('https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=' + encodeURIComponent(token), { muteHttpExceptions: true });
+  if (res.getResponseCode() !== 200) return false;
+  const info = JSON.parse(res.getContentText() || '{}');
+  const ok = _normEmail(info.email) === _affAdminEmail() && String(info.email_verified) !== 'false';
+  if (ok) cache.put(ck, '1', 600);
+  return ok;
+}
+function _affAdmin(p) {
+  if (!_bucketOk('ad', 60)) return { ok: false, error: 'busy' };
+  if (!_affAdminOk(p.token)) return { ok: false, error: 'not_admin' };
+  const op = String(p.op || '');
+  if (op === 'settings') {
+    const sh = _affSheet('settings');
+    const rows = _affRows('settings');
+    let changes = {};
+    try { changes = JSON.parse(p.values || '{}'); } catch (e) { return { ok: false, error: 'bad_values' }; }
+    Object.keys(changes).forEach(function (k) {
+      if (!Object.prototype.hasOwnProperty.call(AFF_DEFAULTS, k)) return;
+      const hit = rows.filter(function (r) { return r.Key === k; })[0];
+      if (hit) sh.getRange(hit._row, 2).setValue(changes[k]);
+      else sh.appendRow([k, changes[k], AFF_DEFAULTS[k][1]]);
+    });
+    _affSettings(true);
+    return { ok: true };
+  }
+  if (op === 'payout') {
+    const a = _affFind(p.code);
+    if (!a) return { ok: false, error: 'not_found' };
+    const code = _affNormCode(a.Code), now = Date.now();
+    const due = _affRows('commissions').filter(function (c) {
+      const st = _affCommissionState(c, now);
+      return _affNormCode(c.Code) === code && (st === 'available' || st === 'approved') && String(c.Test) !== 'test';
+    });
+    const amount = _affMoney(due.reduce(function (t, c) { return t + (Number(c.Commission) || 0); }, 0));
+    if (amount <= 0) return { ok: false, error: 'nothing_due' };
+    const id = 'PO-' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd') + '-' + code;
+    _affSheet('payouts').appendRow([new Date(), id, code, amount, 'USD', a.PayoutMethod, a.PayoutEmail, String(p.reference || '').slice(0, 120), String(p.note || '').slice(0, 200)]);
+    due.forEach(function (c) {
+      _affSet('commissions', c._row, 'Status', 'paid');
+      _affSet('commissions', c._row, 'PaidAt', new Date());
+      _affSet('commissions', c._row, 'PayoutId', id);
+    });
+    _affMail(a.Email, 'You have been paid: $' + amount.toFixed(2), [
+      'Hi ' + _affEsc(String(a.Name || '').split(' ')[0]) + ', we just sent <b>$' + amount.toFixed(2) + '</b> to your ' + _affEsc(a.PayoutMethod || 'PayPal') + ' account (' + _affEsc(a.PayoutEmail) + ').',
+      p.reference ? 'Reference: ' + _affEsc(p.reference) : '',
+      'Thank you for sharing Ezzo Hub.'
+    ].filter(Boolean), ['See your dashboard', AFF_SITE + '/partners']);
+    return { ok: true, id: id, amount: amount };
+  }
+  const a = _affFind(p.code);
+  if (!a) return { ok: false, error: 'not_found' };
+  if (op === 'approve') {
+    _affSet('affiliates', a._row, 'Status', 'approved');
+    if (!a.ApprovedAt) _affSet('affiliates', a._row, 'ApprovedAt', new Date());
+    const d = _affEnsureDiscount(_affFind(a.Code));
+    if (p.silent !== '1') _affWelcome(_affFind(a.Code));
+    return { ok: true, discount: d.ok ? (d.skipped ? 'off' : 'created') : d.error };
+  }
+  if (op === 'reject' || op === 'pause' || op === 'resume') {
+    _affSet('affiliates', a._row, 'Status', op === 'reject' ? 'rejected' : op === 'pause' ? 'paused' : 'approved');
+    if (op === 'reject' && p.notify === '1') _affMail(a.Email, 'Your Ezzo Hub partner application', ['Hi ' + _affEsc(String(a.Name || '').split(' ')[0]) + ',', 'Thank you for applying. We are not able to accept your application right now. ' + _affEsc(p.reason || '')]);
+    // A paused or removed partner's discount code stops working too.
+    if (op !== 'resume' && a.DiscountId) { _dodoApi('delete', '/discounts/' + a.DiscountId); _affSet('affiliates', a._row, 'DiscountId', ''); }
+    if (op === 'resume') _affEnsureDiscount(_affFind(a.Code));
+    return { ok: true };
+  }
+  if (op === 'rate') {
+    const r = String(p.rate || '').trim();
+    if (r && !(Number(r) >= 0 && Number(r) <= 90)) return { ok: false, error: 'bad_rate' };
+    _affSet('affiliates', a._row, 'Rate', r ? Number(r) : '');
+    return { ok: true };
+  }
+  if (op === 'note') { _affSet('affiliates', a._row, 'Notes', String(p.note || '').slice(0, 500)); return { ok: true }; }
+  if (op === 'commission') {
+    // Reject or restore one commission row (by sheet row number).
+    const row = Number(p.row) || 0;
+    const c = _affRows('commissions').filter(function (x) { return x._row === row; })[0];
+    if (!c || _affNormCode(c.Code) !== _affNormCode(a.Code)) return { ok: false, error: 'not_found' };
+    if (String(c.Status) === 'paid') return { ok: false, error: 'already_paid' };
+    _affSet('commissions', row, 'Status', p.status === 'rejected' ? 'rejected' : 'pending');
+    _affSet('commissions', row, 'Note', String(p.note || (p.status === 'rejected' ? 'Rejected by admin' : '')).slice(0, 200));
+    return { ok: true };
+  }
+  if (op === 'login') {
+    // Sends the partner a fresh sign-in link, for when they ask.
+    _affLogin({ email: a.Email });
+    return { ok: true };
+  }
+  return { ok: false, error: 'unknown_op' };
 }

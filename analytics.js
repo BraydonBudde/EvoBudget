@@ -65,6 +65,7 @@ function _analyticsPage() {
   const p = location.pathname.toLowerCase();
   if (p.includes('ultimate-budget')) return 'ubp';
   if (p.includes('claim')) return 'claim';
+  if (p.includes('partners')) return 'partners';
   if (p.includes('privacy') || p.includes('terms') || p.includes('disclaimer')) return 'legal';
   if (p.includes('budgetplanner')) return 'budgetplanner';
   // "/" serves home.html, so anything left unmatched is the marketing site.

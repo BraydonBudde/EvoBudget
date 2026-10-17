@@ -531,3 +531,29 @@
   .adm-range .date-field-styled { flex: 1; min-width: 0; }
   .adm-stat-value { font-size: 24px; }
 }
+
+/* ── Affiliates tab ─────────────────────────────────────────────────── */
+.adm-steps { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+.adm-steps b { color: var(--text-primary); }
+.adm-panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.adm-apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.adm-app { padding: 14px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-faint); background: rgba(var(--grad-indigo-rgb), .04); display: flex; flex-direction: column; gap: 10px; }
+.adm-app-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.adm-app-head strong { display: block; font-size: 14px; color: var(--text-primary); }
+.adm-app-head span:not(.adm-tag) { font-size: 12px; color: var(--text-faint); }
+.adm-app dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+.adm-app dt { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); font-weight: 700; }
+.adm-app dd { margin: 0; font-size: 12.5px; color: var(--text-primary); overflow-wrap: anywhere; }
+.adm-app dd a { color: var(--grad-indigo); }
+.adm-app-text { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); white-space: pre-wrap; }
+.adm-app-actions, .adm-row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.adm-row-actions { justify-content: flex-end; flex-wrap: nowrap; }
+.adm-settings-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px 16px; }
+.adm-field { display: flex; flex-direction: column; gap: 5px; }
+.adm-field > span:first-child { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+.adm-field small { font-size: 11px; line-height: 1.45; color: var(--text-faint); }
+.adm-field-in { display: flex; align-items: center; gap: 8px; }
+.adm-field-in input { width: 100%; }
+.adm-field-in em { font-style: normal; font-size: 12px; color: var(--text-faint); white-space: nowrap; }
+.adm-field--wide { grid-column: 1 / -1; }
+.adm-settings-actions { display: flex; gap: 8px; }

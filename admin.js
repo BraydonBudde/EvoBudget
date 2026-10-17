@@ -483,7 +483,8 @@ function toolLabel(tool) { return tool === 'sbp' ? 'Simple Budget' : tool === 'u
 // this one reads the `page` field ('sbp'/'ubp'/'home'), which is always
 // truthy so toolLabel's `tool || 'Home'` fallback would incorrectly print
 // the raw lowercase 'home' instead of falling through to the nice label.
-function pageLabel(page) { return page === 'sbp' ? 'Simple Budget' : page === 'ubp' ? 'Ultimate Budget' : 'Home'; }
+const PAGE_LABELS = { home: 'Home', budgetplanner: 'Product page', claim: 'Etsy claim', legal: 'Legal pages', partners: 'Partner program', ubp: 'Ultimate Budget', sbp: 'Simple Budget' };
+function pageLabel(page) { return PAGE_LABELS[page] || 'Home'; }
 function relTime(ms) {
   const s = Math.max(0, Math.round((Date.now() - ms) / 1000));
   if (s < 60) return s + 's ago';
@@ -1959,6 +1960,7 @@ function pennyBuildSystemInstruction() {
   return { parts: [{ text:
     "You are Ezzo, the site owner's analytics assistant, built into the private Ezzo Hub admin dashboard. The dashboard has these tabs: Overview (traffic, revenue, funnel), Sales (every order from Dodo Payments, the live checkout, plus the retired Lemon Squeezy and Etsy estimates, with refunds, discount codes and affiliates), Customers, License keys, Product (in-app usage) and Blogs. If a number appears in the dashboard, one of your tools can fetch it. " +
     "The only product sold today is the Ultimate Budget Planner ($49.99 one-time). The Simple Budget Planner is retired. " +
+    "There is also an Affiliates tab for the site's own partner program (partners share a link or discount code and earn commission on sales); use get_affiliate_summary for it. " +
     "You ONLY answer questions about this site's analytics and sales (visitors, sessions, traffic, revenue, orders, refunds, discount codes, affiliate sales, in-app feature usage and preferences, license key redemptions) using the tools provided. " +
     "You must call one of the provided functions to fetch real data before stating any number, percentage, or count - never invent or estimate numbers yourself. If a specific tool doesn't obviously cover what was asked, use search_events (or search_redemptions for anything about codes/order IDs/redeemers) as a general-purpose fallback before saying data isn't available. " +
     "Visitors are identified only by a random on-device ID. Buyer names and email addresses exist on the Customers tab but are deliberately never given to you, and no IP address or budget data is collected at all - if asked for those, say so plainly and point to the Customers tab for contact details. " +
@@ -1984,6 +1986,11 @@ function pennyToolDeclarations() {
           channel: { type: 'string', enum: ['dodo', 'lemonsqueezy', 'etsy'] },
           status: { type: 'string', enum: ['paid', 'partial', 'refunded', 'test'] },
           limit: { type: 'number', description: 'Max rows, default 20, max 50.' },
+        } } },
+      { name: 'get_affiliate_summary', description: "Returns the in-house affiliate (partner) program for a date range (default: this month): program terms, partner counts by status, partner clicks, credited sales and revenue, commission earned, owed and on hold, and per-partner stats by partner code (clicks, demo starts, sales, conversion, revenue, commission). Never includes partner or buyer emails.",
+        parameters: { type: 'object', properties: {
+          from: { type: 'string', description: 'YYYY-MM-DD inclusive start; "all" for all time.' },
+          to: { type: 'string', description: 'YYYY-MM-DD inclusive end.' },
         } } },
       { name: 'get_overview_stats', description: "Returns headline site-wide analytics for the last 30 days: unique visitors, sessions, online-now count, bounce rate, avg session duration, pages/session, new vs. returning visitor split, and page views today.",
         parameters: { type: 'object', properties: {} } },
@@ -2209,11 +2216,36 @@ function pennyAdminToolSearchOrders(args) {
     }))
   };
 }
+function pennyAdminToolGetAffiliateSummary(args) {
+  // Reuses the tab's own maths by borrowing the shared range for one call.
+  const saved = { from: overviewFilters.from, to: overviewFilters.to };
+  if (args?.from === 'all') Object.assign(overviewFilters, { from: '', to: '' });
+  else if (args?.from || args?.to) Object.assign(overviewFilters, { from: args.from || '', to: args.to || '' });
+  else Object.assign(overviewFilters, currentMonthBounds());
+  try {
+    const R = rangeMs();
+    const rows = affPartnerRows();
+    const round = n => Math.round(n * 100) / 100;
+    return {
+      dataRef: 'admin_affiliates', range: args?.from === 'all' ? 'all time' : (args?.from || args?.to) ? { from: args.from || null, to: args.to || null } : 'this month',
+      setUp: !aff.missing, terms: aff.settings,
+      partners: { active: rows.filter(a => a.status === 'approved').length, pendingApplications: rows.filter(a => a.status === 'pending').length, paused: rows.filter(a => a.status === 'paused').length },
+      clicks: aff.clicks.filter(c => within(c.t, R)).length,
+      creditedSales: rows.reduce((t, a) => t + a.sales, 0), creditedRevenue: round(rows.reduce((t, a) => t + a.revenue, 0)),
+      commissionEarned: round(rows.reduce((t, a) => t + a.earned, 0)), owedNow: round(rows.reduce((t, a) => t + a.available, 0)), onHold: round(rows.reduce((t, a) => t + a.held, 0)),
+      byPartner: rows.filter(a => a.status !== 'pending').sort((a, b) => b.revenue - a.revenue).slice(0, 20).map(a => ({
+        code: a.code, status: a.status, rate: a.effectiveRate, clicks: a.clicks, demoStarts: a.demos, sales: a.sales, conversionPct: round(a.conv),
+        revenue: round(a.revenue), commission: round(a.earned), readyToPay: round(a.available), paidAllTime: round(a.paid)
+      }))
+    };
+  } finally { Object.assign(overviewFilters, saved); }
+}
 function pennyExecuteTool(name, args, ctx) {
   try {
     switch (name) {
       case 'get_sales_summary':       return pennyCacheResult(pennyAdminToolGetSalesSummary(args || {}));
       case 'search_orders':           return pennyCacheResult(pennyAdminToolSearchOrders(args || {}));
+      case 'get_affiliate_summary':   return pennyCacheResult(pennyAdminToolGetAffiliateSummary(args || {}));
       case 'get_overview_stats':      return pennyCacheResult(pennyAdminToolGetOverviewStats());
       case 'get_traffic_breakdown':   return pennyCacheResult(pennyAdminToolGetTrafficBreakdown(args || {}));
       case 'get_product_breakdown':   return pennyCacheResult(pennyAdminToolGetProductBreakdown(args || {}));
@@ -2376,6 +2408,7 @@ function loadSampleData() {
   allEvents = generateSampleAdminEvents();
   const extra = generateSampleCommerce();
   allSales = extra.sales; allKeys = extra.keys; allNotify = extra.notify;
+  aff = generateSampleAffiliates();
   _sampleDataActive = true;
   _lastFetched = Date.now();
   pennyResetChatState?.();
@@ -2834,7 +2867,410 @@ function renderProduct() {
   wireCharts(el);
 }
 
-const ADMIN_RENDERERS = { overview: renderOverview, sales: renderSales, customers: renderCustomers, keys: renderRedemptions, product: renderProduct, blogs: renderBlogs, settings: renderSettings };
+// ══════════════════════ Affiliates ══════════════════════
+// The in-house partner program (see AFFILIATE PROGRAM in Code.gs). Its six
+// sheets are read here directly, like every other tab. Anything that has to
+// email a partner, touch Dodo or move money goes through the Apps Script,
+// which checks the owner's own Google sign-in before doing it.
+const AFF_RANGES = {
+  affiliates: 'Affiliates!A2:U5000', clicks: 'AffClicks!A2:G200000', events: 'AffEvents!A2:E200000',
+  commissions: 'Commissions!A2:P50000', payouts: 'Payouts!A2:I10000', settings: 'AffSettings!A2:C100'
+};
+const AFF_SETTING_DEFAULTS = {
+  commissionRate: 30, customerDiscount: 10, cookieDays: 30, holdDays: 30, minPayout: 50, bonusSales: 10, bonusRate: 35, tier2Rate: 0,
+  autoApprove: 'no', programOpen: 'yes', payoutSchedule: 'Monthly, in the first week'
+};
+let aff = { ready: false, missing: false, affiliates: [], clicks: [], events: [], commissions: [], payouts: [], settings: Object.assign({}, AFF_SETTING_DEFAULTS) };
+let affFilters = { status: '', q: '' };
+let affSettingsOpen = false;
+
+async function adminFetchAffiliates(token) {
+  const keys = Object.keys(AFF_RANGES);
+  const qs = keys.map(k => 'ranges=' + encodeURIComponent(AFF_RANGES[k])).join('&');
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values:batchGet?${qs}&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=SERIAL_NUMBER`;
+  try {
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    // The sheets appear when setupAffiliates() is run once in Apps Script.
+    if (!res.ok) return { ready: true, missing: res.status === 400, affiliates: [], clicks: [], events: [], commissions: [], payouts: [], settings: Object.assign({}, AFF_SETTING_DEFAULTS) };
+    const j = await res.json();
+    const v = {};
+    keys.forEach((k, i) => { v[k] = ((j.valueRanges || [])[i] || {}).values || []; });
+    const settings = Object.assign({}, AFF_SETTING_DEFAULTS);
+    v.settings.forEach(r => {
+      const k = _str(r[0]).trim();
+      if (!(k in settings)) return;
+      settings[k] = typeof AFF_SETTING_DEFAULTS[k] === 'number' ? (Number(r[1]) || 0) : (k === 'payoutSchedule' ? _str(r[1]) : _str(r[1]).trim().toLowerCase());
+    });
+    return {
+      ready: true, missing: false, settings,
+      affiliates: v.affiliates.map((r, i) => ({
+        row: i + 2, code: _str(r[0]).toUpperCase(), email: _str(r[1]).toLowerCase(), name: _str(r[2]), status: _str(r[3]) || 'pending', rate: _str(r[4]),
+        discountCode: _str(r[5]), discountId: _str(r[6]), method: _str(r[7]) || 'paypal', payoutEmail: _str(r[8]), website: _str(r[9]),
+        audience: _str(r[10]), application: _str(r[11]), recruitedBy: _str(r[12]).toUpperCase(), createdAt: sheetIso(r[13]), approvedAt: sheetIso(r[14]),
+        lastLogin: sheetIso(r[19]), notes: _str(r[20])
+      })).filter(a => a.code),
+      clicks: v.clicks.map(r => ({ t: Date.parse(sheetIso(r[0])) || 0, code: _str(r[1]).toUpperCase(), vid: _str(r[2]), landing: _str(r[3]), referrer: _str(r[4]), sub: _str(r[5]), tz: _str(r[6]) })),
+      events: v.events.map(r => ({ t: Date.parse(sheetIso(r[0])) || 0, code: _str(r[1]).toUpperCase(), vid: _str(r[2]), type: _str(r[3]), sub: _str(r[4]) })),
+      commissions: v.commissions.map((r, i) => ({
+        row: i + 2, t: Date.parse(sheetIso(r[0])) || 0, code: _str(r[1]).toUpperCase(), orderId: _str(r[2]), type: _str(r[3]), sale: Number(r[4]) || 0,
+        rate: Number(r[5]) || 0, amount: Number(r[6]) || 0, currency: _str(r[7]) || 'USD', status: _str(r[8]), availableAt: Date.parse(sheetIso(r[9])) || 0,
+        paidAt: Date.parse(sheetIso(r[10])) || 0, payoutId: _str(r[11]), via: _str(r[12]), sub: _str(r[13]), note: _str(r[14]), test: _str(r[15]) === 'test'
+      })),
+      payouts: v.payouts.map(r => ({ t: Date.parse(sheetIso(r[0])) || 0, id: _str(r[1]), code: _str(r[2]).toUpperCase(), amount: Number(r[3]) || 0, currency: _str(r[4]) || 'USD',
+        method: _str(r[5]), payoutEmail: _str(r[6]), reference: _str(r[7]), note: _str(r[8]) }))
+    };
+  } catch (e) { return Object.assign({}, aff, { ready: true }); }
+}
+
+// Same rule as the Apps Script: a held commission becomes payable once its
+// hold is over.
+function affCommissionState(c) { return c.status === 'pending' && c.availableAt && c.availableAt <= Date.now() ? 'available' : c.status; }
+function affCounted(c) { return !c.test && c.status !== 'reversed' && c.status !== 'rejected'; }
+function affPartnerRows() {
+  const R = rangeMs();
+  const by = new Map(aff.affiliates.map(a => [a.code, Object.assign({}, a, {
+    clicks: 0, visitors: new Set(), demos: 0, checkouts: 0, sales: 0, revenue: 0, earned: 0, available: 0, held: 0, paid: 0, lifetimeSales: 0, recruits: 0
+  })]));
+  aff.clicks.forEach(c => { const a = by.get(c.code); if (a && within(c.t, R)) { a.clicks++; a.visitors.add(c.vid || c.t); } });
+  aff.events.forEach(e => { const a = by.get(e.code); if (a && within(e.t, R)) { if (e.type === 'demo') a.demos++; else if (e.type === 'checkout') a.checkouts++; } });
+  aff.commissions.forEach(c => {
+    const a = by.get(c.code);
+    if (!a || c.test) return;
+    const st = affCommissionState(c);
+    if (st === 'available' || st === 'approved') a.available += c.amount;
+    else if (st === 'pending') a.held += c.amount;
+    else if (st === 'paid') a.paid += c.amount;
+    if (c.type === 'sale' && affCounted(c)) {
+      a.lifetimeSales++;
+      if (within(c.t, R)) { a.sales++; a.revenue += c.sale; }
+    }
+    if (affCounted(c) && within(c.t, R)) a.earned += c.amount;
+  });
+  aff.affiliates.forEach(x => { if (x.recruitedBy && by.has(x.recruitedBy)) by.get(x.recruitedBy).recruits++; });
+  const s = aff.settings;
+  return [...by.values()].map(a => {
+    a.people = a.visitors.size;
+    a.effectiveRate = Number(a.rate) || (s.bonusSales && a.lifetimeSales >= s.bonusSales && s.bonusRate > s.commissionRate ? s.bonusRate : s.commissionRate);
+    a.conv = a.people ? a.sales / a.people * 100 : 0;
+    return a;
+  });
+}
+
+function adminScriptCall(params) {
+  return new Promise(resolve => {
+    const cb = `ezzoAdm${Math.random().toString(36).slice(2)}`;
+    const script = document.createElement('script');
+    let settled = false;
+    const finish = res => {
+      if (settled) return; settled = true;
+      clearTimeout(timer);
+      window[cb] = function () {};
+      script.remove();
+      resolve(res || { ok: false, error: 'failed' });
+    };
+    const timer = setTimeout(() => finish({ ok: false, error: 'timeout' }), 30000);
+    window[cb] = res => finish(res);
+    const qs = new URLSearchParams(Object.assign({}, params, { token: _adminAccessToken || '', cb, _: String(Date.now()) }));
+    script.src = `${ADMIN_APPS_SCRIPT_URL}?${qs}`;
+    script.onerror = () => finish({ ok: false, error: 'network' });
+    document.head.appendChild(script);
+  });
+}
+const AFF_ERRORS = {
+  not_admin: 'The Apps Script did not accept your sign-in. Sign out and back in, then try again.',
+  nothing_due: 'Nothing is ready to pay for this partner yet.', bad_rate: 'Rates go from 0 to 90.',
+  timeout: 'The Apps Script took too long to answer. Try again.', network: 'Could not reach the Apps Script.',
+  unknown: 'The Apps Script does not know this yet: paste the latest Code.gs and deploy a new version.'
+};
+async function affAction(params, okMsg) {
+  if (_sampleDataActive) { showToast('Not available with sample data'); return null; }
+  const res = await adminScriptCall(Object.assign({ action: 'aff_admin' }, params));
+  if (!res.ok) { showToast(AFF_ERRORS[res.error] || ('Could not do that: ' + (res.error || 'unknown error'))); return null; }
+  if (okMsg) showToast(okMsg);
+  aff = await adminFetchAffiliates(_adminAccessToken);
+  renderAffiliates();
+  return res;
+}
+
+function affSetupHtml() {
+  return `<div class="panel"><div class="panel-inner">
+    <div class="settings-card-title">🤝 Switch on the partner program</div>
+    <p class="admin-danger-sub">The program runs in your own Apps Script and this spreadsheet, so there is nothing to pay for. Four steps, once:</p>
+    <ol class="adm-steps">
+      <li>Open the Apps Script, replace everything with the latest <b>Code.gs</b> from the repo, and save.</li>
+      <li>Choose <b>setupAffiliates</b> in the function menu and press <b>Run</b>. Allow the permissions it asks for (it needs to send partner emails).</li>
+      <li>Optional, recommended: in Project Settings, Script Properties, add <b>DODO_API_KEY</b> with your live Dodo API key. Partners then get their own discount code, applied automatically at checkout.</li>
+      <li><b>Deploy</b>, <b>Manage deployments</b>, edit the current one, choose <b>New version</b>, and deploy. The partner page is at <a href="/partners" target="_blank" rel="noopener">ezzohub.com/partners</a>.</li>
+    </ol>
+  </div></div>`;
+}
+
+function renderAffiliates() {
+  const el = document.getElementById('aview-affiliates');
+  if (!el) return;
+  if (!aff.ready) { el.innerHTML = pageHead('Affiliates', 'Loading the partner program…'); return; }
+  const s = aff.settings;
+  const R = rangeMs(), P = previousRangeMs();
+  const vsTitle = P ? `Compared with the ${P.days} day${P.days === 1 ? '' : 's'} before this range` : '';
+  const partners = affPartnerRows();
+  const pending = partners.filter(a => a.status === 'pending');
+  const active = partners.filter(a => a.status === 'approved');
+  // Revenue from the sales ledger, so it matches the Sales tab exactly.
+  const ledger = salesLedger();
+  const affOrders = list => list.filter(o => o.affiliate && isCounted(o) && o.status !== 'refunded');
+  const now = affOrders(ordersWithin(ledger, R)), before = P ? affOrders(ordersWithin(ledger, P)) : null;
+  const revenue = now.reduce((t, o) => t + o.kept, 0), prevRevenue = before ? before.reduce((t, o) => t + o.kept, 0) : null;
+  const allNet = salesSummary(ordersWithin(ledger, R)).net;
+  const clicks = aff.clicks.filter(c => within(c.t, R)).length;
+  const prevClicks = P ? aff.clicks.filter(c => within(c.t, P)).length : null;
+  const earned = aff.commissions.filter(c => affCounted(c) && within(c.t, R)).reduce((t, c) => t + c.amount, 0);
+  const owed = partners.reduce((t, a) => t + Math.max(0, a.available), 0);
+  const held = partners.reduce((t, a) => t + a.held, 0);
+  const due = partners.filter(a => a.available >= s.minPayout && a.status !== 'rejected').sort((a, b) => b.available - a.available);
+  const q = affFilters.q.trim().toLowerCase();
+  const list = partners.filter(a => a.status !== 'pending' || affFilters.status === 'pending')
+    .filter(a => !affFilters.status || a.status === affFilters.status)
+    .filter(a => !q || [a.code, a.name, a.email, a.website].some(v => String(v || '').toLowerCase().includes(q)))
+    .sort((a, b) => b.revenue - a.revenue || b.clicks - a.clicks);
+  const recent = aff.commissions.filter(c => within(c.t, R)).sort((a, b) => b.t - a.t).slice(0, 60);
+  const partnerVisits = uniqueBy(allEvents.filter(e => e.page === 'partners' && within(eventTime(e), R)), e => e.visitorId).length;
+  const applied = aff.affiliates.filter(a => within(Date.parse(a.createdAt) || 0, R)).length;
+  const nameOf = code => { const a = aff.affiliates.find(x => x.code === code); return a ? a.name : code; };
+  const statusChip = st => `<span class="adm-status adm-status--${{ approved: 'paid', pending: 'wait', paused: 'partial', rejected: 'refunded' }[st] || 'test'}">${esc({ approved: 'Active', pending: 'Applied', paused: 'Paused', rejected: 'Removed' }[st] || st)}</span>`;
+  const cStatus = c => { const st = affCommissionState(c); return `<span class="adm-status adm-status--${{ pending: 'wait', available: 'partial', approved: 'partial', paid: 'paid', reversed: 'refunded', rejected: 'refunded' }[st] || 'test'}">${esc({ pending: 'On hold', available: 'Ready', approved: 'Ready', paid: 'Paid', reversed: 'Refunded', rejected: 'Rejected' }[st] || st)}</span>`; };
+
+  el.innerHTML = `
+    ${pageHead('Affiliates', esc(formatRangeLabel()) + '. Your own partner program: who is sharing the planner, what it brings in, and what you owe.',
+      `<a class="btn btn-ghost btn-sm" href="/partners" target="_blank" rel="noopener">Open partner page ↗</a><button class="btn btn-ghost btn-sm" id="afSettingsBtn" type="button">⚙️ Program settings</button>`)}
+    ${aff.missing ? affSetupHtml() : ''}
+    ${rangeBarHtml('af')}
+    ${statGrid([
+      { icon: '🤝', label: 'Affiliate revenue', value: money(revenue), sub: pct(revenue, allNet, 0) + ' of all revenue · ' + fmt(now.length) + ' order' + (now.length === 1 ? '' : 's'), tone: '#ec4899', delta: deltaChip(revenue, prevRevenue, false, vsTitle),
+        hint: 'Net revenue from orders credited to a partner (their code or link), from the same sales ledger as the Sales tab.' },
+      { icon: '🔗', label: 'Partner clicks', value: fmt(clicks), sub: fmt(active.length) + ' active partner' + (active.length === 1 ? '' : 's'), tone: '#6366f1', delta: deltaChip(clicks, prevClicks, false, vsTitle),
+        hint: 'Visits through a partner link, counted once per visitor per partner per day.' },
+      { icon: '💸', label: 'Commission earned', value: money(earned), sub: 'in this range, refunds excluded', tone: '#a855f7' },
+      { icon: '🏦', label: 'Owed now', value: money(owed), sub: money(held) + ' still on hold · ' + fmt(due.length) + ' due a payout', tone: '#f59e0b',
+        hint: 'Commission past its ' + s.holdDays + '-day hold and not yet paid, across all time. Partners are paid once they pass $' + s.minPayout + '.' }
+    ])}
+
+    <div class="adm-mini-stats">
+      <div><span>Partner page visitors</span><strong>${fmt(partnerVisits)}</strong></div>
+      <div><span>Applications</span><strong>${fmt(applied)}</strong></div>
+      <div><span>Waiting for review</span><strong>${fmt(pending.length)}</strong></div>
+      <div><span>Commission rate</span><strong>${s.commissionRate}%</strong></div>
+      <div><span>Buyer discount</span><strong>${s.customerDiscount}%</strong></div>
+      <div><span>Link window</span><strong>${s.cookieDays} days</strong></div>
+    </div>
+
+    ${affSettingsOpen ? affSettingsHtml(s) : ''}
+
+    ${pending.length ? `<div class="panel"><div class="panel-inner-sm">
+      ${panelTitle('Applications (' + pending.length + ')', 'Approving creates the partner\'s discount code in Dodo (when DODO_API_KEY is set) and emails them their link, code and dashboard.')}
+      <div class="adm-apps">${pending.map(a => `<div class="adm-app">
+        <div class="adm-app-head"><div><strong>${esc(a.name)}</strong><span>${esc(a.email)}</span></div><span class="adm-tag">${esc(a.code)}</span></div>
+        <dl>
+          <div><dt>Shares on</dt><dd>${a.website ? `<a href="${esc(/^https?:/i.test(a.website) ? a.website : 'https://' + a.website)}" target="_blank" rel="noopener noreferrer">${esc(a.website)}</a>` : '-'}</dd></div>
+          <div><dt>Audience</dt><dd>${esc(a.audience || '-')}</dd></div>
+          <div><dt>Applied</dt><dd>${esc(shortDate(Date.parse(a.createdAt)))}</dd></div>
+          ${a.recruitedBy ? `<div><dt>Invited by</dt><dd>${esc(nameOf(a.recruitedBy))}</dd></div>` : ''}
+        </dl>
+        ${a.application ? `<p class="adm-app-text">${esc(a.application)}</p>` : ''}
+        <div class="adm-app-actions">
+          <button class="btn btn-primary btn-sm" type="button" data-aff-op="approve" data-code="${esc(a.code)}">Approve</button>
+          <button class="btn btn-ghost btn-sm" type="button" data-aff-op="reject" data-code="${esc(a.code)}">Decline</button>
+        </div>
+      </div>`).join('')}</div>
+    </div></div>` : ''}
+
+    ${due.length ? `<div class="panel"><div class="panel-inner-sm">
+      <div class="adm-panel-head">${panelTitle('Payouts due', 'Partners whose ready balance has passed the $' + s.minPayout + ' minimum. Pay them in PayPal or Wise, then press Mark paid: their commissions are marked paid and they get an email.')}
+        <button class="btn btn-ghost btn-sm" id="afPaypalCsv" type="button">⬇ PayPal payouts CSV</button></div>
+      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Partner</th><th>Pay to</th><th class="num">Amount</th><th></th></tr></thead><tbody>
+        ${due.map(a => `<tr><td><span class="admin-table-strong">${esc(a.name)}</span> <span class="adm-tag">${esc(a.code)}</span></td>
+          <td>${esc(a.method === 'wise' ? 'Wise' : 'PayPal')} · ${esc(a.payoutEmail || a.email)}</td>
+          <td class="num admin-table-strong">${money(a.available)}</td>
+          <td class="admin-col-action"><button class="btn btn-primary btn-sm" type="button" data-aff-op="payout" data-code="${esc(a.code)}" data-amount="${a.available.toFixed(2)}">Mark paid</button></td></tr>`).join('')}
+      </tbody></table></div>
+    </div></div>` : ''}
+
+    <div class="adm-toolbar">
+      <input class="adm-input adm-input--grow" type="search" id="afQ" placeholder="Search partner, code or email…" value="${esc(affFilters.q)}" aria-label="Search partners">
+      <select class="adm-input" id="afStatus" aria-label="Status">
+        <option value="">Active, paused and removed</option>
+        <option value="approved"${affFilters.status === 'approved' ? ' selected' : ''}>Active</option>
+        <option value="paused"${affFilters.status === 'paused' ? ' selected' : ''}>Paused</option>
+        <option value="rejected"${affFilters.status === 'rejected' ? ' selected' : ''}>Removed</option>
+        <option value="pending"${affFilters.status === 'pending' ? ' selected' : ''}>Applied</option>
+      </select>
+    </div>
+    <div class="panel"><div class="panel-inner-sm">
+      <div class="admin-table-wrap"><table class="admin-table adm-orders">
+        <thead><tr><th>Partner</th><th>Status</th><th class="num">Rate</th><th class="num">Clicks</th><th class="num">Demos</th><th class="num">Sales</th><th class="num">Conv.</th><th class="num">Revenue</th><th class="num">Earned</th><th class="num">Ready</th><th class="num">Paid</th><th></th></tr></thead>
+        <tbody>${list.length ? list.map(a => `<tr class="${a.status === 'rejected' ? 'admin-row-muted' : ''}">
+          <td><span class="admin-table-strong">${esc(a.name)}</span> <span class="adm-tag">${esc(a.code)}</span><br><span class="admin-table-muted">${esc(a.email)}${a.recruits ? ' · invited ' + a.recruits : ''}${a.discountCode && !a.discountId && a.status === 'approved' && s.customerDiscount ? ' · <span title="No discount code in Dodo yet: add DODO_API_KEY, then pause and resume this partner">no code yet</span>' : ''}</span></td>
+          <td>${statusChip(a.status)}</td>
+          <td class="num">${esc(a.effectiveRate)}%${a.rate ? ' <span class="admin-src-badge" title="Custom rate for this partner">custom</span>' : ''}</td>
+          <td class="num">${fmt(a.clicks)}</td><td class="num">${fmt(a.demos)}</td><td class="num">${fmt(a.sales)}</td>
+          <td class="num">${a.people ? a.conv.toFixed(1) + '%' : '-'}</td>
+          <td class="num">${money(a.revenue)}</td><td class="num">${money(a.earned)}</td><td class="num">${money(a.available)}</td><td class="num">${money(a.paid)}</td>
+          <td class="admin-col-action"><div class="adm-row-actions">
+            ${a.status === 'approved' ? `<button class="btn btn-ghost btn-sm" type="button" data-aff-op="pause" data-code="${esc(a.code)}">Pause</button>` : ''}
+            ${a.status === 'paused' || a.status === 'rejected' ? `<button class="btn btn-ghost btn-sm" type="button" data-aff-op="resume" data-code="${esc(a.code)}">${a.status === 'rejected' ? 'Reinstate' : 'Resume'}</button>` : ''}
+            ${a.status === 'pending' ? `<button class="btn btn-primary btn-sm" type="button" data-aff-op="approve" data-code="${esc(a.code)}">Approve</button>` : ''}
+            <button class="btn btn-ghost btn-sm" type="button" data-aff-op="rate" data-code="${esc(a.code)}" data-rate="${esc(a.rate)}">Rate</button>
+            <button class="btn btn-ghost btn-sm" type="button" data-aff-op="login" data-code="${esc(a.code)}" title="Email this partner a fresh sign-in link">Send sign-in</button>
+          </div></td>
+        </tr>`).join('') : `<tr class="admin-empty-row"><td colspan="12">${aff.affiliates.length ? 'No partners match these filters.' : 'No partners yet. Share ezzohub.com/partners to invite creators to apply.'}</td></tr>`}</tbody>
+      </table></div>
+    </div></div>
+
+    <div class="adm-grid adm-grid--2">
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Top partners by revenue')}
+        ${hBarListHtml(partners.filter(a => a.revenue > 0).map(a => ({ label: a.name + ' (' + a.code + ')', value: Math.round(a.revenue) })), { empty: 'No partner sales in this range.', showShare: false, prefix: '$' })}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('How sales were credited', 'A partner\'s code wins over a link. Codes work without any link at all, so they cover videos, podcasts and stories.')}
+        ${hBarListHtml(groupCount(aff.commissions.filter(c => c.type === 'sale' && affCounted(c) && within(c.t, R)), c => c.via === 'code' ? 'Discount code' : 'Partner link'), { empty: 'No credited sales in this range.' })}
+      </div></div>
+    </div>
+
+    <div class="panel"><div class="panel-inner-sm">
+      ${panelTitle('Commissions', 'Every credited sale in this range. Reject one if it breaks the program terms (for example, coupon-site traffic); restore it if you change your mind. Paid ones are final.')}
+      <div class="admin-table-wrap"><table class="admin-table adm-orders"><thead><tr><th>Date</th><th>Partner</th><th>Order</th><th>Type</th><th class="num">Sale</th><th class="num">Rate</th><th class="num">Commission</th><th>Status</th><th>Note</th><th></th></tr></thead><tbody>
+        ${recent.length ? recent.map(c => `<tr class="${c.test || c.status === 'reversed' || c.status === 'rejected' ? 'admin-row-muted' : ''}">
+          <td>${esc(shortDate(c.t))}</td><td>${esc(nameOf(c.code))} <span class="adm-tag">${esc(c.code)}</span></td><td class="admin-key-cell">${esc(c.orderId)}${c.test ? ' <span class="admin-src-badge">TEST</span>' : ''}</td>
+          <td>${esc({ sale: c.via === 'code' ? 'Sale, code' : 'Sale, link', tier2: 'Second tier', clawback: 'Clawback' }[c.type] || c.type)}${c.sub ? ' <span class="admin-table-muted">' + esc(c.sub) + '</span>' : ''}</td>
+          <td class="num">${c.sale ? money(c.sale) : '-'}</td><td class="num">${c.rate ? c.rate + '%' : '-'}</td><td class="num admin-table-strong">${money(c.amount)}</td>
+          <td>${cStatus(c)}${affCommissionState(c) === 'pending' ? `<br><span class="admin-table-muted">until ${esc(shortDate(c.availableAt))}</span>` : ''}</td>
+          <td class="admin-table-muted" style="white-space:normal;max-width:220px">${esc(c.note || '')}</td>
+          <td class="admin-col-action">${c.status === 'paid' || c.type === 'clawback' ? '' : c.status === 'rejected'
+            ? `<button class="btn btn-ghost btn-sm" type="button" data-aff-op="commission" data-code="${esc(c.code)}" data-row="${c.row}" data-status="pending">Restore</button>`
+            : c.status === 'reversed' ? '' : `<button class="btn btn-ghost btn-sm" type="button" data-aff-op="commission" data-code="${esc(c.code)}" data-row="${c.row}" data-status="rejected">Reject</button>`}</td>
+        </tr>`).join('') : '<tr class="admin-empty-row"><td colspan="10">No commissions in this range.</td></tr>'}
+      </tbody></table></div>
+    </div></div>
+
+    ${aff.payouts.length ? `<div class="panel"><div class="panel-inner-sm">
+      ${panelTitle('Payout history')}
+      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Date</th><th>Payout</th><th>Partner</th><th>Paid to</th><th class="num">Amount</th><th>Reference</th></tr></thead><tbody>
+        ${aff.payouts.slice().sort((a, b) => b.t - a.t).map(p => `<tr><td>${esc(shortDate(p.t))}</td><td class="admin-key-cell">${esc(p.id)}</td><td>${esc(nameOf(p.code))}</td><td>${esc((p.method === 'wise' ? 'Wise' : 'PayPal') + ' · ' + p.payoutEmail)}</td><td class="num admin-table-strong">${money(p.amount)}</td><td>${esc(p.reference || '-')}</td></tr>`).join('')}
+      </tbody></table></div>
+    </div></div>` : ''}`;
+
+  wireRangeBar(el, 'af', renderAffiliates);
+  initFieldTips(el);
+  wireSearch('afQ', v => { affFilters.q = v; renderAffiliates(); });
+  document.getElementById('afStatus')?.addEventListener('change', e => { affFilters.status = e.target.value; renderAffiliates(); });
+  document.getElementById('afSettingsBtn')?.addEventListener('click', () => { affSettingsOpen = !affSettingsOpen; renderAffiliates(); });
+  document.getElementById('afPaypalCsv')?.addEventListener('click', () => downloadCsv(
+    ['Recipient', 'Amount', 'Currency', 'Recipient ID', 'Note'],
+    due.filter(a => a.method !== 'wise').map(a => [a.payoutEmail || a.email, a.available.toFixed(2), 'USD', a.code, 'Ezzo Hub partner commission']),
+    'ezzo-paypal-payouts-' + new Date().toISOString().slice(0, 10) + '.csv'));
+  wireAffSettings(el);
+  el.querySelectorAll('[data-aff-op]').forEach(btn => btn.addEventListener('click', async () => {
+    const { affOp: op, code } = btn.dataset;
+    const partner = aff.affiliates.find(a => a.code === code) || {};
+    let extra = {};
+    if (op === 'reject' && !await confirmDialog({ message: `Decline ${partner.name || code}? They get a short, polite email.`, confirmText: 'Decline' })) return;
+    if (op === 'reject') extra = { notify: '1' };
+    if (op === 'pause' && !await confirmDialog({ message: `Pause ${partner.name || code}? Their link and discount code stop crediting sales until you resume them. Commission already earned is kept.`, confirmText: 'Pause' })) return;
+    if (op === 'rate') {
+      const v = prompt(`Commission rate for ${partner.name || code}, in percent. Leave empty to use the program rate (${aff.settings.commissionRate}%, or ${aff.settings.bonusRate}% after ${aff.settings.bonusSales} sales).`, btn.dataset.rate || '');
+      if (v === null) return;
+      extra = { rate: v.trim() };
+    }
+    if (op === 'payout') {
+      const ref = prompt(`Mark ${money(btn.dataset.amount)} as paid to ${partner.name || code} (${partner.payoutEmail || partner.email})?\n\nPayment reference (optional), for example the PayPal transaction id:`, '');
+      if (ref === null) return;
+      extra = { reference: ref.trim() };
+    }
+    if (op === 'commission') extra = { row: btn.dataset.row, status: btn.dataset.status };
+    btn.disabled = true; btn.textContent = '…';
+    const msgs = { approve: 'Approved and welcomed', reject: 'Declined', pause: 'Paused', resume: 'Resumed', rate: 'Rate saved', payout: 'Marked paid and emailed', login: 'Sign-in link sent', commission: 'Commission updated' };
+    const res = await affAction(Object.assign({ op, code }, extra), msgs[op]);
+    if (res && op === 'approve' && res.discount && res.discount !== 'created' && res.discount !== 'off') showToast('Approved. No Dodo discount code yet (' + res.discount + '): add DODO_API_KEY in Script Properties.');
+    if (!res) { btn.disabled = false; }
+  }));
+}
+
+function affSettingsHtml(s) {
+  const num = (k, label, hint, suffix) => `<label class="adm-field"><span>${esc(label)}</span><span class="adm-field-in"><input class="adm-input" type="number" min="0" step="1" name="${k}" value="${esc(s[k])}">${suffix ? `<em>${suffix}</em>` : ''}</span><small>${esc(hint)}</small></label>`;
+  return `<div class="panel"><div class="panel-inner-sm">
+    ${panelTitle('Program settings', 'Saved to the AffSettings sheet. Changes apply to new commissions; anything already earned keeps the rate it was earned at.')}
+    <form class="adm-settings-form" id="afSettingsForm">
+      ${num('commissionRate', 'Commission', 'Share of each sale (after tax and discount) paid to the partner.', '%')}
+      ${num('customerDiscount', 'Buyer discount', 'Percent off with a partner code. 0 turns codes off.', '%')}
+      ${num('cookieDays', 'Link window', 'How long a click is remembered. The latest link before a purchase wins.', 'days')}
+      ${num('holdDays', 'Hold', 'Days before a commission can be paid, so refunds settle first.', 'days')}
+      ${num('minPayout', 'Minimum payout', 'Smallest balance you pay out.', 'USD')}
+      ${num('bonusSales', 'Bonus after', 'Lifetime sales that unlock the bonus rate. 0 turns it off.', 'sales')}
+      ${num('bonusRate', 'Bonus rate', 'Commission once the bonus is unlocked.', '%')}
+      ${num('tier2Rate', 'Second tier', 'Share of each sale paid to the partner who invited the seller. 0 turns it off.', '%')}
+      <label class="adm-field"><span>Applications</span><select class="adm-input" name="autoApprove"><option value="no"${s.autoApprove !== 'yes' ? ' selected' : ''}>I review each one</option><option value="yes"${s.autoApprove === 'yes' ? ' selected' : ''}>Approve automatically</option></select><small>Automatic approval sends the welcome email straight away.</small></label>
+      <label class="adm-field"><span>Program</span><select class="adm-input" name="programOpen"><option value="yes"${s.programOpen !== 'no' ? ' selected' : ''}>Open to applications</option><option value="no"${s.programOpen === 'no' ? ' selected' : ''}>Closed</option></select><small>Closed hides the application form. Existing partners carry on.</small></label>
+      <label class="adm-field adm-field--wide"><span>Payout schedule</span><input class="adm-input" name="payoutSchedule" value="${esc(s.payoutSchedule)}" maxlength="80"><small>Shown to partners, for example "Monthly, in the first week".</small></label>
+      <div class="adm-field--wide adm-settings-actions"><button class="btn btn-primary btn-sm" type="submit">Save settings</button><button class="btn btn-ghost btn-sm" type="button" id="afSettingsClose">Close</button></div>
+    </form>
+  </div></div>`;
+}
+function wireAffSettings(el) {
+  document.getElementById('afSettingsClose')?.addEventListener('click', () => { affSettingsOpen = false; renderAffiliates(); });
+  document.getElementById('afSettingsForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = e.target, values = {};
+    Object.keys(AFF_SETTING_DEFAULTS).forEach(k => { if (f[k]) values[k] = typeof AFF_SETTING_DEFAULTS[k] === 'number' ? Math.max(0, Number(f[k].value) || 0) : f[k].value; });
+    if (values.commissionRate > 90 || values.bonusRate > 90 || values.customerDiscount > 90) { showToast('Rates and discounts go up to 90%.'); return; }
+    const btn = f.querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'Saving…';
+    const res = await affAction({ op: 'settings', values: JSON.stringify(values) }, 'Program settings saved');
+    if (res) affSettingsOpen = false;
+    renderAffiliates();
+  });
+}
+
+// Partner program sample data, shaped like the real sheets.
+function generateSampleAffiliates() {
+  const now = Date.now(), DAY = 86400000;
+  const iso = t => new Date(t).toISOString();
+  const people = [
+    ['MIASAVES', 'Mia Saves', 'mia@example.com', 'approved', 'https://tiktok.com/@miasaves', '10,000 to 100,000'],
+    ['BUDGETWITHBO', 'Bo Lindqvist', 'bo@example.com', 'approved', 'https://youtube.com/@budgetwithbo', '1,000 to 10,000'],
+    ['FRUGALFAY', 'Fay Okafor', 'fay@example.com', 'approved', 'https://frugalfay.example.com', 'Under 1,000'],
+    ['CALMCENTS', 'Priya Nair', 'priya@example.com', 'paused', 'https://instagram.com/calmcents', '1,000 to 10,000'],
+    ['NEWBIE', 'Sam Carter', 'sam@example.com', 'pending', 'https://pinterest.com/samcarter', 'Under 1,000']
+  ];
+  const affiliates = people.map((p, i) => ({ row: i + 2, code: p[0], email: p[2], name: p[1], status: p[3], rate: i === 0 ? '35' : '', discountCode: p[0], discountId: p[3] === 'approved' ? 'dsc_sample' + i : '',
+    method: i === 1 ? 'wise' : 'paypal', payoutEmail: p[2], website: p[4], audience: p[5], application: i === 4 ? 'I pin budget printables and want to recommend a planner my followers can actually use on their phone.' : 'Weekly money videos.',
+    recruitedBy: i === 2 ? 'MIASAVES' : '', createdAt: iso(now - (60 - i * 10) * DAY), approvedAt: iso(now - (58 - i * 10) * DAY), lastLogin: iso(now - i * DAY), notes: '' }));
+  const clicks = [], events = [], commissions = [], payouts = [];
+  [['MIASAVES', 420], ['BUDGETWITHBO', 180], ['FRUGALFAY', 60], ['CALMCENTS', 40]].forEach(([code, n]) => {
+    for (let i = 0; i < n; i++) {
+      const t = now - Math.random() * 45 * DAY;
+      const vid = code + '_v' + i;
+      clicks.push({ t, code, vid, landing: '/budgetplanner', referrer: '', sub: i % 3 ? 'tiktok-oct' : '', tz: 'Europe/London' });
+      if (Math.random() < 0.25) events.push({ t: t + 60000, code, vid, type: 'demo', sub: '' });
+      if (Math.random() < 0.06) events.push({ t: t + 120000, code, vid, type: 'checkout', sub: '' });
+    }
+  });
+  // Commissions mirror the sample sales' affiliate column.
+  allSales.filter(r => r.event === 'payment.succeeded' && r.affiliate).forEach((r, i) => {
+    const code = r.affiliate === 'mia-saves' ? 'MIASAVES' : 'BUDGETWITHBO';
+    r.affiliate = code;
+    const t = Date.parse(r.ts);
+    const refunded = allSales.some(x => x.event === 'refund.succeeded' && x.orderNumber === r.orderId);
+    const rate = code === 'MIASAVES' ? 35 : 30;
+    const paid = t < now - 38 * DAY;
+    commissions.push({ row: i + 2, t, code, orderId: r.orderId, type: 'sale', sale: r.total, rate, amount: Math.round(r.total * rate) / 100, currency: 'USD',
+      status: refunded ? 'reversed' : paid ? 'paid' : 'pending', availableAt: t + 30 * DAY, paidAt: paid ? t + 32 * DAY : 0, payoutId: paid ? 'PO-SAMPLE-' + code : '',
+      via: r.discount ? 'code' : 'link', sub: i % 2 ? 'tiktok-oct' : '', note: refunded ? 'Order refunded' : '', test: r.mode === 'test' });
+  });
+  const paidMia = commissions.filter(c => c.code === 'MIASAVES' && c.status === 'paid').reduce((t, c) => t + c.amount, 0);
+  if (paidMia) payouts.push({ t: now - 6 * DAY, id: 'PO-SAMPLE-MIASAVES', code: 'MIASAVES', amount: Math.round(paidMia * 100) / 100, currency: 'USD', method: 'paypal', payoutEmail: 'mia@example.com', reference: '5TY12345' });
+  return { ready: true, missing: false, affiliates, clicks, events, commissions, payouts, settings: Object.assign({}, AFF_SETTING_DEFAULTS, { tier2Rate: 5 }) };
+}
+
+const ADMIN_RENDERERS = { overview: renderOverview, sales: renderSales, customers: renderCustomers, affiliates: renderAffiliates, keys: renderRedemptions, product: renderProduct, blogs: renderBlogs, settings: renderSettings };
 function switchATab(tab) {
   currentATab = tab;
   document.querySelectorAll('#adminTabs .btab').forEach(b => b.classList.toggle('is-active', b.dataset.atab === tab));
@@ -2847,10 +3283,10 @@ function switchATab(tab) {
 // Sales, Customers and Keys all read from more than one of them, so fetching
 // only what the open tab needs left the others showing stale numbers.
 async function adminFetchAll(token) {
-  const [events, keys, notify, sales] = await Promise.all([
-    adminFetchEvents(token), adminFetchKeys(token), adminFetchNotify(token), adminFetchSales(token)
+  const [events, keys, notify, sales, affiliates] = await Promise.all([
+    adminFetchEvents(token), adminFetchKeys(token), adminFetchNotify(token), adminFetchSales(token), adminFetchAffiliates(token)
   ]);
-  allEvents = events; allKeys = keys; allNotify = notify; allSales = sales;
+  allEvents = events; allKeys = keys; allNotify = notify; allSales = sales; aff = affiliates;
   _lastFetched = Date.now();
 }
 function rerenderCurrent() {
@@ -2914,6 +3350,7 @@ function adminSignOut() {
   allKeys = [];
   allSales = [];
   allNotify = [];
+  aff = { ready: false, missing: false, affiliates: [], clicks: [], events: [], commissions: [], payouts: [], settings: Object.assign({}, AFF_SETTING_DEFAULTS) };
   lsSales = { loaded: false, configured: false, revenue: 0, orders: 0, error: '', rangeKey: null };
   _sampleDataActive = false;
   updateSampleBanner();
