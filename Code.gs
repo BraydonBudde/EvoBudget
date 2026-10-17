@@ -1145,7 +1145,7 @@ const AFF_SHEET_NAMES = { affiliates: 'Affiliates', programs: 'AffPrograms', cou
 // Program-wide switches. Commission terms live on each program.
 const AFF_DEFAULTS = {
   programOpen: ['yes', 'no = the application form is closed'],
-  autoApprove: ['no', 'yes = applications are approved straight away'],
+  autoApprove: ['yes', 'yes = applications are approved straight away'],
   applicationProgram: ['', 'Program id new applicants join (empty = the default program)'],
   payoutSchedule: ['Monthly, in the first week', 'Shown to partners'],
   notifySales: ['yes', 'yes = email partners when they make a sale'],
@@ -1163,6 +1163,7 @@ const AFF_SITE = 'https://ezzohub.com';
 
 function setupAffiliates() {
   Object.keys(AFF_SHEETS).forEach(function (k) { _affSheet(k); });
+  _affDefaultsV2();
   _affSettings(true);
   _affPrograms();
   _affMigrateCoupons();
@@ -1475,8 +1476,22 @@ function _affMigrateCoupons() {
 }
 
 // ── Public endpoints (JSONP) ───────────────────────────────────────────
+// Auto-approval became the default after some programs were already set up
+// with it off. This switches it on once for those; after that, whatever you
+// choose in Settings stays.
+function _affDefaultsV2() {
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('AFF_AUTO_APPROVE_DEFAULT')) return;
+  props.setProperty('AFF_AUTO_APPROVE_DEFAULT', '1');
+  const rows = _affRows('settings');
+  const hit = rows.filter(function (r) { return r.Key === 'autoApprove'; })[0];
+  if (hit) _affSheet('settings').getRange(hit._row, 2).setValue('yes');
+  else _affSheet('settings').appendRow(['autoApprove', 'yes', AFF_DEFAULTS.autoApprove[1]]);
+  _affSettings(true);
+}
 function _handleAffiliate(p) {
   try {
+    _affDefaultsV2();
     switch (p.action) {
       case 'aff_program':  return _affProgramPublic();
       case 'aff_check':    return _affCheck(p);
@@ -1504,7 +1519,7 @@ function _affProgramShape(p) {
 function _affProgramPublic() {
   const s = _affSettings(), programs = _affPrograms();
   const p = programs.filter(function (x) { return x.id === s.applicationProgram && x.active; })[0] || _affDefaultProgram(programs);
-  return Object.assign({ ok: true, open: s.programOpen !== 'no', payoutSchedule: s.payoutSchedule, price: 49.99 }, _affProgramShape(p));
+  return Object.assign({ ok: true, open: s.programOpen !== 'no', autoApprove: s.autoApprove !== 'no', payoutSchedule: s.payoutSchedule, price: 49.99 }, _affProgramShape(p));
 }
 function _affCheck(p) {
   if (!_bucketOk('ac', 240)) return { ok: false, error: 'busy' };

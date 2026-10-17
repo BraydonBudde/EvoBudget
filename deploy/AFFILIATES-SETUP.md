@@ -11,7 +11,7 @@ You control everything from **Admin, then Affiliates**:
 | **Partners** | Review applications (and choose their program when you approve), or add a partner yourself. You can also: <br>• edit details, the program and a custom rate <br>• set payout method and bank details <br>• manage coupons (any number, each with its own %, usage limit and expiry) <br>• view their dashboard read-only <br>• send a sign-in link <br>• pause, delete or reinstate them |
 | **Referrals** | See every credited sale with buyer, risk flags and status. You can: <br>• approve, deny or restore them, singly or in bulk <br>• edit the commission <br>• move a referral to another partner <br>• add one by hand (for example when a buyer forgot the code) <br>• export to CSV |
 | **Payments** | **Ready to pay** is grouped per partner. Choose which referrals to include, the method, the date and the payment reference, and pay below the minimum if you want to. There is also a PayPal payouts CSV. **Paid** is the history: each payout shows its referrals, and you can edit or undo it. |
-| **Settings** | Open or close applications, auto-approve, which program applicants join, the payout schedule, email notifications, and self-referral blocking. |
+| **Settings** | Open or close applications, auto-approve (on by default: partners get their link and code the moment they join), which program applicants join, the payout schedule, email notifications, and self-referral blocking. |
 
 ## Verifying payouts
 

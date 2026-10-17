@@ -24,7 +24,7 @@
   // The terms on show: the program new partners join (public page) or the
   // partner's own program (dashboard). Same shape as the Apps Script sends.
   var program = { name: 'Standard', type: 'percent', amount: 30, buyerDiscount: 10, cookieDays: 30, holdDays: 30, approval: 'auto', minPayout: 50,
-                  tiers: [{ min: 10, amount: 35 }], tierMetric: 'sales', tier2Rate: 0, open: true, payoutSchedule: 'Monthly, in the first week', price: 49.99 };
+                  tiers: [{ min: 10, amount: 35 }], tierMetric: 'sales', tier2Rate: 0, open: true, autoApprove: true, payoutSchedule: 'Monthly, in the first week', price: 49.99 };
   var readOnly = false;
   var me = null;
   var tab = 'overview';
@@ -99,6 +99,8 @@
       rateText: rateText(program.type, program.amount),
       rateLong: program.type === 'flat' ? rateText('flat', program.amount) + ' for every sale' : program.amount + '% of what they pay',
       rateTermsText: program.type === 'flat' ? 'for every sale your link or code brings in' : 'of each sale, worked out on the price paid after the discount and before tax',
+      rateShort: program.type === 'flat' ? 'for every sale' : 'commission on every sale',
+      applyNote: program.autoApprove === false ? 'Tell us where you share. We read every application and usually reply within two working days.' : 'Fill in a short form and get your link and code straight away.',
       bonusRate: top ? rateText(program.type, top.amount) : '', bonusSales: top ? tierText(top) : '',
       perSale: perSale().toFixed(2),
       payoutScheduleLower: String(program.payoutSchedule || 'monthly').replace(/^./, function (c) { return c.toLowerCase(); }).replace(/,.*$/, '')
@@ -130,7 +132,7 @@
     $('#ptSigninForm').addEventListener('submit', function (e) {
       e.preventDefault();
       var email = this.email.value.trim(), msg = $('#ptSigninMsg'), btn = this.querySelector('button');
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Please enter the email you applied with.'; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Please enter the email you joined with.'; return; }
       btn.disabled = true; btn.textContent = 'Sending…';
       call({ action: 'aff_login', email: email }).then(function (res) {
         btn.disabled = false; btn.textContent = 'Email me a sign-in link';
@@ -151,14 +153,14 @@
       btn.disabled = true; btn.textContent = 'Sending…';
       var ref = typeof window.ezzoAffiliateRef === 'function' ? window.ezzoAffiliateRef() : '';
       call(Object.assign({ action: 'aff_apply', recruiter: ref }, data)).then(function (res) {
-        btn.disabled = false; btn.textContent = 'Send application';
+        btn.disabled = false; btn.textContent = 'Join the program';
         if (res.ok) {
           f.innerHTML = '<div class="pt-done"><i>🎉</i><h3>' + (res.approved ? 'You\'re in!' : 'Application sent') + '</h3><p>' +
             (res.approved ? 'Check your inbox for your link and code, then sign in to your dashboard.' : 'Thanks, ' + esc(data.name.split(' ')[0]) + '. We\'ll email you at ' + esc(data.email) + ' within two working days. Your requested code is <b>' + esc(res.code) + '</b>.') +
             '</p></div>';
           return;
         }
-        fail({ exists: 'That email already has an application. Use "Sign in" to get to your dashboard.', bad_email: 'That email does not look right.', closed: 'Applications are closed right now.', busy: 'Lots of applications right now. Please try again in a minute.' }[res.error] || 'Could not send that just now. Please try again.');
+        fail({ exists: 'That email is already a partner. Use "Sign in" to get to your dashboard.', bad_email: 'That email does not look right.', closed: 'Applications are closed right now.', busy: 'Lots of applications right now. Please try again in a minute.' }[res.error] || 'Could not send that just now. Please try again.');
       });
       function fail(text, el) { msg.textContent = text; msg.classList.add('is-err'); if (el && el.focus) el.focus(); return false; }
     });
@@ -223,25 +225,43 @@
         '</p></div>';
       return;
     }
-    var tabs = [['overview', 'Overview'], ['links', 'Links & code'], ['creatives', 'Creatives'], ['earnings', 'Earnings'], ['settings', 'Settings']];
+    var tabs = [['overview', '📊', 'Overview'], ['links', '🔗', 'Links & codes'], ['creatives', '🖼️', 'Creatives'], ['earnings', '💸', 'Earnings'], ['settings', '⚙️', 'Settings']];
+    var code = p.discountCode || p.code, mainLink = link('/budgetplanner');
+    var r = me.stats ? me.stats.rate : { type: program.type, amount: program.amount };
     app.innerHTML =
-      '<div class="pt-app-head"><div><p class="pt-app-hi">Hi ' + esc(String(p.name).split(' ')[0]) + ' 👋</p><h1>Your partner dashboard</h1></div>' +
-      '<div class="pt-app-code"><span>Your code</span><b>' + esc(p.discountCode || p.code) + '</b><button type="button" class="pt-icon-btn" data-copy="' + esc(p.discountCode || p.code) + '" aria-label="Copy code">⧉</button></div></div>' +
+      '<div class="pt-app-head"><div><p class="pt-app-hi">Hi ' + esc(String(p.name).split(' ')[0]) + ' 👋</p><h1>Your partner dashboard</h1>' +
+        '<div class="pt-app-meta"><span>' + esc(program.name || 'Standard') + ' program</span><span>' + rateText(r.type, r.amount) + (r.type === 'flat' ? ' per sale' : ' commission') + '</span><span>Partner since ' + date(p.since) + '</span></div></div>' +
+      '<div class="pt-app-code"><div class="pt-app-code-row"><span>Your code</span><b>' + esc(code) + '</b></div>' +
+        '<div class="pt-app-code-btns"><button type="button" class="lx-btn lx-btn--small" data-copy="' + esc(code) + '" data-copy-label="Code copied">Copy code</button>' +
+        '<button type="button" class="lx-btn lx-btn--primary lx-btn--small" data-copy="' + esc(mainLink) + '" data-copy-label="Link copied">Copy link</button></div></div></div>' +
       (readOnly ? '<div class="pt-banner pt-banner--admin">👁 Admin view of ' + esc(p.name) + '\'s dashboard. Read-only: nothing can be changed from here.</div>' : '') +
       (p.status === 'paused' ? '<div class="pt-banner">Your partnership is paused, so new clicks and sales are not being credited right now. Reply to any of our emails if you have questions.</div>' : '') +
-      '<nav class="pt-tabs" role="tablist">' + tabs.map(function (t) { return '<button type="button" role="tab" data-tab="' + t[0] + '" class="' + (tab === t[0] ? 'is-on' : '') + '">' + t[1] + '</button>'; }).join('') + '</nav>' +
+      '<nav class="pt-tabs" role="tablist" aria-label="Dashboard sections">' + tabs.map(function (t) { return '<button type="button" role="tab" aria-selected="' + (tab === t[0]) + '" data-tab="' + t[0] + '" class="' + (tab === t[0] ? 'is-on' : '') + '"><span aria-hidden="true">' + t[1] + '</span>' + t[2] + '</button>'; }).join('') + '</nav>' +
       '<div id="ptTab"></div>';
     $$('.pt-tabs [data-tab]', app).forEach(function (b) { b.addEventListener('click', function () { tab = b.dataset.tab; render(); }); });
     wireCopy(app);
     var body = $('#ptTab');
     ({ overview: renderOverview, links: renderLinks, creatives: renderCreatives, earnings: renderEarnings, settings: renderSettings }[tab] || renderOverview)(body);
     wireCopy(body);
+    stackTables(app);
   }
+  // A table while it fits, label/value cards when it doesn't: never a
+  // sideways scroll. Re-checked whenever the window changes size.
+  function stackTables(scope) {
+    $$('.pt-table', scope).forEach(function (t) {
+      var heads = $$('thead th', t).map(function (th) { return th.textContent.trim(); });
+      $$('tbody tr', t).forEach(function (tr) { [].slice.call(tr.children).forEach(function (td, i) { if (heads[i]) td.setAttribute('data-label', heads[i]); }); });
+      t.classList.remove('is-stacked');
+      if (t.scrollWidth > t.parentElement.clientWidth + 1) t.classList.add('is-stacked');
+    });
+  }
+  var resizeT;
+  window.addEventListener('resize', function () { clearTimeout(resizeT); resizeT = setTimeout(function () { if (me) stackTables($('#ptApp')); }, 120); });
   function wireCopy(scope) {
     $$('[data-copy]', scope).forEach(function (b) { if (b._w) return; b._w = 1; b.addEventListener('click', function () { copy(b.dataset.copy, b.dataset.copyLabel); }); });
   }
-  function stat(label, value, sub, tone) {
-    return '<div class="pt-stat" style="--tone:' + (tone || '#7651f0') + '"><span>' + label + '</span><b>' + value + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>';
+  function stat(label, value, sub, tone, icon) {
+    return '<div class="pt-stat" style="--tone:' + (tone || '#7651f0') + '"><i aria-hidden="true">' + (icon || '📈') + '</i><span>' + label + '</span><b>' + value + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>';
   }
   function chart(days) {
     var w = 720, h = 170, pad = 22;
@@ -273,10 +293,10 @@
     var held = s.earnings.pending + (s.earnings.review || 0);
     el.innerHTML =
       '<div class="pt-stats">' +
-        stat('Clicks', whole(s.clicks), whole(s.visitors) + ' people', '#7651f0') +
-        stat('Sales', whole(s.sales), conv.toFixed(conv && conv < 1 ? 2 : 1) + '% of people who clicked', '#23a873') +
-        stat('Ready to pay', money(due), due >= pr.minPayout ? 'Included in the next payout' : money(Math.max(0, pr.minPayout - due)) + ' to the ' + money(pr.minPayout) + ' minimum', '#c2730f') +
-        stat('On hold', money(held), (s.earnings.review ? money(s.earnings.review) + ' being reviewed · ' : '') + pr.holdDays + '-day refund window', '#d46fb0') +
+        stat('Clicks', whole(s.clicks), whole(s.visitors) + ' people', '#7651f0', '🔗') +
+        stat('Sales', whole(s.sales), conv.toFixed(conv && conv < 1 ? 2 : 1) + '% of people who clicked', '#23a873', '🛒') +
+        stat('Ready to pay', money(due), due >= pr.minPayout ? 'In the next payout' : money(Math.max(0, pr.minPayout - due)) + ' to the ' + money(pr.minPayout) + ' minimum', '#c2730f', '💰') +
+        stat('On hold', money(held), (s.earnings.review ? money(s.earnings.review) + ' being reviewed · ' : '') + pr.holdDays + '-day refund window', '#d46fb0', '⏳') +
       '</div>' +
       '<div class="pt-grid">' +
         '<div class="pt-card pt-card--wide"><div class="pt-card-head"><h2>Last 30 days</h2><span class="pt-legend"><i class="b"></i>Clicks <i class="s"></i>Sales</span></div>' + chart(s.days) + '</div>' +
@@ -288,8 +308,11 @@
           (nt ? '<div class="pt-progress"><div class="pt-progress-head"><span>' + (pr.tierMetric === 'revenue' ? money(nt.val) + ' of ' + money(nt.tier.min) : nt.val + ' of ' + nt.tier.min + ' sales') + '</span><span>' + rateText(pr.type, nt.tier.amount) + ' next</span></div>' +
             '<div class="pt-progress-track"><i style="width:' + Math.min(100, Math.round(nt.val / nt.tier.min * 100)) + '%"></i></div><p class="pt-note">Reach ' + tierText(nt.tier) + ' and every sale after pays ' + rateText(pr.type, nt.tier.amount) + '.</p></div>'
               : (s.rate.source === 'tier' ? '<p class="pt-note">You have reached a bonus tier. Thank you!</p>' : '')) +
+          '<div class="pt-mini-link"><input readonly aria-label="Your link" value="' + esc(link('/budgetplanner')) + '"><button class="lx-btn lx-btn--primary" type="button" data-copy="' + esc(link('/budgetplanner')) + '" data-copy-label="Link copied">Copy link</button></div>' +
         '</div>' +
         '<div class="pt-card"><h2>Earned so far</h2><div class="pt-earned"><div><span>Paid to you</span><b>' + money(s.earnings.paid) + '</b></div><div><span>Ready</span><b>' + money(s.earnings.available) + '</b></div><div><span>On hold</span><b>' + money(held) + '</b></div></div>' +
+          '<div class="pt-next"><div class="pt-progress-head"><span>Next payout</span><b>' + (due >= pr.minPayout ? money(due) + ' ready' : money(due) + ' of ' + money(pr.minPayout)) + '</b></div>' +
+            '<div class="pt-progress-track"><i style="width:' + (pr.minPayout ? Math.min(100, Math.round(due / pr.minPayout * 100)) : 100) + '%"></i></div></div>' +
           '<p class="pt-note">Paid ' + esc(String(pr.payoutSchedule || 'monthly').toLowerCase()) + ' by ' + esc({ wise: 'Wise', bank: 'bank transfer' }[me.profile.method] || 'PayPal') + (me.profile.method === 'bank' ? '' : ' to ' + esc(me.profile.payoutEmail || me.profile.email)) + '.</p></div>' +
         '<div class="pt-card"><h2>Your program</h2><dl class="pt-terms-list">' +
           '<div><dt>Program</dt><dd>' + esc(pr.name || 'Standard') + '</dd></div>' +
@@ -300,7 +323,7 @@
           '<div><dt>Refund window</dt><dd>' + pr.holdDays + ' days' + (pr.approval === 'manual' ? ', then each sale is reviewed' : '') + '</dd></div>' +
           '<div><dt>Minimum payout</dt><dd>' + money(pr.minPayout) + '</dd></div>' +
         '</dl>' + (pr.description ? '<p class="pt-note">' + esc(pr.description) + '</p>' : '') + '</div>' +
-        (pr.tier2Rate > 0 ? '<div class="pt-card"><h2>Invite other creators</h2><p>Earn <b>' + pr.tier2Rate + '%</b> of every sale made by partners you bring in, on top of your own. ' + (s.recruits ? 'You have brought in <b>' + s.recruits + '</b> so far.' : '') + '</p>' +
+        (pr.tier2Rate > 0 ? '<div class="pt-card pt-card--full"><h2>Invite other creators</h2><p>Earn <b>' + pr.tier2Rate + '%</b> of every sale made by partners you bring in, on top of your own. ' + (s.recruits ? 'You have brought in <b>' + s.recruits + '</b> so far.' : '') + '</p>' +
           '<div class="pt-linkbox"><input readonly value="' + esc(SITE + '/partners?ref=' + me.profile.code) + '"><button class="lx-btn lx-btn--small" type="button" data-copy="' + esc(SITE + '/partners?ref=' + me.profile.code) + '" data-copy-label="Invite link copied">Copy</button></div></div>' : '') +
       '</div>';
   }
@@ -309,9 +332,9 @@
     var pages = [['/', 'Home page'], ['/budgetplanner', 'Product page'], ['/budgetplanner?trial=ubp', 'Free demo (straight into the planner)'], ['/blog', 'Blog']];
     el.innerHTML =
       '<div class="pt-grid">' +
-        '<div class="pt-card pt-card--wide"><h2>Link builder</h2><p class="pt-note">Every link credits you for ' + pr.cookieDays + ' days. Add a campaign tag to see which post or video performs best.</p>' +
+        '<div class="pt-card pt-card--wide"><h2>Link builder</h2><p>Every link credits you for ' + pr.cookieDays + ' days. Add a campaign tag to see which post or video performs best.</p>' +
           '<div class="pt-builder"><label>Send people to<select id="ptLinkPage">' + pages.map(function (x) { return '<option value="' + x[0] + '">' + x[1] + '</option>'; }).join('') + '</select></label>' +
-          '<label>Campaign tag (optional)<input id="ptLinkSub" placeholder="e.g. tiktok-oct" maxlength="40"></label></div>' +
+          '<label><span>Campaign tag <span class="pt-opt">optional</span></span><input id="ptLinkSub" placeholder="e.g. tiktok-oct" maxlength="40"></label></div>' +
           '<div class="pt-linkbox"><input id="ptLinkOut" readonly><button class="lx-btn lx-btn--primary lx-btn--small" type="button" id="ptLinkCopy">Copy link</button></div>' +
           '<div class="pt-share" id="ptShare"></div></div>' +
         '<div class="pt-card"><h2>Your discount code' + ((me.coupons || []).length > 1 ? 's' : '') + '</h2>' + ((me.coupons || []).length
@@ -375,9 +398,9 @@
     var s = me.stats, pr = program;
     var label = { pending: 'On hold', review: 'Being reviewed', available: 'Ready', approved: 'Ready', paid: 'Paid', reversed: 'Refunded', rejected: 'Not eligible' };
     el.innerHTML =
-      '<div class="pt-stats">' + stat('Paid to you', money(s.earnings.paid), s.payouts.length + ' payout' + (s.payouts.length === 1 ? '' : 's'), '#23a873') +
-        stat('Ready to pay', money(s.earnings.available), 'Minimum ' + money(pr.minPayout), '#c2730f') + stat('On hold', money(s.earnings.pending + (s.earnings.review || 0)), pr.holdDays + '-day refund window', '#d46fb0') +
-        stat('Sales revenue', money(s.revenue), 'what your buyers paid', '#7651f0') + '</div>' +
+      '<div class="pt-stats">' + stat('Paid to you', money(s.earnings.paid), s.payouts.length + ' payout' + (s.payouts.length === 1 ? '' : 's'), '#23a873', '✅') +
+        stat('Ready to pay', money(s.earnings.available), 'Minimum ' + money(pr.minPayout), '#c2730f', '💰') + stat('On hold', money(s.earnings.pending + (s.earnings.review || 0)), pr.holdDays + '-day refund window', '#d46fb0', '⏳') +
+        stat('Sales revenue', money(s.revenue), 'what your buyers paid', '#7651f0', '📈') + '</div>' +
       '<div class="pt-card pt-card--flat"><div class="pt-card-head"><h2>Commissions</h2>' + (s.commissions.length ? '<button class="lx-btn lx-btn--small" type="button" id="ptCsv">Download CSV</button>' : '') + '</div>' +
         (s.commissions.length ? '<div class="pt-table-wrap"><table class="pt-table"><thead><tr><th>Date</th><th>Order</th><th>From</th><th class="num">Sale</th><th class="num">Rate</th><th class="num">You earn</th><th>Status</th></tr></thead><tbody>' +
           s.commissions.map(function (c) {
@@ -416,12 +439,12 @@
   function renderSettings(el) {
     var p = me.profile;
     el.innerHTML =
-      '<div class="pt-grid"><form class="pt-card pt-form" id="ptSettings" novalidate><h2>Payout and profile</h2>' +
+      '<div class="pt-grid"><form class="pt-card pt-card--wide pt-form" id="ptSettings" novalidate><h2>Payout and profile</h2>' +
         '<label>Name<input name="name" value="' + esc(p.name) + '" maxlength="80"></label>' +
         '<label>Website or main profile<input name="site" value="' + esc(p.website || '') + '" maxlength="200"></label>' +
         '<div class="pt-form-row"><label>Payout method<select name="method"><option value="paypal"' + (p.method === 'paypal' ? ' selected' : '') + '>PayPal</option><option value="wise"' + (p.method === 'wise' ? ' selected' : '') + '>Wise</option><option value="bank"' + (p.method === 'bank' ? ' selected' : '') + '>Bank transfer</option></select></label>' +
         '<label>Payout email<input name="payout" type="email" value="' + esc(p.payoutEmail || p.email) + '" maxlength="120"></label></div>' +
-        '<label>Bank details (for bank transfers)<textarea name="details" rows="3" maxlength="500" placeholder="Account name, IBAN or account number, SWIFT/BIC, bank name">' + esc(p.payoutDetails || '') + '</textarea></label>' +
+        '<label><span>Bank details <span class="pt-opt">for bank transfers</span></span><textarea name="details" rows="3" maxlength="500" placeholder="Account name, IBAN or account number, SWIFT/BIC, bank name">' + esc(p.payoutDetails || '') + '</textarea></label>' +
         '<button class="lx-btn lx-btn--primary" type="submit">Save changes</button><p class="pt-form-msg" id="ptSettingsMsg" role="status"></p></form>' +
       '<div class="pt-card"><h2>Account</h2><p>Signed in as <b>' + esc(p.email) + '</b>. Partner since ' + date(p.since) + '.</p><p class="pt-note">Questions or changes to your sign-in email? Reply to any email from us.</p>' +
         '<button class="lx-btn" type="button" id="ptSignOut">Sign out</button></div></div>';

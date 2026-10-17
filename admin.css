@@ -87,7 +87,7 @@
 .admin-row-muted > td { opacity: .5; }
 
 /* ── Simple data table (live feed, top pages, etc.) ───────────────── */
-.admin-table-wrap { overflow-x: auto; }
+.admin-table-wrap { width: 100%; }
 .admin-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .admin-table th {
   text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em;
@@ -395,7 +395,7 @@
    toolbars, chips. Built only on the theme tokens from style.css, so every
    one of the six themes styles it without a per-theme rule.
    ══════════════════════════════════════════════════════════════════════ */
-#viewAdmin .app-scroll > .bview { max-width: 1280px; margin-left: auto; margin-right: auto; }
+#viewAdmin .app-scroll > .bview { max-width: none; }
 .adm-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 4px 0 16px; }
 .adm-head .admin-section-title { font-size: 24px; letter-spacing: -.01em; }
 .adm-head .admin-section-sub { margin: 4px 0 0; max-width: 760px; line-height: 1.55; }
@@ -635,3 +635,71 @@ textarea.adm-input { resize: vertical; font-family: inherit; line-height: 1.45; 
 .adm-acts .adm-iconbtn { width: 28px; height: 28px; font-size: 14px; line-height: 1; }
 
 .admin-table td.adm-wrap { white-space: normal; overflow-wrap: anywhere; min-width: 120px; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Full width, never a sideways scroll, readable everywhere.
+   ══════════════════════════════════════════════════════════════════════ */
+#viewAdmin.tool-shell { max-width: none; }
+#viewAdmin .tool-sticky { padding-left: clamp(16px, 2.4vw, 40px); padding-right: clamp(16px, 2.4vw, 40px); }
+#viewAdmin .app-scroll { padding-left: clamp(16px, 2.4vw, 40px); padding-right: clamp(16px, 2.4vw, 40px); }
+
+/* Tab bars wrap onto a second row instead of scrolling sideways. */
+#adminTabs { flex-wrap: wrap; overflow: visible; border-radius: var(--radius-md); cursor: default; }
+#adminTabs .btab { flex: 1 1 auto; justify-content: center; text-align: center; white-space: nowrap; }
+.adm-subnav { flex-wrap: wrap; overflow: visible; }
+.adm-subnav button { flex: 1 1 auto; justify-content: center; }
+
+/* Contrast: faint text is darker than the app's decorative faint, here
+   and in dialogs (which sit outside #viewAdmin). */
+#viewAdmin, .adm-modal-ov { --text-faint: color-mix(in srgb, var(--text-secondary) 78%, var(--text-faint)); }
+
+/* Native dropdown lists follow the theme, so options are never light text
+   on a light list (or dark on dark). */
+html[data-theme="dark"] { color-scheme: dark; }
+html:not([data-theme="dark"]) { color-scheme: light; }
+#viewAdmin select option, .adm-modal select option, #fkDatePop select option { background: var(--surface-solid); color: var(--text-primary); }
+select.adm-input {
+  -webkit-appearance: none; appearance: none; cursor: pointer; padding-right: 32px; max-width: 100%; text-overflow: ellipsis;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 17px) 52%, calc(100% - 12px) 52%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
+}
+.adm-input::placeholder { color: var(--text-faint); opacity: 1; }
+.adm-toolbar > select.adm-input { flex: 0 1 auto; min-width: 150px; }
+.adm-input:disabled { opacity: .75; cursor: not-allowed; }
+
+/* Tables wrap their text; ones that still don't fit become stacked cards
+   (admin.js adds .is-stacked), so nothing ever scrolls sideways. */
+#viewAdmin .admin-table th, .adm-modal .admin-table th { white-space: normal; }
+#viewAdmin .admin-table td, .adm-modal .admin-table td { white-space: normal; overflow-wrap: break-word; }
+.admin-table td.num, .admin-table th.num { white-space: nowrap; }
+.admin-table .admin-key-cell { overflow-wrap: anywhere; }
+.admin-table.is-stacked thead { display: none; }
+.admin-table.is-stacked, .admin-table.is-stacked tbody, .admin-table.is-stacked tr, .admin-table.is-stacked td { display: block; width: 100%; box-sizing: border-box; }
+.admin-table.is-stacked tr[hidden] { display: none; }
+.admin-table.is-stacked tr { padding: 8px 14px; margin-bottom: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-faint); background: rgba(var(--grad-indigo-rgb), .03); }
+.admin-table.is-stacked td { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 4px 10px; padding: 7px 0 !important; border-bottom: 1px dashed var(--border-faint); text-align: right; white-space: normal !important; }
+.admin-table.is-stacked td:last-child { border-bottom: 0; }
+.admin-table.is-stacked td:empty { display: none; }
+.admin-table.is-stacked td[data-label]::before { content: attr(data-label); flex: 0 0 auto; margin-right: auto; text-align: left; font-family: var(--font-body); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); }
+.admin-table.is-stacked td.num { white-space: normal !important; }
+.admin-table.is-stacked tr.admin-empty-row { background: none; border: 0; }
+.admin-table.is-stacked tr.admin-empty-row td { justify-content: center; text-align: center; }
+.admin-table.is-stacked .admin-col-action { width: 100%; }
+.admin-table.is-stacked .adm-row-actions, .admin-table.is-stacked .adm-acts--col { flex-direction: row; justify-content: flex-end; flex-wrap: wrap; }
+.admin-table.is-stacked .admin-activity-detail > td { display: block; padding: 0 !important; }
+.admin-table.is-stacked .admin-activity-detail { background: none; border: 0; padding: 0; margin-top: -6px; }
+.admin-table.is-stacked td > input[type=checkbox] { margin-left: auto; }
+.admin-table.is-stacked .admin-table.is-stacked tr { background: var(--surface-solid); }
+
+/* Dialogs never grow past the screen: their content wraps or stacks. */
+.adm-modal-ov { grid-template-columns: minmax(0, 1fr); }
+.adm-modal { justify-self: center; min-width: 0; max-width: 100%; box-sizing: border-box; }
+.adm-modal-body { min-width: 0; }
+/* Small bar charts fit narrow panels. */
+.admin-vbars { gap: clamp(6px, 1vw, 14px); }
+.admin-vbar-col { min-width: 0; }
+.admin-vbar-label { max-width: 100%; text-align: center; white-space: normal; line-height: 1.25; font-size: 11.5px; }
+@media (max-width: 620px) {
+  .adm-toolbar > * { flex: 1 1 140px; }
+  .adm-toolbar > .adm-input--grow, .adm-toolbar > .adm-toolbar-note { flex-basis: 100%; }
+}

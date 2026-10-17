@@ -570,6 +570,26 @@ function newReturningSplit(events) {
 }
 
 // ══════════════════════ Rendering ══════════════════════
+// ── Never a sideways scroll ───────────────────────────────────────────
+// Every table stays a table while it fits its panel. One that doesn't is
+// shown as stacked label/value cards instead (each cell labelled with its
+// column), re-checked whenever anything re-renders or the window resizes.
+function admStackTables(root) {
+  (root || document).querySelectorAll('.admin-table').forEach(t => {
+    const heads = [...t.querySelectorAll(':scope > thead th')].map(th => th.textContent.trim());
+    t.querySelectorAll(':scope > tbody > tr').forEach(tr => [...tr.children].forEach((td, i) => {
+      if (heads[i] && !td.hasAttribute('colspan')) td.dataset.label = heads[i];
+    }));
+    t.classList.remove('is-stacked');
+    const box = t.parentElement;
+    if (box && t.scrollWidth > box.clientWidth + 1) t.classList.add('is-stacked');
+  });
+}
+let _admStackFrame = 0;
+function admQueueStack() { cancelAnimationFrame(_admStackFrame); _admStackFrame = requestAnimationFrame(() => admStackTables(document)); }
+new MutationObserver(admQueueStack).observe(document.body, { childList: true, subtree: true });
+window.addEventListener('resize', admQueueStack);
+
 function kpiRow(tiles) { return `<div class="ist-row">${tiles.map(t => iconStatTile(t.icon, t.label, t.value, t.sub, t.color, t.hint ? esc(t.hint) : '')).join('')}</div>`; }
 function panelTitle(text, hint) {
   return `<div class="panel-title-sm" style="margin-bottom:14px"><span class="cc-label-text">${esc(text)}</span>${hint ? `<button class="cc-info" type="button" style="margin-left:6px;vertical-align:middle" data-tip="${esc(hint)}" aria-label="What is this?">i</button>` : ''}</div>`;
@@ -2881,7 +2901,7 @@ const AFF_RANGES = {
   payouts: 'Payouts!A2:O10000', settings: 'AffSettings!A2:C100'
 };
 const AFF_SETTING_DEFAULTS = {
-  programOpen: 'yes', autoApprove: 'no', applicationProgram: '', payoutSchedule: 'Monthly, in the first week',
+  programOpen: 'yes', autoApprove: 'yes', applicationProgram: '', payoutSchedule: 'Monthly, in the first week',
   notifySales: 'yes', notifyApplications: 'yes', blockSelf: 'yes'
 };
 const AFF_PROGRAM_FALLBACK = { id: 'P1', name: 'Standard', description: '', type: 'percent', amount: 30, buyerDiscount: 10, cookieDays: 30, holdDays: 30,
