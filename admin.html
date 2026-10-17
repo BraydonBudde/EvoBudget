@@ -7,9 +7,19 @@
   <title>Analytics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    // The saved theme, before anything paints. Same six themes as the planner.
+    (function () {
+      try {
+        var th = localStorage.getItem('evobudget_admin_theme') || 'dark';
+        if (['light', 'peachy', 'dark', 'vintage-ledger', 'jolly', 'frosty'].indexOf(th) < 0) th = 'dark';
+        document.documentElement.setAttribute('data-theme', th);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="style.css?v=20261190" />
-  <link rel="stylesheet" href="admin.css?v=20261190" />
+  <link rel="stylesheet" href="admin.css?v=20261230" />
 </head>
 <body>
 
@@ -92,20 +102,23 @@
 
       <nav class="budget-tabs" id="adminTabs" role="tablist" aria-label="Analytics sections">
         <button class="btab is-active" data-atab="overview" role="tab" type="button">📊 Overview</button>
-        <button class="btab" data-atab="redemptions" role="tab" type="button">🔑 Redemptions</button>
-        <button class="btab" data-atab="sales" role="tab" type="button">🧾 Sales</button>
-        <button class="btab" data-atab="emails" role="tab" type="button">✉️ Emails</button>
+        <button class="btab" data-atab="sales" role="tab" type="button">💰 Sales</button>
+        <button class="btab" data-atab="customers" role="tab" type="button">👥 Customers</button>
+        <button class="btab" data-atab="keys" role="tab" type="button">🔑 Keys</button>
+        <button class="btab" data-atab="product" role="tab" type="button">🧭 Product</button>
         <button class="btab" data-atab="blogs" role="tab" type="button">📝 Blogs</button>
         <button class="btab" data-atab="settings" role="tab" type="button">⚙️ Settings</button>
       </nav>
+      <div class="admin-sample-banner" id="adminSampleBanner" hidden>🧪 You are looking at sample data, not your real numbers. <button id="adminSampleBannerExit" type="button">Exit sample data</button></div>
     </div>
 
 
     <div class="app-scroll">
       <div class="bview is-active" id="aview-overview" role="tabpanel"></div>
-      <div class="bview" id="aview-redemptions" role="tabpanel"></div>
       <div class="bview" id="aview-sales" role="tabpanel"></div>
-      <div class="bview" id="aview-emails" role="tabpanel"></div>
+      <div class="bview" id="aview-customers" role="tabpanel"></div>
+      <div class="bview" id="aview-keys" role="tabpanel"></div>
+      <div class="bview" id="aview-product" role="tabpanel"></div>
       <div class="bview" id="aview-blogs" role="tabpanel"></div>
       <div class="bview" id="aview-settings" role="tabpanel"></div>
     </div>
@@ -123,6 +136,6 @@
        tools use. See the "Ezzo integration" section in admin.js. -->
   <script src="penny.js?v=20261190"></script>
   <script src="blog-posts.js?v=20261190"></script>
-  <script src="admin.js?v=20261190"></script>
+  <script src="admin.js?v=20261230"></script>
 </body>
 </html>

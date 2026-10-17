@@ -242,11 +242,16 @@ function _keysSheet()   { return _sheet(KEYS_SHEET, ['Key', 'Tool', 'Theme', 'La
 function _blogsSheet()  { return _sheet(BLOGS_SHEET, ['Slug', 'Title', 'Excerpt', 'Category', 'Tool', 'Tags', 'Date', 'ReadMinutes', 'Image', 'ImageAlt', 'Body', 'Related', 'Status', 'Updated']); }
 function _notifySheet() { return _sheet(NOTIFY_SHEET, ['Timestamp', 'Email', 'Tool', 'Source', 'VisitorId']); }
 function _salesSheet() {
-  const sh = _sheet(SALES_SHEET, ['Timestamp', 'Event', 'OrderId', 'Email', 'Name', 'Product',
-                                  'Variant', 'Total', 'Currency', 'TestMode', 'Status', 'OrderNumber']);
-  // An earlier version of this sheet stopped at column K. Add the missing
-  // header rather than making anyone recreate the sheet by hand.
-  if (String(sh.getRange(1, 12).getValue()).trim() !== 'OrderNumber') sh.getRange(1, 12).setValue('OrderNumber');
+  const headers = ['Timestamp', 'Event', 'OrderId', 'Email', 'Name', 'Product',
+                   'Variant', 'Total', 'Currency', 'TestMode', 'Status', 'OrderNumber',
+                   'Discount', 'Affiliate', 'Gross'];
+  const sh = _sheet(SALES_SHEET, headers);
+  // Earlier versions of this sheet stopped at column K, then L. Add any
+  // missing headers rather than making anyone recreate the sheet by hand.
+  const have = sh.getRange(1, 1, 1, headers.length).getValues()[0];
+  for (var c = 11; c < headers.length; c++) {
+    if (String(have[c]).trim() !== headers[c]) sh.getRange(1, c + 1).setValue(headers[c]);
+  }
   return sh;
 }
 
@@ -407,8 +412,11 @@ function _handleLsWebhook(e) {
     const buyerEmail = String(a.user_email || a.customer_email || a.email || '');
     const buyerName  = String(a.user_name || a.customer_name || a.name || '');
 
+    // Lemon Squeezy reports how much was taken off, not which code did it.
+    const lsDiscount = Number(a.discount_total || 0) > 0 ? 'discount ' + (Number(a.discount_total) / 100).toFixed(2) : '';
     sh.appendRow([new Date(), event, orderId, buyerEmail, buyerName,
-                  product, variant, total, currency, testMode ? 'test' : 'live', String(a.status || ''), orderNumber]);
+                  product, variant, total, currency, testMode ? 'test' : 'live', String(a.status || ''), orderNumber,
+                  lsDiscount, '', '']);
 
     if (event === 'order_created') {
       _push('💰 Cha-ching!', product + (testMode ? ' [TEST]' : ''), 'cashregister');
@@ -474,8 +482,14 @@ function _handleDodoWebhook(e) {
     const cust = d.customer || {};
     const testMode = (props.getProperty('DODO_MODE') || 'test') !== 'live';
 
+    // What the buyer actually paid, in their own currency with tax, so the
+    // dashboard can work out what share of a sale a later refund returned.
+    const gross = d.total_amount != null ? (Number(d.total_amount) / 100).toFixed(2) + ' ' + String(d.currency || currency) : '';
     sh.appendRow([new Date(), event, orderId, String(cust.email || ''), String(cust.name || ''),
-                  product, 'Dodo Payments', total, currency, testMode ? 'test' : 'live', String(d.status || ''), String(d.payment_id || '')]);
+                  product, 'Dodo Payments', total, currency, testMode ? 'test' : 'live', String(d.status || ''), String(d.payment_id || ''),
+                  event === 'payment.succeeded' ? _dodoDiscountCodes(d) : '',
+                  event === 'payment.succeeded' ? _dodoAffiliate(d) : '',
+                  event === 'payment.succeeded' ? gross : (d.amount != null ? (Number(d.amount) / 100).toFixed(2) + ' ' + String(d.currency || '') : '')]);
 
     const amount = (currency === 'USD' ? '$' : currency + ' ') + total.toFixed(2);
     if (event === 'payment.succeeded') {
@@ -485,6 +499,30 @@ function _handleDodoWebhook(e) {
     }
     return _ok();
   } catch (err) { return _ok(); }
+}
+
+// The codes a buyer used at checkout. Dodo has described these a few ways
+// over time (a discounts list, a single discount_id, a discount_code), so
+// every shape is read. A code is preferred; an id is the fallback, which
+// still tells two discounts apart on the dashboard.
+function _dodoDiscountCodes(d) {
+  const out = [];
+  const add = function (v) { v = String(v || '').trim(); if (v && out.indexOf(v) < 0) out.push(v); };
+  if (Array.isArray(d.discounts)) {
+    d.discounts.forEach(function (x) {
+      if (!x) return;
+      if (typeof x === 'string') { add(x); return; }
+      add(x.code || x.discount_code || x.original_code || x.discount_id);
+    });
+  }
+  if (!out.length) add(d.discount_code || d.discount_id);
+  return out.join(', ');
+}
+// Affonso passes the referral through checkout metadata (affiliate.js adds
+// metadata_affonso_referral to the Buy link). Empty for a direct sale.
+function _dodoAffiliate(d) {
+  const m = d.metadata || {};
+  return String(m.affonso_referral || m.affiliate || m.ref || '').slice(0, 80);
 }
 
 // Sends to whichever services are configured. Both may be set at once.

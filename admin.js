@@ -234,6 +234,21 @@ function adminFriendlyError(err) {
 // ══════════════════════ Sheets fetch ══════════════════════
 function _safeParseJSON(s) { try { return JSON.parse(s || '{}'); } catch (e) { return {}; } }
 
+// Keys, Notify and Sales are read as raw values, so a date arrives as a
+// spreadsheet serial number instead of text formatted in whatever locale the
+// sheet happens to use (where "10/11" could be either month). The serial is
+// wall-clock time in the sheet's timezone, which is the owner's own.
+const SHEET_VALUES_QS = '?valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=SERIAL_NUMBER';
+function sheetIso(v) {
+  if (v === '' || v == null) return '';
+  if (typeof v === 'number' && isFinite(v)) {
+    const w = new Date(Date.UTC(1899, 11, 30) + Math.round(v * 86400000));
+    return new Date(w.getUTCFullYear(), w.getUTCMonth(), w.getUTCDate(), w.getUTCHours(), w.getUTCMinutes(), w.getUTCSeconds()).toISOString();
+  }
+  return String(v);
+}
+const _str = v => (v == null ? '' : String(v));
+
 async function adminFetchEvents(token) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_SHEET_RANGE)}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
@@ -268,7 +283,7 @@ let _notifyFetchError = '';
 // report returned totals only, so a Lemon Squeezy buyer's address never
 // reached the email list.
 const ADMIN_SALES_SHEET = 'Sales';
-const ADMIN_SALES_RANGE = `${ADMIN_SALES_SHEET}!A2:L10000`;
+const ADMIN_SALES_RANGE = `${ADMIN_SALES_SHEET}!A2:O10000`;
 let allSales = [];
 // Test orders are real rows that are not real money. They are always shown
 // somewhere, so nothing is ever silently missing, but they only count
@@ -282,7 +297,7 @@ function setShowTestData(on) {
   showTestData = !!on;
   try { localStorage.setItem(ADMIN_SHOWTEST_KEY, showTestData ? '1' : '0'); } catch (e) {}
 }
-let salesFilters = { mode: '', q: '' };
+let salesFilters = { channel: '', status: '', q: '' };
 let allKeys = [];
 
 // Why the Keys fetch came back empty, if it did. A silently empty tab is
@@ -294,7 +309,7 @@ let _keysFetchError = '';
 // A missing Notify sheet is the normal state until the first address is
 // collected, so that reads as empty rather than as an error.
 async function adminFetchNotify(token) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_NOTIFY_RANGE)}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_NOTIFY_RANGE)}${SHEET_VALUES_QS}`;
   try {
     const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) {
@@ -304,28 +319,33 @@ async function adminFetchNotify(token) {
     _notifyFetchError = '';
     const j = await res.json();
     return (j.values || []).map(r => ({
-      ts: r[0] || '', email: r[1] || '', tool: r[2] || '', source: r[3] || 'notify', visitorId: r[4] || ''
+      ts: sheetIso(r[0]), email: _str(r[1]), tool: _str(r[2]), source: _str(r[3]) || 'notify', visitorId: _str(r[4])
     })).filter(r => r.email);
   } catch (e) { _notifyFetchError = 'network'; return []; }
 }
 
-// Absent until the first webhook lands, which is the normal state.
+// Absent until the first webhook lands, which is the normal state. Every
+// row comes back, refunds included: salesLedger() pairs each refund with the
+// sale it belongs to and takes it off, rather than the refund vanishing.
+// Columns M-O (Discount, Affiliate, Gross) only exist from the Apps Script
+// update that added them, so older rows simply leave them empty.
 async function adminFetchSales(token) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_SALES_RANGE)}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_SALES_RANGE)}${SHEET_VALUES_QS}`;
   try {
     const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) return [];
     const j = await res.json();
-    return (j.values || []).map(r => ({
-      ts: r[0] || '', event: r[1] || '', orderId: r[2] || '', email: r[3] || '', name: r[4] || '',
-      product: r[5] || '', variant: r[6] || '', total: Number(r[7] || 0), currency: r[8] || 'USD',
-      mode: r[9] || 'live', status: r[10] || '', orderNumber: r[11] || ''
-    })).filter(r => r.event === 'order_created' || r.event === 'payment.succeeded');
+    return (j.values || []).map((r, i) => ({
+      row: i + 2, ts: sheetIso(r[0]), event: _str(r[1]).toLowerCase(), orderId: _str(r[2]), email: _str(r[3]), name: _str(r[4]),
+      product: _str(r[5]), variant: _str(r[6]), total: Number(r[7] || 0), currency: _str(r[8]) || 'USD',
+      mode: _str(r[9]) || 'live', status: _str(r[10]), orderNumber: _str(r[11]),
+      discount: _str(r[12]), affiliate: _str(r[13]), gross: _str(r[14])
+    })).filter(r => r.event);
   } catch (e) { return []; }
 }
 
 async function adminFetchKeys(token) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_KEYS_RANGE)}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_KEYS_RANGE)}${SHEET_VALUES_QS}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
   if (!res.ok) {
     let detail = '';
@@ -341,10 +361,10 @@ async function adminFetchKeys(token) {
     if (!Array.isArray(devices)) devices = [];
     return {
       row: i + 2,
-      key: r[0] || '', tool: r[1] || '', theme: r[2] || '', layout: r[3] || '',
-      orderId: r[4] || '', email: r[5] || '', issuedAt: r[6] || '',
-      status: (r[7] || 'active').toLowerCase(), devices,
-      redeemCount: Number(r[9] || 0), lastRedeemedAt: r[10] || ''
+      key: _str(r[0]), tool: _str(r[1]), theme: _str(r[2]), layout: _str(r[3]),
+      orderId: _str(r[4]), email: _str(r[5]), issuedAt: sheetIso(r[6]),
+      status: (_str(r[7]) || 'active').toLowerCase(), devices,
+      redeemCount: Number(r[9] || 0), lastRedeemedAt: sheetIso(r[10])
     };
   }).filter(k => k.key);
 }
@@ -557,15 +577,50 @@ function pieOrEmpty(groups, empty) {
   if (!groups.length) return `<div class="chart-empty">${esc(empty)}</div>`;
   return pieChartHtml(segmentize(groups), { limit: 6 });
 }
+function money(n) {
+  const v = Number(n) || 0;
+  return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function pct(n, d, digits) { return d ? (n / d * 100).toFixed(digits == null ? 1 : digits) + '%' : '0%'; }
+
+// ── Headline stat cards ───────────────────────────────────────────────
+// Each card is compared with the stretch of time of the same length just
+// before the selected range, so "is this good?" is answered on the card
+// itself. `value` is pre-built markup (numbers only), `sub` likewise.
+function deltaChip(now, prev, invert, title) {
+  if (prev == null || now == null) return '';
+  if (!prev && !now) return `<span class="adm-delta adm-delta--flat" title="${esc(title || '')}">no change</span>`;
+  if (!prev) return `<span class="adm-delta adm-delta--up" title="${esc(title || '')}">new</span>`;
+  const change = (now - prev) / prev * 100;
+  if (Math.abs(change) < 0.5) return `<span class="adm-delta adm-delta--flat" title="${esc(title || '')}">no change</span>`;
+  const good = invert ? change < 0 : change > 0;
+  return `<span class="adm-delta ${good ? 'adm-delta--up' : 'adm-delta--down'}" title="${esc(title || '')}">${change > 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(change > -10 && change < 10 ? 1 : 0)}%</span>`;
+}
+function statCard(o) {
+  return `<div class="adm-stat" style="--tone:${o.tone || 'var(--grad-indigo)'}">
+    <div class="adm-stat-top">
+      <span class="adm-stat-icon" aria-hidden="true">${o.icon}</span>
+      <span class="adm-stat-label cc-label-text">${esc(o.label)}</span>
+      ${o.hint ? `<button class="cc-info" type="button" data-tip="${esc(o.hint)}" aria-label="What is this?">i</button>` : ''}
+    </div>
+    <div class="adm-stat-value">${o.value}</div>
+    <div class="adm-stat-foot">${o.delta || ''}<span class="adm-stat-sub">${o.sub || ''}</span></div>
+  </div>`;
+}
+function statGrid(cards) { return `<div class="adm-stat-grid">${cards.map(statCard).join('')}</div>`; }
+function pageHead(title, sub, actions) {
+  return `<div class="adm-head"><div><h2 class="admin-section-title">${esc(title)}</h2>${sub ? `<p class="admin-section-sub">${sub}</p>` : ''}</div>${actions ? `<div class="adm-head-actions">${actions}</div>` : ''}</div>`;
+}
 
 // ── Website vs. in-app ────────────────────────────────────────────────
 // Overview is a store dashboard: it should answer "how is the site doing at
 // turning visitors into buyers", not "how much do existing customers use the
 // planners". Someone budgeting for an hour would otherwise show up as an
 // hour-long website session with a great bounce rate, flattering every
-// number without meaning anything commercially.
+// number without meaning anything commercially. The Product tab is where
+// in-app activity is read.
 const WEBSITE_PAGES = new Set(['home', 'budgetplanner', 'claim', 'legal', '']);
-const IN_APP_EVENTS = new Set(['tab_viewed', 'feature_used', 'theme_changed', 'language_changed', 'dashboard_layout_changed', 'sync_mode_chosen']);
+const IN_APP_EVENTS = new Set(['tab_viewed', 'feature_used', 'theme_changed', 'language_changed', 'dashboard_layout_changed', 'sync_mode_chosen', 'nav_position_changed', 'persona_changed', 'save_failed', 'unlock_revoked']);
 // Buying signals count wherever they happen - the upgrade prompt lives
 // inside the planners, and those are exactly the conversions worth seeing.
 const ALWAYS_COUNT_EVENTS = new Set(['purchase_initiated', 'launch_code_redeemed', 'trial_started']);
@@ -576,75 +631,251 @@ function isWebsiteEvent(e) {
   return WEBSITE_PAGES.has(e.page || '');
 }
 
-function overviewFilteredEvents() {
-  return allEvents.filter(e => {
-    if (!isWebsiteEvent(e)) return false;
-    const t = eventTime(e);
-    if (overviewFilters.from && t < new Date(overviewFilters.from + 'T00:00:00').getTime()) return false;
-    if (overviewFilters.to && t > new Date(overviewFilters.to + 'T23:59:59').getTime()) return false;
-    return true;
-  });
-}
+// ── Date range (shared by Overview, Sales and Product) ─────────────────
+// One range for all three, so switching tabs never quietly changes the
+// period being read. Reset to the current month on every sign-in.
 const _isoDay = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 function todayBounds() { const d = new Date(); return { from: _isoDay(d), to: _isoDay(d) }; }
+function last7Bounds() { const d = new Date(), s = new Date(d); s.setDate(d.getDate() - 6); return { from: _isoDay(s), to: _isoDay(d) }; }
 function lastMonthBounds() {
   const d = new Date();
-  const start = new Date(d.getFullYear(), d.getMonth() - 1, 1);
-  const end = new Date(d.getFullYear(), d.getMonth(), 0);
-  return { from: _isoDay(start), to: _isoDay(end) };
+  return { from: _isoDay(new Date(d.getFullYear(), d.getMonth() - 1, 1)), to: _isoDay(new Date(d.getFullYear(), d.getMonth(), 0)) };
 }
+const RANGE_CHIPS = [
+  ['today', 'Today', todayBounds], ['7d', '7 days', last7Bounds], ['month', 'This month', currentMonthBounds],
+  ['lastmonth', 'Last month', lastMonthBounds], ['all', 'All time', () => ({ from: '', to: '' })]
+];
 function activeQuickRange() {
-  const t = todayBounds(), cm = currentMonthBounds(), lm = lastMonthBounds();
   const f = overviewFilters.from, to = overviewFilters.to;
-  if (f === t.from && to === t.to) return 'today';
-  if (f === cm.from && to === cm.to) return 'month';
-  if (f === lm.from && to === lm.to) return 'lastmonth';
-  return '';
+  const hit = RANGE_CHIPS.find(([, , fn]) => { const b = fn(); return b.from === f && b.to === to; });
+  return hit ? hit[0] : '';
 }
-function overviewFilterBarHtml() {
+function rangeMs() {
+  return {
+    fromMs: overviewFilters.from ? new Date(overviewFilters.from + 'T00:00:00').getTime() : -Infinity,
+    toMs: overviewFilters.to ? new Date(overviewFilters.to + 'T23:59:59.999').getTime() : Infinity
+  };
+}
+function within(t, r) { return t >= r.fromMs && t <= r.toMs; }
+// The comparison period: as long as the part of the range that has already
+// happened, ending where the range starts. "This month" on the 17th is
+// compared with the 17 days before the 1st, not with a whole month.
+function previousRangeMs() {
+  const r = rangeMs();
+  if (!isFinite(r.fromMs)) return null;
+  const end = Math.min(r.toMs, Date.now());
+  const len = end - r.fromMs;
+  if (len <= 0) return null;
+  return { fromMs: r.fromMs - len, toMs: r.fromMs - 1, days: Math.max(1, Math.round(len / 86400000)) };
+}
+function formatRangeLabel() {
+  const key = activeQuickRange();
+  const named = { today: 'Today', '7d': 'The last 7 days', month: 'This month', lastmonth: 'Last month', all: 'All time' }[key];
+  if (named) return named;
+  const fromTxt = overviewFilters.from ? formatDateDisplay(overviewFilters.from) : 'the beginning';
+  const toTxt = overviewFilters.to ? formatDateDisplay(overviewFilters.to) : 'today';
+  return `${fromTxt} to ${toTxt}`;
+}
+function rangeBarHtml(prefix) {
   const active = activeQuickRange();
-  const chip = (id, key, label) => `<button class="admin-range-chip${active === key ? ' is-active' : ''}" id="${id}" type="button">${label}</button>`;
-  return `<div class="admin-filter-bar admin-range-bar">
-    ${styledDateField('ovFilterFrom', 'ovFilterFromWrap', overviewFilters.from)}
-    ${styledDateField('ovFilterTo', 'ovFilterToWrap', overviewFilters.to)}
-    <div class="admin-range-chips">
-      ${chip('ovRangeToday', 'today', 'Today')}
-      ${chip('ovRangeMonth', 'month', 'This month')}
-      ${chip('ovRangeLastMonth', 'lastmonth', 'Last month')}
+  return `<div class="adm-range">
+    <div class="adm-range-chips" role="group" aria-label="Date range">
+      ${RANGE_CHIPS.map(([key, label]) => `<button class="admin-range-chip${active === key ? ' is-active' : ''}" data-range="${key}" type="button">${label}</button>`).join('')}
+    </div>
+    <div class="adm-range-dates">
+      ${styledDateField(prefix + 'From', prefix + 'FromWrap', overviewFilters.from)}
+      <span class="adm-range-sep">to</span>
+      ${styledDateField(prefix + 'To', prefix + 'ToWrap', overviewFilters.to)}
     </div>
   </div>`;
 }
-function wireOverviewFilterBar() {
-  bindDateField('ovFilterFrom', 'ovFilterFromWrap', v => { overviewFilters.from = v; renderOverview(); });
-  bindDateField('ovFilterTo', 'ovFilterToWrap', v => { overviewFilters.to = v; renderOverview(); });
-  const setRange = bounds => { Object.assign(overviewFilters, bounds); renderOverview(); };
-  document.getElementById('ovRangeToday')?.addEventListener('click', () => setRange(todayBounds()));
-  document.getElementById('ovRangeMonth')?.addEventListener('click', () => setRange(currentMonthBounds()));
-  document.getElementById('ovRangeLastMonth')?.addEventListener('click', () => setRange(lastMonthBounds()));
+function wireRangeBar(scope, prefix, rerender) {
+  bindDateField(prefix + 'From', prefix + 'FromWrap', v => { overviewFilters.from = v; rerender(); });
+  bindDateField(prefix + 'To', prefix + 'ToWrap', v => { overviewFilters.to = v; rerender(); });
+  scope.querySelectorAll('[data-range]').forEach(b => b.addEventListener('click', () => {
+    const hit = RANGE_CHIPS.find(c => c[0] === b.dataset.range);
+    if (hit) { Object.assign(overviewFilters, hit[2]()); rerender(); }
+  }));
 }
-// ── Sales ─────────────────────────────────────────────────────────────
-// Two channels, two sources. Lemon Squeezy knows its own revenue exactly,
-// so it's asked directly (via the Apps Script, which holds the API key
-// server-side). Etsy has no such feed, so those sales are inferred from
-// redeemed Etsy keys at list price - an undercount if a buyer never
-// redeems, and it lags the actual sale. Kept clearly separated rather than
-// merged into one number, so a soft figure never masquerades as a hard one.
+function overviewFilteredEvents() {
+  const r = rangeMs();
+  return allEvents.filter(e => isWebsiteEvent(e) && within(eventTime(e), r));
+}
+
+// ══════════════════════ Sales ledger ══════════════════════
+// Every sale, once. Three channels feed it:
+//   Dodo Payments  - the Sales sheet (payment.succeeded / refund.succeeded)
+//   Lemon Squeezy  - the Sales sheet (order_created / order_refunded), retired
+//   Etsy           - the Keys sheet: a buyer claims a key at /claim right
+//                    after buying, so each claimed order is one sale at list
+//                    price. Etsy has no feed, so these are estimates.
+// A webhook retried by the payment provider is recorded once; a refund is
+// matched back to its sale and subtracted from it rather than listed as a
+// second sale.
 const ADMIN_PRICES = { sbp: 19.99, ubp: 49.99 };
+const CHANNEL_LABEL = { dodo: 'Dodo Payments', lemonsqueezy: 'Lemon Squeezy', etsy: 'Etsy' };
+const CHANNEL_COLOR = { dodo: '#8b5cf6', lemonsqueezy: '#eab308', etsy: '#f97316' };
+const PAID_EVENTS = new Set(['order_created', 'payment.succeeded']);
+const REFUND_EVENTS = new Set(['order_refunded', 'refund.succeeded']);
+
+function saleChannel(r) { return (r.variant === 'Dodo Payments' || /^(payment|refund)\./.test(r.event)) ? 'dodo' : 'lemonsqueezy'; }
+function productTool(name) { return /simple/i.test(name) ? 'sbp' : /ultimate/i.test(name) ? 'ubp' : ''; }
+function parseMoney(s) {
+  const m = /^\s*(-?[\d.]+)\s*([A-Za-z]{3})?\s*$/.exec(String(s == null ? '' : s));
+  return m ? { amount: Number(m[1]) || 0, currency: (m[2] || '').toUpperCase() } : null;
+}
+// "EZZO10, LAUNCH" -> ['EZZO10', 'LAUNCH']. Lemon Squeezy only ever said how
+// much was taken off, so its rows group under one label.
+function discountCodes(s) {
+  const v = String(s || '').trim();
+  if (!v) return [];
+  if (/^discount\s/i.test(v)) return ['Lemon Squeezy discount'];
+  return v.split(',').map(x => x.trim()).filter(Boolean);
+}
+
+function salesLedger() {
+  const orders = new Map();
+  const refunds = [];
+  allSales.forEach(r => {
+    const channel = saleChannel(r);
+    if (PAID_EVENTS.has(r.event)) {
+      const id = String(r.orderId || r.orderNumber || '');
+      if (!id) return;
+      const key = channel + '|' + id;
+      if (orders.has(key)) return;
+      orders.set(key, {
+        key, channel, orderId: id, orderNumber: String(r.orderNumber || ''), t: Date.parse(r.ts) || 0,
+        email: String(r.email || '').trim().toLowerCase(), name: r.name || '',
+        product: r.product || '', tool: productTool(r.product), variant: channel === 'dodo' ? '' : (r.variant || ''),
+        net: Number(r.total) || 0, currency: r.currency || 'USD', gross: parseMoney(r.gross),
+        discount: String(r.discount || ''), codes: discountCodes(r.discount), affiliate: String(r.affiliate || ''),
+        test: r.mode === 'test', refunded: 0, refundIds: new Set(), estimated: false
+      });
+    } else if (REFUND_EVENTS.has(r.event)) refunds.push([r, channel]);
+  });
+  refunds.forEach(([r, channel]) => {
+    // Dodo records a refund under its own refund id, with the payment it
+    // belongs to in the OrderNumber column. Lemon Squeezy reuses the order's.
+    const target = channel === 'dodo' ? String(r.orderNumber || '') : String(r.orderId || '');
+    let o = orders.get(channel + '|' + target);
+    if (!o && channel === 'lemonsqueezy' && r.orderNumber) {
+      o = [...orders.values()].find(x => x.channel === channel && x.orderNumber === String(r.orderNumber));
+    }
+    if (!o) return;
+    const rid = String(r.orderId || '') + '|' + String(r.total);
+    if (o.refundIds.has(rid)) return;
+    o.refundIds.add(rid);
+    // A refund comes back in the currency the buyer paid in, with tax, while
+    // the sale is recorded as what reached you. So the refund is turned into
+    // the share of the sale it returned, then applied to what reached you.
+    const back = parseMoney(r.gross) || { amount: Number(r.total) || 0, currency: String(r.currency || '').toUpperCase() };
+    let amount = o.net;
+    if (o.gross && back.currency && back.currency === o.gross.currency && o.gross.amount > 0) amount = o.net * Math.min(1, back.amount / o.gross.amount);
+    else if (back.currency && back.currency === String(o.currency).toUpperCase() && back.amount > 0) amount = Math.min(o.net, back.amount);
+    o.refunded = Math.min(o.net, o.refunded + amount);
+    o.refundT = Date.parse(r.ts) || 0;
+  });
+
+  // Etsy: one sale per claimed order. A reissued key is the same order.
+  const etsySeen = new Set();
+  allKeys.forEach(k => {
+    const key = String(k.key || '').trim().toUpperCase();
+    if (!key.startsWith('ETSY-')) return;
+    const id = String(k.orderId || key);
+    if (etsySeen.has(id)) return;
+    etsySeen.add(id);
+    const tool = k.tool === 'sbp' ? 'sbp' : 'ubp';
+    orders.set('etsy|' + id, {
+      key: 'etsy|' + id, channel: 'etsy', orderId: id, orderNumber: '', t: Date.parse(k.issuedAt) || 0,
+      email: String(k.email || '').trim().toLowerCase(), name: '', product: toolLabel(tool) + ' Planner', tool, variant: k.theme || '',
+      net: ADMIN_PRICES[tool], currency: 'USD', gross: null, discount: '', codes: [], affiliate: '',
+      test: false, refunded: 0, refundIds: new Set(), estimated: true, etsyKey: key
+    });
+  });
+
+  // Has the buyer used their key yet? Lemon Squeezy and Etsy redemptions
+  // carry something that leads back to the order. A Dodo redemption reports
+  // the licence key's own id, which the sale never sees, so for Dodo this
+  // stays unknown rather than guessing.
+  const redeemedOrders = new Set(), redeemedCodes = new Set();
+  redemptionEvents().forEach(e => {
+    const d = e.detail || {};
+    if (d.orderId) redeemedOrders.add(String(d.orderId));
+    if (d.code) redeemedCodes.add(String(d.code).trim().toUpperCase());
+  });
+  const keyRedeemed = new Map();
+  allKeys.forEach(k => { if (k.redeemCount > 0) keyRedeemed.set(String(k.key).trim().toUpperCase(), true); });
+
+  return [...orders.values()].map(o => {
+    o.kept = Math.max(0, o.net - o.refunded);
+    o.status = o.test ? 'test' : o.refunded >= o.net - 0.005 && o.net > 0 ? 'refunded' : o.refunded > 0 ? 'partial' : 'paid';
+    if (o.channel === 'dodo') o.redeemed = null;
+    else if (o.channel === 'etsy') o.redeemed = redeemedCodes.has(o.etsyKey) || keyRedeemed.has(o.etsyKey);
+    else o.redeemed = redeemedOrders.has(o.orderId) || (!!o.orderNumber && redeemedOrders.has(o.orderNumber));
+    return o;
+  }).sort((a, b) => b.t - a.t);
+}
+function ordersWithin(ledger, r) { return ledger.filter(o => within(o.t, r)); }
+function isCounted(o) { return !o.test || showTestData; }
+
+// Totals for a list of orders. Refunds come off the day of the sale, so a
+// range's figure never goes negative because of an older order.
+function salesSummary(list) {
+  const counted = list.filter(isCounted);
+  const s = {
+    gross: 0, refunds: 0, net: 0, orders: 0, refundedOrders: 0, discounted: 0, affiliated: 0,
+    tests: list.filter(o => o.test).length, testRevenue: list.filter(o => o.test).reduce((a, o) => a + o.net, 0),
+    byChannel: { dodo: { orders: 0, revenue: 0 }, lemonsqueezy: { orders: 0, revenue: 0 }, etsy: { orders: 0, revenue: 0 } },
+    estimated: 0
+  };
+  counted.forEach(o => {
+    s.gross += o.net; s.refunds += o.refunded; s.net += o.kept;
+    if (o.status === 'refunded') s.refundedOrders++;
+    else {
+      s.orders++;
+      if (o.codes.length) s.discounted++;
+      if (o.affiliate) s.affiliated++;
+    }
+    const c = s.byChannel[o.channel];
+    if (c) { if (o.status !== 'refunded') c.orders++; c.revenue += o.kept; }
+    if (o.estimated) s.estimated += o.kept;
+  });
+  s.aov = s.orders ? s.net / s.orders : 0;
+  return s;
+}
+
+// Lemon Squeezy's own API knows about orders placed before the sale webhook
+// was set up, which the Sales sheet never saw. When it reports more orders
+// for the range than the sheet has, the difference is added (never the
+// whole figure, which would count the sheet's orders twice).
 let lsSales = { loaded: false, configured: false, revenue: 0, orders: 0, error: '', rangeKey: null };
 let _lsFetchInFlight = false;
-
-// Lemon Squeezy figures are per date range, so they have to be refetched when
-// the range changes - but only once per range, and never while a fetch for it
-// is already in flight, or the re-render this triggers would loop.
 function ensureSalesForRange() {
   const key = (overviewFilters.from || '') + '|' + (overviewFilters.to || '');
-  if (lsSales.rangeKey === key || _lsFetchInFlight) return;
+  if (lsSales.rangeKey === key || _lsFetchInFlight || _sampleDataActive) return;
   _lsFetchInFlight = true;
   fetchLemonSqueezySales().then(() => {
     lsSales.rangeKey = key;
     _lsFetchInFlight = false;
-    if (currentATab === 'overview') renderOverview();
+    if (currentATab === 'overview' || currentATab === 'sales') (ADMIN_RENDERERS[currentATab])();
   });
+}
+function lsTopUp(summary) {
+  const key = (overviewFilters.from || '') + '|' + (overviewFilters.to || '');
+  if (_sampleDataActive || !lsSales.configured || lsSales.rangeKey !== key) return null;
+  const sheet = summary.byChannel.lemonsqueezy;
+  const extraOrders = lsSales.orders - sheet.orders;
+  if (extraOrders <= 0) return null;
+  return { orders: extraOrders, revenue: Math.max(0, lsSales.revenue - sheet.revenue) };
+}
+function applyLsTopUp(summary) {
+  const extra = lsTopUp(summary);
+  if (!extra) return summary;
+  summary.orders += extra.orders; summary.net += extra.revenue; summary.gross += extra.revenue;
+  summary.byChannel.lemonsqueezy.orders += extra.orders; summary.byChannel.lemonsqueezy.revenue += extra.revenue;
+  summary.lsExtra = extra;
+  summary.aov = summary.orders ? summary.net / summary.orders : 0;
+  return summary;
 }
 
 function fetchLemonSqueezySales() {
@@ -667,9 +898,8 @@ function fetchLemonSqueezySales() {
     const timer = setTimeout(() => { lsSales = { loaded: true, configured: false, revenue: 0, orders: 0, error: 'timeout' }; finish(); }, 15000);
     window[cb] = res => {
       lsSales = (res && res.ok)
-        ? { loaded: true, configured: !!res.configured, revenue: Number(res.revenue || 0), orders: Number(res.orders || 0),
-            testOrders: Number(res.testOrders || 0), testRevenue: Number(res.testRevenue || 0), testMode: !!res.testMode, error: '' }
-        : { loaded: true, configured: false, revenue: 0, orders: 0, testOrders: 0, testRevenue: 0, testMode: false, error: (res && res.error) || 'failed' };
+        ? { loaded: true, configured: !!res.configured, revenue: Number(res.revenue || 0), orders: Number(res.orders || 0), error: '' }
+        : { loaded: true, configured: false, revenue: 0, orders: 0, error: (res && res.error) || 'failed' };
       finish();
     };
     const qs = new URLSearchParams({ action: 'sales', from: overviewFilters.from || '', to: overviewFilters.to || '', cb, _: String(Date.now()) });
@@ -679,20 +909,38 @@ function fetchLemonSqueezySales() {
   });
 }
 
-// Etsy revenue for a range, from redemptions of keys issued by /claim.
-function etsySalesInRange(events) {
-  const etsyKeys = new Set(allKeys.map(k => String(k.key).trim().toUpperCase()));
-  let revenue = 0, orders = 0;
-  const perTool = { sbp: 0, ubp: 0 };
-  events.filter(e => e.type === 'launch_code_redeemed').forEach(e => {
-    const code = String((e.detail && e.detail.code) || '').trim().toUpperCase();
-    if (!etsyKeys.has(code)) return;   // legacy or Lemon Squeezy code, not an Etsy sale
-    const tool = (e.detail && e.detail.tool) === 'ubp' ? 'ubp' : 'sbp';
-    revenue += ADMIN_PRICES[tool];
-    perTool[tool] += ADMIN_PRICES[tool];
-    orders++;
+// Discount codes and affiliates across a list of orders, refunds excluded.
+function discountGroups(list) {
+  const m = new Map();
+  list.filter(o => isCounted(o) && o.status !== 'refunded').forEach(o => o.codes.forEach(code => {
+    const g = m.get(code) || { label: code, orders: 0, revenue: 0 };
+    g.orders++; g.revenue += o.kept; m.set(code, g);
+  }));
+  return [...m.values()].sort((a, b) => b.orders - a.orders || b.revenue - a.revenue);
+}
+function affiliateGroups(list) {
+  const m = new Map();
+  list.filter(o => isCounted(o) && o.status !== 'refunded' && o.affiliate).forEach(o => {
+    const g = m.get(o.affiliate) || { label: o.affiliate, orders: 0, revenue: 0 };
+    g.orders++; g.revenue += o.kept; m.set(o.affiliate, g);
   });
-  return { revenue, orders, perTool };
+  return [...m.values()].sort((a, b) => b.revenue - a.revenue);
+}
+function moneyTableHtml(groups, firstCol, empty) {
+  if (!groups.length) return `<div class="chart-empty">${esc(empty)}</div>`;
+  return `<div class="admin-table-wrap"><table class="admin-table adm-compact"><thead><tr><th>${esc(firstCol)}</th><th class="num">Orders</th><th class="num">Revenue</th></tr></thead><tbody>
+    ${groups.slice(0, 8).map(g => `<tr><td class="admin-table-strong">${esc(g.label)}</td><td class="num">${fmt(g.orders)}</td><td class="num">${money(g.revenue)}</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function channelBreakdownHtml(summary) {
+  const rows = ['dodo', 'lemonsqueezy', 'etsy'].map(c => ({ c, ...summary.byChannel[c] })).filter(r => r.orders || r.revenue);
+  if (!rows.length) return '<div class="chart-empty">No sales in this range.</div>';
+  const total = rows.reduce((a, r) => a + r.revenue, 0) || 1;
+  return `<div class="adm-channels">${rows.map(r => `<div class="adm-channel">
+      <div class="adm-channel-head"><span><i style="background:${CHANNEL_COLOR[r.c]}"></i>${esc(CHANNEL_LABEL[r.c])}${r.c === 'etsy' ? ' <small>est.</small>' : ''}</span><strong>${money(r.revenue)}</strong></div>
+      <div class="adm-channel-track"><i style="width:${Math.round(r.revenue / total * 100)}%;background:${CHANNEL_COLOR[r.c]}"></i></div>
+      <div class="adm-channel-meta">${fmt(r.orders)} order${r.orders === 1 ? '' : 's'} · ${Math.round(r.revenue / total * 100)}% of revenue</div>
+    </div>`).join('')}</div>`;
 }
 
 // ── Horizontal bar list ───────────────────────────────────────────────
@@ -701,18 +949,18 @@ function hBarListHtml(groups, opts) {
   const rows = (groups || []).slice().sort((a, b) => b.value - a.value).slice(0, o.limit || 8);
   if (!rows.length) return `<div class="chart-empty">${esc(o.empty || 'No data yet.')}</div>`;
   const max = Math.max(...rows.map(r => r.value)) || 1;
-  const total = rows.reduce((s, r) => s + r.value, 0);
-  // Share is meaningless for money split across two products - "$120 (60%)"
+  const total = (o.total != null ? o.total : rows.reduce((s, r) => s + r.value, 0));
+  // Share is meaningless for money split across products - "$120 (60%)"
   // invites reading the percentage as a margin or a discount. Opt in only
   // where a proportion of a whole is actually the point, like locations.
   const showShare = o.showShare !== false;
   const prefix = o.prefix || '';
   return `<div class="admin-hbars">${rows.map(r => {
-    const pct = Math.round(r.value / max * 100);
+    const w = Math.round(r.value / max * 100);
     const share = total ? Math.round(r.value / total * 100) : 0;
     return `<div class="admin-hbar-row">
       <span class="admin-hbar-label" title="${esc(r.label)}">${esc(r.label)}</span>
-      <span class="admin-hbar-track"><i style="width:${pct}%"></i></span>
+      <span class="admin-hbar-track"><i style="width:${w}%"></i></span>
       <span class="admin-hbar-val">${esc(prefix)}${fmt(r.value)}${showShare ? `<small>${share}%</small>` : ''}</span>
     </div>`;
   }).join('')}</div>`;
@@ -733,6 +981,7 @@ function vBarChartHtml(groups, opts) {
   } else {
     rows = rows.sort((a, b) => b.value - a.value).slice(0, o.limit || 6);
   }
+  if (!rows.length) return `<div class="chart-empty">${esc(o.empty || 'No data yet.')}</div>`;
   const max = Math.max(...rows.map(r => r.value)) || 1;
   const total = rows.reduce((s, r) => s + r.value, 0);
   return `<div class="admin-vbars">${rows.map(r => {
@@ -750,36 +999,33 @@ function vBarChartHtml(groups, opts) {
 }
 
 // ── Conversion funnel ─────────────────────────────────────────────────
-// opts lets a second funnel describe itself. Left out, the wording is
-// exactly what it has always been, so the funnel above is untouched.
 function funnelHtml(steps, opts) {
   const o = opts || {};
   const top = steps[0].value || 0;
   const last = steps[steps.length - 1].value || 0;
-  // The headline number: what share of visits end in a sale. Shown to one
-  // decimal because a store at this size will sit under 1% for a while, and
-  // rounding that to "0%" would hide real movement.
+  // The headline number: what share of the top step ends in a sale. Shown
+  // to two decimals under 1%, because a store at this size will sit there
+  // for a while and rounding that to "0%" would hide real movement.
   const overall = top ? (last / top * 100) : 0;
   const overallTxt = overall > 0 && overall < 1 ? overall.toFixed(2) : overall.toFixed(1);
   const header = `<div class="admin-funnel-rate${o.tone ? ' admin-funnel-rate--' + o.tone : ''}">
     <div class="admin-funnel-rate-num">${overallTxt}%</div>
-    <div class="admin-funnel-rate-label">${esc(o.label || 'overall conversion')}<small>${o.sub || (fmt(last) + ' of ' + fmt(top) + ' sessions ended in a purchase')}</small></div>
+    <div class="admin-funnel-rate-label">${esc(o.label || 'overall conversion')}<small>${o.sub || ''}</small></div>
   </div>`;
   return header + `<div class="admin-funnel">${steps.map((s, i) => {
     const pctOfTop = top ? (s.value / top * 100) : 0;
     const prev = i > 0 ? steps[i - 1].value : null;
     const stepPct = (prev && prev > 0) ? Math.round(s.value / prev * 100) : null;
-    // A later step can legitimately exceed an earlier one: Lemon Squeezy
-    // knows about orders this site never saw a buy-click for (a direct
-    // checkout link, or a purchase from another device). Say so rather than
-    // printing a nonsensical "250% of previous step".
+    // A later step can legitimately exceed an earlier one: a sale can come
+    // from a checkout link this site never saw a buy-click for, or from
+    // another device. Say so rather than printing "250% of previous step".
     const overflows = stepPct !== null && stepPct > 100;
     return `<div class="admin-funnel-step">
       <div class="admin-funnel-head">
         <span class="admin-funnel-label">${esc(s.label)}</span>
         <span class="admin-funnel-value">${fmt(s.value)}</span>
       </div>
-      <div class="admin-funnel-track"><i style="width:${Math.max(pctOfTop, s.value > 0 ? 2 : 0)}%;background:${s.color}"></i></div>
+      <div class="admin-funnel-track"><i style="width:${Math.min(100, Math.max(pctOfTop, s.value > 0 ? 2 : 0))}%;background:${s.color}"></i></div>
       <div class="admin-funnel-meta">
         ${stepPct === null
           ? `<span class="admin-funnel-conv">start of funnel</span>`
@@ -792,99 +1038,154 @@ function funnelHtml(steps, opts) {
   }).join('')}</div>`;
 }
 
-function formatOverviewRangeLabel() {
-  const cm = currentMonthBounds();
-  if (overviewFilters.from === cm.from && overviewFilters.to === cm.to) return 'This month, all tools.';
-  if (!overviewFilters.from && !overviewFilters.to) return 'All time, all tools.';
-  const fromTxt = overviewFilters.from ? formatDateDisplay(overviewFilters.from) : 'the beginning';
-  const toTxt = overviewFilters.to ? formatDateDisplay(overviewFilters.to) : 'today';
-  return `${fromTxt} – ${toTxt}, all tools.`;
+// ── Time series ───────────────────────────────────────────────────────
+// Buckets for the chart: by hour for a single day, by day otherwise. "All
+// time" starts at the first thing ever recorded rather than at 1970.
+function seriesBuckets() {
+  const r = rangeMs();
+  const now = Date.now();
+  const single = overviewFilters.from && overviewFilters.from === overviewFilters.to;
+  if (single) {
+    const d = new Date(overviewFilters.from + 'T00:00:00');
+    const isToday = overviewFilters.from === _isoDay(new Date());
+    const hours = isToday ? new Date().getHours() + 1 : 24;
+    return Array.from({ length: hours }, (_, h) => {
+      const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h).getTime();
+      return { label: String(h).padStart(2, '0') + ':00', start, end: start + 3600000 };
+    });
+  }
+  let fromMs = r.fromMs, toMs = Math.min(r.toMs, now);
+  if (!isFinite(fromMs)) {
+    const times = allEvents.map(eventTime).concat(salesLedger().map(o => o.t)).filter(t => t > 0);
+    fromMs = times.length ? Math.min(...times) : now - 29 * 86400000;
+  }
+  if (!isFinite(toMs) || toMs < fromMs) toMs = Math.max(fromMs, now);
+  const d = new Date(fromMs); d.setHours(0, 0, 0, 0);
+  const out = [];
+  while (d.getTime() <= toMs && out.length < 366) {
+    const start = d.getTime();
+    d.setDate(d.getDate() + 1);
+    out.push({ label: dayKey(start), start, end: d.getTime() });
+  }
+  return out;
 }
+function visitorSeries(events, buckets) {
+  return buckets.map(b => {
+    const seen = new Set();
+    events.forEach(e => { const t = eventTime(e); if (t >= b.start && t < b.end) seen.add(e.visitorId); });
+    return { label: b.label, value: seen.size };
+  });
+}
+function revenueSeries(orders, buckets) {
+  return buckets.map(b => ({
+    label: b.label,
+    value: Math.round(orders.filter(o => isCounted(o) && o.t >= b.start && o.t < b.end).reduce((a, o) => a + o.kept, 0) * 100) / 100
+  }));
+}
+function wireCharts(el) {
+  requestAnimationFrame(() => {
+    el.querySelectorAll('[data-chart-scope]').forEach(scope => {
+      const unit = scope.dataset.unit;
+      wireChartHover(scope, '.spend-line-dot', { format: d => '<strong>' + esc(d.label) + '</strong><br>' + (unit === 'money' ? esc(money(d.val)) : esc(fmt(d.val)) + ' ' + esc(unit || 'visitor') + (d.val == 1 ? '' : 's')) });
+      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d => '<strong>' + esc(d.label) + '</strong><br>' + esc(fmt(d.val)) + ' · ' + parseFloat(d.pct || 0).toFixed(0) + '%' });
+    });
+  });
+}
+function refHost(e) {
+  if (!e.referrer) return 'Direct';
+  try {
+    const h = new URL(e.referrer).hostname.replace(/^www\./, '');
+    // A visitor moving between this site's own pages is not a referral.
+    return /(^|\.)ezzohub\.com$/.test(h) || h === location.hostname ? 'Internal' : h;
+  } catch (err) { return 'Other'; }
+}
+
+// ══════════════════════ Overview ══════════════════════
 function renderOverview() {
   const el = document.getElementById('aview-overview');
-  const now = Date.now();
   ensureSalesForRange();
+  const R = rangeMs(), P = previousRangeMs();
   const rangeEvents = overviewFilteredEvents();
+  const prevEvents = P ? allEvents.filter(e => isWebsiteEvent(e) && within(eventTime(e), P)) : null;
+  const ledger = salesLedger();
+  const rangeOrders = ordersWithin(ledger, R);
+  const sales = applyLsTopUp(salesSummary(rangeOrders));
+  const prevSales = P ? salesSummary(ordersWithin(ledger, P)) : null;
 
   // "Online now" is deliberately live rather than range-filtered - it answers
   // "who is here right now", which a historical range can't.
   const liveEvents = allEvents.filter(e => isOnlineNow(e) && isWebsiteEvent(e));
   const onlineNow = uniqueBy(liveEvents, e => e.visitorId).length;
 
+  const visitors = uniqueBy(rangeEvents, e => e.visitorId).length;
+  const prevVisitors = prevEvents ? uniqueBy(prevEvents, e => e.visitorId).length : null;
   const sessions = buildSessions(rangeEvents);
-  const sessionCount = sessions.length;
   const withDuration = sessions.filter(s => s.duration > 0);
   const avgDuration = withDuration.length ? withDuration.reduce((s, x) => s + x.duration, 0) / withDuration.length : 0;
   const engagedCount = sessions.filter(s => s.engaged).length;
-  const bounceRate = sessionCount ? Math.round((1 - engagedCount / sessionCount) * 100) : 0;
-  const uniqueVisitors = uniqueBy(rangeEvents, e => e.visitorId).length;
+  const bounceRate = sessions.length ? Math.round((1 - engagedCount / sessions.length) * 100) : 0;
+  const conv = visitors ? sales.orders / visitors * 100 : 0;
+  const prevConv = prevSales && prevVisitors ? prevSales.orders / prevVisitors * 100 : (prevSales ? 0 : null);
+  const vsTitle = P ? `Compared with the ${P.days} day${P.days === 1 ? '' : 's'} before this range` : '';
 
-  const etsy = etsySalesInRange(rangeEvents);
-  const lsRevenue = lsSales.configured ? (lsSales.revenue + (showTestData ? lsSales.testRevenue : 0)) : 0;
-  const lsOrders = lsSales.configured ? (lsSales.orders + (showTestData ? lsSales.testOrders : 0)) : 0;
-  const totalRevenue = lsRevenue + etsy.revenue;
-  const totalOrders = lsOrders + etsy.orders;
-  const testNote = lsSales.testOrders
-    ? ' · ' + lsSales.testOrders + ' test order' + (lsSales.testOrders === 1 ? '' : 's') +
-      ' ($' + lsSales.testRevenue.toFixed(2) + ')' + (showTestData ? ' INCLUDED' : ' excluded')
-    : '';
-  const salesSub = lsSales.configured
-    ? (lsSales.testMode && !showTestData
-        ? '⚠ Test orders only - no real sales yet'
-        : '$' + lsRevenue.toFixed(2) + ' Lemon Squeezy + $' + etsy.revenue.toFixed(2) + ' Etsy' + testNote)
-    : (lsSales.loaded ? 'Etsy only - connect Lemon Squeezy for live revenue' : 'loading Lemon Squeezy...');
-
-  // Funnel. The final step can only be observed through redemptions, since
-  // checkout itself completes on Lemon Squeezy's own site.
-  const initiated = uniqueBy(rangeEvents.filter(e => e.type === 'purchase_initiated'), e => e.sessionId).length;
-  const funnelSteps = [
-    { label: 'Sessions', value: sessionCount, color: '#6366f1' },
-    { label: 'Clicked buy', value: initiated, color: '#a855f7', note: 'sessions reaching checkout' },
-    { label: 'Completed purchase', value: totalOrders, color: '#10b981', note: lsSales.configured ? 'Lemon Squeezy orders + redeemed Etsy keys' : 'redeemed Etsy keys only' }
-  ];
-
-  // The question the funnel above cannot answer on its own: of the people
-  // who actually tried a planner, how many went on to press buy. Counted
-  // per visitor rather than per session, because trying it one evening and
-  // buying the next morning is two sessions and one person, and the
-  // session view would score that as a miss.
+  // Funnel, per person: trying the demo one evening and buying the next
+  // morning is two sessions and one buyer.
   const demoPeople = new Set(rangeEvents.filter(e => e.type === 'trial_started').map(e => e.visitorId));
   const buyPeople = new Set(rangeEvents.filter(e => e.type === 'purchase_initiated').map(e => e.visitorId));
-  const demoThenBuy = [...demoPeople].filter(v => buyPeople.has(v)).length;
-  const demoSteps = [
+  const funnelSteps = [
+    { label: 'Visitors', value: visitors, color: '#6366f1' },
     { label: 'Tried the demo', value: demoPeople.size, color: '#06b6d4', note: 'opened a free planner' },
-    { label: 'Then pressed buy', value: demoThenBuy, color: '#a855f7', note: 'the same people, later in the range' }
+    { label: 'Pressed buy', value: buyPeople.size, color: '#a855f7', note: 'reached checkout' },
+    { label: 'Paid orders', value: sales.orders, color: '#10b981', note: 'all channels, refunds excluded' }
   ];
-  const demoSub = demoPeople.size
-    ? fmt(demoThenBuy) + ' of ' + fmt(demoPeople.size) + ' people who tried it went on to checkout'
-    : 'nobody has opened the free demo in this range yet';
 
-  // Today reads by hour; any longer range reads by day.
-  const isToday = activeQuickRange() === 'today';
-  const toMs = overviewFilters.to ? new Date(overviewFilters.to + 'T23:59:59').getTime() : now;
-  const fromMs = overviewFilters.from ? new Date(overviewFilters.from + 'T00:00:00').getTime() : (toMs - 29 * 86400000);
-  const rangeDays = Math.max(1, Math.min(366, Math.round((toMs - fromMs) / 86400000) + 1));
-  const series = isToday ? hourlyUniqueVisitorSeries(rangeEvents) : dailyUniqueVisitorSeries(rangeEvents, rangeDays, toMs);
-  const seriesTotal = series.reduce((s, p) => s + p.value, 0);
+  const buckets = seriesBuckets();
+  const single = buckets.length && buckets[0].label.includes(':');
+  const visSeries = visitorSeries(rangeEvents, buckets);
+  const revSeries = revenueSeries(rangeOrders, buckets);
+  const visTotal = visSeries.reduce((s, p) => s + p.value, 0);
+  const revTotal = revSeries.reduce((s, p) => s + p.value, 0);
 
-  const locationGroups = groupCount(rangeEvents, e => e.timezone).filter(g => g.label);
-  const deviceGroups = groupCount(rangeEvents, e => uaDevice(e.ua));
-  const referrerGroups = groupCount(
-    rangeEvents.filter(e => e.type === 'page_view').map(e => ({ ...e, _ref: e.referrer ? (() => { try { return new URL(e.referrer).hostname; } catch (err) { return 'Other'; } })() : 'Direct' })),
-    e => e._ref
-  );
+  const deviceGroups = groupCount(uniqueVisitorEvents(rangeEvents), e => uaDevice(e.ua));
+  const referrerGroups = groupCount(rangeEvents.filter(e => e.type === 'page_view').map(e => ({ _ref: refHost(e) })).filter(e => e._ref !== 'Internal'), e => e._ref);
+  const pageGroups = groupCount(rangeEvents.filter(e => e.type === 'page_view'), e => pageLabel(e.page));
+  const discounts = discountGroups(rangeOrders);
 
-  const perToolSales = [
-    { label: toolLabel('sbp'), value: Math.round(etsy.perTool.sbp) },
-    { label: toolLabel('ubp'), value: Math.round(etsy.perTool.ubp) }
-  ].filter(x => x.value > 0);
+  const salesSub = [
+    sales.refunds > 0 ? money(sales.refunds) + ' refunded' : '',
+    sales.estimated > 0 ? 'incl. ' + money(sales.estimated) + ' Etsy est.' : '',
+    sales.tests ? sales.tests + ' test' + (showTestData ? ' incl.' : ' excluded') : ''
+  ].filter(Boolean).join(' · ') || 'after refunds';
 
   el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">Overview</h2></div>
-    <p class="admin-section-sub">${esc(formatOverviewRangeLabel())} Website traffic only - activity inside the planners is excluded.</p>
-    ${overviewFilterBarHtml()}
+    ${pageHead('Overview', esc(formatRangeLabel()) + '. Website traffic and sales; activity inside the planner is on the Product tab.')}
+    ${rangeBarHtml('ov')}
 
-    <div class="admin-live-row">
+    ${statGrid([
+      { icon: '💰', label: 'Net revenue', value: money(sales.net), sub: salesSub, tone: '#10b981', delta: deltaChip(sales.net, prevSales && prevSales.net, false, vsTitle),
+        hint: 'Money that reached you: Dodo Payments and Lemon Squeezy sales from the sale webhooks, after tax and minus refunds, plus Etsy sales estimated at list price from claimed keys. Test orders only count when "Count test orders" is on (Sales tab).' },
+      { icon: '🧾', label: 'Paid orders', value: fmt(sales.orders), sub: sales.orders ? money(sales.aov) + ' average' : 'none yet', tone: '#6366f1', delta: deltaChip(sales.orders, prevSales && prevSales.orders, false, vsTitle),
+        hint: 'Orders in this range across every channel. Fully refunded orders are left out.' },
+      { icon: '🎯', label: 'Conversion', value: conv.toFixed(conv > 0 && conv < 1 ? 2 : 1) + '%', sub: 'paid orders per visitor', tone: '#a855f7', delta: deltaChip(conv, prevConv, false, vsTitle),
+        hint: 'Paid orders divided by unique website visitors in the same range.' },
+      { icon: '👥', label: 'Visitors', value: fmt(visitors), sub: fmt(sessions.length) + ' sessions', tone: '#3b82f6', delta: deltaChip(visitors, prevVisitors, false, vsTitle),
+        hint: 'Distinct people on the website (home, product page, claim and legal pages), told apart by a random on-device id.' }
+    ])}
+
+    <div class="adm-mini-stats">
+      <div><span>Avg. visit</span><strong>${formatDuration(avgDuration)}</strong></div>
+      <div><span>Bounce rate</span><strong>${bounceRate}%</strong></div>
+      <div><span>Tried the demo</span><strong>${fmt(demoPeople.size)}</strong></div>
+      <div><span>Pressed buy</span><strong>${fmt(buyPeople.size)}</strong></div>
+      <div><span>Used a discount</span><strong>${fmt(sales.discounted)}</strong></div>
+      <div><span>Via an affiliate</span><strong>${fmt(sales.affiliated)}</strong></div>
+    </div>
+
+    <div class="adm-grid adm-grid--wide-side">
+      <div class="panel chart-panel spend-line-panel" data-chart-scope data-unit="money"><div class="panel-inner-sm">
+        ${panelTitle(single ? 'Revenue by hour' : 'Revenue by day', 'Net revenue on the day each order was placed, refunds taken off that same order.')}
+        ${revTotal > 0 ? svgSpendLine(revSeries, { w: 900, h: 240, curve: true }) + `<div class="spend-line-caption"><span class="spend-line-num">${money(revTotal)}</span><span class="spend-line-label">over this period</span></div>` : '<div class="chart-empty">No sales in this range yet.</div>'}
+      </div></div>
       <div class="panel admin-globe-panel"><div class="panel-inner-sm">
         ${panelTitle('Online now', 'Visitors active in the last couple of minutes, placed by their browser-reported timezone. No IP lookup and no third-party geo service, so points are approximate by design. Drag to spin.')}
         <div class="admin-globe-wrap">
@@ -893,67 +1194,59 @@ function renderOverview() {
         </div>
         <div class="admin-globe-legend" id="adminGlobeLegend"></div>
       </div></div>
-      <div class="admin-kpi-stack">
-        ${kpiRow([
-          { icon: '💰', label: 'Total sales', value: '$' + totalRevenue.toFixed(2), sub: salesSub, color: '#10b981', hint: 'Real money only: Lemon Squeezy test orders are counted separately and never included here. Lemon Squeezy revenue is read live from their API. Etsy has no such feed, so Etsy sales are inferred from redeemed Etsy keys at list price, which undercounts anyone who bought but never redeemed.' },
-          { icon: '🧾', label: 'Orders', value: fmt(totalOrders), sub: lsSales.configured ? fmt(lsOrders) + ' Lemon Squeezy + ' + fmt(etsy.orders) + ' Etsy' : fmt(etsy.orders) + ' redeemed Etsy keys', color: '#6366f1', hint: 'Paid orders in this range. Etsy orders are counted from redeemed keys, so they can lag the actual sale by days.' }
-        ])}
-        ${kpiRow([
-          { icon: '📦', label: 'Sessions', value: fmt(sessionCount), sub: fmt(uniqueVisitors) + ' unique visitors', color: '#3b82f6', hint: 'A session is one continuous visit. A new one starts whenever a visitor returns after being away for a while.' },
-          { icon: '⏱️', label: 'Avg. session duration', value: formatDuration(avgDuration), sub: 'first to last activity', color: '#fb923c', hint: 'Average time between the first and last recorded activity within a session.' }
-        ])}
-        ${kpiRow([
-          { icon: '↩️', label: 'Bounce rate', value: bounceRate + '%', sub: 'left without a 2nd page or ~25s stay', color: '#f43f5e', hint: 'Share of sessions that viewed one page and did not stay long enough for a heartbeat (~25 seconds).' },
-          { icon: '🛒', label: 'Reached checkout', value: fmt(initiated), sub: sessionCount ? Math.round(initiated / sessionCount * 100) + '% of sessions' : '', color: '#a855f7', hint: 'Sessions where someone clicked a buy button. Recorded on this site, so it is exact, unlike what happens afterwards on Lemon Squeezy.' }
-        ])}
-      </div>
     </div>
 
-    <div class="admin-grid-2">
+    <div class="adm-grid adm-grid--3">
       <div class="panel chart-panel"><div class="panel-inner-sm">
-        ${panelTitle('Conversion funnel', 'How many sessions reach each stage. The final step is only visible through redemptions, since checkout completes on Lemon Squeezy.')}
-        ${funnelHtml(funnelSteps)}
+        ${panelTitle('Visitor to buyer', 'Counted per person rather than per session. Paid orders can include sales from a checkout link this site never saw a buy-click for.')}
+        ${funnelHtml(funnelSteps, { label: 'of visitors bought', sub: fmt(sales.orders) + ' paid order' + (sales.orders === 1 ? '' : 's') + ' from ' + fmt(visitors) + ' visitor' + (visitors === 1 ? '' : 's') })}
       </div></div>
       <div class="panel chart-panel"><div class="panel-inner-sm">
-        ${panelTitle('Demo to checkout', 'Of the people who actually opened a free planner, how many went on to press a buy button. Counted per person rather than per session, so trying it one evening and buying the next morning still counts.')}
-        ${funnelHtml(demoSteps, { label: 'of demo users pressed buy', sub: demoSub, tone: 'demo' })}
+        ${panelTitle('Sales by channel', 'Dodo Payments is the live checkout. Lemon Squeezy is the retired one. Etsy is estimated at list price from claimed keys.')}
+        ${channelBreakdownHtml(sales)}
+        ${sales.lsExtra ? `<p class="adm-note">Includes ${fmt(sales.lsExtra.orders)} earlier Lemon Squeezy order${sales.lsExtra.orders === 1 ? '' : 's'} reported by their API that were placed before the sale webhook existed.</p>` : ''}
       </div></div>
       <div class="panel chart-panel"><div class="panel-inner-sm">
-        ${panelTitle('Sales by product', 'Etsy sales split by planner, from redeemed keys. Lemon Squeezy revenue is not split per product here.')}
-        ${perToolSales.length ? hBarListHtml(perToolSales, { empty: 'No sales in this range.', showShare: false, prefix: '$' }) : '<div class="chart-empty">No product sales in this range.</div>'}
+        ${panelTitle('Discount codes', 'Codes used at Dodo checkout, from the sale webhook. Recorded from the Apps Script update that added the Discount column onwards.')}
+        ${moneyTableHtml(discounts, 'Code', 'No discount codes used in this range.')}
       </div></div>
     </div>
 
-    <div class="panel chart-panel spend-line-panel" data-chart-scope><div class="panel-inner-sm">
-      ${panelTitle(isToday ? 'Unique visitors per hour' : 'Unique visitors per day', isToday ? 'Distinct visitors per hour so far today.' : 'Distinct visitors per calendar day across the selected range.')}
-      ${seriesTotal > 0 ? svgSpendLine(series, { w: 900, h: 140 }) + '<div class="spend-line-caption"><span class="spend-line-num">' + fmt(seriesTotal) + '</span><span class="spend-line-label">total visits over this period</span></div>' : '<div class="chart-empty">No visits in this range.</div>'}
+    <div class="panel chart-panel spend-line-panel" data-chart-scope data-unit="visitor"><div class="panel-inner-sm">
+      ${panelTitle(single ? 'Visitors by hour' : 'Visitors by day', 'Distinct website visitors per ' + (single ? 'hour' : 'calendar day') + '.')}
+      ${visTotal > 0 ? svgSpendLine(visSeries, { w: 900, h: 130, curve: true }) + `<div class="spend-line-caption"><span class="spend-line-num">${fmt(visitors)}</span><span class="spend-line-label">unique visitors over this period</span></div>` : '<div class="chart-empty">No visits in this range.</div>'}
     </div></div>
 
-    <div class="admin-grid-2">
-      <div class="panel chart-panel"><div class="panel-inner-sm">
-        ${panelTitle('Device type')}
-        ${vBarChartHtml(deviceGroups, { categories: ['Desktop', 'Tablet', 'Mobile'] })}
-      </div></div>
+    <div class="adm-grid adm-grid--3">
       <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
-        ${panelTitle('Referrers', 'Which site sent each visitor here, grouped by domain. "Direct" means no referrer was recorded: a typed URL, a bookmark, or a privacy-blocked referrer.')}
+        ${panelTitle('Referrers', 'Which site sent each page view here, grouped by domain. "Direct" means no referrer was recorded: a typed URL, a bookmark, or a privacy-blocked referrer. Moves between your own pages are left out.')}
         ${pieOrEmpty(referrerGroups, 'No data yet.')}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Pages viewed')}
+        ${hBarListHtml(pageGroups, { empty: 'No page views yet.', limit: 6 })}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Devices', 'One count per visitor, by the device they first arrived on in this range.')}
+        ${vBarChartHtml(deviceGroups, { categories: ['Desktop', 'Tablet', 'Mobile'] })}
       </div></div>
     </div>
 
     <div class="panel chart-panel"><div class="panel-inner-sm">
-      ${panelTitle('Sessions by location', 'Grouped by the browser-reported timezone, the only geography signal collected.')}
-      ${hBarListHtml(locationGroups, { empty: 'No data yet.', limit: 10 })}
+      ${panelTitle('Where visitors are', 'Grouped by the browser-reported timezone, the only geography signal collected.')}
+      ${hBarListHtml(groupCount(uniqueVisitorEvents(rangeEvents), e => e.timezone).filter(g => g.label && g.label !== 'Unknown').map(g => ({ ...g, label: g.label.replace(/_/g, ' ') })), { empty: 'No data yet.', limit: 10 })}
     </div></div>`;
 
-  wireOverviewFilterBar();
+  wireRangeBar(el, 'ov', renderOverview);
   initFieldTips(el);
   mountLiveGlobe(liveEvents);
-  requestAnimationFrame(() => {
-    el.querySelectorAll('[data-chart-scope]').forEach(scope => {
-      wireChartHover(scope, '.spend-line-dot', { format: d => '<strong>' + esc(d.label) + '</strong><br>' + esc(fmt(d.val)) + ' visitor' + (d.val == 1 ? '' : 's') });
-      wireChartHover(scope, '.pie-seg', { legendScope: scope, swapText: false, highlightClass: 'is-exploded', format: d => '<strong>' + esc(d.label) + '</strong><br>' + esc(fmt(d.val)) + ' · ' + parseFloat(d.pct || 0).toFixed(0) + '%' });
-    });
-  });
+  wireCharts(el);
+}
+// The first event per visitor, so a chatty visitor counts once in a split.
+function uniqueVisitorEvents(events) {
+  const seen = new Map();
+  events.forEach(e => { if (!seen.has(e.visitorId)) seen.set(e.visitorId, e); });
+  return [...seen.values()];
 }
 
 // ── Live globe ────────────────────────────────────────────────────────
@@ -1142,7 +1435,7 @@ function wireRedemptionFilters() {
 }
 // Mirrors KEY_DEVICE_LIMIT in Code.gs. Only used for display/filtering here -
 // the limit is actually enforced server-side, where it cannot be edited.
-const ETSY_DEVICE_LIMIT = 5;
+const ETSY_DEVICE_LIMIT = 3;
 
 // ══════════════════════ Redemption Activity ══════════════════════
 // One row per licence key, not per redemption event. These used to be two
@@ -1161,7 +1454,10 @@ const ETSY_DEVICE_LIMIT = 5;
 // public files rather than one.
 const SOURCE_LABEL = { etsy: 'Etsy', lemonsqueezy: 'Lemon Squeezy', dodo: 'Dodo Payments', launch: 'Launch code' };
 
-function keySource(key) {
+function keySource(key, reported) {
+  // The app says which checkout validated a key (detail.source); only keys
+  // redeemed before it started saying so are told apart by shape.
+  if (reported === 'dodo' || reported === 'lemonsqueezy') return reported;
   const k = String(key || '').trim().toUpperCase();
   if (k.startsWith('ETSY-')) return 'etsy';
   // Lemon Squeezy issues UUIDs; a launch code is a short unbroken run of
@@ -1196,7 +1492,7 @@ function redemptionActivityRows() {
       row = {
         key: raw, tool: (e.detail && e.detail.tool) || '', theme: '', orderId: '', email: '',
         devices: 0, redeemed: 0, status: 'active', sheetRow: null,
-        source: keySource(raw), lastSeen: 0, visitors: new Set(), fromEventsOnly: true
+        source: keySource(raw, e.detail && e.detail.source), lastSeen: 0, visitors: new Set(), fromEventsOnly: true
       };
       byKey.set(raw.toUpperCase(), row);
     }
@@ -1213,7 +1509,7 @@ function redemptionActivityRows() {
   // older rows recorded order_number where newer ones record order_id.
   if (allSales.length) {
     const byOrder = new Map();
-    allSales.forEach(o => {
+    allSales.filter(o => PAID_EVENTS.has(o.event)).forEach(o => {
       const rec = { email: o.email || '', orderNumber: o.orderNumber || '', test: o.mode === 'test' };
       if (o.orderId) byOrder.set(String(o.orderId), rec);
       if (o.orderNumber) byOrder.set(String(o.orderNumber), rec);
@@ -1306,7 +1602,7 @@ function activityTableHtml(rows) {
 }
 
 function renderRedemptions() {
-  const el = document.getElementById('aview-redemptions');
+  const el = document.getElementById('aview-keys');
   const all = redemptionActivityRows();
   const rows = filteredActivityRows();
   const uniqueOrderIds = uniqueBy(all.filter(r => r.orderId), r => r.orderId).length;
@@ -1314,11 +1610,10 @@ function renderRedemptions() {
   const revokedCount = all.filter(r => r.status === 'revoked').length;
 
   el.innerHTML = `
-    <div class="section-header"><h2 class="admin-section-title">Redemption Activity</h2></div>
-    <p class="admin-section-sub">Every license key from both Etsy and Lemon Squeezy, all-time, one row per key. Expand a row for the buyer's email, device use and history. Revoking blocks future redemptions; anyone who already unlocked keeps access, since that unlock lives on their own device.</p>
+    ${pageHead('License keys', 'Every key from Dodo Payments, Etsy and Lemon Squeezy, all time, one row per key. Expand a row for the buyer, devices and history. Revoking blocks new activations; a Dodo key is also refused at each device\'s next check, while an Etsy or Lemon Squeezy unlock stays on devices that already have it.')}
     ${kpiRow([
-      { icon: '🔑', label: 'License keys', value: fmt(all.length), sub: 'issued or redeemed', color: '#6366f1', hint: 'Every key that has been claimed or redeemed, across Etsy, Lemon Squeezy and the original launch codes.' },
-      { icon: '🧾', label: 'Unique order IDs', value: fmt(uniqueOrderIds), sub: '', color: '#14b8a6', hint: 'Distinct order IDs across all keys. Etsy orders come from the claim at /claim; Lemon Squeezy orders from the checkout itself.' },
+      { icon: '🔑', label: 'License keys', value: fmt(all.length), sub: 'issued or redeemed', color: '#6366f1', hint: 'Every key that has been claimed or redeemed, across Dodo Payments, Etsy, Lemon Squeezy and the original launch codes.' },
+      { icon: '🧾', label: 'Unique order IDs', value: fmt(uniqueOrderIds), sub: '', color: '#14b8a6', hint: 'Distinct order IDs across all keys. Etsy orders come from the claim at /claim, Lemon Squeezy orders from the checkout, and a Dodo key reports its licence id.' },
       { icon: '⚠️', label: 'Reused order IDs', value: fmt(reusedOrderIds), sub: 'same order, different visitors', color: '#f43f5e', hint: 'An order ID seen from more than one visitor - the strongest signal worth investigating here, since a real order should only ever be used by one person.' },
       { icon: '🚫', label: 'Revoked', value: fmt(revokedCount), sub: '', color: '#64748b', hint: 'Keys you have disabled. They can no longer be redeemed on a new device.' }
     ])}
@@ -1662,10 +1957,11 @@ function pennyBuildSystemInstruction() {
     ? " NOTE: the dashboard is currently showing SAMPLE/TEST data for trying things out, not real analytics - say so plainly if asked whether this reflects real performance."
     : '';
   return { parts: [{ text:
-    "You are Ezzo, the site owner's analytics assistant, built into the private EzzoBudget admin dashboard. You have full access to every metric in this dashboard - Overview, Live, Traffic, Product, App Insights, and Redemptions - with no exceptions; if a number appears anywhere in the dashboard, one of your tools can fetch it. " +
-    "You ONLY answer questions about the anonymous, aggregate usage analytics collected for this site (visitors, sessions, traffic, tool usage, feature adoption, theme/language/sync preferences, license key redemptions) using the tools provided. " +
+    "You are Ezzo, the site owner's analytics assistant, built into the private Ezzo Hub admin dashboard. The dashboard has these tabs: Overview (traffic, revenue, funnel), Sales (every order from Dodo Payments, the live checkout, plus the retired Lemon Squeezy and Etsy estimates, with refunds, discount codes and affiliates), Customers, License keys, Product (in-app usage) and Blogs. If a number appears in the dashboard, one of your tools can fetch it. " +
+    "The only product sold today is the Ultimate Budget Planner ($49.99 one-time). The Simple Budget Planner is retired. " +
+    "You ONLY answer questions about this site's analytics and sales (visitors, sessions, traffic, revenue, orders, refunds, discount codes, affiliate sales, in-app feature usage and preferences, license key redemptions) using the tools provided. " +
     "You must call one of the provided functions to fetch real data before stating any number, percentage, or count - never invent or estimate numbers yourself. If a specific tool doesn't obviously cover what was asked, use search_events (or search_redemptions for anything about codes/order IDs/redeemers) as a general-purpose fallback before saying data isn't available. " +
-    "This data is entirely anonymous and aggregate: visitors are identified only by a random on-device ID, and there is no name, email, IP address, or any financial/budget data available to you, ever - if asked for something like that, say plainly it was never collected rather than guessing. " +
+    "Visitors are identified only by a random on-device ID. Buyer names and email addresses exist on the Customers tab but are deliberately never given to you, and no IP address or budget data is collected at all - if asked for those, say so plainly and point to the Customers tab for contact details. " +
     "If asked about anything unrelated to this site's analytics (general knowledge, coding help, current events, etc.), politely decline and redirect to an analytics question. " +
     "The owner may ask open-ended strategy questions like 'how should I advertise this' or 'what should I improve' - for those, ground your answer in the actual numbers you fetch (e.g. which tool or region is most active, bounce rate, feature adoption, redemption conversion) rather than generic advice. " +
     "Keep every answer under about 60 words for a typical question. If explicitly asked for more detail or a deeper breakdown, you may write up to about 500 words. " +
@@ -1677,6 +1973,18 @@ function pennyBuildSystemInstruction() {
 function pennyToolDeclarations() {
   return [{
     functionDeclarations: [
+      { name: 'get_sales_summary', description: "Returns sales for a date range (default: this month): net revenue after refunds, paid orders, average order value, refunds, test orders, revenue and orders per channel (Dodo Payments, Lemon Squeezy, Etsy estimated), top discount codes, top affiliates, and revenue per product. Use for any question about money, orders, discounts or affiliates.",
+        parameters: { type: 'object', properties: {
+          from: { type: 'string', description: 'YYYY-MM-DD inclusive start. Omit both from and to for this month; pass from: "all" for all time.' },
+          to: { type: 'string', description: 'YYYY-MM-DD inclusive end.' },
+        } } },
+      { name: 'search_orders', description: "Looks up individual orders (never includes buyer names or emails). Filter by free text (order id, discount code, affiliate, product), channel and status.",
+        parameters: { type: 'object', properties: {
+          q: { type: 'string' },
+          channel: { type: 'string', enum: ['dodo', 'lemonsqueezy', 'etsy'] },
+          status: { type: 'string', enum: ['paid', 'partial', 'refunded', 'test'] },
+          limit: { type: 'number', description: 'Max rows, default 20, max 50.' },
+        } } },
       { name: 'get_overview_stats', description: "Returns headline site-wide analytics for the last 30 days: unique visitors, sessions, online-now count, bounce rate, avg session duration, pages/session, new vs. returning visitor split, and page views today.",
         parameters: { type: 'object', properties: {} } },
       { name: 'get_traffic_breakdown', description: "Returns traffic composition: top regions (by timezone), device types, referrers, top landing/exit pages, and views by page/tool. Filter by a rolling window (days) OR an exact date range (from/to), and optionally by tool.",
@@ -1857,9 +2165,55 @@ function pennyAdminToolGetRecentActivity(args) {
   return { dataRef: 'admin_recent', count: recent.length,
     events: recent.map(e => ({ when: new Date(eventTime(e)).toISOString(), type: e.type, tool: toolLabel(e.tool), region: e.timezone || 'Unknown' })) };
 }
+// Sales for Ezzo: the same ledger the Sales tab reads, without any buyer's
+// name or address. Ezzo's answers go through Google's Gemini API, so contact
+// details stay on the dashboard.
+function pennyAdminToolGetSalesSummary(args) {
+  let r;
+  if (args?.from === 'all') r = { fromMs: -Infinity, toMs: Infinity };
+  else if (args?.from || args?.to) r = {
+    fromMs: args.from ? new Date(args.from + 'T00:00:00').getTime() : -Infinity,
+    toMs: args.to ? new Date(args.to + 'T23:59:59.999').getTime() : Infinity
+  };
+  else { const m = currentMonthBounds(); r = { fromMs: new Date(m.from + 'T00:00:00').getTime(), toMs: new Date(m.to + 'T23:59:59.999').getTime() }; }
+  const list = ordersWithin(salesLedger(), r);
+  const s = salesSummary(list);
+  const byProduct = new Map();
+  list.filter(o => isCounted(o) && o.status !== 'refunded').forEach(o => byProduct.set(o.product || 'Unknown', (byProduct.get(o.product || 'Unknown') || 0) + o.kept));
+  const round = n => Math.round(n * 100) / 100;
+  return {
+    dataRef: 'admin_sales', range: args?.from === 'all' ? 'all time' : (args?.from || args?.to) ? { from: args.from || null, to: args.to || null } : 'this month',
+    currency: 'USD', netRevenue: round(s.net), grossBeforeRefunds: round(s.gross), refunds: round(s.refunds), paidOrders: s.orders, fullyRefundedOrders: s.refundedOrders,
+    averageOrderValue: round(s.aov), etsyEstimatedRevenue: round(s.estimated), testOrdersExcluded: showTestData ? 0 : s.tests, testOrdersCounted: showTestData,
+    byChannel: Object.fromEntries(Object.entries(s.byChannel).map(([k, v]) => [CHANNEL_LABEL[k], { orders: v.orders, revenue: round(v.revenue) }])),
+    ordersWithDiscount: s.discounted, ordersViaAffiliate: s.affiliated,
+    discountCodes: discountGroups(list).slice(0, 10).map(g => ({ code: g.label, orders: g.orders, revenue: round(g.revenue) })),
+    affiliates: affiliateGroups(list).slice(0, 10).map(g => ({ affiliate: g.label, orders: g.orders, revenue: round(g.revenue) })),
+    revenueByProduct: [...byProduct.entries()].map(([product, revenue]) => ({ product, revenue: round(revenue) })),
+    note: 'Etsy sales are estimated at list price from claimed keys. Dodo revenue is after tax, in the settlement currency.'
+  };
+}
+function pennyAdminToolSearchOrders(args) {
+  const q = String(args?.q || '').trim().toLowerCase();
+  let rows = salesLedger();
+  if (args?.channel) rows = rows.filter(o => o.channel === args.channel);
+  if (args?.status) rows = rows.filter(o => o.status === args.status);
+  if (q) rows = rows.filter(o => [o.orderId, o.orderNumber, o.discount, o.affiliate, o.product].some(v => String(v || '').toLowerCase().includes(q)));
+  const limit = Math.min(50, Math.max(1, parseInt(args?.limit) || 20));
+  return {
+    dataRef: 'admin_orders', totalMatches: rows.length, returned: Math.min(limit, rows.length),
+    orders: rows.slice(0, limit).map(o => ({
+      date: o.t ? new Date(o.t).toISOString().slice(0, 10) : null, order: o.orderNumber || o.orderId, channel: CHANNEL_LABEL[o.channel], product: o.product,
+      amount: Math.round(o.net * 100) / 100, refunded: Math.round(o.refunded * 100) / 100, status: o.status, estimated: o.estimated,
+      discountCodes: o.codes, affiliate: o.affiliate || null, keyUsed: o.redeemed
+    }))
+  };
+}
 function pennyExecuteTool(name, args, ctx) {
   try {
     switch (name) {
+      case 'get_sales_summary':       return pennyCacheResult(pennyAdminToolGetSalesSummary(args || {}));
+      case 'search_orders':           return pennyCacheResult(pennyAdminToolSearchOrders(args || {}));
       case 'get_overview_stats':      return pennyCacheResult(pennyAdminToolGetOverviewStats());
       case 'get_traffic_breakdown':   return pennyCacheResult(pennyAdminToolGetTrafficBreakdown(args || {}));
       case 'get_product_breakdown':   return pennyCacheResult(pennyAdminToolGetProductBreakdown(args || {}));
@@ -1880,7 +2234,7 @@ function pennyRenderQuickActions() {
   const wrap = document.getElementById('pennyQuickActions');
   if (!wrap) return;
   const prompts = [
-    { key: 'overview', label: "How's traffic looking this month?" },
+    { key: 'overview', label: "How are sales this month?" },
     { key: 'improve', label: 'What should I improve?' },
     { key: 'advertise', label: 'How should I advertise this?' }
   ];
@@ -1904,11 +2258,11 @@ function generateSampleAdminEvents() {
   const UAS = ['Mozilla/5.0 (Windows NT 10; Win64) Chrome/120', 'Mozilla/5.0 (Macintosh) Safari/605', 'Mozilla/5.0 (iPhone) Safari/604', 'Mozilla/5.0 (Linux; Android) Chrome/119', 'Mozilla/5.0 (iPad) Safari/604'];
   const REFERRERS = ['', '', 'https://google.com/search', 'https://twitter.com/', 'https://reddit.com/r/personalfinance', ''];
   const TABS_SBP = ['dashboard', 'transactions', 'income', 'expenses', 'bills', 'debt', 'savings'];
-  const TABS_UBP = ['dashboard', 'transactions', 'budget', 'debt', 'subscriptions', 'sinking', 'calendar'];
+  const TABS_UBP = ['dashboard', 'transactions', 'budget', 'bills', 'debt', 'goals', 'calendar', 'challenges'];
   const FEATURES_BOTH = ['sample_data_loaded', 'csv_exported'];
-  const FEATURES_UBP = ['debt_added', 'sinking_fund_created', 'subscription_added', 'automation_enabled', 'allocation_enabled'];
-  const THEMES = ['dark', 'synthwave', 'light', 'vintage-ledger', 'terminal'];
-  const LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pl'];
+  const FEATURES_UBP = ['debt_added', 'sinking_fund_created', 'subscription_added', 'allocation_enabled'];
+  const THEMES = ['dark', 'frosty', 'light', 'peachy', 'vintage-ledger', 'jolly'];
+  const LANGUAGES = ['en'];
   const CODES_SBP = ['SAMPL1', 'SAMPL2', 'SAMPL3'];
   const CODES_UBP = ['SAMPU1', 'SAMPU2'];
   const rand = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -1925,7 +2279,7 @@ function generateSampleAdminEvents() {
     const visitorId = 'sample_v' + v;
     const isReturning = Math.random() < 0.35;
     const sessionCount = isReturning ? 2 + Math.floor(Math.random() * 3) : 1;
-    const preferredTool = Math.random() < 0.55 ? 'sbp' : 'ubp';
+    const preferredTool = Math.random() < 0.92 ? 'ubp' : 'sbp';
     const usesBoth = Math.random() < 0.25;
     for (let s = 0; s < sessionCount; s++) {
       const daysAgo = Math.random() * 29;
@@ -1935,6 +2289,11 @@ function generateSampleAdminEvents() {
       let t = now - daysAgo * DAY - Math.random() * 3600000;
       push('page_view', t, 'home', '', visitorId, sessionId);
       t += 2000 + Math.random() * 5000;
+      // The website funnel: product page, demo, buy button.
+      push('page_view', t, 'budgetplanner', '', visitorId, sessionId);
+      if (Math.random() < 0.45) push('trial_started', t + 1500, 'budgetplanner', '', visitorId, sessionId, { tool });
+      if (Math.random() < 0.18) push('purchase_initiated', t + 3000, 'budgetplanner', '', visitorId, sessionId, { tool: 'ubp' });
+      t += 4000;
       push('page_view', t, tool, tool, visitorId, sessionId);
       if (Math.random() < 0.65) {
         const heartbeats = 1 + Math.floor(Math.random() * 6);
@@ -1945,7 +2304,10 @@ function generateSampleAdminEvents() {
         if (Math.random() < 0.15) push('dashboard_layout_changed', t + 12000, tool, tool, visitorId, sessionId, { layout: Math.random() < 0.3 ? 2 : 1 });
         if (Math.random() < 0.2) push('theme_changed', t + 16000, tool, tool, visitorId, sessionId, { theme: rand(THEMES) });
         if (Math.random() < 0.15) push('sync_mode_chosen', t + 20000, tool, tool, visitorId, sessionId, { mode: Math.random() < 0.4 ? 'google' : 'local' });
-        if (Math.random() < 0.1) push('language_changed', t + 24000, tool, tool, visitorId, sessionId, { lang: rand(LANGUAGES) });
+        if (Math.random() < 0.12) push('nav_position_changed', t + 24000, tool, tool, visitorId, sessionId, { position: rand(['top', 'left', 'left', 'right']) });
+        if (Math.random() < 0.12) push('persona_changed', t + 26000, tool, tool, visitorId, sessionId, { persona: rand(['cheeky', 'zen', 'concise', 'sarcastic', 'optimist']) });
+        if (s === 0 && Math.random() < 0.5) push('feature_used', t + 2000, tool, tool, visitorId, sessionId, { feature: 'setup_done' });
+        if (Math.random() < 0.1) push('feature_used', t + 28000, tool, tool, visitorId, sessionId, { feature: 'bank_import', rows: 20 + Math.floor(Math.random() * 120) });
       }
       if (s === 0 && Math.random() < 0.3) {
         const code = rand(tool === 'ubp' ? CODES_UBP : CODES_SBP);
@@ -1961,12 +2323,59 @@ function generateSampleAdminEvents() {
   });
   return events;
 }
+// Sales, keys and waitlist sign-ups to go with the sample events, shaped
+// exactly like the real sheets, so every tab has something to show. Names
+// and addresses use example.com and never leave this browser.
+function generateSampleCommerce() {
+  const now = Date.now(), DAY = 86400000;
+  const iso = t => new Date(t).toISOString();
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const FIRST = ['alex', 'sam', 'jordan', 'casey', 'riley', 'morgan', 'taylor', 'jamie', 'robin', 'drew', 'quinn', 'avery'];
+  const CODES = ['', '', '', 'WELCOME10', 'SPRING15', 'MIA10', 'BUDGETBOSS'];
+  const AFFS = ['', '', '', '', 'mia-saves', 'budgetwithbo'];
+  const sales = [], keys = [], notify = [];
+  for (let i = 0; i < 26; i++) {
+    const t = now - Math.random() * 40 * DAY;
+    const who = pick(FIRST) + (i + 1);
+    const code = pick(CODES);
+    const affiliate = code === 'MIA10' ? 'mia-saves' : pick(AFFS);
+    const off = code ? (code === 'SPRING15' ? 0.15 : 0.10) : 0;
+    const net = Math.round(49.99 * (1 - off) * 100) / 100;
+    const foreign = Math.random() < 0.3;
+    const id = 'pay_sample' + (1000 + i);
+    sales.push({ row: 0, ts: iso(t), event: 'payment.succeeded', orderId: id, email: who + '@example.com', name: who.replace(/\d+/, '').replace(/^./, c => c.toUpperCase()) + ' Sample',
+      product: 'Ultimate Budget Planner', variant: 'Dodo Payments', total: net, currency: 'USD', mode: i === 3 ? 'test' : 'live', status: 'succeeded', orderNumber: id,
+      discount: code, affiliate, gross: foreign ? (net * 4.9).toFixed(2) + ' PLN' : (net * 1.08).toFixed(2) + ' USD' });
+    if (i === 5 || i === 11) {
+      sales.push({ row: 0, ts: iso(t + 2 * DAY), event: 'refund.succeeded', orderId: 'ref_sample' + i, email: who + '@example.com', name: '', product: 'Ultimate Budget Planner',
+        variant: 'Dodo Payments', total: foreign ? net * 4.9 : net * 1.08, currency: foreign ? 'PLN' : 'USD', mode: 'live', status: 'succeeded', orderNumber: id, discount: '', affiliate: '',
+        gross: (foreign ? (net * 4.9).toFixed(2) + ' PLN' : (net * 1.08).toFixed(2) + ' USD') });
+    }
+    // A webhook retry: the same payment twice, which must count once.
+    if (i === 8) sales.push(Object.assign({}, sales[sales.length - 1]));
+  }
+  sales.push({ row: 0, ts: iso(now - 45 * DAY), event: 'order_created', orderId: '880001', email: 'early.bird@example.com', name: 'Early Bird', product: 'Ultimate Budget Planner',
+    variant: 'Dark / Classic', total: 49.99, currency: 'USD', mode: 'live', status: 'paid', orderNumber: '1001', discount: '', affiliate: '', gross: '' });
+  for (let i = 0; i < 6; i++) {
+    const t = now - Math.random() * 30 * DAY;
+    keys.push({ row: 0, key: 'ETSY-SAMP-' + (4000 + i) + '-8000-SAMPLE' + i, tool: 'ubp', theme: pick(['frosty', 'dark', 'peachy']), layout: '1', orderId: String(3400000000 + i),
+      email: 'etsy.buyer' + i + '@example.com', issuedAt: iso(t), status: i === 4 ? 'revoked' : 'active', devices: i % 2 ? ['a'] : ['a', 'b'], redeemCount: i === 2 ? 0 : 1, lastRedeemedAt: iso(t + DAY) });
+  }
+  ['tool-tasks', 'tool-habits', 'tool-meals', 'tool-tasks'].forEach((tool, i) => {
+    notify.push({ ts: iso(now - i * 3 * DAY), email: i === 3 ? 'alex1@example.com' : 'waiting' + i + '@example.com', tool, source: 'notify', visitorId: 'sample_v' + i });
+  });
+  // One address on the waitlist for two tools, and one buyer who also joined it.
+  notify.push({ ts: iso(now - DAY), email: 'waiting0@example.com', tool: 'tool-habits', source: 'notify', visitorId: 'sample_v0' });
+  return { sales, keys, notify };
+}
 function updateSampleBanner() {
   const banner = document.getElementById('adminSampleBanner');
   if (banner) banner.hidden = !_sampleDataActive;
 }
 function loadSampleData() {
   allEvents = generateSampleAdminEvents();
+  const extra = generateSampleCommerce();
+  allSales = extra.sales; allKeys = extra.keys; allNotify = extra.notify;
   _sampleDataActive = true;
   _lastFetched = Date.now();
   pennyResetChatState?.();
@@ -1982,9 +2391,9 @@ async function exitSampleData() {
   updateSampleBanner();
   (ADMIN_RENDERERS[currentATab] || renderOverview)();
   if (_adminAccessToken) {
-    try { allEvents = await adminFetchEvents(_adminAccessToken); _lastFetched = Date.now(); } catch (e) { /* keep last-known data */ }
+    try { await adminFetchAll(_adminAccessToken); } catch (e) { /* keep last-known data */ }
   } else {
-    allEvents = [];
+    allEvents = []; allKeys = []; allSales = []; allNotify = [];
   }
   (ADMIN_RENDERERS[currentATab] || renderOverview)();
 }
@@ -2001,9 +2410,20 @@ function wireSampleDataSection() {
   document.getElementById('sampleDataExitBtn')?.addEventListener('click', async () => { await exitSampleData(); renderSettings(); });
 }
 
+// The same six themes the planner has. Remembered on this browser only; the
+// <head> of admin.html applies it before anything paints.
+const ADMIN_THEMES = [['light', 'Light'], ['peachy', 'Peachy'], ['dark', 'Dark'], ['vintage-ledger', 'Vintage Ledger'], ['jolly', 'Jolly'], ['frosty', 'Frosty']];
+const ADMIN_THEME_KEY = 'evobudget_admin_theme';
+function setAdminTheme(theme) {
+  if (!ADMIN_THEMES.some(t => t[0] === theme)) theme = 'dark';
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem(ADMIN_THEME_KEY, theme); } catch (e) {}
+  // The globe paints its own canvas colours, so it is rebuilt for the theme.
+  if (currentATab === 'overview') renderOverview();
+}
+
 function renderSettings() {
   const el = document.getElementById('aview-settings');
-  const themes = [['light', 'Light'], ['dark', 'Dark'], ['synthwave', 'Synthwave'], ['vintage-ledger', 'Vintage Ledger'], ['terminal', 'Terminal']];
   const current = document.documentElement.dataset.theme || 'dark';
   el.innerHTML = `
     <div class="section-header"><h2 class="admin-section-title">Settings</h2></div>
@@ -2011,14 +2431,17 @@ function renderSettings() {
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">🎨 Appearance</div>
         <div class="theme-setting-row"><div class="theme-pill" role="group">
-          ${themes.map(([val, label]) => `<button class="theme-opt${val === current ? ' is-active' : ''}" data-theme-val="${val}" type="button">${esc(label)}</button>`).join('')}
+          ${ADMIN_THEMES.map(([val, label]) => `<button class="theme-opt${val === current ? ' is-active' : ''}" data-theme-val="${val}" type="button">${esc(label)}</button>`).join('')}
         </div></div>
       </div></div>
       ${pennySettingsCardHtml()}
       <div class="panel"><div class="panel-inner">
         <div class="settings-card-title">ℹ️ About this dashboard</div>
         <div class="admin-setting-row"><div><div class="admin-setting-label">Signed in as</div><div class="admin-setting-hint">${esc(_adminEmail || 'unknown')}</div></div></div>
-        <div class="admin-setting-row"><div><div class="admin-setting-label">Events loaded</div><div class="admin-setting-hint">${fmt(allEvents.length)} rows${_sampleDataActive ? ' (sample data)' : ''}, last refreshed ${_lastFetched ? esc(relTime(_lastFetched)) : 'never'}</div></div></div>
+        <div class="admin-setting-row"><div><div class="admin-setting-label">Data loaded</div><div class="admin-setting-hint">${fmt(allEvents.length)} events, ${fmt(allSales.length)} sales rows, ${fmt(allKeys.length)} keys, ${fmt(allNotify.length)} waitlist sign-ups${_sampleDataActive ? ' (sample data)' : ''}. Last refreshed ${_lastFetched ? esc(relTime(_lastFetched)) : 'never'}.</div></div></div>
+        <div class="admin-setting-row"><div><div class="admin-setting-label">Sales tracking</div><div class="admin-setting-hint">${allSales.some(r => r.discount || r.affiliate || r.gross) || !allSales.some(r => r.event === 'payment.succeeded')
+          ? 'Discount codes and affiliates are being recorded with each Dodo sale.'
+          : 'Dodo sales are arriving without the Discount, Affiliate and Gross columns. Paste the latest Code.gs into Apps Script and deploy a new version to start recording them.'}</div></div></div>
         <div class="admin-setting-row"><div><div class="admin-setting-label">Auto-refresh</div><div class="admin-setting-hint">Every ${Math.round(ADMIN_POLL_MS / 1000)}s while the dashboard is open</div></div></div>
       </div></div>
       <div class="panel"><div class="panel-inner">
@@ -2028,7 +2451,7 @@ function renderSettings() {
         <button class="btn btn-ghost" id="adminSignOutBtn2" type="button">Sign out</button>
       </div></div>
     </div>`;
-  el.querySelectorAll('.theme-opt').forEach(btn => btn.addEventListener('click', () => { document.documentElement.dataset.theme = btn.dataset.themeVal; el.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('is-active', b === btn)); }));
+  el.querySelectorAll('.theme-opt').forEach(btn => btn.addEventListener('click', () => { setAdminTheme(btn.dataset.themeVal); el.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('is-active', b === btn)); }));
   el.querySelector('#adminSignOutBtn2')?.addEventListener('click', adminSignOut);
   pennyWireSettingsCard();
 
@@ -2051,73 +2474,6 @@ function wireFilterBar(rerender) {
   document.getElementById('admFilterClear')?.addEventListener('click', () => { filters.from = ''; filters.to = ''; filters.tool = ''; rerender(); });
 }
 
-// ══════════════════════ Emails ══════════════════════
-// Every address the site has collected, in one list that can leave as a CSV.
-// Two sources today: buyers who claimed an Etsy key, and people who asked to
-// be told when a tool launches. Lemon Squeezy buyers are not here - that
-// sales proxy returns totals only, never customer records.
-let emailFilters = { source: '', tool: '', q: '' };
-
-// Newest-first, by real time where the date can be read and by position in
-// the sheet otherwise. Comparing the formatted strings put September after
-// October, which meant a repeat buyer's row could show an older order than
-// the one they had just placed.
-function emailRecency(r) {
-  const t = Date.parse(r.date);
-  return Number.isFinite(t) ? t : (r.seq || 0);
-}
-
-function emailRows() {
-  const rows = [];
-  allKeys.forEach((k, i) => {
-    if (!k.email) return;
-    rows.push({
-      seq: i,
-      email: String(k.email).trim().toLowerCase(), source: 'purchase', tool: k.tool || '',
-      detail: String(k.orderId || ''), date: k.issuedAt || '', status: k.status || 'active'
-    });
-  });
-  allSales.forEach((o, i) => {
-    if (!o.email) return;
-    rows.push({
-      seq: 2000000 + i,
-      email: String(o.email).trim().toLowerCase(), source: 'purchase',
-      tool: /ultimate/i.test(o.product) ? 'ubp' : /simple/i.test(o.product) ? 'sbp' : '',
-      detail: String(o.orderNumber || o.orderId || ''),
-      date: o.ts || '', status: o.mode === 'test' ? 'test' : 'active'
-    });
-  });
-  allNotify.forEach((n, i) => {
-    rows.push({
-      seq: 1000000 + i,
-      email: String(n.email).trim().toLowerCase(), source: 'notify', tool: n.tool || '',
-      detail: n.source || 'notify', date: n.ts || '', status: ''
-    });
-  });
-  // One row per address per source, keeping the most recent date.
-  const seen = new Map();
-  const count = new Map();
-  rows.forEach(r => {
-    const id = r.email + '|' + r.source + '|' + r.tool;
-    count.set(id, (count.get(id) || 0) + 1);
-    const prev = seen.get(id);
-    if (!prev || emailRecency(r) > emailRecency(prev)) seen.set(id, r);
-  });
-  // How many times this address has bought, so a repeat customer is not
-  // indistinguishable from a first-time one just because the list is
-  // deduplicated.
-  seen.forEach((r, id) => { r.orders = count.get(id) || 1; });
-  return [...seen.values()].sort((a, b) => emailRecency(b) - emailRecency(a));
-}
-
-function emailFilteredRows() {
-  const q = emailFilters.q.trim().toLowerCase();
-  return emailRows().filter(r =>
-    (!emailFilters.source || r.source === emailFilters.source) &&
-    (!emailFilters.tool || r.tool === emailFilters.tool) &&
-    (!q || r.email.includes(q) || String(r.detail).toLowerCase().includes(q)));
-}
-
 function csvCell(v) {
   const s = String(v == null ? '' : v);
   // A leading =, +, - or @ makes a spreadsheet treat the cell as a formula,
@@ -2125,170 +2481,360 @@ function csvCell(v) {
   const safe = /^[=+\-@]/.test(s) ? "'" + s : s;
   return /[",\n]/.test(safe) ? '"' + safe.replace(/"/g, '""') + '"' : safe;
 }
-
-function downloadEmailsCsv(rows, name) {
-  const header = ['Email', 'Source', 'Tool', 'Detail', 'Date', 'Status'];
-  const body = rows.map(r => [r.email, r.source, r.tool, r.detail, r.date, r.status].map(csvCell).join(','));
-  const blob = new Blob(['\uFEFF' + [header.join(','), ...body].join('\r\n')], { type: 'text/csv;charset=utf-8' });
+function downloadCsv(header, rows, name) {
+  const body = rows.map(r => r.map(csvCell).join(','));
+  const blob = new Blob(['﻿' + [header.join(','), ...body].join('\r\n')], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = name || ('ezzo-emails-' + new Date().toISOString().slice(0, 10) + '.csv');
+  a.download = name;
   document.body.appendChild(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
 }
-
-function renderEmails() {
-  const el = document.getElementById('aview-emails');
-  if (!el) return;
-  const all = emailRows();
-  const rows = emailFilteredRows();
-  const unique = new Set(all.map(r => r.email)).size;
-  const purchases = all.filter(r => r.source === 'purchase').length;
-  const notifies = all.filter(r => r.source === 'notify').length;
-  const tools = [...new Set(all.map(r => r.tool).filter(Boolean))];
-
-  el.innerHTML = `
-    <div class="section-header"><h2 class="section-title">✉️ Email list</h2></div>
-    <p class="section-desc">Everyone who has given you an address: Etsy key claims, Lemon Squeezy orders, and launch notifications.
-      Lemon Squeezy buyers appear from the moment the sale webhook is set up, so anything bought before that stays in their dashboard only.</p>
-    ${kpiRow([
-      { icon: '📇', label: 'Unique addresses', value: String(unique), sub: 'across both sources', color: '#6366f1' },
-      { icon: '🛒', label: 'From purchases', value: String(purchases), sub: 'Etsy key claims', color: '#10b981' },
-      { icon: '🔔', label: 'Launch notifications', value: String(notifies), sub: 'asked to be told', color: '#f59e0b' }
-    ])}
-    <div class="tx-filter-bar">
-      <input class="input input-sm" type="text" id="emQ" placeholder="Search address or order…" value="${esc(emailFilters.q)}">
-      <select class="select select-sm" id="emSource">
-        <option value="">All sources</option>
-        <option value="purchase" ${emailFilters.source==='purchase'?'selected':''}>Purchases</option>
-        <option value="notify" ${emailFilters.source==='notify'?'selected':''}>Launch notifications</option>
-      </select>
-      <select class="select select-sm" id="emTool">
-        <option value="">All tools</option>
-        ${tools.map(t => `<option value="${esc(t)}" ${emailFilters.tool===t?'selected':''}>${esc(t)}</option>`).join('')}
-      </select>
-    </div>
-    <div class="adm-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px">
-      <button class="btn btn-primary btn-sm" id="emExport">⬇ Export ${rows.length} shown</button>
-      <button class="btn btn-ghost btn-sm" id="emExportAll">Export all ${all.length}</button>
-      <button class="btn btn-ghost btn-sm" id="emCopy">Copy addresses</button>
-    </div>
-    ${rows.length === 0
-      ? `<div class="empty-state"><div class="empty-icon">✉️</div><p class="empty-title">No addresses yet</p>
-           <p class="empty-sub">They appear here as buyers claim keys and visitors ask to be told about a launch.</p></div>`
-      : `<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
-          <th>Email</th><th>Source</th><th>Tool</th><th>Detail</th><th>Count</th><th>Date</th>
-        </tr></thead><tbody>
-        ${rows.map(r => `<tr class="tx-row">
-          <td>${esc(r.email)}</td>
-          <td><span class="tx-pill">${r.source === 'purchase' ? 'Purchase' : 'Notify'}</span></td>
-          <td>${esc((r.tool || '').toUpperCase())}</td>
-          <td class="tx-desc">${esc(r.detail || '-')}</td>
-          <td>${r.orders > 1 ? '×' + r.orders : ''}</td>
-          <td class="tx-date">${esc(String(r.date).slice(0, 10))}</td>
-        </tr>`).join('')}
-        </tbody></table></div></div>`}`;
-
-  const rerender = () => renderEmails();
-  const q = document.getElementById('emQ');
-  q?.addEventListener('input', () => { emailFilters.q = q.value; clearTimeout(q._t); q._t = setTimeout(rerender, 250); });
-  document.getElementById('emSource')?.addEventListener('change', e => { emailFilters.source = e.target.value; rerender(); });
-  document.getElementById('emTool')?.addEventListener('change', e => { emailFilters.tool = e.target.value; rerender(); });
-  document.getElementById('emExport')?.addEventListener('click', () => downloadEmailsCsv(emailFilteredRows()));
-  document.getElementById('emExportAll')?.addEventListener('click', () => downloadEmailsCsv(emailRows(), 'ezzo-emails-all.csv'));
-  document.getElementById('emCopy')?.addEventListener('click', async () => {
-    const list = [...new Set(emailFilteredRows().map(r => r.email))].join(', ');
-    try { await navigator.clipboard.writeText(list); showToast('Addresses copied'); }
-    catch (e) { showToast('Could not copy'); }
+function shortDate(t) { return t ? new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'; }
+function shortDateTime(t) { return t ? new Date(t).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-'; }
+// Keeps the caret where it was while a search box re-renders its own tab.
+function wireSearch(id, onValue) {
+  const input = document.getElementById(id);
+  input?.addEventListener('input', () => {
+    clearTimeout(input._t);
+    input._t = setTimeout(() => {
+      const pos = input.selectionStart;
+      onValue(input.value);
+      const again = document.getElementById(id);
+      if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (e) {} }
+    }, 200);
   });
 }
 
 // ══════════════════════ Sales ══════════════════════
-// Every Lemon Squeezy order the webhook has recorded. Redemptions only ever
-// showed keys, so an order that was paid for but whose key was never typed
-// in appeared nowhere at all. This is the order side of the same story.
-function salesRows() {
-  const redeemedOrders = new Set();
-  redemptionEvents().forEach(e => {
-    const o = e.detail && e.detail.orderId;
-    if (o) redeemedOrders.add(String(o));
-  });
-  return allSales
-    .filter(o => !salesFilters.mode || o.mode === salesFilters.mode)
-    .filter(o => {
-      const q = salesFilters.q.trim().toLowerCase();
-      if (!q) return true;
-      return [o.email, o.name, o.product, o.orderId, o.orderNumber]
-        .some(v => String(v || '').toLowerCase().includes(q));
-    })
-    .map(o => Object.assign({}, o, {
-      // Either identifier can mark it redeemed: which one a redemption
-      // reported changed when the webhook started recording both.
-      redeemed: redeemedOrders.has(String(o.orderId)) || (!!o.orderNumber && redeemedOrders.has(String(o.orderNumber)))
-    }))
-    .sort((a, b) => String(b.ts).localeCompare(String(a.ts)));
+// Every order from every channel, as it was paid, with what happened to it
+// afterwards (refunds) and what brought it in (discount code, affiliate).
+const STATUS_LABEL = { paid: 'Paid', partial: 'Part refunded', refunded: 'Refunded', test: 'Test' };
+function salesFilteredRows(list) {
+  const q = salesFilters.q.trim().toLowerCase();
+  return list.filter(o =>
+    (!salesFilters.channel || o.channel === salesFilters.channel) &&
+    (!salesFilters.status || o.status === salesFilters.status || (salesFilters.status === 'refunded' && o.status === 'partial')) &&
+    (!q || [o.email, o.name, o.product, o.orderId, o.orderNumber, o.discount, o.affiliate].some(v => String(v || '').toLowerCase().includes(q))));
 }
-
 function renderSales() {
   const el = document.getElementById('aview-sales');
   if (!el) return;
-  const rows = salesRows();
-  const live = allSales.filter(o => o.mode !== 'test');
-  const tests = allSales.filter(o => o.mode === 'test');
-  const liveRevenue = live.reduce((s, o) => s + (Number(o.total) || 0), 0);
-  const unredeemed = rows.filter(o => !o.redeemed).length;
+  ensureSalesForRange();
+  const R = rangeMs(), P = previousRangeMs();
+  const ledger = salesLedger();
+  const inRange = ordersWithin(ledger, R);
+  const sum = applyLsTopUp(salesSummary(inRange));
+  const prev = P ? salesSummary(ordersWithin(ledger, P)) : null;
+  const vsTitle = P ? `Compared with the ${P.days} day${P.days === 1 ? '' : 's'} before this range` : '';
+  const rows = salesFilteredRows(inRange);
+  const discounts = discountGroups(inRange);
+  const affiliates = affiliateGroups(inRange);
+  const productGroups = (() => {
+    const m = new Map();
+    inRange.filter(o => isCounted(o) && o.status !== 'refunded').forEach(o => { const k = o.product || 'Unknown'; m.set(k, (m.get(k) || 0) + o.kept); });
+    return [...m.entries()].map(([label, value]) => ({ label, value: Math.round(value) }));
+  })();
+  const awaiting = inRange.filter(o => o.redeemed === false && o.status === 'paid').length;
 
   el.innerHTML = `
-    <div class="section-header"><h2 class="section-title">🧾 Sales</h2></div>
-    <p class="section-desc">Every Lemon Squeezy order, as it was paid, not as it was redeemed.
-      Etsy sales are not here: Etsy provides no feed, so those only become visible when a key is claimed.</p>
-    ${kpiRow([
-      { icon: '💰', label: 'Real revenue', value: '$' + liveRevenue.toFixed(2), sub: live.length + ' paid order' + (live.length === 1 ? '' : 's'), color: '#10b981' },
-      { icon: '🧪', label: 'Test orders', value: String(tests.length), sub: showTestData ? 'counted in Overview' : 'not counted anywhere', color: '#f59e0b' },
-      { icon: '🔑', label: 'Awaiting redemption', value: String(unredeemed), sub: 'paid but key not yet used', color: '#6366f1' }
+    ${pageHead('Sales', esc(formatRangeLabel()) + '. Every order from Dodo Payments, Lemon Squeezy and Etsy, once each, with refunds taken off.',
+      `<button class="btn btn-ghost btn-sm" id="slExport" type="button">⬇ Export CSV</button>`)}
+    ${rangeBarHtml('sl')}
+    ${statGrid([
+      { icon: '💰', label: 'Net revenue', value: money(sum.net), sub: sum.estimated ? 'incl. ' + money(sum.estimated) + ' Etsy est.' : 'after refunds', tone: '#10b981', delta: deltaChip(sum.net, prev && prev.net, false, vsTitle),
+        hint: 'What reached you after tax and refunds. Dodo sales are recorded in your settlement currency without the buyer\'s tax, so a sale paid in another currency reads the same as one paid in dollars.' },
+      { icon: '🧾', label: 'Paid orders', value: fmt(sum.orders), sub: sum.orders ? money(sum.aov) + ' average order' : 'none yet', tone: '#6366f1', delta: deltaChip(sum.orders, prev && prev.orders, false, vsTitle) },
+      { icon: '↩️', label: 'Refunds', value: money(sum.refunds), sub: fmt(sum.refundedOrders) + ' fully refunded', tone: '#f43f5e', delta: deltaChip(sum.refunds, prev && prev.refunds, true, vsTitle) },
+      { icon: '🏷️', label: 'With a discount', value: fmt(sum.discounted), sub: pct(sum.discounted, sum.orders, 0) + ' of orders · ' + fmt(sum.affiliated) + ' via affiliates', tone: '#f59e0b' }
     ])}
-    <div class="tx-filter-bar">
-      <input class="input input-sm" type="text" id="slQ" placeholder="Search buyer, product or order…" value="${esc(salesFilters.q)}">
-      <select class="select select-sm" id="slMode">
-        <option value="">Live and test</option>
-        <option value="live" ${salesFilters.mode === 'live' ? 'selected' : ''}>Real sales only</option>
-        <option value="test" ${salesFilters.mode === 'test' ? 'selected' : ''}>Test only</option>
+
+    <div class="adm-grid adm-grid--3">
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('By channel')}
+        ${channelBreakdownHtml(sum)}
+        ${sum.lsExtra ? `<p class="adm-note">Includes ${fmt(sum.lsExtra.orders)} earlier Lemon Squeezy order${sum.lsExtra.orders === 1 ? '' : 's'} known only to their API, so they are not listed below.</p>` : ''}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Discount codes', 'Codes applied at checkout. Revenue is what those orders brought in after the discount and any refund.')}
+        ${moneyTableHtml(discounts, 'Code', 'No discount codes used in this range.')}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Affiliates', 'Sales that arrived through an affiliate link or an affiliate\'s code.')}
+        ${moneyTableHtml(affiliates, 'Affiliate', 'No affiliate sales in this range.')}
+      </div></div>
+    </div>
+    ${productGroups.length > 1 ? `<div class="panel chart-panel"><div class="panel-inner-sm">${panelTitle('By product')}${hBarListHtml(productGroups, { showShare: false, prefix: '$' })}</div></div>` : ''}
+
+    <div class="adm-toolbar">
+      <input class="adm-input adm-input--grow" type="search" id="slQ" placeholder="Search buyer, order, code or affiliate…" value="${esc(salesFilters.q)}" aria-label="Search orders">
+      <select class="adm-input" id="slChannel" aria-label="Channel">
+        <option value="">All channels</option>
+        ${Object.entries(CHANNEL_LABEL).map(([v, l]) => `<option value="${v}"${salesFilters.channel === v ? ' selected' : ''}>${l}</option>`).join('')}
       </select>
-      <label class="check-label" style="gap:8px;font-size:12px"
-             title="Test orders are always listed here. This only decides whether they are added to the revenue figure on the Overview tab.">
-        <input type="checkbox" id="slShowTest" ${showTestData ? 'checked' : ''}><span class="checkmark checkmark--sm"></span>
-        <span>Count test orders as revenue</span>
+      <select class="adm-input" id="slStatus" aria-label="Status">
+        <option value="">Any status</option>
+        <option value="paid"${salesFilters.status === 'paid' ? ' selected' : ''}>Paid</option>
+        <option value="refunded"${salesFilters.status === 'refunded' ? ' selected' : ''}>Refunded</option>
+        <option value="test"${salesFilters.status === 'test' ? ' selected' : ''}>Test</option>
+      </select>
+      <label class="admin-search-toggle${showTestData ? ' is-active' : ''}" title="Test orders are always listed. This decides whether they count towards revenue everywhere on the dashboard.">
+        <input type="checkbox" id="slShowTest"${showTestData ? ' checked' : ''}> Count test orders${sum.tests ? ` (${sum.tests})` : ''}
       </label>
     </div>
-    ${rows.length === 0
-      ? `<div class="empty-state"><div class="empty-icon">🧾</div><p class="empty-title">No orders yet</p>
-           <p class="empty-sub">${salesFilters.mode
-              ? 'Nothing matches that filter. Set it back to "Live and test".'
-              : 'Orders appear the moment Lemon Squeezy reports one. If a sale rang your phone but is not listed here, the Apps Script needs redeploying.'}</p></div>`
-      : `<div class="panel"><div class="tx-table-wrap"><table class="tx-table"><thead><tr>
-          <th>Date</th><th>Order</th><th>Product</th><th>Buyer</th><th>Amount</th><th>Key used</th>
-        </tr></thead><tbody>
-        ${rows.map(o => `<tr class="tx-row">
-          <td class="tx-date">${esc(String(o.ts).slice(0, 10))}</td>
-          <td>${esc(o.orderNumber || o.orderId || '-')}${o.mode === 'test' ? ' <span class="admin-src-badge">TEST</span>' : ''}</td>
-          <td class="tx-cat">${esc(o.product)}${o.variant ? ' <span class="admin-table-muted">' + esc(o.variant) + '</span>' : ''}</td>
-          <td class="tx-desc">${esc(o.email || '-')}</td>
-          <td class="tx-amt">$${(Number(o.total) || 0).toFixed(2)}</td>
-          <td>${o.redeemed ? '✓' : '<span class="admin-table-muted">not yet</span>'}</td>
-        </tr>`).join('')}
-        </tbody></table></div></div>`}`;
 
-  const q = document.getElementById('slQ');
-  q?.addEventListener('input', () => { salesFilters.q = q.value; clearTimeout(q._t); q._t = setTimeout(renderSales, 250); });
-  document.getElementById('slMode')?.addEventListener('change', e => { salesFilters.mode = e.target.value; renderSales(); });
-  document.getElementById('slShowTest')?.addEventListener('change', e => {
-    setShowTestData(e.target.checked);
-    renderSales();
+    <div class="panel"><div class="panel-inner-sm">
+      <div class="admin-table-wrap"><table class="admin-table adm-orders">
+        <thead><tr><th>Date</th><th>Order</th><th>Channel</th><th>Product</th><th>Buyer</th><th class="num">Amount</th><th>Discount</th><th>Affiliate</th><th>Status</th><th>Key used</th></tr></thead>
+        <tbody>
+        ${rows.length ? rows.map(o => `<tr class="${o.status === 'refunded' || o.status === 'test' ? 'admin-row-muted' : ''}">
+          <td title="${esc(shortDateTime(o.t))}">${esc(shortDate(o.t))}</td>
+          <td class="admin-key-cell">${esc(o.orderNumber && o.channel === 'lemonsqueezy' ? o.orderNumber : o.orderId)}</td>
+          <td><span class="adm-chip" style="--c:${CHANNEL_COLOR[o.channel]}">${esc(CHANNEL_LABEL[o.channel])}</span></td>
+          <td>${esc(o.product || '-')}${o.variant ? ` <span class="admin-table-muted">${esc(o.variant)}</span>` : ''}</td>
+          <td>${o.email ? `<span class="admin-table-strong">${esc(o.email)}</span>${o.name ? `<br><span class="admin-table-muted">${esc(o.name)}</span>` : ''}` : '<span class="admin-table-muted">-</span>'}</td>
+          <td class="num">${money(o.net)}${o.estimated ? ' <span class="admin-src-badge" title="Etsy has no sales feed, so this is the list price">est.</span>' : ''}${o.refunded > 0 && o.status !== 'refunded' ? `<br><span class="admin-table-muted">-${money(o.refunded)}</span>` : ''}${o.gross && o.gross.currency && o.gross.currency !== String(o.currency).toUpperCase() ? `<br><span class="admin-table-muted" title="What the buyer paid, with tax">${esc(o.gross.amount.toFixed(2) + ' ' + o.gross.currency)}</span>` : ''}</td>
+          <td>${o.codes.length ? o.codes.map(c => `<span class="adm-tag">${esc(c)}</span>`).join(' ') : '<span class="admin-table-muted">-</span>'}</td>
+          <td>${o.affiliate ? `<span class="adm-tag adm-tag--aff">${esc(o.affiliate)}</span>` : '<span class="admin-table-muted">-</span>'}</td>
+          <td><span class="adm-status adm-status--${o.status}">${STATUS_LABEL[o.status]}</span></td>
+          <td>${o.redeemed === null ? '<span class="admin-table-muted" title="A Dodo key reports its own id when used, not the order, so this cannot be matched">n/a</span>' : o.redeemed ? '✓' : '<span class="admin-table-muted">not yet</span>'}</td>
+        </tr>`).join('') : `<tr class="admin-empty-row"><td colspan="10">${inRange.length ? 'No orders match these filters.' : 'No orders in this range. Sales appear the moment Dodo reports one.'}</td></tr>`}
+        </tbody>
+      </table></div>
+      ${awaiting ? `<p class="adm-note">${fmt(awaiting)} paid order${awaiting === 1 ? ' has' : 's have'} a key that has not been used yet.</p>` : ''}
+    </div></div>`;
+
+  wireRangeBar(el, 'sl', renderSales);
+  wireSearch('slQ', v => { salesFilters.q = v; renderSales(); });
+  document.getElementById('slChannel')?.addEventListener('change', e => { salesFilters.channel = e.target.value; renderSales(); });
+  document.getElementById('slStatus')?.addEventListener('change', e => { salesFilters.status = e.target.value; renderSales(); });
+  document.getElementById('slShowTest')?.addEventListener('change', e => { setShowTestData(e.target.checked); renderSales(); });
+  document.getElementById('slExport')?.addEventListener('click', () => downloadCsv(
+    ['Date', 'Order', 'Channel', 'Product', 'Email', 'Name', 'Amount', 'Refunded', 'Currency', 'Paid by buyer', 'Discount', 'Affiliate', 'Status'],
+    rows.map(o => [o.t ? new Date(o.t).toISOString() : '', o.orderNumber || o.orderId, CHANNEL_LABEL[o.channel], o.product, o.email, o.name, o.net.toFixed(2), o.refunded.toFixed(2), o.currency,
+      o.gross ? o.gross.amount.toFixed(2) + ' ' + o.gross.currency : '', o.discount, o.affiliate, STATUS_LABEL[o.status]]),
+    'ezzo-sales-' + new Date().toISOString().slice(0, 10) + '.csv'));
+  initFieldTips(el);
+}
+
+// ══════════════════════ Customers ══════════════════════
+// One row per email address, whatever brought it in: a purchase on any
+// channel, an Etsy key claim, or a "tell me when this launches" sign-up.
+// An address used three times is still one person.
+let customerFilters = { type: '', q: '' };
+function notifyToolLabel(id) {
+  const k = String(id || '').replace(/^tool-/, '');
+  const hit = (typeof BLOG_ADMIN_TOOLS !== 'undefined' ? BLOG_ADMIN_TOOLS : []).find(t => t.id === k);
+  return hit ? hit.label : (k ? k.charAt(0).toUpperCase() + k.slice(1) : 'Launch list');
+}
+function customerRows() {
+  const byEmail = new Map();
+  const get = email => {
+    if (!byEmail.has(email)) byEmail.set(email, { email, name: '', orders: 0, spent: 0, refunds: 0, testOrders: 0, channels: new Set(), products: new Set(), waitlist: new Set(), first: 0, last: 0, orderIds: [] });
+    return byEmail.get(email);
+  };
+  const touch = (c, t) => { if (!t) return; c.first = c.first ? Math.min(c.first, t) : t; c.last = Math.max(c.last, t); };
+  salesLedger().forEach(o => {
+    if (!o.email) return;
+    const c = get(o.email);
+    if (o.name && !c.name) c.name = o.name;
+    touch(c, o.t);
+    c.orderIds.push(o.orderNumber || o.orderId);
+    if (o.test) { c.testOrders++; return; }
+    if (o.status !== 'refunded') c.orders++;
+    c.spent += o.kept; c.refunds += o.refunded;
+    c.channels.add(CHANNEL_LABEL[o.channel]);
+    if (o.product) c.products.add(o.product);
+  });
+  allNotify.forEach(n => {
+    const email = String(n.email || '').trim().toLowerCase();
+    if (!email) return;
+    const c = get(email);
+    c.waitlist.add(notifyToolLabel(n.tool));
+    touch(c, Date.parse(n.ts) || 0);
+  });
+  return [...byEmail.values()].map(c => {
+    c.type = c.orders > 0 ? 'customer' : c.testOrders > 0 && !c.waitlist.size ? 'test' : c.waitlist.size ? 'waitlist' : 'refunded';
+    return c;
+  }).sort((a, b) => b.last - a.last);
+}
+function customerFilteredRows(all) {
+  const q = customerFilters.q.trim().toLowerCase();
+  return all.filter(c =>
+    (!customerFilters.type || c.type === customerFilters.type || (customerFilters.type === 'waitlist' && c.waitlist.size > 0)) &&
+    (!q || c.email.includes(q) || c.name.toLowerCase().includes(q) || c.orderIds.some(id => String(id).toLowerCase().includes(q))));
+}
+const CUSTOMER_TYPE_LABEL = { customer: 'Customer', waitlist: 'Waitlist', test: 'Test buyer', refunded: 'Refunded' };
+function renderCustomers() {
+  const el = document.getElementById('aview-customers');
+  if (!el) return;
+  const all = customerRows();
+  const rows = customerFilteredRows(all);
+  const customers = all.filter(c => c.type === 'customer');
+  const repeat = customers.filter(c => c.orders > 1).length;
+  const waitlist = all.filter(c => c.waitlist.size > 0).length;
+  const ltv = customers.length ? customers.reduce((a, c) => a + c.spent, 0) / customers.length : 0;
+  const csvRows = list => list.map(c => [c.email, c.name, CUSTOMER_TYPE_LABEL[c.type], c.orders, c.spent.toFixed(2), [...c.products].join('; '), [...c.channels].join('; '), [...c.waitlist].join('; '),
+    c.first ? new Date(c.first).toISOString().slice(0, 10) : '', c.last ? new Date(c.last).toISOString().slice(0, 10) : '']);
+  const header = ['Email', 'Name', 'Type', 'Orders', 'Spent', 'Products', 'Channels', 'Waitlist', 'First seen', 'Last seen'];
+
+  el.innerHTML = `
+    ${pageHead('Customers', 'Everyone who has given you an email address, one row per address: buyers on every channel and people on a launch waitlist. All time.',
+      `<button class="btn btn-ghost btn-sm" id="cuCopy" type="button">Copy addresses</button><button class="btn btn-primary btn-sm" id="cuExport" type="button">⬇ Export ${fmt(rows.length)}</button>`)}
+    ${statGrid([
+      { icon: '📇', label: 'Email addresses', value: fmt(all.length), sub: 'unique, all sources', tone: '#6366f1' },
+      { icon: '🛒', label: 'Customers', value: fmt(customers.length), sub: fmt(repeat) + ' bought more than once', tone: '#10b981' },
+      { icon: '💎', label: 'Average spend', value: money(ltv), sub: 'per customer, after refunds', tone: '#a855f7' },
+      { icon: '🔔', label: 'On a waitlist', value: fmt(waitlist), sub: 'asked to hear about a launch', tone: '#f59e0b' }
+    ])}
+    <div class="adm-toolbar">
+      <input class="adm-input adm-input--grow" type="search" id="cuQ" placeholder="Search email, name or order…" value="${esc(customerFilters.q)}" aria-label="Search customers">
+      <select class="adm-input" id="cuType" aria-label="Type">
+        <option value="">Everyone</option>
+        <option value="customer"${customerFilters.type === 'customer' ? ' selected' : ''}>Customers</option>
+        <option value="waitlist"${customerFilters.type === 'waitlist' ? ' selected' : ''}>On a waitlist</option>
+        <option value="refunded"${customerFilters.type === 'refunded' ? ' selected' : ''}>Refunded only</option>
+        <option value="test"${customerFilters.type === 'test' ? ' selected' : ''}>Test buyers</option>
+      </select>
+    </div>
+    <div class="panel"><div class="panel-inner-sm"><div class="admin-table-wrap"><table class="admin-table">
+      <thead><tr><th>Email</th><th>Type</th><th>Products</th><th class="num">Orders</th><th class="num">Spent</th><th>Waitlist</th><th>First seen</th><th>Last seen</th></tr></thead>
+      <tbody>
+      ${rows.length ? rows.map(c => `<tr>
+        <td><span class="admin-table-strong">${esc(c.email)}</span>${c.name ? `<br><span class="admin-table-muted">${esc(c.name)}</span>` : ''}</td>
+        <td><span class="adm-status adm-status--${c.type === 'customer' ? 'paid' : c.type === 'test' ? 'test' : c.type === 'refunded' ? 'refunded' : 'wait'}">${CUSTOMER_TYPE_LABEL[c.type]}</span></td>
+        <td>${c.products.size ? [...c.products].map(p => esc(p)).join('<br>') : '<span class="admin-table-muted">-</span>'}</td>
+        <td class="num">${c.orders ? fmt(c.orders) : '<span class="admin-table-muted">0</span>'}${c.testOrders ? ` <span class="admin-src-badge">+${c.testOrders} test</span>` : ''}</td>
+        <td class="num">${c.spent ? money(c.spent) : '<span class="admin-table-muted">-</span>'}</td>
+        <td>${c.waitlist.size ? [...c.waitlist].map(w => `<span class="adm-tag">${esc(w)}</span>`).join(' ') : '<span class="admin-table-muted">-</span>'}</td>
+        <td>${esc(shortDate(c.first))}</td>
+        <td>${esc(shortDate(c.last))}</td>
+      </tr>`).join('') : `<tr class="admin-empty-row"><td colspan="8">${all.length ? 'Nobody matches these filters.' : 'No addresses yet. They appear as people buy or join a waitlist.'}</td></tr>`}
+      </tbody>
+    </table></div></div></div>`;
+
+  wireSearch('cuQ', v => { customerFilters.q = v; renderCustomers(); });
+  document.getElementById('cuType')?.addEventListener('change', e => { customerFilters.type = e.target.value; renderCustomers(); });
+  document.getElementById('cuExport')?.addEventListener('click', () => downloadCsv(header, csvRows(customerFilteredRows(customerRows())), 'ezzo-customers-' + new Date().toISOString().slice(0, 10) + '.csv'));
+  document.getElementById('cuCopy')?.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(customerFilteredRows(customerRows()).map(c => c.email).join(', ')); showToast('Addresses copied'); }
+    catch (e) { showToast('Could not copy'); }
   });
 }
 
-const ADMIN_RENDERERS = { overview: renderOverview, redemptions: renderRedemptions, sales: renderSales, emails: renderEmails, blogs: renderBlogs, settings: renderSettings };
+// ══════════════════════ Product (in-app usage) ══════════════════════
+// What people do inside the planner, from the events the app already sends.
+// Covers both the free demo and the paid planner: they run the same app.
+const TAB_LABELS = {
+  dashboard: 'Dashboard', transactions: 'Transactions', budget: 'Budget', bills: 'Bills & subscriptions', debt: 'Debt',
+  goals: 'Savings goals', calendar: 'Calendar', challenges: 'Challenges', settings: 'Settings', insights: 'Insights', afford: 'Can I afford it?',
+  income: 'Income', expenses: 'Expenses', savings: 'Savings', subscriptions: 'Subscriptions', sinking: 'Savings goals'
+};
+const FEATURE_LABELS = {
+  setup_done: 'Finished setup', sample_data_loaded: 'Loaded sample data', csv_exported: 'Exported a CSV', bank_import: 'Imported a bank statement',
+  debt_added: 'Added a debt', sinking_fund_created: 'Created a savings goal', subscription_added: 'Added a subscription', allocation_enabled: 'Turned on allocation',
+  automation_enabled: 'Turned on automation', trial_deep_link: 'Opened a demo link', etsy_key_claimed: 'Claimed an Etsy key'
+};
+const LAYOUT_LABELS = { '1': 'Classic', '2': 'Radial', '3': 'Sleek' };
+const THEME_LABELS = { light: 'Light', dark: 'Dark', peachy: 'Peachy', 'vintage-ledger': 'Vintage Ledger', jolly: 'Jolly', frosty: 'Frosty', synthwave: 'Synthwave (retired)', terminal: 'Terminal (retired)', minimal: 'Minimal (retired)' };
+const NAV_LABELS = { top: 'Top bar', left: 'Left rail', right: 'Right rail' };
+function labelled(map, v) { return map[String(v)] || (v ? String(v).replace(/_/g, ' ').replace(/^./, c => c.toUpperCase()) : 'Unknown'); }
+function inAppEvents(r) { return allEvents.filter(e => (e.page === 'ubp' || e.page === 'sbp') && within(eventTime(e), r)); }
+function detailGroups(events, type, field, map) {
+  return groupCount(events.filter(e => e.type === type), e => labelled(map || {}, e.detail && e.detail[field]));
+}
+// Settings people actually changed, counted once per person (their latest
+// choice), so someone flicking through every theme does not count six times.
+function latestChoiceGroups(events, type, field, map) {
+  const last = new Map();
+  events.filter(e => e.type === type).sort((a, b) => eventTime(a) - eventTime(b)).forEach(e => last.set(e.visitorId, e.detail && e.detail[field]));
+  const m = new Map();
+  last.forEach(v => { const k = labelled(map || {}, v); m.set(k, (m.get(k) || 0) + 1); });
+  return [...m.entries()].map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
+}
+function renderProduct() {
+  const el = document.getElementById('aview-product');
+  if (!el) return;
+  const R = rangeMs(), P = previousRangeMs();
+  const ev = inAppEvents(R);
+  const prevEv = P ? inAppEvents(P) : null;
+  const vsTitle = P ? `Compared with the ${P.days} day${P.days === 1 ? '' : 's'} before this range` : '';
+  const users = uniqueBy(ev, e => e.visitorId).length;
+  const prevUsers = prevEv ? uniqueBy(prevEv, e => e.visitorId).length : null;
+  const sessions = buildSessions(ev);
+  const timed = sessions.filter(s => s.duration > 0);
+  const avg = timed.length ? timed.reduce((a, s) => a + s.duration, 0) / timed.length : 0;
+  const prevTimed = prevEv ? buildSessions(prevEv).filter(s => s.duration > 0) : null;
+  const prevAvg = prevTimed ? (prevTimed.length ? prevTimed.reduce((a, s) => a + s.duration, 0) / prevTimed.length : 0) : null;
+  const nr = newReturningSplit(ev);
+  const setupPeople = new Set(ev.filter(e => e.type === 'feature_used' && e.detail && e.detail.feature === 'setup_done').map(e => e.visitorId)).size;
+  const saveFails = ev.filter(e => e.type === 'save_failed').length;
+  const revoked = ev.filter(e => e.type === 'unlock_revoked').length;
+  const bankImports = ev.filter(e => e.type === 'feature_used' && e.detail && e.detail.feature === 'bank_import');
+  const importedRows = bankImports.reduce((a, e) => a + (Number(e.detail.rows) || 0), 0);
+  const dow = dayOfWeekCounts(ev.filter(e => e.type === 'session_start' || e.type === 'page_view'));
+
+  el.innerHTML = `
+    ${pageHead('Product', esc(formatRangeLabel()) + '. How people use the planner, demo and paid alike, from the anonymous events the app sends. No budget data is ever collected.')}
+    ${rangeBarHtml('pr')}
+    ${statGrid([
+      { icon: '🧑‍💻', label: 'Active users', value: fmt(users), sub: fmt(nr.returningCount) + ' returning', tone: '#6366f1', delta: deltaChip(users, prevUsers, false, vsTitle), hint: 'Distinct people who opened the planner in this range. Returning means they have had more than one session ever.' },
+      { icon: '⏱️', label: 'Avg. time in app', value: formatDuration(avg), sub: fmt(sessions.length) + ' sessions', tone: '#fb923c', delta: deltaChip(avg, prevAvg, false, vsTitle) },
+      { icon: '✅', label: 'Finished setup', value: fmt(setupPeople), sub: users ? pct(setupPeople, users, 0) + ' of active users' : '', tone: '#10b981', hint: 'People who completed the first-run setup in this range.' },
+      { icon: '🏦', label: 'Bank imports', value: fmt(bankImports.length), sub: fmt(importedRows) + ' transactions brought in', tone: '#3b82f6' }
+    ])}
+    ${saveFails || revoked ? `<div class="adm-alert">⚠️ ${saveFails ? `${fmt(saveFails)} failed save${saveFails === 1 ? '' : 's'} (the browser refused to store data, usually a full or private-mode storage)` : ''}${saveFails && revoked ? ' · ' : ''}${revoked ? `${fmt(revoked)} unlock${revoked === 1 ? '' : 's'} revoked on a device after a key was disabled` : ''}.</div>` : ''}
+
+    <div class="adm-grid adm-grid--2">
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Sections opened', 'How often each part of the planner was opened.')}
+        ${hBarListHtml(detailGroups(ev, 'tab_viewed', 'tab', TAB_LABELS), { empty: 'No sections opened in this range.', limit: 10 })}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Features used')}
+        ${hBarListHtml(detailGroups(ev, 'feature_used', 'feature', FEATURE_LABELS), { empty: 'No features used in this range.', limit: 10 })}
+      </div></div>
+    </div>
+
+    <div class="adm-grid adm-grid--3">
+      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
+        ${panelTitle('Themes chosen', 'Each person\'s latest choice, among people who changed theme in this range.')}
+        ${pieOrEmpty(latestChoiceGroups(ev, 'theme_changed', 'theme', THEME_LABELS), 'Nobody changed theme in this range.')}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Dashboard layout', 'Each person\'s latest choice.')}
+        ${vBarChartHtml(latestChoiceGroups(ev, 'dashboard_layout_changed', 'layout', LAYOUT_LABELS), { empty: 'No layout changes in this range.' })}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Navigation position', 'Each person\'s latest choice.')}
+        ${vBarChartHtml(latestChoiceGroups(ev, 'nav_position_changed', 'position', NAV_LABELS), { empty: 'Nobody moved the navigation in this range.' })}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Ezzo personality', 'Which voice people picked for Ezzo, latest choice per person.')}
+        ${hBarListHtml(latestChoiceGroups(ev, 'persona_changed', 'persona'), { empty: 'No personality changes in this range.' })}
+      </div></div>
+      <div class="panel chart-panel" data-chart-scope><div class="panel-inner-sm">
+        ${panelTitle('Where data is kept', 'Google Drive sync or this device only, latest choice per person.')}
+        ${pieOrEmpty(latestChoiceGroups(ev, 'sync_mode_chosen', 'mode', { google: 'Google Drive', local: 'This device' }), 'No sync choices in this range.')}
+      </div></div>
+      <div class="panel chart-panel"><div class="panel-inner-sm">
+        ${panelTitle('Devices in the app')}
+        ${vBarChartHtml(groupCount(uniqueVisitorEvents(ev), e => uaDevice(e.ua)), { categories: ['Desktop', 'Tablet', 'Mobile'] })}
+      </div></div>
+    </div>
+
+    <div class="panel chart-panel"><div class="panel-inner-sm">
+      ${panelTitle('Busiest days', 'Visits to the planner by day of the week.')}
+      ${vBarChartHtml(dow.map(d => ({ label: d.label, value: d.value })), { categories: DOW_LABELS.slice(1).concat('Sun') })}
+    </div></div>`;
+
+  wireRangeBar(el, 'pr', renderProduct);
+  initFieldTips(el);
+  wireCharts(el);
+}
+
+const ADMIN_RENDERERS = { overview: renderOverview, sales: renderSales, customers: renderCustomers, keys: renderRedemptions, product: renderProduct, blogs: renderBlogs, settings: renderSettings };
 function switchATab(tab) {
   currentATab = tab;
   document.querySelectorAll('#adminTabs .btab').forEach(b => b.classList.toggle('is-active', b.dataset.atab === tab));
@@ -2297,23 +2843,26 @@ function switchATab(tab) {
 }
 
 // ══════════════════════ Live polling ══════════════════════
+// Every sheet, every tick. Keys, Sales and Notify are small, and Overview,
+// Sales, Customers and Keys all read from more than one of them, so fetching
+// only what the open tab needs left the others showing stale numbers.
+async function adminFetchAll(token) {
+  const [events, keys, notify, sales] = await Promise.all([
+    adminFetchEvents(token), adminFetchKeys(token), adminFetchNotify(token), adminFetchSales(token)
+  ]);
+  allEvents = events; allKeys = keys; allNotify = notify; allSales = sales;
+  _lastFetched = Date.now();
+}
+function rerenderCurrent() {
+  // A re-render while someone is typing into the blog editor would wipe it.
+  if (currentATab === 'blogs' && blogEditing) return;
+  (ADMIN_RENDERERS[currentATab] || renderOverview)();
+}
 function startLivePolling() {
   stopLivePolling();
   liveTimer = setInterval(async () => {
     if (_sampleDataActive) return; // don't let a background poll silently swap sample data back to real
-    try {
-      allEvents = await adminFetchEvents(_adminAccessToken);
-      // Keys change far more rarely than events, so only refetch them on the
-      // two tabs that read them - Keys itself, and Redemptions, which resolves
-      // each key's order ID from them.
-      if (currentATab === 'keys' || currentATab === 'redemptions' || currentATab === 'emails') allKeys = await adminFetchKeys(_adminAccessToken);
-      if (currentATab === 'emails' || currentATab === 'sales' || currentATab === 'redemptions') {
-        allSales = await adminFetchSales(_adminAccessToken);
-      }
-      if (currentATab === 'emails') allNotify = await adminFetchNotify(_adminAccessToken);
-      _lastFetched = Date.now();
-      (ADMIN_RENDERERS[currentATab] || renderOverview)();
-    }
+    try { await adminFetchAll(_adminAccessToken); rerenderCurrent(); }
     catch (e) { /* keep showing last-known data; next tick may recover */ }
   }, ADMIN_POLL_MS);
 }
@@ -2334,11 +2883,7 @@ async function adminSignIn() {
     const email = await _adminFetchEmail(token);
     if (email.toLowerCase() !== ADMIN_ALLOWED_EMAIL.toLowerCase()) { _adminAccessToken = null; throw new Error('not_allowed'); }
     _adminEmail = email;
-    allEvents = await adminFetchEvents(token);
-    allKeys = await adminFetchKeys(token);
-    allNotify = await adminFetchNotify(token);
-    allSales = await adminFetchSales(token);
-    _lastFetched = Date.now();
+    await adminFetchAll(token);
     Object.assign(overviewFilters, currentMonthBounds()); // reset to the current month on every sign-in, per explicit request
     document.getElementById('adminGate').hidden = true;
     // .view{display:none} in style.css only lifts for .view.is-active (see
@@ -2367,6 +2912,9 @@ function adminSignOut() {
   _adminEmail = '';
   allEvents = [];
   allKeys = [];
+  allSales = [];
+  allNotify = [];
+  lsSales = { loaded: false, configured: false, revenue: 0, orders: 0, error: '', rangeKey: null };
   _sampleDataActive = false;
   updateSampleBanner();
   const viewEl = document.getElementById('viewAdmin');
@@ -2379,7 +2927,11 @@ document.getElementById('adminSignInBtn')?.addEventListener('click', adminSignIn
 document.getElementById('adminSignOutBtn')?.addEventListener('click', adminSignOut);
 document.getElementById('adminRefreshBtn')?.addEventListener('click', async () => {
   if (_sampleDataActive) return; // don't let the manual refresh silently swap sample data back to real
-  try { allEvents = await adminFetchEvents(_adminAccessToken); _lastFetched = Date.now(); (ADMIN_RENDERERS[currentATab] || renderOverview)(); } catch (e) { /* silent - keep last-known data on screen */ }
+  const btn = document.getElementById('adminRefreshBtn');
+  btn?.classList.add('is-spinning');
+  try { lsSales.rangeKey = null; await adminFetchAll(_adminAccessToken); rerenderCurrent(); showToast('Up to date'); }
+  catch (e) { showToast("Couldn't refresh. Showing the last data loaded."); }
+  finally { btn?.classList.remove('is-spinning'); }
 });
 document.getElementById('adminSampleBannerExit')?.addEventListener('click', () => { exitSampleData(); if (currentATab === 'settings') renderSettings(); });
 pennyInit();
