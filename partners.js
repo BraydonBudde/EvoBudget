@@ -99,8 +99,9 @@
       rateText: rateText(program.type, program.amount),
       rateLong: program.type === 'flat' ? rateText('flat', program.amount) + ' for every sale' : program.amount + '% of what they pay',
       rateTermsText: program.type === 'flat' ? 'for every sale your link or code brings in' : 'of each sale, worked out on the price paid after the discount and before tax',
-      rateShort: program.type === 'flat' ? 'for every sale' : 'commission on every sale',
-      applyNote: program.autoApprove === false ? 'Tell us where you share. We read every application and usually reply within two working days.' : 'Fill in a short form and get your link and code straight away.',
+      rateShort: program.type === 'flat' ? 'for every sale' : 'of every sale',
+      applyNote: program.autoApprove === false ? 'We review every application within two working days.' : 'Get your link and code straight away.',
+      payoutSchedulePlain: String(program.payoutSchedule || 'Monthly').replace(/,.*$/, ''),
       bonusRate: top ? rateText(program.type, top.amount) : '', bonusSales: top ? tierText(top) : '',
       perSale: perSale().toFixed(2),
       payoutScheduleLower: String(program.payoutSchedule || 'monthly').replace(/^./, function (c) { return c.toLowerCase(); }).replace(/,.*$/, '')
@@ -126,8 +127,13 @@
   function wirePublic() {
     $('#ptCalcRange') && $('#ptCalcRange').addEventListener('input', calc);
     $$('[data-signin]').forEach(function (b) { b.addEventListener('click', openSignin); });
-    // "Program terms" in the agree box opens the full terms just below it.
-    $$('a[href="#terms"]').forEach(function (l) { l.addEventListener('click', function () { var d = $('#terms'); if (d) d.open = true; }); });
+    // "Program terms" opens the full terms in a dialog over the page.
+    var terms = $('#ptTerms');
+    if (terms) {
+      $$('[data-terms]').forEach(function (l) { l.addEventListener('click', function (e) { e.preventDefault(); terms.hidden = false; terms.querySelector('.pt-modal-x').focus(); }); });
+      terms.addEventListener('click', function (e) { if (e.target === terms || e.target.closest('[data-close]')) terms.hidden = true; });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !terms.hidden) terms.hidden = true; });
+    }
     var modal = $('#ptSignin');
     modal.addEventListener('click', function (e) { if (e.target === modal || e.target.closest('[data-close]')) closeSignin(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeSignin(); });
@@ -145,12 +151,13 @@
     form && form.addEventListener('submit', function (e) {
       e.preventDefault();
       var f = form, msg = $('#ptApplyMsg'), btn = f.querySelector('button[type=submit]');
-      var data = { name: f.name.value.trim(), email: f.email.value.trim(), site: f.site.value.trim(), audience: f.audience.value, code: f.code.value.trim(),
-                   promo: f.promo.value.trim(), method: f.method.value, payout: f.payout.value.trim() };
+      var val = function (n) { return f[n] ? String(f[n].value || '').trim() : ''; };
+      var data = { name: val('name'), email: val('email'), site: val('site'), audience: val('audience'), code: val('code'),
+                   promo: val('promo'), method: val('method') || 'paypal', payout: val('payout') };
       msg.className = 'pt-form-msg';
       if (!data.name) return fail('Please add your name.', f.name);
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return fail('That email does not look right.', f.email);
-      if (data.payout && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.payout)) return fail('The payout email does not look right.', f.payout);
+      if (data.payout && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.payout)) return fail('The payout email does not look right.', f.payout || f.email);
       if (!f.agree.checked) return fail('Please agree to the program terms.', f.agree);
       btn.disabled = true; btn.textContent = 'Sending…';
       var ref = typeof window.ezzoAffiliateRef === 'function' ? window.ezzoAffiliateRef() : '';

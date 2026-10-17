@@ -81,7 +81,37 @@ function _analyticsTool() {
 // Fires an event. Silent no-op if the endpoint isn't configured yet, and
 // never throws or blocks the caller - a failed/slow analytics call must
 // never be able to affect the app itself.
+//
+// Only real visitors are counted. Nothing is sent from:
+//  - automated browsers (test runs set navigator.webdriver),
+//  - copies of the site running anywhere but ezzohub.com (local previews),
+//  - the owner's own devices: any browser that has signed in to the admin
+//    dashboard, or opened any page with ?notrack=1 (?notrack=0 undoes it).
+// Marking a device sends one last "owner_device" event, so the dashboard can
+// also hide everything that device sent before it was marked.
+const ANALYTICS_OWNER_KEY = 'ezzo_exclude_from_analytics';
+function _analyticsRealSite() {
+  try { return !navigator.webdriver && /(^|\.)ezzohub\.com$/.test(location.hostname); } catch (e) { return false; }
+}
+function _analyticsIsOwner() { try { return localStorage.getItem(ANALYTICS_OWNER_KEY) === '1'; } catch (e) { return false; } }
+function _analyticsShouldSend() { return _analyticsRealSite() && !_analyticsIsOwner(); }
+function _analyticsMarkOwnerDevice() {
+  if (_analyticsIsOwner()) return;
+  if (_analyticsRealSite()) _analyticsSend('owner_device', {});
+  try { localStorage.setItem(ANALYTICS_OWNER_KEY, '1'); } catch (e) {}
+}
+(function () {
+  try {
+    const flag = new URLSearchParams(location.search).get('notrack');
+    if (flag === '1') _analyticsMarkOwnerDevice();
+    else if (flag === '0') localStorage.removeItem(ANALYTICS_OWNER_KEY);
+  } catch (e) {}
+})();
 function trackEvent(type, detail) {
+  if (!ANALYTICS_ENDPOINT || !_analyticsShouldSend()) return;
+  _analyticsSend(type, detail);
+}
+function _analyticsSend(type, detail) {
   if (!ANALYTICS_ENDPOINT) return;
   try {
     const payload = {

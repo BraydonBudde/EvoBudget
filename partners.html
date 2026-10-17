@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="landing.css?v=20261218" />
-  <link rel="stylesheet" href="partners.css?v=20261241" />
+  <link rel="stylesheet" href="partners.css?v=20261250" />
   <style>html, body { margin: 0; background: #f3f1fd; } body { min-height: 100vh; }</style>
 </head>
 <body>
@@ -46,171 +46,64 @@
         <span class="lx-brand-mark"><img src="branding/ezzo-mark-white.png" alt="" width="28" height="28" /></span>
         <span>Ezzo Hub<small>Partners</small></span>
       </a>
-      <nav class="lx-nav-links" aria-label="Page sections" data-public>
-        <a href="#how">How it works</a>
-        <a href="#perks">What you get</a>
-        <a href="#earn">Earnings</a>
-      </nav>
       <div class="lx-nav-end">
         <button class="lx-btn lx-btn--small" type="button" data-signin data-public>Sign in</button>
-        <a class="lx-btn lx-btn--primary lx-btn--small" href="#apply" data-public>Join now</a>
         <button class="lx-btn lx-btn--small" type="button" id="ptSignOutTop" data-app hidden>Sign out</button>
       </div>
     </div>
   </header>
 
   <!-- ═══════════════ PUBLIC: the program ═══════════════ -->
-  <main id="ptPublic">
-    <section class="pt-hero lx-wrap">
-      <div class="pt-hero-copy">
-        <h1 class="pt-h1"><span>Share a planner people love.</span><span class="lx-grad-text">Earn <b data-p="rateText">30%</b> on every sale.</span></h1>
-        <p class="pt-lead">The Ultimate Budget Planner shows people exactly what they can spend each day, with no bank login and no subscription. Recommend it, give your audience <b><span data-p="customerDiscount">10</span>% off</b>, and get paid for every sale your link or code brings in.</p>
-        <div class="pt-hero-cta">
-          <a class="lx-btn lx-btn--primary" href="#apply">Become a partner</a>
-          <button class="lx-btn" type="button" data-signin>I'm already a partner</button>
-        </div>
-      </div>
-      <div class="pt-hero-art" aria-hidden="true">
-        <div class="pt-stage">
-          <img class="pt-creative pt-creative--back" src="branding/partners/dark-story.webp" alt="" width="560" height="996" />
-          <img class="pt-creative pt-creative--front" src="branding/partners/frosty-story.webp" alt="" width="560" height="996" />
-          <div class="pt-mock">
-            <div class="pt-mock-top"><span class="pt-mock-dot"></span><span>Your partner dashboard</span></div>
-            <div class="pt-mock-label">Earned this month</div>
-            <div class="pt-mock-big">$<span id="ptMockNum">374.92</span></div>
-            <svg class="pt-mock-chart" viewBox="0 0 300 90" preserveAspectRatio="none">
-              <defs><linearGradient id="ptMockFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b6cf6" stop-opacity=".35"/><stop offset="1" stop-color="#8b6cf6" stop-opacity="0"/></linearGradient></defs>
-              <path d="M0 78 C30 74 40 60 70 62 S110 40 140 46 S190 22 220 30 S270 8 300 12 L300 90 L0 90 Z" fill="url(#ptMockFill)"/>
-              <path class="pt-mock-line" d="M0 78 C30 74 40 60 70 62 S110 40 140 46 S190 22 220 30 S270 8 300 12" fill="none" stroke="#7651f0" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-            <div class="pt-mock-row"><span>Clicks</span><b>1,284</b></div>
-            <div class="pt-mock-row"><span>Sales</span><b>28</b></div>
-          </div>
-          <div class="pt-toast pt-toast--a"><span><svg><use href="#i-coin"/></svg></span><div><b>New sale</b><small>+$13.50 via your code</small></div></div>
-          <div class="pt-toast pt-toast--b"><span><svg><use href="#i-link"/></svg></span><div><b>12 new clicks</b><small>from your story</small></div></div>
-        </div>
-        <p class="pt-mock-note">Real creatives from the partner kit. The dashboard numbers are an illustration.</p>
-      </div>
-    </section>
+  <main id="ptPublic" class="pt-land lx-wrap">
+    <section class="pt-land-pitch" aria-labelledby="ptTitle">
+      <h1 class="pt-h1" id="ptTitle"><span>Share a planner people love.</span><span class="lx-grad-text">Earn <b data-p="rateText">30%</b> on every sale.</span></h1>
+      <p class="pt-lead">The Ultimate Budget Planner shows people what they can safely spend each day, with no bank login and no subscription. Recommend it, give your audience <b><span data-p="customerDiscount">10</span>% off</b>, and get paid for every sale.</p>
 
-    <section class="lx-wrap pt-band-stats" aria-label="The program at a glance">
-      <div><svg aria-hidden="true"><use href="#i-coin"/></svg><b data-p="rateText">30%</b><span data-p="rateShort">commission on every sale</span></div>
-      <div><svg aria-hidden="true"><use href="#i-gift"/></svg><b><span data-p="customerDiscount">10</span>% off</b><span>for your audience</span></div>
-      <div><svg aria-hidden="true"><use href="#i-clock"/></svg><b><span data-p="cookieDays">30</span> days</b><span>after each click</span></div>
-      <div><svg aria-hidden="true"><use href="#i-bank"/></svg><b>$<span data-p="minPayout">50</span></b><span>minimum payout</span></div>
-    </section>
+      <dl class="pt-keys" aria-label="The program at a glance">
+        <div><dt>Commission</dt><dd data-p="rateText">30%</dd><span data-p="rateShort">of every sale</span></div>
+        <div><dt>You earn</dt><dd>$<span data-p="perSale">13.50</span></dd><span>for each sale</span></div>
+        <div><dt>Your audience</dt><dd><span data-p="customerDiscount">10</span>% off</dd><span>with your code</span></div>
+        <div><dt>Link window</dt><dd><span data-p="cookieDays">30</span> days</dd><span>after each click</span></div>
+      </dl>
 
-    <section class="pt-sec lx-wrap" id="how">
-      <div class="pt-sec-head"><h2 class="pt-h2"><span>Three steps.</span><span class="lx-grad-text">No fees, ever.</span></h2></div>
-      <ol class="pt-steps">
-        <li>
-          <div class="pt-step-art pt-step-art--form" aria-hidden="true">
-            <i></i><i></i><i class="short"></i><em>Join now</em>
-          </div>
-          <span class="pt-step-num">1</span>
-          <h3>Join</h3>
-          <p data-p="applyNote">Fill in a short form and get your link and code straight away.</p>
-        </li>
-        <li>
-          <div class="pt-step-art pt-step-art--share" aria-hidden="true">
-            <img src="branding/partners/frosty-square-post.webp" alt="" width="640" height="640" loading="lazy" />
-            <img src="branding/partners/dark-pinterest-pin.webp" alt="" width="520" height="780" loading="lazy" />
-            <img src="branding/partners/peachy-square-post.webp" alt="" width="640" height="640" loading="lazy" />
-          </div>
-          <span class="pt-step-num">2</span>
-          <h3>Share your link or code</h3>
-          <p>Post ready-made banners, videos and captions, in all six of the planner's looks, or make your own.</p>
-        </li>
-        <li>
-          <div class="pt-step-art pt-step-art--paid" aria-hidden="true">
-            <div><span>Payout sent</span><b>$121.50</b><small><svg><use href="#i-check"/></svg> Received</small></div>
-          </div>
-          <span class="pt-step-num">3</span>
-          <h3>Get paid</h3>
-          <p>Watch clicks and sales arrive live. Earnings are paid <span data-p="payoutScheduleLower">monthly</span> once you pass $<span data-p="minPayout">50</span>.</p>
-        </li>
+      <ol class="pt-flow" aria-label="How it works">
+        <li><i aria-hidden="true">1</i><div><b>Join</b><span data-p="applyNote">Get your link and code straight away.</span></div></li>
+        <li><i aria-hidden="true">2</i><div><b>Share</b><span>Post your link, code or our ready-made creatives.</span></div></li>
+        <li><i aria-hidden="true">3</i><div><b>Get paid</b><span><span data-p="payoutSchedulePlain">Monthly</span>, from $<span data-p="minPayout">50</span>.</span></div></li>
       </ol>
+
+      <figure class="pt-strip" aria-label="Examples from the partner kit">
+        <div class="pt-strip-imgs" aria-hidden="true">
+          <img src="branding/partners/frosty-story.webp" alt="" width="560" height="996" />
+          <img src="branding/partners/peachy-square-post.webp" alt="" width="640" height="640" />
+          <img src="branding/partners/dark-pinterest-pin.webp" alt="" width="520" height="780" />
+          <img src="branding/partners/light-square-post-receipt.webp" alt="" width="640" height="640" />
+        </div>
+        <figcaption><b>Creatives included.</b> Banners, short videos and captions in six looks, ready the moment you join.</figcaption>
+      </figure>
     </section>
 
-    <section class="pt-sec lx-wrap" id="perks">
-      <div class="pt-sec-head"><h2 class="pt-h2"><span>Everything you need.</span><span class="lx-grad-text">Nothing you don't.</span></h2></div>
-      <div class="pt-perks">
-        <div class="pt-perk"><i aria-hidden="true"><svg><use href="#i-coin"/></svg></i><h3><span data-p="rateText">30%</span> commission</h3><p>On every sale for <span data-p="cookieDays">30</span> days after a click<span data-show="tiers">, rising to <span data-p="bonusRate">35%</span> once you pass <span data-p="bonusSales">10 sales</span></span>.</p></div>
-        <div class="pt-perk"><i aria-hidden="true"><svg><use href="#i-gift"/></svg></i><h3><span data-p="customerDiscount">10</span>% off for your audience</h3><p>Your code is applied at checkout automatically when they use your link.</p></div>
-        <div class="pt-perk"><i aria-hidden="true"><svg><use href="#i-mic"/></svg></i><h3>A code that works anywhere</h3><p>Say it in a video, a podcast or a story. Any sale with your code is yours, link or no link.</p></div>
-        <div class="pt-perk"><i aria-hidden="true"><svg><use href="#i-chart"/></svg></i><h3>A live dashboard</h3><p>Clicks, demo starts, sales and earnings by day, with campaign tags to see which post worked.</p></div>
-        <div class="pt-perk"><i aria-hidden="true"><svg><use href="#i-image"/></svg></i><h3>Creatives included</h3><p>Banners, videos, screenshots and captions, ready the moment you join.</p></div>
-        <div class="pt-perk"><i aria-hidden="true"><svg><use href="#i-shield"/></svg></i><h3>Paid on time</h3><p>PayPal, Wise or bank transfer, <span data-p="payoutScheduleLower">monthly</span>. Every payout is itemised in your dashboard.</p></div>
-      </div>
-    </section>
-
-    <section class="pt-sec lx-wrap" id="earn">
-      <div class="pt-calc">
-        <div class="pt-calc-copy">
-          <h2 class="pt-h2"><span>What could you earn?</span><span>Slide to see.</span></h2>
-          <p>The planner is $<span data-p="price">49.99</span>, paid once. Your audience gets <span data-p="customerDiscount">10</span>% off with your code and you earn <span data-p="rateLong">30% of what they pay</span><span data-show="tiers">, rising to <span data-p="bonusRate">35%</span> after <span data-p="bonusSales">10 sales</span></span>.</p>
-          <p class="pt-fine">An example, not a promise: what you earn depends on your audience. Commission is worked out on the price paid after the discount and before sales tax. Partners can be offered other programs.</p>
-        </div>
-        <div class="pt-calc-card">
-          <label for="ptCalcRange">Sales you refer each month <b id="ptCalcSales">20</b></label>
-          <input type="range" id="ptCalcRange" min="1" max="200" value="20" aria-describedby="ptCalcOut" />
-          <div class="pt-calc-out" id="ptCalcOut" aria-live="polite">
-            <div><span>Per month</span><b id="ptCalcMonth">$270</b></div>
-            <div><span>Per year</span><b id="ptCalcYear">$3,240</b></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="pt-sec lx-wrap" id="apply">
-      <div class="pt-apply">
-        <div class="pt-apply-copy">
-          <h2 class="pt-h2"><span>Become a partner.</span><span class="lx-grad-text">It's free.</span></h2>
-          <p class="pt-text">Bloggers, creators, coaches, newsletter writers and anyone whose people want calmer money. Big audience or small, you're welcome.</p>
-          <ul class="pt-points pt-points--tight">
-            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>No minimum audience size</span></li>
-            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>No cost and no contract</span></li>
-            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Leave any time and keep what you've earned</span></li>
-          </ul>
-          <img class="pt-apply-img" src="branding/partners/frosty-square-post.webp" alt="" width="640" height="640" loading="lazy" aria-hidden="true" />
-        </div>
+    <section class="pt-land-form" aria-labelledby="ptFormTitle">
+      <div class="pt-form-card">
+        <h2 id="ptFormTitle">Join the partner program</h2>
+        <p class="pt-form-sub">Free, no contract, no minimum audience. Takes a minute.</p>
         <form class="pt-form" id="ptApplyForm" novalidate>
           <div class="pt-form-row">
-            <label>Your name<input name="name" autocomplete="name" required maxlength="80" /></label>
-            <label>Email<input name="email" type="email" autocomplete="email" required maxlength="120" /></label>
+            <label><span>Your name</span><input name="name" autocomplete="name" required maxlength="80" /></label>
+            <label><span>Email</span><input name="email" type="email" autocomplete="email" required maxlength="120" /></label>
           </div>
           <label><span>Where you share <span class="pt-opt">website or main profile</span></span><input name="site" placeholder="https://" maxlength="200" inputmode="url" /></label>
           <div class="pt-form-row">
-            <label>Audience size
-              <select name="audience">
-                <option value="">Choose one</option>
-                <option>Under 1,000</option><option>1,000 to 10,000</option><option>10,000 to 100,000</option><option>Over 100,000</option>
-              </select>
-            </label>
             <label><span>Code you'd like <span class="pt-opt">optional</span></span><input name="code" placeholder="e.g. MIA" maxlength="16" autocapitalize="characters" /></label>
-          </div>
-          <label><span>How will you share it? <span class="pt-opt">optional</span></span><textarea name="promo" rows="3" maxlength="600" placeholder="A YouTube review, a blog post, my newsletter..."></textarea></label>
-          <div class="pt-form-row">
-            <label>Payout method
+            <label><span>Paid by</span>
               <select name="method"><option value="paypal">PayPal</option><option value="wise">Wise</option><option value="bank">Bank transfer</option></select>
             </label>
-            <label><span>Payout email <span class="pt-opt">if different</span></span><input name="payout" type="email" placeholder="Same as your email" maxlength="120" /></label>
           </div>
-          <label class="pt-agree"><input type="checkbox" name="agree" required /> <span>I agree to the <a href="#terms">program terms</a>, including always marking posts as an ad or affiliate link.</span></label>
-          <button class="lx-btn lx-btn--primary" type="submit">Join the program</button>
+          <label class="pt-agree"><input type="checkbox" name="agree" required /> <span>I agree to the <a href="#terms" data-terms>program terms</a> and will always mark posts as an ad or affiliate link.</span></label>
+          <button class="lx-btn lx-btn--primary pt-submit" type="submit">Join the program</button>
           <p class="pt-form-msg" id="ptApplyMsg" role="status"></p>
-          <details class="pt-terms-full" id="terms">
-        <summary>Read the full program terms</summary>
-        <div>
-          <p><b>Credit.</b> A sale is yours when the buyer uses your discount code, or buys within the link window after clicking your link. A code always wins over a link. Purchases you make yourself, through your own link or code, earn no commission.</p>
-          <p><b>Refunds.</b> If an order is refunded, its commission is cancelled. If it was already paid to you, the amount is taken off your next payout.</p>
-          <p><b>Honest promotion.</b> Always label posts as an ad or affiliate link where your platform or law requires it (for example #ad). Don't bid on "Ezzo Hub" or "Ezzo" in search ads, don't post coupon codes on coupon sites, don't invent reviews or results, and don't make claims about the product it doesn't make. No spam.</p>
-          <p><b>Your data, theirs.</b> You see clicks, demo starts, sales and earnings. You never see a buyer's name, email or budget, and they never see yours.</p>
-          <p><b>Changes and ending.</b> We may update these terms or the rates with notice by email; earned commission is always honoured at the rate it was earned. Either side can end the partnership any time. Accounts that break these terms can be closed and unpaid commission withheld.</p>
-          <p><b>Taxes.</b> You're responsible for any tax on what you earn.</p>
-        </div>
-      </details>
         </form>
+        <p class="pt-form-foot">Already a partner? <button type="button" class="pt-link" data-signin>Sign in</button></p>
       </div>
     </section>
   </main>
@@ -218,21 +111,9 @@
   <!-- ═══════════════ SIGNED IN: the dashboard ═══════════════ -->
   <main id="ptApp" class="lx-wrap" hidden></main>
 
-  <footer class="lx-foot">
-    <div class="lx-wrap lx-foot-in">
-      <a class="lx-brand" href="/" aria-label="Ezzo Hub home">
-        <span class="lx-brand-mark"><img src="branding/ezzo-mark-white.png" alt="" width="28" height="28" /></span>
-        <span>Ezzo Hub<small>Tools for real life</small></span>
-      </a>
-      <nav class="lx-foot-links" aria-label="Footer">
-        <a href="/budgetplanner">Ultimate Budget Planner</a>
-        <a href="/partners">Partners</a>
-        <a href="/blog">Blog</a>
-        <a href="/privacy">Privacy Policy</a>
-        <a href="/terms">Terms of Use</a>
-      </nav>
-      <p class="lx-foot-copy">&copy; <span id="lxYear">2026</span> Ezzo Hub. All rights reserved.</p>
-    </div>
+  <footer class="pt-foot lx-wrap">
+    <span>&copy; <span id="lxYear">2026</span> Ezzo Hub</span>
+    <nav aria-label="Footer"><a href="/budgetplanner">Ultimate Budget Planner</a><a href="/blog">Blog</a><a href="/privacy">Privacy</a><a href="/terms">Terms of Use</a></nav>
   </footer>
 </div>
 
@@ -251,8 +132,24 @@
   </div>
 </div>
 
-<script src="analytics.js?v=20261230"></script>
-<script src="affiliate.js?v=20261230"></script>
-<script src="partners.js?v=20261241"></script>
+<!-- Program terms -->
+<div class="pt-modal" id="ptTerms" hidden role="dialog" aria-modal="true" aria-labelledby="ptTermsTitle">
+  <div class="pt-modal-card pt-modal-card--wide">
+    <button class="pt-modal-x" type="button" data-close aria-label="Close">×</button>
+    <h2 id="ptTermsTitle">Program terms</h2>
+    <div class="pt-terms-body">
+      <p><b>Credit.</b> A sale is yours when the buyer uses your discount code, or buys within the link window after clicking your link. A code always wins over a link. Purchases you make yourself, through your own link or code, earn no commission.</p>
+          <p><b>Refunds.</b> If an order is refunded, its commission is cancelled. If it was already paid to you, the amount is taken off your next payout.</p>
+          <p><b>Honest promotion.</b> Always label posts as an ad or affiliate link where your platform or law requires it (for example #ad). Don't bid on "Ezzo Hub" or "Ezzo" in search ads, don't post coupon codes on coupon sites, don't invent reviews or results, and don't make claims about the product it doesn't make. No spam.</p>
+          <p><b>Your data, theirs.</b> You see clicks, demo starts, sales and earnings. You never see a buyer's name, email or budget, and they never see yours.</p>
+          <p><b>Changes and ending.</b> We may update these terms or the rates with notice by email; earned commission is always honoured at the rate it was earned. Either side can end the partnership any time. Accounts that break these terms can be closed and unpaid commission withheld.</p>
+          <p><b>Taxes.</b> You're responsible for any tax on what you earn.</p>
+    </div>
+  </div>
+</div>
+
+<script src="analytics.js?v=20261250"></script>
+<script src="affiliate.js?v=20261250"></script>
+<script src="partners.js?v=20261250"></script>
 </body>
 </html>

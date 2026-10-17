@@ -249,6 +249,38 @@ function sheetIso(v) {
 }
 const _str = v => (v == null ? '' : String(v));
 
+// Traffic that isn't a real visitor: automated browsers (test runs, which
+// before Oct 17 also reached the sheet from local previews), crawlers, and
+// any device marked as the owner's ("owner_device", sent once when a device
+// is marked: signing in here, or ?notrack=1 on any page). Hidden from every
+// number unless "Show my own visits and test traffic" is on in Settings.
+const ADMIN_BOT_UA = /HeadlessChrome|Playwright|puppeteer|Lighthouse|bot\b|crawler|spider|slurp|facebookexternalhit|Bytespider/i;
+const ADMIN_SHOWALL_KEY = 'evobudget_admin_show_all_traffic';
+let adminHiddenTraffic = { events: 0, visitors: 0 };
+function adminShowAllTraffic() { try { return localStorage.getItem(ADMIN_SHOWALL_KEY) === '1'; } catch (e) { return false; } }
+function adminFilterTraffic(events) {
+  const owners = new Set(events.filter(e => e.type === 'owner_device').map(e => e.visitorId));
+  try { const v = localStorage.getItem('evobudget_analytics_vid'); if (v) owners.add(v); } catch (e) {}
+  const hidden = events.filter(e => e.type === 'owner_device' || owners.has(e.visitorId) || ADMIN_BOT_UA.test(e.ua || ''));
+  adminHiddenTraffic = { events: hidden.length, visitors: new Set(hidden.map(e => e.visitorId)).size };
+  if (adminShowAllTraffic()) return events.filter(e => e.type !== 'owner_device');
+  const drop = new Set(hidden);
+  return events.filter(e => !drop.has(e));
+}
+// This browser is the owner's: stop counting it, and tell the sheet so its
+// past visits are hidden too. Same event shape analytics.js sends.
+function adminMarkOwnerDevice() {
+  try {
+    if (localStorage.getItem('ezzo_exclude_from_analytics') === '1') return;
+    localStorage.setItem('ezzo_exclude_from_analytics', '1');
+    const vid = localStorage.getItem('evobudget_analytics_vid');
+    if (!vid || !/(^|\.)ezzohub\.com$/.test(location.hostname) || navigator.webdriver) return;
+    const body = JSON.stringify({ appKey: 'EVOBUDGETANALYTICS', type: 'owner_device', visitorId: vid, sessionId: 'admin', page: 'admin', tool: '',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '', referrer: '', ua: navigator.userAgent.slice(0, 256), lang: navigator.language || '', detail: {}, clientTs: new Date().toISOString() });
+    navigator.sendBeacon(ADMIN_APPS_SCRIPT_URL, new Blob([body], { type: 'text/plain;charset=UTF-8' }));
+  } catch (e) {}
+}
+
 async function adminFetchEvents(token) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${ADMIN_SPREADSHEET_ID}/values/${encodeURIComponent(ADMIN_SHEET_RANGE)}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
@@ -259,12 +291,14 @@ async function adminFetchEvents(token) {
   // since row 1 is the header) is carried on every event purely so the
   // Danger Zone delete feature can clear exactly the right cells later -
   // nothing else in this file reads it.
-  return rows.map((r, i) => ({
+  const events = rows.map((r, i) => ({
     row: i + 2,
     serverTime: r[0] || '', type: r[1] || '', visitorId: r[2] || '', sessionId: r[3] || '',
     page: r[4] || '', tool: r[5] || '', timezone: r[6] || '', referrer: r[7] || '',
     ua: r[8] || '', lang: r[9] || '', detail: _safeParseJSON(r[10]), clientTs: r[11] || ''
   })).filter(e => e.type); // drop any accidental blank rows
+  allEventsRaw = events;
+  return adminFilterTraffic(events);
 }
 
 // ══════════════════════ Etsy keys ══════════════════════
@@ -392,7 +426,9 @@ async function adminSetKeyStatus(rowNum, status) {
 // deletion. Requires the read-write ADMIN_SCOPES above.
 function eventsInRange(from, to) {
   if (!from && !to) return [];
-  return allEvents.filter(e => {
+  // Deleting a range removes everything in it, including hidden test and
+  // owner traffic, not only what the dashboard counts.
+  return (_sampleDataActive ? allEvents : (allEventsRaw.length ? allEventsRaw : allEvents)).filter(e => {
     const t = eventTime(e);
     if (from && t < new Date(from + 'T00:00:00').getTime()) return false;
     if (to && t > new Date(to + 'T23:59:59').getTime()) return false;
@@ -424,6 +460,7 @@ async function adminDeleteEventsInRange(token, from, to) {
 
 // ══════════════════════ State ══════════════════════
 let allEvents = [];
+let allEventsRaw = [];   // before hiding owner devices and automated browsers
 let currentATab = 'overview';
 let liveTimer = null;
 const filters = { from: '', to: '', tool: '' };
@@ -646,11 +683,16 @@ const IN_APP_EVENTS = new Set(['tab_viewed', 'feature_used', 'theme_changed', 'l
 // inside the planners, and those are exactly the conversions worth seeing.
 const ALWAYS_COUNT_EVENTS = new Set(['purchase_initiated', 'launch_code_redeemed', 'trial_started']);
 
+// Website and product are kept apart: website numbers (visitors, sessions,
+// online now) come only from the website's own pages, and the Product tab
+// only from inside the planner. The buying signals above still feed the
+// Overview funnel from wherever they happen, but without making someone
+// using the planner count as a website visitor.
 function isWebsiteEvent(e) {
-  if (ALWAYS_COUNT_EVENTS.has(e.type)) return true;
   if (IN_APP_EVENTS.has(e.type)) return false;
   return WEBSITE_PAGES.has(e.page || '');
 }
+function commerceEventsIn(r) { return allEvents.filter(e => ALWAYS_COUNT_EVENTS.has(e.type) && within(eventTime(e), r)); }
 
 // ── Date range (shared by Overview, Sales and Product) ─────────────────
 // One range for all three, so switching tabs never quietly changes the
@@ -1010,7 +1052,7 @@ function vBarChartHtml(groups, opts) {
     const share = total ? Math.round(r.value / total * 100) : 0;
     return `<div class="admin-vbar-col">
       <span class="admin-vbar-track">
-        <i style="height:${h}%"><b>${fmt(r.value)}</b></i>
+        <i style="height:${h}%">${r.value > 0 ? `<b>${fmt(r.value)}</b>` : ''}</i>
         ${r.value === 0 ? `<em class="admin-vbar-zero">0</em>` : ''}
       </span>
       <span class="admin-vbar-label" title="${esc(r.label)}">${esc(r.label)}</span>
@@ -1151,8 +1193,9 @@ function renderOverview() {
 
   // Funnel, per person: trying the demo one evening and buying the next
   // morning is two sessions and one buyer.
-  const demoPeople = new Set(rangeEvents.filter(e => e.type === 'trial_started').map(e => e.visitorId));
-  const buyPeople = new Set(rangeEvents.filter(e => e.type === 'purchase_initiated').map(e => e.visitorId));
+  const commerce = commerceEventsIn(R);
+  const demoPeople = new Set(commerce.filter(e => e.type === 'trial_started').map(e => e.visitorId));
+  const buyPeople = new Set(commerce.filter(e => e.type === 'purchase_initiated').map(e => e.visitorId));
   const funnelSteps = [
     { label: 'Visitors', value: visitors, color: '#6366f1' },
     { label: 'Tried the demo', value: demoPeople.size, color: '#06b6d4', note: 'opened a free planner' },
@@ -2494,6 +2537,8 @@ function renderSettings() {
         <div class="settings-card-title">ℹ️ About this dashboard</div>
         <div class="admin-setting-row"><div><div class="admin-setting-label">Signed in as</div><div class="admin-setting-hint">${esc(_adminEmail || 'unknown')}</div></div></div>
         <div class="admin-setting-row"><div><div class="admin-setting-label">Data loaded</div><div class="admin-setting-hint">${fmt(allEvents.length)} events, ${fmt(allSales.length)} sales rows, ${fmt(allKeys.length)} keys, ${fmt(allNotify.length)} waitlist sign-ups${_sampleDataActive ? ' (sample data)' : ''}. Last refreshed ${_lastFetched ? esc(relTime(_lastFetched)) : 'never'}.</div></div></div>
+        <div class="admin-setting-row"><div><div class="admin-setting-label">Your own visits and test traffic</div><div class="admin-setting-hint">${adminShowAllTraffic() ? 'Shown in every number.' : `Hidden from every number: ${fmt(adminHiddenTraffic.events)} events from ${fmt(adminHiddenTraffic.visitors)} device${adminHiddenTraffic.visitors === 1 ? '' : 's'} (your own, automated test browsers and crawlers).`} This browser is never counted. To stop counting your phone or another browser, open any page there once with <b>?notrack=1</b> on the end, for example ezzohub.com/?notrack=1.</div></div>
+          <label class="admin-search-toggle${adminShowAllTraffic() ? ' is-active' : ''}"><input type="checkbox" id="adminShowAll"${adminShowAllTraffic() ? ' checked' : ''}> Show them</label></div>
         <div class="admin-setting-row"><div><div class="admin-setting-label">Sales tracking</div><div class="admin-setting-hint">${allSales.some(r => r.discount || r.affiliate || r.gross) || !allSales.some(r => r.event === 'payment.succeeded')
           ? 'Discount codes and affiliates are being recorded with each Dodo sale.'
           : 'Dodo sales are arriving without the Discount, Affiliate and Gross columns. Paste the latest Code.gs into Apps Script and deploy a new version to start recording them.'}</div></div></div>
@@ -2508,6 +2553,11 @@ function renderSettings() {
     </div>`;
   el.querySelectorAll('.theme-opt').forEach(btn => btn.addEventListener('click', () => { setAdminTheme(btn.dataset.themeVal); el.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('is-active', b === btn)); }));
   el.querySelector('#adminSignOutBtn2')?.addEventListener('click', adminSignOut);
+  el.querySelector('#adminShowAll')?.addEventListener('change', async e => {
+    try { localStorage.setItem(ADMIN_SHOWALL_KEY, e.target.checked ? '1' : '0'); } catch (x) {}
+    if (_adminAccessToken && !_sampleDataActive) { try { allEvents = await adminFetchEvents(_adminAccessToken); } catch (x) {} }
+    renderSettings();
+  });
   pennyWireSettingsCard();
 
   wireDangerZone();
@@ -4179,6 +4229,7 @@ async function adminSignIn() {
     if (email.toLowerCase() !== ADMIN_ALLOWED_EMAIL.toLowerCase()) { _adminAccessToken = null; throw new Error('not_allowed'); }
     _adminEmail = email;
     adminUpdateRailAccount();
+    adminMarkOwnerDevice();
     await adminFetchAll(token);
     Object.assign(overviewFilters, currentMonthBounds()); // reset to the current month on every sign-in, per explicit request
     document.getElementById('adminGate').hidden = true;

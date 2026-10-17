@@ -35,6 +35,16 @@
     return v;
   }
   function cleanCode(v) { return String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16); }
+  // Clicks and funnel steps only count from real visits to ezzohub.com:
+  // never from automated test browsers or local copies of the site, so test
+  // runs can't inflate a partner's numbers. (Tests that check this code
+  // turn it back on with a test-only switch and a fake Apps Script.)
+  function realVisit() {
+    try {
+      if (localStorage.getItem('ezzo_force_tracking') === '1') return true;
+      return !navigator.webdriver && /(^|\.)ezzohub\.com$/.test(location.hostname);
+    } catch (e) { return false; }
+  }
   // JSONP, the same way the rest of the site talks to the Apps Script.
   function call(params, done) {
     var cb = 'ezzoAff' + Math.random().toString(36).slice(2);
@@ -95,7 +105,7 @@
       showNote(r);
       prepareCheckout();
     });
-    call({ action: 'aff_click', ref: incoming, vid: visitorId(), sub: sub, lp: location.pathname.slice(0, 80),
+    if (realVisit()) call({ action: 'aff_click', ref: incoming, vid: visitorId(), sub: sub, lp: location.pathname.slice(0, 80),
            rf: (document.referrer || '').slice(0, 200), tz: (Intl.DateTimeFormat().resolvedOptions().timeZone || '') });
     // Keep the address bar clean once the referral is stored.
     try {
@@ -145,7 +155,7 @@
       try {
         var r = current();
         if (r && (type === 'trial_started' || type === 'purchase_initiated')) {
-          call({ action: 'aff_event', ref: r.code, type: type === 'trial_started' ? 'demo' : 'checkout', vid: visitorId(), sub: r.sub || '' });
+          if (realVisit()) call({ action: 'aff_event', ref: r.code, type: type === 'trial_started' ? 'demo' : 'checkout', vid: visitorId(), sub: r.sub || '' });
         }
       } catch (e) {}
       return original.apply(this, arguments);
