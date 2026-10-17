@@ -4082,6 +4082,11 @@ const ADMIN_RENDERERS = { overview: renderOverview, sales: renderSales, customer
 function switchATab(tab) {
   currentATab = tab;
   document.querySelectorAll('#adminTabs .btab').forEach(b => b.classList.toggle('is-active', b.dataset.atab === tab));
+  document.querySelectorAll('#adminRailSections .nav-rail-item').forEach(b => {
+    const on = b.dataset.atab === tab;
+    b.classList.toggle('is-active', on);
+    if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
   document.querySelectorAll('.bview').forEach(v => v.classList.toggle('is-active', v.id === 'aview-' + tab));
   (ADMIN_RENDERERS[tab] || renderOverview)();
 }
@@ -4112,6 +4117,52 @@ function startLivePolling() {
 }
 function stopLivePolling() { if (liveTimer) { clearInterval(liveTimer); liveTimer = null; } }
 
+// ══════════════════════ Side rail (desktop and tablet) ══════════════════════
+// The same sidebar the planner uses: sections down the left on desktop, an
+// icon rail on a tablet, and on a phone the top bar with its tabs instead
+// (all layout in style.css under data-nav="left"). The sections are built
+// from the tab bar, so there is one list of tabs. The tool buttons are moved
+// rather than copied, so each keeps its one id and its listeners.
+function adminBuildRail() {
+  const box = document.getElementById('adminRailSections');
+  if (!box) return;
+  box.innerHTML = [...document.querySelectorAll('#adminTabs .btab')].map(b => {
+    const text = b.textContent.trim();
+    const m = text.match(/^(\S+)\s+(.+)$/);
+    const icon = m ? m[1] : '•', label = m ? m[2] : text;
+    const on = b.classList.contains('is-active');
+    return `<button class="nav-rail-item${on ? ' is-active' : ''}"${on ? ' aria-current="page"' : ''} data-atab="${esc(b.dataset.atab)}" type="button" title="${esc(label)}">
+      <span class="nav-rail-icon" aria-hidden="true">${icon}</span><span class="nav-rail-label">${esc(label)}</span></button>`;
+  }).join('');
+  box.querySelectorAll('.nav-rail-item').forEach(i => i.addEventListener('click', () => switchATab(i.dataset.atab)));
+  document.getElementById('adminRailAccount')?.addEventListener('click', () => switchATab('settings'));
+}
+function adminUpdateRailAccount() {
+  const email = _adminEmail || 'Owner';
+  const e = document.getElementById('adminRailEmail'), a = document.getElementById('adminRailAvatar');
+  if (e) e.textContent = email;
+  if (a) a.textContent = (email.trim()[0] || 'A').toUpperCase();
+}
+const ADMIN_PHONE_MQ = window.matchMedia('(max-width: 760px)');
+function adminPlaceChrome() {
+  const tools = document.getElementById('adminRailTools');
+  const left = document.querySelector('#viewAdmin .tool-topbar-left');
+  const right = document.querySelector('#viewAdmin .tool-topbar-right');
+  if (!tools || !left || !right) return;
+  const btn = id => document.getElementById(id);
+  const leftSet = ['adminHomeLink', 'adminRefreshBtn'].map(btn).filter(Boolean);
+  const rightSet = ['pennyNavBtn', 'adminSignOutBtn'].map(btn).filter(Boolean);
+  if (ADMIN_PHONE_MQ.matches) {
+    leftSet.forEach(b => left.appendChild(b));
+    rightSet.forEach(b => right.appendChild(b));
+  } else {
+    [...leftSet, ...rightSet].forEach(b => tools.appendChild(b));
+  }
+}
+ADMIN_PHONE_MQ.addEventListener('change', adminPlaceChrome);
+// After the whole file has run, so everything these read is defined.
+document.addEventListener('DOMContentLoaded', () => { adminBuildRail(); adminPlaceChrome(); adminUpdateRailAccount(); });
+
 // ══════════════════════ Auth gate / bootstrap ══════════════════════
 let _adminEmail = '';
 let _lastFetched = 0;
@@ -4127,6 +4178,7 @@ async function adminSignIn() {
     const email = await _adminFetchEmail(token);
     if (email.toLowerCase() !== ADMIN_ALLOWED_EMAIL.toLowerCase()) { _adminAccessToken = null; throw new Error('not_allowed'); }
     _adminEmail = email;
+    adminUpdateRailAccount();
     await adminFetchAll(token);
     Object.assign(overviewFilters, currentMonthBounds()); // reset to the current month on every sign-in, per explicit request
     document.getElementById('adminGate').hidden = true;

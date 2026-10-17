@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-nav="left" data-width="full">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,7 +19,7 @@
     })();
   </script>
   <link rel="stylesheet" href="style.css?v=20261190" />
-  <link rel="stylesheet" href="admin.css?v=20261240" />
+  <link rel="stylesheet" href="admin.css?v=20261250" />
 </head>
 <body>
 
@@ -54,10 +54,38 @@
 
   <!-- ═══════════════════ DASHBOARD ═══════════════════ -->
   <div class="view tool-shell" id="viewAdmin" hidden>
+    <!-- Desktop and tablet: the sections down the left, like the planner.
+         On a phone this hides and the top bar with its tabs takes over
+         (style.css, data-nav="left"). Filled in by adminBuildRail(). -->
+    <aside class="nav-rail" id="adminRail" aria-label="Analytics navigation">
+      <div class="nav-rail-box">
+        <div class="nav-rail-brand">
+          <div class="wordmark">
+            <div class="wordmark-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <rect x="1" y="7" width="3" height="8" fill="white" rx="1"/>
+                <rect x="6" y="4" width="3" height="11" fill="white" rx="1"/>
+                <rect x="11" y="1" width="3" height="14" fill="white" rx="1"/>
+              </svg>
+            </div>
+            <span class="app-title-editable">Analytics</span>
+          </div>
+        </div>
+        <p class="nav-rail-heading">Navigation</p>
+        <nav class="nav-rail-sections" id="adminRailSections" aria-label="Sections"></nav>
+        <div class="nav-rail-widgets" aria-hidden="true"></div>
+        <div class="nav-rail-tools" id="adminRailTools"></div>
+        <p class="nav-rail-heading">Account</p>
+        <button class="nav-rail-account" id="adminRailAccount" type="button" title="Settings">
+          <span class="nra-avatar" id="adminRailAvatar">A</span>
+          <span class="nra-text"><span class="nra-name">Signed in</span><span class="nra-sub" id="adminRailEmail">Owner</span></span>
+        </button>
+      </div>
+    </aside>
     <div class="tool-sticky">
       <header class="topbar tool-topbar">
         <div class="tool-topbar-left">
-          <a class="btn-icon" href="/" aria-label="Back to Ezzo Hub" title="Back to Ezzo Hub">
+          <a class="btn-icon" id="adminHomeLink" href="/" aria-label="Back to Ezzo Hub" title="Back to Ezzo Hub">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
               <path d="M9 21V12h6v9"/>
@@ -110,11 +138,11 @@
         <button class="btab" data-atab="blogs" role="tab" type="button">📝 Blogs</button>
         <button class="btab" data-atab="settings" role="tab" type="button">⚙️ Settings</button>
       </nav>
-      <div class="admin-sample-banner" id="adminSampleBanner" hidden>🧪 You are looking at sample data, not your real numbers. <button id="adminSampleBannerExit" type="button">Exit sample data</button></div>
     </div>
 
 
     <div class="app-scroll">
+      <div class="admin-sample-banner" id="adminSampleBanner" hidden>🧪 You are looking at sample data, not your real numbers. <button id="adminSampleBannerExit" type="button">Exit sample data</button></div>
       <div class="bview is-active" id="aview-overview" role="tabpanel"></div>
       <div class="bview" id="aview-sales" role="tabpanel"></div>
       <div class="bview" id="aview-customers" role="tabpanel"></div>
@@ -138,6 +166,6 @@
        tools use. See the "Ezzo integration" section in admin.js. -->
   <script src="penny.js?v=20261190"></script>
   <script src="blog-posts.js?v=20261190"></script>
-  <script src="admin.js?v=20261240"></script>
+  <script src="admin.js?v=20261250"></script>
 </body>
 </html>

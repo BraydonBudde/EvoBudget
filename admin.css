@@ -703,3 +703,18 @@ select.adm-input {
   .adm-toolbar > * { flex: 1 1 140px; }
   .adm-toolbar > .adm-input--grow, .adm-toolbar > .adm-toolbar-note { flex-basis: 100%; }
 }
+
+/* ══ Side rail (desktop and tablet), top bar on a phone ═══════════════
+   Layout comes from style.css (html[data-nav="left"]), shared with the
+   planner. Only what is admin-specific lives here. */
+html[data-nav="left"] #viewAdmin.view.tool-shell.is-active { max-width: none; }
+#adminRail .nav-rail-widgets { flex: 1 1 auto; }
+#adminRail .nav-rail-tools .btn-icon { width: 40px; height: 40px; }
+#adminRail .nav-rail-account { margin-top: 2px; }
+#viewAdmin .app-scroll > .admin-sample-banner { margin: 0 0 16px; }
+@media (min-width: 761px) {
+  html[data-nav="left"] #viewAdmin > .app-scroll { padding-top: 26px; }
+}
+/* The planner turned its sidebar tools into list items and hides the icon
+   row; the admin keeps the row (home, refresh, Ezzo, sign out). */
+#adminRail .nav-rail-tools { display: flex; margin-top: 10px; }
